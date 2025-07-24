@@ -136,7 +136,7 @@ phi = initialize_interaction_field()
 
 frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
 ], [], [], [], [], []
-print("🔄 Výpočet polí:")
+print("🔄 Starting field calculations:")
 
 threshold = 0.12
 neighborhood_size = 3
@@ -145,7 +145,9 @@ trajectories = []  # seznam (id, step, y, x, size)
 active_tracks = {}  # id -> (y, x)
 next_id = 0
 
+print("🔄 Initializing fields and interaction field.")
 for i in range(steps):
+    print(f"🔄 Step {i+1}/{steps}: Evolving fields and detecting phenomena.")
     psi, phi = evolve(psi, delta, phi)
     amp = np.abs(psi)
     phase = np.angle(psi)
@@ -215,7 +217,7 @@ for i in range(steps):
         avg_radius = 0.0
     radius_log.append((i, avg_radius))
 
-    print(f"  {int((i+1)/steps*100)} %")
+    print(f"  {int((i+1)/steps*100)} % completed.")
 
     if coords.size > 0:
         centroid = coords.mean(axis=0)
@@ -241,6 +243,7 @@ for i in range(steps):
     center_y, center_x = size // 2, size // 2
     central_amp = amp[center_y, center_x]
 
+    print(f"🔄 Step {i+1}/{steps}: Saving data and updating logs.")
     amplitude_log.append((i, central_amp))
     phi_center_log.append((i, np.abs(phi[center_y, center_x])))
 
@@ -561,4 +564,4 @@ np.save(os.path.join(output_dir, "frames_vortices.npy"), frames_vort_np)
 save_phi_center_plot()
 generate_html_report()
 
-print("✅ Všechny GIFy a logy vygenerovány.")
+print("✅ All GIFs and logs have been successfully generated.")
