@@ -15,9 +15,9 @@ def notify_file_creation(path, success=True, error=None):
     """Print a notification about file creation success or failure."""
     name = os.path.basename(path)
     if success:
-        print(f"✅ Soubor '{name}' byl úspěšně vytvořen.")
+        print(f"✅ File '{name}' has been successfully created.")
     else:
-        print(f"❌ Nepodařilo se vytvořit soubor '{name}': {error}")
+        print(f"❌ Failed to create file '{name}': {error}")
 
 
 def save_csv(filename, header, rows):
@@ -28,7 +28,8 @@ def save_csv(filename, header, rows):
             writer = csv.writer(f)
             if header:
                 writer.writerow(header)
-            writer.writerows(rows)
+            for row in tqdm(rows, desc=f"Saving {filename}", unit="row"):
+                writer.writerow(row)
         notify_file_creation(path)
     except Exception as e:
         notify_file_creation(path, success=False, error=e)
@@ -101,14 +102,14 @@ def evolve(psi, delta, phi):
     fluctuation = np.random.normal(
         0.0, 0.01, (size, size)) * np.exp(1j * np.angle(psi))
 
-    # 💡 Přidání interakce
+    # 💡 Adding interaction
     interaction_term = 0.02 * np.clip(phi, -10, 10) * psi
 
     psi += linon_complex + fluctuation + interaction_term
     psi -= 0.001 * psi
     psi += diffuse_complex(psi)
 
-    # 🌀 Jednoduchá evoluce φ (např. směrem k |ψ|²)
+    # 🌀 Simple evolution of φ (e.g., towards |ψ|²)
     phi += 0.02 * (np.clip(np.abs(psi)**2, 0, 1e4) - phi)
 
     phi += diffuse_complex(phi)
@@ -124,7 +125,7 @@ def save_phi_center_plot(filename="phi_center_plot.png"):
     plt.plot(steps_list, phi_center_values, label="|φ_center|", color="orange")
     plt.xlabel("Step")
     plt.ylabel("|φ_center|")
-    plt.title("Vývoj amplitudy interakčního pole ve středu")
+    plt.title("Development of the amplitude of the interaction field at the center")
     plt.grid(True)
     plt.tight_layout()
     path = os.path.join(output_dir, filename)
@@ -177,7 +178,7 @@ if __name__ == "__main__":
     active_tracks = {}  # id -> (y, x)
     next_id = 0
     
-    print("🔄 Initializing fields and interaction field.")
+    print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
         print(f"🔄 Step {i+1}/{steps}: Evolving fields and detecting phenomena.")
         psi, phi = evolve(psi, delta, phi)
@@ -379,9 +380,9 @@ if __name__ == "__main__":
     )
     
     # Výpis do konzole
-    print("🔬 Dominantní frekvence:", f"{dominant_freq:.2e} Hz")
-    print("⚡ Energie částice:", f"{energy:.2e} J")
-    print("🌈 Vlnová délka:", f"{wavelength:.2e} m")
+    print("🔬 Dominant frequency:", f"{dominant_freq:.2e} Hz")
+    print("⚡ Particle energy:", f"{energy:.2e} J")
+    print("🌈 Wavelength:", f"{wavelength:.2e} m")
     
     # Uložení grafu
     plt.figure(figsize=(8, 4))
@@ -490,15 +491,15 @@ if __name__ == "__main__":
             confirmations.append("🧫 Detekce kvazičástic s měřitelnou trajektorií")
         if stable_frequency:
             confirmations.append(
-                f"🎵 Stabilní spektrum s dominantní frekvencí {dominant_freq:.2e} Hz")
+                f"🎵 Stable spectrum with dominant frequency {dominant_freq:.2e} Hz")
         if topo_conserved:
             confirmations.append(
-                "🔁 Zachování topologického náboje (winding number)")
+                "🔁 Conservation of topological charge (winding number)")
         if phi_present:
-            confirmations.append("🌌 Vznik nenulového pole φ v centru pole")
+            confirmations.append("🌌 Emergence of a non-zero field φ at the center of the field")
         if not confirmations:
             confirmations.append(
-                "⚠️ Nebyly detekovány žádné hlavní emergentní jevy")
+                "No major emergent phenomena detected")
     
         # 🔧 HTML konstrukce
         confirmed_html = "\n".join(f"<li>{c}</li>" for c in confirmations)
