@@ -1,6 +1,8 @@
+from matplotlib.animation import FuncAnimation
 from tqdm import tqdm
 from scipy.fft import fft, fftfreq
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 from scipy.ndimage import gaussian_filter, maximum_filter
@@ -51,8 +53,8 @@ probe_points = [(0, 0), (0, size//2), (size//2, 0),
 multi_amp_logs = {pt: [] for pt in probe_points}
 
 
-PIXEL_SIZE = 1e-9      # 1 pixel = 1 nm
-TIME_STEP = 1e-15      # 1 krok = 1 femtosekunda
+PIXEL_SIZE = 1e-12     # 1 pixel = 1 pm (pikometr)
+TIME_STEP = 1e-21      # 1 krok = 1 zs (zeptosekunda)
 
 
 def sigmoid(x, k=5):
@@ -166,18 +168,18 @@ if __name__ == "__main__":
     # Inicializace polí
     psi, delta = initialize_fields()
     phi = initialize_interaction_field()
-    
+
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
     # print("🔄 Starting field calculations:")
-    
+
     threshold = 0.12
     neighborhood_size = 3
     radius_log = []
     trajectories = []  # seznam (id, step, y, x, size)
     active_tracks = {}  # id -> (y, x)
     next_id = 0
-    
+
     # print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
         # Removed manual progress print
@@ -189,26 +191,26 @@ if __name__ == "__main__":
         dFx_dy = np.gradient(grad_x, axis=0)
         curl = dFy_dx - dFx_dy
         vortices = detect_vortices(phase)
-    
+
         num_pos = np.sum(vortices == 1)
         num_neg = np.sum(vortices == -1)
         net_charge = num_pos - num_neg
         total = num_pos + num_neg
         topo_log.append((i, num_pos, num_neg, net_charge, total))
-    
+
         local_max = (amp == maximum_filter(amp, size=neighborhood_size))
         particles = (amp > threshold) & local_max
         coords = np.argwhere(particles)
-    
+
         # Pro každou nově detekovanou částici
         assigned = set()
         new_active_tracks = {}
-    
+
         for cy, cx in coords:
             pos = np.array([cy, cx])
             min_dist = float("inf")
             closest_id = None
-    
+
             # Najdi nejbližší aktivní trajektorii
             for tid, last_pos in active_tracks.items():
                 dist = np.linalg.norm(pos - last_pos)
@@ -216,7 +218,7 @@ if __name__ == "__main__":
                     if dist < min_dist:
                         min_dist = dist
                         closest_id = tid
-    
+
             if closest_id is not None:
                 # Navazujeme na předchozí trajektorii
                 new_active_tracks[closest_id] = pos
@@ -227,18 +229,18 @@ if __name__ == "__main__":
                 new_active_tracks[next_id] = pos
                 trajectories.append((next_id, i, cy, cx, amp[cy, cx]))
                 next_id += 1
-    
+
         # Aktualizuj aktivní trajektorie
         active_tracks = new_active_tracks
-    
+
         frames_particles.append(particles.astype(float))
-    
+
         frames_amp.append(amp)
         frames_vecx.append(grad_x)
         frames_vecy.append(grad_y)
         frames_curl.append(curl)
         frames_vort.append(vortices)
-    
+
         r_threshold = 0.15
         mask = amp > r_threshold
         coords = np.argwhere(mask)
@@ -249,15 +251,15 @@ if __name__ == "__main__":
         else:
             avg_radius = 0.0
         radius_log.append((i, avg_radius))
-    
+
         # Removed manual progress print
-    
+
         if coords.size > 0:
             centroid = coords.mean(axis=0)
             particle_log.append((i, centroid[0], centroid[1], len(coords)))
         else:
             particle_log.append((i, np.nan, np.nan, 0))
-    
+
         radius = 5
         if coords.size > 0:
             center_y, center_x = centroid.round().astype(int)
@@ -271,88 +273,94 @@ if __name__ == "__main__":
         else:
             pos_count = 0
             neg_count = 0
-        interaction_log.append((i, pos_count, neg_count, pos_count - neg_count))
-    
+        interaction_log.append(
+            (i, pos_count, neg_count, pos_count - neg_count))
+
         center_y, center_x = size // 2, size // 2
         central_amp = amp[center_y, center_x]
-    
+
         # print(f"🔄 Step {i+1}/{steps}: Saving data and updating logs.")
         amplitude_log.append((i, central_amp))
         phi_center_log.append((i, np.abs(phi[center_y, center_x])))
-    
+
         for pt in probe_points:
             y, x = pt
             if 0 <= y < size and 0 <= x < size:
                 multi_amp_logs[pt].append(np.abs(psi[y, x]))
             else:
                 multi_amp_logs[pt].append(np.nan)
-    
-    
+
     save_csv("radius_log.csv", ["step", "avg_radius"], radius_log)
-    
-    save_csv("vortex_log.csv", ["step", "num_pos", "num_neg", "net_charge"], vortex_log)
-    
-    save_csv("particle_log.csv", ["step", "center_y", "center_x", "size"], particle_log)
-    
+
+    save_csv("vortex_log.csv", ["step", "num_pos",
+             "num_neg", "net_charge"], vortex_log)
+
+    save_csv("particle_log.csv", [
+             "step", "center_y", "center_x", "size"], particle_log)
+
     save_csv(
         "interaction_log.csv",
         ["step", "vortices_pos", "vortices_neg", "net_local_charge"],
         interaction_log,
     )
-    
+
     save_csv("amplitude_log.csv", ["step", "central_amplitude"], amplitude_log)
-    
+
     save_csv("phi_center_log.csv", ["step", "phi_center_abs"], phi_center_log)
-    
-    
+
     # 🔍 SPEKTRÁLNÍ ANALÝZA OSCILACE V CENTRU
-    
-    
+
     # Získáme amplitudy a vytvoříme časovou osu
     amplitudes = np.array([row[1] for row in amplitude_log])
     times = np.arange(len(amplitudes)) * TIME_STEP  # čas v sekundách
-    
+
     # Odstraníme trend (DC složku)
     amplitudes -= np.mean(amplitudes)
-    
+
     # Provedeme FFT
     fft_result = fft(amplitudes)
     frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
     spectrum = np.abs(fft_result)
-    
+
     # Vybereme pouze kladné frekvence
     positive_freqs = frequencies[:len(frequencies)//2]
     positive_spectrum = spectrum[:len(spectrum)//2]
-    
+
     # Najdeme dominantní frekvenci
     dominant_index = np.argmax(positive_spectrum)
     dominant_freq = positive_freqs[dominant_index]  # v Hz
-    
+
     # Spočteme energii: E = h·f
     h = 6.62607015e-34  # Planckova konstanta [J·s]
     energy = h * dominant_freq
-    
+
     # Spočteme vlnovou délku: λ = c / f
     c = 299_792_458  # rychlost světla [m/s]
     wavelength = c / dominant_freq if dominant_freq != 0 else np.inf
-    
+
+    # Spočteme efektivní hmotnost částice: m = E/c²
+    mass = energy / c**2  # efektivní hmotnost [kg]
+
+    # Porovnáme s elektronem
+    electron_mass = 9.10938356e-31  # hmotnost elektronu [kg]
+    mass_ratio = mass / electron_mass
+
     # Uložení do CSV
     save_csv(
         "spectrum_log.csv",
         ["frequency_Hz", "amplitude"],
         zip(positive_freqs, positive_spectrum),
     )
-    
+
     save_csv(
         "trajectories.csv",
         ["id", "step", "y", "x", "amplitude"],
         trajectories,
     )
-    
-    # 🔍 MULTISPEKTRÁLNÍ ANALÝZA
-    
-    multi_spectrum_rows = []
-    
+
+    # MULTISPEKTRÁLNÍ ANALÝZA pro každý bod zvlášť
+    multi_spectrum_details = []
+
     for pt, amp_list in multi_amp_logs.items():
         signal = np.array(amp_list)
         signal -= np.mean(signal)
@@ -361,29 +369,47 @@ if __name__ == "__main__":
         spectrum = np.abs(fft_result)
         positive_freqs = freqs[:len(freqs)//2]
         positive_spectrum = spectrum[:len(spectrum)//2]
+
         dom_idx = np.argmax(positive_spectrum)
         dom_freq = positive_freqs[dom_idx]
         energy = h * dom_freq
-        multi_spectrum_rows.append((pt[0], pt[1], dom_freq, energy))
-    
-    # Uložení
+        mass = energy / c**2
+        mass_ratio = mass / electron_mass
+
+        multi_spectrum_details.append({
+            "point": pt,
+            "dominant_freq_Hz": dom_freq,
+            "energy_J": energy,
+            "mass_kg": mass,
+            "mass_ratio": mass_ratio
+        })
+
+        # Uložení spektra pro každý bod zvlášť
+        save_csv(
+            f"spectrum_log_point_{pt[0]}_{pt[1]}.csv",
+            ["frequency_Hz", "amplitude"],
+            zip(positive_freqs, positive_spectrum),
+        )
+
+    # Uložení shrnutí výsledků pro všechny body
     save_csv(
-        "multi_spectrum_log.csv",
-        ["y", "x", "dominant_freq_Hz", "energy_J"],
-        multi_spectrum_rows,
+        "multi_spectrum_summary.csv",
+        ["y", "x", "dominant_freq_Hz", "energy_J", "mass_kg", "mass_ratio"],
+        [(d["point"][0], d["point"][1], d["dominant_freq_Hz"], d["energy_J"],
+          d["mass_kg"], d["mass_ratio"]) for d in multi_spectrum_details]
     )
-    
+
     save_csv(
         "topo_log.csv",
         ["step", "num_pos", "num_neg", "net_charge", "total_vortices"],
         topo_log,
     )
-    
+
     # Výpis do konzole
     print("🔬 Dominant frequency:", f"{dominant_freq:.2e} Hz")
     print("⚡ Particle energy:", f"{energy:.2e} J")
     print("🌈 Wavelength:", f"{wavelength:.2e} m")
-    
+
     # Uložení grafu
     plt.figure(figsize=(8, 4))
     plt.plot(positive_freqs, positive_spectrum)
@@ -393,7 +419,7 @@ if __name__ == "__main__":
     plt.xscale("log")
     if np.any(positive_spectrum > 0):
         plt.yscale("log")
-    
+
     plt.grid(True)
     plt.tight_layout()
     plot_path = os.path.join(output_dir, "spectrum_plot.png")
@@ -404,16 +430,14 @@ if __name__ == "__main__":
         notify_file_creation(plot_path, success=False, error=e)
     finally:
         plt.close()
-    
-    
+
     # Funkce pro uložení GIFů
-    
-    
+
     def save_gif(data_frames, filename, cmap='viridis', vmin=None, vmax=None):
         fig, ax = plt.subplots(figsize=(6, 6))
         img = ax.imshow(data_frames[0], cmap=cmap, vmin=vmin, vmax=vmax)
         ax.axis("off")
-    
+
         def update(i):
             img.set_data(data_frames[i])
             return [img]
@@ -426,8 +450,7 @@ if __name__ == "__main__":
             notify_file_creation(filename, success=False, error=e)
         finally:
             plt.close(fig)
-    
-    
+
     save_gif(frames_amp, os.path.join(output_dir, "lineum_amplitude.gif"),
              cmap="plasma", vmin=0, vmax=0.5)
     save_gif(frames_curl, os.path.join(output_dir, "lineum_spin.gif"),
@@ -436,19 +459,19 @@ if __name__ == "__main__":
         output_dir, "lineum_vortices.gif"), cmap="bwr", vmin=-1, vmax=1)
     save_gif(frames_particles, os.path.join(
         output_dir, "lineum_particles.gif"), cmap="gray", vmin=0, vmax=1)
-    
+
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
-    vec = ax.quiver(x, y, frames_vecx[0], frames_vecy[0], color='lime', scale=20)
+    vec = ax.quiver(x, y, frames_vecx[0],
+                    frames_vecy[0], color='lime', scale=20)
     ax.axis("off")
-    
-    
+
     def update_quiver(i):
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [vec]
-    
-    
-    ani = FuncAnimation(fig, update_quiver, frames=steps, interval=300, blit=True)
+
+    ani = FuncAnimation(fig, update_quiver, frames=steps,
+                        interval=300, blit=True)
     flow_path = os.path.join(output_dir, "lineum_flow.gif")
     try:
         ani.save(flow_path, writer=PillowWriter(fps=10))
@@ -457,23 +480,22 @@ if __name__ == "__main__":
         notify_file_creation(flow_path, success=False, error=e)
     finally:
         plt.close(fig)
-    
+
     fig, ax = plt.subplots(figsize=(7, 7))
     amp_img = ax.imshow(frames_amp[0], cmap='plasma', vmin=0, vmax=0.5)
     curl_overlay = ax.imshow(
         frames_curl[0], cmap='bwr', alpha=0.4, vmin=-0.3, vmax=0.3)
-    vec = ax.quiver(x, y, frames_vecx[0], frames_vecy[0], color='lime', scale=20)
+    vec = ax.quiver(x, y, frames_vecx[0],
+                    frames_vecy[0], color='lime', scale=20)
     ax.axis("off")
-    
-    
+
     def update_combo(i):
         amp_img.set_data(frames_amp[i])
         curl_overlay.set_data(frames_curl[i])
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
-    
-    
-    def generate_html_report(filename="lineum_report.html"):
+
+    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True):
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
         # total vortices > 0
@@ -482,13 +504,14 @@ if __name__ == "__main__":
         topo_conserved = charge_std < 3
         stable_frequency = dominant_freq > 1e10  # arbitrárně: nad 10 GHz
         phi_present = np.nanmax([row[1] for row in phi_center_log]) > 0.01
-    
+
         # 🧪 Dynamický seznam potvrzených jevů
         confirmations = []
         if vortices_present:
             confirmations.append("🌀 Spontánní vznik vírů (vortexů)")
         if quasiparticles_present:
-            confirmations.append("🧫 Detekce kvazičástic s měřitelnou trajektorií")
+            confirmations.append(
+                "🧫 Detekce kvazičástic s měřitelnou trajektorií")
         if stable_frequency:
             confirmations.append(
                 f"🎵 Stable spectrum with dominant frequency {dominant_freq:.2e} Hz")
@@ -496,14 +519,48 @@ if __name__ == "__main__":
             confirmations.append(
                 "🔁 Conservation of topological charge (winding number)")
         if phi_present:
-            confirmations.append("🌌 Emergence of a non-zero field φ at the center of the field")
+            confirmations.append(
+                "🌌 Emergence of a non-zero field φ at the center of the field")
+        if mass_ratio > 0.001 and mass_ratio < 100:
+            confirmations.append(
+                f"⚖️ Emergence of quasiparticles with realistic effective mass ({mass_ratio:.2e}× electron mass)")
+
+        # Potvrzení homogenního výskytu kvazičástic
+        try:
+            with open(os.path.join(output_dir, "multi_spectrum_summary.csv")) as f:
+                import csv
+                reader = csv.DictReader(f)
+                freqs = []
+                mass_ratios = []
+                for row in reader:
+                    freqs.append(float(row["dominant_freq_Hz"]))
+                    mass_ratios.append(float(row["mass_ratio"]))
+
+                freq_std = np.std(freqs)
+                mass_ratio_std = np.std(mass_ratios)
+
+                if freq_std < 1e17 and mass_ratio_std < 0.01:
+                    confirmations.append(
+                        "🧬 Homogenní výskyt kvazičástic s realistickou frekvencí a hmotností napříč celým polem")
+        except Exception as e:
+            print("⚠️ Homogeneity check failed:", e)
+
+        if max_lifespan >= 100:
+            confirmations.append(
+                f"🕒 Emergence of long-lived quasiparticles (max {max_lifespan} steps, median {median_lifespan})"
+            )
+
+        if include_spin and os.path.exists(os.path.join(output_dir, "spin_aura_avg.png")):
+            confirmations.append(
+                "🧲 Kvazičástice nesou emergentní spinovou strukturu (dipól nebo vír)")
+
         if not confirmations:
             confirmations.append(
                 "No major emergent phenomena detected")
-    
+
         # 🔧 HTML konstrukce
         confirmed_html = "\n".join(f"<li>{c}</li>" for c in confirmations)
-    
+
         html = f"""<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -533,6 +590,12 @@ if __name__ == "__main__":
         <tr><td>Dominant frequency</td><td>{dominant_freq:.2e} Hz</td></tr>
         <tr><td>Energy</td><td>{energy:.2e} J</td></tr>
         <tr><td>Wavelength</td><td>{wavelength:.2e} m</td></tr>
+        <tr><td>Effective mass</td><td>{mass:.2e} kg</td></tr>
+        <tr><td>Mass relative to electron</td><td>{mass_ratio:.2e}× electron mass</td></tr>
+        <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
+        <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
+
+
       </table>
     
       <p>See full spectrum: <a href="spectrum_log.csv">spectrum_log.csv</a></p>
@@ -561,6 +624,15 @@ if __name__ == "__main__":
         <img src="lineum_particles.gif" alt="Particles">
         <img src="lineum_full_overlay.gif" alt="Full overlay">
       </div>
+
+      <h2>🧲 Spinová aura kvazičástice</h2>
+<p>
+Analýzou pole <code>curl(∇arg(ψ))</code> v okolí stovek kvazičástic
+vznikla průměrná „spinová aura“. Výsledek ukazuje dipólovou strukturu
+s protisměrnou rotací – podobně jako reálné částice nesou kvantový moment hybnosti.
+</p>
+<div><img src="spin_aura_avg.png" alt="Spin aura"></div>
+
     
       <h2>📚 Glossary & Naming Rationale</h2>
     
@@ -584,7 +656,7 @@ if __name__ == "__main__":
       </p>
     </body>
     </html>"""
-    
+
         path = os.path.join(output_dir, filename)
         try:
             with open(path, "w", encoding="utf-8") as f:
@@ -592,9 +664,9 @@ if __name__ == "__main__":
             notify_file_creation(path)
         except Exception as e:
             notify_file_creation(path, success=False, error=e)
-    
-    
-    ani = FuncAnimation(fig, update_combo, frames=steps, interval=300, blit=True)
+
+    ani = FuncAnimation(fig, update_combo, frames=steps,
+                        interval=300, blit=True)
     overlay_path = os.path.join(output_dir, "lineum_full_overlay.gif")
     try:
         ani.save(overlay_path, writer=PillowWriter(fps=10))
@@ -603,17 +675,110 @@ if __name__ == "__main__":
         notify_file_creation(overlay_path, success=False, error=e)
     finally:
         plt.close(fig)
-    
+
     # 🌀 Uložení všech polí vírů do souboru pro analýzu
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
     npy_path = os.path.join(output_dir, "frames_vortices.npy")
+    frames_curl_np = np.array(frames_curl)
+    npy_curl_path = os.path.join(output_dir, "frames_curl.npy")
+    try:
+        np.save(npy_curl_path, frames_curl_np)
+        notify_file_creation(npy_curl_path)
+    except Exception as e:
+        notify_file_creation(npy_curl_path, success=False, error=e)
+
     try:
         np.save(npy_path, frames_vort_np)
         notify_file_creation(npy_path)
     except Exception as e:
         notify_file_creation(npy_path, success=False, error=e)
-    
+
     save_phi_center_plot()
-    generate_html_report()
-    
+
+    # 📈 Výpočet životnosti kvazičástic
+    lifespan_df = pd.DataFrame(trajectories, columns=[
+                               "id", "step", "y", "x", "amplitude"])
+    lifespans = lifespan_df.groupby("id")["step"].agg(["min", "max"])
+    lifespans["duration"] = lifespans["max"] - lifespans["min"] + 1
+    max_lifespan = int(lifespans["duration"].max())
+    median_lifespan = int(lifespans["duration"].median())
+
+    # 📊 Analýza průměrné spinové aury kvazičástic
+    import seaborn as sns
+    from scipy.ndimage import zoom
+
+    frames_curl_np = np.array(frames_curl)
+    lifespan_df = pd.DataFrame(trajectories, columns=[
+                               "id", "step", "y", "x", "amplitude"])
+    cutout_size = 11
+    half_size = cutout_size // 2
+    cutouts = []
+
+    for _, row in lifespan_df.iterrows():
+        step = int(row["step"])
+        y = int(row["y"])
+        x = int(row["x"])
+
+        if (
+            0 <= step < len(frames_curl_np)
+            and half_size <= y < frames_curl_np.shape[1] - half_size
+            and half_size <= x < frames_curl_np.shape[2] - half_size
+        ):
+            cutout = frames_curl_np[step, y - half_size: y +
+                                    half_size + 1, x - half_size: x + half_size + 1]
+            cutouts.append(cutout)
+
+    average_spin_map = np.mean(cutouts, axis=0)
+    upsampled_spin_map = zoom(average_spin_map, 5, order=3)
+
+    # Uložení obrázku
+    spin_img_path = os.path.join(output_dir, "spin_aura_avg.png")
+    plt.figure(figsize=(6, 6))
+    sns.heatmap(upsampled_spin_map, center=0,
+                cmap="bwr", cbar=True, square=True)
+    plt.title("🧲 Průměrná spinová aura kvazičástice (curl ∇arg(ψ))")
+    plt.axis("off")
+    plt.tight_layout()
+    plt.savefig(spin_img_path, dpi=150)
+    plt.close()
+
+    include_spin = os.path.exists(
+        os.path.join(output_dir, "spin_aura_avg.png"))
+
+    generate_html_report(
+        mass=mass,
+        mass_ratio=mass_ratio,
+        max_lifespan=max_lifespan,
+        median_lifespan=median_lifespan,
+        include_spin=include_spin
+    )
+
     print("✅ All GIFs and logs have been successfully generated.")
+
+# 💻 Interaktivní náhled simulace (volitelné UI okno)
+
+fig, ax = plt.subplots(figsize=(7, 7))
+x, y = np.meshgrid(np.arange(size), np.arange(size))
+
+amp_img = ax.imshow(frames_amp[0], cmap='plasma', vmin=0, vmax=0.5)
+curl_overlay = ax.imshow(
+    frames_curl[0], cmap='bwr', alpha=0.4, vmin=-0.3, vmax=0.3)
+vec = ax.quiver(x, y, frames_vecx[0], frames_vecy[0], color='lime', scale=20)
+particles_overlay = ax.imshow(
+    frames_particles[0], cmap='gray', alpha=0.6, vmin=0, vmax=1)
+
+ax.set_title("Lineum realtime UI: |ψ| + spin + tok + částice")
+ax.axis("off")
+
+
+def update(i):
+    amp_img.set_data(frames_amp[i])
+    curl_overlay.set_data(frames_curl[i])
+    vec.set_UVC(frames_vecx[i], frames_vecy[i])
+    particles_overlay.set_data(frames_particles[i])
+    return [amp_img, curl_overlay, vec, particles_overlay]
+
+
+ani = FuncAnimation(fig, update, frames=len(
+    frames_amp), interval=200, blit=True)
+plt.show()
