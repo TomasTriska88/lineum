@@ -46,7 +46,7 @@ phi_center_log = []
 
 # Parametry
 size = 100
-steps = 200
+steps = 500
 # Body, jejichž amplitudu budeme sledovat
 probe_points = [(0, 0), (0, size//2), (size//2, 0),
                 (size-1, size-1), (size//2, size//2 + 10)]
@@ -71,6 +71,9 @@ def initialize_fields():
     amp = np.random.normal(0.0, 0.1, (size, size))
     phase = np.random.uniform(0, 2*np.pi, (size, size))
     amp[size//2, size//2] += 1.0  # asymetrie uprostřed
+    amp[size//2 - 5, size//2 + 5] += 0.7
+    amp[size//2 + 4, size//2 - 3] += 0.6
+
     psi = amp * np.exp(1j * phase)
     delta = generate_structured_delta()
     return psi, delta
@@ -617,6 +620,11 @@ if __name__ == "__main__":
         except Exception as e:
             print("⚠️ φ-gravitační test selhal:", e)
 
+        if mean_curvature_deg > 0.5:
+            confirmations.append(
+                f"🌙 Zakřivená trajektorie kvazičástic v poli φ (∅ úhel změny směru = {mean_curvature_deg:.2f}°)"
+            )
+
         if not confirmations:
             confirmations.append(
                 "No major emergent phenomena detected")
@@ -627,6 +635,10 @@ if __name__ == "__main__":
         gravitational_row = ""
         if phi_gravitation_confirmed:
             gravitational_row = f"<tr><td>Gravitational behavior</td><td>Emergent φ-gradient driven motion</td></tr>"
+
+        curvature_row = ""
+        if mean_curvature_deg > 0.5:
+            curvature_row = f"<tr><td>Trajectory curvature</td><td>{mean_curvature_deg:.2f}° per step</td></tr>"
 
         html = f"""<!DOCTYPE html>
     <html lang="en">
@@ -662,6 +674,7 @@ if __name__ == "__main__":
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
         {gravitational_row}
+        {curvature_row}
 
       </table>
     
@@ -842,6 +855,28 @@ The result is motion not due to pulling, but due to a shared directional prefere
     lifespans["duration"] = lifespans["max"] - lifespans["min"] + 1
     max_lifespan = int(lifespans["duration"].max())
     median_lifespan = int(lifespans["duration"].median())
+
+    # 📐 Výpočet průměrného zakřivení dráhy nejstabilnější částice
+    longest_id = lifespan_df["duration"].idxmax()
+    track = lifespan_df[lifespan_df["id"] == longest_id].sort_values("step")
+    positions = track[["y", "x"]].to_numpy()
+
+    def angle_between(v1, v2):
+        norm_product = np.linalg.norm(v1) * np.linalg.norm(v2)
+        if norm_product == 0:
+            return 0
+        cos_theta = np.clip(np.dot(v1, v2) / norm_product, -1.0, 1.0)
+        return np.arccos(cos_theta)
+
+    angles = []
+    for i in range(1, len(positions) - 1):
+        v1 = positions[i] - positions[i - 1]
+        v2 = positions[i + 1] - positions[i]
+        angle = angle_between(v1, v2)
+        angles.append(angle)
+
+    mean_curvature_rad = np.mean(angles)
+    mean_curvature_deg = np.degrees(mean_curvature_rad)
 
     # 📊 Analýza průměrné spinové aury kvazičástic
     import seaborn as sns
