@@ -169,7 +169,7 @@ if __name__ == "__main__":
     
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
-    print("🔄 Starting field calculations:")
+    # print("🔄 Starting field calculations:")
     
     threshold = 0.12
     neighborhood_size = 3
@@ -178,9 +178,9 @@ if __name__ == "__main__":
     active_tracks = {}  # id -> (y, x)
     next_id = 0
     
-    print("🔄 Initializing the field and interaction field.")
+    # print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
-        print(f"🔄 Step {i+1}/{steps}: Evolving fields and detecting phenomena.")
+        # Removed manual progress print
         psi, phi = evolve(psi, delta, phi)
         amp = np.abs(psi)
         phase = np.angle(psi)
@@ -276,7 +276,7 @@ if __name__ == "__main__":
         center_y, center_x = size // 2, size // 2
         central_amp = amp[center_y, center_x]
     
-        print(f"🔄 Step {i+1}/{steps}: Saving data and updating logs.")
+        # print(f"🔄 Step {i+1}/{steps}: Saving data and updating logs.")
         amplitude_log.append((i, central_amp))
         phi_center_log.append((i, np.abs(phi[center_y, center_x])))
     
