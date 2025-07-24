@@ -107,6 +107,11 @@ def evolve(psi, delta, phi):
     # 💡 Adding interaction
     interaction_term = 0.04 * np.clip(phi, -10, 10) * psi
 
+    # 💫 Gradient φ jako „tíhový tok“
+    grad_phi_x, grad_phi_y = np.gradient(np.abs(phi))
+    phi_flow_term = -0.004 * (grad_phi_x + 1j * grad_phi_y)
+    psi += phi_flow_term
+
     psi += linon_complex + fluctuation + interaction_term
     psi -= 0.001 * psi
     psi += diffuse_complex(psi)
@@ -118,6 +123,8 @@ def evolve(psi, delta, phi):
     local_input = np.clip(np.abs(psi)**2, 0, 1e4)
 
     phi += reaction_strength * (local_input - phi)
+    phi += 0.02 * diffuse_complex(phi)  # jemná difuze pole φ
+
     phi += diffusion_strength * diffuse_complex(phi)
 
     return psi, phi
@@ -205,6 +212,15 @@ if __name__ == "__main__":
         local_max = (amp == maximum_filter(amp, size=neighborhood_size))
         particles = (amp > threshold) & local_max
         coords = np.argwhere(particles)
+
+        # 💥 Experimentální injekce do φ – lokální posílení v místě částic
+        injection_amount = 0.2
+        for cy, cx in coords:
+            y_min = max(cy - 1, 0)
+            y_max = min(cy + 2, size)
+            x_min = max(cx - 1, 0)
+            x_max = min(cx + 2, size)
+            phi[y_min:y_max, x_min:x_max] += injection_amount
 
         # Pro každou nově detekovanou částici
         assigned = set()
