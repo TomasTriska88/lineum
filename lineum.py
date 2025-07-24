@@ -529,6 +529,7 @@ if __name__ == "__main__":
         topo_conserved = charge_std < 3
         stable_frequency = dominant_freq > 1e10  # arbitrárně: nad 10 GHz
         phi_present = np.nanmax([row[1] for row in phi_center_log]) > 0.01
+        phi_gravitation_confirmed = False
 
         # 🧪 Dynamický seznam potvrzených jevů
         confirmations = []
@@ -584,12 +585,48 @@ if __name__ == "__main__":
                 "🌠 Lokální zvýšení pole φ v okolí kvazičástic potvrzeno"
             )
 
+        # 💫 φ-gravitační interakce: ověření sbližování částic
+        try:
+            top_trajs = pd.read_csv(os.path.join(
+                output_dir, "trajectories.csv"))
+            grouped = top_trajs.groupby("id")
+            lifespans = grouped.size().sort_values(ascending=False)
+            top2_ids = lifespans.head(2).index.tolist()
+            filtered = top_trajs[top_trajs["id"].isin(top2_ids)]
+
+            from collections import defaultdict
+            from scipy.spatial.distance import euclidean
+            step_to_positions = defaultdict(dict)
+            for _, row in filtered.iterrows():
+                step = int(row["step"])
+                id_ = int(row["id"])
+                y = float(row["y"])
+                x = float(row["x"])
+                step_to_positions[step][id_] = (y, x)
+
+            shared_steps = [s for s in step_to_positions if len(
+                step_to_positions[s]) == 2]
+            if len(shared_steps) >= 5:
+                dists = [euclidean(*step_to_positions[s].values())
+                         for s in shared_steps]
+                if dists[0] > dists[-1]:
+                    confirmations.append(
+                        "🌠 Emergentní φ-gravitační interakce – kvazičástice se přibližují vlivem gradientu φ"
+                    )
+                    phi_gravitation_confirmed = True
+        except Exception as e:
+            print("⚠️ φ-gravitační test selhal:", e)
+
         if not confirmations:
             confirmations.append(
                 "No major emergent phenomena detected")
 
         # 🔧 HTML konstrukce
         confirmed_html = "\n".join(f"<li>{c}</li>" for c in confirmations)
+
+        gravitational_row = ""
+        if phi_gravitation_confirmed:
+            gravitational_row = f"<tr><td>Gravitational behavior</td><td>Emergent φ-gradient driven motion</td></tr>"
 
         html = f"""<!DOCTYPE html>
     <html lang="en">
@@ -624,11 +661,33 @@ if __name__ == "__main__":
         <tr><td>Mass relative to electron</td><td>{mass_ratio:.2e}× electron mass</td></tr>
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
-
+        {gravitational_row}
 
       </table>
     
       <p>See full spectrum: <a href="spectrum_log.csv">spectrum_log.csv</a></p>
+
+      <h2>🧮 Field Evolution Equation</h2>
+<p><strong>Updated Lineum Field Equation:</strong></p>
+<pre><code>
+ψ ← ψ + linon + fluktuace + φ⋅ψ − disipace + difuze + gradient(φ)
+φ ← φ + α (|ψ|² − φ) + β · difuze
+</code></pre>
+
+<p><strong>Term definitions:</strong></p>
+<table>
+<tr><th>Term</th><th>Description</th></tr>
+<tr><td>ψ</td><td>Complex scalar field – field tension</td></tr>
+<tr><td>linon</td><td>Nonlinear probabilistic particle generation</td></tr>
+<tr><td>fluktuace</td><td>Quantum phase noise (oscillatory noise)</td></tr>
+<tr><td>φ⋅ψ</td><td>Interaction with φ – modulates ψ evolution</td></tr>
+<tr><td>disipace</td><td>Field damping (decay term)</td></tr>
+<tr><td>difuze</td><td>Spatial diffusion (Laplacian)</td></tr>
+<tr><td>gradient(φ)</td><td><strong>New:</strong> directional influence – ψ follows φ curvature</td></tr>
+<tr><td>α (|ψ|² − φ)</td><td>Reaction of φ to field density</td></tr>
+<tr><td>β · difuze</td><td>Mild diffusion to form spatial φ gradients</td></tr>
+</table>
+
     
       <h2>🌀 Simulation Summary</h2>
       <ul>
@@ -665,6 +724,14 @@ s protisměrnou rotací – podobně jako reálné částice nesou kvantový mom
 
     
       <h2>📚 Glossary & Naming Rationale</h2>
+
+      <h2>🧠 Note on Gravity</h2>
+<p>
+This simulation supports an alternative interpretation of gravity: not as a force, but as an emergent drive toward co-existence. 
+Particles do not attract one another – instead, they shape the φ field in a way that guides others toward them.
+The result is motion not due to pulling, but due to a shared directional preference.
+</p>
+
     
     <h3>🔤 Lineum</h3>
     <p>
