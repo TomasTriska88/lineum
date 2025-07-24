@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from scipy.fft import fft, fftfreq
 import numpy as np
 import matplotlib.pyplot as plt
@@ -146,7 +147,7 @@ active_tracks = {}  # id -> (y, x)
 next_id = 0
 
 print("🔄 Initializing fields and interaction field.")
-for i in range(steps):
+for i in tqdm(range(steps), desc="Processing steps", unit="step"):
     print(f"🔄 Step {i+1}/{steps}: Evolving fields and detecting phenomena.")
     psi, phi = evolve(psi, delta, phi)
     amp = np.abs(psi)
@@ -217,7 +218,7 @@ for i in range(steps):
         avg_radius = 0.0
     radius_log.append((i, avg_radius))
 
-    print(f"  {int((i+1)/steps*100)} % completed.")
+    # Removed manual progress print
 
     if coords.size > 0:
         centroid = coords.mean(axis=0)
