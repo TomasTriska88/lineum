@@ -46,7 +46,7 @@ phi_center_log = []
 
 # Parametry
 size = 100
-steps = 300
+steps = 200
 # Body, jejichž amplitudu budeme sledovat
 probe_points = [(0, 0), (0, size//2), (size//2, 0),
                 (size-1, size-1), (size//2, size//2 + 10)]
@@ -105,16 +105,20 @@ def evolve(psi, delta, phi):
         0.0, 0.01, (size, size)) * np.exp(1j * np.angle(psi))
 
     # 💡 Adding interaction
-    interaction_term = 0.02 * np.clip(phi, -10, 10) * psi
+    interaction_term = 0.04 * np.clip(phi, -10, 10) * psi
 
     psi += linon_complex + fluctuation + interaction_term
     psi -= 0.001 * psi
     psi += diffuse_complex(psi)
 
-    # 🌀 Simple evolution of φ (e.g., towards |ψ|²)
-    phi += 0.02 * (np.clip(np.abs(psi)**2, 0, 1e4) - phi)
+    # 🌀 Laděná evoluce φ pro silnější lokální efekt
+    reaction_strength = 0.06     # zvýšíme reakci na |ψ|²
+    diffusion_strength = 0.015   # výrazně zpomalíme difuzi
 
-    phi += diffuse_complex(phi)
+    local_input = np.clip(np.abs(psi)**2, 0, 1e4)
+
+    phi += reaction_strength * (local_input - phi)
+    phi += diffusion_strength * diffuse_complex(phi)
 
     return psi, phi
 
@@ -240,6 +244,11 @@ if __name__ == "__main__":
         frames_vecy.append(grad_y)
         frames_curl.append(curl)
         frames_vort.append(vortices)
+
+        # 🔄 Uložení φ polí pro každé časové okno (pouze absolutní hodnota)
+        if 'frames_phi' not in locals():
+            frames_phi = []
+        frames_phi.append(np.abs(phi.copy()))
 
         r_threshold = 0.15
         mask = amp > r_threshold
@@ -495,7 +504,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True):
+    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1):
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
         # total vortices > 0
@@ -553,6 +562,11 @@ if __name__ == "__main__":
         if include_spin and os.path.exists(os.path.join(output_dir, "spin_aura_avg.png")):
             confirmations.append(
                 "🧲 Kvazičástice nesou emergentní spinovou strukturu (dipól nebo vír)")
+
+        if phi_mean_near > phi_mean_field + 3 * phi_std_field:
+            confirmations.append(
+                "🌠 Lokální zvýšení pole φ v okolí kvazičástic potvrzeno"
+            )
 
         if not confirmations:
             confirmations.append(
@@ -689,9 +703,52 @@ s protisměrnou rotací – podobně jako reálné částice nesou kvantový mom
 
     try:
         np.save(npy_path, frames_vort_np)
+        frames_amp_np = np.array(frames_amp)
+        amp_npy_path = os.path.join(output_dir, "frames_amp.npy")
+        try:
+            np.save(amp_npy_path, frames_amp_np)
+            notify_file_creation(amp_npy_path)
+        except Exception as e:
+            notify_file_creation(amp_npy_path, success=False, error=e)
+
         notify_file_creation(npy_path)
     except Exception as e:
         notify_file_creation(npy_path, success=False, error=e)
+
+    # 🧪 Analýza φ v okolí kvazičástic
+    import random
+    phi_values_near_particles = []
+    phi_values_field = []
+
+    for row in trajectories:
+        step, y, x = int(row[1]), int(row[2]), int(row[3])
+        if 0 <= step < len(frames_phi):
+            phi_frame = frames_phi[step]
+            if 2 < y < size - 3 and 2 < x < size - 3:
+                local_phi = phi_frame[y-2:y+3, x-2:x+3].flatten()
+                phi_values_near_particles.extend(local_phi)
+
+        # náhodné body mimo částice
+        for _ in range(5):
+            ry, rx = random.randint(0, size - 1), random.randint(0, size - 1)
+            phi_values_field.append(frames_phi[step][ry, rx])
+
+    phi_mean_near = np.mean(phi_values_near_particles)
+    phi_std_near = np.std(phi_values_near_particles)
+    phi_mean_field = np.mean(phi_values_field)
+    phi_std_field = np.std(phi_values_field)
+
+    print(f"🌌 φ near particles: {phi_mean_near:.4e} ± {phi_std_near:.4e}")
+    print(f"🌌 φ elsewhere:      {phi_mean_field:.4e} ± {phi_std_field:.4e}")
+
+    # 🌀 Uložení φ polí pro pozdější analýzu
+    frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
+    phi_npy_path = os.path.join(output_dir, "frames_phi.npy")
+    try:
+        np.save(phi_npy_path, frames_phi_np)
+        notify_file_creation(phi_npy_path)
+    except Exception as e:
+        notify_file_creation(phi_npy_path, success=False, error=e)
 
     save_phi_center_plot()
 
@@ -750,7 +807,10 @@ s protisměrnou rotací – podobně jako reálné částice nesou kvantový mom
         mass_ratio=mass_ratio,
         max_lifespan=max_lifespan,
         median_lifespan=median_lifespan,
-        include_spin=include_spin
+        include_spin=include_spin,
+        phi_mean_near=phi_mean_near,
+        phi_mean_field=phi_mean_field,
+        phi_std_field=phi_std_field
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
