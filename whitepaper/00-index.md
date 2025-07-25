@@ -28,6 +28,6 @@ Vizualizace a generovaný report najdete ve složce [`/output/`](https://github.
 
 ---
 
-📄 Verze dokumentu: `0.1`  
+📄 Verze dokumentu: `1.0`  
 🗓️ Poslední aktualizace: 2025-07-26 0:58 CET  
 🧭 Whitepaper je ve vývoji – některé kapitoly jsou rozpracované.
