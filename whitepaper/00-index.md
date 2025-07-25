@@ -8,15 +8,15 @@ Tento whitepaper popisuje hypotetický model reality, ve kterém z čistě loká
 
 ## 📘 Obsah
 
-| Kapitola                                       | Popis                                                         |
-| ---------------------------------------------- | ------------------------------------------------------------- |
-| [1. Abstrakt](01-abstract.md)                  | Shrnutí hypotézy, detekovaných jevů a výsledků                |
-| [2. Motivace](02-motivace.md)                  | Proč hledat alternativní přístup ke vzniku reality            |
-| [3. Základní rovnice](03-rovnice.md)           | Formulace rovnice, výklad členů a jejich role                 |
-| [4. Simulační metoda](04-metoda.md)            | Popis numerické simulace, dat, výpočtů, parametrů             |
-| [5. Validace jevů](05-validace.md)             | Důkazy, měření, grafy, počty struktur, konzervace             |
-| [6. Interpretace výsledků](06-interpretace.md) | Význam φ-pastí, vztah ke gravitaci, topologie                 |
-| [7. Závěr a výzva](07-zaver.md)                | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
+| Kapitola                                         | Popis                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------- |
+| [1. Abstrakt](01-abstract.md)                    | Shrnutí hypotézy, detekovaných jevů a výsledků                |
+| [2. Motivace](02-motivation.md)                  | Proč hledat alternativní přístup ke vzniku reality            |
+| [3. Základní rovnice](03-equation.md)            | Formulace rovnice, výklad členů a jejich role                 |
+| [4. Simulační metoda](04-method.md)              | Popis numerické simulace, dat, výpočtů, parametrů             |
+| [5. Validace jevů](05-validation.md)             | Důkazy, měření, grafy, počty struktur, konzervace             |
+| [6. Interpretace výsledků](06-interpretation.md) | Význam φ-pastí, vztah ke gravitaci, topologie                 |
+| [7. Závěr a výzva](07-conclusion.md)             | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
 
 ---
 
