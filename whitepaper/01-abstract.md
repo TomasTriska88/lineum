@@ -27,3 +27,47 @@ Kód projektu obsahuje automatizovaný detekční modul, který vyhodnocuje vzni
 Evoluce pole probíhá výhradně pomocí lokálních operací (gradient, Laplacián, fázový šum, nelineární excitace) na diskrétní mřížce. Rovnice neobsahuje žádné předem definované síly – kvazičástice se přesto přibližují k sobě prostřednictvím gradientu φ. To naznačuje alternativní interpretaci gravitace – nikoliv jako přitažlivé síly, ale jako emergentní tendenci k sdílení prostředí.
 
 Lineum není prezentováno jako kompletní teorie všeho. Je to návrh – důkaz, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu, vedeného s pomocí umělé inteligence, a je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke struktuře reality mohou vznikat i mimo tradiční rámce – pokud mají co říct.
+
+---
+
+## Vizualizace emergentních jevů ze simulace Lineum
+
+<sub>(rozlišení 128×128, 200 kroků, detekce aktivní)</sub>
+
+### Topologické jevy a kvantovaný náboj
+
+![Detekce vírů](../output/lineum_vortices.gif)  
+_Detekované kvantované víry (červené = +1, modré = –1) – topologický náboj konzervován._
+
+---
+
+### Spinové struktury a tok pole
+
+![Spin pole](../output/lineum_spin.gif)  
+_Spin vypočítaný jako rotace fázového gradientu – emergentní orbitální moment._
+
+![Fázový tok](../output/lineum_flow.gif)  
+_Směrové napětí pole – fázový tok ∇arg(ψ), naznačuje organizované proudění._
+
+---
+
+### Vrstvená dynamika (kompozitní vizualizace)
+
+![Overlay](../output/lineum_full_overlay.gif)  
+_Vrstevnatá vizualizace amplitudy, spinu a toku – znázorňuje synchronizaci jevů._
+
+---
+
+### Interakční pole φ ve středu simulace
+
+![φ_center](../output/phi_center_plot.png)  
+_Vývoj hodnoty φ ve středu pole – prudký nárůst a stabilizace kolem hodnoty 10⁴._
+
+---
+
+### Frekvenční spektrum
+
+![Spektrum](../output/spectrum_plot.png)  
+_Dominantní frekvence oscilace ve středu pole: ~5×10¹⁸ Hz_
+
+---
