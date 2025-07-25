@@ -8,6 +8,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 from scipy.ndimage import gaussian_filter, maximum_filter
 import csv
 import os
+from scipy.spatial.distance import euclidean
 
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
@@ -45,11 +46,11 @@ topo_log = []
 phi_center_log = []
 
 # Parametry
-size = 100
-steps = 500
+size = 128
+steps = 200
 # Body, jejichž amplitudu budeme sledovat
-probe_points = [(0, 0), (0, size//2), (size//2, 0),
-                (size-1, size-1), (size//2, size//2 + 10)]
+probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
+
 multi_amp_logs = {pt: [] for pt in probe_points}
 
 
@@ -71,9 +72,6 @@ def initialize_fields():
     amp = np.random.normal(0.0, 0.1, (size, size))
     phase = np.random.uniform(0, 2*np.pi, (size, size))
     amp[size//2, size//2] += 1.0  # asymetrie uprostřed
-    amp[size//2 - 5, size//2 + 5] += 0.7
-    amp[size//2 + 4, size//2 - 3] += 0.6
-
     psi = amp * np.exp(1j * phase)
     delta = generate_structured_delta()
     return psi, delta
@@ -554,6 +552,18 @@ if __name__ == "__main__":
             confirmations.append(
                 f"⚖️ Emergence of quasiparticles with realistic effective mass ({mass_ratio:.2e}× electron mass)")
 
+        if blackhole_count > 0:
+            confirmations.append(
+                f"🕳️ Detekce {blackhole_count} kvazičástic uvězněných ve φ-pasti (černá díra)")
+
+        if wormhole_count > 0:
+            confirmations.append(
+                f"🌉 Podezření na {wormhole_count} případů červí díry (skoková relokace mezi φ-zónami)")
+
+        if curl_std > 0.05:
+            confirmations.append(
+                f"🔄 Signifikantní spinová aktivita v φ-zónách (σ = {curl_std:.2e})")
+
         # Potvrzení homogenního výskytu kvazičástic
         try:
             with open(os.path.join(output_dir, "multi_spectrum_summary.csv")) as f:
@@ -620,11 +630,6 @@ if __name__ == "__main__":
         except Exception as e:
             print("⚠️ φ-gravitační test selhal:", e)
 
-        if mean_curvature_deg > 0.5:
-            confirmations.append(
-                f"🌙 Zakřivená trajektorie kvazičástic v poli φ (∅ úhel změny směru = {mean_curvature_deg:.2f}°)"
-            )
-
         if not confirmations:
             confirmations.append(
                 "No major emergent phenomena detected")
@@ -635,10 +640,6 @@ if __name__ == "__main__":
         gravitational_row = ""
         if phi_gravitation_confirmed:
             gravitational_row = f"<tr><td>Gravitational behavior</td><td>Emergent φ-gradient driven motion</td></tr>"
-
-        curvature_row = ""
-        if mean_curvature_deg > 0.5:
-            curvature_row = f"<tr><td>Trajectory curvature</td><td>{mean_curvature_deg:.2f}° per step</td></tr>"
 
         html = f"""<!DOCTYPE html>
     <html lang="en">
@@ -674,7 +675,6 @@ if __name__ == "__main__":
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
         {gravitational_row}
-        {curvature_row}
 
       </table>
     
@@ -851,38 +851,57 @@ The result is motion not due to pulling, but due to a shared directional prefere
     # 📈 Výpočet životnosti kvazičástic
     lifespan_df = pd.DataFrame(trajectories, columns=[
                                "id", "step", "y", "x", "amplitude"])
+    phi_abs = np.array(frames_phi)
+    blackhole_candidates = []
+    for tid, group in lifespan_df.groupby("id"):
+        steps = group["step"].values
+        ys = group["y"].values.astype(int)
+        xs = group["x"].values.astype(int)
+        inside_phi = []
+        for s, y, x in zip(steps, ys, xs):
+            if 0 <= s < len(phi_abs):
+                if phi_abs[s, y, x] > 0.25:
+                    inside_phi.append(True)
+                else:
+                    inside_phi.append(False)
+        if len(inside_phi) > 5 and all(inside_phi[-5:]):
+            blackhole_candidates.append(tid)
+    blackhole_count = len(blackhole_candidates)
+
+    wormhole_count = 0
+    for tid, group in lifespan_df.groupby("id"):
+        group = group.sort_values("step")
+        prev = None
+        for _, row in group.iterrows():
+            step, y, x = int(row["step"]), int(row["y"]), int(row["x"])
+            if 0 <= step < len(phi_abs):
+                if phi_abs[step, y, x] > 0.25:
+                    if prev:
+                        dist = euclidean((y, x), prev)
+                        if dist > 20:
+                            wormhole_count += 1
+                            break
+                    prev = (y, x)
+
     lifespans = lifespan_df.groupby("id")["step"].agg(["min", "max"])
     lifespans["duration"] = lifespans["max"] - lifespans["min"] + 1
     max_lifespan = int(lifespans["duration"].max())
     median_lifespan = int(lifespans["duration"].median())
-
-    # 📐 Výpočet průměrného zakřivení dráhy nejstabilnější částice
-    longest_id = lifespan_df["duration"].idxmax()
-    track = lifespan_df[lifespan_df["id"] == longest_id].sort_values("step")
-    positions = track[["y", "x"]].to_numpy()
-
-    def angle_between(v1, v2):
-        norm_product = np.linalg.norm(v1) * np.linalg.norm(v2)
-        if norm_product == 0:
-            return 0
-        cos_theta = np.clip(np.dot(v1, v2) / norm_product, -1.0, 1.0)
-        return np.arccos(cos_theta)
-
-    angles = []
-    for i in range(1, len(positions) - 1):
-        v1 = positions[i] - positions[i - 1]
-        v2 = positions[i + 1] - positions[i]
-        angle = angle_between(v1, v2)
-        angles.append(angle)
-
-    mean_curvature_rad = np.mean(angles)
-    mean_curvature_deg = np.degrees(mean_curvature_rad)
 
     # 📊 Analýza průměrné spinové aury kvazičástic
     import seaborn as sns
     from scipy.ndimage import zoom
 
     frames_curl_np = np.array(frames_curl)
+
+    curl_inside_phi = []
+    for step in range(len(frames_curl_np)):
+        mask = phi_abs[step] > 0.25
+        curl_inside_phi.extend(frames_curl_np[step][mask])
+
+    curl_mean = np.mean(curl_inside_phi)
+    curl_std = np.std(curl_inside_phi)
+
     lifespan_df = pd.DataFrame(trajectories, columns=[
                                "id", "step", "y", "x", "amplitude"])
     cutout_size = 11
