@@ -71,3 +71,8 @@ _Vývoj hodnoty φ ve středu pole – prudký nárůst a stabilizace kolem hodn
 _Dominantní frekvence oscilace ve středu pole: ~5×10¹⁸ Hz_
 
 ---
+
+**Kód, výstupy a detekční systém jsou veřejně přístupné v repozitáři:**  
+👉 [https://github.com/TomasTriska88/lineum-core](https://github.com/TomasTriska88/lineum-core)
+
+> _(Poznámka: replikovatelnost výsledků bude ověřena pomocí samostatného běhového testu s různými výchozími parametry. Tuto část doplníme po dokončení série validací.)_
