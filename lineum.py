@@ -681,10 +681,10 @@ if __name__ == "__main__":
       <p>See full spectrum: <a href="spectrum_log.csv">spectrum_log.csv</a></p>
 
       <h2>🧮 Field Evolution Equation</h2>
-<p><strong>Updated Lineum Field Equation:</strong></p>
+<p><strong>Lineum Field Equation:</strong></p>
 <pre><code>
-ψ ← ψ + linon + fluktuace + φ⋅ψ − disipace + difuze + gradient(φ)
-φ ← φ + α (|ψ|² − φ) + β · difuze
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ  
+φ ← φ + (|ψ|² − φ) + ∇²φ
 </code></pre>
 
 <p><strong>Term definitions:</strong></p>
