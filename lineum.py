@@ -517,7 +517,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1):
+    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None):
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
         # total vortices > 0
@@ -551,6 +551,19 @@ if __name__ == "__main__":
         if blackhole_count > 0:
             confirmations.append(
                 f"🕳️ Detekce {blackhole_count} kvazičástic uvězněných ve φ-pasti (černá díra)")
+
+            if mass_ratio_blackholes is not None and mass_ratio_blackholes < 0.01:
+                confirmations.append(
+                    "🪐 Třískova hypotéza strukturálního uzavření potvrzena: částice zanikají v silných φ-zónách bez zbytkové hmotnosti"
+                )
+            elif mass_ratio_blackholes is not None:
+                confirmations.append(
+                    f"🪐 Třískova hypotéza strukturálního uzavření částečně potvrzena: návratové částice mají hmotnost {mass_ratio_blackholes:.2e}× elektronová"
+                )
+            else:
+                confirmations.append(
+                    "🪐 Třískova hypotéza strukturálního uzavření zatím neověřena – spektrální data nedostupná"
+                )
 
         if wormhole_count > 0:
             confirmations.append(
@@ -864,6 +877,22 @@ The result is motion not due to pulling, but due to a shared directional prefere
             blackhole_candidates.append(tid)
     blackhole_count = len(blackhole_candidates)
 
+    # Výpočet průměrné hmotnosti návratových částic
+    blackhole_masses = []
+
+    for tid in blackhole_candidates:
+        traj = lifespan_df[lifespan_df["id"] == tid]
+        yx_pairs = traj[["y", "x"]].drop_duplicates().values.astype(int)
+        for y, x in yx_pairs:
+            match = [d for d in multi_spectrum_details if d["point"] == (y, x)]
+            if match:
+                blackhole_masses.append(match[0]["mass_ratio"])
+
+    if blackhole_masses:
+        mass_ratio_blackholes = np.mean(blackhole_masses)
+    else:
+        mass_ratio_blackholes = None
+
     wormhole_count = 0
     for tid, group in lifespan_df.groupby("id"):
         group = group.sort_values("step")
@@ -943,7 +972,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
         include_spin=include_spin,
         phi_mean_near=phi_mean_near,
         phi_mean_field=phi_mean_field,
-        phi_std_field=phi_std_field
+        phi_std_field=phi_std_field,
+        mass_ratio_blackholes=mass_ratio_blackholes
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
