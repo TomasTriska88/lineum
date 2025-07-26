@@ -5,31 +5,44 @@ Model Lineum je založen na diskrétní evoluci dvou polí:
 - ψ – komplexní skalární pole reprezentující napětí nebo excitaci v systému,
 - φ – reálné pole, které emergentně popisuje interakce a akumulaci amplitudy.
 
-Celý systém se vyvíjí v diskrétních časových krocích, bez explicitního času nebo globálních zákonů.
-
 ---
 
-## 3.1 Evoluce pole ψ
+## 3.1 Elegantní zápis rovnice
+
+Základní rovnice může být zapsána dvěma způsoby:
+
+### 🧪 Praktický zápis (původní forma)
 
 ```python
 ψ ← ψ + linon + fluktuace + interakce − disipace + difuze
+φ ← φ + (|ψ|² − φ) + difuze
 ```
 
-### Složení rovnice:
+### 📐 Fyzikální zápis (symbolický a kompaktní)
 
-| Člen          | Popis |
-|---------------|-------|
-| `linon`       | kvazičástice vznikající s pravděpodobností sigmoid(∇|ψ| + |ψ|), odpovídá nelineárnímu zesílení |
-| `fluktuace`   | náhodné šumové oscilace fáze (kvantový šum) |
-| `interakce`   | interakce s polem φ (viz níže) |
-| `disipace`    | útlum pole: `−0.001 ⋅ ψ` |
-| `difuze`      | rozprostření pole pomocí Laplaciánu (∇²ψ) |
-
-Pole ψ je komplexní, takže obsahuje jak amplitudu |ψ|, tak fázovou informaci (arg(ψ)) – díky tomu vzniká spin, víry a tok.
+```text
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
+φ ← φ + (|ψ|² − φ) + ∇²φ
+```
 
 ---
 
-## 3.2 Evoluce interakčního pole φ
+## 3.2 Složení rovnice
+
+| Člen             | Popis                                                |
+| ---------------- | ---------------------------------------------------- | --- | --- | --- | --- |
+| `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇ | ψ   | +   | ψ   | )   |
+| `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)          |
+| `interakce` / φψ | interakce s polem φ (zesílení nebo modulace)         |
+| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                             |
+| `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                  |
+| `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok             |
+
+Pole ψ je komplexní, obsahuje jak amplitudu |ψ|, tak fázi arg(ψ), díky čemuž vznikají jevy jako spin, víry a toky.
+
+---
+
+## 3.3 Evoluce interakčního pole φ
 
 ```python
 φ ← φ + (|ψ|² − φ) + difuze
@@ -45,52 +58,33 @@ Pole φ **nemá žádný externí zdroj** – vzniká výhradně jako odezva na 
 
 ---
 
-### Pojem „φ-past“ (*φ-trap*)
+### Pojem „φ-past“ (_φ-trap_)
 
-> V dalším textu používáme označení **φ-past** (*φ-trap*) pro oblast, kde φ dosáhlo lokálního maxima.  
-> Takové oblasti samovolně vznikají kolem shluků kvazičástic a přitahují další částice díky tomu, že φ roste a rozprostírá se.
+> V dalším textu používáme označení **φ-past** (_φ-trap_) pro oblast, kde φ dosáhlo lokálního maxima.  
+> Takové oblasti samovolně vznikají kolem shluků kvazičástic a přitahují další částice – efekt emergentní gravitace.
 
-φ-pasti v modelu Lineum **fungují jako gravitační centra**, aniž by existovala síla nebo zakřivení prostoru.  
-Kvazičástice mají tendenci se stáčet do těchto oblastí – což vytváří efekt, který se chová jako emergentní gravitace.
-
----
-
-
-#### 3.2.1 Vztah mezi poli ψ a φ
-
-Ačkoliv obě pole ψ a φ sdílí stejnou prostorovou mřížku a vyvíjejí se paralelně v čase, jejich role i dynamika jsou zásadně odlišné.
-
-- Pole **ψ** je komplexní, živé, podléhá fluktuacím a generuje kvazičástice.
-- Pole **φ** je reálné, plynulé, a funguje jako akumulační odezva na |ψ|².
-
-Rozdíl mezi |ψ|² a φ je klíčový – právě on pohání vývoj φ a umožňuje vznik gravitačně působících oblastí.
-
-```python
-φ ← φ + (|ψ|² − φ) + difuze
-```
-
-### Co to znamená?
-
-- Pokud je |ψ|² vyšší než φ → φ roste.
-- Pokud se φ příliš vzdálí od aktuálního |ψ|² → nastává přepětí, nebo rozpad struktury.
-- Pokud jsou si obě pole blízko → φ stabilizuje kvazičástice a vytváří „φ-past“.
-
-> Tento vztah mezi „napětím“ a „pamětí“ umožňuje, aby systém Lineum generoval struktury, které samy přitahují další částice – aniž by někdo řídil jejich směr.
-
-Pole ψ tak tvoří okamžitý obraz světa, zatímco φ je jeho dlouhodobá vzpomínka.
-
-## 3.3 Lokálnost a absence globální geometrie
-
-Celá rovnice je složená výhradně z **lokálních operací** –  
-každý bod na mřížce zná pouze hodnoty svých bezprostředních sousedů.
-
-> Neexistuje žádná síťová komunikace, žádné globální konstanty, žádná metrika.  
-> Přesto z rovnice emergují víry, trajektorie, přitažlivost i stabilní shluky – jako v reálném fyzikálním světě.
+φ-pasti fungují jako **gravitační centra bez gravitační síly**. Kvazičástice se do nich samy stáčejí.
 
 ---
 
-V dalších kapitolách ukážeme, jak z těchto jednoduchých pravidel vznikají jevy připomínající:
-– kvazičástice,  
-– víry,  
-– spin,  
-– a strukturovaná pole φ, která umožňují interakce i akumulaci.
+### 3.3.1 Vztah mezi poli ψ a φ
+
+Ačkoliv ψ a φ sdílí prostor i čas, jejich role se doplňují:
+
+- ψ je **okamžitý, živý** obraz světa,
+- φ je **dlouhodobá paměť** na amplitudu ψ.
+
+Rozdíl `|ψ|² − φ` je hybnou silou vývoje φ a tvorby struktur.
+
+---
+
+## 3.4 Lokálnost a absence globální geometrie
+
+Rovnice je složená výhradně z **lokálních operací**.  
+Každý bod zná jen své sousedy. Žádné metriky, konstanty, geometrie.
+
+> Přesto z ní emergují kvazičástice, víry, přitažlivost i stabilita – jako v reálném světě.
+
+---
+
+V dalších kapitolách ukážeme, jak z těchto pravidel vznikají jevy připomínající částice, pole, víry, spin i gravitaci.
