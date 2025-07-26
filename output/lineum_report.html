@@ -21,14 +21,14 @@
         <li>🌀 Spontánní vznik vírů (vortexů)</li>
 <li>🧫 Detekce kvazičástic s měřitelnou trajektorií</li>
 <li>🎵 Stable spectrum with dominant frequency 5.00e+18 Hz</li>
+<li>🔁 Conservation of topological charge (winding number)</li>
 <li>🌌 Emergence of a non-zero field φ at the center of the field</li>
 <li>⚖️ Emergence of quasiparticles with realistic effective mass (4.05e-02× electron mass)</li>
-<li>🕳️ Detekce 1486 kvazičástic uvězněných ve φ-pasti (černá díra)</li>
-<li>🔄 Signifikantní spinová aktivita v φ-zónách (σ = 6.14e-01)</li>
+<li>🕳️ Detekce 1477 kvazičástic uvězněných ve φ-pasti (černá díra)</li>
+<li>🔄 Signifikantní spinová aktivita v φ-zónách (σ = 6.32e-01)</li>
 <li>🧬 Homogenní výskyt kvazičástic s realistickou frekvencí a hmotností napříč celým polem</li>
 <li>🕒 Emergence of long-lived quasiparticles (max 200 steps, median 7)</li>
 <li>🧲 Kvazičástice nesou emergentní spinovou strukturu (dipól nebo vír)</li>
-<li>🌠 Emergentní φ-gravitační interakce – kvazičástice se přibližují vlivem gradientu φ</li>
       </ul>
     
       <h2>📊 Quasiparticle Properties</h2>
@@ -41,17 +41,17 @@
         <tr><td>Mass relative to electron</td><td>4.05e-02× electron mass</td></tr>
         <tr><td>Max lifespan</td><td>200 steps</td></tr>
         <tr><td>Median lifespan</td><td>7 steps</td></tr>
-        <tr><td>Gravitational behavior</td><td>Emergent φ-gradient driven motion</td></tr>
+        
 
       </table>
     
       <p>See full spectrum: <a href="spectrum_log.csv">spectrum_log.csv</a></p>
 
       <h2>🧮 Field Evolution Equation</h2>
-<p><strong>Updated Lineum Field Equation:</strong></p>
+<p><strong>Lineum Field Equation:</strong></p>
 <pre><code>
-ψ ← ψ + linon + fluktuace + φ⋅ψ − disipace + difuze + gradient(φ)
-φ ← φ + α (|ψ|² − φ) + β · difuze
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ  
+φ ← φ + (|ψ|² − φ) + ∇²φ
 </code></pre>
 
 <p><strong>Term definitions:</strong></p>
@@ -71,11 +71,11 @@
     
       <h2>🌀 Simulation Summary</h2>
       <ul>
-        <li><strong>Steps:</strong> [104 105]</li>
+        <li><strong>Steps:</strong> [198 199]</li>
         <li><strong>Field size:</strong> 128 × 128</li>
         <li><strong>Quasiparticles detected:</strong> ✅ Yes</li>
         <li><strong>Vortices detected:</strong> ✅ Yes</li>
-        <li><strong>Topological charge conserved:</strong> ⚠️ Unstable</li>
+        <li><strong>Topological charge conserved:</strong> ✅ Yes</li>
       </ul>
     
       <h2>📈 Key Plots</h2>
