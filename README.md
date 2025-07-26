@@ -5,19 +5,24 @@
 At its core, the system evolves a complex scalar field ψ and an auxiliary interaction field φ in discrete time. The update rule incorporates local activation, stochastic fluctuation, nonlinear feedback, dissipation, and diffusion—without any global control, integration, or externally imposed dynamics.
 
 ```
-ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ  
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
 φ ← φ + (|ψ|² − φ) + ∇²φ
 ```
 
 **Symbol key:**
-- **ψ**: complex scalar field (main field)
-- **φ**: interaction field (memory/feedback)
-- **𝛌̃**: nonlinear local activation ("linon", pronounced *LI-non*, with short "i" as in *limit*) – probabilistic excitation emerging from the local field gradient
-- **ξ**: fluctuation (quantum-like phase noise)
-- **φψ**: interaction term – coupling between φ and ψ
-- **δψ**: dissipation (attenuation of ψ)
-- **∇²ψ, ∇²φ**: diffusion (Laplacian operator)
-- **|ψ|²**: local field intensity (density)
+
+| Symbol     | Meaning                                                               |
+|------------|------------------------------------------------------------------------|
+| **ψ**      | Complex scalar field (main tension field)                              |
+| **φ**      | Interaction field (memory, feedback, accumulation)                     |
+| **𝛌̃**      | Nonlinear local activation (*linon*) – probabilistic quasiparticle creation |
+| **ξ**      | Fluctuation – quantum-like phase noise                                  |
+| **φψ**     | Interaction term – coupling between φ and ψ                             |
+| **δψ**     | Dissipation – attenuation of ψ                                          |
+| **∇²ψ**     | Diffusion – spatial spreading (Laplacian of ψ)                           |
+| **∇φ**     | Gradient of φ – directional influence on ψ (emergent gravitation)        |
+| **|ψ|²**   | Local intensity of the field                                            |
+| **∇²φ**     | Diffusion of φ – forms spatial gradients and smoothing                  |
 
 Despite relying solely on local and minimal update rules, the system exhibits emergent order—producing structure, phase flow, interaction fields, and reproducible observables reminiscent of physical dynamics.
 
