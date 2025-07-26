@@ -38,7 +38,6 @@ def save_csv(filename, header, rows):
         notify_file_creation(path, success=False, error=e)
 
 
-vortex_log = []
 particle_log = []
 interaction_log = []
 amplitude_log = []
@@ -317,9 +316,6 @@ if __name__ == "__main__":
                 multi_amp_logs[pt].append(np.nan)
 
     save_csv("radius_log.csv", ["step", "avg_radius"], radius_log)
-
-    save_csv("vortex_log.csv", ["step", "num_pos",
-             "num_neg", "net_charge"], vortex_log)
 
     save_csv("particle_log.csv", [
              "step", "center_y", "center_x", "size"], particle_log)
