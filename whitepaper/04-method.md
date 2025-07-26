@@ -1,7 +1,135 @@
-> **Poznámka k rozsahu validace:**
->
-> V této fázi jsou některé jevy, zejména ty související s makroskopickým chováním kvazičástic, detekovány vizuálně na základě výstupů ze simulace (např. animace, φ-pole, trajektorie).
-> Tyto závěry zatím nejsou kvantifikovány numerickým testováním nebo statistickou analýzou. 
->
-> V dokumentu je výslovně odlišujeme jako **hypotetické** nebo **dále testované**. 
-> Plán jejich ověření je uveden v přehledu `todo.md`.
+# 4. Simulační metoda
+
+## 4.1 Přehled
+
+Pro ověření hypotézy emergentního chování byla rovnice evoluce pole Lineum implementována jako numerická simulace na dvourozměrné diskrétní mřížce. Simulace probíhá ve diskrétních krocích bez použití explicitního času, sil nebo globální geometrie.
+
+Každý krok aktualizuje dvě pole:
+
+- **ψ** – komplexní skalární pole reprezentující napětí v systému,
+- **φ** – reálné pole emergujících interakcí.
+
+Výpočetní smyčka aplikuje výhradně lokální operace (gradient, Laplacián, šum, nelineární excitace) a vyhodnocuje výstupy jako amplitudu, fázi, spin, víry, trajektorie částic nebo spektrum oscilací.
+
+---
+
+## 4.2 Parametry simulace
+
+Použité parametry (velikost mřížky, počet kroků, intenzita šumu, prahové hodnoty) se mohou lišit podle účelu simulace. Běžně se používají:
+
+- **mřížky o rozměrech stovek bodů** na stranu,
+- **desítky až stovky kroků**,
+- **počáteční šum** přidaný jako náhodné poruchy amplitudy a fáze,
+- **lokální asymetrie** ve středu pole k iniciaci dynamiky.
+
+Přesné hodnoty jsou uvedeny u konkrétních výsledků.
+
+---
+
+## 4.3 Evoluce pole
+
+Použitá rovnice má formu:
+
+```text
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
+φ ← φ + α (|ψ|² − φ) + β · ∇²φ
+```
+
+### Členy rovnice:
+
+<!-- prettier-ignore-start -->
+| Symbol         | Popis                                                                 |
+|----------------|-----------------------------------------------------------------------|
+| 𝛌̃ (linon)      | Kvazičástice vznikající pravděpodobnostně dle sigmoid(∇\\|ψ\\| + \\|ψ\\|)     |
+| ξ (fluktuace)   | Náhodné fázové oscilace (kvantový šum)                              |
+| φψ              | Interakce pole ψ s polem φ (zesílení / modulace)                    |
+| δψ              | Disipace pole ψ (útlum)                                              |
+| ∇²ψ             | Difuze pole ψ pomocí Laplaciánu                                     |
+| ∇φ              | Gradient φ – emergentní „gravitační“ tok                            |
+| \\|ψ\\|² − φ     | Lokální akumulace hustoty ψ do paměťového pole φ                    |
+<!-- prettier-ignore-end -->
+
+---
+
+## 4.4 Detekce jevů
+
+V každém kroku simulace se vyhodnocují následující jevy:
+
+| Jev                       | Detekční metoda                                      |
+| ------------------------- | ---------------------------------------------------- |
+| **Kvazičástice (linony)** | Lokální maxima amplitudy ψ překračující zvolený práh |
+| **Trajektorie**           | Sledování souřadnic linonů mezi kroky                |
+| **Víry (vortices)**       | Výpočet winding number kolem 2×2 buněk               |
+| **Spin**                  | Vzorec `curl(∇ arg(ψ))` – rotace fázového gradientu  |
+| **Fázový tok**            | Gradient fáze `∇ arg(ψ)`                             |
+| **Topologický náboj**     | Celkový počet vírů (kladných a záporných)            |
+| **Spektrum oscilace**     | FFT nad amplitudou v centru pole                     |
+| **φ-pasti**               | Lokální maxima φ, která akumulují kvazičástice       |
+| **Spinová aura**          | Průměrný tvar curl pole v okolí stovek kvazičástic   |
+| **Gravitační chování**    | Sbližování částic v gradientu φ                      |
+
+---
+
+## 4.5 Vizualizace a exporty
+
+Každý běh simulace generuje:
+
+- CSV logy (trajektorie, spin, φ, amplituda, topologie),
+- spektrální grafy a mapy,
+- průměrnou spinovou mapu („spin aura“),
+- GIF animace (amplituda, spin, částice, overlay, tok).
+
+Výsledky jsou exportovány do složky `output/` a dokumentovány v HTML reportu.
+
+---
+
+## 4.6 Limity a poznámky
+
+- Všechny operace jsou **lokální** – bez metriky, konstant, sil nebo globální geometrie.
+- **Fluktuace a linony** obsahují pravděpodobnostní složku – systém není zcela deterministický.
+- Struktury vznikají spontánně i při různých inicializacích.
+- Konzervace topologického náboje je opakovaně pozorována, ale není formálně dokázána.
+- Spektrální a gravitační jevy jsou analyzovány nad výběrovými trajektoriemi.
+
+---
+
+## 4.7 Poznámka k rozsahu validace
+
+V této fázi jsou některé jevy, zejména ty související s makroskopickým chováním kvazičástic, detekovány vizuálně na základě výstupů ze simulace (např. animace, φ-pole, trajektorie). Tyto závěry zatím nejsou kvantifikovány statisticky. V dokumentu je výslovně odlišujeme jako **hypotetické** nebo **dále testované**. Plán jejich ověření je uveden v `todo.md`.
+
+---
+
+## 4.8 Implementace
+
+Simulace je napsána v jazyce Python a je dostupná v repozitáři [`lineum-core`](https://github.com/TomasTriska88/lineum-core).
+
+Výpočetní jádro zahrnuje:
+
+- inicializaci polí ψ a φ s počáteční asymetrií,
+- krokovou evoluci rovnice zahrnující excitaci kvazičástic, fázový šum, disipaci, difuzi a interakce,
+- výpočet derivací, gradientů, curlu a winding number pro detekci jevů,
+- detekci částic, vírů a emergentních struktur,
+- logování a export do CSV, GIF, obrázků a HTML reportu.
+
+Výstupy simulace jsou ukládány do složky `output/`.
+
+Kód je navržen modulárně. Parametry simulace, detekční prahy a vizualizační volby lze snadno upravit. Architektura odděluje rovnicovou dynamiku, detekci jevů a prezentaci výsledků, což umožňuje snadné experimentování a rozšíření.
+
+> Pythonový kód je v neustálém vývoji. Průběžně se upravuje a rozšiřuje tak, aby umožňoval detekci nových jevů, generoval další výstupy a poskytoval lepší interpretaci vzniklých struktur.
+
+---
+
+## 4.9 Výstupní data
+
+Simulace generuje různé typy výstupů, které slouží k analýze a vizualizaci vznikajících jevů:
+
+- **CSV logy**: časové řady detekovaných kvazičástic, vírů, amplitud, spekter a dalších měřitelných parametrů,
+- **GIF animace**: vývoj amplitudy, spinu, částic, toku a jejich kombinací,
+- **Obrázky (PNG)**: spektrální grafy, průměrná spinová struktura („aura“), vývoj φ ve středu pole,
+- **Binární pole (NPY)**: celé datové vrstvy pro opakovanou nebo hlubší analýzu.
+
+Aktuální seznam výstupů a vizualizací je dostupný ve složce `output/` a shrnut v automaticky generovaném reportu `lineum_report.html`.
+
+> Struktura a počet výstupních souborů se může měnit s vývojem kódu. Dokumentace se zaměřuje na principy a typy dat, nikoliv na konkrétní názvy.
+
+---
