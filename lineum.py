@@ -517,7 +517,8 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None):
+    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None
+                             ):
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
         # total vortices > 0
@@ -564,6 +565,15 @@ if __name__ == "__main__":
                 confirmations.append(
                     "🪐 Třískova hypotéza strukturálního uzavření zatím neověřena – spektrální data nedostupná"
                 )
+
+        if avg_phi_death is not None and avg_phi_death > 0.25:
+            confirmations.append(
+                f"🌀 φ v místě zániku návratových částic potvrzuje strukturální uzavření (⟨φ⟩ = {avg_phi_death:.3f})"
+            )
+        elif avg_phi_death is not None:
+            confirmations.append(
+                f"🌀 φ v místě zániku návratových částic: {avg_phi_death:.3f} (hranice potvrzení je 0.25)"
+            )
 
         if wormhole_count > 0:
             confirmations.append(
@@ -877,6 +887,23 @@ The result is motion not due to pulling, but due to a shared directional prefere
             blackhole_candidates.append(tid)
     blackhole_count = len(blackhole_candidates)
 
+    # Získání φ při posledním výskytu každé černoděrové částice
+    phi_at_death = []
+
+    for tid in blackhole_candidates:
+        traj = lifespan_df[lifespan_df["id"] == tid]
+        last_step = traj["step"].max()
+        row = traj[traj["step"] == last_step].iloc[0]
+        y, x = int(row["y"]), int(row["x"])
+        if 0 <= last_step < len(phi_abs):
+            phi_val = phi_abs[last_step, y, x]
+            phi_at_death.append(phi_val)
+
+    if phi_at_death:
+        avg_phi_death = np.mean(phi_at_death)
+    else:
+        avg_phi_death = None
+
     # Výpočet průměrné hmotnosti návratových částic
     blackhole_masses = []
 
@@ -973,7 +1000,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
         phi_mean_near=phi_mean_near,
         phi_mean_field=phi_mean_field,
         phi_std_field=phi_std_field,
-        mass_ratio_blackholes=mass_ratio_blackholes
+        mass_ratio_blackholes=mass_ratio_blackholes,
+        avg_phi_death=avg_phi_death
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
