@@ -4,6 +4,10 @@ Projekt Lineum představuje jednoduchou, lokální a diskrétní rovnici pro e
 
 V širším kontextu je tento model příkladem emergentního chování: zcela nové vzory se rodí z pouhých lokálních interakcí. Podobné kolektivní efekty známe z jiných oblastí fyziky – hejna ptáků vytvářejí koordinovaná uskupení pouze díky jednoduchým pravidlům sousedského zarovnání a synchronizace světlušek vzniká bez centrální koordinace. V superkapalinách a supravodičích navíc vznikají kvantované víry, které představují topologické defekty s kvantovanou cirkulací a nesou diskrétní spin nebo magnetický tok. Tyto jevy ilustrují, jak i jednoduché rovnice mohou vést k nečekaně bohaté dynamice.
 
+Základní rovnice systému Lineum má tvar:
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
+φ ← φ + (|ψ|² − φ) + ∇²φ
+
 Mezi opakovaně detekovanými jevy nalezneme:
 
 - kvazičástice sledující konzistentní trajektorie (střední životnost 7 kroků, maximum 200),
@@ -26,7 +30,11 @@ Kód projektu obsahuje automatizovaný detekční modul, který vyhodnocuje vzni
 
 Evoluce pole probíhá výhradně pomocí lokálních operací (gradient, Laplacián, fázový šum, nelineární excitace) na diskrétní mřížce. Rovnice neobsahuje žádné předem definované síly – kvazičástice se přesto přibližují k sobě prostřednictvím gradientu φ. To naznačuje alternativní interpretaci gravitace – nikoliv jako přitažlivé síly, ale jako emergentní tendenci k sdílení prostředí.
 
-Lineum není prezentováno jako kompletní teorie všeho. Je to návrh – důkaz, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu, vedeného s pomocí umělé inteligence, a je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke struktuře reality mohou vznikat i mimo tradiční rámce – pokud mají co říct.
+Simulace v této fázi nereplikuje známé částice standardního modelu ani běžné interakce (např. elektromagnetismus, silná nebo slabá síla). Jde o emergentní analogový systém, který však ukazuje, že některé známé fyzikální jevy mohou vzniknout spontánně – bez předem definovaných zákonů.
+
+Lineum není prezentováno jako kompletní teorie všeho. Je to návrh – důkaz, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu, vedeného s pomocí umělé inteligence (asistentka Lina), která se podílela na koncepčním rozvoji a interpretaci výstupů. Projekt je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke struktuře reality mohou vznikat i mimo tradiční rámce – pokud mají co říct.
+
+Výsledky jsou plně replikovatelné a systém lze snadno upravit k testování dalších hypotéz. Projekt vítá nezávislé ověření, diskuzi a případné rozšíření.
 
 ---
 
