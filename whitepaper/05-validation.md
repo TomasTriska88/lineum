@@ -103,8 +103,12 @@ Následující vzorce byly použity pro kvantitativní ověřování detekovaný
 
 Veškeré výpočty probíhají automaticky při běhu simulace a jsou exportovány do příslušných logů (`*_log.csv`, `*_plot.png`, `*_aura.png`).
 
+> Testování ukázalo, že i při zpřísněných podmínkách (např. mass_ratio 0.5–5, σ(curl) > 0.2) zůstává většina struktur validní. Pouze v krajních případech (krátké běhy <100 kroků) klesá spektrálně detekovaná hmotnost pod očekávaný rozsah. Výsledky tak potvrzují robustnost výstupů i při náročnější validaci.
+
 ---
 
 ## 5.6 Shrnutí
 
 Současná fáze vývoje systému Lineum umožňuje spolehlivou detekci základních emergentních jevů. Většina z nich je potvrzena jak vizuálně, tak číselně. Statistické metody budou aplikovány v dalších iteracích výzkumu. Všechny hypotézy jsou formulovány otevřeně a ověřitelnost je klíčovým cílem projektu.
+
+Dále bylo zjištěno, že některé vlastnosti – především hmotnost kvazičástic – vyžadují delší časový vývoj ke své plné manifestaci. V kratších simulacích může být spektrální energie podhodnocená, což není nedostatek modelu, ale přirozený důsledek frekvenční rozlišovací schopnosti. To ukazuje, že i čas samotný může být klíčem k emergenci „reálnějších“ struktur.
