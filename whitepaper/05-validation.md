@@ -35,7 +35,7 @@ V dalších fázích výzkumu bude validace rozšířena o:
 | Jev                   | Způsob ověření                                                                                                                                          | Stav                      |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | Kvazičástice (linony) | Vizualizace + [`trajectories.csv`](../output/trajectories.csv), [`lineum_particles.gif`](../output/lineum_particles.gif)                                | ✔️ potvrzeno              |
-| Víry (vortices)       | Winding number + [`vortex_log.csv`](../output/vortex_log.csv), [`lineum_vortices.gif`](../output/lineum_vortices.gif)                                   | ✔️ potvrzeno              |
+| Víry (vortices)       | Winding number + [`topo_log.csv`](../output/topo_log.csv), [`lineum_vortices.gif`](../output/lineum_vortices.gif)                                       | ✔️ potvrzeno              |
 | Spin a tok            | Gradient fáze + [`frames_curl.npy`](../output/frames_curl.npy), [`lineum_spin.gif`](../output/lineum_spin.gif)                                          | ✔️ potvrzeno              |
 | φ-pasti               | Lokální maxima φ + [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_phi_amp_trajectories.gif`](../output/lineum_phi_amp_trajectories.gif) | ✔️ potvrzeno              |
 | Topologický náboj     | [`topo_log.csv`](../output/topo_log.csv), výkyv do ±3, viz [`topo_charge_plot.png`](../output/topo_charge_plot.png)                                     | ✔️ přibližně konzervováno |
