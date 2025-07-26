@@ -33,7 +33,13 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 
 ### 🔲 4. Přitažlivost bez síly – emergentní tok
 - Ověřit, zda vzniká tok ψ směrem k φ bez síly
-- [ ] Porovnat ∇arg(ψ) a gradient φ
+
+
+- [ ] Porovnat ∇arg(ψ) a gradient ϕ
+### 🔲 5. Vztah lineum k matematickým konstantám
+- Ověřit, zda vztah lineum ke zlatému řezu (φ) se projevuje ve struktuře pole nebo emergentních jevech
+- Ověřit vztah lineum k Fibonacciho posloupnosti (například distribuce počtu linonů)
+- Ověřit, zda existuje souvislost lineum s Ludolfovým číslem π (např. v oscilacích nebo topologii)
 
 ---
 
