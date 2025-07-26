@@ -133,3 +133,24 @@ Aktuální seznam výstupů a vizualizací je dostupný ve složce `output/` a s
 > Struktura a počet výstupních souborů se může měnit s vývojem kódu. Dokumentace se zaměřuje na principy a typy dat, nikoliv na konkrétní názvy.
 
 ---
+
+## 4.10 Numerická stabilita a volba koeficientů
+
+Simulace je navržena tak, aby zůstala numericky stabilní i při delším běhu bez nutnosti globálního řízení. Toho je dosaženo následujícími volbami:
+
+- **Disipace ψ** je velmi slabá (`−0.001 ⋅ ψ`), aby nebránila vzniku oscilací, ale zároveň tlumila nekontrolovaný růst.
+- **Fluktuace fáze** (`ξ`) jsou generovány náhodně, ale s malou amplitudou, aby podporovaly diverzitu bez chaotického rozkladu.
+- **Linony** vznikají s pravděpodobností podle sigmoid(∇‖ψ‖ + ‖ψ‖), což zabraňuje přebytku excitací v hladkých oblastech.
+- **Reakční síla pole φ** je vyšší (`α ≈ 0.06`) než difuzní složka (`β ≈ 0.015`), čímž dochází k rychlé odezvě v místech s vysokou |ψ|², ale zároveň si pole φ udržuje hladký profil bez náhlých změn.
+- **Gradient φ** je zaveden jako jemný tok (`∇φ`) s malým koeficientem, což vytváří „gravitační“ efekt bez dominantního ovlivnění rovnice.
+
+Volba těchto koeficientů nebyla provedena laděním na výsledek, ale na základě pozorované stability a konzistence mezi různými inicializačními stavy. Rovnice je robustní i při různých počátečních podmínkách a zachovává topologickou konzervaci i bez externího řízení.
+
+## 4.11 Měřítko času a prostoru
+
+Přestože simulace běží v diskrétním čase a bez fyzikálních jednotek, některé výstupy (např. spektrum, energie, hmotnost, vlnová délka) lze mapovat na přibližnou fyzikální škálu:
+
+- **Prostorový krok** je často interpretován jako 1 pikometr (1e−12 m),
+- **Časový krok** jako 1 zeptosekunda (1e−21 s).
+
+Toto měřítko je zvoleno tak, aby dominantní frekvence, energie a efektivní hmotnosti kvazičástic odpovídaly hodnotám blízkým známým částicím (např. elektronům). Jde o volitelné mapování pro orientaci – simulace sama je bezrozměrná.
