@@ -12,30 +12,33 @@ Od snah Stephena Wolframa modelovat realitu pomocí buněčných automatů až p
 
 Současná teoretická fyzika operuje s množstvím navzájem nekompatibilních rámců. Kvantová teorie pole popisuje interakce částic jako výměnu bosonů v plochém pozadí, zatímco obecná relativita staví svět jako zakřivený prostor bez částic. Gravitační interakce zatím nelze kvantovat bez narušení konzistence, a temná hmota i temná energie zůstávají neuchopitelné.
 
-Lineum k těmto otázkám přistupuje z jiné strany. Neptá se, jak vypočítat gravitační sílu nebo proč je energie kvantována. Lineum se ptá, co se stane, když všechno zahodíme – a ponecháme jen čistou evoluci napětí v poli, bez sil, bez zákonů, bez konstant. A pak sledujeme, co se stane.
+Lineum k těmto otázkám přistupuje z jiné strany. Neptá se, jak vypočítat gravitační sílu nebo proč je energie kvantována. Lineum se ptá, co se stane, když všechno zahodíme – a ponecháme jen čistou evoluci napětí v poli, bez sil, bez zákonů, bez konstant. A pak sledujeme, co se stane. Tím klade otázku, zda to, co dnes vnímáme jako fundamentální zákony, nejsou ve skutečnosti pouze stabilní vzory vzniklé z hlubší vrstvy pravidel, která žádné zákony neobsahuje.
 
 Místo hledání nových částic, sil nebo dimenzí formuluje Lineum jedinou diskrétní rovnici pro evoluci komplexního pole ψ, doplněnou o interakční pole φ. Bez předem zadaných zákonů. Bez předpokladů o hmotě, prostoru, energii či čase. Jen pole, které se mění podle čistě lokálních pravidel.
 
-Motivací bylo ověřit hypotézu, že z těchto pravidel může spontánně vzniknout strukturovaný svět. Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
+Od dětství jsem intuitivně cítil, že řád a inteligence nevznikají z velikosti objektů a struktur, ale z množství jejich vzájemně reagujících částí. Nepotřebujeme složité struktury – stačí jednoduchá pravidla a dostatek interakcí. Věřil jsem, že právě z této komplexity může vzejít smysl – nikoliv jako plán, ale jako přirozený důsledek vztahů.
 
-Lineum tuto myšlenku posouvá o krok dál:
+Zároveň jsem vždy vnitřně cítil potřebu hledat jinak než většina – ne zhora dolů, ne v rámci známých rámců. Ale dívat se zezdola nahoru. Nehledat nové částice v existujících silách, ale nové jevy ve známém chaosu. A tak vznikla potřeba myslet „out of the box“ – nejen metodou, ale i vnímáním.
+
+Motivací bylo ověřit hypotézu, že z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem. Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
+
+Lineum tuto myšlenku posouvá o krok dál – od inspirace k měřitelnému projevu:
 
 - rovnice je formulována bez explicitního času – pouze jako diskrétní krok,
 - neobsahuje síly – a přesto dochází k přibližování částic,
 - neobsahuje geometrii – a přesto vznikají víry, spin a prostorové smyčky,
 - neobsahuje gravitační člen – a přesto vznikají „pasti“, které částice zachytávají.
 
-První náznaky, že z rovnice skutečně vznikají částice, víry a struktury, nepřišly jako výpočet. Přišly jako obraz. Animace, ve kterých pole samo začalo kreslit tvar – a my jsme ho jen pozorovali.
+První náznaky, že z rovnice skutečně vznikají částice, víry a struktury, nepřišly jako výpočet. Přišly jako obraz. Animace, ve kterých pole samo začalo kreslit tvar – a my jsme ho jen pozorovali. Bylo to jako sledovat vznik písma v prázdnotě. Nešlo o výsledek výpočtu, ale o náznak zákonitosti bez zákona. O tvar, který sám sebe naznačil. Rovnice neměla žádný záměr – a přesto začala kreslit význam.
 
 ![Výřez φ](../output/phi_crop_dominant_maximum.png)  
 _Výřez interakčního pole φ v okolí globálního maxima (poslední krok simulace). Červeně vyznačena oblast s nejvyšší hodnotou φ – stabilní „φ-past“, která představuje hlavní gravitační centrum vzniklé z čistě lokálních pravidel._
 
 ![Vývoj φ](../output/phi_evolution_crop.gif)  
-*Animace vývoje φ-pole v okolí globálního maxima. Nejsvětlejší bod zůstává stabilní – značí přítomnost gravitační pasti. Okolní pole φ se rozlévá difuzně, čímž rozšiřuje svůj vliv do okolí bez nutnosti explicitní síly nebo geometrie.*
+_Animace vývoje φ-pole v okolí globálního maxima. Nejsvětlejší bod zůstává stabilní – značí přítomnost gravitační pasti. Okolní pole φ se rozlévá difuzně, čímž rozšiřuje svůj vliv do okolí bez nutnosti explicitní síly nebo geometrie._
 
-Tato cesta není náhradou za standardní fyziku. Je to doplněk.  
-Možná nová metoda hledání. A především – výzva k tomu, zda realita sama není výsledkem velmi jednoduché hry… která se odehrává na hlubší rovině, než jsme zvyklí vnímat.
+Tato cesta není náhradou za standardní fyziku. Je to možný doplněk – nebo jiná metoda hledání. A především – výzva k tomu, zda realita sama není výsledkem velmi jednoduché hry… která se odehrává na hlubší rovině, než jsme zvyklí vnímat.
 
-Lineum začalo jako myšlenkový experiment. Ale to, co z něj začalo vycházet, si zaslouží pozornost.  
+Lineum vzniklo jako myšlenkový experiment. Ale to, co z něj vyšlo, si zaslouží pozornost.  
 Ne protože víme, že je to pravda.  
 Ale protože možná jsme zahlédli mechanismus, který by takový prostor mohl sám vytvořit.
