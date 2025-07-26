@@ -17,24 +17,30 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 
 ## 🔬 Priorita: Nejvyšší – rozšíření směrem k reálné fyzice
 
-### 🔲 1. Ověření známých částic a kvantových vlastností
+### 🔲 1. Temná hmota a temná energie
 
-- Zjistit, zda lze ve výstupech najít analogie k elektronům, fotonům, neutrinu...
+- Pokusit se detekovat oblasti s energetickou nebo topologickou stopou bez detekovatelné kvazičástice
+- Ověřit, zda některé víry nebo φ-pasti vykazují „neviditelný“ vliv na tok bez přítomnosti hmoty
+- Hledat trvalé fluktuace, které se energeticky projevují, ale nemají klasický nosič
+
+### 🔲 2. Ověření známých částic a kvantových vlastností
+
+- Zjistit, zda lze ve výstupech najít analogie k elektronům, fotonům, neutrinům...
 - Identifikovat, zda se některé kvazičástice stabilně chovají jako fermiony nebo bosony
 - [ ] Hledání spektrálních vzorců podobných známým částicím
 
-### 🔲 2. Elektromagnetismus a pole
+### 🔲 3. Elektromagnetismus a pole
 
 - Sledovat, zda vznikají proudové smyčky, periodické vlny nebo dipólové struktury
 - Porovnat s vektory spinu a curl(∇arg(ψ)) – hledat pole podobná EM poli
 - [ ] Vytvořit vizualizaci vektorových polí a oscilací
 
-### 🔲 3. Slabá a silná interakce
+### 🔲 4. Slabá a silná interakce
 
 - Zvážit, zda φ nebo jiné vnitřní struktury mohou reprezentovat slabou/silnou interakci
 - [ ] Vyhodnotit možné interakce kvazičástic na krátkou vzdálenost
 
-### 🔲 4. Kvantová pole a standardní model
+### 🔲 5. Kvantová pole a standardní model
 
 - Porovnat strukturu Linea s elementárními interakcemi ve standardním modelu
 - Zhodnotit, zda lze ψ chápat jako pole se spektrálními režimy – nebo jako více polí
@@ -44,24 +50,24 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 
 ## 🟡 Střední priorita – potvrzení emergentní gravitace a „hmoty“
 
-### 🔲 5. Reorganizace kvazičástic v hmotném objektu
+### 🔲 6. Reorganizace kvazičástic v hmotném objektu
 
 - Simulovat shluk kvazičástic, sledovat deformaci při pohybu k φ-maximu
 - Porovnat tvar a polohu shluku v čase
 - [ ] Vizualizace přeskupení |ψ| a overlay s φ
 
-### 🔲 6. Rychlost přiblížení objektů podle „hmotnosti“
+### 🔲 7. Rychlost přiblížení objektů podle „hmotnosti“
 
 - Ověřit, zda menší objekty reagují rychleji
 - Kvantifikovat přes trajektorie a φ-centrické měření
 - [ ] Spustit simulaci s 2–3 shluky různé hustoty
 
-### 🔲 7. Vzájemné ovlivnění více φ-pastí
+### 🔲 8. Vzájemné ovlivnění více φ-pastí
 
 - Analyzovat slučování, interferenci nebo stabilitu více maxim
 - [ ] Vizualizace rozdělených φ-center ve stejném běhu
 
-### 🔲 8. Přitažlivost bez síly – emergentní tok
+### 🔲 9. Přitažlivost bez síly – emergentní tok
 
 - Ověřit, zda vzniká tok ψ směrem k φ bez síly
 - Porovnat ∇arg(ψ) a gradient φ
@@ -70,7 +76,7 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 
 ## 🧪 Nižší priorita – matematické a estetické souvislosti
 
-### 🔲 9. Vztah lineum k matematickým konstantám
+### 🔲 10. Vztah lineum k matematickým konstantám
 
 - Ověřit, zda vztah lineum ke zlatému řezu (φ) se projevuje ve struktuře pole nebo emergentních jevech
 - Ověřit vztah lineum k Fibonacciho posloupnosti (například distribuce počtu linonů)
