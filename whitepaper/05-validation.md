@@ -32,18 +32,18 @@ V dalších fázích výzkumu bude validace rozšířena o:
 
 ## 5.2 Validované jevy
 
-| Jev                   | Způsob ověření                                 | Stav                      |
-| --------------------- | ---------------------------------------------- | ------------------------- |
-| Kvazičástice (linony) | Vizualizace + log trajektorií                  | ✔️ potvrzeno              |
-| Víry (vortices)       | Winding number + animace `lineum_vortices.gif` | ✔️ potvrzeno              |
-| Spin a tok            | Gradient fázového pole + `lineum_spin.gif`     | ✔️ potvrzeno              |
-| φ-pasti               | φ maxima + akumulace částic                    | ✔️ potvrzeno              |
-| Topologický náboj     | `topo_log.csv`, výkyv do ±3                    | ✔️ přibližně konzervováno |
-| Gravitační chování    | Gradient φ a přiblížení částic                 | ✔️ pozorováno             |
-| Stabilita struktury   | Dlouhověkost trajektorií (>100 kroků)          | ✔️ částečně               |
-| Emergentní hmotnost   | Spektrální analýza, `mass_ratio ≈ 0.04`        | ✔️ realistická            |
-| Homogenita výskytu    | `multi_spectrum_summary.csv` (nízké σ)         | ✔️ potvrzeno              |
-| Spinová aura          | Průměr přes stovky pozic, `spin_aura_avg.png`  | ✔️ potvrzeno              |
+| Jev                   | Způsob ověření                                                                                                                                          | Stav                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Kvazičástice (linony) | Vizualizace + [`trajectories.csv`](../output/trajectories.csv), [`lineum_particles.gif`](../output/lineum_particles.gif)                                | ✔️ potvrzeno              |
+| Víry (vortices)       | Winding number + [`vortex_log.csv`](../output/vortex_log.csv), [`lineum_vortices.gif`](../output/lineum_vortices.gif)                                   | ✔️ potvrzeno              |
+| Spin a tok            | Gradient fáze + [`frames_curl.npy`](../output/frames_curl.npy), [`lineum_spin.gif`](../output/lineum_spin.gif)                                          | ✔️ potvrzeno              |
+| φ-pasti               | Lokální maxima φ + [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_phi_amp_trajectories.gif`](../output/lineum_phi_amp_trajectories.gif) | ✔️ potvrzeno              |
+| Topologický náboj     | [`topo_log.csv`](../output/topo_log.csv), výkyv do ±3, viz [`topo_charge_plot.png`](../output/topo_charge_plot.png)                                     | ✔️ přibližně konzervováno |
+| Gravitační chování    | Gradient φ + přiblížení částic, [`interaction_log.csv`](../output/interaction_log.csv)                                                                  | ✔️ pozorováno             |
+| Stabilita struktury   | Dlouhověkost trajektorií (>100 kroků), [`trajectories.csv`](../output/trajectories.csv)                                                                 | ✔️ částečně               |
+| Emergentní hmotnost   | [`spectrum_log.csv`](../output/spectrum_log.csv), [`multi_spectrum_summary.csv`](../output/multi_spectrum_summary.csv)                                  | ✔️ realistická            |
+| Homogenita výskytu    | Rozptyl ve [`multi_spectrum_summary.csv`](../output/multi_spectrum_summary.csv)                                                                         | ✔️ potvrzeno              |
+| Spinová aura          | [`spin_aura_avg.png`](../output/spin_aura_avg.png) – průměr přes stovky pozic                                                                           | ✔️ potvrzeno              |
 
 ---
 
