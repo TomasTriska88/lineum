@@ -84,6 +84,39 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 
 ---
 
+## 🧪 Experimentální hypotézy – testování neúspěšných modelů
+
+### 🔲 11. Inflaton a inflace v poli Lineum
+
+- Modelovat inflaci jako jednorázovou globální excitaci φ nebo ψ
+- Pozorovat, zda vznikne trvalá topologická nebo energetická struktura („gravitační stopa“)
+- Porovnat fáze expanze a následného uklidnění pole
+
+### 🔲 12. Éter a vlnový nosič
+
+- Inicializovat ψ jako hladkou sinusovou vlnu v prostoru (bez linonů)
+- Ověřit, zda dochází k přenosu energie bez částic
+- Porovnat s klasickým pojetím éteru a jeho zhroucením
+
+### 🔲 13. Pilot-wave teorie (Bohm)
+
+- Přidat externí „guiding wave“ nebo vektorové pole ovlivňující pohyb kvazičástic
+- Ověřit, zda linony sledují předem dané vlny nebo trajektorie
+
+### 🔲 14. Vortex atomy (Lord Kelvin)
+
+- Zkoumat víry jako základní jednotky struktury
+- Ověřit, zda lze z vírů složit stabilní složitější formace (analogie k atomům)
+
+### 🔲 15. Preonové hypotézy
+
+- Modelovat kvazičástice jako složené z menších elementárních vírů
+- Testovat vznik složených objektů se strukturou uvnitř
+
+> Tyto experimenty slouží ke konfrontaci s historickými i spekulativními teoriemi. Pokud selžou, potvrdíme odolnost modelu Lineum. Pokud uspějí, může jít o hlubší vztah k nečekaným strukturám reality.
+
+---
+
 ## 🔎 Poznámky
 
 - Každý bod by měl mít vlastní podložení ve výstupu (csv, animace, snímky).
