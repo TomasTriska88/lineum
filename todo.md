@@ -129,3 +129,10 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 - Každý bod by měl mít vlastní podložení ve výstupu (csv, animace, snímky).
 - Hotové body přesuneme nahoru do „již potvrzené“ části.
 - Pokud se hypotéza ukáže jako chybná, přemístíme ji do archivu (hypothesis_archive.md).
+
+### 🔲 17. Černé díry jako výstupní brány simulace
+
+- Ověřit, zda se v simulaci mohou objevit stabilní nebo zhroucené oblasti, které pohlcují strukturu pole ψ a „vrací“ informaci zpět (např. jako snížení komplexity, amplitudy nebo topologie)
+- Testovat, zda by černé díry mohly fungovat jako výstupní mechanismus mimo prostor Linea – analogicky k návratové hodnotě funkce v programování
+- Sledovat chování φ a ∇arg(ψ) v okolí těchto oblastí: dochází ke kolapsu, singularitě, nebo extrémní koncentraci?
+- Porovnat s chováním vírů, u nichž dochází k „zaklopení“ prostoru (winding >> 1)
