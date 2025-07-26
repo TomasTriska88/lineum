@@ -88,3 +88,47 @@ Každý bod zná jen své sousedy. Žádné metriky, konstanty, geometrie.
 ---
 
 V dalších kapitolách ukážeme, jak z těchto pravidel vznikají jevy připomínající částice, pole, víry, spin i gravitaci.
+
+## 3.5 Historie vývoje rovnice
+
+Během experimentování s modelem Lineum se rovnice vyvíjela takto:
+
+### 🔹 Verze 1 – čistě oscilující pole
+
+```text
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ
+```
+
+První verze obsahovala jen pole ψ. Generovala linony, spin a víry, ale neumožňovala akumulaci ani emergentní přitažlivost. Pole φ ještě nebylo dynamické.
+
+- ✅ Generovala kvazičástice a toky
+- ❌ Žádná akumulace ani emergentní gravitační chování
+- ❌ φ bylo neměnné, bez paměti
+
+---
+
+### 🔹 Verze 2 – zavedení akumulačního pole φ
+
+```text
+φ ← φ + (|ψ|² − φ) + ∇²φ
+```
+
+Zavedeno jako reakce na otázku „co způsobuje přitažlivost?“ Pole φ začalo reagovat na hustotu |ψ|² a vytvářet stabilní maxima.
+
+- ✅ Poprvé vznikají φ-pasti
+- ✅ Kvazičástice se v nich začaly samovolně zdržovat
+- ⚠️ Tok ψ stále nerozlišoval směr ke gradientu φ
+
+---
+
+### 🔹 Verze 3 – emergentní gravitace skrze ∇φ
+
+```text
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
+```
+
+Přidáním gradientu φ vzniká tok bez síly – kvazičástice se pohybují do oblastí, kde φ stoupá.
+
+- ✅ Gravitační chování bez explicitní síly
+- ✅ Vznikají φ-centra, přitažlivost, akumulace
+- ✅ Celkový model má paměť, interakci a trajektorii
