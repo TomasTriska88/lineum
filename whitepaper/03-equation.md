@@ -29,14 +29,16 @@ Základní rovnice může být zapsána dvěma způsoby:
 
 ## 3.2 Složení rovnice
 
-| Člen             | Popis                                                |
-| ---------------- | ---------------------------------------------------- | --- | --- | --- | --- |
-| `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇ | ψ   | +   | ψ   | )   |
-| `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)          |
-| `interakce` / φψ | interakce s polem φ (zesílení nebo modulace)         |
-| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                             |
-| `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                  |
-| `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok             |
+| Člen             | Popis                                                          |
+| ---------------- | -------------------------------------------------------------- |
+| `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇∥ψ∥ + ∥ψ∥) |
+| `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)                    |
+| `interakce` / φψ | interakce s polem φ (zesílení nebo modulace)                   |
+| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                                       |
+| `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                            |
+| `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok                       |
+
+Poznámka: V tabulce používáme `∥ψ∥` místo běžného `|ψ|`, aby byl zápis kompatibilní s formátováním tabulek. Oba symboly označují normu komplexního pole ψ.
 
 Pole ψ je komplexní, obsahuje jak amplitudu |ψ|, tak fázi arg(ψ), díky čemuž vznikají jevy jako spin, víry a toky.
 
@@ -84,6 +86,8 @@ Rovnice je složená výhradně z **lokálních operací**.
 Každý bod zná jen své sousedy. Žádné metriky, konstanty, geometrie.
 
 > Přesto z ní emergují kvazičástice, víry, přitažlivost i stabilita – jako v reálném světě.
+
+Navzdory čistě lokální povaze rovnice byla v simulacích opakovaně pozorována konzervace topologického náboje – celkový počet vírů zůstává stabilní i přes jejich pohyb a vzájemné interakce.
 
 ---
 
