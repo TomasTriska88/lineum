@@ -49,7 +49,8 @@ phi_center_log = []
 # False = běžné simulace s fluktuacemi
 LOW_NOISE_MODE = True
 
-# Přepínač pro test výdechu (tiché částice s nízkou hmotností)
+# TEST_EXHALE_MODE = True aktivuje klidnější simulaci pro test strukturální paměti (výdech)
+# V běžných simulacích vypnout (False), aby došlo k plné dynamice systému
 TEST_EXHALE_MODE = True
 
 # Parametry
