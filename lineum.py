@@ -44,14 +44,17 @@ amplitude_log = []
 topo_log = []
 phi_center_log = []
 
-# Parametry
-size = 128
-steps = 500
-
 # Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
 # True = testování strukturálního uzavření (hypotéza)
 # False = běžné simulace s fluktuacemi
 LOW_NOISE_MODE = True
+
+# Přepínač pro test výdechu (tiché částice s nízkou hmotností)
+TEST_EXHALE_MODE = True
+
+# Parametry
+size = 128
+steps = 1000 if TEST_EXHALE_MODE else 500
 
 NOISE_STRENGTH = 0.01 if not LOW_NOISE_MODE else 0.0
 
@@ -106,7 +109,10 @@ def evolve(psi, delta, phi):
     probability = sigmoid(amp + grad_mag)
     random_field = np.random.rand(size, size)
     linons = (random_field < probability).astype(float)
-    linon_effect = (0.03 + 0.02 * amp.clip(min=0)) * linons
+    linon_base = 0.01 if TEST_EXHALE_MODE else 0.03
+    linon_scaling = 0.01 if TEST_EXHALE_MODE else 0.02
+    linon_effect = (linon_base + linon_scaling * amp.clip(min=0)) * linons
+
     linon_complex = linon_effect * np.exp(1j * np.angle(psi))
 
     # 🧘 LOW NOISE MODE
@@ -124,7 +130,9 @@ def evolve(psi, delta, phi):
     psi += phi_flow_term
 
     psi += linon_complex + fluctuation + interaction_term
-    psi -= 0.001 * psi
+    disipation_rate = 0.002 if TEST_EXHALE_MODE else 0.001
+    psi -= disipation_rate * psi
+
     psi += diffuse_complex(psi)
 
     # 🌀 Laděná evoluce φ pro silnější lokální efekt
