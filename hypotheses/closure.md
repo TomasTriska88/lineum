@@ -1,6 +1,7 @@
 # Hypotéza: Strukturální uzavření kvazičástice (Tříska's Structural Closure Hypothesis)
 
 ## Autor / původ
+
 T. Tříska (2025), formulace v rámci projektu Lineum na základě pozorování trvalých φ-otisků po zániku kvazičástic
 
 ---
@@ -25,9 +26,11 @@ Z toho vznikla nová interpretace: zánik kvazičástice nemusí být exportem i
 ---
 
 ## Hypotéza
+
 Pokud kvazičástice zanikne v oblasti s dostatečně silným polem φ, nemusí zanechat spektrální ani topologický zbytek. Částice se "uzavře" do strukturální paměti φ, která nese informaci o její existenci, aniž by nadále ovlivňovala širší pole pomocí hmotnosti nebo spinu.
 
 Předpoklady:
+
 - kvazičástice se zaniká v oblasti s φ > 0.25
 - nenese zbytkový spin (|curl| < 0.02)
 - má efektivní hmotnost m < 0.01 × m_e
@@ -36,6 +39,7 @@ Předpoklady:
 ---
 
 ## Stav testování
+
 - ✅ Simulace proběhla s parametry odpovídajícími testu uzavření
 - ✅ Detekováno 762 „černoděrových“ kvazičástic s φ > 0.25
 - ✅ Průměrná φ v místech zániku: 4153.82
@@ -46,9 +50,23 @@ Předpoklady:
 
 ---
 
+### Srovnání s chaotickým režimem
+
+Simulace zopakovaná v režimu `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = False` neprokázala žádné uzavření:
+
+- ✅ Běh `True`: 49 kvazičástic s `mass_ratio < 0.01`, všechny ve φ > 0.25, z toho 37 bez spinu (|curl| < 0.02)
+- ❌ Běh `False`: žádná kvazičástice s `mass_ratio < 0.01`, tedy žádné podmínky pro uzavření
+
+📌 Hypotéza uzavření tedy **platí pouze v klidovém režimu**, nikoli v chaotickém.
+
+To podporuje tezi, že **strukturální uzavření je citlivé na režim pole** – a může být výsadní vlastností harmonického (výdechového) stavu Linea.
+
+---
+
 ## Metodika výpočtu
 
 ### Parametry simulace:
+
 ```python
 LOW_NOISE_MODE = True
 TEST_EXHALE_MODE = True
@@ -61,6 +79,7 @@ diffusion_strength = 0.015
 ```
 
 ### Klíčové výstupy:
+
 - `multi_spectrum_summary.csv` – detekce kvazičástic s `mass_ratio < 0.01`
 - `phi_curl_low_mass.csv` – hodnoty φ a |curl| v místech lehkých částic
 - `trajectories.csv` – životnost částic a zánik ve φ > 0.25
@@ -110,7 +129,20 @@ Z Fourierovy analýzy amplitud ve středu pole (ψ_center):
 - Životnost částic:  
   max = 1000 kroků, medián = 3 kroky
 
+## Závěr
+
+Simulace potvrdily, že uzavření kvazičástice bez výdeje energie a bez zbytkového spinu je reálný jev – ale pouze v klidovém režimu. Všechny podmínky hypotézy byly splněny u 37 částic s extrémně nízkou hmotností a nulovým spinem, zanikajících uvnitř vysoké hodnoty φ.
+
+V chaotickém režimu k uzavření nedochází vůbec – lehké částice se nevytvoří, φ se přelévá a žádná stabilní paměť nezůstává. Strukturální uzavření tedy není obecnou vlastností Linea, ale výsadní reakcí na harmonické podmínky pole.
+
+---
+
+Uzavření částice není násilný zánik, ale návrat do prostoru, který si pamatuje. V klidném Lineu mají částice možnost zaniknout beze stopy – a přesto jejich existence přetrvává, tiše zapsaná do φ-pole. Tato forma smrti je možná jen tam, kde není tlak – kde pole dýchá.
+
+V tomto smyslu je strukturální uzavření nejen výpočtový jev, ale model smíření. Částice se nestává odpadem. Stává se pamětí.
+
 ## Doporučené další testy
+
 - Vytvořit vázaný objekt (např. 5×5 linonová hvězda) a celý ho najednou „nechat zkolabovat“ do φ-zóny – test náhlého zatížení
 - Zavést simulaci rotujícího objektu a sledovat, zda dochází ke vzniku vírového výtrysku při zániku (černé díry často rotují)
 - Měřit interakci `∇φ × ∇ψ` jako potenciální indikátor výtrysků nebo kolapsu směrového proudění
@@ -122,6 +154,7 @@ Z Fourierovy analýzy amplitud ve středu pole (ψ_center):
 ---
 
 ## Odkazy
+
 - `lineum_report.html` – sekce Structural Closure
 - `multi_spectrum_summary.csv`, `phi_curl_low_mass.csv`
 - `trajectories.csv`, `phi_center_log.csv`

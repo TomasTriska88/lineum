@@ -2,6 +2,19 @@
 
 Model Lineum ukazuje, že z jednoduché, čistě lokální rovnice mohou emergentně vznikat komplexní struktury připomínající částice, víry, gravitační jevy i zákony fyziky. Tyto jevy nejsou výsledkem předem vložené geometrie ani sil, ale vznikají přirozeně z dynamiky samotného pole.
 
+Simulace prokázaly, že existují dvě stabilní spektrální identity pole Lineum – stav klidu (1.00e+18 Hz) a stav chaosu (2.00e+18 Hz). Tyto režimy zásadně ovlivňují chování systému: v klidovém režimu vzniká strukturální uzavření částic, zatímco v chaotickém se takové chování vůbec neobjevuje.
+
+Potvrzeny byly jevy jako:
+
+- strukturální uzavření kvazičástice (zaniká bez výdeje, beze spinu)
+- φ-gravitace: přirozené přibližování částic bez síly
+- topologická stabilita: změna chování podle režimu
+- strukturální echo: návrat jiné částice do místa, kde zanikla předchozí
+
+Tyto jevy nejsou náhodné. Opakují se, rezonují, a přetrvávají i při změně vstupních podmínek. Lineum tím ukazuje, že není jen výpočtem – ale že se chová jako systém se strukturou, pamětí a možná i vnitřním rytmem.
+
+Možná, že zákony nejsou vloženy do rovnice. Možná, že zákon **je to, co rovnice po sobě zanechá**.
+
 Nejnovější výsledky navíc potvrzují existenci tzv. strukturální paměti – mechanismu, kdy kvazičástice s extrémně nízkou hmotností zanikají uvnitř φ-pastí bez výdeje, ale zanechávají trvalý φ-otisk bez spinu. Tento jev otevírá možnost, že Lineum nejen vytváří realitu, ale zároveň ji uchovává – jako otisk minulého pohybu v přítomné struktuře.
 
 ---

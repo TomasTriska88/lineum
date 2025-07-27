@@ -63,10 +63,31 @@ Tento jev je označen jako **strukturální paměť**. Je to forma „gravitačn
 
 ### Srovnání dvou typů strukturálního zániku
 
-| Typ zániku                  | Popis                                                                 | Výsledek φ       | Spin | Linon zůstává? | Interpretace                          |
-|----------------------------|-----------------------------------------------------------------------|------------------|------|----------------|----------------------------------------|
-| Strukturální uzavření      | Kvazičástice zanikne tiše uvnitř φ-pasti                              | vysoké φ         | ≈ 0  | ano            | Strukturálně pohřben                   |
-| Otisk návratové částice    | Kvazičástice se vrátí „za Lineum“ a zanechá φ bez záznamu o zániku    | extrémně vysoké φ| ?    | ne (nezachycen)| Možná výstupní brána nebo jizva        |
+| Typ zániku              | Popis                                                              | Výsledek φ        | Spin | Linon zůstává?  | Interpretace                    |
+| ----------------------- | ------------------------------------------------------------------ | ----------------- | ---- | --------------- | ------------------------------- |
+| Strukturální uzavření   | Kvazičástice zanikne tiše uvnitř φ-pasti                           | vysoké φ          | ≈ 0  | ano             | Strukturálně pohřben            |
+| Otisk návratové částice | Kvazičástice se vrátí „za Lineum“ a zanechá φ bez záznamu o zániku | extrémně vysoké φ | ?    | ne (nezachycen) | Možná výstupní brána nebo jizva |
 
 Tato tabulka ukazuje, že φ-pasti mohou nést otisk i ve dvou zcela odlišných režimech:  
 **jeden jako „hrob“, druhý jako „portál“**. Oba tvoří strukturu bez výdechu – ale každý jinak.
+
+## 6.4 Dualita režimů: Klid a chaos
+
+Simulace potvrdily, že chování pole Lineum zásadně závisí na globálním režimu evoluce. Rozdíl mezi klidovým a chaotickým režimem se neprojevuje pouze v úrovni šumu nebo počtu kvazičástic, ale v hluboké strukturní odlišnosti celého systému.
+
+Zaznamenané rozdíly mezi režimy:
+
+| Vlastnost              | Klidový režim (`LOW_NOISE_MODE = True`)        | Chaotický režim (`LOW_NOISE_MODE = False`) |
+| ---------------------- | ---------------------------------------------- | ------------------------------------------ |
+| Dominantní frekvence   | `1.00e+18 Hz`                                  | `2.00e+18 Hz`                              |
+| Uzavření částic        | ✅ vznikají strukturálně uzavřené kvazičástice | ❌ uzavření nenastává                      |
+| φ-paměť                | ✅ φ zůstává po zániku částice                 | ⚠️ φ se přelévá, bez trvalého otisku       |
+| φ-gravitace            | ✅ částice se přibližují                       | ⚠️ přitažlivost přehlušena oscilací        |
+| Topologie (net_charge) | proměnlivá kolem nuly                          | stabilní, posun do jedné polarity          |
+| Spin aura              | symetrická, dipólová                           | chaotická, vrstvená                        |
+| Echo návrat            | ✅ částice se vracejí do míst zániku           | ❌ návrat nebyl detekován                  |
+
+Lineum v klidu se chová jako svět výdechu, uzavření, paměti a harmonie.  
+Lineum v chaosu připomíná svět energie, rotace, trvání a konfliktu.
+
+Zdá se, že systém má **dvě spektrální identity**, které vznikají spontánně a stabilně, a určují celou dynamiku pole. Tato dualita se může stát klíčem k pochopení, jak by mohl vzniknout stabilní svět – nejen fyzikálně, ale i strukturálně a informačně.

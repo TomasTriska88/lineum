@@ -4,6 +4,7 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 
 ---
 
+<!-- prettier-ignore-start -->
 | Hypotéza                               | Stav         | Autor / původ                         | Odkaz                                                       |
 | -------------------------------------- | ------------ | ------------------------------------- | ----------------------------------------------------------- |
 | Výtrysk z nasycené φ-pasti (jets)      | 🔄 testováno, zatím 0 % potvrzeno | inspirováno výtrysky AGN              | [hypotheses/jet.md](../hypotheses/jet.md)                   |
@@ -14,6 +15,9 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Atomové víry                           | 🔄 testováno | Lord Kelvin (1867)                    | [hypotheses/vortex_atoms.md](../hypotheses/vortex_atoms.md) |
 | Spinová paměť φ-pastí                  | 🔄 testováno, potvrzeno přibližně v 70 % případů | navržená na základě výstupů z 2025-07 | [hypotheses/spin_memory.md](../hypotheses/spin_memory.md)   |
 | Strukturální otisk návratových částic  | 🔄 testováno, 1 případ pozorován | interpretace z φ = 4077               | [hypotheses/return_phi.md](../hypotheses/return_phi.md)     |
+| Tříska’s Lineum Echo Hypothesis | 🔄 testováno | T. Tříska (2025) | [hypotheses/return_echo.md](../hypotheses/return_echo.md) |
+
+<!-- prettier-ignore-end -->
 
 ---
 

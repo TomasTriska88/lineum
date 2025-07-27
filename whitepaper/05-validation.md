@@ -32,6 +32,7 @@ V dalších fázích výzkumu bude validace rozšířena o:
 
 ## 5.2 Validované jevy
 
+<!-- prettier-ignore-start -->
 | Jev                   | Způsob ověření                                                                                                                                          | Stav                      |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | Kvazičástice (linony) | Vizualizace + [`trajectories.csv`](../output/trajectories.csv), [`lineum_particles.gif`](../output/lineum_particles.gif)                                | ✔️ potvrzeno              |
@@ -44,9 +45,11 @@ V dalších fázích výzkumu bude validace rozšířena o:
 | Emergentní hmotnost   | [`spectrum_log.csv`](../output/spectrum_log.csv), [`multi_spectrum_summary.csv`](../output/multi_spectrum_summary.csv)                                  | ✔️ realistická            |
 | Homogenita výskytu    | Rozptyl ve [`multi_spectrum_summary.csv`](../output/multi_spectrum_summary.csv)                                                                         | ✔️ potvrzeno              |
 | Spinová aura          | [`spin_aura_avg.png`](../output/spin_aura_avg.png) – průměr přes stovky pozic                                                                           | ✔️ potvrzeno              |
-| Strukturální paměť    | `phi_curl_low_mass.csv`, `multi_spectrum_summary.csv` – 49 částic s mass_ratio < 0.01, φ > 0.25, curl ≈ 0                                               | ✔️ potvrzeno              |
+| Strukturální paměť    | `phi_curl_low_mass.csv`, `multi_spectrum_summary.csv` – 49 částic s mass_ratio < 0.01, φ > 0.25, z toho 37 s |curl| < 0.02 (uzavření)    | ✔️ potvrzeno              |
 | Výtrysk z φ-pasti (jet) | [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_spin.gif`](../output/lineum_spin.gif), `frames_curl.npy` | ❌ zatím nepozorován |
+| Echo návrat částic      | [`true_trajectories.csv`](../output/true_trajectories.csv) – opakovaný výskyt částic ve stejných souřadnicích v čase (např. [127, 0]) | ✔️ pozorováno         |
 
+<!-- prettier-ignore-end -->
 
 ---
 
