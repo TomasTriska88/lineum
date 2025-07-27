@@ -40,6 +40,8 @@ Projekt je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke
 
 Výsledky jsou plně replikovatelné a systém lze snadno upravit k testování dalších hypotéz. Projekt vítá nezávislé ověření, otevřenou diskuzi a případné rozšíření směrem k hlubší fyzikální interpretaci. Lineum je otevřenou platformou pro experimentální zkoumání reality – bez dogmat, ale s důrazem na pozorovatelné jevy.
 
+Nové výsledky z dlouhých simulací zároveň potvrzují hypotézu strukturální paměti – některé kvazičástice s extrémně nízkou hmotností (mass_ratio < 0.01) se ztrácejí uvnitř silných φ-pastí beze zbytku spinu nebo výdeje energie, ale zanechávají trvalou φ-strukturu. Ta může ovlivňovat tok pole a představuje tichý záznam zaniklé kvazičástice – paměť bez výdechu.
+
 ---
 
 ## Vizualizace emergentních jevů ze simulace Lineum
