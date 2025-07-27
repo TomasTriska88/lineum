@@ -46,7 +46,15 @@ phi_center_log = []
 
 # Parametry
 size = 128
-steps = 200
+steps = 500
+
+# Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
+# True = testování strukturálního uzavření (hypotéza)
+# False = běžné simulace s fluktuacemi
+LOW_NOISE_MODE = True
+
+NOISE_STRENGTH = 0.01 if not LOW_NOISE_MODE else 0.0
+
 # Body, jejichž amplitudu budeme sledovat
 probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 
@@ -101,8 +109,11 @@ def evolve(psi, delta, phi):
     linon_effect = (0.03 + 0.02 * amp.clip(min=0)) * linons
     linon_complex = linon_effect * np.exp(1j * np.angle(psi))
 
+    # 🧘 LOW NOISE MODE
+    NOISE_STRENGTH = 0.0  # nastav 0.01 nebo 0.0 podle toho, kolik šumu chceš
+
     fluctuation = np.random.normal(
-        0.0, 0.01, (size, size)) * np.exp(1j * np.angle(psi))
+        0.0, NOISE_STRENGTH, (size, size)) * np.exp(1j * np.angle(psi))
 
     # 💡 Adding interaction
     interaction_term = 0.04 * np.clip(phi, -10, 10) * psi
