@@ -120,7 +120,20 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 - Modelovat kvazičástice jako složené z menších elementárních vírů
 - Testovat vznik složených objektů se strukturou uvnitř
 
-> Tyto experimenty slouží ke konfrontaci s historickými i spekulativními teoriemi. Pokud selžou, potvrdíme odolnost modelu Lineum. Pokud uspějí, může jít o hlubší vztah k nečekaným strukturám reality.
+### 🔲 17. Černé díry jako výstupní brány simulace
+
+- Ověřit, zda se v simulaci mohou objevit stabilní nebo zhroucené oblasti, které pohlcují strukturu pole ψ a „vrací“ informaci zpět (např. jako snížení komplexity, amplitudy nebo topologie)
+- Testovat, zda by černé díry mohly fungovat jako výstupní mechanismus mimo prostor Linea – analogicky k návratové hodnotě funkce v programování
+- Sledovat chování φ a ∇arg(ψ) v okolí těchto oblastí: dochází ke kolapsu, singularitě, nebo extrémní koncentraci?
+- Porovnat s chováním vírů, u nichž dochází k „zaklopení“ prostoru (winding >> 1)
+
+### 🔲 18. Výtrysk energie z nasycené φ-pasti (Fermiho bubliny v Lineu)
+
+- Simulovat situaci, kdy φ-pastě přibývá příliš mnoho kvazičástic a φ roste nad běžnou mez
+- Ověřit, zda dojde k přesměrování toku ψ ven z pasti – ve formě výtrysku nebo gradientového výronu
+- Hledat směrné uvolnění spinu nebo napětí – kolmo ke koncentraci (analogicky k výtrysku z akrečního disku)
+- Vizualizovat směr a sílu výtrysku, analyzovat přítomnost oscilací nebo spinových struktur v okolí výronu
+- Porovnat s reálnými pozorováními Fermiho bublin nebo jets u černých děr
 
 ---
 
@@ -129,10 +142,3 @@ Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další tes
 - Každý bod by měl mít vlastní podložení ve výstupu (csv, animace, snímky).
 - Hotové body přesuneme nahoru do „již potvrzené“ části.
 - Pokud se hypotéza ukáže jako chybná, přemístíme ji do archivu (hypothesis_archive.md).
-
-### 🔲 17. Černé díry jako výstupní brány simulace
-
-- Ověřit, zda se v simulaci mohou objevit stabilní nebo zhroucené oblasti, které pohlcují strukturu pole ψ a „vrací“ informaci zpět (např. jako snížení komplexity, amplitudy nebo topologie)
-- Testovat, zda by černé díry mohly fungovat jako výstupní mechanismus mimo prostor Linea – analogicky k návratové hodnotě funkce v programování
-- Sledovat chování φ a ∇arg(ψ) v okolí těchto oblastí: dochází ke kolapsu, singularitě, nebo extrémní koncentraci?
-- Porovnat s chováním vírů, u nichž dochází k „zaklopení“ prostoru (winding >> 1)
