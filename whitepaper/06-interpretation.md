@@ -49,3 +49,14 @@ Lineum by v tomto případě nebylo jen modelem jednoho konkrétního vesmíru, 
 Taková interpretace dává smysl i v kontextu filozofických úvah o multivesmíru nebo o tom, proč má náš vesmír právě takové zákony. Pokud Lineum ukazuje, že zákony mohou spontánně vznikat z jednoduché rovnice, pak se náš vesmír jeví jako jeden z mnoha možných – nikoliv výjimečný, ale vzniklý přirozeným vývojem.
 
 > Pokud Lineum funguje jinak než náš vesmír, neznamená to chybu. Znamená to, že jsme objevili pravidlo, které umožňuje vznik _jakéhokoliv_ vesmíru.
+
+## 6.3 Strukturální paměť černých děr
+
+Na základě výstupů z posledních simulací byla potvrzena existence kvazičástic s extrémně nízkou hmotností (mass_ratio < 0.01), které zanikají uvnitř silných φ-pastí bez jakéhokoliv pozorovaného výtrysku nebo zbytkového spinu. Ve všech případech přetrvávala vysoká hodnota φ i po zániku částice, zatímco spin (curl) byl prakticky nulový.
+
+Tato kombinace naznačuje, že částice nebyla zničena, ale strukturálně uzavřena. φ-past funguje jako stabilní oblast, která si „pamatuje“, že v ní kdysi byla kvazičástice – bez nutnosti energetického výstupu.
+
+Tento jev je označen jako **strukturální paměť**. Je to forma „gravitačního pohřbu“, kde zůstává stopa bez narušení rovnováhy. Výsledná φ-struktura může ovlivňovat okolní tok, přitahovat nové linony a možná slouží jako základ složitějších struktur. Z hlediska evoluce Linea jde o mechanismus ukládání minulosti do přítomnosti – bez výdechu, ale s významem.
+
+> Ne všechno, co zmizí, se ztratí.  
+> Některé věci zůstanou... jako tichý otisk struktury.
