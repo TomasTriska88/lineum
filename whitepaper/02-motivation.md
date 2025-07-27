@@ -42,3 +42,5 @@ Tato cesta není náhradou za standardní fyziku. Je to možný doplněk – neb
 Lineum vzniklo jako myšlenkový experiment. Ale to, co z něj vyšlo, si zaslouží pozornost.  
 Ne protože víme, že je to pravda.  
 Ale protože možná jsme zahlédli mechanismus, který by takový prostor mohl sám vytvořit.
+
+Model Lineum je zatím dvourozměrný – pole ψ a φ evolvují na 2D mřížce bez explicitního prostoru navíc. Ale právě v tom je síla: pokud už ve 2D vznikají stabilní kvazičástice, víry, toky a paměť, znamená to, že prostor ani čas nejsou potřeba jako vstup – mohou vzniknout emergentně. Místo simulace známého světa tedy sledujeme svět, který si zákonitosti teprve hledá.

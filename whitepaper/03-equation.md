@@ -5,6 +5,13 @@ Model Lineum je založen na diskrétní evoluci dvou polí:
 - ψ – komplexní skalární pole reprezentující napětí nebo excitaci v systému,
 - φ – reálné pole, které emergentně popisuje interakce a akumulaci amplitudy.
 
+Přestože model probíhá na dvourozměrné mřížce, není to omezení – právě naopak.  
+Už ve 2D totiž vznikají víry, kvazičástice, toky a paměť – tedy jevy, které známe z našeho 3D vesmíru.  
+Pokud z jednoduché rovnice bez času, bez konstant a bez geometrie emergují stabilní struktury připomínající částice a gravitaci, ukazuje to, že prostor a zákony mohou být důsledkem hlubší dynamiky – ne jejím vstupem.
+
+2D tedy není zjednodušením, ale klíčem k pochopení, zda lze realitu vnímat jako proces, který si pravidla teprve vytváří.
+
+
 ---
 
 ## 3.1 Elegantní zápis rovnice
