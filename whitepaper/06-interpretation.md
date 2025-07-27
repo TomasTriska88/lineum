@@ -60,3 +60,13 @@ Tento jev je označen jako **strukturální paměť**. Je to forma „gravitačn
 
 > Ne všechno, co zmizí, se ztratí.  
 > Některé věci zůstanou... jako tichý otisk struktury.
+
+### Srovnání dvou typů strukturálního zániku
+
+| Typ zániku                  | Popis                                                                 | Výsledek φ       | Spin | Linon zůstává? | Interpretace                          |
+|----------------------------|-----------------------------------------------------------------------|------------------|------|----------------|----------------------------------------|
+| Strukturální uzavření      | Kvazičástice zanikne tiše uvnitř φ-pasti                              | vysoké φ         | ≈ 0  | ano            | Strukturálně pohřben                   |
+| Otisk návratové částice    | Kvazičástice se vrátí „za Lineum“ a zanechá φ bez záznamu o zániku    | extrémně vysoké φ| ?    | ne (nezachycen)| Možná výstupní brána nebo jizva        |
+
+Tato tabulka ukazuje, že φ-pasti mohou nést otisk i ve dvou zcela odlišných režimech:  
+**jeden jako „hrob“, druhý jako „portál“**. Oba tvoří strukturu bez výdechu – ale každý jinak.
