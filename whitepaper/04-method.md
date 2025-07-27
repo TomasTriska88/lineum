@@ -130,6 +130,10 @@ Simulace generuje různé typy výstupů, které slouží k analýze a vizualiza
 
 Aktuální seznam výstupů a vizualizací je dostupný ve složce `output/` a shrnut v automaticky generovaném reportu `lineum_report.html`.
 
+Výstupní soubor `phi_curl_low_mass.csv` slouží k ověření hypotézy strukturální paměti. Obsahuje hodnoty φ a curl v místech kvazičástic s velmi nízkou efektivní hmotností. Kombinací s výstupy `multi_spectrum_summary.csv` a `trajectories.csv` lze ověřit, zda došlo k tichému uzavření částice ve φ-pasti bez výdeje energie.
+
+Testování tohoto jevu je aktivováno pomocí volby `TEST_EXHALE_MODE = True`, která upravuje parametry simulace směrem k pomalejší dynamice, delší životnosti a vyšší disipaci – čímž se zvyšuje pravděpodobnost výdechu.
+
 > Struktura a počet výstupních souborů se může měnit s vývojem kódu. Dokumentace se zaměřuje na principy a typy dat, nikoliv na konkrétní názvy.
 
 ---
