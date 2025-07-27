@@ -1016,6 +1016,23 @@ The result is motion not due to pulling, but due to a shared directional prefere
     low_mass_count = sum(
         1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
 
+    # 📊 Export φ a curl v místech kvazičástic s mass_ratio < 0.01
+    low_mass_coords = [
+        (d["point"][0], d["point"][1])
+        for d in multi_spectrum_details
+        if d["mass_ratio"] < 0.01
+    ]
+
+    phi_final = np.abs(phi.copy())  # poslední stav φ
+    curl_final = curl  # poslední stav curl (v hlavní smyčce už ho máš)
+
+    rows = []
+    for y, x in low_mass_coords:
+        if 0 <= y < size and 0 <= x < size:
+            rows.append([y, x, phi_final[y, x], curl_final[y, x]])
+
+    save_csv("phi_curl_low_mass.csv", ["y", "x", "phi", "curl"], rows)
+
     generate_html_report(
         mass=mass,
         mass_ratio=mass_ratio,
