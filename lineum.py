@@ -756,7 +756,7 @@ if __name__ == "__main__":
     
       <h2>🌀 Simulation Summary</h2>
       <ul>
-        <li><strong>Steps:</strong> {steps}</li>
+        <li><strong>Steps:</strong> {len(frames_amp)}</li>
         <li><strong>Field size:</strong> {size} × {size}</li>
         <li><strong>Quasiparticles detected:</strong> {'✅ Yes' if quasiparticles_present else '❌ No'}</li>
         <li><strong>Vortices detected:</strong> {'✅ Yes' if vortices_present else '❌ No'}</li>
