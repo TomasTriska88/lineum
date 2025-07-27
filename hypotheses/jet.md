@@ -43,6 +43,10 @@ disipation_rate = 0.001
 ---
 
 ## Doporučené další testy
+- Otestovat pád strukturovaného vázaného útvaru (např. kompaktní linonová hvězda) do φ-pasti – místo jednotlivých linonů
+- Zavést rotující vektorovou strukturu jako vstup – protože reálné černé díry rotují
+- Zavést kumulativní monitoring `φ` + `∇φ × ∇ψ` v čase jako podmínku „kritického bodu“
+
 - Zvýšit `linon_scaling` a počet kvazičástic
 - Omezit disipaci a zkrátit dobu běhu
 - Testovat se strukturami 2×2 φ-pastí v mřížce

@@ -47,11 +47,11 @@ phi_center_log = []
 # Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
 # True = testování strukturálního uzavření (hypotéza)
 # False = běžné simulace s fluktuacemi
-LOW_NOISE_MODE = False
+LOW_NOISE_MODE = True
 
 # TEST_EXHALE_MODE = True aktivuje klidnější simulaci pro test strukturální paměti (výdech)
 # V běžných simulacích vypnout (False), aby došlo k plné dynamice systému
-TEST_EXHALE_MODE = False
+TEST_EXHALE_MODE = True
 
 # Parametry
 size = 128
