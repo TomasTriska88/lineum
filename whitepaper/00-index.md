@@ -18,7 +18,7 @@ Tento whitepaper popisuje hypotetický model reality, ve kterém z čistě loká
 | [6. Interpretace výsledků](06-interpretation.md) | Význam φ-pastí, vztah ke gravitaci, topologie                 |
 | [7. Závěr a výzva](07-conclusion.md)             | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
 | [8. Poděkování](08-acknowledgements.md)          | Uznání osobního i digitálního přínosu během vývoje projektu   |
-
+| [9. Hypotézy a stav ověření](09-hypotheses.md)   | Přehled formulovaných hypotéz, jejich aktuální stav a odkazy  |
 
 ---
 
