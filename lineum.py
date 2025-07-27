@@ -528,7 +528,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None
+    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None
                              ):
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
@@ -702,6 +702,9 @@ if __name__ == "__main__":
         <tr><td>Wavelength</td><td>{wavelength:.2e} m</td></tr>
         <tr><td>Effective mass</td><td>{mass:.2e} kg</td></tr>
         <tr><td>Mass relative to electron</td><td>{mass_ratio:.2e}× electron mass</td></tr>
+        <tr><td>⟨φ⟩ at blackhole death</td><td>{avg_phi_death:.3f}</td></tr>
+        <tr><td>⟨mass_ratio⟩ at blackhole death</td><td>{mass_ratio_blackholes:.6f}</td></tr>
+        <tr><td>Particles with mass_ratio < 0.01</td><td>{low_mass_count}</td></tr>
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
         {gravitational_row}
@@ -1002,6 +1005,9 @@ The result is motion not due to pulling, but due to a shared directional prefere
     include_spin = os.path.exists(
         os.path.join(output_dir, "spin_aura_avg.png"))
 
+    low_mass_count = sum(
+        1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
+
     generate_html_report(
         mass=mass,
         mass_ratio=mass_ratio,
@@ -1012,7 +1018,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
         phi_mean_field=phi_mean_field,
         phi_std_field=phi_std_field,
         mass_ratio_blackholes=mass_ratio_blackholes,
-        avg_phi_death=avg_phi_death
+        avg_phi_death=avg_phi_death,
+        low_mass_count=low_mass_count
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
