@@ -585,6 +585,12 @@ if __name__ == "__main__":
                     "🪐 Třískova hypotéza strukturálního uzavření zatím neověřena – spektrální data nedostupná"
                 )
 
+        # 🧠 Strukturální paměť kvazičástic s nízkou hmotností
+        if low_mass_count > 0 and phi_above_025_count > 0 and curl_near_zero_count > 0:
+            confirmations.append(
+                f"🧠 Strukturální paměť potvrzena: {phi_above_025_count} nízkomasových částic bylo uzavřeno ve φ > 0.25 bez zbytkového spinu (|curl| < 0.02)"
+            )
+
         if avg_phi_death is not None and avg_phi_death > 0.25:
             confirmations.append(
                 f"🌀 φ v místě zániku návratových částic potvrzuje strukturální uzavření (⟨φ⟩ = {avg_phi_death:.3f})"
@@ -713,6 +719,10 @@ if __name__ == "__main__":
         <tr><td>⟨φ⟩ at blackhole death</td><td>{avg_phi_death:.3f}</td></tr>
         <tr><td>⟨mass_ratio⟩ at blackhole death</td><td>{mass_ratio_blackholes:.6f}</td></tr>
         <tr><td>Particles with mass_ratio < 0.01</td><td>{low_mass_count}</td></tr>
+        <tr><td>⟨φ⟩ at low-mass points</td><td>{phi_low_mass_mean:.3f}</td></tr>
+        <tr><td>⟨|curl|⟩ at low-mass points</td><td>{curl_low_mass_mean:.3f}</td></tr>
+        <tr><td>Low-mass points with φ > 0.25</td><td>{phi_above_025_count}</td></tr>
+        <tr><td>Low-mass points with |curl| < 0.02</td><td>{curl_near_zero_count}</td></tr>
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
         {gravitational_row}
@@ -1033,6 +1043,15 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     save_csv("phi_curl_low_mass.csv", ["y", "x", "phi", "curl"], rows)
 
+    # 📊 Vyhodnocení paměťové stopy ve φ-pastích
+    df_low_mass = pd.read_csv(os.path.join(
+        output_dir, "phi_curl_low_mass.csv"))
+
+    phi_low_mass_mean = df_low_mass["phi"].mean()
+    curl_low_mass_mean = df_low_mass["curl"].abs().mean()
+    phi_above_025_count = (df_low_mass["phi"] > 0.25).sum()
+    curl_near_zero_count = (df_low_mass["curl"].abs() < 0.02).sum()
+
     generate_html_report(
         mass=mass,
         mass_ratio=mass_ratio,
@@ -1044,7 +1063,11 @@ The result is motion not due to pulling, but due to a shared directional prefere
         phi_std_field=phi_std_field,
         mass_ratio_blackholes=mass_ratio_blackholes,
         avg_phi_death=avg_phi_death,
-        low_mass_count=low_mass_count
+        low_mass_count=low_mass_count,
+        phi_low_mass_mean=phi_low_mass_mean,
+        curl_low_mass_mean=curl_low_mass_mean,
+        phi_above_025_count=phi_above_025_count,
+        curl_near_zero_count=curl_near_zero_count
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
