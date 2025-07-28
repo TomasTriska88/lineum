@@ -102,7 +102,7 @@ def diffuse_complex(field, rate=0.05):
     )
 
 
-def evolve(psi, delta, phi):
+def evolve(psi, delta, phi, kappa):
     amp = np.abs(psi)
     grad_x, grad_y = np.gradient(amp + delta)
     grad_mag = np.sqrt(np.clip(grad_x**2 + grad_y**2, 0, 1e4))
@@ -143,9 +143,8 @@ def evolve(psi, delta, phi):
 
     local_input = np.clip(np.abs(psi)**2, 0, 1e4)
 
-    phi += TUNING_CONST * reaction_strength * (local_input - phi)
-
-    phi += TUNING_CONST * 0.02 * diffuse_complex(phi)
+    phi += kappa * reaction_strength * (local_input - phi)
+    phi += kappa * 0.02 * diffuse_complex(phi)
 
     phi += diffusion_strength * diffuse_complex(phi)
 
@@ -201,6 +200,8 @@ if __name__ == "__main__":
     # Inicializace polí
     psi, delta = initialize_fields()
     phi = initialize_interaction_field()
+    # ladicí pole, zatím statické (všude 1.0)
+    kappa = np.ones((size, size), dtype=np.float64)
 
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
@@ -220,7 +221,7 @@ if __name__ == "__main__":
     # print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
         # Removed manual progress print
-        psi, phi = evolve(psi, delta, phi)
+        psi, phi = evolve(psi, delta, phi, kappa)
         amp = np.abs(psi)
         phase = np.angle(psi)
         grad_x, grad_y = np.gradient(phase)
@@ -228,7 +229,7 @@ if __name__ == "__main__":
         dFx_dy = np.gradient(grad_x, axis=0)
 
         raw_curl = dFy_dx - dFx_dy
-        curl = raw_curl * TUNING_CONST if APPLY_TUNING else raw_curl
+        curl = raw_curl * kappa
 
         vortices = detect_vortices(phase)
 
