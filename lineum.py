@@ -131,6 +131,7 @@ def evolve(psi, delta, phi):
     psi += phi_flow_term
 
     psi += linon_complex + fluctuation + interaction_term
+
     disipation_rate = 0.002 if TEST_EXHALE_MODE else 0.001
     psi -= disipation_rate * psi
 
@@ -142,8 +143,9 @@ def evolve(psi, delta, phi):
 
     local_input = np.clip(np.abs(psi)**2, 0, 1e4)
 
-    phi += reaction_strength * (local_input - phi)
-    phi += 0.02 * diffuse_complex(phi)  # jemná difuze pole φ
+    phi += TUNING_CONST * reaction_strength * (local_input - phi)
+
+    phi += TUNING_CONST * 0.02 * diffuse_complex(phi)
 
     phi += diffusion_strength * diffuse_complex(phi)
 
@@ -211,6 +213,10 @@ if __name__ == "__main__":
     active_tracks = {}  # id -> (y, x)
     next_id = 0
 
+    # Ladicí konstanta aplikovaná na víc složek systému
+    TUNING_CONST = 1 / 137
+    APPLY_TUNING = True
+
     # print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
         # Removed manual progress print
@@ -220,7 +226,10 @@ if __name__ == "__main__":
         grad_x, grad_y = np.gradient(phase)
         dFy_dx = np.gradient(grad_y, axis=1)
         dFx_dy = np.gradient(grad_x, axis=0)
-        curl = dFy_dx - dFx_dy
+
+        raw_curl = dFy_dx - dFx_dy
+        curl = raw_curl * TUNING_CONST if APPLY_TUNING else raw_curl
+
         vortices = detect_vortices(phase)
 
         num_pos = np.sum(vortices == 1)
@@ -970,7 +979,12 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     lifespans = lifespan_df.groupby("id")["step"].agg(["min", "max"])
     lifespans["duration"] = lifespans["max"] - lifespans["min"] + 1
-    max_lifespan = int(lifespans["duration"].max())
+
+    if lifespans["duration"].dropna().empty:
+        max_lifespan = 0
+    else:
+        max_lifespan = int(lifespans["duration"].max())
+
     median_lifespan = int(lifespans["duration"].median())
 
     # 📊 Analýza průměrné spinové aury kvazičástic
@@ -1099,4 +1113,4 @@ def update(i):
 
 ani = FuncAnimation(fig, update, frames=len(
     frames_amp), interval=200, blit=True)
-plt.show()
+# plt.show()
