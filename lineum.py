@@ -201,7 +201,10 @@ if __name__ == "__main__":
     psi, delta = initialize_fields()
     phi = initialize_interaction_field()
     # ladicí pole, zatím statické (všude 1.0)
-    kappa = np.ones((size, size), dtype=np.float64)
+
+    kappa = np.zeros((size, size), dtype=np.float64)
+    for y in range(size):
+        kappa[y, :] = np.linspace(0.1, 1.0, size)
 
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
