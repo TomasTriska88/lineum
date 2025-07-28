@@ -523,14 +523,14 @@ if __name__ == "__main__":
         finally:
             plt.close(fig)
 
-    save_gif(frames_amp, os.path.join(output_dir, persistent_path("lineum_amplitude", ".gif")),
+    save_gif(frames_amp, persistent_path("lineum_amplitude", ".gif"),
              cmap="plasma", vmin=0, vmax=0.5)
-    save_gif(frames_curl, os.path.join(output_dir, persistent_path("lineum_spin", ".gif")),
+    save_gif(frames_curl, persistent_path("lineum_spin", ".gif"),
              cmap="bwr", vmin=-0.3, vmax=0.3)
-    save_gif(frames_vort, os.path.join(
-        output_dir, persistent_path("lineum_vortices", ".gif")), cmap="bwr", vmin=-1, vmax=1)
-    save_gif(frames_particles, os.path.join(
-        output_dir, persistent_path("lineum_particles", ".gif")), cmap="gray", vmin=0, vmax=1)
+    save_gif(frames_vort, persistent_path(
+        "lineum_vortices", ".gif"), cmap="bwr", vmin=-1, vmax=1)
+    save_gif(frames_particles, persistent_path(
+        "lineum_particles", ".gif"), cmap="gray", vmin=0, vmax=1)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
@@ -544,8 +544,7 @@ if __name__ == "__main__":
 
     ani = FuncAnimation(fig, update_quiver, frames=steps,
                         interval=300, blit=True)
-    flow_path = os.path.join(
-        output_dir, persistent_path("lineum_flow", ".gif"))
+    flow_path = persistent_path("lineum_flow", ".gif")
     try:
         ani.save(flow_path, writer=PillowWriter(fps=10))
         notify_file_creation(flow_path)
@@ -860,8 +859,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     ani = FuncAnimation(fig, update_combo, frames=steps,
                         interval=300, blit=True)
-    overlay_path = os.path.join(
-        output_dir, persistent_path("lineum_full_overlay", ".gif"))
+    overlay_path = persistent_path("lineum_full_overlay", ".gif")
     try:
         ani.save(overlay_path, writer=PillowWriter(fps=10))
         notify_file_creation(overlay_path)
@@ -875,8 +873,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     npy_path = os.path.join(
         output_dir, persistent_path("frames_vortices", ".npy"))
     frames_curl_np = np.array(frames_curl)
-    npy_curl_path = os.path.join(
-        output_dir, persistent_path("frames_curl", ".npy"))
+    npy_curl_path = persistent_path("frames_curl", ".npy")
     try:
         np.save(npy_curl_path, frames_curl_np)
         notify_file_creation(npy_curl_path)
@@ -886,8 +883,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     try:
         np.save(npy_path, frames_vort_np)
         frames_amp_np = np.array(frames_amp)
-        amp_npy_path = os.path.join(
-            output_dir, persistent_path("frames_amp", ".npy"))
+        amp_npy_path = persistent_path("frames_amp", ".npy")
         try:
             np.save(amp_npy_path, frames_amp_np)
             notify_file_creation(amp_npy_path)
@@ -926,8 +922,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 🌀 Uložení φ polí pro pozdější analýzu
     frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
-    phi_npy_path = os.path.join(
-        output_dir, persistent_path("frames_phi", ".npy"))
+    phi_npy_path = persistent_path("frames_phi", ".npy")
     try:
         np.save(phi_npy_path, frames_phi_np)
         notify_file_creation(phi_npy_path)
@@ -1052,8 +1047,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     upsampled_spin_map = zoom(average_spin_map, 5, order=3)
 
     # Uložení obrázku
-    spin_img_path = os.path.join(
-        output_dir, persistent_path("spin_aura_avg", ".png"))
+    spin_img_path = persistent_path("spin_aura_avg", ".png")
     plt.figure(figsize=(6, 6))
     sns.heatmap(upsampled_spin_map, center=0,
                 cmap="bwr", cbar=True, square=True)
@@ -1063,8 +1057,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     plt.savefig(spin_img_path, dpi=150)
     plt.close()
 
-    include_spin = os.path.exists(
-        os.path.join(output_dir, "spin_aura_avg.png"))
+    include_spin = persistent_path("spin_aura_avg", ".png")
 
     low_mass_count = sum(
         1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
