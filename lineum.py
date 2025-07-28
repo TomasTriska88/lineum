@@ -10,7 +10,23 @@ import csv
 import os
 from scipy.spatial.distance import euclidean
 
-output_dir = "output"
+
+# Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
+# True = testování strukturálního uzavření (hypotéza)
+# False = běžné simulace s fluktuacemi
+LOW_NOISE_MODE = True
+
+# TEST_EXHALE_MODE = True aktivuje klidnější simulaci pro test strukturální paměti (výdech)
+# V běžných simulacích vypnout (False), aby došlo k plné dynamice systému
+TEST_EXHALE_MODE = True
+
+# 🆕 Persistent režim
+PERSISTENT_MODE = True
+run_id = "spec1"
+run_label = "true" if TEST_EXHALE_MODE else "false"
+
+output_dir = os.path.join(
+    "persistent") if PERSISTENT_MODE else "output"
 os.makedirs(output_dir, exist_ok=True)
 
 
@@ -21,6 +37,12 @@ def notify_file_creation(path, success=True, error=None):
         print(f"✅ File '{name}' has been successfully created.")
     else:
         print(f"❌ Failed to create file '{name}': {error}")
+
+
+def persistent_path(name, suffix):
+    """Vygeneruj výstupní cestu se správným prefixem podle režimu."""
+    filename = f"{run_id}_{run_label}_{name}{suffix}" if PERSISTENT_MODE else f"{name}{suffix}"
+    return os.path.join(output_dir, filename)
 
 
 def save_csv(filename, header, rows):
@@ -43,15 +65,6 @@ interaction_log = []
 amplitude_log = []
 topo_log = []
 phi_center_log = []
-
-# Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
-# True = testování strukturálního uzavření (hypotéza)
-# False = běžné simulace s fluktuacemi
-LOW_NOISE_MODE = True
-
-# TEST_EXHALE_MODE = True aktivuje klidnější simulaci pro test strukturální paměti (výdech)
-# V běžných simulacích vypnout (False), aby došlo k plné dynamice systému
-TEST_EXHALE_MODE = True
 
 # Parametry
 size = 128
@@ -151,7 +164,7 @@ def evolve(psi, delta, phi, kappa):
     return psi, phi
 
 
-def save_phi_center_plot(filename="phi_center_plot.png"):
+def save_phi_center_plot(filename=persistent_path("phi_center_plot", ".png")):
     phi_center_values = [row[1] for row in phi_center_log]
     steps_list = [row[0] for row in phi_center_log]
 
@@ -348,20 +361,23 @@ if __name__ == "__main__":
             else:
                 multi_amp_logs[pt].append(np.nan)
 
-    save_csv("radius_log.csv", ["step", "avg_radius"], radius_log)
+    save_csv(persistent_path("radius_log", ".csv"),
+             ["step", "avg_radius"], radius_log)
 
-    save_csv("particle_log.csv", [
+    save_csv(persistent_path("particle_log", ".csv"), [
              "step", "center_y", "center_x", "size"], particle_log)
 
-    save_csv(
-        "interaction_log.csv",
+    save_csv(persistent_path(
+        "interaction_log", ".csv"),
         ["step", "vortices_pos", "vortices_neg", "net_local_charge"],
         interaction_log,
     )
 
-    save_csv("amplitude_log.csv", ["step", "central_amplitude"], amplitude_log)
+    save_csv(persistent_path("amplitude_log", ".csv"), [
+             "step", "central_amplitude"], amplitude_log)
 
-    save_csv("phi_center_log.csv", ["step", "phi_center_abs"], phi_center_log)
+    save_csv(persistent_path("phi_center_log", ".csv"),
+             ["step", "phi_center_abs"], phi_center_log)
 
     # 🔍 SPEKTRÁLNÍ ANALÝZA OSCILACE V CENTRU
 
@@ -401,14 +417,14 @@ if __name__ == "__main__":
     mass_ratio = mass / electron_mass
 
     # Uložení do CSV
-    save_csv(
-        "spectrum_log.csv",
+    save_csv(persistent_path(
+        "spectrum_log", ".csv"),
         ["frequency_Hz", "amplitude"],
         zip(positive_freqs, positive_spectrum),
     )
 
-    save_csv(
-        "trajectories.csv",
+    save_csv(persistent_path(
+        "trajectories", ".csv"),
         ["id", "step", "y", "x", "amplitude"],
         trajectories,
     )
@@ -441,21 +457,21 @@ if __name__ == "__main__":
 
         # Uložení spektra pro každý bod zvlášť
         save_csv(
-            f"spectrum_log_point_{pt[0]}_{pt[1]}.csv",
+            persistent_path(f"spectrum_log_point_{pt[0]}_{pt[1]}", ".csv"),
             ["frequency_Hz", "amplitude"],
             zip(positive_freqs, positive_spectrum),
         )
 
     # Uložení shrnutí výsledků pro všechny body
-    save_csv(
-        "multi_spectrum_summary.csv",
+    save_csv(persistent_path(
+        "multi_spectrum_summary", ".csv"),
         ["y", "x", "dominant_freq_Hz", "energy_J", "mass_kg", "mass_ratio"],
         [(d["point"][0], d["point"][1], d["dominant_freq_Hz"], d["energy_J"],
           d["mass_kg"], d["mass_ratio"]) for d in multi_spectrum_details]
     )
 
     save_csv(
-        "topo_log.csv",
+        persistent_path("topo_log", ".csv"),
         ["step", "num_pos", "num_neg", "net_charge", "total_vortices"],
         topo_log,
     )
@@ -477,7 +493,8 @@ if __name__ == "__main__":
 
     plt.grid(True)
     plt.tight_layout()
-    plot_path = os.path.join(output_dir, "spectrum_plot.png")
+    plot_path = os.path.join(
+        output_dir, persistent_path("spectrum_plot", ".png"))
     try:
         plt.savefig(plot_path)
         notify_file_creation(plot_path)
@@ -506,14 +523,14 @@ if __name__ == "__main__":
         finally:
             plt.close(fig)
 
-    save_gif(frames_amp, os.path.join(output_dir, "lineum_amplitude.gif"),
+    save_gif(frames_amp, os.path.join(output_dir, persistent_path("lineum_amplitude", ".gif")),
              cmap="plasma", vmin=0, vmax=0.5)
-    save_gif(frames_curl, os.path.join(output_dir, "lineum_spin.gif"),
+    save_gif(frames_curl, os.path.join(output_dir, persistent_path("lineum_spin", ".gif")),
              cmap="bwr", vmin=-0.3, vmax=0.3)
     save_gif(frames_vort, os.path.join(
-        output_dir, "lineum_vortices.gif"), cmap="bwr", vmin=-1, vmax=1)
+        output_dir, persistent_path("lineum_vortices", ".gif")), cmap="bwr", vmin=-1, vmax=1)
     save_gif(frames_particles, os.path.join(
-        output_dir, "lineum_particles.gif"), cmap="gray", vmin=0, vmax=1)
+        output_dir, persistent_path("lineum_particles", ".gif")), cmap="gray", vmin=0, vmax=1)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
@@ -527,7 +544,8 @@ if __name__ == "__main__":
 
     ani = FuncAnimation(fig, update_quiver, frames=steps,
                         interval=300, blit=True)
-    flow_path = os.path.join(output_dir, "lineum_flow.gif")
+    flow_path = os.path.join(
+        output_dir, persistent_path("lineum_flow", ".gif"))
     try:
         ani.save(flow_path, writer=PillowWriter(fps=10))
         notify_file_creation(flow_path)
@@ -550,7 +568,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0):
+    def generate_html_report(filename=persistent_path("lineum_report", ".html"), mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0):
 
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
@@ -842,7 +860,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     ani = FuncAnimation(fig, update_combo, frames=steps,
                         interval=300, blit=True)
-    overlay_path = os.path.join(output_dir, "lineum_full_overlay.gif")
+    overlay_path = os.path.join(
+        output_dir, persistent_path("lineum_full_overlay", ".gif"))
     try:
         ani.save(overlay_path, writer=PillowWriter(fps=10))
         notify_file_creation(overlay_path)
@@ -853,9 +872,11 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 🌀 Uložení všech polí vírů do souboru pro analýzu
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
-    npy_path = os.path.join(output_dir, "frames_vortices.npy")
+    npy_path = os.path.join(
+        output_dir, persistent_path("frames_vortices", ".npy"))
     frames_curl_np = np.array(frames_curl)
-    npy_curl_path = os.path.join(output_dir, "frames_curl.npy")
+    npy_curl_path = os.path.join(
+        output_dir, persistent_path("frames_curl", ".npy"))
     try:
         np.save(npy_curl_path, frames_curl_np)
         notify_file_creation(npy_curl_path)
@@ -865,7 +886,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
     try:
         np.save(npy_path, frames_vort_np)
         frames_amp_np = np.array(frames_amp)
-        amp_npy_path = os.path.join(output_dir, "frames_amp.npy")
+        amp_npy_path = os.path.join(
+            output_dir, persistent_path("frames_amp", ".npy"))
         try:
             np.save(amp_npy_path, frames_amp_np)
             notify_file_creation(amp_npy_path)
@@ -904,7 +926,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 🌀 Uložení φ polí pro pozdější analýzu
     frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
-    phi_npy_path = os.path.join(output_dir, "frames_phi.npy")
+    phi_npy_path = os.path.join(
+        output_dir, persistent_path("frames_phi", ".npy"))
     try:
         np.save(phi_npy_path, frames_phi_np)
         notify_file_creation(phi_npy_path)
@@ -1029,7 +1052,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
     upsampled_spin_map = zoom(average_spin_map, 5, order=3)
 
     # Uložení obrázku
-    spin_img_path = os.path.join(output_dir, "spin_aura_avg.png")
+    spin_img_path = os.path.join(
+        output_dir, persistent_path("spin_aura_avg", ".png"))
     plt.figure(figsize=(6, 6))
     sns.heatmap(upsampled_spin_map, center=0,
                 cmap="bwr", cbar=True, square=True)
@@ -1060,7 +1084,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
         if 0 <= y < size and 0 <= x < size:
             rows.append([y, x, phi_final[y, x], curl_final[y, x]])
 
-    save_csv("phi_curl_low_mass.csv", ["y", "x", "phi", "curl"], rows)
+    save_csv(persistent_path("phi_curl_low_mass", ".csv"),
+             ["y", "x", "phi", "curl"], rows)
 
     # 📊 Vyhodnocení paměťové stopy ve φ-pastích
     df_low_mass = pd.read_csv(os.path.join(

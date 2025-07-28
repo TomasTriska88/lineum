@@ -17,6 +17,7 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Strukturální otisk návratových částic  | 🔄 testováno, 1 případ pozorován | interpretace z φ = 4077               | [hypotheses/return_phi.md](../hypotheses/return_phi.md)     |
 | Tříska’s Lineum Echo Hypothesis | 🔄 testováno | T. Tříska (2025) | [hypotheses/return_echo.md](../hypotheses/return_echo.md) |
 | Tříska’s Evolution–Mutation Hypothesis | 🔄 testováno | T. Tříska (2025) | [06-interpretation.md (Tříska’s Evolution–Mutation Flow Model)](06-interpretation.md) |
+| Tříska’s Resonant Seed Hypothesis | 🟡 navrženo | T. Tříska (2025) | [hypotheses/resonant_seed.md](../hypotheses/resonant_seed.md) |
 
 
 <!-- prettier-ignore-end -->
