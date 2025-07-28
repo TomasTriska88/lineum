@@ -18,6 +18,7 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Tříska’s Lineum Echo Hypothesis | 🔄 testováno | T. Tříska (2025) | [hypotheses/return_echo.md](../hypotheses/return_echo.md) |
 | Tříska’s Evolution–Mutation Hypothesis | 🔄 testováno | T. Tříska (2025) | [06-interpretation.md (Tříska’s Evolution–Mutation Flow Model)](06-interpretation.md) |
 | Tříska’s Resonant Seed Hypothesis | 🟡 navrženo | T. Tříska (2025) | [hypotheses/resonant_seed.md](../hypotheses/resonant_seed.md) |
+| Tříska’s Dimensional Transparency Hypothesis | 🟡 navrženo | T. Tříska (2025) | [hypotheses/dimensional_transparency.md](../hypotheses/dimensional_transparency.md) |
 
 
 <!-- prettier-ignore-end -->
