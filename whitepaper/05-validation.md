@@ -49,9 +49,54 @@ V dalších fázích výzkumu bude validace rozšířena o:
 | Výtrysk z φ-pasti (jet) | [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_spin.gif`](../output/lineum_spin.gif), `frames_curl.npy` | ❌ zatím nepozorován |
 | Echo návrat částic      | [`true_trajectories.csv`](../output/true_trajectories.csv) – opakovaný výskyt částic ve stejných souřadnicích v čase (např. [127, 0]) | ✔️ pozorováno         |
 | Migrace vírových jader | `frames_curl.npy`, centroid tracking – dominantní vír sleduje souvislou dráhu v čase | ✔️ potvrzeno |
-
-
 <!-- prettier-ignore-end -->
+
+## 5.2.1 Výsledky běhů `spec1` a `spec2`
+
+### Testovací sada `spec1`
+
+| Běh           | Konfigurace                                | Výstupy                                                         | Pozorování                                                                     |
+| ------------- | ------------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `spec1_true`  | `exhale_mode=True`, `low_noise_mode=True`  | `spin_aura_avg.png`, `phi_curl_low_mass.csv`, `frames_curl.npy` | Stabilní struktury, 49 tichých zániků φ, dipólová spin aura                    |
+| `spec1_false` | `exhale_mode=True`, `low_noise_mode=False` | stejné                                                          | Téměř stejné tiché zániky (46/49), větší spinová aktivita, aura stále dipólová |
+
+### Vyhodnocení
+
+- **Tříska’s Silent Collapse Hypothesis:** potvrzena – částice zanikají při φ > 0.25 a |curl| < 0.02, bez strukturální stopy
+- **Tříska’s Resonant Seed Hypothesis:** potvrzena – tiché zániky přítomné ve všech bězích, nezávisle na šumu
+- **Tříska’s Tensor Spin Hypothesis:** neprokázána – žádná čtyřnásobná symetrie, spin aura vždy dipólová
+- **Tříska’s Dimensional Transparency Hypothesis:** zatím neprokázána – gradientní κ sice ukazuje slábnutí struktur, ale bez ostrovního κ nelze hypotézu o průhlednosti potvrdit
+
+---
+
+### Testovací sada `spec2`
+
+| Běh           | Konfigurace                                                | Výstupy                                                          | Pozorování                                                              |
+| ------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `spec2_true`  | `exhale_mode=True`, `low_noise_mode=True`, `κ = gradient`  | `phi_curl_low_mass.csv`, `spin_aura_avg.png`, `trajectories.csv` | Zániky φ pozorovány rovnoměrně – ale pole κ není ostrovní               |
+| `spec2_false` | `exhale_mode=True`, `low_noise_mode=False`, `κ = gradient` | stejné                                                           | Gradientní konfigurace nepřináší průkaz pro DTH – je potřeba ostrovní κ |
+
+### Vyhodnocení
+
+- **Tříska’s Silent Collapse Hypothesis:** znovu potvrzena – pozorovány tiché zániky i mimo střední φ, bez interference a víru
+- **Tříska’s Resonant Seed Hypothesis:** potvrzena – 49 zániků φ, z toho 37 tiché
+- **Tříska’s Tensor Spin Hypothesis:** znovu neprokázána
+- **Tříska’s Dimensional Transparency Hypothesis:** zatím neprokázána – v testovaných bězích nebyla použita ostrovní konfigurace κ, nelze tedy potvrdit hypotézu o průhlednosti
+
+---
+
+### Testovací sada `spec2`
+
+| Běh           | Konfigurace                                              | Výstupy                                                          | Pozorování                                                        |
+| ------------- | -------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `spec2_true`  | `exhale_mode=True`, `low_noise_mode=True`, `κ = ostrov`  | `phi_curl_low_mass.csv`, `spin_aura_avg.png`, `trajectories.csv` | Zániky φ koncentrované ve φ-ostrově, částice mimo κ okamžitě mizí |
+| `spec2_false` | `exhale_mode=True`, `low_noise_mode=False`, `κ = ostrov` | stejné                                                           | Mimo κ nejsou částice ani víry, struktura mizí – potvrzení DTH    |
+
+### Vyhodnocení
+
+- **Tříska’s Dimensional Transparency Hypothesis:** potvrzena – struktura vzniká a drží se jen tam, kde je κ > 0
+- **Tříska’s Resonant Seed Hypothesis:** opět potvrzena – 49 zániků φ, z toho 37 tiché
+- **Tříska’s Tensor Spin Hypothesis:** znovu neprokázána
 
 ---
 

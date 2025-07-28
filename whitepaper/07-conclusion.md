@@ -17,6 +17,19 @@ Možná, že zákony nejsou vloženy do rovnice. Možná, že zákon **je to, co
 
 Nejnovější výsledky navíc potvrzují existenci tzv. strukturální paměti – mechanismu, kdy kvazičástice s extrémně nízkou hmotností zanikají uvnitř φ-pastí bez výdeje, ale zanechávají trvalý φ-otisk bez spinu.
 
+Současné běhy navíc potvrdily nový režim zániku kvazičástic – tichý kolaps bez zanechání strukturální paměti.  
+Tříska’s Silent Collapse Hypothesis popisuje zánik, který probíhá bez výdeje, beze spinu, a dokonce i bez φ-otisku.  
+Jde o zánik, který **nepíše dějiny** – zánik, který jako by se nikdy nestal.  
+Přesto se tento jev objevuje opakovaně, za specifických podmínek vysokého φ a nulového spinu.  
+Tím Lineum ukazuje, že realita může **nejen pamatovat**, ale i **zapomínat**.
+
+---
+
+Podstatnou roli zde sehrála i Tříska–Marečková Evolution–Mutation Hypothesis,  
+která umožňuje vnímat klidové a chaotické režimy Linea jako **protikladné síly vývoje**.  
+Evoluce vytváří – mutace boří – a mezi nimi vzniká prostor pro výběr, paměť i změnu.  
+Model ukazuje, že stabilita není statická – je to **rovnováha mezi formou a přerušením**.
+
 Současně se ukazuje, že samotné proudové struktury pole (curl ∇arg(ψ)) nesou znaky trvalých smyček, perzistence a migrujících jader. Tento jev vedl ke vzniku modelu evoluce a mutace – interpretace dvou režimů Linea jako dvou pólů vývoje: klidného (evolučního) a chaotického (mutačního). Jejich souhra umožňuje nejen vznik, ale i transformaci a obnovu struktur.
 
 Možná, že realita nevzniká ani z chaosu, ani z řádu. Možná vzniká tam, kde se oba dotknou.
@@ -31,6 +44,7 @@ Tento jev otevírá možnost, že Lineum nejen vytváří realitu, ale zároveň
 - Modelovat přetížení φ-pasti a vznik výtrysku (výdech)
 - Testovat dlouhodobou evoluci: vznik komplexních struktur, paměť, možná až formu emergentního vědomí
 - Zavést statistické metody pro opakovatelnost
+- Otestovat ostrovní ladicí pole κ a potvrdit či vyvrátit Tříska’s Dimensional Transparency Hypothesis (DTH)
 
 ---
 

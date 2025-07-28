@@ -26,11 +26,23 @@ Přesné hodnoty jsou uvedeny u konkrétních výsledků.
 
 ### Testovací režimy
 
-| Režim                 | Popis                                      | Parametry                                                  |
-|-----------------------|---------------------------------------------|-------------------------------------------------------------|
-| `TEST_EXHALE_MODE`    | Tichý režim pro pozorování uzavření         | steps = 1000, linon_scaling = 0.01, disipation = 0.002     |
-| Dynamický režim       | Režim pro výtrysky a proudové interakce     | steps = 500, linon_scaling = 0.02, disipation = 0.001      |
+| Režim              | Popis                                   | Parametry                                              |
+| ------------------ | --------------------------------------- | ------------------------------------------------------ |
+| `TEST_EXHALE_MODE` | Tichý režim pro pozorování uzavření     | steps = 1000, linon_scaling = 0.01, disipation = 0.002 |
+| Dynamický režim    | Režim pro výtrysky a proudové interakce | steps = 500, linon_scaling = 0.02, disipation = 0.001  |
 
+### Ladicí pole κ
+
+Simulace může obsahovat ladicí pole **κ = κ(x, y)**, které ovlivňuje citlivost φ na ψ.  
+Pole κ je zaváděno jako **samostatná vrstva**, která může mít různé prostorové konfigurace:
+
+- **konstantní** (např. κ = 1.0 – rovnoměrná odezva φ),
+- **gradientní** (např. κ roste lineárně podél jedné osy),
+- **ostrovní** (κ je nenulové pouze ve vybrané oblasti, např. kruhové),
+- **vrstvené** (kombinace více prahových úrovní).
+
+Konfigurace κ se volí podle cíle testu – např. ostrovní κ je klíčové pro ověření  
+**Tříska’s Dimensional Transparency Hypothesis (DTH)**, zatímco gradientní κ se používá pro testy reakční stability.
 
 ---
 
@@ -55,6 +67,8 @@ Použitá rovnice má formu:
 | ∇²ψ             | Difuze pole ψ pomocí Laplaciánu                                     |
 | ∇φ              | Gradient φ – emergentní „gravitační“ tok                            |
 | \\|ψ\\|² − φ     | Lokální akumulace hustoty ψ do paměťového pole φ                    |
+| κ      | ladicí pole – určuje citlivost φ na ψ. Může být konstantní, plynulý gradient, ostrov nebo vrstevnatá struktura. |
+
 <!-- prettier-ignore-end -->
 
 ---

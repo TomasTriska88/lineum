@@ -8,8 +8,14 @@ Základní rovnice systému Lineum má tvar:
 
 ```
 ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
-φ ← φ + (|ψ|² − φ) + ∇²φ
+φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ ∇²φ
+κ ← κ(x, y)
+
 ```
+
+Pole **κ** umožňuje řídit citlivost φ na ψ a jeho difuzi lokálně.  
+Může být prostorově konstantní, plynulý (např. gradientní) nebo lokalizovaný („ostrovní“).  
+Jeho konfigurace má přímý dopad na vznik struktur a je klíčová pro testy hypotéz jako je **Tříska’s Dimensional Transparency Hypothesis (DTH)**.
 
 Mezi opakovaně detekovanými jevy nalezneme:
 
