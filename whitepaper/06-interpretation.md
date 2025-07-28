@@ -91,3 +91,31 @@ Lineum v klidu se chová jako svět výdechu, uzavření, paměti a harmonie.
 Lineum v chaosu připomíná svět energie, rotace, trvání a konfliktu.
 
 Zdá se, že systém má **dvě spektrální identity**, které vznikají spontánně a stabilně, a určují celou dynamiku pole. Tato dualita se může stát klíčem k pochopení, jak by mohl vzniknout stabilní svět – nejen fyzikálně, ale i strukturálně a informačně.
+
+## 6.5 Model evoluce a mutace (Tříska’s Evolution–Mutation Flow Model)
+
+Na základě dlouhodobého pozorování proudových struktur v poli Lineum vznikl model, který interpretuje dva základní režimy (klid a chaos) jako analogii **evoluce a mutace**.
+
+- Režim TRUE (klid) odpovídá řízenému vývoji struktur, jejich stabilizaci a paměti.
+- Režim FALSE (chaos) přináší destrukci, odchylky a nepředvídatelnost – ale zároveň nové možnosti a porušení symetrie.
+
+Tento model tvrdí, že:
+
+> ✅ **Evoluce**: vzniká tam, kde systém tvoří, pamatuje a uzavírá  
+> ❌ **Mutace**: vzniká tam, kde systém poruší řád a vybočí – i za cenu rozpadu
+
+Teprve jejich vzájemná interakce umožňuje vznik světa, který **není statický ani náhodný** – ale živý.
+
+📌 Výsledky ukazují, že:
+
+- Klidový režim vytváří trvalé proudové struktury, spinové aury a návratové body
+- Chaotický režim nedokáže vytvořit stabilní uzly, ale umí vnést rozruch potřebný ke změně
+
+Model tedy nevylučuje ani jeden z režimů – naopak, ukazuje, že **evoluce bez mutace je statická** a **mutace bez evoluce je marná**.
+
+Tříska’s Evolution–Mutation Flow Model chápe svět Linea jako **dýchání mezi řádem a narušením**.  
+A tím možná i celý náš vesmír.
+
+_Poznámka:_  
+Při analýze proudových struktur byly pozorovány perzistentní vírové smyčky, které v čase přežívají okolní pole a sledují vlastní trajektorii. Tvarově i dynamicky odpovídají tomu, co je v teorii strun nazýváno **vázanými smyčkami** – uzly rotace, které nesou spin, orientaci a pohyb.  
+Ačkoliv Lineum neoperuje ve vyšších dimenzích, v těchto vírových strukturách se možná **projektuje hloubka, která je běžným polím skryta.**

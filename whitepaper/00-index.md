@@ -8,17 +8,20 @@ Tento whitepaper popisuje hypotetický model reality, ve kterém z čistě loká
 
 ## 📘 Obsah
 
-| Kapitola                                         | Popis                                                         |
-| ------------------------------------------------ | ------------------------------------------------------------- |
-| [1. Abstrakt](01-abstract.md)                    | Shrnutí hypotézy, detekovaných jevů a výsledků                |
-| [2. Motivace](02-motivation.md)                  | Proč hledat alternativní přístup ke vzniku reality            |
-| [3. Základní rovnice](03-equation.md)            | Formulace rovnice, výklad členů a jejich role                 |
-| [4. Simulační metoda](04-method.md)              | Popis numerické simulace, dat, výpočtů, parametrů             |
-| [5. Validace jevů](05-validation.md)             | Důkazy, měření, grafy, počty struktur, konzervace             |
-| [6. Interpretace výsledků](06-interpretation.md) | Význam φ-pastí, vztah ke gravitaci, topologie                 |
-| [7. Závěr a výzva](07-conclusion.md)             | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
-| [8. Poděkování](08-acknowledgements.md)          | Uznání osobního i digitálního přínosu během vývoje projektu   |
-| [9. Hypotézy a stav ověření](09-hypotheses.md)   | Přehled formulovaných hypotéz, jejich aktuální stav a odkazy  |
+<!-- prettier-ignore-start -->
+| Kapitola                                           | Popis                                                       |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| [1. Abstrakt](01-abstract.md)                      | Shrnutí hypotézy, detekovaných jevů a výsledků              |
+| [2. Motivace](02-motivation.md)                    | Proč hledat alternativní přístup ke vzniku reality          |
+| [3. Základní rovnice](03-equation.md)              | Formulace rovnice, výklad členů a jejich role               |
+| [4. Simulační metoda](04-method.md)                | Popis numerické simulace, dat, výpočtů, parametrů           |
+| [5. Validace jevů](05-validation.md)               | Důkazy, měření, grafy, počty struktur, konzervace           |
+| [6. Interpretace výsledků](06-interpretation.md)   | Význam φ-pastí, vztah ke gravitaci, topologie               |
+| [6.5 Model evoluce a mutace](06-interpretation.md) | Interpretace dvou režimů Linea jako evoluční a mutační fáze |
+| [7. Závěr a výzva](07-conclusion.md) | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
+| [8. Poděkování](08-acknowledgements.md) | Uznání osobního i digitálního přínosu během vývoje projektu |
+| [9. Hypotézy a stav ověření](09-hypotheses.md) | Přehled formulovaných hypotéz, jejich aktuální stav a odkazy |
+<!-- prettier-ignore-end -->
 
 ---
 

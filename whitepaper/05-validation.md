@@ -48,6 +48,8 @@ V dalších fázích výzkumu bude validace rozšířena o:
 | Strukturální paměť    | `phi_curl_low_mass.csv`, `multi_spectrum_summary.csv` – 49 částic s mass_ratio < 0.01, φ > 0.25, z toho 37 s |curl| < 0.02 (uzavření)    | ✔️ potvrzeno              |
 | Výtrysk z φ-pasti (jet) | [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_spin.gif`](../output/lineum_spin.gif), `frames_curl.npy` | ❌ zatím nepozorován |
 | Echo návrat částic      | [`true_trajectories.csv`](../output/true_trajectories.csv) – opakovaný výskyt částic ve stejných souřadnicích v čase (např. [127, 0]) | ✔️ pozorováno         |
+| Migrace vírových jader | `frames_curl.npy`, centroid tracking – dominantní vír sleduje souvislou dráhu v čase | ✔️ potvrzeno |
+
 
 <!-- prettier-ignore-end -->
 
