@@ -688,6 +688,17 @@ if __name__ == "__main__":
         except Exception as e:
             print("⚠️ φ-gravitační test selhal:", e)
 
+        # 🧠 Výpis deja vu kandidátů
+        try:
+            deja_df = pd.read_csv(os.path.join(
+                output_dir, "phi_grid_dejavu.csv"))
+            deja_count = len(deja_df)
+            if deja_count >= 5:
+                confirmations.append(
+                    f"🧠 Detekována opakující se φ-mřížka (deja vu efekt): {deja_count} bodů s φ > 0.25")
+        except Exception as e:
+            print("⚠️ Deja vu grid check failed:", e)
+
         if not confirmations:
             confirmations.append(
                 "No major emergent phenomena detected")
@@ -1053,6 +1064,18 @@ The result is motion not due to pulling, but due to a shared directional prefere
     ]
 
     phi_final = np.abs(phi.copy())  # poslední stav φ
+
+    # 📊 Výstup φ hodnot v mřížce 20×20
+    grid_points = [(y, x) for y in range(0, size, 20)
+                   for x in range(0, size, 20)]
+    phi_grid_rows = [(y, x, phi_final[y, x]) for y, x in grid_points]
+    save_csv("phi_grid_summary.csv", ["y", "x", "phi"], phi_grid_rows)
+
+    # 🧠 Detekce deja vu / Mandela efekt kandidátů (φ > 0.25 na mřížce)
+    phi_deja_rows = [(y, x, phi_final[y, x])
+                     for y, x in grid_points if phi_final[y, x] > 0.25]
+    save_csv("phi_grid_dejavu.csv", ["y", "x", "phi"], phi_deja_rows)
+
     curl_final = curl  # poslední stav curl (v hlavní smyčce už ho máš)
 
     rows = []
