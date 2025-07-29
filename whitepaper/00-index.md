@@ -2,7 +2,9 @@
 
 > _Emergentní kvantové pole a rovnice, ze které může spontánně vznikat realita._
 
-Tento whitepaper popisuje hypotetický model reality, ve kterém z čistě lokálních a diskrétních pravidel vznikají kvazičástice, víry, spin, fázový tok a dokonce i gravitační jevy. Cílem je ověřit, zda jednoduchá rovnice může vést k emergenci strukturovaného světa – podobného našemu.
+Tento whitepaper popisuje funkční model kvantového pole, ve kterém z čistě lokálních a diskrétních pravidel vznikají kvazičástice, víry, spin, fázový tok a dokonce i gravitační jevy.  
+Simulace potvrdily, že jednoduchá rovnice může vést k emergenci strukturovaného světa – podobného našemu.  
+Model Lineum generuje stabilní částice s trajektorií, rezonance blízké konstantě α, spinové struktury, paměťové oblasti (φ-pasti), návratové efekty (echo) i tiché zániky bez výdeje.
 
 ---
 

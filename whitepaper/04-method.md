@@ -2,12 +2,15 @@
 
 ## 4.1 Přehled
 
-Pro ověření hypotézy emergentního chování byla rovnice evoluce pole Lineum implementována jako numerická simulace na dvourozměrné diskrétní mřížce. Simulace probíhá ve diskrétních krocích bez použití explicitního času, sil nebo globální geometrie.
+Pro testování a ověřování emergentních jevů byla rovnice evoluce pole Lineum implementována jako numerická simulace na dvourozměrné diskrétní mřížce. Simulace probíhá ve diskrétních krocích bez použití explicitního času, sil nebo globální geometrie.
 
-Každý krok aktualizuje dvě pole:
+Každý krok aktualizuje tři pole:
 
 - **ψ** – komplexní skalární pole reprezentující napětí v systému,
-- **φ** – reálné pole emergujících interakcí.
+- **φ** – reálné pole emergujících interakcí,
+- **κ** – ladicí pole určující lokální citlivost φ na ψ.
+
+Tyto tři vrstvy spolu tvoří samostatný, emergentní systém – ψ určuje napětí, φ uchovává paměť, a κ ladí reakční charakter systému.
 
 Výpočetní smyčka aplikuje výhradně lokální operace (gradient, Laplacián, šum, nelineární excitace) a vyhodnocuje výstupy jako amplitudu, fázi, spin, víry, trajektorie částic nebo spektrum oscilací.
 
@@ -118,6 +121,8 @@ Výsledky jsou exportovány do složky `output/` a dokumentovány v HTML reportu
 ## 4.7 Poznámka k rozsahu validace
 
 V této fázi jsou některé jevy, zejména ty související s makroskopickým chováním kvazičástic, detekovány vizuálně na základě výstupů ze simulace (např. animace, φ-pole, trajektorie). Tyto závěry zatím nejsou kvantifikovány statisticky. V dokumentu je výslovně odlišujeme jako **hypotetické** nebo **dále testované**. Plán jejich ověření je uveden v `todo.md`.
+
+> Například φ-paměť a echo efekt jsou nyní ověřovány kombinací výstupů `phi_curl_low_mass.csv`, `multi_spectrum_summary.csv` a `trajectories.csv`.
 
 ---
 

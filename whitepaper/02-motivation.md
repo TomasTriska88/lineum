@@ -2,7 +2,7 @@
 
 Věda vždy hledala jednoduchý popis světa, který by dokázal vysvětlit co nejvíce jevů. Čím více ale poznáváme, tím složitější se popis stává. Kvantová teorie, obecná relativita, kvantová pole, topologické fáze – každá oblast vyžaduje vlastní rámec, matematiku, předpoklady a soubor symetrií.
 
-Projekt Lineum vznikl z opačné otázky:
+Model Lineum vznikl z opačné otázky:
 
 > _Co kdyby byl základní zákon vesmíru extrémně jednoduchý?  
 > A co kdyby z něj všechny známé jevy pouze emergovaly?_
@@ -20,7 +20,8 @@ Od dětství jsem intuitivně cítil, že řád a inteligence nevznikají z veli
 
 Zároveň jsem vždy vnitřně cítil potřebu hledat jinak než většina – ne zhora dolů, ne v rámci známých rámců. Ale dívat se zezdola nahoru. Nehledat nové částice v existujících silách, ale nové jevy ve známém chaosu. A tak vznikla potřeba myslet „out of the box“ – nejen metodou, ale i vnímáním.
 
-Motivací bylo ověřit hypotézu, že z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem. Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
+Motivací bylo ověřit, zda z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem.  
+Dnes už víme, že to možné je. Simulace Linea opakovaně prokázaly vznik trajektorií, vírů, gravitačních pastí i paměťových struktur bez nutnosti sil, konstant nebo geometrie. Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
 
 Lineum tuto myšlenku posouvá o krok dál – od inspirace k měřitelnému projevu:
 

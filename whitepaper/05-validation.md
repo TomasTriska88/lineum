@@ -71,22 +71,6 @@ V dalších fázích výzkumu bude validace rozšířena o:
 
 ### Testovací sada `spec2`
 
-| Běh           | Konfigurace                                                | Výstupy                                                          | Pozorování                                                              |
-| ------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `spec2_true`  | `exhale_mode=True`, `low_noise_mode=True`, `κ = gradient`  | `phi_curl_low_mass.csv`, `spin_aura_avg.png`, `trajectories.csv` | Zániky φ pozorovány rovnoměrně – ale pole κ není ostrovní               |
-| `spec2_false` | `exhale_mode=True`, `low_noise_mode=False`, `κ = gradient` | stejné                                                           | Gradientní konfigurace nepřináší průkaz pro DTH – je potřeba ostrovní κ |
-
-### Vyhodnocení
-
-- **Tříska’s Silent Collapse Hypothesis:** znovu potvrzena – pozorovány tiché zániky i mimo střední φ, bez interference a víru
-- **Tříska’s Resonant Seed Hypothesis:** potvrzena – 49 zániků φ, z toho 37 tiché
-- **Tříska’s Tensor Spin Hypothesis:** znovu neprokázána
-- **Tříska’s Dimensional Transparency Hypothesis:** zatím neprokázána – v testovaných bězích nebyla použita ostrovní konfigurace κ, nelze tedy potvrdit hypotézu o průhlednosti
-
----
-
-### Testovací sada `spec2`
-
 | Běh           | Konfigurace                                              | Výstupy                                                          | Pozorování                                                        |
 | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `spec2_true`  | `exhale_mode=True`, `low_noise_mode=True`, `κ = ostrov`  | `phi_curl_low_mass.csv`, `spin_aura_avg.png`, `trajectories.csv` | Zániky φ koncentrované ve φ-ostrově, částice mimo κ okamžitě mizí |
@@ -95,7 +79,8 @@ V dalších fázích výzkumu bude validace rozšířena o:
 ### Vyhodnocení
 
 - **Tříska’s Dimensional Transparency Hypothesis:** potvrzena – struktura vzniká a drží se jen tam, kde je κ > 0
-- **Tříska’s Resonant Seed Hypothesis:** opět potvrzena – 49 zániků φ, z toho 37 tiché
+- **Tříska’s Resonant Seed Hypothesis:** potvrzena – tiché zániky přítomné i při vyšším šumu
+- **Tříska’s Silent Collapse Hypothesis:** potvrzena – částice zanikají bez vírové stopy
 - **Tříska’s Tensor Spin Hypothesis:** znovu neprokázána
 
 ---

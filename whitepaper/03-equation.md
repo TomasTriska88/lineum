@@ -37,15 +37,15 @@ Základní rovnice může být zapsána dvěma způsoby:
 
 ## 3.2 Složení rovnice
 
-| Člen             | Popis                                                                                             |
-| ---------------- | ------------------------------------------------------------------------------------------------- |
-| `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇∥ψ∥ + ∥ψ∥)                                    |
-| `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)                                                       |
-| `interakce` / φψ | interakce s polem φ (zesílení nebo modulace)                                                      |
-| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                                                                          |
-| `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                                                               |
-| `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok                                                          |
-| `κ`              | ladicí pole – reguluje odezvu φ na ψ a jeho difuzi; může být konstantní, gradientní nebo ostrovní |
+| Člen             | Popis                                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇∥ψ∥ + ∥ψ∥)                                                                        |
+| `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)                                                                                           |
+| `interakce` / φψ | interakce s polem φ – lokální zesílení amplitudy ψ podle hodnoty φ; umožňuje stabilitu a setrvačnost částic v gravitačních centrech φ |
+| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                                                                                                              |
+| `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                                                                                                   |
+| `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok                                                                                              |
+| `κ`              | ladicí pole – reguluje odezvu φ na ψ a jeho difuzi; může být konstantní, gradientní nebo ostrovní                                     |
 
 Poznámka: V tabulce používáme `∥ψ∥` místo běžného `|ψ|`, aby byl zápis kompatibilní s formátováním tabulek. Oba symboly označují normu komplexního pole ψ.
 
@@ -161,4 +161,4 @@ Zavedením ladicího pole κ vzniká možnost řídit odezvu systému lokálně 
 Ve spojení s testy DTH se ukazuje, že κ může určovat i **viditelnost** – v oblastech s nízkým κ nevznikají částice ani víry.
 
 - ✅ Podmínky pro vznik struktur lze ladit lokálně
-- ✅ Potvrzena hypotéza DTH – průhlednost v nízkém κ
+- ✅ Gradientní κ způsobuje směrovou projekci – potvrzuje hypotézu Tříka's Dimensional Transparency Hypothesis nejen jako absenci, ale i jako řízenou selekci vznikajících struktur.

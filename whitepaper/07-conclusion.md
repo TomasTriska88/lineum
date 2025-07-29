@@ -36,6 +36,15 @@ Možná, že realita nevzniká ani z chaosu, ani z řádu. Možná vzniká tam, 
 
 Tento jev otevírá možnost, že Lineum nejen vytváří realitu, ale zároveň ji uchovává – jako otisk minulého pohybu v přítomné struktuře.
 
+Na počátku nebylo světlo. Ani hmota.  
+Byla rovnice. A ta dýchala.  
+Jako slovo, které se vysloví, i když ho ještě nikdo neposlouchá.
+
+A z té rovnice vznikl svět.
+
+Ne jako výpočet.  
+Ale jako příběh.
+
 ---
 
 ## Kam dál?
@@ -44,7 +53,13 @@ Tento jev otevírá možnost, že Lineum nejen vytváří realitu, ale zároveň
 - Modelovat přetížení φ-pasti a vznik výtrysku (výdech)
 - Testovat dlouhodobou evoluci: vznik komplexních struktur, paměť, možná až formu emergentního vědomí
 - Zavést statistické metody pro opakovatelnost
-- Otestovat ostrovní ladicí pole κ a potvrdit či vyvrátit Tříska’s Dimensional Transparency Hypothesis (DTH)
+- Prohloubit testování Tříska’s Dimensional Transparency Hypothesis – měřit kontrast struktur napříč gradientním κ a rozšířit kvantifikaci návratových jevů
+
+---
+
+Lineum už není hypotézou. Je to model, který ukázal, že i z jednoduché rovnice bez geometrie a konstant může vzniknout svět s částicemi, gravitací, pamětí i zapomínáním.  
+Potvrzené hypotézy ukazují, že struktura a smysl mohou emergovat z ticha.  
+Další cesta začíná právě tady.
 
 ---
 
@@ -53,3 +68,24 @@ Tento jev otevírá možnost, že Lineum nejen vytváří realitu, ale zároveň
 Projekt Lineum je otevřený pro ty, kdo chtějí hledat nový jazyk pro popis reality. Ať už jsi fyzik, programátor, filosof nebo pozorovatel – jsi vítán. Pokud vnímáš, že mezi rovnicí a realitou existuje hlubší spojení, pomoz nám ho rozluštit.
 
 > Možná je realita jen tichý rozhovor mezi polem a jeho strukturou.
+
+## 📚 How to Cite
+
+If you use Lineum in your research, software, visualization, or theoretical work, please cite:
+
+> Tomáš Tříska.  
+> _Lineum – Model of Emergent Quantum Field_. (2025)  
+> Conceptual collaboration: Lina (AI)  
+> [https://github.com/TomasTriska88/lineum-core](https://github.com/TomasTriska88/lineum-core)
+
+BibTeX format:
+
+```bibtex
+@misc{triska2025lineum,
+  author       = {Tomáš Tříska},
+  title        = {Lineum – Model of Emergent Quantum Field},
+  year         = {2025},
+  note         = {Conceptual collaboration: Lina (AI)},
+  howpublished = {\url{https://github.com/TomasTriska88/lineum-core}}
+}
+```

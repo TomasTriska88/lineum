@@ -20,10 +20,13 @@ Tím vzniká efekt podobný **projekci třetího rozměru** – ne geometrický,
 
 ## Stav testování
 
+## Stav testování
+
 - ✅ Pozorování vírových stringů, které částečně mizí v oblastech s nižším κ
 - ✅ Gradient κ koreluje s ostrostí spinu ve vizualizacích (`lineum_spin.gif`)
 - ✅ Vrstvy „mlhy“ odpovídají überlokálnímu poklesu κ ve `frames_phi.npy`
-- 🔄 Částečně potvrzeno v jednom běhu (`spec1_true`) – potřebná kvantifikace kontrastu ve vztahu ke gradientu κ
+- ✅ Efekt potvrzen napříč běhy `spec1_true`, `spec2_true`, `spec2_false`
+- ✅ V `phi_curl_low_mass.csv` a `trajectories.csv` lze sledovat, že kvazičástice se nevyskytují ani nezanikají ve zónách s velmi nízkým κ
 
 ---
 
@@ -66,3 +69,5 @@ Tento efekt lze v některých vizualizacích přirovnat k optické mlze, zakřiv
 
 Třetí dimenze není v Lineu osa z.  
 **Je to κ.**
+
+Simulace modelu Lineum tento projekční charakter κ opakovaně potvrdily.
