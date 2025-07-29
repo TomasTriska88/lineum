@@ -29,12 +29,12 @@ Model Lineum generuje stabilní částice s trajektorií, rezonance blízké kon
 
 ## 🧪 Výstupy a vizualizace
 
-Vizualizace a generovaný report najdete ve složce [`/output/`](https://github.com/TomasTriska88/lineum-core/tree/main/output).
+Vizualizace a generovaný report najdete ve složce [`/persistant/`](https://github.com/TomasTriska88/lineum-core/tree/main/persistant).
 
 - topologie, spin, overlay GIFy
 
 ---
 
 📄 Verze dokumentu: `1.0`  
-🗓️ Poslední aktualizace: 2025-07-26 0:58 CET  
+🗓️ Poslední aktualizace: 2025-07-29 12:44 CET  
 🧭 Whitepaper je ve vývoji – některé kapitoly jsou rozpracované.
