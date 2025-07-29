@@ -10,6 +10,30 @@ import csv
 import os
 from scipy.spatial.distance import euclidean
 
+# 🛠️ Běhové přepínače – snadné spouštění běhů
+RUN_ID = 4             # číslo běhu (1, 2, ...)
+RUN_MODE = "true"      # "true" nebo "false"
+# použito jako prefix všech výstupních souborů
+RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}"
+
+# 🔧 Mapování konfigurací
+CONFIGS = {
+    (1, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
+    (1, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
+    (2, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
+    (2, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
+    (3, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
+    (3, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
+    (4, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
+    (4, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
+}
+
+# 📦 Aplikace konfigurace
+cfg = CONFIGS.get((RUN_ID, RUN_MODE), {})
+LOW_NOISE_MODE = cfg.get("LOW_NOISE_MODE", False)
+TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
+KAPPA_MODE = cfg.get("KAPPA_MODE", "gradient")
+
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -25,7 +49,7 @@ def notify_file_creation(path, success=True, error=None):
 
 def save_csv(filename, header, rows):
     """Save rows to CSV and notify about success or failure."""
-    path = os.path.join(output_dir, filename)
+    path = os.path.join(output_dir, f"{RUN_TAG}_{filename}")
     try:
         with open(path, "w", newline="") as f:
             writer = csv.writer(f)
@@ -151,7 +175,7 @@ def evolve(psi, delta, phi, kappa):
     return psi, phi
 
 
-def save_phi_center_plot(filename="phi_center_plot.png"):
+def save_phi_center_plot(filename=f"{RUN_TAG}_phi_center_plot.png"):
     phi_center_values = [row[1] for row in phi_center_log]
     steps_list = [row[0] for row in phi_center_log]
 
@@ -202,9 +226,20 @@ if __name__ == "__main__":
     phi = initialize_interaction_field()
     # ladicí pole, zatím statické (všude 1.0)
 
-    kappa = np.zeros((size, size), dtype=np.float64)
-    for y in range(size):
-        kappa[y, :] = np.linspace(0.1, 1.0, size)
+    kappa = np.ones((size, size), dtype=np.float64)
+
+    if KAPPA_MODE == "gradient":
+        for y in range(size):
+            kappa[y, :] = np.linspace(0.1, 1.0, size)
+
+    elif KAPPA_MODE == "constant":
+        kappa *= 0.5  # nebo jiná zvolená konstanta
+
+    elif KAPPA_MODE == "island":
+        from scipy.ndimage import gaussian_filter
+        kappa *= 0.0
+        kappa[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
+        kappa = gaussian_filter(kappa, sigma=5)
 
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
@@ -477,7 +512,7 @@ if __name__ == "__main__":
 
     plt.grid(True)
     plt.tight_layout()
-    plot_path = os.path.join(output_dir, "spectrum_plot.png")
+    plot_path = os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")
     try:
         plt.savefig(plot_path)
         notify_file_creation(plot_path)
@@ -506,14 +541,14 @@ if __name__ == "__main__":
         finally:
             plt.close(fig)
 
-    save_gif(frames_amp, os.path.join(output_dir, "lineum_amplitude.gif"),
+    save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
              cmap="plasma", vmin=0, vmax=0.5)
-    save_gif(frames_curl, os.path.join(output_dir, "lineum_spin.gif"),
+    save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
              cmap="bwr", vmin=-0.3, vmax=0.3)
     save_gif(frames_vort, os.path.join(
-        output_dir, "lineum_vortices.gif"), cmap="bwr", vmin=-1, vmax=1)
+        output_dir, f"{RUN_TAG}_lineum_vortices.gif"), cmap="bwr", vmin=-1, vmax=1)
     save_gif(frames_particles, os.path.join(
-        output_dir, "lineum_particles.gif"), cmap="gray", vmin=0, vmax=1)
+        output_dir, f"{RUN_TAG}_lineum_particles.gif"), cmap="gray", vmin=0, vmax=1)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
@@ -527,7 +562,7 @@ if __name__ == "__main__":
 
     ani = FuncAnimation(fig, update_quiver, frames=steps,
                         interval=300, blit=True)
-    flow_path = os.path.join(output_dir, "lineum_flow.gif")
+    flow_path = os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
     try:
         ani.save(flow_path, writer=PillowWriter(fps=10))
         notify_file_creation(flow_path)
@@ -550,7 +585,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename="lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0):
+    def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0):
 
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
@@ -624,7 +659,7 @@ if __name__ == "__main__":
 
         # Potvrzení homogenního výskytu kvazičástic
         try:
-            with open(os.path.join(output_dir, "multi_spectrum_summary.csv")) as f:
+            with open(os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv")) as f:
                 import csv
                 reader = csv.DictReader(f)
                 freqs = []
@@ -647,7 +682,7 @@ if __name__ == "__main__":
                 f"🕒 Emergence of long-lived quasiparticles (max {max_lifespan} steps, median {median_lifespan})"
             )
 
-        if include_spin and os.path.exists(os.path.join(output_dir, "spin_aura_avg.png")):
+        if include_spin and os.path.exists(os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")):
             confirmations.append(
                 "🧲 Kvazičástice nesou emergentní spinovou strukturu (dipól nebo vír)")
 
@@ -659,7 +694,7 @@ if __name__ == "__main__":
         # 💫 φ-gravitační interakce: ověření sbližování částic
         try:
             top_trajs = pd.read_csv(os.path.join(
-                output_dir, "trajectories.csv"))
+                output_dir, f"{RUN_TAG}_trajectories.csv"))
             grouped = top_trajs.groupby("id")
             lifespans = grouped.size().sort_values(ascending=False)
             top2_ids = lifespans.head(2).index.tolist()
@@ -691,7 +726,7 @@ if __name__ == "__main__":
         # 🧠 Výpis deja vu kandidátů
         try:
             deja_df = pd.read_csv(os.path.join(
-                output_dir, "phi_grid_dejavu.csv"))
+                output_dir, f"{RUN_TAG}_phi_grid_dejavu.csv"))
             deja_count = len(deja_df)
             if deja_count >= 5:
                 confirmations.append(
@@ -726,7 +761,16 @@ if __name__ == "__main__":
       </style>
     </head>
     <body>
-      <h1>🧪 Lineum – Emergent Quantum Field</h1>
+        <h1>🧪 Lineum – Emergent Quantum Field</h1>
+
+        <h2>📂 Run Configuration</h2>
+        <ul>
+            <li><strong>Run tag:</strong> {RUN_TAG}</li>
+            <li><strong>LOW_NOISE_MODE:</strong> {'True' if LOW_NOISE_MODE else 'False'}</li>
+            <li><strong>TEST_EXHALE_MODE:</strong> {'True' if TEST_EXHALE_MODE else 'False'}</li>
+            <li><strong>KAPPA_MODE:</strong> {KAPPA_MODE}</li>
+        </ul>
+
     
       <h2>✅ Confirmed Emergent Phenomena</h2>
       <ul>
@@ -754,7 +798,7 @@ if __name__ == "__main__":
 
       </table>
     
-      <p>See full spectrum: <a href="spectrum_log.csv">spectrum_log.csv</a></p>
+      <p>See full spectrum: <a href="{RUN_TAG}_spectrum_log.csv">{RUN_TAG}_spectrum_log.csv</a></p>
 
       <h2>🧮 Field Evolution Equation</h2>
 <p><strong>Lineum Field Equation:</strong></p>
@@ -789,18 +833,18 @@ if __name__ == "__main__":
     
       <h2>📈 Key Plots</h2>
       <div class="grid">
-        <div><img src="topo_charge_plot.png" alt="Topological charge plot"></div>
-        <div><img src="vortex_count_plot.png" alt="Vortex count plot"></div>
-        <div><img src="spectrum_plot.png" alt="Spectrum plot"></div>
-        <div><img src="phi_center_plot.png" alt="φ center plot"></div>
+        <div><img src="{RUN_TAG}_topo_charge_plot.png" alt="Topological charge plot"></div>
+        <div><img src="{RUN_TAG}_vortex_count_plot.png" alt="Vortex count plot"></div>
+        <div><img src="{RUN_TAG}_spectrum_plot.png" alt="Spectrum plot"></div>
+        <div><img src="{RUN_TAG}_phi_center_plot.png" alt="φ center plot"></div>
       </div>
     
       <h2>🎞️ Field Evolution GIFs</h2>
       <div class="grid">
-        <img src="lineum_amplitude.gif" alt="Amplitude">
-        <img src="lineum_spin.gif" alt="Spin">
-        <img src="lineum_particles.gif" alt="Particles">
-        <img src="lineum_full_overlay.gif" alt="Full overlay">
+        <img src="{RUN_TAG}_lineum_amplitude.gif" alt="Amplitude">
+        <img src="{RUN_TAG}_lineum_spin.gif" alt="Spin">
+        <img src="{RUN_TAG}_lineum_particles.gif" alt="Particles">
+        <img src="{RUN_TAG}_lineum_full_overlay.gif" alt="Full overlay">
       </div>
 
       <h2>🧲 Spinová aura kvazičástice</h2>
@@ -809,7 +853,7 @@ Analýzou pole <code>curl(∇arg(ψ))</code> v okolí stovek kvazičástic
 vznikla průměrná „spinová aura“. Výsledek ukazuje dipólovou strukturu
 s protisměrnou rotací – podobně jako reálné částice nesou kvantový moment hybnosti.
 </p>
-<div><img src="spin_aura_avg.png" alt="Spin aura"></div>
+<div><img src="{RUN_TAG}_spin_aura_avg.png" alt="Spin aura"></div>
 
     
       <h2>📚 Glossary & Naming Rationale</h2>
@@ -853,7 +897,8 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     ani = FuncAnimation(fig, update_combo, frames=steps,
                         interval=300, blit=True)
-    overlay_path = os.path.join(output_dir, "lineum_full_overlay.gif")
+    overlay_path = os.path.join(
+        output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
     try:
         ani.save(overlay_path, writer=PillowWriter(fps=10))
         notify_file_creation(overlay_path)
@@ -864,9 +909,9 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 🌀 Uložení všech polí vírů do souboru pro analýzu
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
-    npy_path = os.path.join(output_dir, "frames_vortices.npy")
+    npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
     frames_curl_np = np.array(frames_curl)
-    npy_curl_path = os.path.join(output_dir, "frames_curl.npy")
+    npy_curl_path = os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy")
     try:
         np.save(npy_curl_path, frames_curl_np)
         notify_file_creation(npy_curl_path)
@@ -876,7 +921,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     try:
         np.save(npy_path, frames_vort_np)
         frames_amp_np = np.array(frames_amp)
-        amp_npy_path = os.path.join(output_dir, "frames_amp.npy")
+        amp_npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy")
         try:
             np.save(amp_npy_path, frames_amp_np)
             notify_file_creation(amp_npy_path)
@@ -915,7 +960,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 🌀 Uložení φ polí pro pozdější analýzu
     frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
-    phi_npy_path = os.path.join(output_dir, "frames_phi.npy")
+    phi_npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
     try:
         np.save(phi_npy_path, frames_phi_np)
         notify_file_creation(phi_npy_path)
@@ -1040,7 +1085,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     upsampled_spin_map = zoom(average_spin_map, 5, order=3)
 
     # Uložení obrázku
-    spin_img_path = os.path.join(output_dir, "spin_aura_avg.png")
+    spin_img_path = os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")
     plt.figure(figsize=(6, 6))
     sns.heatmap(upsampled_spin_map, center=0,
                 cmap="bwr", cbar=True, square=True)
@@ -1051,7 +1096,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
     plt.close()
 
     include_spin = os.path.exists(
-        os.path.join(output_dir, "spin_aura_avg.png"))
+        os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
 
     low_mass_count = sum(
         1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
@@ -1087,7 +1132,7 @@ The result is motion not due to pulling, but due to a shared directional prefere
 
     # 📊 Vyhodnocení paměťové stopy ve φ-pastích
     df_low_mass = pd.read_csv(os.path.join(
-        output_dir, "phi_curl_low_mass.csv"))
+        output_dir, f"{RUN_TAG}_phi_curl_low_mass.csv"))
 
     phi_low_mass_mean = df_low_mass["phi"].mean()
     curl_low_mass_mean = df_low_mass["curl"].abs().mean()
