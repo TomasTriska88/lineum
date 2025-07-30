@@ -20,7 +20,12 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Tříska’s Resonant Seed Hypothesis | ✅ confirmed | T. Tříska (2025) | [hypotheses/resonant_seed.md](../hypotheses/resonant_seed.md) |
 | Tříska’s Dimensional Transparency Hypothesis | ✅ confirmed | T. Tříska (2025) | [hypotheses/dimensional_transparency.md](../hypotheses/dimensional_transparency.md) |
 | Tříska’s Tensor Spin Hypothesis | ❌ not confirmed | T. Tříska (2025) | [hypotheses/tensor_spin.md](../hypotheses/tensor_spin.md) |
-| Tříska’s Silent Collapse Hypothesis | ✅ confirmed | Lina (formulováno na základě simulací T. Tříska) | [hypotheses/silent_collapse.md](../hypotheses/silent_collapse.md) |
+| Tříska’s Silent Collapse Hypothesis    | ✅ confirmed | Lina (formulováno na základě simulací T. Tříska) | [hypotheses/silent_collapse.md](../hypotheses/silent_collapse.md) |
+| Tříska’s Spectral Observer Hypothesis  | ✅ confirmed | T. Tříska (2025) | [hypotheses/spectral_observer.md](../hypotheses/spectral_observer.md) |
+| Tříska’s Harmonic Depth Hypothesis     | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/harmonic_depth.md](../hypotheses/harmonic_depth.md) |
+| Tříska’s Harmonic Spectrum Hypothesis  | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/harmonic_spectrum.md](../hypotheses/harmonic_spectrum.md) |
+
+
 
 <!-- prettier-ignore-end -->
 

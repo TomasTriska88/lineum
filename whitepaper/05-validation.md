@@ -28,6 +28,18 @@ V dalších fázích výzkumu bude validace rozšířena o:
 - měření odchylek, rozptylu a robustnosti výsledků,
 - klastrovou analýzu a strojové učení nad výstupy.
 
+### 🌐 Mezijazyková spektrální validace
+
+Nově zavedený způsob testování založený na porovnání spektrálních výstupů téhož běhu Linea (např. `spec1_true`) napříč různými programovacími jazyky (Python, C++, Rust, Julia, JavaScript).  
+Cílem je ověřit, zda výsledná frekvenční struktura systému zůstává konzistentní, nebo se mění v závislosti na pozorovateli (jazyk, FFT knihovna, numerická přesnost).
+
+Používá se zejména pro potvrzení hypotéz:
+
+- **Tříska’s Spectral Observer Hypothesis**
+- **Tříska’s Harmonic Depth Hypothesis**
+
+Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – ale je spektrálně reaktivní vůči způsobu pozorování.
+
 ---
 
 ## 5.2 Validované jevy
@@ -49,6 +61,8 @@ V dalších fázích výzkumu bude validace rozšířena o:
 | Výtrysk z φ-pasti (jet) | [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_spin.gif`](../output/lineum_spin.gif), `frames_curl.npy` | ❌ zatím nepozorován |
 | Echo návrat částic      | [`true_trajectories.csv`](../output/true_trajectories.csv) – opakovaný výskyt částic ve stejných souřadnicích v čase (např. [127, 0]) | ✔️ pozorováno         |
 | Migrace vírových jader | `frames_curl.npy`, centroid tracking – dominantní vír sleduje souvislou dráhu v čase | ✔️ potvrzeno |
+| Spektrální pozorovatelská závislost | Porovnání `amplitude_log_timeseries.csv` napříč Python, Rust, C++, Julia, JS | ✔️ potvrzeno |
+
 <!-- prettier-ignore-end -->
 
 ## 5.2.1 Výsledky běhů `spec1` a `spec2`
