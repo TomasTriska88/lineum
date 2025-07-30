@@ -17,13 +17,22 @@ Pokud z jednoduché rovnice bez času, bez konstant a bez geometrie emergují st
 
 Základní rovnice může být zapsána dvěma způsoby:
 
-### 🧪 Praktický zápis (původní forma)
+### 🧪 Praktický zápis (aktuální forma podle kódu)
 
-```text
-ψ ← ψ + linon + fluktuace + interakce − disipace + difuze + tok
-φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ difuze
-κ ← κ(x, y)
+```markdown
+ψ ← ψ + linon + fluktuace + φψ − δψ + ∇²ψ + ∇φ  
+φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ ∇²φ
 ```
+
+> **Poznámka:**  
+> – δ = disipation_rate = 0.002 (při TEST_EXHALE_MODE=True), jinak 0.001  
+> – linon je injektováno podle |ψ| s pravděpodobností sigmoid(|ψ| + ∇|ψ|)  
+> – ∇φ a ∇²φ jsou vypočítávány jako diskrétní derivace:  
+>    – ∇φ = `np.gradient(φ)` vrací dvojici polí: první derivaci podle osy 0 a osy 1.
+>    – ∇²φ = `np.gradient(np.gradient(φ)[0])[0] + np.gradient(np.gradient(φ)[1])[1]`  
+>    což odpovídá klasickému Laplaceovu operátoru jako součtu druhých derivací ve směru osy 0 a 1.
+> – ∇²ψ je implementován jako Laplace filtr na reálné i imaginární části pole ψ.  
+> – Fluktuace se přidávají přes náhodný fázový posun: `ψ *= exp(i * noise)`
 
 ### 📐 Fyzikální zápis (symbolický a kompaktní)
 
@@ -32,6 +41,33 @@ Základní rovnice může být zapsána dvěma způsoby:
 φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ ∇²φ
 κ ← κ(x, y)
 ```
+
+Pole κ je implementováno jako dvojrozměrné pole, jehož hodnoty určují citlivost pole φ na vstupy z ψ.  
+Ve výstupech běhů, kde je nastaven `KAPPA_MODE`, jsou použity různé mapy κ – např. hladký gradient, ostrůvek nebo konstantní pole.  
+Každá mapa κ je vizualizována ve výstupním souboru `..._kappa_map.png`, který umožňuje okamžitě zhodnotit ladicí topologii konkrétního běhu.
+
+Níže jsou příklady těchto map:
+
+| Spec verze   | Popis κ                          | Vizualizace                           |
+| ------------ | -------------------------------- | ------------------------------------- |
+| `spec1_true` | plynulý gradient                 | ![κ](output/spec1_true_kappa_map.png) |
+| `spec3_true` | konstantní hodnota (0.5)         | ![κ](output/spec3_true_kappa_map.png) |
+| `spec4_true` | ostrovní mapa (ostrov uprostřed) | ![κ](output/spec4_true_kappa_map.png) |
+| `spec7_true` | interpolace ostrov → konst.      | ![κ](output/spec7_true_kappa_map.png) |
+
+> **Poznámka:**  
+> Mapy κ jsou generovány automaticky v každém běhu, kde je `KAPPA_MODE` nastaven.  
+> V případě `spec7_true` odpovídá výstupní vizualizace konečnému stavu κ po proběhlé interpolaci.
+
+Konkrétní parametry každého běhu a jejich vliv na vznik struktur, toky nebo φ-pasti lze dohledat v části [05-validation.md](05-validation.md).
+
+> **Poznámka k numerickým metodám:**
+>
+> Diskrétní derivace použité v této implementaci odpovídají standardnímu přístupu pomocí centrálních diferencí. Funkce `np.gradient` aproximuje první derivaci s chybou řádu O(h²), kde h je délka kroku v mřížce. Laplaceův operátor (∇²) je vyjádřen jako součet druhých parciálních derivací, což rovněž zachovává druhý řád přesnosti.
+>
+> Vzhledem k tomu, že simulace probíhají na dostatečně rozsáhlém poli (obvykle 512×512 nebo více) a dynamika se odehrává převážně uvnitř, nejsou okrajové podmínky kritické. Implicitně jsou použity nulové derivace na okrajích (Neumannovy podmínky), ale ty lze snadno nahradit periodickými, pokud by to bylo třeba.
+>
+> Numerická stabilita Laplace filtru a celkové konzervativní vlastnosti systému jsou průběžně ověřovány v části [05-validation.md](05-validation.md), kde je sledován vývoj energie a struktur.
 
 ---
 
