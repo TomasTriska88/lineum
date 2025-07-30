@@ -11,7 +11,7 @@ import os
 from scipy.spatial.distance import euclidean
 
 # 🛠️ Běhové přepínače – snadné spouštění běhů
-RUN_ID = 1             # číslo běhu (1, 2, ...)
+RUN_ID = 3             # číslo běhu (1, 2, ...)
 RUN_MODE = "false"      # "true" nebo "false"
 # použito jako prefix všech výstupních souborů
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}"
@@ -53,6 +53,9 @@ CONFIGS = {
 
     # Fyzikální realita se šumem + pamětí.
     (6, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "constant"},
+
+    # Simulace vesmíru, ve kterém se zákony postupně stávají globálně sdílenými.
+    (7, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island_to_constant"}
 }
 
 # 📦 Aplikace konfigurace
@@ -122,6 +125,15 @@ TIME_STEP = 1e-21      # 1 krok = 1 zs (zeptosekunda)
 
 def sigmoid(x, k=5):
     return 1 / (1 + np.exp(-k * (x - 0.0)))
+
+
+def generate_kappa(step, total_steps=steps):
+    """Postupná změna z island na constant"""
+    progress = step / total_steps
+    core = np.zeros((size, size))
+    core[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
+    core = gaussian_filter(core, sigma=5)
+    return (1 - progress) * core + progress * 0.5
 
 
 def generate_structured_delta(scale=10):
@@ -223,6 +235,22 @@ def save_phi_center_plot(filename=f"{RUN_TAG}_phi_center_plot.png"):
         plt.close()
 
 
+def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
+    plt.figure(figsize=(6, 6))
+    plt.imshow(kappa, cmap="inferno", vmin=0, vmax=1)
+    plt.colorbar(label="κ value")
+    plt.title("Kappa map (κ)")
+    plt.axis("off")
+    path = os.path.join(output_dir, filename)
+    try:
+        plt.savefig(path)
+        notify_file_creation(path)
+    except Exception as e:
+        notify_file_creation(path, success=False, error=e)
+    finally:
+        plt.close()
+
+
 def detect_vortices(phase):
     vortices = np.zeros_like(phase)
     for i in range(size - 1):
@@ -258,15 +286,18 @@ if __name__ == "__main__":
     if KAPPA_MODE == "gradient":
         for y in range(size):
             kappa[y, :] = np.linspace(0.1, 1.0, size)
+        save_kappa_map(kappa)
 
     elif KAPPA_MODE == "constant":
         kappa *= 0.5  # nebo jiná zvolená konstanta
+        save_kappa_map(kappa)
 
     elif KAPPA_MODE == "island":
         from scipy.ndimage import gaussian_filter
         kappa *= 0.0
         kappa[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
         kappa = gaussian_filter(kappa, sigma=5)
+        save_kappa_map(kappa)
 
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
@@ -286,6 +317,10 @@ if __name__ == "__main__":
     # print("🔄 Initializing the field and interaction field.")
     for i in tqdm(range(steps), desc="Processing steps", unit="step"):
         # Removed manual progress print
+
+        if KAPPA_MODE == "island_to_constant":
+            kappa = generate_kappa(i)
+
         psi, phi = evolve(psi, delta, phi, kappa)
         amp = np.abs(psi)
         phase = np.angle(psi)
@@ -469,32 +504,11 @@ if __name__ == "__main__":
         zip(positive_freqs, positive_spectrum),
     )
 
-    # 💉 Filtrace podezřelých trajektorií
-    df_traj = pd.DataFrame(trajectories, columns=[
-                           "id", "step", "y", "x", "amplitude"])
-    clean_trajectories = []
-
-    for tid, group in df_traj.groupby("id"):
-        if len(group) >= 0.9 * steps and group["step"].min() == 0:
-            continue  # ❌ podezřelá dlouhověkost (většina běhu)
-
-        std_y = group["y"].std()
-        std_x = group["x"].std()
-        if std_y < 2.0 and std_x < 2.0:
-            continue  # ❌ i mírně statické částice
-
-        amp_max = group["amplitude"].max()
-        amp_min = group["amplitude"].min()
-        if amp_min > 0 and (amp_max / amp_min) > 1e8:
-            continue  # ❌ přísnější oscilace
-
-        clean_trajectories.extend(group.itertuples(index=False, name=None))
-
     # Nyní exportuj jen čisté trajektorie
     save_csv(
         "trajectories.csv",
         ["id", "step", "y", "x", "amplitude"],
-        clean_trajectories,
+        trajectories,
     )
 
     # MULTISPEKTRÁLNÍ ANALÝZA pro každý bod zvlášť
@@ -1017,6 +1031,9 @@ The result is motion not due to pulling, but due to a shared directional prefere
         notify_file_creation(phi_npy_path, success=False, error=e)
 
     save_phi_center_plot()
+
+    if KAPPA_MODE == "island_to_constant":
+        save_kappa_map(kappa)
 
     # 📈 Výpočet životnosti kvazičástic
     lifespan_df = pd.DataFrame(trajectories, columns=[
