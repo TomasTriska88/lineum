@@ -22,8 +22,13 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Tříska’s Tensor Spin Hypothesis | ❌ not confirmed | T. Tříska (2025) | [hypotheses/tensor_spin.md](../hypotheses/tensor_spin.md) |
 | Tříska’s Silent Collapse Hypothesis    | ✅ confirmed | Lina (formulováno na základě simulací T. Tříska) | [hypotheses/silent_collapse.md](../hypotheses/silent_collapse.md) |
 | Tříska’s Spectral Observer Hypothesis  | ✅ confirmed | T. Tříska (2025) | [hypotheses/spectral_observer.md](../hypotheses/spectral_observer.md) |
+| Tříska’s Law Transition Hypothesis     | 🔄 testováno | T. Tříska (2025) | [hypotheses/law_transition.md](../hypotheses/law_transition.md) |
 | Tříska’s Harmonic Depth Hypothesis     | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/harmonic_depth.md](../hypotheses/harmonic_depth.md) |
 | Tříska’s Harmonic Spectrum Hypothesis  | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/harmonic_spectrum.md](../hypotheses/harmonic_spectrum.md) |
+| Tříska’s Spectral Balance Hypothesis | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/spectral_balance.md](../hypotheses/spectral_balance.md) |
+| Tříska’s Autodestructive Spectrum Hypothesis | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/autodestructive_spectrum.md](../hypotheses/autodestructive_spectrum.md) |
+
+
 
 
 

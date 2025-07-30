@@ -40,9 +40,12 @@ Simulace může obsahovat ladicí pole **κ = κ(x, y)**, které ovlivňuje citl
 Pole κ je zaváděno jako **samostatná vrstva**, která může mít různé prostorové konfigurace:
 
 - **konstantní** (např. κ = 1.0 – rovnoměrná odezva φ),
-- **gradientní** (např. κ roste lineárně podél jedné osy),
+- **gradientní** (κ roste lineárně podél jedné osy),
 - **ostrovní** (κ je nenulové pouze ve vybrané oblasti, např. kruhové),
-- **vrstvené** (kombinace více prahových úrovní).
+- **vrstvené** (kombinace více prahových úrovní),
+- **island_to_constant** (κ se během simulace vyvíjí z ostrovní do konstantní – pomocí funkce `generate_kappa(step)` dochází k plynulému přechodu mezi lokálním a globálním zákonem podle času).
+
+Tento poslední režim umožňuje studium efektu, kdy se zákonitosti neobjevují náhle, ale postupně expandují – což je klíčové pro testování hypotézy spektrální rezonance při změně zákona.
 
 Konfigurace κ se volí podle cíle testu – např. ostrovní κ je klíčové pro ověření  
 **Tříska’s Dimensional Transparency Hypothesis (DTH)**, zatímco gradientní κ se používá pro testy reakční stability.
