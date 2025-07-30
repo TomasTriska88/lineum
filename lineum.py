@@ -11,21 +11,48 @@ import os
 from scipy.spatial.distance import euclidean
 
 # 🛠️ Běhové přepínače – snadné spouštění běhů
-RUN_ID = 4             # číslo běhu (1, 2, ...)
-RUN_MODE = "true"      # "true" nebo "false"
+RUN_ID = 1             # číslo běhu (1, 2, ...)
+RUN_MODE = "false"      # "true" nebo "false"
 # použito jako prefix všech výstupních souborů
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}"
 
 # 🔧 Mapování konfigurací
 CONFIGS = {
+    # Model pozorovatelného světa s minimem entropie.
     (1, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
+
+    # Model rezonance mezi řádem a chaosem.
     (1, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
+
+    # Simulace světa, kde vzniká struktura pouze z proudění.
     (2, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
+
+    # Model turbulentního kvantového pole.
     (2, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
+
+    # Matematický ideál reality. Ticho, z něhož může vzniknout struktura.
     (3, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
+
+    # Model fyzikální reality jako kombinace determinismu a náhodnosti.
     (3, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
+
+    # Model uzavřeného systému, jako částice v pasti.
     (4, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
+
+    # Simulace kvantové experimentální situace.
     (4, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
+
+    # Model pro detekci extrémně jemných jevů.
+    (5, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": True, "KAPPA_MODE": "island"},
+
+    # Model ostrovního vesmíru pod kvantovým kolapsem.
+    (5, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "island"},
+
+    # Model latentního ideálu se zpomalením.
+    (6, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "constant"},
+
+    # Fyzikální realita se šumem + pamětí.
+    (6, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "constant"},
 }
 
 # 📦 Aplikace konfigurace
@@ -442,10 +469,32 @@ if __name__ == "__main__":
         zip(positive_freqs, positive_spectrum),
     )
 
+    # 💉 Filtrace podezřelých trajektorií
+    df_traj = pd.DataFrame(trajectories, columns=[
+                           "id", "step", "y", "x", "amplitude"])
+    clean_trajectories = []
+
+    for tid, group in df_traj.groupby("id"):
+        if len(group) >= 0.9 * steps and group["step"].min() == 0:
+            continue  # ❌ podezřelá dlouhověkost (většina běhu)
+
+        std_y = group["y"].std()
+        std_x = group["x"].std()
+        if std_y < 2.0 and std_x < 2.0:
+            continue  # ❌ i mírně statické částice
+
+        amp_max = group["amplitude"].max()
+        amp_min = group["amplitude"].min()
+        if amp_min > 0 and (amp_max / amp_min) > 1e8:
+            continue  # ❌ přísnější oscilace
+
+        clean_trajectories.extend(group.itertuples(index=False, name=None))
+
+    # Nyní exportuj jen čisté trajektorie
     save_csv(
         "trajectories.csv",
         ["id", "step", "y", "x", "amplitude"],
-        trajectories,
+        clean_trajectories,
     )
 
     # MULTISPEKTRÁLNÍ ANALÝZA pro každý bod zvlášť
