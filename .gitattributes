@@ -1,0 +1,9 @@
+# Velké datové výstupy (Numpy array)
+**/*_frames_amp.npy filter=lfs diff=lfs merge=lfs -text
+**/*_frames_vortices.npy filter=lfs diff=lfs merge=lfs -text
+**/*_frames_curl.npy filter=lfs diff=lfs merge=lfs -text
+**/*_frames_phi.npy filter=lfs diff=lfs merge=lfs -text
+
+# Velké vizualizační GIFy
+**/spec*_true_lineum_flow.gif filter=lfs diff=lfs merge=lfs -text
+**/spec*_true_lineum_full_overlay.gif filter=lfs diff=lfs merge=lfs -text
