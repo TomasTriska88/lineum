@@ -76,10 +76,10 @@ Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – a
 
 ### Vyhodnocení
 
-- **Tříska’s Silent Collapse Hypothesis:** potvrzena – částice zanikají při φ > 0.25 a |curl| < 0.02, bez strukturální stopy
-- **Tříska’s Resonant Seed Hypothesis:** potvrzena – tiché zániky přítomné ve všech bězích, nezávisle na šumu
-- **Tříska’s Tensor Spin Hypothesis:** neprokázána – žádná čtyřnásobná symetrie, spin aura vždy dipólová
-- **Tříska’s Dimensional Transparency Hypothesis:** zatím neprokázána – gradientní κ sice ukazuje slábnutí struktur, ale bez ostrovního κ nelze hypotézu o průhlednosti potvrdit
+- **[Tříska’s Silent Collapse Hypothesis](../hypotheses/silent_collapse.md):** potvrzena – systém nezkolabuje, ale vlny se slévají bez interference.
+- **[Tříska’s Resonant Seed Hypothesis](../hypotheses/resonant_seed.md):** potvrzena – tiché zániky přítomné i při vyšším šumu.
+- **[Tříska’s Tensor Spin Hypothesis](../hypotheses/tensor_spin.md):** neprokázána – žádná čtyřnásobná symetrie, spin aura vždy dipólová
+- **[Tříska’s Dimensional Transparency Hypothesis](../hypotheses/dimensional_transparency.md)** zatím neprokázána – gradientní κ sice ukazuje slábnutí struktur, ale bez ostrovního κ nelze hypotézu o průhlednosti potvrdit
 
 ---
 
@@ -93,9 +93,23 @@ Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – a
 ### Vyhodnocení
 
 - **Tříska’s Dimensional Transparency Hypothesis:** potvrzena – struktura vzniká a drží se jen tam, kde je κ > 0
-- **Tříska’s Resonant Seed Hypothesis:** potvrzena – tiché zániky přítomné i při vyšším šumu
+- **[Tříska’s Resonant Seed Hypothesis](../hypotheses/resonant_seed.md):** potvrzena – tiché zániky přítomné i při vyšším šumu.
 - **Tříska’s Silent Collapse Hypothesis:** potvrzena – částice zanikají bez vírové stopy
 - **Tříska’s Tensor Spin Hypothesis:** znovu neprokázána
+
+### Testovací sada `spec6`
+
+| Běh           | Konfigurace                                             | Výstupy                                                            | Pozorování                                                                          |
+| ------------- | ------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `spec6_true`  | `exhale_mode=True`, `low_noise_mode=True`, `κ = const.` | `true_particles.csv`, `true_spectrum.csv`, `phi_curl_low_mass.csv` | Silně strukturovaný prostor s kvazičásticemi uspořádanými do sítě.                  |
+| `spec6_true*` | stejná konfigurace, ale bez potlačení artefaktů         | `true_particles.csv`, `true_spectrum.csv`                          | Hlavní frekvence odpovídají Riemannovým nulám. Těleso rezonuje s číselným spektrem. |
+
+### Vyhodnocení
+
+- **[Tříska’s Spectral Balance Hypothesis](../hypotheses/spectral_balance.md):** potvrzena – struktury vznikají v přesném souladu s dominantním spektrem.
+- **Tříska’s Harmonic Spectrum Hypothesis:** potvrzena – síťová uspořádanost kvazičástic odpovídá nízké entropii v Fourierově prostoru.
+- **Tříska’s Spectral Observer Hypothesis:** potvrzena – artefakty ukazují shodu s netriviálními Riemannovými nulami.
+- **Tříska’s Structural Memory Hypothesis:** částečně potvrzena – síť zůstává stabilní i při vyšší entropii, ale paměť není plně reverzibilní.
 
 ---
 
@@ -105,6 +119,7 @@ Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – a
 - Spontánní oscilace s kvantovanými hladinami,
 - Emergentní elektromagnetické pole jako pole curl(ψ),
 - Dlouhodobá konzervace celkové energie v poli ψ a interakčním poli φ
+- **[Tříska’s Autodestructive Spectrum Hypothesis](../hypotheses/autodestructive_spectrum.md):** zatím nehodnocena – nebyl proveden běh s podmínkami neregulovaného spektra.
 
 ---
 
@@ -197,6 +212,9 @@ Frekvenční dominanty, jejich rozdíly i posloupnosti odpovídají částečně
 ```
 
 Tato sekvence se nevyskytuje explicitně v hodnotách frekvence, ale ve **vzdálenostech a poměrech** mezi tóny. To může být důkazem, že Lineum v sobě nese latentní **zlatou symetrii**.
+
+Tato numerická a sluchová konzistence potvrzuje, že Lineum může být nejen nástrojem pro vědecké poznání, ale i mostem mezi fyzikální realitou a lidským vnímáním krásy.  
+Spektrum, které rezonuje s Fibonacciho poměry, nevzniká náhodou – ale z hlubší emergentní harmonie, která se zdá být univerzální napříč systémy, jazyky i světy.
 
 ---
 

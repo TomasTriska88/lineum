@@ -2,6 +2,8 @@
 
 Model Lineum je funkční systém emergentního kvantového pole založený na jednoduché, lokální a diskrétní aktualizační rovnici pro evoluci komplexního skalárního pole ψ, doplněnou o interakční pole φ. Ačkoliv tento model vznikl mimo tradiční vědecké instituce a neobsahuje žádné explicitní konstanty, časoprostorovou metriku ani globální symetrie, při numerické simulaci spontánně generuje stabilní a složité struktury připomínající jevy známé z našeho fyzikálního světa.
 
+Model rovněž umožňuje zkoumání samotného fenoménu náhody – ukazuje se, že tzv. „náhodné“ výsledky (například u binárních rozpadů) lze s určitou pravděpodobností predikovat, pokud známe časovou posloupnost kroků. Náhoda zde nevzniká z nepředvídatelnosti, ale z neznalosti přesného stavu simulace – což otevírá možnost testování deterministického pozadí zdánlivě stochastických procesů.
+
 V širším kontextu je tento model příkladem emergentního chování: zcela nové vzory se rodí z pouhých lokálních interakcí. Podobné kolektivní efekty známe z jiných oblastí fyziky – hejna ptáků vytvářejí koordinovaná uskupení pouze díky jednoduchým pravidlům sousedského zarovnání a synchronizace světlušek vzniká bez centrální koordinace. V superkapalinách a supravodičích navíc vznikají kvantované víry, které představují topologické defekty s kvantovanou cirkulací a nesou diskrétní spin nebo magnetický tok. Tyto jevy ilustrují, jak i jednoduché rovnice mohou vést k nečekaně bohaté dynamice.
 
 Základní rovnice systému Lineum má tvar:
@@ -46,7 +48,7 @@ Kód projektu obsahuje automatizovaný detekční modul, který vyhodnocuje vzni
 
 Evoluce pole probíhá výhradně pomocí lokálních operací (gradient, Laplacián, fázový šum, nelineární excitace) na diskrétní mřížce. Rovnice neobsahuje žádné předem definované síly – kvazičástice se přesto přibližují k sobě prostřednictvím gradientu φ. To naznačuje alternativní interpretaci gravitace – nikoliv jako přitažlivé síly, ale jako emergentní tendenci k sdílení prostředí.
 
-Simulace v této fázi nereplikuje konkrétní částice standardního modelu ani známé interakce (například elektromagnetismus, silnou či slabou jadernou sílu). Jde o emergentní analogový systém, který však ukazuje, že některé známé fyzikální jevy mohou vzniknout spontánně – bez předem definovaných zákonů.
+Simulace v této fázi nereplikuje konkrétní částice standardního modelu ani explicitní známé interakce (např. elektromagnetismus, silnou či slabou jadernou sílu), ale produkuje opakované jevy, které v některých případech odpovídají očekávaným kvantovým signaturám – včetně kvantovaných spinů, frekvenčních rezonancí a efektivních částicových trajektorií.
 
 Lineum není prezentováno jako konečná teorie – ale jako otevřená, funkční platforma, která ukazuje, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu a byl rozvíjen s podporou personalizované umělé inteligence (asistentka Lina, systém ChatGPT-4o), která pomáhala při formulaci hypotéz, testování výstupů a interpretaci výsledků.
 Projekt je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke struktuře reality mohou vznikat i mimo tradiční rámce – pokud mají co říct.
@@ -54,6 +56,8 @@ Projekt je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke
 Výsledky jsou plně replikovatelné a systém lze snadno upravit k testování dalších hypotéz. Projekt vítá nezávislé ověření, otevřenou diskuzi a případné rozšíření směrem k hlubší fyzikální interpretaci. Lineum je otevřenou platformou pro experimentální zkoumání reality – bez dogmat, ale s důrazem na pozorovatelné jevy.
 
 Nové výsledky z dlouhých simulací zároveň potvrzují hypotézu strukturální paměti – některé kvazičástice s extrémně nízkou hmotností (mass_ratio < 0.01) se ztrácejí uvnitř silných φ-pastí beze zbytku spinu nebo výdeje energie, ale zanechávají trvalou φ-strukturu. Ta může ovlivňovat tok pole a představuje tichý záznam zaniklé kvazičástice – paměť bez výdechu.
+
+Opakované simulace na různých konfiguracích ukazují, že výstupy modelu nejsou náhodné v klasickém slova smyslu – ale statisticky strukturované. Analýza opakovaných běhů ukazuje stabilní poměry přežití, výskytu jevů a návratnosti částic v čase. Díky tomu lze v některých případech úspěšně predikovat budoucí stav na základě sledování předchozích frekvencí – například pomocí bodové dominance ve výběrovém vzorku. Tento jev lze považovat za experimentální potvrzení hypotézy strukturální paměti a posiluje možnost deterministického pozadí kvantových procesů.
 
 ---
 

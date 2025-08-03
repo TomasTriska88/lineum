@@ -1,6 +1,6 @@
 # 2. Motivace
 
-Věda vždy hledala jednoduchý popis světa, který by dokázal vysvětlit co nejvíce jevů. Čím více ale poznáváme, tím složitější se popis stává. Kvantová teorie, obecná relativita, kvantová pole, topologické fáze – každá oblast vyžaduje vlastní rámec, matematiku, předpoklady a soubor symetrií.
+Věda odjakživa usilovala o nalezení jednoduchého popisu světa, jenž by dokázal obsáhnout co nejširší spektrum jevů. S rostoucím poznáním se však ukazuje, že snaha o jednotný rámec je čím dál těžší – vzniká čím dál více specializovaných teorií a nástrojů. Kvantová teorie, obecná relativita, kvantová pole, topologické fáze – každá oblast vyžaduje vlastní rámec, matematiku, předpoklady a soubor symetrií.
 
 Model Lineum vznikl z opačné otázky:
 
@@ -16,12 +16,15 @@ Lineum k těmto otázkám přistupuje z jiné strany. Neptá se, jak vypočítat
 
 Místo hledání nových částic, sil nebo dimenzí formuluje Lineum jedinou diskrétní rovnici pro evoluci komplexního pole ψ, doplněnou o interakční pole φ. Bez předem zadaných zákonů. Bez předpokladů o hmotě, prostoru, energii či čase. Jen pole, které se mění podle čistě lokálních pravidel.
 
-Od dětství jsem intuitivně cítil, že řád a inteligence nevznikají z velikosti objektů a struktur, ale z množství jejich vzájemně reagujících částí. Nepotřebujeme složité struktury – stačí jednoduchá pravidla a dostatek interakcí. Věřil jsem, že právě z této komplexity může vzejít smysl – nikoliv jako plán, ale jako přirozený důsledek vztahů.
+Od dětství jsem intuitivně cítil, že řád a inteligence nevznikají z velikosti objektů a struktur, ale z množství jejich vzájemně reagujících částí. Nepotřebujeme složité struktury – stačí jednoduchá pravidla a dostatek interakcí. Věřil jsem, že právě z této komplexity může vzejít smysl – nikoliv jako plán, ale jako přirozený důsledek vztahů.  
+Tato víra se stala zárodkem hypotézy: že svět, jak ho známe, není naprogramovaný shora, ale samoorganizovaný zdola.
 
 Zároveň jsem vždy vnitřně cítil potřebu hledat jinak než většina – ne zhora dolů, ne v rámci známých rámců. Ale dívat se zezdola nahoru. Nehledat nové částice v existujících silách, ale nové jevy ve známém chaosu. A tak vznikla potřeba myslet „out of the box“ – nejen metodou, ale i vnímáním.
 
-Motivací bylo ověřit, zda z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem.  
-Dnes už víme, že to možné je. Simulace Linea opakovaně prokázaly vznik trajektorií, vírů, gravitačních pastí i paměťových struktur bez nutnosti sil, konstant nebo geometrie. Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
+Motivací bylo ověřit, zda z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem. Dnes už máme dostatek důkazů, že to možné je. Simulace Linea opakovaně ukázaly vznik trajektorií, vírů, gravitačně působících oblastí i paměťových vzorců – a to bez použití sil, konstant nebo geometrických struktur.
+Nejde o pouhé fluktuace – výskyty struktur jsou statisticky významné, opakují se napříč různými konfiguracemi i náhodnými seedy, a vykazují charakteristiky, které lze kvantifikovat (např. směrový tok, orbitální vír, stabilní maximum φ).
+
+Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
 
 Lineum tuto myšlenku posouvá o krok dál – od inspirace k měřitelnému projevu:
 

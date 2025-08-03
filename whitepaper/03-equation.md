@@ -22,17 +22,18 @@ Základní rovnice může být zapsána dvěma způsoby:
 ```markdown
 ψ ← ψ + linon + fluktuace + φψ − δψ + ∇²ψ + ∇φ  
 φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ ∇²φ
+κ ← κ + κ ⋅ ∇²κ
 ```
 
-> **Poznámka:**  
-> – δ = disipation_rate = 0.002 (při TEST_EXHALE_MODE=True), jinak 0.001  
-> – linon je injektováno podle |ψ| s pravděpodobností sigmoid(|ψ| + ∇|ψ|)  
-> – ∇φ a ∇²φ jsou vypočítávány jako diskrétní derivace:  
->    – ∇φ = `np.gradient(φ)` vrací dvojici polí: první derivaci podle osy 0 a osy 1.
->    – ∇²φ = `np.gradient(np.gradient(φ)[0])[0] + np.gradient(np.gradient(φ)[1])[1]`  
->    což odpovídá klasickému Laplaceovu operátoru jako součtu druhých derivací ve směru osy 0 a 1.
-> – ∇²ψ je implementován jako Laplace filtr na reálné i imaginární části pole ψ.  
-> – Fluktuace se přidávají přes náhodný fázový posun: `ψ *= exp(i * noise)`
+_Poznámka:_  
+– δ = disipation_rate = 0.002 (při TEST_EXHALE_MODE=True), jinak 0.001  
+– linon je injektováno podle |ψ| s pravděpodobností sigmoid(|ψ| + ∇|ψ|)  
+– ∇φ a ∇²φ jsou vypočítávány jako diskrétní derivace:  
+  – ∇φ = `np.gradient(φ)` vrací dvojici polí: první derivaci podle osy 0 a osy 1.  
+  – ∇²φ = `np.gradient(np.gradient(φ)[0])[0] + np.gradient(np.gradient(φ)[1])[1]`  
+    což odpovídá klasickému Laplaceovu operátoru jako součtu druhých derivací ve směru osy 0 a 1.  
+– ∇²ψ je implementován jako Laplace filtr aplikovaný zvlášť na reálnou a imaginární část ψ.  
+– Fluktuace se přidávají přes náhodný fázový posun: `ψ *= exp(i * noise)`, kde noise je pole se stejnou dimenzí jako ψ.
 
 ### 📐 Fyzikální zápis (symbolický a kompaktní)
 
@@ -78,7 +79,7 @@ Konkrétní parametry každého běhu a jejich vliv na vznik struktur, toky nebo
 | `linon` / 𝛌̃      | kvazičástice vznikající s pravděpodobností sigmoid(∇∥ψ∥ + ∥ψ∥)                                                                        |
 | `fluktuace` / ξ  | náhodné šumové oscilace fáze (kvantový šum)                                                                                           |
 | `interakce` / φψ | interakce s polem φ – lokální zesílení amplitudy ψ podle hodnoty φ; umožňuje stabilitu a setrvačnost částic v gravitačních centrech φ |
-| `disipace` / δψ  | útlum pole: `−0.001 ⋅ ψ`                                                                                                              |
+| `disipace` / δψ  | útlum pole: −δψ, kde δ = 0.002 při TEST_EXHALE_MODE=True, jinak 0.001                                                                 |
 | `difuze` / ∇²ψ   | rozprostření pole pomocí Laplaciánu                                                                                                   |
 | `tok` / ∇φ       | gradient φ – emergentní „gravitační“ tok                                                                                              |
 | `κ`              | ladicí pole – reguluje odezvu φ na ψ a jeho difuzi; může být konstantní, gradientní nebo ostrovní                                     |
@@ -97,7 +98,7 @@ Pole ψ je komplexní, obsahuje jak amplitudu |ψ|, tak fázi arg(ψ), díky če
 ## 3.3 Evoluce interakčního pole φ
 
 ```python
-φ ← φ + (|ψ|² − φ) + difuze
+φ ← φ + κ ⋅ (|ψ|² − φ) + κ ⋅ ∇²φ
 ```
 
 Pole φ se chová jako akumulační paměť, která:
@@ -107,6 +108,8 @@ Pole φ se chová jako akumulační paměť, která:
 - zároveň se rozlévá do okolí pomocí Laplaciánu (difuze).
 
 Pole φ **nemá žádný externí zdroj** – vzniká výhradně jako odezva na ψ.
+
+Gradient tohoto pole (∇φ) vytváří směr a tok, čímž v systému emerguje něco, co lze považovat za směr času – bez nutnosti zavádět čas explicitně.
 
 ---
 

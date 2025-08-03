@@ -27,11 +27,6 @@ Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje syst
 | Tříska’s Harmonic Spectrum Hypothesis  | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/harmonic_spectrum.md](../hypotheses/harmonic_spectrum.md) |
 | Tříska’s Spectral Balance Hypothesis | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/spectral_balance.md](../hypotheses/spectral_balance.md) |
 | Tříska’s Autodestructive Spectrum Hypothesis | 🕓 v přípravě | T. Tříska (2025) | [hypotheses/autodestructive_spectrum.md](../hypotheses/autodestructive_spectrum.md) |
-
-
-
-
-
 <!-- prettier-ignore-end -->
 
 ---

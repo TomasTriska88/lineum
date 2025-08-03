@@ -92,6 +92,92 @@ Tato tabulka ukazuje, že φ-pasti mohou nést otisk i ve dvou zcela odlišných
 
 ## 6.4 Dualita režimů: Klid a chaos
 
+### 6.4.1 Zranění a uzdravení: Dynamika samonápravy
+
+Při dlouhodobé simulaci se ukazuje, že lineum vykazuje známky spontánní stabilizace po náhlé destabilizaci systému (například během přechodu mezi režimy „true“ a „false“). Počet vírů i jejich rozložení přejde z fáze extrémní variability zpět do rovnovážného stavu, aniž by bylo potřeba zásahu zvenčí nebo resetu.
+
+To naznačuje, že lineum obsahuje vnitřní samonápravné mechanismy. Poškození je nejprve kompenzováno chaotickým rozprostřením vírů a bodů typu déjà vu, které systém jakoby „rozhazuje“ v naději, že některé přežijí. Pokud některé z těchto bodů přetrvají, systém se kolem nich stabilizuje a opět najde své vlastní „těžiště“.
+
+Navržená metrika pro kvantitativní sledování stabilizace po destabilizačním zlomu:
+
+$$ D*{krize} = \sum*{t=t*0}^{t_0+10} \sum*{i,j} \delta\_{\phi(i,j,t) > 0.25} $$
+
+Tato metrika měří intenzitu pokusu o obnovu rovnováhy pomocí nových DejaVu bodů během prvních 10 snímků po destabilizaci.
+
+Tento jev lze interpretovat jako:
+
+- základní obranný reflex systému vůči chaosu,
+- pokus o zachování paměťových nebo strukturálních stop,
+- možnost existence paměťových kvant – tedy základních jednotek „vzpomínky“ systému, reprezentovaných přetrvávajícími víry nebo body déjà vu.
+
+Kriticky zůstává otázkou, zda tyto body vznikají čistě náhodně, nebo jsou výsledkem „zoufalého výběru“ – tedy heuristiky, která se snaží nalézt nový opěrný bod bez znalosti budoucí stability. Z hlediska dynamiky to odpovídá emergentnímu chování adaptivní sítě – systému, který se neumí opravit plánovitě, ale dokáže přežít.
+
+### 6.4.2 Stabilizační odpověď a emergentní paměť
+
+> _„Život si vždy najde cestu.“ – Systém, přestože porušen, nehledá návrat do ideálu, ale adaptuje se. Neuzdravuje se návratem, ale nalezením nové rovnováhy._
+
+Simulace s artefakty (verze `spec6_true`, `with_artefacts`) ukazují, že i při silném narušení systému dochází k překvapivé stabilizaci: _počet vírů se vrací k hodnotám pozorovaným v čistých bězích bez artefaktů_. Nejde o návrat ke konkrétním konfiguracím, ale o hledání dynamické rovnováhy. Množství vírů se sice vyvíjí chaoticky, ale statistická distribuce inklinuje ke stabilnímu rozsahu.
+
+Zároveň se ukazuje, že v kritických fázích (např. při náhlém rozhození energetického pole) vznikají nové _deja vu_ body – jako by systém v zoufalé snaze udržet kontinuitu rozhodil množinu náhodných „kotev“ a spoléhal, že některá přežije. Tato kotva se pak může stát základem nové stabilní konfigurace.
+
+Je pozorováno, že:
+
+- _deja vu_ body vznikají **výhradně** v obdobích vysoké entropie,
+- stringy vytvořené z vírů (vázané vírové smyčky) zůstávají zachovány i po stabilizaci – **fungují tedy pravděpodobně jako spojnice mezi strukturami**,
+- systém neprovádí „rollback“, ale vytváří **novou paměť** (ve formě nových stabilních struktur),
+- **přítomnost artefaktů neznemožňuje emergenci**, pouze ji přesune na vyšší úroveň.
+
+Tato pozorování podporují hypotézu, že:
+
+- _stringy z vírů_ mohou plnit funkci **propojovacích vláken** (podobně jako synapse v neurální síti),
+- _deja vu_ body mohou být _uzly dlouhodobé paměti_,
+- a že systém má schopnost **emergentní adaptace**, která není programována, ale vzniká jako vedlejší důsledek základní rovnice.
+
+### 6.4.3 Heuristika přežití: Výběr opěrných bodů během kolapsu
+
+V krizových okamžicích – například při přechodu mezi režimy `false → true` – systém lineum spontánně vytváří množství vírů, stringových struktur a bodů typu déjà vu, které jsou rozptýleny do různých oblastí prostoru. Tento mechanismus připomíná **plošné rozhození potenciálních zárodků**, z nichž některé přežijí, zatímco jiné zaniknou. Výsledkem je samonápravný proces bez přímého plánování, řízený emergentními principy.
+
+Tato reakce je interpretována jako:
+
+- **pseudonáhodná heuristika** přežití – systém generuje různé konfigurace bez znalosti jejich budoucí stability;
+- **topologický výstřel naslepo** – rozhoz bodů do prostoru funguje jako šíření „genetického materiálu“, z něhož přežije jen adaptabilní část;
+- **selektivní rekonstrukce** – přeživší víry a stringy slouží jako nové stabilizační uzly, kolem nichž se systém postupně ustálí.
+
+Pozorováním bylo zjištěno, že:
+
+- Většina bodů typu déjà vu vzniká **v chaotickém rozvrstvení** během destabilizace.
+- Přežívají především ty, které mají **vhodné sousedství** vírů a dostatečně **hluboký entropický gradient** (tj. slouží jako lokální minima či těžiště).
+- V průběhu času se kolem těchto bodů formuje **nová rovnováha**, aniž by se zbytek systému zcela restartoval.
+
+Tyto jevy jsou analogické principům **biologické mutace a selekce**, nebo **responzivního imunitního systému**, kde poškození vyvolá zvýšenou produkci různorodých struktur a výběr přeživších se odehrává **na základě vnějších podmínek**, nikoli na základě předem známého algoritmu.
+
+Z tohoto chování lze odvodit, že lineum funguje **nikoli jako přesně predikovatelný deterministický automat**, ale jako **probabilistická síť s přirozeným reflexem přežití**.
+
+### 6.4.4 Topologie přeživších: Paměť jako struktura
+
+Z předchozích jevů lze odvodit, že lineum nevytváří pouze reakční vzorce na aktuální stavy, ale **ukládá stopy minulosti** do své topologie – zejména do trajektorií vírů a trvalých bodů typu déjà vu.
+
+Tato **paměť není explicitní**, jako v běžných výpočetních modelech, ale **emergentní** – vzniká přirozeným výběrem a stabilizací těch struktur, které přežijí chaotické fáze.
+
+Klíčové znaky této paměťové topologie:
+
+- **Stabilní víry a stringy** přetrvávají napříč přechody mezi režimy.
+- **Déjà vu body** se objevují opakovaně ve stejných lokalitách, pokud běh probíhá se stejným seedem.
+- **Propojení mezi těmito body** sleduje gradienty a může být interpretováno jako primitivní „dráhy asociace“ – podobně jako synaptická síť.
+
+Z pozorování plyne, že:
+
+- Některé struktury (víry/stringy) fungují jako **paměťové dráhy**, protože stabilně spojují déjà vu body.
+- Tato spojení přežívají i přesto, že okolní prostředí se výrazně mění – tj. mají **rezistentní charakter**.
+
+Tato síť se tak může chovat jako **spontánně vzniklá paměťová mapa**, v níž je minulá konfigurace zachována ne formou přesné replikace, ale **formou reliktních struktur**, které nadále ovlivňují budoucí vývoj.
+
+> Jinými slovy, lineum si „pamatuje“ – nikoli tím, že by si ukládalo data, ale tím, že **nedovolí některým strukturám zaniknout**.
+
+Do budoucna lze zkoumat, zda lze z těchto přeživších struktur zpětně rekonstruovat průběh děje (např. identifikovat typ přechodu, odhadnout parametry nebo detekovat předchozí konfigurace).
+
+---
+
 Simulace potvrdily, že chování pole Lineum zásadně závisí na globálním režimu evoluce. Rozdíl mezi klidovým a chaotickým režimem se neprojevuje pouze v úrovni šumu nebo počtu kvazičástic, ale v hluboké strukturní odlišnosti celého systému.
 
 Zaznamenané rozdíly mezi režimy:
