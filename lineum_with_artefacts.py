@@ -9,12 +9,17 @@ from scipy.ndimage import gaussian_filter, maximum_filter
 import csv
 import os
 from scipy.spatial.distance import euclidean
+import random
 
 # 🛠️ Běhové přepínače – snadné spouštění běhů
-RUN_ID = 3             # číslo běhu (1, 2, ...)
-RUN_MODE = "false"      # "true" nebo "false"
+RUN_ID = 6             # číslo běhu (1, 2, ...)
+RUN_MODE = "true"      # "true" nebo "false"
 # použito jako prefix všech výstupních souborů
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}"
+SEED = 23              # pevně daný seed pro opakovatelnost
+
+np.random.seed(SEED)
+random.seed(SEED)
 
 # 🔧 Mapování konfigurací
 CONFIGS = {
@@ -64,7 +69,7 @@ LOW_NOISE_MODE = cfg.get("LOW_NOISE_MODE", False)
 TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
 KAPPA_MODE = cfg.get("KAPPA_MODE", "gradient")
 
-output_dir = "output"
+output_dir = "output_with_artefacts"
 os.makedirs(output_dir, exist_ok=True)
 
 
