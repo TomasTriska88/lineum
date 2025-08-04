@@ -11,6 +11,7 @@ T. Tříska (2025), formulace na základě pozorování, že stabilita systému 
 Hodnota α ≈ 1/137, známá jako jemná struktura, není univerzální konstanta daná zvenčí, ale **emergentní vlastnost vnitřního ladicího pole** systému.
 
 Systém Lineum ukazuje, že při určitém rozsahu hodnot κ vzniká:
+
 - stabilní spinová aura
 - pravidelná oscilace pole ϕ
 - rovnoměrný výskyt částic
@@ -18,7 +19,12 @@ Systém Lineum ukazuje, že při určitém rozsahu hodnot κ vzniká:
 Tato stabilita vrcholí právě kolem hodnoty κ ≈ 1/137.
 
 Hypotéza tedy tvrdí, že:
+
 > **α je rezonancí ladicího pole, ne konstantou samotného vesmíru.**
+
+> Pokud hodnota κ **neodpovídá žádné vnitřní rezonanci**, může dojít ke stavu, kdy excitace **nevytvoří žádnou trvalou strukturu**.  
+> V testovacím režimu `TEST_EXHALE_MODE` se tyto excitace často **rozplynou bez paměti**, bez víru, bez výdeje energie –  
+> odpovídá to jevu popsanému jako **tichý kolaps** (`Silent Collapse Hypothesis`).
 
 ---
 

@@ -8,16 +8,16 @@ Lina (formulováno na základě simulací T. Tříska, 2025)
 
 ## Hypotéza
 
-Kvazičástice v systému Lineum mohou zanikat v oblastech s vysokým φ a téměř nulovým spinem (|curl| < 0.02), aniž by po sobě zanechaly vírovou strukturu, trajektorii nebo jinou topologickou stopu.  
+Kvazičástice v systému Lineum mohou zanikat v oblastech s vysokým φ a téměř nulovým spinem (|curl| < 0.02), aniž by po sobě zanechaly vírovou strukturu, trajektorii nebo jinou topologickou stopu.
 
 Tento proces označujeme jako **tichý kolaps** – zánik bez otisku, beze zbytku, bez reakce.
 
 Podmínky, za kterých dochází k tichému kolapsu:
 
-- φ > 0.25  
-- |curl| < 0.02  
-- efektivní hmotnost částice m < 0.01 × mₑ  
-- žádný vírový ani strukturální otisk v φ  
+- φ > 0.25
+- |curl| < 0.02
+- efektivní hmotnost částice m < 0.01 × mₑ
+- žádný vírový ani strukturální otisk v φ
 
 ---
 
@@ -29,6 +29,23 @@ Podmínky, za kterých dochází k tichému kolapsu:
 - ✅ Vizualizace (`lineum_spin.gif`, `frames_curl.npy`) neukazují žádné zbytkové proudění
 
 ---
+
+## Kontext režimu `TEST_EXHALE_MODE`
+
+Tento režim upravuje parametry simulace směrem k **pomalejší dynamice, vyšší disipaci a delší životnosti kvazičástic**.  
+Tím se zvyšuje pravděpodobnost, že excitace spontánně zanikne v lokálním φ-maximu bez energetického výdeje.
+
+Je navržen speciálně pro testování hypotéz, které se týkají:
+
+- klidového zániku kvazičástic (např. tichý kolaps),
+- uzavření bez výdeje energie,
+- strukturální paměti φ pole.
+
+Výstupy pro analýzu zahrnují:
+
+- `phi_curl_low_mass.csv` – hodnoty φ a curl v místech s extrémně nízkou efektivní hmotností,
+- `trajectories.csv` – sledování pohybu částic před zánikem,
+- `multi_spectrum_summary.csv` – spektrální složení v místě a čase uzavření.
 
 ## Metodika výpočtu
 
