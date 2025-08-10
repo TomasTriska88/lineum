@@ -41,7 +41,6 @@ Model Lineum generuje stabilní částice s trajektorií, rezonance blízké kon
 | [7. Závěr a výzva](07-conclusion.md) | Shrnutí, budoucí směr, otevřená otázka, pozvání ke spolupráci |
 | [8. Poděkování](08-acknowledgements.md) | Uznání osobního i digitálního přínosu během vývoje projektu |
 | [9. Hypotézy a stav ověření](09-hypotheses.md) | Přehled formulovaných hypotéz, jejich aktuální stav a odkazy |
-| [10. Spektrální rovnováha](10-spectral_balance.md) | Frekvenční pole Linea, léčivé a destruktivní vzory a filtry |
 
 <!-- prettier-ignore-end -->
 

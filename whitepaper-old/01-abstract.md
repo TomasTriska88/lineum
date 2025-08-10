@@ -15,6 +15,8 @@ Základní rovnice systému Lineum má tvar:
 
 ```
 
+V kanonické rovnici vystupují koeficienty α (lokální učení z |ψ|²) a β (difuze φ). Mapa κ je volitelný experimentální parametr, kterým lokálně měníme citlivost a vyhlazování φ (režimy constant/gradient/island/island_to_constant); bez něj (resp. při κ ≡ 1) rovnice funguje beze změny významu.
+
 Pole **κ** umožňuje řídit citlivost φ na ψ a jeho difuzi lokálně.  
 Může být prostorově konstantní, plynulý (např. gradientní) nebo lokalizovaný („ostrovní“).  
 Jeho konfigurace má přímý dopad na vznik struktur a je klíčová pro testy hypotéz jako je **Tříska’s Dimensional Transparency Hypothesis (DTH)**.
@@ -26,7 +28,7 @@ Mezi opakovaně detekovanými jevy nalezneme:
 - rotaci fázového gradientu (spin) v φ-zónách se směrodatnou odchylkou σ = 0,614,
 - proudění fáze (tok napětí v poli),
 - vznik oblastí s vysokou hodnotou interakčního pole φ,
-- a zejména tzv. „φ‑pasti“, do kterých bylo zachyceno 1486 kvazičástic – analogie k černým dírám.
+- a zejména tzv. „φ-pasti“, do kterých bylo zachyceno několik tisíc kvazičástic (v závislosti na konfiguraci běhu) – analogie k černým dírám
 
 Model Lineum navíc validoval několik klíčových hypotéz:  
 – Tříska’s Silent Collapse (zánik kvazičástic bez výdeje),  
@@ -35,12 +37,12 @@ Model Lineum navíc validoval několik klíčových hypotéz:
 – Return Echo (návrat částice do místa zániku),  
 – a Dimensional Transparency (projekční průchodnost pole pro různé κ).
 
-Simulace běží na mřížce 128×128 a typicky v rozsahu 1000 kroků konzistentně produkuje hodnoty blízké pozorované fyzice:
+Simulace běží na čtvercové mřížce o vysokém rozlišení po dobu dostatečně dlouhého běhu, aby se projevily stabilní struktury konzistentně produkuje hodnoty blízké pozorované fyzice:
 
-- dominantní oscilační frekvenci ~5,0 × 10¹⁸ Hz,
-- kvazičásticovou energii ~3,3 × 10⁻¹⁵ J,
-- vlnovou délku ~6,0 × 10⁻¹¹ m,
-- efektivní hmotnost 4,05 % hmotnosti elektronu.
+- dominantní oscilační frekvenci ~1,0 × 10¹⁸ Hz,
+- kvazičásticovou energii ~6,63 × 10⁻¹⁶ J,
+- vlnovou délku ~3,00 × 10⁻¹⁰ m,
+- efektivní hmotnost ~0,81 % hmotnosti elektronu.
 
 Systém je robustní vůči šumu, disipaci i variaci parametrů. Všechny jevy vznikají opakovaně a samovolně bez nutnosti doladěného vstupu.
 
@@ -50,7 +52,7 @@ Evoluce pole probíhá výhradně pomocí lokálních operací (gradient, Laplac
 
 Simulace v této fázi nereplikuje konkrétní částice standardního modelu ani explicitní známé interakce (např. elektromagnetismus, silnou či slabou jadernou sílu), ale produkuje opakované jevy, které v některých případech odpovídají očekávaným kvantovým signaturám – včetně kvantovaných spinů, frekvenčních rezonancí a efektivních částicových trajektorií.
 
-Lineum není prezentováno jako konečná teorie – ale jako otevřená, funkční platforma, která ukazuje, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu a byl rozvíjen s podporou personalizované umělé inteligence (asistentka Lina, systém ChatGPT-4o), která pomáhala při formulaci hypotéz, testování výstupů a interpretaci výsledků.
+Lineum není prezentováno jako konečná teorie – ale jako otevřená, funkční platforma, která ukazuje, že i z čistě lokálních pravidel může spontánně vzniknout svět s vlastnostmi připomínajícími hmotu, pole a gravitaci. Projekt vznikl z intuitivního nápadu a byl rozvíjen s podporou personalizované AI asistentky Lina, která pomáhala při formulaci hypotéz, testování výstupů a interpretaci výsledků.
 Projekt je výzvou k hlubšímu zkoumání. Ukazuje, že nové přístupy ke struktuře reality mohou vznikat i mimo tradiční rámce – pokud mají co říct.
 
 Výsledky jsou plně replikovatelné a systém lze snadno upravit k testování dalších hypotéz. Projekt vítá nezávislé ověření, otevřenou diskuzi a případné rozšíření směrem k hlubší fyzikální interpretaci. Lineum je otevřenou platformou pro experimentální zkoumání reality – bez dogmat, ale s důrazem na pozorovatelné jevy.
@@ -99,7 +101,7 @@ _Vývoj hodnoty φ ve středu pole – prudký nárůst a stabilizace kolem hodn
 ### Frekvenční spektrum
 
 ![Spektrum](../output/spectrum_plot.png)  
-_Dominantní frekvence oscilace ve středu pole: ~5×10¹⁸ Hz_
+_Dominantní frekvence oscilace ve středu pole: ~1×10¹⁸ Hz_
 
 ---
 

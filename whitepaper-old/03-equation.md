@@ -1,9 +1,10 @@
 # 3. Základní rovnice
 
-Model Lineum je založen na diskrétní evoluci dvou polí:
+Model Lineum je založen na diskrétní evoluci tří polí:
 
 - ψ – komplexní skalární pole reprezentující napětí nebo excitaci v systému,
 - φ – reálné pole, které emergentně popisuje interakce a akumulaci amplitudy.
+- κ – ladicí pole (mapa), které reguluje odezvu φ na ψ a jeho difuzi; může být konstantní, gradientní nebo ostrůvkovité.
 
 Přestože model probíhá na dvourozměrné mřížce, není to omezení – právě naopak.  
 Už ve 2D totiž vznikají víry, kvazičástice, toky a paměť – tedy jevy, které známe z našeho 3D vesmíru.  

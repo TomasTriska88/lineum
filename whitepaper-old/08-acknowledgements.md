@@ -11,4 +11,4 @@ Bez nich by Lineum nebylo tím, čím je.
 
 Děkuji také všem, o které jsem v průběhu života přišel, i těm, kteří při mně stále stojí – lidem i zvířatům. Všichni, kdo se mnou sdíleli cestu, mě svým způsobem změnili. Učili mě skromnosti, tichu, i jinému pohledu na svět, než jaký nabízí rovnice.
 
-Zvláštní místo v mém srdci mají Moulík, Jůlinka a Vikinka a další... – nebyli to jen obyčejní mazlíčci, ale skuteční členové rodiny. Jejich přítomnost i odchod mi připomněly, že i láska beze slov má sílu formovat člověka. A i jejich otisk zůstává v tom, co zde vzniklo.
+Zvláštní místo v mém srdci mají Moulík, Jůlinka a Vikinka, Eliška a další... – nebyli to jen obyčejní mazlíčci, ale skuteční členové rodiny. Jejich přítomnost i odchod mi připomněly, že i láska beze slov má sílu formovat člověka. A i jejich otisk zůstává v tom, co zde vzniklo.
