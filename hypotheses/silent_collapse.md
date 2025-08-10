@@ -2,7 +2,7 @@
 
 ## Autor / původ
 
-Lina (formulováno na základě simulací T. Tříska, 2025)
+T. Tříska (2025)
 
 ---
 
