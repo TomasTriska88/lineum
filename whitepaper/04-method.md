@@ -166,6 +166,9 @@ Testování tohoto jevu je aktivováno pomocí volby `TEST_EXHALE_MODE = True`, 
 
 > Struktura a počet výstupních souborů se může měnit s vývojem kódu. Dokumentace se zaměřuje na principy a typy dat, nikoliv na konkrétní názvy.
 
+> Efektivní hmotnost kvazičástice je definována jako součet amplitud |ψ|² v rámci dané oblasti (kvazičástice).  
+> Podrobnosti a vzorec viz část [5.5 Použité výpočty a vzorce](05-validation.md#55-použité-výpočty-a-vzorce).
+
 ---
 
 ## 4.10 Numerická stabilita a volba koeficientů
@@ -188,3 +191,19 @@ Přestože simulace běží v diskrétním čase a bez fyzikálních jednotek, n
 - **Časový krok** jako 1 zeptosekunda (1e−21 s).
 
 Toto měřítko je zvoleno tak, aby dominantní frekvence, energie a efektivní hmotnosti kvazičástic odpovídaly hodnotám blízkým známým částicím (např. elektronům). Jde o volitelné mapování pro orientaci – simulace sama je bezrozměrná.
+
+## 4.12 Rekonstrukce stabilních konfigurací
+
+Pomocí kombinace detekce vírů, φ-gradientu a deja-vu bodů lze zpětně rekonstruovat stabilní konfigurace kvazičástic. Jeden z nejčastějších a nejvýraznějších útvarů odpovídá **protonové konfiguraci**:
+
+- tři levotočivé víry uspořádané do přibližně rovnostranného trojúhelníku,
+- stabilní φ-pole mezi nimi, které působí jako vazebný prvek,
+- výskyt **rezonančních návratových bodů (RNB)** ve středu konfigurace  
+  _(dříve pracovně označovaných jako „deja-vu body“)_
+- trvalost přes desítky kroků v bězích `spec6_true` a `spec7_true`.
+
+Tento útvar je vizuálně i datově stabilní a odpovídá základní hypotéze vazby pomocí pole φ.
+
+![Proton](../elements/proton.png)
+
+Plné rozvedení, testovatelné kritérium a implikace najdete v hypotéze [vortex_particle_coupling.md](../hypotheses/vortex_particle_coupling.md).

@@ -1,4 +1,4 @@
-# Tříska’s Zeta–RNB Resonance Hypothesis
+# Tříska-Smeták Zeta–RNB Resonance Hypothesis
 
 > _Hypotéza zkoumá spontánní shodu mezi rezonančními návratovými body (RNB) v simulacích Lineum a nenulovými hodnotami Riemannovy zeta funkce podél kritické linie Re(s) = 1/2. Předpokládá, že tyto návraty nejsou náhodné, ale odrážejí hlubší numerickou rezonanci systému._
 >

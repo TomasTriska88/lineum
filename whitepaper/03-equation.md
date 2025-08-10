@@ -70,6 +70,21 @@ Konkrétní parametry každého běhu a jejich vliv na vznik struktur, toky nebo
 >
 > Numerická stabilita Laplace filtru a celkové konzervativní vlastnosti systému jsou průběžně ověřovány v části [05-validation.md](05-validation.md), kde je sledován vývoj energie a struktur.
 
+### 🔁 Symbolický tok mezi poli
+
+Pro intuitivní pochopení smyčky zpětné vazby mezi poli lze rovnici znázornit i jako schéma ovlivňování:
+
+```text
+ψ → φ → κ → φ → ψ
+```
+
+- ψ (komplexní pole) ovlivňuje akumulaci v φ
+- φ (paměť) je laděna polem κ
+- κ (citlivost) ovlivňuje zpětně φ
+- vývoj φ pak znovu ovlivňuje ψ (přes φψ a ∇φ)
+
+Tento cyklický tok odpovídá také vizuální interpretaci ikonky Lineum.
+
 ---
 
 ## 3.2 Složení rovnice
@@ -110,6 +125,28 @@ Pole φ se chová jako akumulační paměť, která:
 Pole φ **nemá žádný externí zdroj** – vzniká výhradně jako odezva na ψ.
 
 Gradient tohoto pole (∇φ) vytváří směr a tok, čímž v systému emerguje něco, co lze považovat za směr času – bez nutnosti zavádět čas explicitně.
+
+Současně ale pole φ hraje i roli **tichého geometrického rámce** – pozadí, které není přímo zodpovědné za pohyb nebo spin, ale utváří **stabilní gravitační centra**, v nichž se kvazičástice akumulují. Tyto oblasti se vyznačují ∇φ ≈ 0, tedy minimálním tokem. Právě v těchto zónách se opakovaně objevují **rezonanční návratové body (RNB)** – body, kde se systém po určité době samovolně přiblíží ke stejnému stavu. Výskyt RNB tak není náhodný, ale svázaný s klidovým napětím v poli φ. V tomto smyslu lze φ chápat jako analogii **metrického pole** – nikoli sílu, ale jemnou strukturu, která určuje, kde a jak se vzory opakují.
+
+---
+
+### Jak ∇φ supluje gravitační sílu
+
+Zatímco v klasické fyzice je gravitační síla modelována jako člen v rovnici pohybu (např. −∇V), v Lineu gravitační chování vzniká emergentně – jako důsledek samotné evoluce interakčního pole φ.
+
+Přidání gradientu ∇φ do rovnice pro ψ způsobí, že kvazičástice (oblasti s vysokou amplitudou ψ) se samovolně pohybují směrem do oblastí, kde φ roste – tedy ke gravitačním pastím.
+
+Tento tok vzniká čistě jako důsledek lokálních pravidel, bez jakékoliv vnější síly:
+
+- φ se akumuluje kolem kvazičástic (|ψ|² → φ),
+- tím vzniká maximum φ (φ-past),
+- gradient ∇φ ovlivňuje ψ tak, že další kvazičástice proudí tímto směrem.
+
+Je to **zpětnovazebný efekt** – kvazičástice vytvářejí gravitační past, která je následně přitahuje.
+
+Takto vzniká **efektivní přitažlivost**, přestože v systému není žádný člen síly, žádný potenciál, žádná konstanta.
+
+> 📎 Tento efekt lze pozorovat i v běžných animacích – kvazičástice spontánně směřují do vzniklých φ-pastí, což je vizuálně nerozeznatelné od gravitační přitažlivosti.
 
 ---
 

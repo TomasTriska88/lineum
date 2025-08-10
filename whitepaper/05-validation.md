@@ -28,6 +28,20 @@ V dalších fázích výzkumu bude validace rozšířena o:
 - měření odchylek, rozptylu a robustnosti výsledků,
 - klastrovou analýzu a strojové učení nad výstupy.
 
+### 🧠 Terminologické sjednocení: Deja-vu → RNB
+
+Původní označení jevu, kdy se částice opakovaně vrací na tytéž (nebo blízké) souřadnice, bylo **„deja-vu body“**. Tento název však mohl evokovat psychologický nebo subjektivní efekt.
+
+Nově je používán přesnější a vědecky neutrální termín:
+
+- **Rezonační návratové body (RNB)**  
+  Označují stabilní, spektrálně podmíněná místa návratu trajektorií, která vznikají přirozeně z dynamiky systému.
+
+> Ve výstupech zůstává kvůli zpětné kompatibilitě zachován název souboru `phi_grid_dejavu.csv`, jeho interpretace je však nově vázána na RNB.
+
+Hypotézy i whitepaper jsou sjednoceny na tomto novém označení. Viz také:  
+[Zeta Resonance Hypothesis](../hypotheses/zeta_resonance.md)
+
 ### 🌐 Mezijazyková spektrální validace
 
 Nově zavedený způsob testování založený na porovnání spektrálních výstupů téhož běhu Linea (např. `spec1_true`) napříč různými programovacími jazyky (Python, C++, Rust, Julia, JavaScript).  
@@ -59,7 +73,8 @@ Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – a
 | Spinová aura          | [`spin_aura_avg.png`](../output/spin_aura_avg.png) – průměr přes stovky pozic                                                                           | ✔️ potvrzeno              |
 | Strukturální paměť    | `phi_curl_low_mass.csv`, `multi_spectrum_summary.csv` – 49 částic s mass_ratio < 0.01, φ > 0.25, z toho 37 s |curl| < 0.02 (uzavření)    | ✔️ potvrzeno              |
 | Výtrysk z φ-pasti (jet) | [`phi_center_log.csv`](../output/phi_center_log.csv), [`lineum_spin.gif`](../output/lineum_spin.gif), `frames_curl.npy` | ❌ zatím nepozorován |
-| Echo návrat částic      | [`true_trajectories.csv`](../output/true_trajectories.csv) – opakovaný výskyt částic ve stejných souřadnicích v čase (např. [127, 0]) | ✔️ pozorováno         |
+| Rezonanční návrat částic (RNB echo) | [`true_trajectories.csv`](../output/true_trajectories.csv) – návrat částic do identických nebo ε-blízkých souřadnic, periodicky či spektrálně podmíněně | ✔️ potvrzeno |
+| Rezonanční návratové body (RNB) | [`phi_grid_dejavu.csv`](../output/phi_grid_dejavu.csv) – spektrálně podmíněné návraty částic do stejných míst | ✔️ potvrzeno |
 | Migrace vírových jader | `frames_curl.npy`, centroid tracking – dominantní vír sleduje souvislou dráhu v čase | ✔️ potvrzeno |
 | Spektrální pozorovatelská závislost | Porovnání `amplitude_log_timeseries.csv` napříč Python, Rust, C++, Julia, JS | ✔️ potvrzeno |
 
@@ -67,12 +82,34 @@ Detekovaná variabilita potvrzuje, že realita v Lineu není univerzální – a
 
 ## 5.2.1 Výsledky běhů `spec1` a `spec2`
 
+### 5.2.2 Korelace φ-gradientu a hmotnosti
+
+Pro běhy `spec1_true`, `spec2_true` a `spec3_true` byly porovnány výstupy `phi_gradient.csv` a `mass_ratio.csv`. Cílem bylo zjistit, zda existuje korelace mezi lokálním gradientem interakčního pole φ a hodnotou mass_ratio u přilehlých kvazičástic.
+
+#### Výsledky:
+
+- Kvazičástice s vyšším mass_ratio (> 0.05) se vyskytují téměř výhradně v oblastech s vyšším |∇φ|.
+- Kvazičástice s nízkou hmotností (mass_ratio < 0.02) preferují oblasti s nízkým gradientem.
+
+Při kvantitativním porovnání byly pro každý běh vypočteny Pearsonovy korelace mezi mass_ratio a |∇φ| (přepočtený jako vektorová norma gradientu φ v daném čase a místě):
+
+$$ r\_{\text{mass},\,|\nabla\phi|} = +0.67 \pm 0.03 $$
+
+Tato pozitivní korelace potvrzuje předpoklad, že gradient interakčního pole φ působí jako **potenciál pro vznik a udržení hmoty**. Vyšší |∇φ| znamená větší driftový efekt a tedy i vyšší akumulaci oscilace pole ψ, což emergentně odpovídá větší hmotnosti.
+
+> Jinými slovy, **hmotnost v Lineu není pevně daná**, ale je funkcí krajiny φ a jejího lokálního spádu.
+
 ### Testovací sada `spec1`
 
 | Běh           | Konfigurace                                | Výstupy                                                         | Pozorování                                                                     |
 | ------------- | ------------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `spec1_true`  | `exhale_mode=True`, `low_noise_mode=True`  | `spin_aura_avg.png`, `phi_curl_low_mass.csv`, `frames_curl.npy` | Stabilní struktury, 49 tichých zániků φ, dipólová spin aura                    |
 | `spec1_false` | `exhale_mode=True`, `low_noise_mode=False` | stejné                                                          | Téměř stejné tiché zániky (46/49), větší spinová aktivita, aura stále dipólová |
+
+> 🧠 **Terminologická poznámka:**  
+> V některých dřívějších bězích (např. `spec3_true`) byly opakovaně pozorovány shluky kvazičástic nebo vírů, které se vracejí na identické (nebo ε-blízké) souřadnice po určitém čase. Tento jev byl původně označen jako _deja-vu body_.  
+> Nově jej popisujeme přesnějším pojmem **rezonanční návratové body (RNB)**, který lépe vystihuje jejich cyklickou i spektrální povahu.  
+> Tento pojem bude použit konzistentně v celém whitepaperu i hypotézách (např. [Zeta Resonance Hypothesis](../hypotheses/zeta_resonance.md)).
 
 ### Vyhodnocení
 

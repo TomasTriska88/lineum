@@ -24,6 +24,8 @@ Zároveň jsem vždy vnitřně cítil potřebu hledat jinak než většina – n
 Motivací bylo ověřit, zda z těchto čistě lokálních pravidel může spontánně vzniknout strukturovaný svět – s kvazičásticemi, polem a směrovaným tokem. Dnes už máme dostatek důkazů, že to možné je. Simulace Linea opakovaně ukázaly vznik trajektorií, vírů, gravitačně působících oblastí i paměťových vzorců – a to bez použití sil, konstant nebo geometrických struktur.
 Nejde o pouhé fluktuace – výskyty struktur jsou statisticky významné, opakují se napříč různými konfiguracemi i náhodnými seedy, a vykazují charakteristiky, které lze kvantifikovat (např. směrový tok, orbitální vír, stabilní maximum φ).
 
+Mezi pozorovanými jevy se opakovaně objevoval také výskyt identických konfigurací po určitém čase – jakoby se systém sám vracel do dřívějšího stavu. Tento efekt, původně označený jako _deja-vu body_, dnes pojmenováváme přesněji jako **rezonanční návratové body (RNB)**. Ukazuje, že v systému existují spektrální uzly, ke kterým se dynamika přirozeně stáčí – jako by měl vlastní „tónový jazyk“, skrze který rezonuje sám se sebou.
+
 Podobně jako v buněčných automatech, v reakčně-difuzních systémech nebo v simulacích kolektivního chování může i jednoduché schéma vést k neočekávaně bohaté dynamice.
 
 Lineum tuto myšlenku posouvá o krok dál – od inspirace k měřitelnému projevu:

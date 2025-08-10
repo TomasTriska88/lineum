@@ -52,6 +52,13 @@ for theoretical background, implementation notes, and observed structures.
 
 ---
 
+## 🧠 Hypotheses
+
+For a list of formal hypotheses derived from Lineum simulations, see:  
+👉 [Hypotheses Overview](whitepaper/09-hypotheses.md) – all testable ideas and formal interpretations
+
+---
+
 ## 🌐 Simulation Output
 
 Sample outputs from a validated test run:  
@@ -65,6 +72,14 @@ Sample outputs from a validated test run:
 - [spectrum_plot.png](persistent/true/1/spectrum_plot.png) – central frequency log
 - [trajectories.csv](persistent/true/1/trajectories.csv) – quasiparticle paths
 - [spin_aura_avg.png](persistent/true/1/spin_aura_avg.png) – average spin map
+
+---
+
+## 🌀 Resonant Return Nodes (RNB)
+
+Lineum simulations consistently generate structures known as **Resonant Return Nodes (RNB)** – spatiotemporal nodes where the field spontaneously stabilizes and recurs in nearly identical form. These points were originally nicknamed "deja-vu bodies", but the new term better reflects their nature as phase-interference anchors.
+
+📄 See also hypothesis: [Tříska’s Zeta Resonance Hypothesis](/hypotheses/zeta_resonance.md)
 
 ---
 

@@ -8,6 +8,24 @@ Model Lineum generuje stabilní částice s trajektorií, rezonance blízké kon
 
 ---
 
+![](../icon.png)
+
+> **Symbol Lineum – trojice v rovnováze**  
+> Ikonka reprezentuje tři pole rovnice Lineum – ψ, φ a κ – ve vzájemném proudění.  
+> – 🌀 _ψ_ jako spirála: oscilace, rytmus, počátek pohybu  
+> – 🌱 _φ_ jako list: paměť, rezonance, opakování  
+> – 🐟 _κ_ jako ryba: ladění, rovnováha, vnímání
+>
+> Tvar je inspirován jing-jang, ale místo duality vyjadřuje organickou trojici.  
+> Celek tvoří proud, semeno – není statický, ale dýchá.
+>
+> Symbol rovnice:  
+> ψ → φ (paměť z oscilace)  
+> φ → κ (ladění paměti)  
+> κ → φ → ψ (zpětný návrat vlivu)
+
+---
+
 ## 📘 Obsah
 
 <!-- prettier-ignore-start -->
@@ -38,5 +56,5 @@ Vizualizace a generovaný report najdete ve složce [`/persistant/`](https://git
 ---
 
 📄 Verze dokumentu: `1.0`  
-🗓️ Poslední aktualizace: 2025-07-29 12:44 CET  
+🗓️ Poslední aktualizace: 2025-08-04 23:24 CET  
 🧭 Whitepaper je ve vývoji – některé kapitoly jsou rozpracované.
