@@ -6,7 +6,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 from scipy.ndimage import gaussian_filter, maximum_filter
-import csv
 import os
 from scipy.spatial.distance import euclidean
 import random
