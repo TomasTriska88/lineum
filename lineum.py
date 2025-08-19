@@ -83,15 +83,17 @@ def notify_file_creation(path, success=True, error=None):
 
 
 def save_csv(filename, header, rows):
-    """Save rows to CSV and notify about success or failure."""
+    """Fast CSV save using pandas; avoids per-row Python overhead."""
     path = os.path.join(output_dir, f"{RUN_TAG}_{filename}")
     try:
-        with open(path, "w", newline="") as f:
-            writer = csv.writer(f)
-            if header:
-                writer.writerow(header)
-            for row in tqdm(rows, desc=f"Saving {filename}", unit="row"):
-                writer.writerow(row)
+        # Materialize rows once (zip/generators → list); much faster than row-by-row writes
+        data = list(rows)
+        # Build DataFrame with/without header
+        if header:
+            df = pd.DataFrame(data, columns=header)
+        else:
+            df = pd.DataFrame(data)
+        df.to_csv(path, index=False)
         notify_file_creation(path)
     except Exception as e:
         notify_file_creation(path, success=False, error=e)
