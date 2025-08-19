@@ -135,7 +135,7 @@ JACCARD_MIN  = 0.5           # threshold for considering two sets 'consistent'
 > These are direct unit conversions and serve as a replication anchor for all spectral analyses (SBR, harmonicity, depth).
 
 > **Representative metrics (spec6_false).**  
-> **SBR ≈ 2.97** with a ±2-bin guard around f₀. Secondary peaks are **not prominent**, i.e., harmonicity is low in this run.  
+> **SBR ≈ 2.98** with a ±2-bin guard around f₀. Secondary peaks are **not prominent**, i.e., harmonicity is low in this run.  
 > The dominant frequency **f₀ = 1.00×10¹⁸ Hz** is **consistent across sampled points** (see multi-point spectrum logs).
 
 - **Stable f₀** with narrow within-run variance and small across-run drift.
