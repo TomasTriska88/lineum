@@ -259,26 +259,29 @@ def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
 
 
 def detect_vortices(phase):
-    vortices = np.zeros_like(phase)
-    for i in range(size - 1):
-        for j in range(size - 1):
-            p00 = phase[i, j]
-            p01 = phase[i, j+1]
-            p11 = phase[i+1, j+1]
-            p10 = phase[i+1, j]
+    """
+    Vectorized winding-number detection on 2x2 plaquettes.
+    Produces the same result as the previous double-for loop:
+    sets +1 / -1 on cells [0..size-2, 0..size-2], leaves last row/col = 0.
+    """
+    # 2x2 bloky (stejný rozsah jako dřív: do size-1)
+    p00 = phase[:-1, :-1]
+    p01 = phase[:-1, 1:]
+    p11 = phase[1:, 1:]
+    p10 = phase[1:, :-1]
 
-            # Rozdíly fáze mezi sousedy (modulo 2π)
-            d1 = np.angle(np.exp(1j * (p01 - p00)))
-            d2 = np.angle(np.exp(1j * (p11 - p01)))
-            d3 = np.angle(np.exp(1j * (p10 - p11)))
-            d4 = np.angle(np.exp(1j * (p00 - p10)))
+    # fázové rozdíly zabalené do (-π, π]
+    d1 = np.angle(np.exp(1j * (p01 - p00)))
+    d2 = np.angle(np.exp(1j * (p11 - p01)))
+    d3 = np.angle(np.exp(1j * (p10 - p11)))
+    d4 = np.angle(np.exp(1j * (p00 - p10)))
 
-            winding = (d1 + d2 + d3 + d4) / (2 * np.pi)
+    winding = (d1 + d2 + d3 + d4) / (2 * np.pi)
 
-            if winding > 0.5:
-                vortices[i, j] = 1
-            elif winding < -0.5:
-                vortices[i, j] = -1
+    vortices = np.zeros_like(phase, dtype=int)
+    block = vortices[:-1, :-1]
+    block[winding > 0.5] = 1
+    block[winding < -0.5] = -1
     return vortices
 
 
@@ -706,17 +709,16 @@ if __name__ == "__main__":
             notify_file_creation(filename, success=False, error=e)
 
     save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-         cmap="plasma", vmin=0, vmax=0.5, out_px=600)
+             cmap="plasma", vmin=0, vmax=0.5, out_px=600)
 
     save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-            cmap="bwr", vmin=-0.3, vmax=0.3, out_px=600)
+             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=600)
 
     save_gif(frames_vort, os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
-            cmap="bwr", vmin=-1, vmax=1, out_px=600)
+             cmap="bwr", vmin=-1, vmax=1, out_px=600)
 
     save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
-            cmap="gray", vmin=0, vmax=1, out_px=600)
-
+             cmap="gray", vmin=0, vmax=1, out_px=600)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
