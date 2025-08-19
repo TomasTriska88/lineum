@@ -595,11 +595,6 @@ if __name__ == "__main__":
         pct_neutral = None
         mean_total_vort = None
 
-    # Výpis do konzole
-    print("🔬 Dominant frequency:", f"{dominant_freq:.2e} Hz")
-    print("⚡ Particle energy:", f"{energy:.2e} J")
-    print("🌈 Wavelength:", f"{wavelength:.2e} m")
-
     # Uložení grafu
     plt.figure(figsize=(8, 4))
     plt.plot(positive_freqs, positive_spectrum)
@@ -685,7 +680,7 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [amp_img, curl_overlay, vec]
 
-    def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0, phi_half_life_steps=None, sbr=None, pct_neutral=None, mean_total_vort=None):
+    def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0, phi_half_life_steps=None, sbr=None, pct_neutral=None, mean_total_vort=None, phi_std_near=None):
 
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
@@ -922,6 +917,10 @@ if __name__ == "__main__":
   <tr><td>Topology neutrality</td>
       <td>{'—' if pct_neutral is None else f'{pct_neutral:.1f}%'} of steps with |net charge| ≤ 1
           (mean vortices ≈ {'—' if mean_total_vort is None else f'{mean_total_vort:.0f}'})</td></tr>
+            <tr><td>φ near vs field</td>
+      <td>{phi_mean_near:.2e} ± {('—' if phi_std_near is None else f'{phi_std_near:.2e}')}
+          vs {phi_mean_field:.2e} ± {('—' if phi_std_field is None else f'{phi_std_field:.2e}')}</td></tr>
+
 
     </table>
     
@@ -1309,8 +1308,10 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
         phi_above_025_count=phi_above_025_count,
         curl_near_zero_count=curl_near_zero_count,
         phi_half_life_steps=phi_half_life_steps,
-        sbr=sbr, pct_neutral=pct_neutral,
-        mean_total_vort=mean_total_vort
+        sbr=sbr,
+        pct_neutral=pct_neutral,
+        mean_total_vort=mean_total_vort,
+        phi_std_near=phi_std_near,
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
