@@ -656,32 +656,67 @@ if __name__ == "__main__":
 
     # Funkce pro uložení GIFů
 
-    def save_gif(data_frames, filename, cmap='viridis', vmin=None, vmax=None):
-        fig, ax = plt.subplots(figsize=(6, 6))
-        img = ax.imshow(data_frames[0], cmap=cmap, vmin=vmin, vmax=vmax)
-        ax.axis("off")
+    def save_gif(data_frames, filename, cmap='viridis', vmin=None, vmax=None,
+                 out_px=None, resample='nearest'):
+        """
+        Fast GIF writer: maps frames -> RGBA via Matplotlib colormap (no figures),
+        then writes GIF via Pillow. Optional upscale to a fixed pixel size (out_px).
+        """
+        from matplotlib import cm, colors
+        from PIL import Image
+        import numpy as np
 
-        def update(i):
-            img.set_data(data_frames[i])
-            return [img]
-        ani = FuncAnimation(fig, update, frames=len(
-            data_frames), interval=300, blit=True)
+        if vmin is None:
+            vmin = float(np.min(data_frames))
+        if vmax is None:
+            vmax = float(np.max(data_frames))
+
+        norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=True)
+        mapper = cm.ScalarMappable(norm=norm, cmap=cmap)
+
+        # zvol resampling (nejvěrnější předchozímu vzhledu bývá 'nearest')
+        RESAMPLE = {
+            'nearest': Image.NEAREST,
+            'bilinear': Image.BILINEAR,
+            'bicubic': Image.BICUBIC
+        }.get(resample, Image.NEAREST)
+
+        pil_frames = []
+        for f in data_frames:
+            rgba = mapper.to_rgba(f, bytes=True)   # uint8 RGBA
+            img = Image.fromarray(rgba, mode="RGBA")
+            if out_px is not None:
+                img = img.resize((out_px, out_px), RESAMPLE)
+            pil_frames.append(img)
+
         try:
-            ani.save(filename, writer=PillowWriter(fps=10))
+            if len(pil_frames) == 1:
+                pil_frames[0].save(filename)
+            else:
+                pil_frames[0].save(
+                    filename,
+                    save_all=True,
+                    append_images=pil_frames[1:],
+                    duration=100,  # ~10 fps
+                    loop=0,
+                    disposal=2
+                )
             notify_file_creation(filename)
         except Exception as e:
             notify_file_creation(filename, success=False, error=e)
-        finally:
-            plt.close(fig)
 
     save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-             cmap="plasma", vmin=0, vmax=0.5)
+         cmap="plasma", vmin=0, vmax=0.5, out_px=600)
+
     save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-             cmap="bwr", vmin=-0.3, vmax=0.3)
-    save_gif(frames_vort, os.path.join(
-        output_dir, f"{RUN_TAG}_lineum_vortices.gif"), cmap="bwr", vmin=-1, vmax=1)
-    save_gif(frames_particles, os.path.join(
-        output_dir, f"{RUN_TAG}_lineum_particles.gif"), cmap="gray", vmin=0, vmax=1)
+            cmap="bwr", vmin=-0.3, vmax=0.3, out_px=600)
+
+    save_gif(frames_vort, os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
+            cmap="bwr", vmin=-1, vmax=1, out_px=600)
+
+    save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
+            cmap="gray", vmin=0, vmax=1, out_px=600)
+
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
