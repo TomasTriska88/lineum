@@ -488,7 +488,7 @@ if __name__ == "__main__":
     # Provedeme FFT
     fft_result = fft(amplitudes)
     frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
-    spectrum = np.abs(fft_result)
+    spectrum = np.abs(fft_result)**2
 
     # Vybereme pouze kladné frekvence
     positive_freqs = frequencies[:len(frequencies)//2]
@@ -546,7 +546,7 @@ if __name__ == "__main__":
         signal -= np.mean(signal)
         fft_result = fft(signal)
         freqs = fftfreq(len(signal), d=TIME_STEP)
-        spectrum = np.abs(fft_result)
+        spectrum = np.abs(fft_result)**2
         positive_freqs = freqs[:len(freqs)//2]
         positive_spectrum = spectrum[:len(spectrum)//2]
 
@@ -598,9 +598,9 @@ if __name__ == "__main__":
     # Uložení grafu
     plt.figure(figsize=(8, 4))
     plt.plot(positive_freqs, positive_spectrum)
-    plt.title("Spektrum oscilace ve středu pole")
-    plt.xlabel("Frekvence (Hz)")
-    plt.ylabel("Intenzita")
+    plt.title("Spectrum of center-point oscillation")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Power (arb.)")
     plt.xscale("log")
     if np.any(positive_spectrum > 0):
         plt.yscale("log")
@@ -615,6 +615,42 @@ if __name__ == "__main__":
         notify_file_creation(plot_path, success=False, error=e)
     finally:
         plt.close()
+
+    # --- Topology plots (to match the HTML report)
+    if not topo_df.empty:
+        # Net topological charge over steps
+        plt.figure(figsize=(8, 3))
+        plt.plot(topo_df["step"], topo_df["net_charge"])
+        plt.title("Topological net charge per step")
+        plt.xlabel("Step")
+        plt.ylabel("Net charge")
+        plt.grid(True)
+        plt.tight_layout()
+        path = os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png")
+        try:
+            plt.savefig(path)
+            notify_file_creation(path)
+        except Exception as e:
+            notify_file_creation(path, success=False, error=e)
+        finally:
+            plt.close()
+
+        # Total vortices over steps
+        plt.figure(figsize=(8, 3))
+        plt.plot(topo_df["step"], topo_df["total_vortices"])
+        plt.title("Total vortices per step")
+        plt.xlabel("Step")
+        plt.ylabel("Count")
+        plt.grid(True)
+        plt.tight_layout()
+        path = os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png")
+        try:
+            plt.savefig(path)
+            notify_file_creation(path)
+        except Exception as e:
+            notify_file_creation(path, success=False, error=e)
+        finally:
+            plt.close()
 
     # Funkce pro uložení GIFů
 
@@ -851,6 +887,7 @@ if __name__ == "__main__":
             f'<li><a href="{RUN_TAG}_topo_log.csv">topo_log.csv</a></li>'
             f'<li><a href="{RUN_TAG}_trajectories.csv">trajectories.csv</a></li>'
             f'<li><a href="{RUN_TAG}_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li>'
+            f'<li><a href="{RUN_TAG}_spin_aura_profile.csv">spin_aura_profile.csv</a></li>'
             f'</ul>'
         )
 
@@ -901,7 +938,7 @@ if __name__ == "__main__":
         </ul>
 
     
-      <h2>✅ Confirmed observations</h2>
+      <h2>✅ Confirmed observations (v1-safe)</h2>
       <ul>
         {confirmed_html}
       </ul>
@@ -936,13 +973,6 @@ if __name__ == "__main__":
 
         <tr><td>Effective mass</td><td>{mass:.2e} kg</td></tr>
         <tr><td>Mass relative to electron</td><td>{mass_ratio:.2e}× electron mass</td></tr>
-        <tr><td>Mean φ at end-of-life events</td><td>{avg_phi_death}</td></tr>
-        <tr><td>Mean mass_ratio at end-of-life events</td><td>{mass_ratio_blackholes}</td></tr>
-        <tr><td>Particles with mass_ratio < 0.01</td><td>{low_mass_count}</td></tr>
-        <tr><td>⟨φ⟩ at low-mass points</td><td>{phi_low_mass_mean:.3f}</td></tr>
-        <tr><td>⟨|curl|⟩ at low-mass points</td><td>{curl_low_mass_mean:.3f}</td></tr>
-        <tr><td>Low-mass points with φ > 0.25</td><td>{phi_above_025_count}</td></tr>
-        <tr><td>Low-mass points with |curl| < 0.02</td><td>{curl_near_zero_count}</td></tr>
         <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
         <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
         {gravitational_row}
@@ -1006,7 +1036,7 @@ flow pattern in the model; no claim is made about quantum spin.
     
       <h2>📚 Glossary & Naming Rationale</h2>
 
-      <h2>🧠 Note on Gravity</h2>
+      <h2>🧠 Note on φ-guided motion</h2>
 <p><strong>Note on φ-guided motion.</strong><br>
 We do not claim a gravitational theory. In the canonical regime, particles tend to move along gradients of the background field φ. We refer to this as <em>environmental guidance</em>: a metric-like influence of φ on trajectories, without introducing a force law or any analogy to GR. This behavior is quantified via alignment metrics in the report and should be interpreted as an emergent guidance effect within the model.</p>
     
@@ -1104,9 +1134,6 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     phi_mean_field = np.mean(phi_values_field)
     phi_std_field = np.std(phi_values_field)
 
-    print(f"🌌 φ near particles: {phi_mean_near:.4e} ± {phi_std_near:.4e}")
-    print(f"🌌 φ elsewhere:      {phi_mean_field:.4e} ± {phi_std_field:.4e}")
-
     # 🌀 Uložení φ polí pro pozdější analýzu
     frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
     phi_npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
@@ -1115,8 +1142,6 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
         notify_file_creation(phi_npy_path)
     except Exception as e:
         notify_file_creation(phi_npy_path, success=False, error=e)
-
-    save_phi_center_plot()
 
     if KAPPA_MODE == "island_to_constant":
         save_kappa_map(kappa)
@@ -1241,11 +1266,36 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     plt.figure(figsize=(6, 6))
     sns.heatmap(upsampled_spin_map, center=0,
                 cmap="bwr", cbar=True, square=True)
-    plt.title("🧲 Průměrná spinová aura kvazičástice (curl ∇arg(ψ))")
+    plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
     plt.axis("off")
     plt.tight_layout()
     plt.savefig(spin_img_path, dpi=150)
     plt.close()
+
+    # Also save a plain spin-aura map (without axes) and a radial profile for the appendix
+    # Map (use the upsampled heatmap as a clean raster)
+    spin_map_path = os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png")
+    plt.figure(figsize=(3.6, 3.6))
+    plt.imshow(upsampled_spin_map, cmap="bwr")
+    plt.axis("off")
+    plt.tight_layout(pad=0)
+    try:
+        plt.savefig(spin_map_path, bbox_inches="tight", pad_inches=0, dpi=150)
+        notify_file_creation(spin_map_path)
+    except Exception as e:
+        notify_file_creation(spin_map_path, success=False, error=e)
+    finally:
+        plt.close()
+
+    # Radial profile from the non-upsampled average map
+    yy, xx = np.indices(average_spin_map.shape)
+    cy, cx = average_spin_map.shape[0] // 2, average_spin_map.shape[1] // 2
+    rr = np.sqrt((yy - cy)**2 + (xx - cx)**2)
+    rbin = rr.astype(int)
+    rmax = rbin.max()
+    profile_rows = [(int(r), float(average_spin_map[rbin == r].mean()))
+                    for r in range(rmax + 1)]
+    save_csv("spin_aura_profile.csv", ["radius_px", "mean_curl"], profile_rows)
 
     include_spin = os.path.exists(
         os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
@@ -1291,6 +1341,12 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     phi_above_025_count = (df_low_mass["phi"] > 0.25).sum()
     curl_near_zero_count = (df_low_mass["curl"].abs() < 0.02).sum()
 
+    # Save φ-center plot used in the report
+    try:
+        save_phi_center_plot()
+    except Exception as e:
+        print(f"[warn] save_phi_center_plot failed: {e}")
+
     generate_html_report(
         mass=mass,
         mass_ratio=mass_ratio,
@@ -1315,31 +1371,3 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
-
-# 💻 Interaktivní náhled simulace (volitelné UI okno)
-
-fig, ax = plt.subplots(figsize=(7, 7))
-x, y = np.meshgrid(np.arange(size), np.arange(size))
-
-amp_img = ax.imshow(frames_amp[0], cmap='plasma', vmin=0, vmax=0.5)
-curl_overlay = ax.imshow(
-    frames_curl[0], cmap='bwr', alpha=0.4, vmin=-0.3, vmax=0.3)
-vec = ax.quiver(x, y, frames_vecx[0], frames_vecy[0], color='lime', scale=20)
-particles_overlay = ax.imshow(
-    frames_particles[0], cmap='gray', alpha=0.6, vmin=0, vmax=1)
-
-ax.set_title("Lineum realtime UI: |ψ| + spin + tok + částice")
-ax.axis("off")
-
-
-def update(i):
-    amp_img.set_data(frames_amp[i])
-    curl_overlay.set_data(frames_curl[i])
-    vec.set_UVC(frames_vecx[i], frames_vecy[i])
-    particles_overlay.set_data(frames_particles[i])
-    return [amp_img, curl_overlay, vec, particles_overlay]
-
-
-ani = FuncAnimation(fig, update, frames=len(
-    frames_amp), interval=200, blit=True)
-# plt.show()
