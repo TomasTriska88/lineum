@@ -14,7 +14,7 @@ import random
 RUN_ID = 6             # číslo běhu (1, 2, ...)
 RUN_MODE = "false"      # "true" nebo "false"
 # použito jako prefix všech výstupních souborů
-SEED = 17              # pevně daný seed pro opakovatelnost
+SEED = 41              # pevně daný seed pro opakovatelnost
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}"
 
 np.random.seed(SEED)
@@ -283,36 +283,6 @@ def detect_vortices(phase: np.ndarray) -> np.ndarray:
 VORTEX_VIS_PERCENTILE = 5.0  # visualization-only gate: keep lowest 5% amplitud
 
 
-def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh: float | None = None) -> np.ndarray:
-    """
-    Visualization-only gate: keep vortex marks only where |psi| is low (near singularities).
-    RAW data (CSV/metrics) must use ungated 'vortices'.
-    """
-
-    def compute_vortex_vis_threshold(amp: np.ndarray, percentile: float | None = None) -> float:
-        """
-        Default visualization threshold for gating vortices by low amplitude.
-        If percentile is None, falls back to VORTEX_VIS_PERCENTILE (or 5.0 if not defined).
-        """
-        if percentile is None:
-            try:
-                # pokud jsi dřív přidal konstantu
-                p = float(VORTEX_VIS_PERCENTILE)
-            except NameError:
-                p = 5.0
-        else:
-            p = float(percentile)
-        return float(np.percentile(amp, p))
-
-    if amp_thresh is None:
-        amp_thresh = compute_vortex_vis_threshold(amp)
-
-    mask = (amp <= amp_thresh)
-    out = np.zeros_like(vortices)
-    out[:-1, :-1] = vortices[:-1, :-1] * mask[:-1, :-1]
-    return out
-
-
 def update_topology_log(raw_vortices: np.ndarray, step_idx: int, topo_log: list) -> None:
     """
     Append RAW topology counts for this step into topo_log: (step, +1, -1, net, total).
@@ -329,6 +299,7 @@ def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh
     Keep vortex marks only where |psi| is low (near singularities).
     Used for visualization; metrics still use raw vortices.
     """
+
     if amp_thresh is None:
         # default: robust 5th percentile
         amp_thresh = float(np.percentile(amp, 5.0))
@@ -776,6 +747,223 @@ if __name__ == "__main__":
         except Exception as e:
             notify_file_creation(filename, success=False, error=e)
 
+    def save_full_overlay_gif(frames_amp, frames_curl, frames_vecx, frames_vecy, filename,
+                              vmin_amp=0.0, vmax_amp=0.5, vmin_curl=-0.3, vmax_curl=0.3,
+                              out_px=512, vec_stride=8, vec_scale=6.0, k_skip=2, fps=10,
+                              amp_alpha_floor=0.20, curl_alpha_quantile=0.90, alpha_scale=96,
+                              resample='nearest'):
+        """
+        Rychlý overlay GIF:
+        • základ = amplitude (plasma),
+        • přes to curl (bwr) s alfou potlačenou podle amplitudy i kvantilového prahu |curl|,
+        • řídké šipky se špičkou z (frames_vecx, frames_vecy).
+        """
+        from matplotlib import cm, colors
+        from PIL import Image, ImageDraw
+        import numpy as np
+        import math
+
+        # Colormap normalizace
+        amp_norm = colors.Normalize(vmin=vmin_amp,  vmax=vmax_amp,  clip=True)
+        curl_norm = colors.Normalize(vmin=vmin_curl, vmax=vmax_curl, clip=True)
+        amp_map = cm.ScalarMappable(norm=amp_norm,  cmap='plasma')
+        curl_map = cm.ScalarMappable(norm=curl_norm, cmap='bwr')
+
+        # Resample režim
+        RESAMPLE = {
+            'nearest': Image.NEAREST,
+            'bilinear': Image.BILINEAR,
+            'bicubic': Image.BICUBIC
+        }.get(resample, Image.NEAREST)
+
+        pil_frames = []
+        n = len(frames_amp)
+
+        # Globální statistiky curlu (konzistentní napříč snímky)
+        abs_curl_all = np.abs(np.stack(frames_curl))
+        max_abs_curl = max(1e-9, float(abs_curl_all.max()))
+        # např. 90. percentil
+        curl_q = float(np.quantile(abs_curl_all, curl_alpha_quantile))
+
+        for i in range(0, n, max(1, k_skip)):
+            amp = frames_amp[i]
+            curl = frames_curl[i]
+            vx = frames_vecx[i]
+            vy = frames_vecy[i]
+
+            # RGBA base = amplitude
+            amp_rgba = amp_map.to_rgba(amp, bytes=True)  # uint8 RGBA
+            base = Image.fromarray(amp_rgba, mode="RGBA")
+
+            # RGBA overlay = curl s ALFA maskou (amp-gating + kvantil |curl|)
+            curl_rgba = curl_map.to_rgba(curl, bytes=True).copy()
+            abs_curl = np.abs(curl)
+
+            # 1) normalizovaný příspěvek z curlu
+            #    (lineárně od prahu curl_q do maxima; pod prahem = 0)
+            denom = max(1e-12, (max_abs_curl - curl_q))
+            alpha_f = np.clip((abs_curl - curl_q) / denom, 0.0, 1.0)
+
+            # 2) potlačení mimo "hmotu": v nízké amplitudě nulová alfa
+            alpha_f[amp < amp_alpha_floor] = 0.0
+
+            # 3) zmenšení celkové krytí (méně "fialového sněhu")
+            # typicky 96 (0..96)
+            alpha = (alpha_f * alpha_scale).astype(np.uint8)
+            curl_rgba[..., 3] = alpha
+            over = Image.fromarray(curl_rgba, mode="RGBA")
+
+            # Kompozice amplitude + curl
+            comp = Image.alpha_composite(base, over)
+
+            # --- ŠIPKY se špičkou (arrowheads) ---
+            draw = ImageDraw.Draw(comp)
+            H, W = amp.shape
+            arrow_rgba = (144, 238, 144, 200)
+
+            for y in range(0, H, vec_stride):
+                for x in range(0, W, vec_stride):
+                    dx = float(vx[y, x])
+                    dy = float(vy[y, x])
+                    if dx*dx + dy*dy < 1e-12:
+                        continue
+
+                    x1, y1 = float(x), float(y)
+                    x2 = x1 + dx * vec_scale
+                    y2 = y1 + dy * vec_scale
+
+                    # tělo šipky
+                    draw.line([(x1, y1), (x2, y2)], fill=arrow_rgba, width=1)
+
+                    # špička šipky („V“)
+                    theta = math.atan2(dy, dx)
+                    head_len = 0.6 * vec_scale
+                    head_wide = 0.35 * vec_scale
+                    hx = math.cos(theta)
+                    hy = math.sin(theta)
+                    nx = -hy
+                    ny = hx
+                    xh1 = x2 - hx*head_len + nx*head_wide
+                    yh1 = y2 - hy*head_len + ny*head_wide
+                    xh2 = x2 - hx*head_len - nx*head_wide
+                    yh2 = y2 - hy*head_len - ny*head_wide
+                    draw.line([(x2, y2), (xh1, yh1)], fill=arrow_rgba, width=1)
+                    draw.line([(x2, y2), (xh2, yh2)], fill=arrow_rgba, width=1)
+
+            if out_px:
+                comp = comp.resize((out_px, out_px), RESAMPLE)
+
+            pil_frames.append(comp)
+
+        try:
+            if len(pil_frames) == 1:
+                pil_frames[0].save(filename)
+            else:
+                pil_frames[0].save(
+                    filename,
+                    save_all=True,
+                    append_images=pil_frames[1:],
+                    duration=int(1000/max(1, fps)),
+                    loop=0,
+                    disposal=2,
+                    optimize=True
+                )
+            notify_file_creation(filename)
+        except Exception as e:
+            notify_file_creation(filename, success=False, error=e)
+
+    def save_flow_quiver_gif(frames_vecx, frames_vecy, filename,
+                             out_px=512, vec_stride=8, vec_scale=6.0, k_skip=2, fps=10,
+                             bg="white", resample="nearest"):
+        # This Python code is generating a series of frames for an ultra-fast flow GIF with vector arrows. It
+        # uses the PIL (Python Imaging Library) module to create and draw the frames. The code takes input
+        # arrays `frames_vecx` and `frames_vecy` representing vector components, and generates a GIF animation
+        # showing the flow of vectors as arrows on a sparse grid.
+        """
+        Ultra-fast FLOW GIF: čistý vektorový tok s šipkami (arrowheads), bez Matplotlibu.
+        Vykreslí se řídká šachovnice šipek z (frames_vecx, frames_vecy).
+        """
+        from PIL import Image, ImageDraw
+        import numpy as np
+        import math
+
+        # vyber resample kernel
+        RESAMPLE = {
+            "nearest": Image.NEAREST,
+            "bilinear": Image.BILINEAR,
+            "bicubic": Image.BICUBIC
+        }.get(resample, Image.NEAREST)
+
+        n = len(frames_vecx)
+        H, W = frames_vecx[0].shape
+
+        # barva šipek (poloprůhledná limetková, podobná původnímu quiveru)
+        arrow_rgba = (144, 238, 144, 220)
+
+        pil_frames = []
+        for i in range(0, n, max(1, k_skip)):
+            vx = frames_vecx[i]
+            vy = frames_vecy[i]
+
+            # plátno
+            if bg == "black":
+                comp = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+            else:
+                comp = Image.new("RGBA", (W, H), (255, 255, 255, 255))
+
+            draw = ImageDraw.Draw(comp)
+
+            # šipky se špičkou (stejná orientace jako u overlay funkce)
+            for y in range(0, H, vec_stride):
+                for x in range(0, W, vec_stride):
+                    dx = float(vx[y, x])
+                    dy = float(vy[y, x])
+                    if dx*dx + dy*dy < 1e-12:
+                        continue
+
+                    x1, y1 = float(x), float(y)
+                    x2 = x1 + dx * vec_scale
+                    y2 = y1 + dy * vec_scale
+                    # tělo šipky
+                    draw.line([(x1, y1), (x2, y2)], fill=arrow_rgba, width=2)
+
+                    # špička (dvě krátké čárky do "V")
+                    theta = math.atan2(dy, dx)
+                    head_len = 0.6 * vec_scale
+                    head_wide = 0.35 * vec_scale
+                    hx = math.cos(theta)
+                    hy = math.sin(theta)
+                    nx = -hy
+                    ny = hx
+                    xh1 = x2 - hx * head_len + nx * head_wide
+                    yh1 = y2 - hy * head_len + ny * head_wide
+                    xh2 = x2 - hx * head_len - nx * head_wide
+                    yh2 = y2 - hy * head_len - ny * head_wide
+                    draw.line([(x2, y2), (xh1, yh1)], fill=arrow_rgba, width=2)
+                    draw.line([(x2, y2), (xh2, yh2)], fill=arrow_rgba, width=2)
+
+            if out_px:
+                comp = comp.resize((out_px, out_px), RESAMPLE)
+
+            pil_frames.append(comp)
+
+        try:
+            if len(pil_frames) == 1:
+                pil_frames[0].save(filename)
+            else:
+                pil_frames[0].save(
+                    filename,
+                    save_all=True,
+                    append_images=pil_frames[1:],
+                    duration=int(1000/max(1, fps)),
+                    loop=0,
+                    disposal=2,
+                    optimize=True
+                )
+            notify_file_creation(filename)
+        except Exception as e:
+            notify_file_creation(filename, success=False, error=e)
+
     save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
              cmap="plasma", vmin=0, vmax=0.5, out_px=512)
 
@@ -788,40 +976,18 @@ if __name__ == "__main__":
     save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
              cmap="gray", vmin=0, vmax=1, out_px=512)
 
-    fig, ax = plt.subplots(figsize=(6, 6))
-    x, y = np.meshgrid(np.arange(size), np.arange(size))
-    vec = ax.quiver(x, y, frames_vecx[0],
-                    frames_vecy[0], color='lime', scale=20)
-    ax.axis("off")
-
-    def update_quiver(i):
-        vec.set_UVC(frames_vecx[i], frames_vecy[i])
-        return [vec]
-
-    ani = FuncAnimation(fig, update_quiver, frames=steps,
-                        interval=300, blit=True)
     flow_path = os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
-    try:
-        ani.save(flow_path, writer=PillowWriter(fps=10))
-        notify_file_creation(flow_path)
-    except Exception as e:
-        notify_file_creation(flow_path, success=False, error=e)
-    finally:
-        plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7, 7))
-    amp_img = ax.imshow(frames_amp[0], cmap='plasma', vmin=0, vmax=0.5)
-    curl_overlay = ax.imshow(
-        frames_curl[0], cmap='bwr', alpha=0.4, vmin=-0.3, vmax=0.3)
-    vec = ax.quiver(x, y, frames_vecx[0],
-                    frames_vecy[0], color='lime', scale=20)
-    ax.axis("off")
-
-    def update_combo(i):
-        amp_img.set_data(frames_amp[i])
-        curl_overlay.set_data(frames_curl[i])
-        vec.set_UVC(frames_vecx[i], frames_vecy[i])
-        return [amp_img, curl_overlay, vec]
+    save_flow_quiver_gif(
+        frames_vecx, frames_vecy,
+        flow_path,
+        out_px=512,      # velikost výsledného GIFu v pixelech
+        # řídkost mřížky šipek (vyšší = méně šipek → rychlejší)
+        vec_stride=12,
+        vec_scale=9.0,   # délka šipek (měřítko)
+        k_skip=2,        # přeskočí každý 2. frame (rychlejší, menší soubor)
+        fps=5,          # snímková frekvence GIFu
+        bg="black"       # nebo "black", chceš-li tmavé pozadí
+    )
 
     def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0, phi_half_life_steps=None, sbr=None, pct_neutral=None, mean_total_vort=None, phi_std_near=None):
 
@@ -1044,7 +1210,7 @@ if __name__ == "__main__":
             <li><strong>KAPPA_MODE:</strong> {KAPPA_MODE}</li>
         </ul>
 
-    
+
       <h2>✅ Confirmed observations (v1-safe)</h2>
       <ul>
         {confirmed_html}
@@ -1067,7 +1233,7 @@ if __name__ == "__main__":
 
 
     </table>
-    
+
       <h2>📊 Quasiparticle Properties</h2>
       <table>
         <tr><th>Property</th><th>Value</th></tr>
@@ -1085,7 +1251,7 @@ if __name__ == "__main__":
         {gravitational_row}
 
       </table>
-    
+
       <h2>🌀 Simulation Summary</h2>
       <ul>
         <li><strong>Steps:</strong> {len(frames_amp)}</li>
@@ -1094,7 +1260,7 @@ if __name__ == "__main__":
         <li><strong>Vortices detected:</strong> {'✅ Yes' if vortices_present else '❌ No'}</li>
         <li><strong>Topological charge conserved:</strong> {'✅ Yes' if topo_conserved else '⚠️ Unstable'}</li>
       </ul>
-    
+
       <h2>📈 Key Plots</h2>
       <div class="grid">
         <div><img src="{RUN_TAG}_topo_charge_plot.png" alt="Topological charge plot"></div>
@@ -1102,14 +1268,43 @@ if __name__ == "__main__":
         <div><img src="{RUN_TAG}_spectrum_plot.png" alt="Spectrum plot"></div>
         <div><img src="{RUN_TAG}_phi_center_plot.png" alt="φ center plot"></div>
       </div>
-    
-      <h2>🎞️ Field Evolution GIFs</h2>
+
+            <h2>🎞️ Field Evolution GIFs</h2>
       <div class="grid">
-        <img src="{RUN_TAG}_lineum_amplitude.gif" alt="Amplitude">
-        <img src="{RUN_TAG}_lineum_spin.gif" alt="Spin">
-        <img src="{RUN_TAG}_lineum_particles.gif" alt="Particles">
-        <img src="{RUN_TAG}_lineum_full_overlay.gif" alt="Full overlay">
+        <figure>
+          <img src="{RUN_TAG}_lineum_amplitude.gif" alt="Amplitude |ψ|" title="Amplitude |ψ|">
+          <figcaption>Amplitude |ψ|</figcaption>
+        </figure>
+
+        <figure>
+          <img src="{RUN_TAG}_lineum_spin.gif" alt="Spin-like curl map" title="Spin-like curl map">
+          <figcaption>Spin-like curl map</figcaption>
+        </figure>
+
+        <figure>
+          <img src="{RUN_TAG}_lineum_vortices.gif" alt="Vortex cores (±1 winding)" title="Vortex cores (±1 winding)">
+          <figcaption>Vortex cores (±1 winding)</figcaption>
+        </figure>
+
+        <figure>
+          <img src="{RUN_TAG}_lineum_particles.gif" alt="Tracked quasiparticles" title="Tracked quasiparticles">
+          <figcaption>Tracked quasiparticles</figcaption>
+        </figure>
+
+        <figure>
+          <img src="{RUN_TAG}_lineum_flow.gif" alt="Flow field arrows (∇φ)" title="Flow field arrows (∇φ)">
+          <figcaption>Flow field arrows (∇φ)</figcaption>
+        </figure>
+
+        <figure>
+  <img src="{RUN_TAG}_lineum_full_overlay.gif"
+       alt="Composite overlay (masked curl)"
+       title="Composite overlay (masked curl)">
+  <figcaption>Composite overlay (masked curl)</figcaption>
+</figure>
+
       </div>
+
 
       <h2>🧲 Spin aura (averaged curl map)</h2>
 <p>
@@ -1120,13 +1315,13 @@ flow pattern in the model; no claim is made about quantum spin.
 
 <div><img src="{RUN_TAG}_spin_aura_avg.png" alt="Spin aura"></div>
 
-    
+
       <h2>📚 Glossary & Naming Rationale</h2>
 
       <h2>🧠 Note on φ-guided motion</h2>
 <p><strong>Note on φ-guided motion.</strong><br>
 We do not claim a gravitational theory. In the canonical regime, particles tend to move along gradients of the background field φ. We refer to this as <em>environmental guidance</em>: a metric-like influence of φ on trajectories, without introducing a force law or any analogy to GR. This behavior is quantified via alignment metrics in the report and should be interpreted as an emergent guidance effect within the model.</p>
-    
+
     <h3>🔤 Lineum</h3>
     <p>
       The name <strong>Lineum</strong> is a coined term from the Latin <em>linea</em> ("line" or "thread"), symbolizing
@@ -1143,13 +1338,13 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     </p>
 
     <p style="color:#666;margin-top:24px;">
-  <small>Note: This report summarizes operational measurements from a 2D emergent model.
-  No cosmological, gravitational, biomedical or metaphysical claims are made.</small>
+<small>Note: This report summarizes operational measurements from a 2D emergent model.
+No cosmological, gravitational, biomedical or metaphysical claims are made.</small>
 </p>
-    
-      <p style="margin-top:30px; font-style: italic; color: #555;">
+
+    <p style="margin-top:30px; font-style: italic; color: #555;">
         (c) Lineum – emergent quantum field simulation
-      </p>
+    </p>
     </body>
     </html>"""
 
@@ -1161,17 +1356,23 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
         except Exception as e:
             notify_file_creation(path, success=False, error=e)
 
-    ani = FuncAnimation(fig, update_combo, frames=steps,
-                        interval=300, blit=True)
     overlay_path = os.path.join(
         output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
-    try:
-        ani.save(overlay_path, writer=PillowWriter(fps=10))
-        notify_file_creation(overlay_path)
-    except Exception as e:
-        notify_file_creation(overlay_path, success=False, error=e)
-    finally:
-        plt.close(fig)
+    save_full_overlay_gif(
+        frames_amp, frames_curl, frames_vecx, frames_vecy,
+        overlay_path,
+        vmin_amp=0.0, vmax_amp=0.5,
+        vmin_curl=-0.3, vmax_curl=0.3,
+        out_px=512,
+        vec_stride=12,         # řidší šipky = čistší obraz
+        vec_scale=6.0,
+        k_skip=2,
+        fps=5,                 # sladěno s ostatními GIFy (při k_skip=2)
+        amp_alpha_floor=0.30,  # skryje curl v nízké |ψ|
+        curl_alpha_quantile=0.95,  # ignoruj slabý curl pod 95. perc.
+        alpha_scale=80,        # jemnější krytí curlu
+        resample="bilinear"
+    )
 
     # 🌀 Uložení všech polí vírů do souboru pro analýzu
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
@@ -1235,7 +1436,7 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
 
     # 📈 Výpočet životnosti kvazičástic
     lifespan_df = pd.DataFrame(trajectories, columns=[
-                               "id", "step", "y", "x", "amplitude"])
+        "id", "step", "y", "x", "amplitude"])
     phi_abs = np.array(frames_phi)
     blackhole_candidates = []
     for tid, group in lifespan_df.groupby("id"):
@@ -1326,7 +1527,7 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
     curl_std = np.std(curl_inside_phi)
 
     lifespan_df = pd.DataFrame(trajectories, columns=[
-                               "id", "step", "y", "x", "amplitude"])
+        "id", "step", "y", "x", "amplitude"])
     cutout_size = 11
     half_size = cutout_size // 2
     cutouts = []
