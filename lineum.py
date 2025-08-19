@@ -333,13 +333,28 @@ if __name__ == "__main__":
 
         psi, phi = evolve(psi, delta, phi, kappa)
         amp = np.abs(psi)
-        phase = np.angle(psi)
-        grad_x, grad_y = np.gradient(phase)
-        dFy_dx = np.gradient(grad_y, axis=1)
-        dFx_dy = np.gradient(grad_x, axis=0)
 
-        raw_curl = dFy_dx - dFx_dy
-        curl = raw_curl * kappa
+        phase = np.angle(psi)
+
+        # Fast central differences with periodic boundary; phase-safe wrapping
+        dph_dx = 0.5 * \
+            np.angle(
+                np.exp(1j * (np.roll(phase, -1, axis=1) - np.roll(phase, 1, axis=1))))
+        dph_dy = 0.5 * \
+            np.angle(
+                np.exp(1j * (np.roll(phase, -1, axis=0) - np.roll(phase, 1, axis=0))))
+
+        # Keep original names for downstream code
+        grad_x = dph_dx
+        grad_y = dph_dy
+
+        # Curl(∇phase) via central differences (no wrapping needed on grads)
+        dFy_dx = 0.5 * (np.roll(grad_y, -1, axis=1) -
+                        np.roll(grad_y, 1, axis=1))
+        dFx_dy = 0.5 * (np.roll(grad_x, -1, axis=0) -
+                        np.roll(grad_x, 1, axis=0))
+
+        curl = (dFy_dx - dFx_dy) * kappa
 
         vortices = detect_vortices(phase)
 
