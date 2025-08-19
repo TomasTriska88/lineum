@@ -861,9 +861,13 @@ if __name__ == "__main__":
 
         # --- Derived display numbers from f0 (safe)
         try:
-            energy_j = PLANCK_H * dominant_freq
+            # constants in-place (avoid missing PLANCK_H / LIGHT_SPEED)
+            _H = 6.62607015e-34        # Planck constant [J·s]
+            _C = 299_792_458.0         # speed of light [m/s]
+            energy_j = _H * dominant_freq
             energy_ev = energy_j / 1.602176634e-19
-            wavelength_m = LIGHT_SPEED / dominant_freq
+            wavelength_m = _C / \
+                dominant_freq if dominant_freq != 0 else float("inf")
         except Exception:
             energy_j = None
             energy_ev = None
@@ -902,7 +906,7 @@ if __name__ == "__main__":
         </ul>
 
     
-      <h2>✅ Confirmed Emergent Phenomena</h2>
+      <h2>✅ Confirmed observations</h2>
       <ul>
         {confirmed_html}
       </ul>
@@ -1021,6 +1025,11 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
       The name follows a tradition of physics-inspired constructs such as <em>graviton</em>, <em>inflaton</em>, or
       <em>axion</em>—terms that suggest emergent dynamics without predefining their exact physical nature.
     </p>
+
+    <p style="color:#666;margin-top:24px;">
+  <small>Note: This report summarizes operational measurements from a 2D emergent model.
+  No cosmological, gravitational, biomedical or metaphysical claims are made.</small>
+</p>
     
       <p style="margin-top:30px; font-style: italic; color: #555;">
         (c) Lineum – emergent quantum field simulation
