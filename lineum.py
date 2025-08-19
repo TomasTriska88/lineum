@@ -258,24 +258,20 @@ def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
         plt.close()
 
 
-def detect_vortices(phase):
+def detect_vortices(phase: np.ndarray) -> np.ndarray:
     """
     Vectorized winding-number detection on 2x2 plaquettes.
-    Produces the same result as the previous double-for loop:
-    sets +1 / -1 on cells [0..size-2, 0..size-2], leaves last row/col = 0.
+    Returns int array in {-1,0,+1}, without amplitude gating.
     """
-    # 2x2 bloky (stejný rozsah jako dřív: do size-1)
     p00 = phase[:-1, :-1]
     p01 = phase[:-1, 1:]
     p11 = phase[1:, 1:]
     p10 = phase[1:, :-1]
 
-    # fázové rozdíly zabalené do (-π, π]
     d1 = np.angle(np.exp(1j * (p01 - p00)))
     d2 = np.angle(np.exp(1j * (p11 - p01)))
     d3 = np.angle(np.exp(1j * (p10 - p11)))
     d4 = np.angle(np.exp(1j * (p00 - p10)))
-
     winding = (d1 + d2 + d3 + d4) / (2 * np.pi)
 
     vortices = np.zeros_like(phase, dtype=int)
@@ -283,6 +279,64 @@ def detect_vortices(phase):
     block[winding > 0.5] = 1
     block[winding < -0.5] = -1
     return vortices
+
+
+VORTEX_VIS_PERCENTILE = 5.0  # visualization-only gate: keep lowest 5% amplitud
+
+
+def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh: float | None = None) -> np.ndarray:
+    """
+    Visualization-only gate: keep vortex marks only where |psi| is low (near singularities).
+    RAW data (CSV/metrics) must use ungated 'vortices'.
+    """
+
+    def compute_vortex_vis_threshold(amp: np.ndarray, percentile: float | None = None) -> float:
+        """
+        Default visualization threshold for gating vortices by low amplitude.
+        If percentile is None, falls back to VORTEX_VIS_PERCENTILE (or 5.0 if not defined).
+        """
+        if percentile is None:
+            try:
+                # pokud jsi dřív přidal konstantu
+                p = float(VORTEX_VIS_PERCENTILE)
+            except NameError:
+                p = 5.0
+        else:
+            p = float(percentile)
+        return float(np.percentile(amp, p))
+
+    if amp_thresh is None:
+        amp_thresh = compute_vortex_vis_threshold(amp)
+
+    mask = (amp <= amp_thresh)
+    out = np.zeros_like(vortices)
+    out[:-1, :-1] = vortices[:-1, :-1] * mask[:-1, :-1]
+    return out
+
+
+def update_topology_log(raw_vortices: np.ndarray, step_idx: int, topo_log: list) -> None:
+    """
+    Append RAW topology counts for this step into topo_log: (step, +1, -1, net, total).
+    """
+    num_pos = int(np.sum(raw_vortices == 1))
+    num_neg = int(np.sum(raw_vortices == -1))
+    net_charge = num_pos - num_neg
+    total = num_pos + num_neg
+    topo_log.append((step_idx, num_pos, num_neg, net_charge, total))
+
+
+def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh: float = None) -> np.ndarray:
+    """
+    Keep vortex marks only where |psi| is low (near singularities).
+    Used for visualization; metrics still use raw vortices.
+    """
+    if amp_thresh is None:
+        # default: robust 5th percentile
+        amp_thresh = float(np.percentile(amp, 5.0))
+    mask = (amp <= amp_thresh)
+    out = np.zeros_like(vortices)
+    out[:-1, :-1] = vortices[:-1, :-1] * mask[:-1, :-1]
+    return out
 
 
 if __name__ == "__main__":
@@ -333,21 +387,36 @@ if __name__ == "__main__":
 
         psi, phi = evolve(psi, delta, phi, kappa)
         amp = np.abs(psi)
+
         phase = np.angle(psi)
-        grad_x, grad_y = np.gradient(phase)
-        dFy_dx = np.gradient(grad_y, axis=1)
-        dFx_dy = np.gradient(grad_x, axis=0)
 
-        raw_curl = dFy_dx - dFx_dy
-        curl = raw_curl * kappa
+        # Phase-safe central differences with periodic boundary:
+        # wrap differences as angle(exp(i Δθ)) to avoid ±π jumps artefacts
+        dph_dx = 0.5 * \
+            np.angle(
+                np.exp(1j * (np.roll(phase, -1, axis=1) - np.roll(phase, 1, axis=1))))
+        dph_dy = 0.5 * \
+            np.angle(
+                np.exp(1j * (np.roll(phase, -1, axis=0) - np.roll(phase, 1, axis=0))))
 
-        vortices = detect_vortices(phase)
+        # keep names used later (for vector field/GIFs)
+        grad_x = dph_dx
+        grad_y = dph_dy
 
-        num_pos = np.sum(vortices == 1)
-        num_neg = np.sum(vortices == -1)
-        net_charge = num_pos - num_neg
-        total = num_pos + num_neg
-        topo_log.append((i, num_pos, num_neg, net_charge, total))
+        # curl(∇phase) via central differences (periodic)
+        dFy_dx = 0.5 * (np.roll(grad_y, -1, axis=1) -
+                        np.roll(grad_y, 1, axis=1))
+        dFx_dy = 0.5 * (np.roll(grad_x, -1, axis=0) -
+                        np.roll(grad_x, 1, axis=0))
+
+        curl = (dFy_dx - dFx_dy) * kappa
+
+        # RAW pro metriky/CSV
+        raw_vortices = detect_vortices(phase)
+        # zapis do logu (metoda)
+        update_topology_log(raw_vortices, i, topo_log)
+        vortices_vis = gate_vortices_by_amplitude(
+            raw_vortices, amp)  # jen pro GIF
 
         local_max = (amp == maximum_filter(amp, size=neighborhood_size))
         particles = (amp > threshold) & local_max
@@ -399,7 +468,7 @@ if __name__ == "__main__":
         frames_vecx.append(grad_x)
         frames_vecy.append(grad_y)
         frames_curl.append(curl)
-        frames_vort.append(vortices)
+        frames_vort.append(vortices_vis)
 
         # 🔄 Uložení φ polí pro každé časové okno (pouze absolutní hodnota)
         if 'frames_phi' not in locals():
@@ -432,7 +501,7 @@ if __name__ == "__main__":
             y_max = min(center_y + radius + 1, size)
             x_min = max(center_x - radius, 0)
             x_max = min(center_x + radius + 1, size)
-            local_vortices = vortices[y_min:y_max, x_min:x_max]
+            local_vortices = raw_vortices[y_min:y_max, x_min:x_max]
             pos_count = np.sum(local_vortices == 1)
             neg_count = np.sum(local_vortices == -1)
         else:
