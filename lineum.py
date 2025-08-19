@@ -709,16 +709,16 @@ if __name__ == "__main__":
             notify_file_creation(filename, success=False, error=e)
 
     save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-             cmap="plasma", vmin=0, vmax=0.5, out_px=600)
+             cmap="plasma", vmin=0, vmax=0.5, out_px=512)
 
     save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=600)
+             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=512)
 
     save_gif(frames_vort, os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
-             cmap="bwr", vmin=-1, vmax=1, out_px=600)
+             cmap="bwr", vmin=-1, vmax=1, out_px=512)
 
     save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
-             cmap="gray", vmin=0, vmax=1, out_px=600)
+             cmap="gray", vmin=0, vmax=1, out_px=512)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
