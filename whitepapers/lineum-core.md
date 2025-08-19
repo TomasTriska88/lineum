@@ -1,5 +1,5 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.0  
+**Version:** 1.0.1  
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs  
@@ -163,9 +163,12 @@ Detection is performed using automated field analysis:
 ## 4.5 Output
 
 For each run, the system generates:
-– numerical summaries (CSV),  
-– static field snapshots (PNG),  
-– and, for selected runs, animated visualizations (GIF) for qualitative review.
+
+- **CSV (per run):** `*_amplitude_log.csv`, `*_spectrum_log.csv`, `*_phi_center_log.csv`, `*_topo_log.csv`, `*_trajectories.csv`, `*_multi_spectrum_summary.csv`, `*_spin_aura_profile.csv`.
+- **PNG (figures):** `*_spectrum_plot.png`, `*_topo_charge_plot.png`, `*_vortex_count_plot.png`, `*_spin_aura_map.png`, `*_phi_center_plot.png`.
+- **GIF (animations):** `*_lineum_amplitude.gif`, `*_lineum_spin.gif`, `*_lineum_vortices.gif`, `*_lineum_particles.gif`, `*_lineum_full_overlay.gif`.
+
+_Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix A for the prefix convention.\_
 
 # 5. Validation
 
@@ -208,7 +211,7 @@ This phenomenon is reproducible for both constant and gradient κ-maps.
 > **f₀ = 1.00×10¹⁸ Hz**, which implies **E = h f₀ = 6.63×10⁻¹⁶ J ≈ 4.14 keV** and **λ = c / f₀ = 3.00×10⁻¹⁰ m**.
 
 > **Representative run metrics (spec6_false).**  
-> Spectral Balance Ratio: **SBR ≈ 2.98** (peak vs. rest, excluding ±2 bins around f₀).  
+> Spectral Balance Ratio: **SBR ≈ 6.18** (peak vs. rest, excluding ±2 bins around f₀).
 > Topology: global vortex charge stays near neutral — **|net charge| ≤ 1** for **94.9 %** of steps (mean total vortices ≈ **93** per frame).  
 > Particle lifetimes: **median 3 steps**, with rare long-lived outliers up to **1000 steps**.  
 > φ half-life (center): **≈ 480 steps** (canonical target ≈ 2000).  
@@ -280,6 +283,13 @@ Computational resources and support from academic and independent research netwo
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
 
+**1.0.1 — 2025-08-19 (patch)**
+
+- Corrects **SBR** in §5.6 to **6.18** (consistent with the canonical report).
+- Appendix A: adds _Visualization-only note_ for **Vortices GIF** (amplitude gating for display only; **CSV/metrics use raw winding**).
+- Clarifies spectrum definition as **power spectrum** `|FFT(x)|^2` with a **±2-bin guard** around `f0`.
+- No change to the canonical equation or scope.
+
 **1.0.0 — 2025-08-19 (initial canonical)**
 
 - Pins Eq-4 (κ static), 2D + periodic BCs.
@@ -291,6 +301,8 @@ Computational resources and support from academic and independent research netwo
 
 This appendix fixes the minimal conventions needed to reproduce our measurements in the canonical run.
 
+_All output files are saved with the run tag prefix (`RUN_TAG_…`, e.g., `spec6_false_…`). For readability we refer to them without the prefix in the text._
+
 **Quasiparticles (trajectories).** Detected from local amplitude structure in ψ; tracks exported to `trajectories.csv` (positions per step). A detection forms a time-indexed set of coordinates; lifetimes are measured as the number of steps per unique track id.
 
 **Vortices (winding number).** Computed on 2×2 plaquettes by summing phase differences and rounding to the nearest integer winding:
@@ -301,11 +313,15 @@ $$
 
 Positive/negative counts and net charge are logged per step in `topo_log.csv`.
 
+_Visualization-only note._ The **Vortices** GIF applies an amplitude gate to the winding map for clarity: marks are displayed only where |ψ| is below a low-amplitude threshold (default: 5th percentile per frame). **All metrics and CSV logs** (e.g., `topo_log.csv`) always use the **raw** winding (no amplitude gating).
+
 **Spin / curl map (“spin aura”).** We use the phase–gradient curl,
 
 $$
 S=\mathrm{curl}\!\big(\nabla \arg \psi\big)
 $$
+
+_Numerical detail._ Phase increments are wrapped as `angle(exp(i*Δφ))` and evaluated with central differences under periodic BCs. This avoids ±π discontinuity artefacts; the curl signal is therefore concentrated near vortex cores rather than appearing as spurious long “strings”.
 
 averaged in fixed-size windows centered on detected quasiparticles. The averaged raster is exported as `*_spin_aura_map.png`; the radial profile as `*_spin_aura_profile.csv`.
 
