@@ -1,3 +1,10 @@
+**Document ID:** lineum-core  
+**Version:** 1.0.0  
+**Status:** Draft  
+**Equation:** Eq-4 (canonical; κ static)  
+**Scope:** 2D, periodic BCs  
+**Date:** 2025-08-19
+
 # 1. Abstract
 
 Lineum is a functional model of an emergent quantum field based on a simple, local, and discrete update equation for the evolution of a complex scalar field ψ, coupled with an interaction field φ and an experimental tuning field κ. The model does not assume any explicit constants, spacetime metric, or global symmetries, yet numerical simulations consistently produce stable and complex structures resembling phenomena known from physics.
@@ -17,7 +24,7 @@ _Not_ “LAI-non”.
 Repeated simulations robustly generate:
 – linons (stable localized excitations) with consistent trajectories,
 – vortices with quantized topological charge,  
-– phase gradient rotation (spin) in φ-zones,  
+– phase gradient rotation (spin) around linons,
 – phase flow and high-φ regions,  
 – and φ-traps that capture multiple **linons**.
 
@@ -71,7 +78,7 @@ The canonical form is:
 | **κ ← κ(x, y)** | spatial tuning map |
 <!-- prettier-ignore-end -->
 
-> _For the full development history of this equation, see_ [Appendix A: Equation History](lineum-equation-history.md).
+> _For the full development history of this equation, see_ [Appendix A: Equation History](lineum-core-equation-history.md).
 
 **Legend (symbols & operators)**
 
@@ -91,6 +98,8 @@ The canonical form is:
 | BCs | — | boundary conditions | periodic in x,y |
 | α_eff, β_eff | — | effective params | α_eff = κ·α, β_eff = κ·β (κ modulates α,β) |
 <!-- prettier-ignore-end -->
+
+_Scope note (canonical dimensionality)._ All results in this core paper use a **2D discrete grid with periodic boundary conditions**. Any 3D extensions or non-periodic boundaries are treated as **supplementary variants** and are not part of the canonical Eq. 1.
 
 **Sign convention.** The +∇φ term in the ψ-update induces drift toward increasing φ (movement along the φ-gradient).
 
@@ -151,11 +160,14 @@ The validation phase aims to confirm that specific emergent phenomena occur cons
 
 Simulations show that localized maxima in φ act as potential wells for **linons**.  
 Trajectory tracking confirms convergence toward φ peaks with measurable acceleration, despite no explicit force term in the equations.
+See §3 (Sign convention): the +∇φ term in the ψ-update explicitly defines drift toward increasing φ, hence the observed attraction is an environmental consequence of local gradients rather than an added force law.
 
 ## 5.2 Spin Aura
 
-In 100 % of observed stable **linons**, a persistent phase gradient rotation (spin) develops in the surrounding φ-field.  
+In 100 % of observed stable **linons**, a persistent phase gradient rotation (spin) develops around the linon in ∇ arg ψ.
 This effect is robust to noise and persists until particle decay.
+
+**Operational definition.** We define the spin aura as the time- and ensemble-averaged map of `curl(∇ arg ψ)` in a fixed-size neighborhood around detected linon centers. For each detection, the local curl map is centered on the particle and accumulated; the resulting average yields a stable, radially decaying ring-like profile. Presence of this profile is our detection criterion; its amplitude–radius curve is reported in `spin_aura_profile.csv` and the raster in `spin_aura_map.png`. This makes §5.2 falsifiable and reproducible across runs.
 
 ## 5.3 Silent Collapse
 
@@ -167,15 +179,34 @@ The process is characterized by an exponential decrease in |ψ|² amplitude with
 Following particle decay, residual φ-structures remain localized, maintaining their shape and magnitude over extended timesteps.  
 This memory effect demonstrates φ-field stability independent of active ψ excitation.
 
+**Note (Return Echo).** In multiple runs, locations of prior linon decay later act as weak attractors for new linons: trajectories revisit identical or ε-near coordinates after a delay. This **return echo** is distinct from Structural Closure: closure denotes a **static φ remnant** after decay; echo denotes a **behavioral bias** that steers future arrivals back to that remnant via local ∇φ shaping. See also the Return Echo hypothesis and trajectory density maps.
+
 ## 5.5 Dimensional Transparency
 
 By applying localized κ variations, regions can be tuned to allow ψ-structures to pass through without interaction, effectively behaving as transparent zones.  
 This phenomenon is reproducible for both constant and gradient κ-maps.
 
+**Operational note.** We treat κ as a spatial tuner that gates interaction. A region with κ≈0 behaves as a _transparent_ corridor: ψ-structures neither persist nor imprint φ there, while adjacent κ>0 zones support formation and capture. Quantitatively, transparency is flagged when (i) the local count of |ψ|² maxima drops to baseline within the κ≈0 window, and (ii) φ-curl maps show no persistent imprint across that window, while both signals remain nonzero in the neighboring κ>0 zone. Island-shaped κ maps are the preferred testbed for A/B confirmation.
+
 ## 5.6 Spectral Stability
+
+> **Current canonical measurement (example).**  
+> With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on a canonical run (`spec6_false`) is  
+> **f₀ = 1.00×10¹⁸ Hz**, which implies **E = h f₀ = 6.63×10⁻¹⁶ J ≈ 4.14 keV** and **λ = c / f₀ = 3.00×10⁻¹⁰ m**.
+
+> **Representative run metrics (spec6_false).**  
+> Spectral Balance Ratio: **SBR ≈ 2.97** (peak vs. rest, excluding ±2 bins around f₀).  
+> Secondary peaks: **not pronounced** (harmonicity is minimal in this run).  
+> Topology: global vortex charge stays near neutral — **|net charge| ≤ 1** for ~95% of steps (mean total vortices ≈ 93 per frame).  
+> Particle lifetimes: **median 3 steps**, with rare long-lived outliers up to **1000 steps**.  
+> _Note._ In this particular run the φ background shows a **faster-than-canonical** relaxation (half-life ≈ **480** steps) prior to calibration; the **canonical target remains ≈ 2000** steps.
+> These values are purely unit conversions (no extra fitting) and serve as a stable anchor for replication.
 
 Fourier analysis of long-duration runs shows that dominant oscillation frequencies remain stable over time, even with particle creation and annihilation events.  
 Typical dominant frequency: ≈ 1.0×10¹⁸ Hz with <1 % variation across runs.
+
+**Implementation robustness.** The dominant peak stays within ±0.5% across different random seeds, grid sizes, and run durations; see `multi_spectrum_summary.csv` for aggregated runs.
+_See also (Harmonic Spectrum)._ Secondary harmonics co-appear with the dominant tone (e.g., 9.990×10^20 Hz); methods and cross-language checks are summarized in `hypotheses/harmonic_spectrum.md`.
 
 # 6. Interpretation
 
@@ -188,6 +219,20 @@ The persistence of φ-structures after particle decay (Structural Closure) indic
 The ability to create transparent regions through κ variation (Dimensional Transparency) demonstrates controllable interaction tuning, potentially analogous to refractive or transmissive media in optics.
 
 Spin Aura and Spectral Stability show that once formed, linon excitations (particle-like) in the model exhibit consistent internal dynamics, maintaining stable oscillatory behavior over extended periods.
+
+## 6.1 Silent Gravity (interpretive note)
+
+Simulations indicate that the φ-field acts as a quiet geometric background: linons statistically prefer regions with low |∇φ| and dwell near φ-minima, while drift along +∇φ (Section 5.1) organizes their migration. This **silent gravity** is not an explicit force term, but an emergent tendency of the environment: the topology of φ shapes where density accumulates and for how long. In this view, φ provides metric-like structure without prescribing a spacetime geometry; attraction arises from local gradients and quiet basins (∇φ → 0) rather than from imposed long-range laws.
+
+## 6.2 Vortex–Particle Coupling (interpretive note)
+
+Stable linons frequently co-occur with small sets of phase vortices. Empirically, triads of co-rotating vortices (↺↺↺) form long-lived, near-equilateral configurations with a symmetric φ basin between the cores; we interpret these as **vortex-coupled quasi-particles**. In this picture, rotation sense acts as a particle/antiparticle tag (↺/↻), while the binding topology (e.g., triangle vs. chain) encodes species. The core paper does not fix a taxonomy; it only records that vortex triads correlate with (i) persistent interferential structure in `arg ψ`, (ii) a low-∇φ region at the triangle centroid, and (iii) ≥20-step spatial stability. Quantitative detection rules and symbols are described in the supplementary Vortex–Particle Coupling note.
+
+## 6.3 Law Transition (interpretive note)
+
+_Scope._ This note refers to **experimental variants** where κ changes over time (non-canonical to Eq. 1). When κ follows a slow, coherent trajectory (e.g., `island_to_constant`), the system passes through **effective regimes** without losing linon stability: interaction patterns reorganize while macroscopic order persists. We observe **spectral restructuring** (secondary peaks, spacing shifts) concurrent with the κ-trajectory, suggesting an emergent **principle of law transition**: order can remain intact while the “rules” drift smoothly.
+
+_Evidence._ Runs with dynamic `generate_kappa(step)` show time-resolved spectral changes (see `multi_spectrum_summary.csv`, `*_spectrum_log.csv`; sliding-FFT recommended). Exploratory overlays with Riemann ζ zeros are noted but not claimed as established. See the dedicated hypothesis file for parameters and logs.
 
 Together, these results strengthen the case that a simple, metric-free local update rule can give rise to robust and quantifiable macroscopic effects, offering a controlled platform for exploring emergent analogues of known physical phenomena.
 
@@ -214,3 +259,18 @@ The author thanks collaborators and early reviewers who provided feedback on the
 Special appreciation is extended to the open-source community for tools and libraries used in the implementation, and to colleagues who assisted in designing reproducibility protocols.
 
 Computational resources and support from academic and independent research networks were essential for completing this work.
+
+# 9. Versioning & Changelog
+
+**Policy.** Semantic Versioning (MAJOR.MINOR.PATCH).
+
+- **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
+- **MINOR**: new sections/notes, validation expansions; no breaking changes.
+- **PATCH**: wording, typos, figures, formatting.
+
+**1.0.0 — 2025-08-19 (initial canonical)**
+
+- Pins Eq-4 (κ static), 2D + periodic BCs.
+- Validation §§5.1–5.6 (incl. operational §5.2, robustness note in §5.6, operational note in §5.5).
+- Interpretation: 6.1 Silent Gravity, 6.2 Vortex–Particle Coupling, 6.3 Law Transition.
+- §3: explicit scope note for 2D/periodic; sign convention for +∇φ.
