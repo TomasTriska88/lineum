@@ -1032,26 +1032,6 @@ if __name__ == "__main__":
         {gravitational_row}
 
       </table>
-
-      <h2>🧮 Field Evolution Equation</h2>
-<p><strong>Lineum Field Equation:</strong></p>
-<pre><code>
-ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ  
-φ ← φ + (|ψ|² − φ) + ∇²φ
-</code></pre>
-
-<table>
-<tr><th>Term</th><th>Description</th></tr>
-<tr><td>ψ</td><td>Complex scalar field (tension)</td></tr>
-<tr><td>linon</td><td>Nonlinear stochastic source (particle generation)</td></tr>
-<tr><td>fluctuation</td><td>Phase noise (ξ)</td></tr>
-<tr><td>φ·ψ</td><td>Local coupling of φ to ψ</td></tr>
-<tr><td>dissipation</td><td>Field damping term (−γψ)</td></tr>
-<tr><td>diffusion</td><td>Spatial Laplacian term (∇²ψ, ∇²φ)</td></tr>
-<tr><td>∇|φ|</td><td>Gradient-guided drift (environmental guidance)</td></tr>
-<tr><td>α (|ψ|² − φ)</td><td>φ reaction (slow memory update)</td></tr>
-<tr><td>β · diffusion</td><td>Mild φ diffusion (structure formation)</td></tr>
-</table>
     
       <h2>🌀 Simulation Summary</h2>
       <ul>
