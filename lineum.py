@@ -333,28 +333,13 @@ if __name__ == "__main__":
 
         psi, phi = evolve(psi, delta, phi, kappa)
         amp = np.abs(psi)
-
         phase = np.angle(psi)
+        grad_x, grad_y = np.gradient(phase)
+        dFy_dx = np.gradient(grad_y, axis=1)
+        dFx_dy = np.gradient(grad_x, axis=0)
 
-        # Fast central differences with periodic boundary; phase-safe wrapping
-        dph_dx = 0.5 * \
-            np.angle(
-                np.exp(1j * (np.roll(phase, -1, axis=1) - np.roll(phase, 1, axis=1))))
-        dph_dy = 0.5 * \
-            np.angle(
-                np.exp(1j * (np.roll(phase, -1, axis=0) - np.roll(phase, 1, axis=0))))
-
-        # Keep original names for downstream code
-        grad_x = dph_dx
-        grad_y = dph_dy
-
-        # Curl(∇phase) via central differences (no wrapping needed on grads)
-        dFy_dx = 0.5 * (np.roll(grad_y, -1, axis=1) -
-                        np.roll(grad_y, 1, axis=1))
-        dFx_dy = 0.5 * (np.roll(grad_x, -1, axis=0) -
-                        np.roll(grad_x, 1, axis=0))
-
-        curl = (dFy_dx - dFx_dy) * kappa
+        raw_curl = dFy_dx - dFx_dy
+        curl = raw_curl * kappa
 
         vortices = detect_vortices(phase)
 
@@ -724,16 +709,16 @@ if __name__ == "__main__":
             notify_file_creation(filename, success=False, error=e)
 
     save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-             cmap="plasma", vmin=0, vmax=0.5, out_px=512)
+             cmap="plasma", vmin=0, vmax=0.5, out_px=600)
 
     save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=512)
+             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=600)
 
     save_gif(frames_vort, os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
-             cmap="bwr", vmin=-1, vmax=1, out_px=512)
+             cmap="bwr", vmin=-1, vmax=1, out_px=600)
 
     save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
-             cmap="gray", vmin=0, vmax=1, out_px=512)
+             cmap="gray", vmin=0, vmax=1, out_px=600)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     x, y = np.meshgrid(np.arange(size), np.arange(size))
@@ -745,73 +730,30 @@ if __name__ == "__main__":
         vec.set_UVC(frames_vecx[i], frames_vecy[i])
         return [vec]
 
-    # --- Fast overlay GIF compositor (amp + curl + sparse flow arrows)
-    def save_overlay_gif(frames_amp, frames_curl, frames_vecx, frames_vecy, filename,
-                         out_px=600, stride=8, arrow_scale=4, curl_alpha=0.40):
-        from matplotlib import cm, colors
-        from PIL import Image, ImageDraw
-        import numpy as np
+    ani = FuncAnimation(fig, update_quiver, frames=steps,
+                        interval=300, blit=True)
+    flow_path = os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
+    try:
+        ani.save(flow_path, writer=PillowWriter(fps=10))
+        notify_file_creation(flow_path)
+    except Exception as e:
+        notify_file_creation(flow_path, success=False, error=e)
+    finally:
+        plt.close(fig)
 
-        # Colormap + normalizace jako dřív
-        amp_norm = colors.Normalize(vmin=0.0, vmax=0.5, clip=True)
-        amp_map = cm.get_cmap("plasma")
-        curl_norm = colors.Normalize(vmin=-0.3, vmax=0.3, clip=True)
-        curl_map = cm.get_cmap("bwr")
+    fig, ax = plt.subplots(figsize=(7, 7))
+    amp_img = ax.imshow(frames_amp[0], cmap='plasma', vmin=0, vmax=0.5)
+    curl_overlay = ax.imshow(
+        frames_curl[0], cmap='bwr', alpha=0.4, vmin=-0.3, vmax=0.3)
+    vec = ax.quiver(x, y, frames_vecx[0],
+                    frames_vecy[0], color='lime', scale=20)
+    ax.axis("off")
 
-        H, W = frames_amp[0].shape
-        frames = []
-        for i in range(len(frames_amp)):
-            # |ψ| → RGBA
-            amp_rgba = (
-                amp_map(amp_norm(frames_amp[i])) * 255).astype(np.uint8)
-            base = Image.fromarray(amp_rgba, mode="RGBA")
-
-            # curl → RGBA s alfa
-            curl_rgba = (
-                curl_map(curl_norm(frames_curl[i])) * 255).astype(np.uint8)
-            curl_img = Image.fromarray(curl_rgba, mode="RGBA")
-            curl_img.putalpha(int(255 * curl_alpha))
-            composite = Image.alpha_composite(base, curl_img)
-
-            # šipky toku (řídká mřížka)
-            draw = ImageDraw.Draw(composite)
-            Vx = frames_vecx[i]
-            Vy = frames_vecy[i]
-            for y in range(0, H, stride):
-                for x in range(0, W, stride):
-                    u = float(Vx[y, x])
-                    v = float(Vy[y, x])
-                    mag = (u*u + v*v) ** 0.5
-                    if mag < 1e-6:
-                        continue
-                    ux = u / mag
-                    vy = v / mag
-                    x0, y0 = x, y
-                    x1 = x0 + ux * arrow_scale
-                    y1 = y0 + vy * arrow_scale
-                    # lime šipky (plná krytost)
-                    draw.line((x0, y0, x1, y1), fill=(0, 255, 0, 255), width=1)
-
-            if out_px:
-                composite = composite.resize((out_px, out_px), Image.NEAREST)
-            frames.append(composite)
-
-        try:
-            if len(frames) == 1:
-                frames[0].save(filename)
-            else:
-                frames[0].save(
-                    filename, save_all=True, append_images=frames[1:],
-                    duration=100, loop=0, disposal=2
-                )
-            notify_file_creation(filename)
-        except Exception as e:
-            notify_file_creation(filename, success=False, error=e)
-
-    overlay_path = os.path.join(
-        output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
-    save_overlay_gif(frames_amp, frames_curl, frames_vecx, frames_vecy, overlay_path,
-                     out_px=512, stride=8, arrow_scale=4, curl_alpha=0.40)
+    def update_combo(i):
+        amp_img.set_data(frames_amp[i])
+        curl_overlay.set_data(frames_curl[i])
+        vec.set_UVC(frames_vecx[i], frames_vecy[i])
+        return [amp_img, curl_overlay, vec]
 
     def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0, phi_half_life_steps=None, sbr=None, pct_neutral=None, mean_total_vort=None, phi_std_near=None):
 
@@ -1075,6 +1017,26 @@ if __name__ == "__main__":
         {gravitational_row}
 
       </table>
+
+      <h2>🧮 Field Evolution Equation</h2>
+<p><strong>Lineum Field Equation:</strong></p>
+<pre><code>
+ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ  
+φ ← φ + (|ψ|² − φ) + ∇²φ
+</code></pre>
+
+<table>
+<tr><th>Term</th><th>Description</th></tr>
+<tr><td>ψ</td><td>Complex scalar field (tension)</td></tr>
+<tr><td>linon</td><td>Nonlinear stochastic source (particle generation)</td></tr>
+<tr><td>fluctuation</td><td>Phase noise (ξ)</td></tr>
+<tr><td>φ·ψ</td><td>Local coupling of φ to ψ</td></tr>
+<tr><td>dissipation</td><td>Field damping term (−γψ)</td></tr>
+<tr><td>diffusion</td><td>Spatial Laplacian term (∇²ψ, ∇²φ)</td></tr>
+<tr><td>∇|φ|</td><td>Gradient-guided drift (environmental guidance)</td></tr>
+<tr><td>α (|ψ|² − φ)</td><td>φ reaction (slow memory update)</td></tr>
+<tr><td>β · diffusion</td><td>Mild φ diffusion (structure formation)</td></tr>
+</table>
     
       <h2>🌀 Simulation Summary</h2>
       <ul>
@@ -1150,6 +1112,18 @@ We do not claim a gravitational theory. In the canonical regime, particles tend 
             notify_file_creation(path)
         except Exception as e:
             notify_file_creation(path, success=False, error=e)
+
+    ani = FuncAnimation(fig, update_combo, frames=steps,
+                        interval=300, blit=True)
+    overlay_path = os.path.join(
+        output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
+    try:
+        ani.save(overlay_path, writer=PillowWriter(fps=10))
+        notify_file_creation(overlay_path)
+    except Exception as e:
+        notify_file_creation(overlay_path, success=False, error=e)
+    finally:
+        plt.close(fig)
 
     # 🌀 Uložení všech polí vírů do souboru pro analýzu
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
