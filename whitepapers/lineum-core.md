@@ -40,6 +40,12 @@ All phenomena emerge without fine-tuned initial input, relying solely on local o
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
 
+> **Canonical Scope (arXiv v1)** > **Equation:** Eq-4 (κ static). **Domain:** 2D grid, periodic BCs.
+> **Canonical run:** RUN*TAG = `spec6_false_s41`; steps = 1000; precision = float64.
+> **Primary spectral observable:** power spectrum |FFT(x)|² with a ±2-bin guard around f₀ (see §5.6).
+> **Replication tolerances:** defined in §4.3.1.
+> **Artifacts:** `{RUN_TAG}_lineum_report.html` (canonical report). All CSV/PNG/GIF outputs are prefixed with `{RUN_TAG}*`.
+
 **Graphical abstract.**
 
 ![Lineum symbol](source/icon.png)
@@ -113,10 +119,11 @@ Simulations are performed on a discrete square grid with periodic boundary condi
 
 ## 4.1 Grid and Initialization
 
-– Typical grid size: 512×512 cells.  
-– Initial ψ: complex noise with small amplitude.  
-– Initial φ: uniform background with small perturbations.  
-– κ: constant, smoothly varying, or localized map depending on the test.
+– **Canonical grid:** 128×128 cells (periodic BCs). All results reported in this core paper use this grid.  
+– **Exploratory grids (non-canonical):** 256×256 or 512×512 may be used for visualization or stress tests, but they are not part of the canonical results.  
+– **Initial ψ:** complex noise with small amplitude.  
+– **Initial φ:** uniform background with small perturbations.  
+– **κ:** static spatial map (constant/gradient/localized) depending on the test.
 
 ## 4.2 Update Procedure
 
@@ -134,7 +141,7 @@ Simulation parameters and κ-maps are stored alongside results to allow exact re
 
 #### 4.3.1 Cross-Implementation Replication (advisory)
 
-We do not require bit-for-bit equality across languages/backends. Small numerical differences are expected (RNG streams, FFT/Laplacian kernels, rounding). For v1, replication is defined by metric tolerances on the canonical run (`spec6_false`):
+We do not require bit-for-bit equality across languages/backends. Small numerical differences are expected (RNG streams, FFT/Laplacian kernels, rounding). For v1, replication is defined by metric tolerances on the canonical run (`spec6_false_s41`):
 
 – **Dominant frequency f₀:** within ±0.5%  
 – **SBR (±2-bin guard):** within ±10%  
@@ -166,9 +173,35 @@ For each run, the system generates:
 
 - **CSV (per run):** `*_amplitude_log.csv`, `*_spectrum_log.csv`, `*_phi_center_log.csv`, `*_topo_log.csv`, `*_trajectories.csv`, `*_multi_spectrum_summary.csv`, `*_spin_aura_profile.csv`.
 - **PNG (figures):** `*_spectrum_plot.png`, `*_topo_charge_plot.png`, `*_vortex_count_plot.png`, `*_spin_aura_map.png`, `*_phi_center_plot.png`.
-- **GIF (animations):** `*_lineum_amplitude.gif`, `*_lineum_spin.gif`, `*_lineum_vortices.gif`, `*_lineum_particles.gif`, `*_lineum_full_overlay.gif`.
+- **GIF (animations):** `*_lineum_amplitude.gif`, `*_lineum_spin.gif`, `*_lineum_vortices.gif`,
+  `*_lineum_particles.gif`, `*_lineum_flow.gif`, `*_lineum_full_overlay.gif`.
 
-_Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix A for the prefix convention.\_
+Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix A for the prefix convention.
+
+## 4.6 Reproduction Manifest (canonical run)
+
+This manifest pins all run-level switches for the canonical reference used in this paper.
+
+- **RUN_TAG:** `spec6_false_s41`
+- **Seed:** `41`
+- **Grid:** `128 × 128` (periodic BCs)
+- **Steps:** `1000`
+- **Precision:** `float64` (IEEE-754)
+- **Δt (time step):** `1.0e-21 s` (canonical)
+- **κ-mode:** `constant` (static spatial map; no time evolution)
+- **Equation:** Eq-4 (canonical update rule; see Eq. (1))
+- **Primary spectral metric:** power spectrum `|FFT(x)|^2` with a `±2`-bin guard around `f0`
+- **Detection conventions:** as fixed in Appendix A (no amplitude gating for CSV/metrics; vortex gating is visualization-only)
+
+**Artifacts (prefixing):** all outputs are prefixed with `{RUN_TAG}_…` (e.g., `spec6_false_s41_lineum_report.html`), as listed in §4.5 and Appendix A.
+
+## 4.7 Data & Code Availability
+
+All canonical artifacts for the run `spec6_false_s41` are provided with this preprint as ancillary files: the canonical HTML report (`spec6_false_s41_lineum_report.html`), the reference implementation (`lineum.py`), and the generated CSV/PNG/GIF outputs listed in §4.5.
+
+Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The HTML report is the ground-truth index of files and metrics for this paper.
+
+Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
 # 5. Validation
 
@@ -206,22 +239,35 @@ This phenomenon is reproducible for both constant and gradient κ-maps.
 
 ## 5.6 Spectral Stability
 
-> **Current canonical measurement (example).**  
-> With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on a canonical run (`spec6_false`) is  
+> **Canonical frequency anchor (spec6_false_s41)**  
+> With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on the canonical run `spec6_false_s41` is  
 > **f₀ = 1.00×10¹⁸ Hz**, which implies **E = h f₀ = 6.63×10⁻¹⁶ J ≈ 4.14 keV** and **λ = c / f₀ = 3.00×10⁻¹⁰ m**.
 
-> **Representative run metrics (spec6_false).**  
-> Spectral Balance Ratio: **SBR ≈ 6.18** (peak vs. rest, excluding ±2 bins around f₀).
-> Topology: global vortex charge stays near neutral — **|net charge| ≤ 1** for **94.9 %** of steps (mean total vortices ≈ **93** per frame).  
-> Particle lifetimes: **median 3 steps**, with rare long-lived outliers up to **1000 steps**.  
-> φ half-life (center): **≈ 480 steps** (canonical target ≈ 2000).  
-> φ near vs. field (mean ± sd): **4.49e+02 ± 6.69e+02** vs **5.50e+02 ± 7.51e+02** — **no elevation near particles**, consistent with **gradient-based guidance** rather than attraction to high-φ zones.
+> **Representative run metrics (canonical: spec6_false_s41)**  
+> SBR (±2-bin guard): **6.18**.  
+> Topology neutrality: **91.6%** of steps with |net charge| ≤ 1 (mean vortices ≈ **86** per frame).  
+> φ half-life (center): **483 steps**.  
+> Steps / grid: **1000**, **128×128**.
 
 Fourier analysis of long-duration runs shows that dominant oscillation frequencies remain stable over time, even with particle creation and annihilation events.  
 Typical dominant frequency: ≈ 1.0×10¹⁸ Hz with <1 % variation across runs.
 
 **Implementation robustness.** The dominant peak stays within ±0.5% across different random seeds, grid sizes, and run durations; see `multi_spectrum_summary.csv` for aggregated runs.
 _See also (Harmonic Spectrum)._ Secondary harmonics may co-appear with the dominant tone; methods and cross-language checks are summarized in the Spectral Structure extension.
+
+#### 5.7 Robustness mini-sweep (seeds 23, 17, 41, 73; spec6_false)
+
+We ran four canonical-scope repeats differing only by RNG seed. The dominant spectral peak and SBR are stable; topology and decay metrics vary modestly within replication tolerances.
+
+| seed | SBR (±2-bin guard) | Topology neutrality (%) | φ half-life (center, steps) | Mean vortices / frame |
+| :--: | :----------------: | :---------------------: | :-------------------------: | :-------------------: |
+|  23  |        6.18        |          94.9           |             480             |          93           |
+|  17  |        6.18        |          91.1           |             483             |          89           |
+|  41  |        6.18        |          91.6           |             483             |          86           |
+|  73  |        6.18        |          92.0           |             484             |          86           |
+
+**Summary.** SBR is constant at **6.18** across all runs; neutrality spans **91.1–94.9%** (median ≈ **91.8%**); φ half-life is **480–484** steps (median ≈ **483**).  
+**Canonical anchor.** We select `spec6_false_s41` as the medoid (closest to medians) for figures and references throughout the paper.
 
 # 6. Interpretation
 
@@ -301,7 +347,7 @@ Computational resources and support from academic and independent research netwo
 
 This appendix fixes the minimal conventions needed to reproduce our measurements in the canonical run.
 
-_All output files are saved with the run tag prefix (`RUN_TAG_…`, e.g., `spec6_false_…`). For readability we refer to them without the prefix in the text._
+All output files are saved with the run tag prefix (`{RUN_TAG}_…`, e.g., `spec6_false_s41_…`). For readability we refer to them without the prefix in the text.
 
 **Quasiparticles (trajectories).** Detected from local amplitude structure in ψ; tracks exported to `trajectories.csv` (positions per step). A detection forms a time-indexed set of coordinates; lifetimes are measured as the number of steps per unique track id.
 
@@ -344,4 +390,4 @@ Reported as a derived display quantity (no fitting).
 
 **Topology neutrality.** Fraction of steps with |net charge| ≤ 1, computed from `topo_log.csv`.
 
-**Cross-implementation note.** Exact pixelwise equality across languages/backends is not required; replication is defined via metric tolerances in §4.3.1 on the canonical run (`spec6_false`).
+**Cross-implementation note.** Exact pixelwise equality across languages/backends is not required; replication is defined via metric tolerances in §4.3.1 on the canonical run (`spec6_false_s41`).
