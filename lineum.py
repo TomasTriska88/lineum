@@ -10,59 +10,59 @@ import os
 from scipy.spatial.distance import euclidean
 import random
 
-# 🛠️ Běhové přepínače – snadné spouštění běhů
-RUN_ID = 6             # číslo běhu (1, 2, ...)
-RUN_MODE = "false"      # "true" nebo "false"
-# použito jako prefix všech výstupních souborů
-SEED = 41              # pevně daný seed pro opakovatelnost
+# 🛠️ Runtime toggles – easy run control
+RUN_ID = 6             # run index (1, 2, …)
+RUN_MODE = "false"      # "true" or "false"
+# used as a prefix for all output files
+SEED = 41              # fixed seed for reproducibility
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}"
 
 np.random.seed(SEED)
 random.seed(SEED)
 
-# 🔧 Mapování konfigurací
+# 🔧 Configuration mapping
 CONFIGS = {
-    # Model pozorovatelného světa s minimem entropie.
+    # Observable-world / low-entropy test
     (1, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
 
-    # Model rezonance mezi řádem a chaosem.
+    # Resonance between order and chaos
     (1, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "gradient"},
 
-    # Simulace světa, kde vzniká struktura pouze z proudění.
+    # Structure-from-flow only (no memory)
     (2, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
 
-    # Model turbulentního kvantového pole.
+    # Turbulent quantum-like field
     (2, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "gradient"},
 
-    # Matematický ideál reality. Ticho, z něhož může vzniknout struktura.
+    # Mathematical ideal; silence → structure
     (3, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
 
-    # Model fyzikální reality jako kombinace determinismu a náhodnosti.
+    # Determinism + noise (physical-like)
     (3, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "constant"},
 
-    # Model uzavřeného systému, jako částice v pasti.
+    # Closed system / trapped particle
     (4, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
 
-    # Simulace kvantové experimentální situace.
+    # Quantum-experiment-like setup
     (4, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island"},
 
-    # Model pro detekci extrémně jemných jevů.
+    # Detector for extremely subtle effects
     (5, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": True, "KAPPA_MODE": "island"},
 
-    # Model ostrovního vesmíru pod kvantovým kolapsem.
+    # Island universe under collapse
     (5, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "island"},
 
-    # Model latentního ideálu se zpomalením.
+    # Latent ideal with slowdown
     (6, "true"):  {"LOW_NOISE_MODE": True,  "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "constant"},
 
-    # Fyzikální realita se šumem + pamětí.
+    # # Noisy reality + memory
     (6, "false"): {"LOW_NOISE_MODE": False, "TEST_EXHALE_MODE": True,  "KAPPA_MODE": "constant"},
 
-    # Simulace vesmíru, ve kterém se zákony postupně stávají globálně sdílenými.
+    # Laws gradually becoming globally shared
     (7, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island_to_constant"}
 }
 
-# 📦 Aplikace konfigurace
+# 📦 Apply configuration
 cfg = CONFIGS.get((RUN_ID, RUN_MODE), {})
 LOW_NOISE_MODE = cfg.get("LOW_NOISE_MODE", False)
 TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
@@ -104,24 +104,24 @@ amplitude_log = []
 topo_log = []
 phi_center_log = []
 
-# Přepínač pro Low Noise režim (vypnutí kvantového šumu ξ)
-# True = testování strukturálního uzavření (hypotéza)
-# False = běžné simulace s fluktuacemi
+# Low-noise toggle (disable stochastic ξ)
+# True = structural-closure test mode
+# False = regular simulations with fluctuations
 LOW_NOISE_MODE = False
 
-# TEST_EXHALE_MODE = True aktivuje klidnější simulaci pro test strukturální paměti (výdech)
-# V běžných simulacích vypnout (False), aby došlo k plné dynamice systému
+# TEST_EXHALE_MODE=True enables calmer dynamics for structural-memory test
+# Use False in regular runs for full dynamics
 TEST_EXHALE_MODE = True
 
-# Parametry
+# Parameters
 size = 128
 steps = 1000 if TEST_EXHALE_MODE else 500
 
-# canonical noise level
+# Canonical noise level
 BASE_NOISE_STRENGTH = 0.005
 NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
 
-# Body, jejichž amplitudu budeme sledovat
+# Probe points whose amplitude we track
 probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 
 multi_amp_logs = {pt: [] for pt in probe_points}
@@ -381,12 +381,12 @@ if __name__ == "__main__":
 
         curl = (dFy_dx - dFx_dy) * kappa
 
-        # RAW pro metriky/CSV
+        # RAW vortices for metrics/CSV
         raw_vortices = detect_vortices(phase)
-        # zapis do logu (metoda)
+        # append to topology log
         update_topology_log(raw_vortices, i, topo_log)
         vortices_vis = gate_vortices_by_amplitude(
-            raw_vortices, amp)  # jen pro GIF
+            raw_vortices, amp)  # visualization-only (for GIF)
 
         local_max = (amp == maximum_filter(amp, size=neighborhood_size))
         particles = (amp > threshold) & local_max
@@ -440,7 +440,7 @@ if __name__ == "__main__":
         frames_curl.append(curl)
         frames_vort.append(vortices_vis)
 
-        # 🔄 Uložení φ polí pro každé časové okno (pouze absolutní hodnota)
+        # 🔄 Save |φ| frames for each time window (absolute value only)
         if 'frames_phi' not in locals():
             frames_phi = []
         frames_phi.append(np.abs(phi.copy()))
@@ -522,23 +522,23 @@ if __name__ == "__main__":
 
     # 🔍 SPEKTRÁLNÍ ANALÝZA OSCILACE V CENTRU
 
-    # Získáme amplitudy a vytvoříme časovou osu
+    # Get amplitudes and create the time axis
     amplitudes = np.array([row[1] for row in amplitude_log])
     times = np.arange(len(amplitudes)) * TIME_STEP  # čas v sekundách
 
-    # Odstraníme trend (DC složku)
+    # Remove DC component
     amplitudes -= np.mean(amplitudes)
 
-    # Provedeme FFT
+    # Compute FFT
     fft_result = fft(amplitudes)
     frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
     spectrum = np.abs(fft_result)**2
 
-    # Vybereme pouze kladné frekvence
+    # Keep positive frequencies only
     positive_freqs = frequencies[:len(frequencies)//2]
     positive_spectrum = spectrum[:len(spectrum)//2]
 
-    # Najdeme dominantní frekvenci
+    # Find the dominant frequency
     dominant_index = np.argmax(positive_spectrum)
     dominant_freq = positive_freqs[dominant_index]  # v Hz
 
@@ -554,18 +554,18 @@ if __name__ == "__main__":
         rest_power if (rest_power and rest_power > 0) else np.nan
 
     # Spočteme energii: E = h·f
-    h = 6.62607015e-34  # Planckova konstanta [J·s]
+    h = 6.62607015e-34  # Planck constant [J·s]
     energy = h * dominant_freq
 
     # Spočteme vlnovou délku: λ = c / f
-    c = 299_792_458  # rychlost světla [m/s]
+    c = 299_792_458  # speed of light [m/s]
     wavelength = c / dominant_freq if dominant_freq != 0 else np.inf
 
     # Spočteme efektivní hmotnost částice: m = E/c²
-    mass = energy / c**2  # efektivní hmotnost [kg]
+    mass = energy / c**2  # effective mass [kg]
 
-    # Porovnáme s elektronem
-    electron_mass = 9.10938356e-31  # hmotnost elektronu [kg]
+    # Compare with electron
+    electron_mass = 9.10938356e-31  # electron mass [kg]
     mass_ratio = mass / electron_mass
 
     # Uložení do CSV
@@ -582,7 +582,7 @@ if __name__ == "__main__":
         trajectories,
     )
 
-    # MULTISPEKTRÁLNÍ ANALÝZA pro každý bod zvlášť
+    # 🔍 SPECTRAL ANALYSIS OF THE CENTER-POINT OSCILLATION
     multi_spectrum_details = []
 
     for pt, amp_list in multi_amp_logs.items():
@@ -639,7 +639,7 @@ if __name__ == "__main__":
         pct_neutral = None
         mean_total_vort = None
 
-    # Uložení grafu
+    # Save plot
     plt.figure(figsize=(8, 4))
     plt.plot(positive_freqs, positive_spectrum)
     plt.title("Spectrum of center-point oscillation")
@@ -752,12 +752,12 @@ if __name__ == "__main__":
                               out_px=512, vec_stride=8, vec_scale=6.0, k_skip=2, fps=10,
                               amp_alpha_floor=0.20, curl_alpha_quantile=0.90, alpha_scale=96,
                               resample='nearest'):
+        """Fast overlay GIF:
+        • base = amplitude (plasma),
+        • overlay = curl (bwr) with alpha masked by amplitude and curl quantile,
+        • sparse arrows from (frames_vecx, frames_vecy).
         """
-        Rychlý overlay GIF:
-        • základ = amplitude (plasma),
-        • přes to curl (bwr) s alfou potlačenou podle amplitudy i kvantilového prahu |curl|,
-        • řídké šipky se špičkou z (frames_vecx, frames_vecy).
-        """
+
         from matplotlib import cm, colors
         from PIL import Image, ImageDraw
         import numpy as np
@@ -880,14 +880,14 @@ if __name__ == "__main__":
         # arrays `frames_vecx` and `frames_vecy` representing vector components, and generates a GIF animation
         # showing the flow of vectors as arrows on a sparse grid.
         """
-        Ultra-fast FLOW GIF: čistý vektorový tok s šipkami (arrowheads), bez Matplotlibu.
+        Ultra-fast FLOW GIF: sparse vector field with arrowheads (no Matplotlib).
         Vykreslí se řídká šachovnice šipek z (frames_vecx, frames_vecy).
         """
         from PIL import Image, ImageDraw
         import numpy as np
         import math
 
-        # vyber resample kernel
+        # choose resample kernel
         RESAMPLE = {
             "nearest": Image.NEAREST,
             "bilinear": Image.BILINEAR,
@@ -897,7 +897,7 @@ if __name__ == "__main__":
         n = len(frames_vecx)
         H, W = frames_vecx[0].shape
 
-        # barva šipek (poloprůhledná limetková, podobná původnímu quiveru)
+        # arrow color (semi-transparent lime)
         arrow_rgba = (144, 238, 144, 220)
 
         pil_frames = []
@@ -927,7 +927,7 @@ if __name__ == "__main__":
                     # tělo šipky
                     draw.line([(x1, y1), (x2, y2)], fill=arrow_rgba, width=2)
 
-                    # špička (dvě krátké čárky do "V")
+                    # arrowhead ("V" shape with two short strokes)
                     theta = math.atan2(dy, dx)
                     head_len = 0.6 * vec_scale
                     head_wide = 0.35 * vec_scale
@@ -980,11 +980,11 @@ if __name__ == "__main__":
     save_flow_quiver_gif(
         frames_vecx, frames_vecy,
         flow_path,
-        out_px=512,      # velikost výsledného GIFu v pixelech
-        # řídkost mřížky šipek (vyšší = méně šipek → rychlejší)
+        out_px=512,      # output GIF size in pixels
+        # sparsity of arrow grid
         vec_stride=12,
-        vec_scale=9.0,   # délka šipek (měřítko)
-        k_skip=2,        # přeskočí každý 2. frame (rychlejší, menší soubor)
+        vec_scale=9.0,   # arrow length (scale)
+        k_skip=2,        # skip every 2nd frame (smaller file)
         fps=5,          # snímková frekvence GIFu
         bg="black"       # nebo "black", chceš-li tmavé pozadí
     )
@@ -1125,7 +1125,7 @@ if __name__ == "__main__":
                     phi_gravitation_confirmed = True
 
         except Exception as e:
-            print("⚠️ φ-gravitační test selhal:", e)
+            print("⚠️ φ-guidance test failed:", e)
 
         if not confirmations:
             confirmations.append(
@@ -1364,17 +1364,17 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         vmin_amp=0.0, vmax_amp=0.5,
         vmin_curl=-0.3, vmax_curl=0.3,
         out_px=512,
-        vec_stride=12,         # řidší šipky = čistší obraz
+        vec_stride=12,         # sparser arrows = cleaner look
         vec_scale=6.0,
         k_skip=2,
         fps=5,                 # sladěno s ostatními GIFy (při k_skip=2)
         amp_alpha_floor=0.30,  # skryje curl v nízké |ψ|
-        curl_alpha_quantile=0.95,  # ignoruj slabý curl pod 95. perc.
-        alpha_scale=80,        # jemnější krytí curlu
+        curl_alpha_quantile=0.95,  # ignore weak curl below the 95th percentile
+        alpha_scale=80,        # gentler overall curl alpha
         resample="bilinear"
     )
 
-    # 🌀 Uložení všech polí vírů do souboru pro analýzu
+    # 🌀 Save all vortex fields to files for analysis
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
     npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
     frames_curl_np = np.array(frames_curl)
@@ -1412,7 +1412,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
                 local_phi = phi_frame[y-2:y+3, x-2:x+3].flatten()
                 phi_values_near_particles.extend(local_phi)
 
-        # náhodné body mimo částice
+        # random points outside particles
         for _ in range(5):
             ry, rx = random.randint(0, size - 1), random.randint(0, size - 1)
             phi_values_field.append(frames_phi[step][ry, rx])
