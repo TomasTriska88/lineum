@@ -5,6 +5,13 @@
 **Scope:** 2D, periodic BCs  
 **Date:** 2025-08-19
 
+> **Canonical Scope (v1.0.x)**  
+> **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
+> **Δt:** 1.0×10⁻²¹ s • **Seed:** 41 • **RUN_TAG:** spec6_false_s41  
+> **κ-mode:** constant • **Noise:** zero-mean, σξ ≪ 1 (canonical low)  
+> **Operators:** ∇ (central), ∇² (5-point von Neumann)  
+> **Out of scope:** 3D, time-varying κ, zeta/RNB correlations, Return Echo, Vortex–Particle coupling, and other interpretive add-ons. These are intentionally excluded from the core and deferred to **future work**; they are not part of this submission.
+
 # 1. Abstract
 
 Lineum is a functional model of an emergent quantum field based on a simple, local, and discrete update equation for the evolution of a complex scalar field ψ, coupled with an interaction field φ and an experimental tuning field κ. The model does not assume any explicit constants, spacetime metric, or global symmetries, yet numerical simulations consistently produce stable and complex structures resembling phenomena known from physics.
@@ -39,12 +46,6 @@ The model produces quantitative signatures close to physical scales, such as:
 All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to move along +∇|φ|; we describe this as environmental guidance rather than any gravitational claim.
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
-
-> **Canonical Scope (arXiv v1)** > **Equation:** Eq-4 (κ static). **Domain:** 2D grid, periodic BCs.
-> **Canonical run:** RUN*TAG = `spec6_false_s41`; steps = 1000; precision = float64.
-> **Primary spectral observable:** power spectrum |FFT(x)|² with a ±2-bin guard around f₀ (see §5.6).
-> **Replication tolerances:** defined in §4.3.1.
-> **Artifacts:** `{RUN_TAG}_lineum_report.html` (canonical report). All CSV/PNG/GIF outputs are prefixed with `{RUN_TAG}*`.
 
 **Graphical abstract.**
 
@@ -192,6 +193,13 @@ This manifest pins all run-level switches for the canonical reference used in th
 - **Equation:** Eq-4 (canonical update rule; see Eq. (1))
 - **Primary spectral metric:** power spectrum `|FFT(x)|^2` with a `±2`-bin guard around `f0`
 - **Detection conventions:** as fixed in Appendix A (no amplitude gating for CSV/metrics; vortex gating is visualization-only)
+- **α (reaction_strength):** `7.0e-4`
+- **β (φ diffusion):** `1.5e-2` (computed as `0.30 × diffuse_complex(rate=0.05)`)
+- **δ (ψ damping):** `4.62e-3`
+- **σξ (noise amplitude):** `5.0e-3`
+- **κ-map:** `constant 0.5` (uniform across the grid)
+
+- **Code provenance:** recorded in the HTML report header when available (short Git SHA). Runs in this paper are pinned by `RUN_TAG`; the exact commit is documented in the report and artifact manifest.
 
 **Artifacts (prefixing):** all outputs are prefixed with `{RUN_TAG}_…` (e.g., `spec6_false_s41_lineum_report.html`), as listed in §4.5 and Appendix A.
 
