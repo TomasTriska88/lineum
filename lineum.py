@@ -1235,6 +1235,24 @@ if __name__ == "__main__":
                 labels.append(f"pixel: {PIXEL_SIZE:.2e} m")
             except Exception:
                 pass
+
+        # Try to include Git commit (short SHA) if available
+        commit_short = None
+        try:
+            import subprocess
+            import os
+            commit_short = subprocess.check_output(
+                ["git", "rev-parse", "--short", "HEAD"],
+                stderr=subprocess.DEVNULL
+            ).decode().strip()
+        except Exception:
+            # Fallback: allow passing it via environment (optional)
+            commit_short = os.environ.get(
+                "GIT_COMMIT_SHORT", "").strip() or None
+
+        if commit_short:
+            labels.append(f"commit: {commit_short}")
+
         labels_text = " · ".join(labels)
 
         # --- Data links for convenience (relative to report location)
