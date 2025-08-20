@@ -583,6 +583,22 @@ if __name__ == "__main__":
     (sbr_mean, sbr_ci), (f0_mean, f0_ci) = window_sbr_and_f0(
         amplitudes, TIME_STEP, W=256, hop=128, guard=2)
 
+    # Export a compact metrics summary with CIs
+    save_csv("metrics_summary.csv",
+             ["metric", "value", "ci_lo", "ci_hi", "unit"],
+             [
+                 ["f0",  float(f0_mean) if f0_mean == f0_mean else None,
+                  float(f0_ci[0]) if f0_ci and f0_ci[0] == f0_ci[0] else None,
+                  float(f0_ci[1]) if f0_ci and f0_ci[1] == f0_ci[1] else None,
+                  "Hz"],
+                 ["SBR", float(sbr_mean) if sbr_mean == sbr_mean else None,
+                     float(
+                     sbr_ci[0]) if sbr_ci and sbr_ci[0] == sbr_ci[0] else None,
+                     float(
+                     sbr_ci[1]) if sbr_ci and sbr_ci[1] == sbr_ci[1] else None,
+                     ""],
+             ])
+
     # Remove DC component
     amplitudes -= np.mean(amplitudes)
 
@@ -1239,8 +1255,7 @@ if __name__ == "__main__":
         # Try to include Git commit (short SHA) if available
         commit_short = None
         try:
-            import subprocess
-            import os
+            import subprocess              # ponecháme jen subprocess
             commit_short = subprocess.check_output(
                 ["git", "rev-parse", "--short", "HEAD"],
                 stderr=subprocess.DEVNULL
@@ -1265,6 +1280,7 @@ if __name__ == "__main__":
             f'<li><a href="{RUN_TAG}_trajectories.csv">trajectories.csv</a></li>'
             f'<li><a href="{RUN_TAG}_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li>'
             f'<li><a href="{RUN_TAG}_spin_aura_profile.csv">spin_aura_profile.csv</a></li>'
+            f'<li><a href="{RUN_TAG}_metrics_summary.csv">metrics_summary.csv</a></li>'
             f'</ul>'
         )
 
@@ -1350,6 +1366,12 @@ if __name__ == "__main__":
 
 
     </table>
+    
+    <p class="metrics-note" style="font-size:0.9em; opacity:0.85; margin-top:6px;">
+  Windowed estimates: W=256, hop=128, guard=±2 bins around f₀; 95% CI via bootstrap (B=1000 resamples).
+  See <code>metrics_summary.csv</code> in the downloads section for machine-readable values.
+</p>
+
 
       <h2>📊 Quasiparticle Properties</h2>
       <table>
@@ -1774,7 +1796,6 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         pct_neutral=pct_neutral,
         mean_total_vort=mean_total_vort,
         phi_std_near=phi_std_near,
-        sbr=sbr,
         sbr_ci=sbr_ci,
         f0_ci=f0_ci,
 
