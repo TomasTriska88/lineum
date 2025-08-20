@@ -72,6 +72,59 @@ output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
 
 
+def sliding_windows_1d(x, W, hop):
+    x = np.asarray(x, dtype=float)
+    n = len(x)
+    if n < W:
+        return []
+    return [x[i:i+W] for i in range(0, n - W + 1, hop)]
+
+
+def bootstrap_mean_ci(vals, B=1000, alpha=0.05, rng=np.random):
+    vals = np.asarray(vals, dtype=float)
+    if vals.size == 0:
+        return (float('nan'), (float('nan'), float('nan')))
+    n = vals.size
+    means = np.empty(B, dtype=float)
+    for b in range(B):
+        idx = rng.randint(0, n, size=n)
+        means[b] = np.mean(vals[idx])
+    lo = float(np.quantile(means, alpha/2))
+    hi = float(np.quantile(means, 1 - alpha/2))
+    return (float(np.mean(vals)), (lo, hi))
+
+
+def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
+    """Windowed SBR and f0 using the same SBR definition as the single-shot path."""
+    amps = np.asarray(amplitudes, dtype=float)
+    sbr_vals, f0_vals = [], []
+    for w in sliding_windows_1d(amps, W=W, hop=hop):
+        w = w - np.mean(w)
+        P = np.abs(fft(w))**2
+        F = fftfreq(len(w), d=dt)
+        Pp = P[:len(P)//2]
+        Fp = F[:len(F)//2]
+        if Pp.size == 0:
+            continue
+        idx = int(np.argmax(Pp))
+        peak = float(Pp[idx])
+        # mean background excluding ±guard bins around the peak (matches current code)
+        mask = np.ones_like(Pp, dtype=bool)
+        l = max(idx - guard, 0)
+        r = min(idx + guard + 1, Pp.size)
+        mask[l:r] = False
+        bg = float(np.mean(Pp[mask])) if np.any(mask) else np.nan
+        if bg > 0:
+            # keep strict peak/mean; switchable
+            sbr_vals.append(2*peak/(bg+peak) if False else peak/bg)
+        f0_vals.append(float(Fp[idx]))
+    sbr_mean, sbr_ci = bootstrap_mean_ci(sbr_vals) if sbr_vals else (
+        float('nan'), (float('nan'), float('nan')))
+    f0_mean,  f0_ci = bootstrap_mean_ci(f0_vals) if f0_vals else (
+        float('nan'), (float('nan'), float('nan')))
+    return (sbr_mean, sbr_ci), (f0_mean, f0_ci)
+
+
 def notify_file_creation(path, success=True, error=None):
     """Print a notification about file creation success or failure."""
     name = os.path.basename(path)
@@ -526,6 +579,10 @@ if __name__ == "__main__":
     amplitudes = np.array([row[1] for row in amplitude_log])
     times = np.arange(len(amplitudes)) * TIME_STEP  # čas v sekundách
 
+    # Windowed estimates + 95% CI (W=256, hop=128, guard=2)
+    (sbr_mean, sbr_ci), (f0_mean, f0_ci) = window_sbr_and_f0(
+        amplitudes, TIME_STEP, W=256, hop=128, guard=2)
+
     # Remove DC component
     amplitudes -= np.mean(amplitudes)
 
@@ -552,6 +609,12 @@ if __name__ == "__main__":
     rest_power = np.mean(positive_spectrum[mask]) if np.any(mask) else np.nan
     sbr = peak_power / \
         rest_power if (rest_power and rest_power > 0) else np.nan
+
+    # Prefer robust windowed estimates if valid (fallback to single-shot if not)
+    if not np.isnan(f0_mean):
+        dominant_freq = f0_mean
+    if not np.isnan(sbr_mean):
+        sbr = sbr_mean
 
     # Spočteme energii: E = h·f
     h = 6.62607015e-34  # Planck constant [J·s]
@@ -989,7 +1052,30 @@ if __name__ == "__main__":
         bg="black"       # nebo "black", chceš-li tmavé pozadí
     )
 
-    def generate_html_report(filename=f"{RUN_TAG}_lineum_report.html", mass=0, mass_ratio=0, max_lifespan=0, median_lifespan=0, include_spin=True, phi_mean_near=0, phi_mean_field=0, phi_std_field=1, mass_ratio_blackholes=None, avg_phi_death=None, low_mass_count=None, phi_low_mass_mean=0, curl_low_mass_mean=0, phi_above_025_count=0, curl_near_zero_count=0, phi_half_life_steps=None, sbr=None, pct_neutral=None, mean_total_vort=None, phi_std_near=None):
+    def generate_html_report(
+        filename=f"{RUN_TAG}_lineum_report.html",
+        mass=0,
+        mass_ratio=0,
+        max_lifespan=0,
+        median_lifespan=0,
+        include_spin=True,
+        phi_mean_near=0,
+        phi_mean_field=0,
+        phi_std_field=1,
+        mass_ratio_blackholes=None,
+        avg_phi_death=None,
+        low_mass_count=None,
+        phi_low_mass_mean=0,
+        curl_low_mass_mean=0,
+        phi_above_025_count=0,
+        curl_near_zero_count=0,
+        phi_half_life_steps=None,
+        sbr=None, pct_neutral=None,
+        mean_total_vort=None,
+        phi_std_near=None,
+        f0_ci=None,
+        sbr_ci=None
+    ):
 
         # ✅ Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
@@ -1178,6 +1264,18 @@ if __name__ == "__main__":
             energy_ev = None
             wavelength_m = None
 
+        def _fmt_ci_pair(val, ci, unit=""):
+            try:
+                if ci and all(isinstance(x, (int, float)) and x == x for x in ci):
+                    lo, hi = ci
+                    if unit:
+                        return f"{val:.2e} {unit}  [{lo:.2e}, {hi:.2e}]"
+                    else:
+                        return f"{val:.2f}  [{lo:.2f}, {hi:.2f}]"
+                return f"{val:.2e} {unit}".strip() if unit else f"{val:.2f}"
+            except Exception:
+                return "—"
+
         html = f"""<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -1222,8 +1320,9 @@ if __name__ == "__main__":
     <tr><td>φ half-life (center)</td>
         <td>{phi_half_life_steps if phi_half_life_steps is not None else '—'} steps
             (canonical target ≈ 2000)</td></tr>
-              <tr><td>SBR (±2-bin guard)</td>
-      <td>{'—' if (sbr is None or sbr != sbr) else f'{sbr:.2f}'}</td></tr>
+            <tr><td>SBR (±2-bin guard)</td>
+    <td>{'—' if (sbr is None or sbr != sbr) else _fmt_ci_pair(sbr, sbr_ci)}</td></tr>
+
   <tr><td>Topology neutrality</td>
       <td>{'—' if pct_neutral is None else f'{pct_neutral:.1f}%'} of steps with |net charge| ≤ 1
           (mean vortices ≈ {'—' if mean_total_vort is None else f'{mean_total_vort:.0f}'})</td></tr>
@@ -1238,7 +1337,8 @@ if __name__ == "__main__":
       <table>
         <tr><th>Property</th><th>Value</th></tr>
         <tr><td>Dominant frequency f₀</td>
-    <td>{dominant_freq:.2e} Hz</td></tr>
+    <td>{_fmt_ci_pair(dominant_freq, f0_ci, 'Hz')}</td></tr>
+
 <tr><td>Energy (E = h f₀)</td>
     <td>{'—' if energy_j is None else f'{energy_j:.2e} J (~{energy_ev/1e3:.2f} keV)'}</td></tr>
 <tr><td>Wavelength (λ = c / f₀)</td>
@@ -1656,6 +1756,10 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         pct_neutral=pct_neutral,
         mean_total_vort=mean_total_vort,
         phi_std_near=phi_std_near,
+        sbr=sbr,
+        sbr_ci=sbr_ci,
+        f0_ci=f0_ci,
+
     )
 
     print("✅ All GIFs and logs have been successfully generated.")
