@@ -209,11 +209,15 @@ All canonical artifacts for the run `spec6_false_s41` are provided with this pre
 
 Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The HTML report is the ground-truth index of files and metrics for this paper.
 
+**Version pinning (no checksums).** Provenance is pinned by `RUN_TAG=spec6_false_s41`, the code commit noted in the HTML report header (short Git SHA, when available), and the artifact manifest (file list with sizes & timestamps) embedded in the report. We intentionally do not publish checksums because this is a living paper with evolving outputs; reproducibility is evaluated against the acceptance bands in §4.3.1.
+
 Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
 # 5. Validation
 
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
+
+**Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** (\(f_0\)) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length \(W=256\) frames, hop \(H=128\) frames) with a ±2-bin guard around \(f_0\) in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify run-to-run and within-run variability without fitting any external model.
 
 ## 5.1 Guided Motion via φ-Gradient
 
