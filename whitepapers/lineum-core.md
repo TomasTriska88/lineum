@@ -114,6 +114,29 @@ _Scope note (canonical dimensionality)._ All results in this core paper use a **
 
 No explicit spacetime geometry, global constants, or long-range interactions are predefined. All behavior results from repeated local updates of these fields.
 
+## 3.1 Numerical scheme & stability (canonical)
+
+**Discrete operators (periodic, $\Delta x = \Delta y = 1$).**
+
+$$
+\nabla_x f_{i,j} = \frac{f_{i+1,j}-f_{i-1,j}}{2},\quad
+\nabla_y f_{i,j} = \frac{f_{i,j+1}-f_{i,j-1}}{2}
+$$
+
+$$
+\nabla^2 f_{i,j} = f_{i+1,j} + f_{i-1,j} + f_{i,j+1} + f_{i,j-1} - 4\,f_{i,j}.
+$$
+
+**Time stepping.** Explicit Euler with fixed $\Delta t = 1.0\times 10^{-21}\,\mathrm{s}$ (canonical anchor).
+
+**Stability sanity.** For diffusion-like terms a heuristic CFL bound is
+
+$$
+\Delta t \lesssim \mathcal{O}\!\left(\frac{(\Delta x)^2}{4 D_{\mathrm{eff}}}\right).
+$$
+
+In practice we verify stability empirically via Section 5 metrics (SBR, topological neutrality, and $\phi$ half-life) on the canonical run; windowed estimates with 95% CIs are reported in the HTML report.
+
 # 4. Method
 
 Simulations are performed on a discrete square grid with periodic boundary conditions. Each step updates ψ and φ according to the canonical equation; **κ is a static spatial map** that is sampled (not evolved) at each step. We apply the discrete Laplacian for diffusion terms and nearest-neighbor operations for gradients.
@@ -217,7 +240,7 @@ Future updates and non-canonical experiments will be released as separate prepri
 
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
 
-**Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** (\(f_0\)) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length \(W=256\) frames, hop \(H=128\) frames) with a ±2-bin guard around \(f_0\) in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify run-to-run and within-run variability without fitting any external model.
+**Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** ($f_0$) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length $W=256$ frames, hop $H=128$ frames) with a ±2-bin guard around $f_0$ in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify run-to-run and within-run variability without fitting any external model.
 
 ## 5.1 Guided Motion via φ-Gradient
 
@@ -389,10 +412,10 @@ $$
 P(f)=\bigl|\mathrm{FFT}(x)\bigr|^{2}.
 $$
 
-The dominant tone \(f_0\) is the argmax of the positive-frequency band.
-**SBR** compares the peak power to the rest of the spectrum with a ±2-bin guard around \(f_0\).
+The dominant tone $f_0$ is the argmax of the positive-frequency band.
+**SBR** compares the peak power to the rest of the spectrum with a ±2-bin guard around $f_0$.
 
-**Effective mass (display-only).** Converted from \(f_0\) via:
+**Effective mass (display-only).** Converted from $f_0$ via:
 
 $$
 E=h f_0,\qquad m=\frac{E}{c^2},\qquad \mathrm{mass\_ratio}=\frac{m}{m_e}.
@@ -403,3 +426,55 @@ Reported as a derived display quantity (no fitting).
 **Topology neutrality.** Fraction of steps with |net charge| ≤ 1, computed from `topo_log.csv`.
 
 **Cross-implementation note.** Exact pixelwise equality across languages/backends is not required; replication is defined via metric tolerances in §4.3.1 on the canonical run (`spec6_false_s41`).
+
+## Appendix B — Metrics & CI (v1)
+
+**Spectral pipeline (center amplitude).** We compute the power spectrum $P(f)=|\mathrm{FFT}(x)|^2$ on sliding windows of the center-point amplitude time series. Defaults: window length $W=256$ frames, hop $H=128$, de-meaned FFT (DC removed), and a ±2-bin guard around the dominant bin $f_0$ when estimating the background.
+
+**Dominant frequency $f_0$.** For each window, $f_0=\arg\max_f P(f)$ on the positive-frequency band. We aggregate the windowwise mean and a non-parametric **95% bootstrap CI** across windows.
+
+**SBR (Spectral Balance Ratio).** For each window:
+
+$$
+\mathrm{SBR}=\frac{P(f_0)}{\mathrm{mean}\,\{\,P(f):\, f\notin[f_0-2,\,f_0+2]\,\}}.
+$$
+
+**Bootstrap procedure.** Given windowwise values $\{v_k\}_{k=1}^n$, resample indices with replacement $B=1000$ times, compute the mean for each resample, and take the $[2.5\%,97.5\%]$ quantiles as the CI.
+
+**Minimal pseudocode (reference):**
+
+```python
+import numpy as np
+
+def sliding_windows(x, W, hop):
+    for i in range(0, max(len(x)-W+1, 0), hop):
+        yield x[i:i+W]
+
+def welch_power(w, dt):
+    w = w - w.mean()
+    P = np.abs(np.fft.fft(w))**2
+    F = np.fft.fftfreq(len(w), d=dt)
+    return P[:len(P)//2], F[:len(F)//2]
+
+def sbr_and_f0_windows(x, dt, W=256, hop=128, guard=2):
+    sbr_vals, f0_vals = [], []
+    for w in sliding_windows(x, W, hop):
+        P, F = welch_power(w, dt)
+        k = int(np.argmax(P)); peak = P[k]
+        mask = np.ones_like(P, dtype=bool)
+        mask[max(k-guard,0):min(k+guard+1,len(P))] = False
+        bg = P[mask].mean() if mask.any() else np.nan
+        if bg > 0: sbr_vals.append(peak/bg)
+        f0_vals.append(F[k])
+    return np.array(sbr_vals), np.array(f0_vals)
+
+def bootstrap_mean_ci(vals, B=1000, alpha=0.05):
+    vals = np.asarray(vals, float)
+    n = len(vals)
+    if n == 0: return np.nan, (np.nan, np.nan)
+    means = [vals[np.random.randint(0, n, n)].mean() for _ in range(B)]
+    lo, hi = np.quantile(means, [alpha/2, 1-alpha/2])
+    return float(vals.mean()), (float(lo), float(hi))
+```
+
+_The HTML report prints `value [lo, hi]` for both metrics and also writes them to `metrics_summary.csv`._
