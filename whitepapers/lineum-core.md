@@ -1,9 +1,9 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs  
-**Date:** 2025-08-19
+**Date:** 2025-08-21
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -38,10 +38,10 @@ Repeated simulations robustly generate:
 From these, several phenomena are validated in the core, including Structural Closure (φ-field memory after particle decay) and Dimensional Transparency (projection properties under varied κ). Interpretive claims are reserved for extensions.
 
 The model produces quantitative signatures close to physical scales, such as:
-– dominant oscillation frequency ≈ 1.0×10¹⁸ Hz,  
-– linon energy ≈ 6.63×10⁻¹⁶ J,
-– wavelength ≈ 3.00×10⁻¹⁰ m,  
-– effective mass ≈ 0.81 % of the electron mass.
+– dominant oscillation frequency ≈ **3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
+– linon energy ≈ **2.59×10⁻¹⁵ J** ≈ **16.15 keV**,
+– wavelength ≈ **7.67×10⁻¹¹ m** (0.0767 nm),
+– effective mass (display-only) ≈ **3.16 %** of the electron mass.
 
 All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to move along +∇|φ|; we describe this as environmental guidance rather than any gravitational claim.
 
@@ -92,8 +92,8 @@ The canonical form is:
 <!-- prettier-ignore-start -->
 | Symbol | Type / Range | Role | Default / Notes |
 |---|---|---|---|
-| ψ(x,y,t) | ℂ | primary field; |ψ|² = density, arg ψ = phase | linons = localized |ψ|² maxima |
-| φ(x,y,t) | ℝ | interaction / memory field | accumulates response to |ψ|² |
+| ψ(x,y,t) | ℂ | primary field; &#124;ψ&#124;² = density, arg ψ = phase • linons = localized &#124;ψ&#124;² maxima |
+| φ(x,y,t) | ℝ | interaction / memory field | accumulates response to &#124;ψ&#124;² |
 | κ(x,y) | ℝ⁺ (static) | spatial tuning map | no time evolution; often normalized to [0,1] |
 | 𝛌̃(x,y,t) | ℂ | external stimulus | 0 unless stimulus experiments |
 | ξ(x,y,t) | ℂ | noise (zero-mean) | optional; amplitude σ_ξ ≪ 1 |
@@ -105,6 +105,16 @@ The canonical form is:
 | BCs | — | boundary conditions | periodic in x,y |
 | α_eff, β_eff | — | effective params | α_eff = κ·α, β_eff = κ·β (κ modulates α,β) |
 <!-- prettier-ignore-end -->
+
+**Canonical parameters (spec6_false_s41)**
+
+| Param | Meaning                         | Canonical value |
+| :---: | ------------------------------- | :-------------- |
+|   α   | φ relaxation toward \|ψ\|²      | 7.0×10⁻⁴        |
+|   β   | φ diffusion strength            | 1.5×10⁻²        |
+|   δ   | ψ damping per step              | 4.62×10⁻³       |
+|  σξ   | noise amplitude in ψ            | 5.0×10⁻³        |
+|   κ   | spatial tuning (static, const.) | 0.5 everywhere  |
 
 _Scope note (canonical dimensionality)._ All results in this core paper use a **2D discrete grid with periodic boundary conditions**. Any 3D extensions or non-periodic boundaries are treated as **supplementary variants** and are not part of the canonical Eq. 1.
 
@@ -157,6 +167,33 @@ At each timestep:
 2. Apply the update rules for ψ and φ (**κ is static and only sampled**).
 3. Optionally add controlled noise ξ to test stability.
 4. Record intermediate states for analysis.
+
+#### One-step update (canonical Eq-4)
+
+**Context:** periodic BCs, Δx = Δy = 1, explicit Euler; κ is static (constant map in the canonical run).
+
+```python
+# periodic BCs, Δx=Δy=1, explicit Euler
+for t in range(T):
+    # spatial derivatives
+    lap_psi  = laplacian(psi)          # 5-point (von Neumann)
+    grad_phi = gradient(phi)           # central differences
+    lap_phi  = laplacian(phi)
+
+    # effective parameters (κ is static)
+    alpha_eff = kappa * alpha
+    beta_eff  = kappa * beta
+
+    # ψ-update
+    psi = psi + lambda_tilde + xi + phi*psi - delta*psi + lap_psi + grad_phi
+
+    # φ-update
+    phi = phi + alpha_eff*(np.abs(psi)**2 - phi) + beta_eff*lap_phi
+
+    # optional logging/detectors
+    if t % LOG_EVERY == 0:
+        save_state(...)
+```
 
 ## 4.3 Reproducibility
 
@@ -236,6 +273,14 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 
 Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
+## 4.8 Threats to validity (core v1)
+
+> **Periodic BC artifacts.** We verify metric invariance (within tolerances) when changing the grid size; figures are illustrative only, acceptance is by metrics.  
+> **Stencil bias.** Results replicate with a 9-point Laplacian (Appendix) in addition to the canonical 5-point stencil.  
+> **Spectral leakage.** FFT on de-meaned windows with a ±2-bin guard around $f_0$ mitigates leakage; SBR is computed on the power spectrum $|\mathrm{FFT}(x)|^2$.  
+> **RNG/seed bias.** We report metrics with 95% CIs across seeds {23, 17, 41, 73}; replication is defined by tolerance bands in §4.3.1.  
+> **Visualization bias.** All metrics derive from numeric logs (CSV). Amplitude gating is **visualization-only** in GIFs; winding/metrics use raw values.
+
 # 5. Validation
 
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
@@ -276,10 +321,10 @@ This phenomenon is reproducible for both constant and gradient κ-maps.
 
 > **Canonical frequency anchor (spec6_false_s41)**  
 > With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on the canonical run `spec6_false_s41` is  
-> **f₀ = 1.00×10¹⁸ Hz**, which implies **E = h f₀ = 6.63×10⁻¹⁶ J ≈ 4.14 keV** and **λ = c / f₀ = 3.00×10⁻¹⁰ m**.
+> **f₀ = 3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**], which implies **E = h f₀ ≈ 2.59×10⁻¹⁵ J ≈ 16.15 keV** and **λ = c / f₀ ≈ 7.67×10⁻¹¹ m (0.0767 nm)**.
 
 > **Representative run metrics (canonical: spec6_false_s41)**  
-> SBR (±2-bin guard): **6.18**.  
+> SBR (±2-bin guard): **6.88** [**6.86**, **6.90**].  
 > Topology neutrality: **91.6%** of steps with |net charge| ≤ 1 (mean vortices ≈ **86** per frame).  
 > φ half-life (center): **483 steps**.  
 > Steps / grid: **1000**, **128×128**.
@@ -303,6 +348,27 @@ We ran four canonical-scope repeats differing only by RNG seed. The dominant spe
 
 **Summary.** SBR is constant at **6.18** across all runs; neutrality spans **91.1–94.9%** (median ≈ **91.8%**); φ half-life is **480–484** steps (median ≈ **483**).  
 **Canonical anchor.** We select `spec6_false_s41` as the medoid (closest to medians) for figures and references throughout the paper.
+
+#### 5.8 Ablation study (canonical grid; Δt fixed)
+
+We summarize what breaks when key terms are removed from Eq. (1). Detection rules follow Appendix A; metrics are computed as in §5.
+
+<!-- prettier-ignore-start -->
+| Variant | ψ term            | φ term                                           | κ  | Drift (+∇φ) | Spin aura | Structural closure | Neutral topology |
+|:------:|--------------------|--------------------------------------------------|:--:|:------------:|:---------:|:------------------:|:----------------:|
+| V1     | no φ, no ∇φ        | —                                                | —  | ✗            | weak      | ✗                  | ✓ / −            |
+| V2     | +φ, no ∇φ          | $\alpha(\lvert\psi\rvert^2 - \phi)$, no diffusion | —  | ± (unstable) | ✓         | ±                  | −                |
+| V3     | +φ, **+∇φ**        | $\alpha(\lvert\psi\rvert^2 - \phi)$, no diffusion | —  | **✓**        | ✓         | ±                  | −                |
+| V4     | +φ, +∇φ            | $\alpha(\lvert\psi\rvert^2 - \phi) + \beta\nabla^2\phi$ | κ  | **✓**        | **✓**     | **✓**              | **✓**            |
+<!-- prettier-ignore-end -->
+
+**Legend (symbols).** ✓ = present (meets §4.3.1 bands); ✗ = absent; ± = intermittent/unstable; — = not applicable; ✓ / − = vacuously neutral or undefined neutrality (no sustained vortex structure).
+
+_Notes._  
+– **V1** (no φ, no ∇φ): ψ evolves with diffusion/damping only → no drift, no closure.  
+– **V2** (φ without ∇φ): memory exists, but trajectories lack consistent guidance; closure intermittent.  
+– **V3** (add ∇φ): drift emerges; closure still fragile without φ diffusion.  
+– **V4** (full canonical): guidance, spin, and closure co-occur; topology remains neutral within §4.3.1 bands.
 
 # 6. Interpretation
 
@@ -363,6 +429,21 @@ Computational resources and support from academic and independent research netwo
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
+
+**1.0.2 — 2025-08-21 (patch)**
+
+- Sync §5.6 _Spectral Stability_ with the canonical run `spec6_false_s41`:
+  **f₀ = 3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
+  **SBR = 6.88** [**6.86**, **6.90**].
+- Update **Abstract** numeric anchors to match the canonical run:
+  **E ≈ 2.59×10⁻¹⁵ J ≈ 16.15 keV**, **λ ≈ 7.67×10⁻¹¹ m (0.0767 nm)**, effective mass ≈ **3.16% mₑ**.
+- Add **§3.1 Numerical scheme & stability (canonical)** (discrete operators, explicit Euler Δt=1.0×10⁻²¹ s).
+- Add **§4.8 Threats to validity (core v1)**.
+- Add **Appendix B — Metrics & CI (v1)** (windowed estimates + 95% bootstrap CI; aligns with HTML report).
+- §4.6 **Manifest**: add _Code provenance_ note; §4.7 **Data & Code**: _Version pinning (no checksums)_.
+- §5.8 **Ablation study**: fix table rendering (escape `|` as `&#124;`), add **Legend (symbols)**.
+- Math rendering: switch inline `\(...\)` → `$...$`; fix legend/table pipes to avoid column breaks.
+- Tooling (report): show **mean ±95% CI** for f₀/SBR; write `metrics_summary.csv`; header includes short **git commit**.
 
 **1.0.1 — 2025-08-19 (patch)**
 
