@@ -1,9 +1,9 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.2  
+**Version:** 1.0.3-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs  
-**Date:** 2025-08-21
+**Date:** 2025-08-23
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -299,6 +299,8 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that f₀ lies exactly on this FFT bin.
 > 5. Confirm the same values in the HTML for `spec6_false_s17/s23/s73` (see Appendix C, Evidence Index).
 
+**Track policy.** This manuscript is the frozen **core** track (**v1.0.3-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+
 Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
 **Ancillary artifacts (per seed).** The following files are attached as ancillary data to the paper (one HTML and one CSV per seed); filenames are prefixed by `{RUN_TAG}_…`.
@@ -468,6 +470,16 @@ _Notes._
 – **V3** (add ∇φ): drift emerges; closure still fragile without φ diffusion.  
 – **V4** (full canonical): guidance, spin, and closure co-occur; topology remains neutral within §4.3.1 bands.
 
+#### 5.9 Verification run — C3 (grid-size invariance)
+
+**Run:** `spec6_false_s41_grid256`  
+**Setup change:** grid 256×256; Δt = 1.0e−21 s (unchanged)
+
+**Result.** Dominant frequency **f₀ = 3.91×10¹⁸ Hz** (exact FFT bin); **SBR = 6.77 [6.66, 6.84]**; display-only **m/mₑ = 0.0316**.  
+**Acceptance.** f₀ within **±0.5%** of canonical; SBR within the **±10%** band → **PASS**.
+
+_Evidence:_ see the HTML report `spec6_false_s41_grid256_lineum_report.html` (Quasiparticle Properties & Run metrics tables).
+
 # 6. Interpretation
 
 The confirmed phenomena suggest that local field interactions in Lineum can spontaneously produce structures and behaviors commonly associated with particle-like dynamics.
@@ -527,6 +539,18 @@ Computational resources and support from academic and independent research netwo
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
+
+**1.0.3 — 2025-08-23 (patch)**
+
+- Abstract: add **Core thesis (v1)** and **Falsifiable checks (v1)** (C1/C2/C3).
+- §4.7: add **Reviewer quick-check (v1)** with exact HTML table strings.
+- §4.8: add **Not claimed (v1)** and expand **Display-only mass** risk note.
+- §4.9: add **Tooling guardrails (v1)** (mass-from-f₀, commit provenance, SI anchoring, pinned runs).
+- §5.6: add **Worked example (canonical f₀)**, **Formatting policy (v1)**, bin-centering addendum, and **Sampling & Nyquist safety (v1)**.
+- §5.9: add **Verification run — C3 (grid-size invariance)**.
+- Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
+
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in 1.0.3-core.
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -702,3 +726,14 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 **φ-trap.** A localized region of the interaction field φ that tends to capture or retain linons (observational term; no force law is assumed).
 
 **RUN_TAG / evidence bundle.** A unique label for a run (e.g., `spec6_false_s41`) used to prefix all artifacts (HTML/CSV/PNG/GIF). The **evidence bundle** is the set of per-seed reports and metrics listed in Appendix C.
+
+## Appendix E — Verification runs (v1)
+
+Minimal verification runs demonstrating invariance under window length, time-step refinement (fixed Δf), and grid size.
+
+| RUN_TAG                     | Setup change                           | f₀ (Hz)    | E (J; keV)             | λ (m; nm)             | m/mₑ           | Outcome                |
+| :-------------------------- | :------------------------------------- | :--------- | :--------------------- | :-------------------- | :------------- | :--------------------- |
+| `spec6_false_s41_w512`      | W = 512 (Δt = 1.0e−21 s)               | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
+| `spec6_false_s23_w512`      | W = 512 (Δt = 1.0e−21 s)               | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
+| `spec6_false_s41_dt05_w512` | Δt → 5.0e−22 s, W → 512 (Δf preserved) | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
+| `spec6_false_s41_grid256`   | Grid 256×256 (Δt = 1.0e−21 s)          | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (SBR within ±10%) |

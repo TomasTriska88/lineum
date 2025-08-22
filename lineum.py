@@ -1,3 +1,4 @@
+import os as _os
 from matplotlib.animation import FuncAnimation
 from tqdm import tqdm
 from scipy.fft import fft, fftfreq
@@ -15,9 +16,44 @@ RUN_ID = 6
 RUN_MODE = "false"
 SEED = 41
 
+# allow env override for the seed, e.g. LINEUM_SEED=23
+try:
+    import os
+    SEED = int(os.environ.get("LINEUM_SEED", SEED))
+except Exception:
+    pass
+
+
 # Optional label for experiment variants (leave "" for baseline)
-# Examples: "w512" (C1), "dt05_w1024" (C2), "grid256" (C3)
-PARAM_TAG = "w512"
+# Examples: "w512" (C1), "dt05_w512" (C2), "grid256" (C3)
+PARAM_TAG = ""
+
+
+# --- Variant resolver (dynamic) ---
+# Allow env override, e.g. LINEUM_PARAM_TAG="w512" or "dt05_w512"
+PARAM_TAG = os.environ.get("LINEUM_PARAM_TAG", PARAM_TAG).strip()
+
+
+def _variant_window_params(param_tag: str, base_W=256, base_hop=128):
+    """
+    Map PARAM_TAG to windowing parameters for f₀/SBR estimation.
+    Examples:
+      ""         -> (256, 128)
+      "w512"     -> (512, 256)
+      "w1024"    -> (1024, 512)
+    Multiple tags can be underscore-joined; window tag wins if present.
+    """
+    tags = {t for t in (param_tag or "").split("_") if t}
+    W, hop = base_W, base_hop
+    if "w1024" in tags:
+        W, hop = 1024, 512
+    elif "w512" in tags:
+        W, hop = 512, 256
+    return W, hop
+
+
+WINDOW_W, WINDOW_HOP = _variant_window_params(PARAM_TAG)
+
 
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}{('_' + PARAM_TAG) if PARAM_TAG else ''}"
 
@@ -110,18 +146,55 @@ def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
         Fp = F[:len(F)//2]
         if Pp.size == 0:
             continue
-        idx = int(np.argmax(Pp))
+        # dominant bin with harmonic promotion (avoid 1/2 subharmonic latch)
+        # Fundamental-first peak selection across {½, 1×, 2×} to avoid latching to harmonics
+        idx0 = int(np.argmax(Pp))
+        idx_half = (idx0 // 2) if (idx0 % 2 == 0 and idx0 > 0) else None
+        idx2 = (idx0 * 2) if (idx0 * 2 < Pp.size) else None
+
+        cands = []
+        pmax = -np.inf
+
+        def _add(idx_):
+            global pmax
+            if idx_ is None:
+                return
+            p = float(Pp[idx_])
+            cands.append((idx_, p))
+            nonlocal_pmax = p  # local alias to compute max without shadowing
+            return nonlocal_pmax
+
+        # collect candidates and find the max power among them
+        p_list = []
+        for _i in (idx_half, idx0, idx2):
+            if _i is not None:
+                p_list.append(float(Pp[_i]))
+        pmax = max(p_list) if p_list else -np.inf
+
+        # keep candidates within 75% of the strongest and pick the lowest index (favor fundamental)
+        kept = []
+        for _i in (idx_half, idx0, idx2):
+            if _i is None:
+                continue
+            if float(Pp[_i]) >= 0.75 * pmax:
+                kept.append(_i)
+
+        idx = (min(kept) if kept else idx0)
         peak = float(Pp[idx])
-        # mean background excluding ±guard bins around the peak (matches current code)
+
+        # mean background excluding ±guard bins around the chosen peak
         mask = np.ones_like(Pp, dtype=bool)
         l = max(idx - guard, 0)
         r = min(idx + guard + 1, Pp.size)
         mask[l:r] = False
         bg = float(np.mean(Pp[mask])) if np.any(mask) else np.nan
+
         if bg > 0:
-            # keep strict peak/mean; switchable
-            sbr_vals.append(2*peak/(bg+peak) if False else peak/bg)
+            sbr_vals.append(peak / bg)
+
+        # store promoted/demoted frequency (fundamental-biased)
         f0_vals.append(float(Fp[idx]))
+
     sbr_mean, sbr_ci = bootstrap_mean_ci(sbr_vals) if sbr_vals else (
         float('nan'), (float('nan'), float('nan')))
     f0_mean,  f0_ci = bootstrap_mean_ci(f0_vals) if f0_vals else (
@@ -170,8 +243,16 @@ LOW_NOISE_MODE = False
 # Use False in regular runs for full dynamics
 TEST_EXHALE_MODE = True
 
-# Parameters
 size = 128
+
+# Allow grid-size override via PARAM_TAG (e.g., "grid256")
+_tag_raw = os.environ.get("LINEUM_PARAM_TAG", "").strip()
+_tag = (PARAM_TAG or _tag_raw)
+_tagset = {t for t in _tag.split("_") if t}
+if "grid256" in _tagset:
+    size = 256
+
+
 steps = 1000 if TEST_EXHALE_MODE else 500
 
 # Canonical noise level
@@ -186,6 +267,14 @@ multi_amp_logs = {pt: [] for pt in probe_points}
 
 PIXEL_SIZE = 1e-12     # 1 pixel = 1 pm (pikometr)
 TIME_STEP = 1e-21      # 1 krok = 1 zs (zeptosekunda)
+
+# Allow time-step refinement via PARAM_TAG (e.g., "dt05" halves Δt)
+_tag_raw = _os.environ.get("LINEUM_PARAM_TAG", "").strip()
+_tag = (PARAM_TAG or _tag_raw)
+_tags = {t for t in _tag.split("_") if t}
+
+if "dt05" in _tags:
+    TIME_STEP *= 0.5
 
 
 def sigmoid(x, k=5):
@@ -585,7 +674,7 @@ if __name__ == "__main__":
 
     # Windowed estimates + 95% CI (W=256, hop=128, guard=2)
     (sbr_mean, sbr_ci), (f0_mean, f0_ci) = window_sbr_and_f0(
-        amplitudes, TIME_STEP, W=256, hop=128, guard=2)
+        amplitudes, TIME_STEP, W=WINDOW_W, hop=WINDOW_HOP, guard=2)
 
     # Export a compact metrics summary with CIs
     save_csv("metrics_summary.csv",
@@ -1373,10 +1462,11 @@ if __name__ == "__main__":
 
     </table>
     
-    <p class="metrics-note" style="font-size:0.9em; opacity:0.85; margin-top:6px;">
-  Windowed estimates: W=256, hop=128, guard=±2 bins around f₀; 95% CI via bootstrap (B=1000 resamples).
+<p class="metrics-note" style="font-size:0.9em; opacity:0.85; margin-top:6px;">
+  Windowed estimates: W={WINDOW_W}, hop={WINDOW_HOP}, guard=±2 bins around f₀; 95% CI via bootstrap (B=1000 resamples).
   See <code>metrics_summary.csv</code> in the downloads section for machine-readable values.
 </p>
+
 
 
 <h2>📊 Quasiparticle Properties</h2>
