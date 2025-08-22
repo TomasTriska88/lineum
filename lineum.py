@@ -14,7 +14,7 @@ import random
 RUN_ID = 6             # run index (1, 2, …)
 RUN_MODE = "false"      # "true" or "false"
 # used as a prefix for all output files
-SEED = 41              # fixed seed for reproducibility
+SEED = 23              # fixed seed for reproducibility
 RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}"
 
 np.random.seed(SEED)
@@ -1375,24 +1375,28 @@ if __name__ == "__main__":
 </p>
 
 
-      <h2>📊 Quasiparticle Properties</h2>
-      <table>
-        <tr><th>Property</th><th>Value</th></tr>
-        <tr><td>Dominant frequency f₀</td>
-    <td>{_fmt_ci_pair(dominant_freq, f0_ci, 'Hz')}</td></tr>
+<h2>📊 Quasiparticle Properties</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Dominant frequency f₀</td>
+<td>{_fmt_ci_pair(dominant_freq, f0_ci, 'Hz')}</td></tr>
 
 <tr><td>Energy (E = h f₀)</td>
-    <td>{'—' if energy_j is None else f'{energy_j:.2e} J (~{energy_ev/1e3:.2f} keV)'}</td></tr>
+<td>{'—' if energy_j is None else f'{energy_j:.2e} J (~{energy_ev/1e3:.2f} keV)'}</td></tr>
 <tr><td>Wavelength (λ = c / f₀)</td>
-    <td>{'—' if wavelength_m is None else f'{wavelength_m:.2e} m'}</td></tr>
+<td>{'—' if wavelength_m is None else f'{wavelength_m:.2e} m'}</td></tr>
 
-        <tr><td>Effective mass</td><td>{mass:.2e} kg</td></tr>
-        <tr><td>Mass relative to electron</td><td>{mass_ratio:.2e}× electron mass</td></tr>
-        <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
-        <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
-        {gravitational_row}
+  <tr><td>Effective mass</td><td>{mass:.2e} kg</td></tr>
+  <tr><td>Mass relative to electron</td><td>{mass_ratio:.4f} ({mass_ratio*100:.2f}%) × electron mass</td></tr>
+  <tr><td>Max lifespan</td><td>{max_lifespan} steps</td></tr>
+  <tr><td>Median lifespan</td><td>{median_lifespan} steps</td></tr>
+  {gravitational_row}
 
-      </table>
+</table>
+<p style="margin:6px 0 0;color:#555;font-size:0.9em;">
+  <strong>Note.</strong> “Effective mass” is a display-only unit conversion from f₀ via m = h·f₀ / c²; it is not an intrinsic rest-mass claim. See the core paper’s “Interpretation note (v1)” for context.
+</p>
+
 
       <h2>🌀 Simulation Summary</h2>
       <ul>

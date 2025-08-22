@@ -43,6 +43,10 @@ The model produces quantitative signatures close to physical scales, such as:
 – wavelength ≈ **7.67×10⁻¹¹ m** (0.0767 nm),
 – effective mass (display-only) ≈ **3.16 %** of the electron mass.
 
+> **Interpretation note (v1).** The “effective mass” value is a **unit-conversion from the canonical frequency** \(f_0\) via \(m = h f_0 / c^2\). It is provided **only** as an intuition aid for scale (≈ 3.16 % of \(m_e\) consistently across seeds 17/23/41/73), **not** as a claim of an intrinsic rest mass. Numbers match the HTML “Quasiparticle Properties” tables for runs `spec6_false_s17`, `spec6_false_s23`, `spec6_false_s41`, and `spec6_false_s73`.
+
+> **Reports alignment (v1).** The display-only effective mass derived from the canonical tone (f₀) is **consistent across independent seeds**. In our v1 evidence bundle, runs `spec6_false_s17/s23/s41/s73` all report f₀ ≈ 3.91×10¹⁸ Hz, E ≈ 2.59×10⁻¹⁵ J (~16.15 keV), and an effective mass ratio of **m/mₑ ≈ 0.0316 (3.16%)**, matching the HTML “Quasiparticle Properties” tables for these tags. This is an **SI-anchored unit conversion** (m = h·f₀ / c²) meant purely as a scale indicator, not a rest-mass claim. _(For example outputs, see the s23 report and s41 report in the evidence bundle.)_
+
 All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to move along +∇|φ|; we describe this as environmental guidance rather than any gravitational claim.
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
@@ -293,6 +297,8 @@ _Provenance._ Checksums are intentionally omitted (living paper). Provenance is 
 > **Spectral leakage.** FFT on de-meaned windows with a ±2-bin guard around $f_0$ mitigates leakage; SBR is computed on the power spectrum $|\mathrm{FFT}(x)|^2$.  
 > **RNG/seed bias.** We report metrics with 95% CIs across seeds {23, 17, 41, 73}; replication is defined by tolerance bands in §4.3.1.  
 > **Visualization bias.** All metrics derive from numeric logs (CSV). Amplitude gating is **visualization-only** in GIFs; winding/metrics use raw values.
+
+> **Display-only mass (interpretation risk).** The “effective mass” reported in §1/§5.6 is a unit-conversion from the canonical frequency \(f_0\) via \(m = h f_0 / c^2\). It is provided purely as a scale cue (e.g., ≈ 3.16% of \(m_e\) across seeds 17/23/41/73), not as a claim of an intrinsic rest mass. Mitigations in v1: (i) explicit **Interpretation note (v1)** in the Abstract; (ii) matching values in all HTML “Quasiparticle Properties” tables for the evidence runs; (iii) SI constants stated in §5.6; (iv) report tooling computes the display mass directly from \(f_0\) at render time to avoid drift.
 
 # 5. Validation
 
