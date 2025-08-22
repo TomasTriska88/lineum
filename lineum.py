@@ -10,12 +10,16 @@ import os
 from scipy.spatial.distance import euclidean
 import random
 
-# 🛠️ Runtime toggles – easy run control
-RUN_ID = 6             # run index (1, 2, …)
-RUN_MODE = "false"      # "true" or "false"
-# used as a prefix for all output files
-SEED = 23              # fixed seed for reproducibility
-RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}"
+# --- Run config ---
+RUN_ID = 6
+RUN_MODE = "false"
+SEED = 41
+
+# Optional label for experiment variants (leave "" for baseline)
+# Examples: "w512" (C1), "dt05_w1024" (C2), "grid256" (C3)
+PARAM_TAG = "w512"
+
+RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}{('_' + PARAM_TAG) if PARAM_TAG else ''}"
 
 np.random.seed(SEED)
 random.seed(SEED)
