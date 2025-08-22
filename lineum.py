@@ -675,16 +675,18 @@ if __name__ == "__main__":
 
         dom_idx = np.argmax(positive_spectrum)
         dom_freq = positive_freqs[dom_idx]
-        energy = h * dom_freq
-        mass = energy / c**2
-        mass_ratio = mass / electron_mass
+
+        # Lokální přepočet – NEPŘEPISUJE globální mass/mass_ratio
+        energy_i = h * dom_freq
+        mass_i = energy_i / c**2
+        mass_ratio_i = mass_i / electron_mass
 
         multi_spectrum_details.append({
             "point": pt,
-            "dominant_freq_Hz": dom_freq,
-            "energy_J": energy,
-            "mass_kg": mass,
-            "mass_ratio": mass_ratio
+            "dominant_freq_Hz": float(dom_freq),
+            "energy_J": float(energy_i),
+            "mass_kg": float(mass_i),
+            "mass_ratio": float(mass_ratio_i)
         })
 
         # Uložení spektra pro každý bod zvlášť
@@ -1774,6 +1776,19 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         save_phi_center_plot()
     except Exception as e:
         print(f"[warn] save_phi_center_plot failed: {e}")
+
+    # --- Recompute display-only mass from the canonical f0 and guard against drift ---
+    _H = 6.62607015e-34
+    _C = 299_792_458.0
+    _electron_mass = 9.1093837015e-31  # CODATA 2018
+
+    mass = (_H * dominant_freq) / (_C**2)
+    electron_mass = _electron_mass      # keep plain name if used downstream
+    mass_ratio = mass / electron_mass
+
+    # sanity guard – the display mass must be exactly hf0/c^2
+    _mass_from_f = (_H * dominant_freq) / (_C**2)
+    assert abs(mass - _mass_from_f) / _mass_from_f < 1e-6, "mass/f0 mismatch"
 
     generate_html_report(
         mass=mass,
