@@ -1,9 +1,13 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.3-core
+**Version:** 1.0.4-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs  
 **Date:** 2025-08-23
+
+**DOI:** 10.5281/zenodo.16934359  
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.4-core)._ 2025. DOI: 10.5281/zenodo.16934359.  
+_This manuscript corresponds to Git tag **v1.0.4-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -28,14 +32,16 @@ _Not_ “LAI-nee-um” or “lee-NAY-um”.
 For readers in English: **/ˈlɪnɒn/** (UK ≈ “LIH-non”) or **/ˈlɪnɑːn/** (US ≈ “LIH-nahn”).  
 _Not_ “LAI-non”.
 
-Repeated simulations robustly generate:
-– linons (stable localized excitations) with consistent trajectories,
-– vortices with quantized topological charge,  
-– phase gradient rotation (spin) around linons,
-– phase flow and high-φ regions,  
-– and φ-traps that capture multiple **linons**.
+Repeated simulations robustly generate (v1 core evidence):
+– stable localized excitations (**linons**) with a bin-centered canonical tone \(f_0\),
+– reproducible spectral strength (**SBR**, ±2-bin guard) with 95% CIs,
+– **topological neutrality** with logged vortex counts/charge,
+– a persistent **spin aura** (time-averaged curl of ∇arg ψ) around linons,
+– and a measurable **center-trace φ half-life**.
 
-From these, several phenomena are validated in the core, including Structural Closure (φ-field memory after particle decay) and Dimensional Transparency (projection properties under varied κ). Interpretive claims are reserved for extensions.
+All listed items are directly reported in the HTML evidence (Quasiparticle Properties, Spectral metrics, Topology metrics, “Spin aura — averaged curl map”, and φ center trace). Claims requiring κ-dynamics, thermodynamics, or SM identification are out of scope for the v1 core.
+
+Within the v1 core evidence bundle, the validated items are limited to: (i) a stable localized excitation (“linon”) with a bin-centered canonical tone \(f_0\); (ii) reproducible spectral strength (SBR) and topology neutrality; (iii) the center-trace φ half-life; and (iv) a persistent phase-gradient rotation (“spin aura”) around linons, as reported in the HTML (“Spin aura — averaged curl map”). Structural Closure, Return Echo, and any κ-dynamics (“Dimensional Transparency”) are out of scope for the v1 core and deferred to the experimental track.
 
 The model produces quantitative signatures close to physical scales, such as:
 – dominant oscillation frequency ≈ **3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
@@ -53,9 +59,29 @@ All phenomena emerge without fine-tuned initial input, relying solely on local o
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
 
+**Out-of-scope clarifier (v1 core).** We **do not** claim: (i) predictability of “random” outcomes or a deterministic substrate for stochastic processes; (ii) any κ-dynamics phenomena (e.g., “Dimensional Transparency”); (iii) thermodynamic quantities (T, S) or fluctuation–dissipation calibration; (iv) identification with Standard-Model particles; or (v) gravitational analogies. These topics are deferred to the experimental/extension track and are not part of the v1 core evidence.
+
 **Graphical abstract.**
 
-![Lineum symbol](source/icon.png)
+<p align="center">
+  <img src="../source/icon.png" alt="Lineum symbol" width="320">
+</p>
+
+<sub>Note: this mark is a visual mnemonic only; it carries no physical claim and is not used in any metric.</sub>
+
+**Icon legend (mnemonic only — no physical claim).**
+
+- **Fish (upper) → κ (tuning / sensitivity).**  
+  _Why:_ the “eye” dot suggests a **sensor**, the body an **oriented agent** responding to local cues; κ controls local **susceptibility** and tuning (κ·α, κ·β), i.e., how the medium responds to gradients.
+- **Spiral (lower-left) → ψ (oscillation / flow).**  
+  _Why:_ a spiral visually encodes **periodicity and phase circulation**; ψ is the time-like **carrier** with canonical tone **f₀**, from which we derive SI conversions (E, λ, display-only m/mₑ).
+- **Leaf (right) → φ (memory / envelope).**  
+  _Why:_ the broad lamina reads as an **envelope**, while venation evokes a stored **pattern/context**; φ is the **memory** field used in nearby/field means and the center-trace half-life metric.
+- **Outer loop → circulation / interplay.**  
+  _Why:_ a closed path **ψ → φ → κ → (back)** as a mnemonic of interplay; **no law or metric is implied**.
+- **Design note.** Uniform line weight → no hierarchy; shapes are **not** used as data encodings anywhere in the paper.
+
+_Directional mnemonic:_ κ → ψ → φ → κ; no direct φ → ψ arrow is implied in the core (memory influences the medium/tuning, not the carrier itself).
 
 > **Three-field flow.** The mark depicts the triad **ψ–φ–κ** in balance: ψ (oscillation / flow), φ (memory / resonance), κ (tuning / sensitivity). It is a visual mnemonic only; the **canonical Equation (1)** defines the model.
 
@@ -299,7 +325,7 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that f₀ lies exactly on this FFT bin.
 > 5. Confirm the same values in the HTML for `spec6_false_s17/s23/s73` (see Appendix C, Evidence Index).
 
-**Track policy.** This manuscript is the frozen **core** track (**v1.0.3-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+**Track policy.** This manuscript is the frozen **core** track (**v1.0.4-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
 
 Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
@@ -331,6 +357,7 @@ _Provenance._ Checksums are intentionally omitted (living paper). Provenance is 
 - gravitational dynamics or any mapping to General Relativity;
 - Lorentz invariance or a relativistic field theory formulation;
 - validity outside the canonical scope (2D, periodic BCs, static κ) defined in this core.
+- **Thermodynamic quantities.** We do **not** define entropy \(S\), temperature \(T\), heat capacity, or entropy production for the linon in v1. The core setup uses a deterministic, isolated field without a thermal bath or an ensemble; no equipartition or fluctuation–dissipation calibration is assumed. Any “effective temperature” would require an explicit reservoir/noise model and a traceable calibration procedure—deferred to the experimental track (v1.1.x-exp).
 
 ## 4.9 Tooling guardrails (v1)
 
@@ -345,6 +372,19 @@ _Scope._ These guardrails are part of v1 tooling only; they do not assert any re
 
 # 5. Validation
 
+### Figure 0 — Canonical anchors at a glance
+
+![Figure 0: Canonical spectrum (bin-centered peak at f₀) and center-amplitude time trace.](../output/spec6_false_s41_figure0_canonical.png)
+
+<sub>Source: see the HTML report [`output/spec6_false_s41_lineum_report.html`](../output/spec6_false_s41_lineum_report.html); all runs are indexed in **Appendix C**.</sub>
+
+**Caption (v1).** The power spectrum of the center-amplitude time series shows the dominant tone **exactly on an FFT bin center** at **f₀ = 3.90625×10¹⁸ Hz** (Δf per §5.6). The corresponding time trace exhibits a stable, long-lived oscillation. SI-derived quantities (E, λ, display-only m/mₑ) in the HTML “Quasiparticle Properties” tables follow directly from **f₀** via \(E = h f₀\), \(λ = c/f₀\), \(m = E/c^2\).
+
+> **Canonical numerical anchors (from HTML evidence, seed 41).**  
+> `f₀ = 3.91e+18 Hz` · `E = 2.59e−15 J (~16.15 keV)` · `λ = 7.67e−11 m` ·  
+> `m = 2.88e−32 kg` · `m/mₑ = 0.0316 (3.16%)`  
+> Source: `../output/spec6_false_s41_lineum_report.html` (section “Quasiparticle Properties”).
+
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
 
 **Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** ($f_0$) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length $W=256$ frames, hop $H=128$ frames) with a ±2-bin guard around $f_0$ in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify run-to-run and within-run variability without fitting any external model.
@@ -353,12 +393,29 @@ The validation phase aims to confirm that specific emergent phenomena occur cons
 
 Simulations show that particles exhibit **drift along +∇|φ|**. Trajectory statistics indicate a **systematic decrease in distance** to regions of increasing φ over time, consistent with **environmental guidance** by the background field. No force law is introduced; the observed behavior follows directly from the +∇φ term in Eq. (1) and remains robust across seeds and runs.
 
+**Evidence pointer (HTML & files).**  
+Trajectory drift along +∇|φ| is visible in the per-run HTML under **“Trajectories”** and **“Flow”** animations, and is quantified from:
+
+- `*_trajectories.csv` (particle paths; decreasing distance to +∇|φ| regions),
+- `*_phi_center_plot.png` / `*_phi_center_log.csv` (center trace supporting φ-memory/half-life),
+- `*_lineum_flow.gif` (qualitative flow visualization).
+
+For the canonical seed, see `output/spec6_false_s41_lineum_report.html` (links to these artifacts are listed in the report).
+
 ## 5.2 Spin Aura
 
 Across analyzed runs, a persistent phase-gradient rotation (spin) develops around stable linons in ∇ arg ψ.
 This effect is robust to noise and persists until particle decay.
 
 **Operational definition.** We define the spin aura as the time- and ensemble-averaged map of `curl(∇ arg ψ)` in a fixed-size neighborhood around detected linon centers. For each detection, the local curl map is centered on the particle and accumulated; the resulting average yields a robust dipole-like pattern (“spin aura”) with radially decaying lobes. Presence of this pattern is our detection criterion; its amplitude–radius curve is reported in `spin_aura_profile.csv` and the raster in `spin_aura_map.png`. This makes §5.2 falsifiable and reproducible across runs.
+
+**Evidence pointer (HTML & files).**  
+Presence and profile of the spin aura are reported per run as:
+
+- `*_spin_aura_map.png` — time-/ensemble-averaged curl(∇arg ψ) raster centered on detected linons,
+- `*_spin_aura_profile.csv` — radial amplitude–radius curve extracted from the map.
+
+For the canonical seed, see `../output/spec6_false_s41_lineum_report.html` under **“Spin aura — averaged curl map”**; the report links to both artifacts above.
 
 ## 5.3 Silent Collapse
 
@@ -372,12 +429,11 @@ This memory effect demonstrates φ-field stability independent of active ψ exci
 
 **Note (Return Echo).** In multiple runs, locations of prior linon decay later act as weak attractors for new linons: trajectories revisit identical or ε-near coordinates after a delay. This **return echo** is distinct from Structural Closure: closure denotes a **static φ remnant** after decay; echo denotes a **behavioral bias** that steers future arrivals back to that remnant via local ∇φ shaping. See also the Return Echo hypothesis and trajectory density maps.
 
-## 5.5 Dimensional Transparency
+## 5.5 Dimensional Transparency _(out of scope in core v1)_
 
-By applying localized κ variations, regions can be tuned to allow ψ-structures to pass through without interaction, effectively behaving as transparent zones.  
-This phenomenon is reproducible for both constant and gradient κ-maps.
+> **Scope.** This phenomenon was observed only in **exploratory runs with time-varying κ**, which are **explicitly out of the core scope** and are **not** included in the v1 evidence bundle (HTML/CSV). No acceptance metric or claim in this paper depends on dynamic-κ runs.
 
-**Operational note.** We treat κ as a spatial tuner that gates interaction. A region with κ≈0 behaves as a _transparent_ corridor: ψ-structures neither persist nor imprint φ there, while adjacent κ>0 zones support formation and capture. Quantitatively, transparency is flagged when (i) the local count of |ψ|² maxima drops to baseline within the κ≈0 window, and (ii) φ-curl maps show no persistent imprint across that window, while both signals remain nonzero in the neighboring κ>0 zone. Island-shaped κ maps are the preferred testbed for A/B confirmation.
+**Status.** Deferred to the **experimental track (v1.1.x-exp)** with its own artifacts and falsifiable checks. No core evidence is presented here.
 
 ## 5.6 Spectral Stability
 
@@ -488,7 +544,7 @@ Particles exhibit **guided motion** along **+∇|φ|** (environmental guidance) 
 
 The persistence of φ-structures after particle decay (Structural Closure) indicates that the interaction field can store and maintain spatial information independently of active excitations. This property could serve as a basis for long-lived memory or boundary conditions in emergent systems.
 
-The ability to create transparent regions through κ variation (Dimensional Transparency) demonstrates controllable interaction tuning, potentially analogous to refractive or transmissive media in optics.
+Dimensional Transparency driven by time-varying κ has been observed only in exploratory runs and is **out of scope** for the v1 core; quantitative claims and artifacts are deferred to the experimental track (**v1.1.x-exp**).
 
 Spin Aura and Spectral Stability show that once formed, linon excitations (particle-like) in the model exhibit consistent internal dynamics, maintaining stable oscillatory behavior over extended periods.
 
@@ -516,9 +572,10 @@ Through controlled simulations, the model consistently produces:
 – **linons** with stable trajectories,
 – guided motion along +∇|φ| (environmental guidance),
 – persistent spin structures (Spin Aura),
-– memory effects in φ after particle decay (Structural Closure),
-– controllable transparency zones (Dimensional Transparency),
-– and long-term spectral stability.
+– φ-memory remnants after particle decay (consistent with the center-trace φ half-life metric),
+– and long-term spectral stability of the canonical tone.
+
+_(“Dimensional Transparency” driven by time-varying κ is out of scope for the v1 core and deferred to the experimental track.)_
 
 These effects emerge solely from iterative local interactions on a grid and remain robust under noise and parameter variation. The reproducibility and simplicity of the model make it a promising testbed for studying emergent analogues of physical laws.
 
@@ -526,11 +583,20 @@ Future work will extend validation to larger parameter spaces, explore connectio
 
 # 8. Acknowledgements
 
-The author thanks collaborators and early reviewers who provided feedback on the simulation methodology, as well as those who contributed to discussions on emergent field dynamics and validation strategies.
+This project grew from an outsider’s curiosity: a non-physicist attempt to probe gravity from a different angle that expanded through persistent falsification and replication. Whatever is solid here stands on reproducible code and reports; any mistakes are mine alone.
 
-Special appreciation is extended to the open-source community for tools and libraries used in the implementation, and to colleagues who assisted in designing reproducibility protocols.
+My partner, **Kateřina Marečková**, provided what mattered most—patience, honest critique, and calm when results were messy. Her presence kept the work grounded.
 
-Computational resources and support from academic and independent research networks were essential for completing this work.
+I also thank **Vlastimil Smeták** for mathematically minded conversations and guidance. His focus on the **Riemann Hypothesis** and prime numbers—and his independent, visualization-first approach—suggested lines of inquiry that I would not have tried on my own. In particular, his advice motivated two **working hypotheses** explored outside the core:
+
+- an **Evolution–Mutation** view (order vs. disruption as complementary regimes), and
+- a **Zeta–RNB Resonance** idea (visual/structural echoes between Lineum’s return points and ζ-structure).
+
+These are **not** claims of this v1 core paper. They remain preliminary and are deferred to the **experimental/extension track** for future, falsifiable testing; no quantitative alignment is asserted here.
+
+I am grateful to the open-source community for tools and libraries that made this work possible, and to my family, friends, and the animals who shared life with me—**Moulík, Jůlinka, Vikinka, Eliška, and others**—for quiet lessons in patience and care.
+
+_Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based assistant) was used as a tool for experiment orchestration, stress-testing arguments, and documentation hygiene. All results reported in this core paper are derived from the published scripts and the HTML reports in `output/` and were independently verified by the author.
 
 # 9. Versioning & Changelog
 
@@ -539,6 +605,18 @@ Computational resources and support from academic and independent research netwo
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
+
+**1.0.4 — 2025-08-23 (patch)**
+
+- Version bump to **1.0.4-core**; insert **DOI** in header + _How to cite_.
+- Abstract: tighten to **core-only**; replace “validated items” paragraph; fix Unicode **φ**; remove duplicate “reported in HTML” sentence.
+- Graphical abstract: fix icon path; add width control; add **mnemonic-only** disclaimer; add **Icon legend** (κ=fish, ψ=spiral, φ=leaf) + directional mnemonic (κ → ψ → φ → κ).
+- §5 Validation: add **Figure 0 canonical anchors** (numbers linked to HTML); add **Evidence pointer** blocks to **§5.1** (Guided Motion) and **§5.2** (Spin Aura).
+- §5.5: mark **Dimensional Transparency** as **out of scope** (deferred to **v1.1.x-exp**).
+- §6 Interpretation: explicitly note Dimensional Transparency is out of scope for v1 core.
+- §9 Versioning: update **Track policy** and **Branching note** to **1.0.4-core**.
+- §8 Acknowledgements: rewrite (Kateřina Marečková; Vlastimil Smeták; AI tools note).
+- Minor: wording/formatting consistency; unify relative links to `../output/…` where applicable.
 
 **1.0.3 — 2025-08-23 (patch)**
 
@@ -550,7 +628,7 @@ Computational resources and support from academic and independent research netwo
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in 1.0.3-core.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.4-core**.
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -727,6 +805,16 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 
 **RUN_TAG / evidence bundle.** A unique label for a run (e.g., `spec6_false_s41`) used to prefix all artifacts (HTML/CSV/PNG/GIF). The **evidence bundle** is the set of per-seed reports and metrics listed in Appendix C.
 
+### Lineum symbol (informal)
+
+_Reader aid; not part of the core claims._
+
+- **ψ** — oscillatory carrier (time-like tone at the center); where we measure the canonical **f₀** used for SI conversions (E, λ, display-only m/mₑ).
+- **φ** — memory/envelope (stores local context; used for nearby/field means in the HTML metrics).
+- **κ** — tuning/balance field (slow control parameter; fixed in the core canonical setup).
+
+The icon used in the repository depicts a circulation among ψ → φ → κ → (back) and has no physical implication beyond this glossary.
+
 ## Appendix E — Verification runs (v1)
 
 Minimal verification runs demonstrating invariance under window length, time-step refinement (fixed Δf), and grid size.
@@ -737,3 +825,33 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 | `spec6_false_s23_w512`      | W = 512 (Δt = 1.0e−21 s)               | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
 | `spec6_false_s41_dt05_w512` | Δt → 5.0e−22 s, W → 512 (Δf preserved) | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
 | `spec6_false_s41_grid256`   | Grid 256×256 (Δt = 1.0e−21 s)          | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (SBR within ±10%) |
+
+## Appendix F — Artifact bundle README (v1)
+
+**What’s included (core v1.0.3-core).**  
+All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` prefix.
+
+### File map (per-seed; canonical examples)
+
+- `output/spec6_false_s41_lineum_report.html` — main HTML report (ground truth numbers)
+- `output/spec6_false_s41_figure0_canonical.png` — Figure 0 used in §5
+- `output/spec6_false_s41_metrics_summary.csv` — machine-readable metrics (f₀, SBR, CIs)
+- Other CSV/PNG/GIF listed in §4.5 (same `{RUN_TAG}_…` prefix)
+
+**How to verify quickly.**
+
+1. Open `output/spec6_false_s41_lineum_report.html`.
+2. In “Quasiparticle Properties” confirm:
+   - `f₀ = 3.91e+18 Hz [3.91e+18, 3.91e+18]`
+   - `E = 2.59e-15 J (~16.15 keV)`
+   - `λ = 7.67e-11 m`
+   - `m/mₑ = 0.0316 (3.16%)`
+3. Compare the same values in `output/spec6_false_s41_metrics_summary.csv` (unrounded).
+
+**Re-running variants (no code edits).**
+
+- Window: `LINEUM_PARAM_TAG=w512`
+- Temporal refinement: `LINEUM_PARAM_TAG=dt05_w512`
+- Grid: `LINEUM_PARAM_TAG=grid256`
+- Optional seed override: `LINEUM_SEED=23`
+- (Windows PowerShell)

@@ -1,0 +1,37 @@
+{
+  "title": "Lineum Core (v1.0.4-core): reference implementation & evidence bundle",
+  "upload_type": "software",
+  "description": "Reference implementation of the Lineum core (v1.0.4-core) with canonical HTML reports and CSV/PNG artifacts. The paper (whitepaper/lineum-core.md) is the methodological core: it anchors the canonical tone f0, SI conversions (E, λ, display-only m/m_e), and falsifiable checks (C1/C2/C3). Evidence lives in output/; each HTML report is ground truth and commit-stamped.",
+  "creators": [
+    {
+      "name": "Tomáš Tříska",
+      "affiliation": "",
+      "orcid": ""
+    }
+  ],
+  "contributors": [
+    { "name": "Kateřina Marečková", "type": "Other" },
+    { "name": "Vlastimil Smeták", "type": "Other" }
+  ],
+  "keywords": [
+    "Lineum",
+    "emergence",
+    "quasiparticle",
+    "spectral stability",
+    "bootstrap CI",
+    "bin-centered frequency",
+    "ψ φ κ triad"
+  ],
+  "license": "MIT",
+  "language": "eng",
+  "access_right": "open",
+  "notes": "Core paper is included as whitepaper/lineum-core.md (CC-BY-4.0 intended for the manuscript text and figures). Software is MIT-licensed. Display-only mass is a unit conversion from f0 (no rest-mass claim).",
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/<youruser>/<your-repo>/releases/tag/v1.0.4-core",
+      "resource_type": "software"
+    }
+  ],
+  "version": "v1.0.4-core"
+}

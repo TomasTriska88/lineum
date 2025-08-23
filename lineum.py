@@ -725,6 +725,82 @@ if __name__ == "__main__":
     if not np.isnan(sbr_mean):
         sbr = sbr_mean
 
+        # --- Figure 0: canonical spectrum + time trace (auto-generated) ---
+    figure0_html = ""
+    try:
+        import numpy as np
+
+        # vezmeme středové okno délky WINDOW_W (vyhneme se okrajům)
+        Wp = int(WINDOW_W) if WINDOW_W else 256
+        i0 = max(0, len(amplitudes)//2 - Wp//2)
+        seg = np.asarray(amplitudes[i0:i0+Wp], dtype=float)
+        tseg = np.asarray(times[i0:i0+seg.size], dtype=float)
+        if seg.size < 16:
+            raise RuntimeError("Too few samples for Figure 0")
+
+        # odstraníme DC a použijeme Hann okno
+        seg_zm = seg - float(np.mean(seg))
+        win = np.hanning(seg.size)
+        seg_win = seg_zm * win
+
+        # FFT (prezentační větev): spočti výkon, vyčisti NaN/Inf a NORMALIZUJ do [0,1]
+        F = np.fft.rfft(seg_win)
+        P = np.abs(F)**2  # power
+        # normalizace o energii okna a vlastní maximum
+        denom = float((win**2).sum()) + 1e-12
+        P = P / denom
+        # nahradit ne-finitní
+        P = np.where(np.isfinite(P), P, 0.0)
+        Pmax = float(np.max(P)) if np.any(P > 0) else 1.0
+        Pn = P / (Pmax + 1e-12)  # 0..1
+
+        freqs = np.fft.rfftfreq(seg.size, d=TIME_STEP)
+        df_plot = float(
+            freqs[1] - freqs[0]) if freqs.size > 1 else max(1.0, dominant_freq/10.0)
+        if not np.isfinite(df_plot) or df_plot <= 0:
+            df_plot = max(1.0, dominant_freq/10.0)
+
+        # vykreslení
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), dpi=160)
+
+        # TIME TRACE — zero-mean normalization (±1 around 0)
+        seg_norm = seg_zm / (np.max(np.abs(seg_zm)) + 1e-12)
+        ax1.plot(tseg, seg_norm)
+        ax1.axhline(0.0, linewidth=1, linestyle="--", alpha=0.6)
+        ax1.set_xlabel("time [s]")
+        ax1.set_ylabel("zero-mean normalized |ψ| at center")
+        ax1.set_title("Center-amplitude trace (windowed, zero-mean)")
+
+        # SPECTRUM — semilogy, používáme Pn∈[0,1], přidáme ε
+        ax2.semilogy(freqs, Pn + 1e-12)
+        ax2.axvline(float(dominant_freq), linestyle="--")
+        ax2.set_xlabel("frequency [Hz]")
+        ax2.set_ylabel("power (arb. units)")
+        ax2.set_title(
+            f"Spectrum (peak near f₀ ≈ {float(dominant_freq):.2e} Hz)")
+        ax2.set_xlim(max(0.0, float(dominant_freq) - 3*df_plot),
+                     float(dominant_freq) + 3*df_plot)
+
+        fig.tight_layout()
+        fig_path = os.path.join(output_dir, f"{RUN_TAG}_figure0_canonical.png")
+        fig.savefig(fig_path, bbox_inches="tight")
+        plt.close(fig)
+
+        figure0_html = f"""
+<h2>Figure 0 — Canonical anchors</h2>
+<figure>
+  <img src="{RUN_TAG}_figure0_canonical.png" alt="Spectrum (bin-centered) and center trace" />
+  <figcaption style="font-size:0.9em; opacity:0.85; margin-top:4px;">
+    Windowed center trace (zero-mean, Hann) and one-sided spectrum.
+    Peak at f₀ ≈ {float(dominant_freq):.2e} Hz; FFT bin spacing Δf ≈ {df_plot:.2e} Hz.
+  </figcaption>
+</figure>
+"""
+
+    except Exception as _e:
+        print("⚠️ Figure 0 generation failed:", _e)
+        figure0_html = ""
+
     # Spočteme energii: E = h·f
     h = 6.62607015e-34  # Planck constant [J·s]
     energy = h * dominant_freq
@@ -1185,7 +1261,8 @@ if __name__ == "__main__":
         mean_total_vort=None,
         phi_std_near=None,
         f0_ci=None,
-        sbr_ci=None
+        sbr_ci=None,
+        figure0_html=""
     ):
 
         # ✅ Detekce jevů na základě logů
@@ -1411,14 +1488,15 @@ if __name__ == "__main__":
       <meta charset="UTF-8">
       <title>Lineum Simulation Report</title>
       <style>
-        body {{ font-family: Arial, sans-serif; padding: 20px; }}
-        h1, h2 {{ color: #2c3e50; }}
-        img {{ margin: 10px; border: 1px solid #ccc; }}
-        .grid {{ display: flex; flex-wrap: wrap; gap: 10px; }}
-        table {{ border-collapse: collapse; margin-top: 10px; }}
-        th, td {{ border: 1px solid #ccc; padding: 6px 10px; text-align: left; }}
-        th {{ background-color: #f4f4f4; }}
-      </style>
+  body {{ font-family: Arial, sans-serif; padding: 20px; }}
+  h1, h2 {{ color: #2c3e50; }}
+  .grid {{ display: flex; flex-wrap: wrap; gap: 10px; }}
+  table {{ border-collapse: collapse; margin-top: 10px; }}
+  th, td {{ border: 1px solid #ccc; padding: 6px 10px; text-align: left; }}
+  th {{ background-color: #f4f4f4; }}
+  img {{ max-width: 100%; height: auto; display: block; margin: 10px 0; border: 1px solid #ccc; }}
+</style>
+
     </head>
     <body>
         <h1>🧪 Lineum – Emergent Quantum Field</h1>
@@ -1468,6 +1546,7 @@ if __name__ == "__main__":
 </p>
 
 
+{figure0_html}
 
 <h2>📊 Quasiparticle Properties</h2>
 <table>
@@ -1911,7 +1990,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         phi_std_near=phi_std_near,
         sbr_ci=sbr_ci,
         f0_ci=f0_ci,
-
+        figure0_html=figure0_html
     )
 
     print("✅ All GIFs and logs have been successfully generated.")

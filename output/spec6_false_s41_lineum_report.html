@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Lineum Simulation Report</title>
+      <style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h1, h2 { color: #2c3e50; }
+  .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+  th { background-color: #f4f4f4; }
+  img { max-width: 100%; height: auto; display: block; margin: 10px 0; border: 1px solid #ccc; }
+</style>
+
+    </head>
+    <body>
+        <h1>🧪 Lineum – Emergent Quantum Field</h1>
+
+        <p style="margin-top:-8px;color:#666;"><small>RUN_TAG: spec6_false_s41 · Δt: 1.00e-21 s · pixel: 1.00e-12 m · commit: c910bd4</small></p>
+
+        <h2>📦 Data & downloads</h2>
+        <ul><li><a href="spec6_false_s41_amplitude_log.csv">amplitude_log.csv</a></li><li><a href="spec6_false_s41_spectrum_log.csv">spectrum_log.csv</a></li><li><a href="spec6_false_s41_phi_center_log.csv">phi_center_log.csv</a></li><li><a href="spec6_false_s41_topo_log.csv">topo_log.csv</a></li><li><a href="spec6_false_s41_trajectories.csv">trajectories.csv</a></li><li><a href="spec6_false_s41_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li><li><a href="spec6_false_s41_spin_aura_profile.csv">spin_aura_profile.csv</a></li><li><a href="spec6_false_s41_metrics_summary.csv">metrics_summary.csv</a></li></ul>
+
+
+        <h2>📂 Run Configuration</h2>
+        <ul>
+            <li><strong>Run tag:</strong> spec6_false_s41</li>
+            <li><strong>LOW_NOISE_MODE:</strong> False</li>
+            <li><strong>TEST_EXHALE_MODE:</strong> True</li>
+            <li><strong>KAPPA_MODE:</strong> constant</li>
+        </ul>
+
+
+      <h2>✅ Confirmed observations (v1-safe)</h2>
+      <ul>
+        <li>🌀 Spontaneous vortex formation (±1 winding)</li>
+<li>🧫 Quasiparticle detections with trackable trajectories</li>
+<li>🎵 Stable single-peak spectrum (f₀ = 3.91e+18 Hz; SBR ≈ 6.88)</li>
+<li>🔁 Near-neutral global topological charge over time (winding)</li>
+<li>🌌 Non-zero background φ observed at the center</li>
+<li>⚖️ Display-only effective mass estimate from f₀ (m/mₑ ≈ 3.16e-02)</li>
+<li>🔄 Significant curl activity inside high-φ regions (σ = 9.20e-02)</li>
+<li>🧬 Consistent f₀ across sampled points (low across-grid variance)</li>
+<li>🕒 Emergence of long-lived quasiparticles (max 1000 steps, median 3)</li>
+<li>🧲 Averaged curl map near quasiparticles shows a dipole-like pattern (spin aura)</li>
+      </ul>
+
+      <h2>📌 Run metrics (spec6_false_s41)</h2>
+    <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>φ half-life (center)</td>
+        <td>483 steps
+            (canonical target ≈ 2000)</td></tr>
+            <tr><td>SBR (±2-bin guard)</td>
+    <td>6.88  [6.86, 6.90]</td></tr>
+
+  <tr><td>Topology neutrality</td>
+      <td>91.6% of steps with |net charge| ≤ 1
+          (mean vortices ≈ 86)</td></tr>
+            <tr><td>φ near vs field</td>
+      <td>4.79e+02 ± 7.06e+02
+          vs 5.64e+02 ± 7.62e+02</td></tr>
+
+
+    </table>
+    
+<p class="metrics-note" style="font-size:0.9em; opacity:0.85; margin-top:6px;">
+  Windowed estimates: W=256, hop=128, guard=±2 bins around f₀; 95% CI via bootstrap (B=1000 resamples).
+  See <code>metrics_summary.csv</code> in the downloads section for machine-readable values.
+</p>
+
+
+
+<h2>Figure 0 — Canonical anchors</h2>
+<figure>
+  <img src="spec6_false_s41_figure0_canonical.png" alt="Spectrum (bin-centered) and center trace" />
+  <figcaption style="font-size:0.9em; opacity:0.85; margin-top:4px;">
+    Windowed center trace (zero-mean, Hann) and one-sided spectrum.
+    Peak at f₀ ≈ 3.91e+18 Hz; FFT bin spacing Δf ≈ 3.91e+18 Hz.
+  </figcaption>
+</figure>
+
+
+<h2>📊 Quasiparticle Properties</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Dominant frequency f₀</td>
+<td>3.91e+18 Hz  [3.91e+18, 3.91e+18]</td></tr>
+
+<tr><td>Energy (E = h f₀)</td>
+<td>2.59e-15 J (~16.15 keV)</td></tr>
+<tr><td>Wavelength (λ = c / f₀)</td>
+<td>7.67e-11 m</td></tr>
+
+  <tr><td>Effective mass</td><td>2.88e-32 kg</td></tr>
+  <tr><td>Mass relative to electron</td><td>0.0316 (3.16%) × electron mass</td></tr>
+  <tr><td>Max lifespan</td><td>1000 steps</td></tr>
+  <tr><td>Median lifespan</td><td>3 steps</td></tr>
+  <tr><td>Guided motion</td><td>Alignment with +∇|φ| (environmental guidance)</td></tr>
+
+</table>
+<p style="margin:6px 0 0;color:#555;font-size:0.9em;">
+  <strong>Note.</strong> “Effective mass” is a display-only unit conversion from f₀ via m = h·f₀ / c²; it is not an intrinsic rest-mass claim. See the core paper’s “Interpretation note (v1)” for context.
+</p>
+
+
+      <h2>🌀 Simulation Summary</h2>
+      <ul>
+        <li><strong>Steps:</strong> 1000</li>
+        <li><strong>Field size:</strong> 128 × 128</li>
+        <li><strong>Quasiparticles detected:</strong> ✅ Yes</li>
+        <li><strong>Vortices detected:</strong> ✅ Yes</li>
+        <li><strong>Topological charge conserved:</strong> ✅ Yes</li>
+      </ul>
+
+      <h2>📈 Key Plots</h2>
+      <div class="grid">
+        <div><img src="spec6_false_s41_topo_charge_plot.png" alt="Topological charge plot"></div>
+        <div><img src="spec6_false_s41_vortex_count_plot.png" alt="Vortex count plot"></div>
+        <div><img src="spec6_false_s41_spectrum_plot.png" alt="Spectrum plot"></div>
+        <div><img src="spec6_false_s41_phi_center_plot.png" alt="φ center plot"></div>
+      </div>
+
+            <h2>🎞️ Field Evolution GIFs</h2>
+      <div class="grid">
+        <figure>
+          <img src="spec6_false_s41_lineum_amplitude.gif" alt="Amplitude |ψ|" title="Amplitude |ψ|">
+          <figcaption>Amplitude |ψ|</figcaption>
+        </figure>
+
+        <figure>
+          <img src="spec6_false_s41_lineum_spin.gif" alt="Spin-like curl map" title="Spin-like curl map">
+          <figcaption>Spin-like curl map</figcaption>
+        </figure>
+
+        <figure>
+          <img src="spec6_false_s41_lineum_vortices.gif" alt="Vortex cores (±1 winding)" title="Vortex cores (±1 winding)">
+          <figcaption>Vortex cores (±1 winding)</figcaption>
+        </figure>
+
+        <figure>
+          <img src="spec6_false_s41_lineum_particles.gif" alt="Tracked quasiparticles" title="Tracked quasiparticles">
+          <figcaption>Tracked quasiparticles</figcaption>
+        </figure>
+
+        <figure>
+          <img src="spec6_false_s41_lineum_flow.gif" alt="Flow field arrows (∇φ)" title="Flow field arrows (∇φ)">
+          <figcaption>Flow field arrows (∇φ)</figcaption>
+        </figure>
+
+        <figure>
+  <img src="spec6_false_s41_lineum_full_overlay.gif"
+       alt="Composite overlay (masked curl)"
+       title="Composite overlay (masked curl)">
+  <figcaption>Composite overlay (masked curl)</figcaption>
+</figure>
+
+      </div>
+
+
+      <h2>🧲 Spin aura (averaged curl map)</h2>
+<p>
+We compute an average of <code>curl(∇arg ψ)</code> in local windows centered on detected quasiparticles.
+The resulting map shows a robust dipole-like pattern (“spin aura”). We report this as an emergent
+flow pattern in the model; no claim is made about quantum spin.
+</p>
+
+<div><img src="spec6_false_s41_spin_aura_avg.png" alt="Spin aura"></div>
+
+
+      <h2>📚 Glossary & Naming Rationale</h2>
+
+      <h2>🧠 Note on φ-guided motion</h2>
+<p><strong>Note on φ-guided motion.</strong><br>
+We do not claim a gravitational theory. In the canonical regime, particles tend to move along gradients of the background field φ. We refer to this as <em>environmental guidance</em>: a metric-like influence of φ on trajectories, without introducing a force law or any analogy to GR. This behavior is quantified via alignment metrics in the report and should be interpreted as an emergent guidance effect within the model.</p>
+
+    <h3>🔤 Lineum</h3>
+    <p>
+      The name <strong>Lineum</strong> is a coined term from the Latin <em>linea</em> ("line" or "thread"), symbolizing
+      the filament-like tension structures that emerge in the field. It refers to a hypothetical quantum field defined
+      by local, nonlinear evolution rules. This field exhibits spontaneous formation of vortices, oscillations,
+      topological effects, and quasiparticles.
+    </p>
+    <p>
+      Pronunciation: <strong><em>line-um</em></strong> (Czech: <em>lineum</em>, as written).
+    </p>
+    <p>
+      The name follows a tradition of physics-inspired constructs such as <em>graviton</em>, <em>inflaton</em>, or
+      <em>axion</em>—terms that suggest emergent dynamics without predefining their exact physical nature.
+    </p>
+
+    <p style="color:#666;margin-top:24px;">
+<small>Note: This report summarizes operational measurements from a 2D emergent model.
+No cosmological, gravitational, biomedical or metaphysical claims are made.</small>
+</p>
+
+    <p style="margin-top:30px; font-style: italic; color: #555;">
+        (c) Lineum – emergent quantum field simulation
+    </p>
+    </body>
+    </html>
