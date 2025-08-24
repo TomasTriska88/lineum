@@ -1,6 +1,8 @@
 # Lineum Core (v1.0.4-core)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16934359.svg)](https://doi.org/10.5281/zenodo.16934359)
+[![Donate](https://img.shields.io/badge/Donate-Revolut-ff69b4?logo=revolut)](https://revolut.me/tomastriska)
+[![arXiv Endorsement](https://img.shields.io/badge/Need-arXiv%20endorsement-blue?logo=arxiv)](https://arxiv.org/auth/endorse?x=ZYULU9)
 
 **Status:** Public, reproducible core release • **Tag:** `v1.0.4-core` • **Paper:** `whitepaper/lineum-core.md`  
 **Evidence:** `output/evidence_v1.0.4-core.zip` (HTML + CSV + Figure 0)
@@ -97,3 +99,13 @@ Open-source; permissive license recommended (e.g., MIT). See `LICENSE`.
 ---
 
 _Notes:_ This `README` supersedes older wiki/sample paths. Canonical artifacts for the core release live in `output/`.
+
+---
+
+## Support & Endorsement
+
+If you find Lineum valuable and would like to support further development, you can contribute here:  
+👉 [Donate via Revolut](https://revolut.me/tomastriska)
+
+At this stage, community support is also welcome in the form of **arXiv endorsements**, which are required for submission:  
+👉 [arXiv Endorsement Link](https://arxiv.org/auth/endorse?x=ZYULU9)
