@@ -11,6 +11,7 @@ Sekce níže jsou rozdělené tak, aby nejdřív řešily **základní principy 
 - Lineum je **diskrétní dynamický model pole ψ s emergentními kvazičásticemi („linony“)** studovaný numericky v rámci daného Eq-4 a parametrického prostoru.
 - Lineum **není** plnohodnotná QFT, GR ani kompletní náhrada Standardního modelu; všechny fyzikální analogie jsou zatím interpretace navrstvené nad numerickým modelem.
 - Tvrzení typu „#disproved“ se vždy vztahují **jen k chování uvnitř modelu Lineum (Eq-4 + daný parametrický prostor)**, ne k obecné fyzikální teorii.
+- Žádná konkrétní simulační konfigurace (např. preset `(6, "false")` s `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`) **není** deklarovaná jako „náš vesmír“; lze ji používat jen jako interní **„fyzikálně vypadající“ referenční scénář** v rámci modelu a jako výchozí baseline pro vizualizace a outreach, ne jako tvrzení o skutečné kosmologii.
 
 ### Legenda úrovní tvrzení (podle whitepaperu)
 
@@ -149,15 +150,16 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ### 🔲 K. Most k empirii a „nenumerologii“ #empirics
 
- - [ ] Stručně sepsat, **co se zatím netvrdí**: žádná přímá identifikace s konkrétní částicí SM (Standard Model), žádná predikce konkrétní hmotnosti / průřezu, žádný claim o přímé shodě s experimentem – a mít to jako odkazovatelný odstavec (FAQ / limitations).
- - [ ] Uvést, které numerické shody (např. řádové hodnoty E, λ) jsou zatím brané jako **heuristické / estetické** a které bys považoval za kandidáty na testovatelnou predikci (a za jakých podmínek).
- - [ ] Navrhnout první nástřel **„empirické mapy“**: jaký typ experimentu nebo existujícího datasetu by mohl být v budoucnu použit jako benchmark (např. obecný tvar spektra, statistika lokálních excitací, strukturální vlastnosti pole).
- - [ ] Pokusit se **klasifikovat linon** v rámci známých typů excitací (solitony, breathery, excitace skalárního pole…) a explicitně říct, zda jde spíš o analogii k těmto objektům, nebo o novou kategorii v rámci modelu.
- - [ ] Připravit krátkou sekci „**možné fyzikální realizace**“: příklady systémů, kde by se podobná excitace mohla principálně objevit (optické mřížky, BEC, nelineární vlnová dynamika) – zatím jen jako „outlook“ bez tvrdých claimů.
- - [ ] Jasně oddělit **core model** (Eq-4 + linony + status Structural Closure podle whitepaperu) od pozdějších **interpretací** (gravitace, temná hmota, SM analogie) i v komunikačních materiálech. Mít možnost fyzikům říct: „tohle je čistě emergentní numerický model, tohle je interpretace navíc.“
- - [ ] U názvů jako „temná hmota“, „gravitace“, „éter“, „preony“… explicitně uvést, že jde o **pracovní analogie v rámci modelu**, nikoli tvrzení o totožnosti s konkrétní entitou Standardního modelu nebo kosmologie.
- - [ ] Připravit **Lineum-motivovaný efektivní model odchylek od Kerr BH** s bezrozměrnými parametry `\boldsymbol\theta_{\rm L}=\{\alpha_S,\beta_\kappa,\delta_{\rm ps}\}`, explicitně formulovaný jako #empirics / #outlook vrstva (ne přímá predikce Eq-4), a navázat ho na existující datové kanály (area theorem z GW, ringdown/QNM, EHT stíny) včetně jasného rozdělení: `\alpha_S` jako prakticky neměřitelná log-korekce pro astrofyzikální BH, hlavní testovatelnost přes `\beta_\kappa` a `\delta_{\rm ps}`.
- - [ ] Připravit **Lineum-motivovaný efektivní model odchylek na galaktických škálách** ve smyslu emergentní gravitace (Verlinde vs. Lineum):  
+- [ ] Stručně sepsat, **co se zatím netvrdí**: žádná přímá identifikace s konkrétní částicí SM (Standard Model), žádná predikce konkrétní hmotnosti / průřezu, žádný claim o přímé shodě s experimentem – a mít to jako odkazovatelný odstavec (FAQ / limitations).
+- [ ] Uvést, které numerické shody (např. řádové hodnoty E, λ) jsou zatím brané jako **heuristické / estetické** a které bys považoval za kandidáty na testovatelnou predikci (a za jakých podmínek).
+- [ ] Navrhnout první nástřel **„empirické mapy“**: jaký typ experimentu nebo existujícího datasetu by mohl být v budoucnu použit jako benchmark (např. obecný tvar spektra, statistika lokálních excitací, strukturální vlastnosti pole).
+- [ ] Pokusit se **klasifikovat linon** v rámci známých typů excitací (solitony, breathery, excitace skalárního pole…) a explicitně říct, zda jde spíš o analogii k těmto objektům, nebo o novou kategorii v rámci modelu.
+- [ ] Připravit krátkou sekci „**možné fyzikální realizace**“: příklady systémů, kde by se podobná excitace mohla principálně objevit (optické mřížky, BEC, nelineární vlnová dynamika) – zatím jen jako „outlook“ bez tvrdých claimů.
+- [ ] Jasně oddělit **core model** (Eq-4 + linony + status Structural Closure podle whitepaperu) od pozdějších **interpretací** (gravitace, temná hmota, SM analogie) i v komunikačních materiálech. Mít možnost fyzikům říct: „tohle je čistě emergentní numerický model, tohle je interpretace navíc.“
+- [ ] U názvů jako „temná hmota“, „gravitace“, „éter“, „preony“… explicitně uvést, že jde o **pracovní analogie v rámci modelu**, nikoli tvrzení o totožnosti s konkrétní entitou Standardního modelu nebo kosmologie.
+- [ ] U „fyzikálně vypadajících“ presetů (např. `(6, "false")` s `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`) doplnit v dokumentaci výslovný disclaimer, že jde o **interní referenční vesmír Linea**, ne identifikaci s naším vesmírem; zdůraznit, že takové presety jsou z hlediska teorie neprivilegované a slouží jen jako intuitivní baseline pro interpretaci výsledků.
+- [ ] Připravit **Lineum-motivovaný efektivní model odchylek od Kerr BH** s bezrozměrnými parametry `\boldsymbol\theta_{\rm L}=\{\alpha_S,\beta_\kappa,\delta_{\rm ps}\}`, explicitně formulovaný jako #empirics / #outlook vrstva (ne přímá predikce Eq-4), a navázat ho na existující datové kanály (area theorem z GW, ringdown/QNM, EHT stíny) včetně jasného rozdělení: `\alpha_S` jako prakticky neměřitelná log-korekce pro astrofyzikální BH, hlavní testovatelnost přes `\beta_\kappa` a `\delta_{\rm ps}`.
+- [ ] Připravit **Lineum-motivovaný efektivní model odchylek na galaktických škálách** ve smyslu emergentní gravitace (Verlinde vs. Lineum):  
        – zvolit pragmatickou parametrizaci `g_{\rm L}(r;\boldsymbol\theta)` (např. relační RAR-like `\nu`-funkci nebo kernelovou konvoluci),  
        – formulovat primární test pomocí galaxy–galaxy weak lensingu (profil `\Delta\Sigma(R)` kolem izolovaných diskových galaxií v intervalu `R \approx 50–300\,\mathrm{kpc}`) s jasně definovaným H₀ (Verlindeho emergentní gravitace) a H₁ (Lineum),  
        – doplnit sekundární diagnostiky (RAR, Einsteinův poloměr, konzistence masových profilů v kupách, lokální testy) jako ortogonální kanály pro totéž `g_{\rm L}(r;\boldsymbol\theta)`,  
@@ -265,6 +267,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
   (3D spirály bodů uzavření / „černých děr“, frekvenční „žilky“ na FFT atd.)  
   a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel).  
   V core v1.0.6-core nejsou žádné tvrdé statistické testy → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko, ne jako tvrzení o reálné fyzice.
+- [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
 - Formálně definovat, co jsou v modelu **„body uzavření“ / zeta-body** (aktuální název; historický termín _DejaVu body_ uvést jen jako legacy alias):  
   – např. opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
   – k nim definovat přesné mapování do 1D/2D prostoru (kruh, spirála, normalizovaná osa), které se používá při porovnání s Riemannovými nulami a dalšími posloupnostmi.
