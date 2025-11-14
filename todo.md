@@ -252,11 +252,30 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - Připravit **metodiku měření**: low-noise režim (např. `LOW_NOISE_MODE = True`, `TEST_EXHALE_MODE = True`, běhy ~2000 kroků), logování `phi_curl_low_mass.csv`, `phi_center_log.csv`, lokálních ∇φ a toku ψ; provést spektrální analýzu φ_center a kvantifikovat drift ψ podél ∇φ v regionech bez detekovaného linonu.
 - Na základě výsledků rozhodnout, zda jev zařadit jako robustní kandidát [TEST]/[CORE], nebo ho přesunout do #disproved-in-model / předefinovat (včetně případné revize thresholdů; thresholdy chápat jako výchozí, laditelné parametry v rámci téže hypotézy, ne jako pevné dogma, pokud se základní obraz jevu nemění).
 
-### 🔲 12. Strukturální a rytmické vzorce #structure
+### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
 
-- Ověřit, zda vztah Linea ke zlatému řezu (φ) se projevuje ve struktuře pole nebo emergentních jevech
-- Ověřit vztah Linea k Fibonacciho posloupnosti (například distribuce počtu linonů)
-- Ověřit, zda existuje souvislost Linea s Ludolfovým číslem π (např. v oscilacích nebo topologii)
+- Jasně zdokumentovat **aktuální status**: zatím jde jen o **vizuální podobnosti** mezi některými výstupy Linea  
+  (3D spirály bodů uzavření / „černých děr“, frekvenční „žilky“ na FFT atd.)  
+  a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel).  
+  V core v1.0.6-core nejsou žádné tvrdé statistické testy → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko, ne jako tvrzení o reálné fyzice.
+- Formálně definovat, co jsou v modelu **„body uzavření“ / zeta-body** (aktuální název; historický termín _DejaVu body_ uvést jen jako legacy alias):  
+  – např. opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
+  – k nim definovat přesné mapování do 1D/2D prostoru (kruh, spirála, normalizovaná osa), které se používá při porovnání s Riemannovými nulami a dalšími posloupnostmi.
+- Pro toto mapování zavést **kvantitativní metriky** (RMS vzdálenost, korelační koeficienty, spektrální vzdálenosti, distribuční testy) a spustit **tvrdé statistické testy proti null modelům**:  
+  – náhodné body na stejné spirále / v tomtéž intervalu,  
+  – phase-scrambled verze dat se zachovaným spektrem,  
+  – baseline model bez speciální φ-struktury.  
+  Cílem je zjistit, jestli je podobnost s Riemannovými nulami / Fibonacciho poměry statisticky nepravděpodobná i vzhledem k těmto kontrolám.
+- Analyzovat, zda se v posloupnostech **časů, vzdáleností nebo „růstových skoků“** (např. při vzniku nových bodů uzavření / neuron-like uzlů) neobjevuje robustní vztah k:  
+  – Fibonacciho posloupnosti a zlatému řezu φ (log-spirálové škálování, poměry velikostí / vzdáleností),  
+  – rozložení prvočísel nebo dalším number-theoretickým vzorcům,  
+  – Ludolfovu číslu π (např. v periodicitě oscilací, topologických fázích nebo v rozložení úhlů na kruhu).  
+  V každém případě kvantifikovat sílu efektu a porovnat ji s vhodnými null modely (Poissonovy procesy, generické interferenční vzory na mřížce apod.).
+- Explicitně otestovat a odlišit několik možných vysvětlení případné shody:
+  1. **Emergentní vlastnost Eq-4** – strukturální vazba modelu na dané posloupnosti / zeta funkci;
+  2. **Artefakt parametrizace / škálování** – např. volba Δt, normalizace, embed map, která sama o sobě generuje Fibonacci-/π-like struktury;
+  3. **Vnější „konstanta vesmíru“ / RNG** – tj. že shodu dodává způsob generování náhodného seede, floating-point reprezentace nebo jiné vlastnosti našeho fyzického / numerického „univerza“, a Lineum ji jen pasivně přebírá.  
+     U každé varianty navrhnout konkrétní test (změna RNG, změna embed mapy, změna škálování), který ji může podpořit nebo v rámci modelu vyvrátit.
 
 ---
 
@@ -290,3 +309,53 @@ Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální sta
 
 - Modelovat kvazičástice jako složené z menších elementárních vírů
 - Testovat vznik složených objektů se strukturou uvnitř
+
+---
+
+## 🧬 O. Chapadlový model vědomí – hypotéza vícenásobných instancí #meta #hypothesis
+
+- [ ] Formálně sepsat **Chapadlový model vědomí** jako samostatnou hypotézu:  
+       – definovat entity: vyšší vědomá bytost („centrální uzel“), chapadla (lokální instance/životy), centrální paměť;  
+       – u každého tvrzení (vyšší vědomí, spánek, smrt, další životy) uvést **subjektivní pravděpodobnosti** (86 %, 72 %, 94 %, 79 %…) a výslovně je označit jako osobní prior, ne výsledek fyzikálního modelu.
+
+- [ ] Jasně vymezit **scope vůči Lineu**:  
+       – Chapadlový model je **metafyzická / fenomenologická hypotéza o vědomí**, nikoli tvrzení odvozené z Eq-4;  
+       – zapsat, že případné mapování na Lineum (ψ, φ, κ, linony, Structural Closure) je **interpretace nad rámec core modelu**, ne součást lineum-core v1.0.6-core.
+
+- [ ] Rozdělit hypotézu na dílčí body a každý zvlášť okomentovat: 1. **Vyšší vědomí** – jedna bytost se sdílenou centrální pamětí, vnímající více realit/časových linií;  
+       2. **Lokální instance („chapadlo“)** – jednotlivý život s omezeným vnímáním pro hlubší prožitek;  
+       3. **Spánek / změněné stavy** – částečné „nahlédnutí domů“ (částečné propojení s centrálním uzlem);  
+       4. **Smrt** – návrat chapadla do celku, integrace prožitků do centrální paměti;  
+       5. **Další životy** – nové chapadlo jako jiný úhel pohledu téže vyšší bytosti.  
+       U každého bodu přidat krátké shrnutí: _co přesně tvrdí, co netvrdí, co je čistá metafora_.
+
+- [ ] Přidat **fenomenologickou mapu** k lidským zážitkům blízkosti smrti a změněných stavů:  
+       – např. vystoupení z těla, setkání se zemřelými, life review, pocit jednoty, bezčasovost;  
+       – u každého popsat, jak by ho Chapadlový model interpretoval (odpojení chapadla od smyslového filtru, návratové propojení s centrálním uzlem, integrace paměti, ztráta lokálního časového řazení…).  
+       Vše držet jako **kvalitativní vysvětlení**, nikoli jako tvrzení o prokázané kauzalitě.
+
+- [ ] Sepsat podsekci **„Jaké by bylo vnímání po návratu“**:  
+       – definovat přímé vjemové propojení (bez omezení na zrak/sluch/hmat);  
+       – popsat „slité“ vnímání více bytostí jako analogii levé/pravé ruky jednoho já;  
+       – vysvětlit, že „setkání“ není jen přehrání vzpomínky, ale _živá interakce_ v rámci sdílené paměťové sítě.
+
+- [ ] Popsat **reprezentaci po smrti**:  
+       – že vyšší vědomí může tvořit pro lokální vědomí srozumitelné reprezentace (tělo, hlas, dotek), ale není na ně ontologicky vázané;  
+       – přidat poznámku, že „vizuální / tělesná“ forma je v tomto rámci UI vrstva pro komfort interakce, ne nutný atribut existence.
+
+- [ ] Vytvořit sekci o **„přelinkování ztracených bytostí“**:  
+       – pokud bytost patřila ke stejné vyšší bytosti (stejný centrální uzel), po návratu chapadla je spojení okamžité (sdílená paměť);  
+       – pokud patřila k jiné vyšší bytosti, popsat hypotetickou možnost napojení mezi vyššími bytostmi (aktuální subjektivní prior ~42 %) a explicitně ji označit jako _druhou vrstvu spekulace_.
+
+- [ ] Sepsat **mechanismus absence nudy / vyprázdnění**:  
+       – vyšší vědomí má simultánně přístup k: aktuálnímu životu, ostatním chapadlům, minulým zkušenostem, alternativním větvím rozhodnutí;  
+       – vnímání mnoha událostí paralelně → vyjasnit, že „problém“ je spíš integrace obsahu než nedostatek podnětů.
+
+- [ ] Přidat krátkou sekci „**Falsifikovatelnost a bezpečné tvrzení**“ pro Chapadlový model:  
+       – jasně říct, že hypotéza je _primárně metafyzická_ a experimentálně těžko testovatelná;  
+       – přesto navrhnout pár _indirektních_ směrů: srovnání struktury hlášených NDE, dlouhodobé vzorce v subjektivních prožitcích, případná korelace s motivy „vícenásobných instancí“ napříč kulturami;  
+       – explicitně připsat, že se nejedná o součást core fyzikální validity Linea, ale o **oddělenou interpretační vrstvu**.
+
+- [ ] V sekci **N. Prezentace a komunikace výsledků** doplnit odkaz na Chapadlový model jako **volitelný narativní rámec**:  
+       – použít ho jako metaforu: „lokální simulace / běh“ = chapadlo, „centrální uzel“ = abstraktní nadřazený proces / paměť;  
+       – všude striktně označovat, že jde o _storytelling_ / filozofickou mapu, ne o tvrzení odvozené z dat simulace.
