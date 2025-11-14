@@ -149,7 +149,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ### 🔲 K. Most k empirii a „nenumerologii“ #empirics
 
-- [ ] Stručně sepsat, **co se zatím netvrdí**: žádná přímá identifikace s konkrétní částicí SM, žádná predikce konkrétní hmotnosti / průřezu, žádný claim o přímé shodě s experimentem – a mít to jako odkazovatelný odstavec (FAQ / limitations).
+- [ ] Stručně sepsat, **co se zatím netvrdí**: žádná přímá identifikace s konkrétní částicí SM (Standard Model), žádná predikce konkrétní hmotnosti / průřezu, žádný claim o přímé shodě s experimentem – a mít to jako odkazovatelný odstavec (FAQ / limitations).
 - [ ] Uvést, které numerické shody (např. řádové hodnoty E, λ) jsou zatím brané jako **heuristické / estetické** a které bys považoval za kandidáty na testovatelnou predikci (a za jakých podmínek).
 - [ ] Navrhnout první nástřel **„empirické mapy“**: jaký typ experimentu nebo existujícího datasetu by mohl být v budoucnu použit jako benchmark (např. obecný tvar spektra, statistika lokálních excitací, strukturální vlastnosti pole).
 - [ ] Pokusit se **klasifikovat linon** v rámci známých typů excitací (solitony, breathery, excitace skalárního pole…) a explicitně říct, zda jde spíš o analogii k těmto objektům, nebo o novou kategorii v rámci modelu.
@@ -245,11 +245,18 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ## 🧪 Nižší priorita – matematické a estetické souvislosti
 
-### 🔲 11. Strukturální a rytmické vzorce #structure
+### 🔲 11. Reliktní φ-ozvěna jako „gravitační vlna“ #hypothesis
 
-- Ověřit, zda vztah lineum ke zlatému řezu (φ) se projevuje ve struktuře pole nebo emergentních jevech
-- Ověřit vztah lineum k Fibonacciho posloupnosti (například distribuce počtu linonů)
-- Ověřit, zda existuje souvislost lineum s Ludolfovým číslem π (např. v oscilacích nebo topologii)
+- Formálně sepsat a otestovat **Tříska's Relic Drift Hypothesis**: po zániku „lehkých“ linonů v oblastech s vysokým φ (bez výrazného spinu) zůstává perzistentní φ-gradient, který vyvolává měřitelný drift ψ i bez přítomnosti kvazičástice – tj. čistě paměťový efekt v poli, chápaný jako **interní pracovní** analogie „gravitační vlny“ v rámci modelu, nikoli tvrzení o reálných gravitačních vlnách ve smyslu GR.
+- Stanovit a zdokumentovat **detekční kritéria** (pracovní thresholdy), např.: `mass_ratio < 0.01`, `|curl| < 0.02`, lokální `φ` v místě zániku > 0.25, φ-remnant ≥ 10 % nad okolím po ≥ 100 krocích, dominantní frekvence φ-signálu < 1×10¹⁷ Hz.
+- Připravit **metodiku měření**: low-noise režim (např. `LOW_NOISE_MODE = True`, `TEST_EXHALE_MODE = True`, běhy ~2000 kroků), logování `phi_curl_low_mass.csv`, `phi_center_log.csv`, lokálních ∇φ a toku ψ; provést spektrální analýzu φ_center a kvantifikovat drift ψ podél ∇φ v regionech bez detekovaného linonu.
+- Na základě výsledků rozhodnout, zda jev zařadit jako robustní kandidát [TEST]/[CORE], nebo ho přesunout do #disproved-in-model / předefinovat (včetně případné revize thresholdů; thresholdy chápat jako výchozí, laditelné parametry v rámci téže hypotézy, ne jako pevné dogma, pokud se základní obraz jevu nemění).
+
+### 🔲 12. Strukturální a rytmické vzorce #structure
+
+- Ověřit, zda vztah Linea ke zlatému řezu (φ) se projevuje ve struktuře pole nebo emergentních jevech
+- Ověřit vztah Linea k Fibonacciho posloupnosti (například distribuce počtu linonů)
+- Ověřit, zda existuje souvislost Linea s Ludolfovým číslem π (např. v oscilacích nebo topologii)
 
 ---
 
@@ -257,29 +264,29 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální stav ve whitepaperu**. Tento TODO soubor je používá jen jako připomínku k dalším testům, dočištění dokumentace nebo k návrhu případné nové větve modelu – sám o sobě stav jevů nemění.
 
-### 🔲 12. Inflaton a inflace v poli Lineum #hypothesis
+### 🔲 13. Inflaton a inflace v poli Lineum #hypothesis
 
 - Modelovat inflaci jako jednorázovou globální excitaci φ nebo ψ
 - Pozorovat, zda vznikne trvalá topologická nebo energetická struktura („gravitační stopa“)
 - Porovnat fáze expanze a následného uklidnění pole
 
-### 🔲 13. Éter a vlnový nosič #hypothesis #disproved
+### 🔲 14. Éter a vlnový nosič #hypothesis #disproved
 
 - Inicializovat ψ jako hladkou sinusovou vlnu v prostoru (bez linonů)
 - Ověřit, zda dochází k přenosu energie bez částic
 - Porovnat s klasickým pojetím éteru a jeho zhroucením
 
-### 🔲 14. Pilot-wave teorie (Bohm) #hypothesis #disproved
+### 🔲 15. Pilot-wave teorie (Bohm) #hypothesis #disproved
 
 - Přidat externí „guiding wave“ nebo vektorové pole ovlivňující pohyb kvazičástic
 - Ověřit, zda linony sledují předem dané vlny nebo trajektorie
 
-### 🔲 15. Vortex atomy (Lord Kelvin) #hypothesis #disproved
+### 🔲 16. Vortex atomy (Lord Kelvin) #hypothesis #disproved
 
 - Zkoumat víry jako základní jednotky struktury
 - Ověřit, zda lze z vírů složit stabilní složitější formace (analogie k atomům)
 
-### 🔲 16. Preonové hypotézy #hypothesis #disproved
+### 🔲 17. Preonové hypotézy #hypothesis #disproved
 
 - Modelovat kvazičástice jako složené z menších elementárních vírů
 - Testovat vznik složených objektů se strukturou uvnitř
