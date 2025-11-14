@@ -1,11 +1,11 @@
 # Lineum Appendix – Equation History
 
 **Document ID:** lineum-core-equation-history  
-**Version:** 1.0.0  
+**Version:** 1.1.0
 **Status:** Draft  
 **Relates to:** `lineum-core.md` §3  
 **Equation versions:** V1–V4 (canonical: V4)  
-**Date:** 2025-08-10
+**Date:** 2025-11-14
 
 ---
 
@@ -32,6 +32,10 @@ The equation in the core paper represents the current, most refined formulation 
 
 **Terminology.** Throughout this appendix, we use **linon** to denote a stable, localized |ψ|² excitation (i.e., the quasi-particle of the Lineum model).
 
+In the experimental context of the broader project, **DTH** denotes the **Dimensional Transparency Hypothesis** – a working hypothesis (not an established mechanism) about how changes in κ might affect the “visibility” of simulated structures when interpreted in terms of a prospective detector setup.
+
+> **Interpretation note:** Terms like “gravity” or “gravitational” in this appendix describe **gravity-like patterns in the simulation**, not a confirmed physical gravitational force in nature.
+
 ### 🔹 Version 1 – Purely oscillating field
 
 ```text
@@ -41,7 +45,7 @@ The equation in the core paper represents the current, most refined formulation 
 The first version contained only the ψ field. It generated linons, spin, and vortices, but did not allow accumulation or emergent attraction. The φ field was not yet dynamic.
 
 - ✅ Generated **linons** and flows
-- ❌ No accumulation or emergent gravitational behavior
+- ❌ No accumulation or emergent gravity-like behavior (in the simulation)
 - ❌ φ was static, without memory
 
 ---
@@ -61,7 +65,7 @@ The φ field began reacting to the density |ψ|² and creating stable maxima.
 
 ---
 
-### 🔹 Version 3 – Emergent gravity through ∇φ
+### 🔹 Version 3 – Emergent gravity-like behavior through ∇φ
 
 > **Note:** This change affects the ψ field equation, unlike Version 2 which introduced the φ field equation.  
 > It represents the first direct coupling of ψ to φ through its gradient.
@@ -70,9 +74,9 @@ The φ field began reacting to the density |ψ|² and creating stable maxima.
 ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ
 ```
 
-By adding the gradient of φ, flow without force emerges – **linons** move into regions where φ increases.
+By adding the gradient of φ, a gravity-like flow pattern emerges in the simulation – **linons** move into regions where φ increases.
 
-- ✅ Gravitational behavior without explicit force
+- ✅ Gravity-like behavior (in the model) without an explicit force term
 - ✅ Formation of φ-centers, attraction, accumulation
 - ✅ The overall model has memory, interaction, and trajectory
 
@@ -89,11 +93,11 @@ By adding the gradient of φ, flow without force emerges – **linons** move int
 > The multiplicative κ shown above is retained here as a **historical snapshot** of the development stage.
 
 By introducing the tuning field κ, the system’s response can be controlled locally – where the field “reacts” and where it is “deaf”.  
-In connection with DTH tests, κ appears to also determine **visibility** – in areas with low κ, no particles or vortices form.
+In connection with the current Dimensional Transparency Hypothesis (DTH) test setup, κ appears to influence **visibility** in the simulation – in low-κ regions we typically do not observe particle or vortex formation. This is an empirical observation of the model, not a confirmed statement about any physical detector.
 
 ## 4. Discussion
 
-This progression shows a shift from a minimalistic ψ–φ interaction model to a more versatile three-field system capable of sustaining richer emergent structures. Each modification was driven by simulation feedback and aimed at increasing stability, scalability, and interpretability.
+This progression shows a shift from a minimalistic ψ–φ interaction model to a more versatile three-field system capable of sustaining richer emergent structures **within the simulation**. Each modification was driven by simulation feedback and aimed at increasing stability, scalability, and interpretability of the model, not by fitting any specific physical constant or established gravitational law.
 
 ## 5. Versioning & Changelog
 
@@ -102,6 +106,11 @@ This progression shows a shift from a minimalistic ψ–φ interaction model to 
 - **MAJOR**: structural changes that alter interpretation of historical entries.
 - **MINOR**: new archival variants, added rationale, artifacts.
 - **PATCH**: wording/formatting fixes.
+
+**1.1.0 — 2025-11-14**
+
+- Adds an explicit interpretation note that “gravity” / “gravitational” refers to gravity-like patterns **in the simulation**, not a physical gravitational force.
+- Introduces the Dimensional Transparency Hypothesis (DTH) terminology and clarifies κ–visibility as an empirical property of the model, not a statement about any real detector.
 
 **1.0.0 — 2025-08-10 (initial)**
 

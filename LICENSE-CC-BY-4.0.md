@@ -13,4 +13,4 @@ Full license text: https://creativecommons.org/licenses/by/4.0/
 
 **Attribution suggestion**
 
-> T. Tříska, _Lineum Core (v1.0.4-core)_, 2025. CC BY 4.0.
+> T. Tříska, _Lineum Core (v1.0.6-core)_, 2025. CC BY 4.0. DOI: 10.5281/zenodo.16934359.

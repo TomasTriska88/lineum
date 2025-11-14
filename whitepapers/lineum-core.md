@@ -1,20 +1,20 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.4-core
+**Version:** 1.0.6-core  
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs  
-**Date:** 2025-08-23
+**Date:** 2025-11-14
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.4-core)._ 2025. DOI: 10.5281/zenodo.16934359.  
-_This manuscript corresponds to Git tag **v1.0.4-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.6-core)._ 2025. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.6-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
 > **Δt:** 1.0×10⁻²¹ s • **Seed:** 41 • **RUN_TAG:** spec6_false_s41  
 > **κ-mode:** constant • **Noise:** zero-mean, σξ ≪ 1 (canonical low)  
 > **Operators:** ∇ (central), ∇² (5-point von Neumann)  
-> **Out of scope:** 3D, time-varying κ, zeta/RNB correlations, Return Echo, Vortex–Particle coupling, and other interpretive add-ons. These are intentionally excluded from the core and deferred to **future work**; they are not part of this submission.
+> **Out of scope:** 3D, time-varying κ, zeta/RNB correlations, Return Echo, Vortex–Particle coupling, and other interpretive add-ons. These are intentionally excluded from the core and deferred to **future work**; they are not part of this submission. **Structural Closure is in scope for v1.0.x** and is treated as an operational consequence of the φ center-trace half-life metric (see §5.4).
 
 # 1. Abstract
 
@@ -41,13 +41,17 @@ Repeated simulations robustly generate (v1 core evidence):
 
 All listed items are directly reported in the HTML evidence (Quasiparticle Properties, Spectral metrics, Topology metrics, “Spin aura — averaged curl map”, and φ center trace). Claims requiring κ-dynamics, thermodynamics, or SM identification are out of scope for the v1 core.
 
-Within the v1 core evidence bundle, the validated items are limited to: (i) a stable localized excitation (“linon”) with a bin-centered canonical tone \(f_0\); (ii) reproducible spectral strength (SBR) and topology neutrality; (iii) the center-trace φ half-life; and (iv) a persistent phase-gradient rotation (“spin aura”) around linons, as reported in the HTML (“Spin aura — averaged curl map”). Structural Closure, Return Echo, and any κ-dynamics (“Dimensional Transparency”) are out of scope for the v1 core and deferred to the experimental track.
+Within the v1 core evidence bundle, the validated items are limited to: (i) a stable localized excitation (“linon”) with a bin-centered canonical tone \(f_0\); (ii) reproducible spectral strength (SBR) and topology neutrality; (iii) the center-trace φ half-life together with **Structural Closure** (localized, long-lived φ remnants after linon decay); and (iv) a persistent phase-gradient rotation (“spin aura”) around linons, as reported in the HTML (“Spin aura — averaged curl map”). **Return Echo** and any κ-dynamics (“Dimensional Transparency”) remain out of scope for the v1 core and are deferred to the experimental/extension track (see the dedicated whitepapers).
 
-The model produces quantitative signatures close to physical scales, such as:
-– dominant oscillation frequency ≈ **3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
-– linon energy ≈ **2.59×10⁻¹⁵ J** ≈ **16.15 keV**,
-– wavelength ≈ **7.67×10⁻¹¹ m** (0.0767 nm),
-– effective mass (display-only) ≈ **3.16 %** of the electron mass.
+For the canonical parameter choice (Δt fixed and SI constants applied post hoc), the dominant oscillation can be expressed in familiar physical units for **scale illustration only**. For example, when written in SI units:
+these values are not used as acceptance thresholds or constraints anywhere in the core validation.
+
+- dominant oscillation frequency ≈ **3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
+- linon energy ≈ **2.59×10⁻¹⁵ J** ≈ **16.15 keV**,
+- wavelength ≈ **7.67×10⁻¹¹ m** (0.0767 nm),
+- effective mass (display-only) ≈ **3.16 %** of the electron mass.
+
+These SI-anchored values are **unit conversions of the canonical tone f₀**, not additional constraints on the model or evidence that Lineum directly realizes any specific physical scale.
 
 > **Interpretation note (v1).** The “effective mass” value is a **unit-conversion from the canonical frequency** \(f_0\) via \(m = h f_0 / c^2\). It is provided **only** as an intuition aid for scale (≈ 3.16 % of \(m_e\) consistently across seeds 17/23/41/73), **not** as a claim of an intrinsic rest mass. Numbers match the HTML “Quasiparticle Properties” tables for runs `spec6_false_s17`, `spec6_false_s23`, `spec6_false_s41`, and `spec6_false_s73`.
 
@@ -96,12 +100,12 @@ _Directional mnemonic:_ κ → ψ → φ → κ; no direct φ → ψ arrow is im
 
 Many approaches in theoretical physics rely on continuous equations embedded in a predefined spacetime geometry, with global constants and symmetries fixed a priori. Such frameworks limit the exploration of systems where both the geometry and the interaction rules could emerge from purely local processes.
 
-Lineum is designed as a minimal model to investigate whether complex, stable, and physically relevant structures can arise from:
+Lineum is designed as a minimal model to investigate whether complex, stable, and potentially physics-analogous structures can arise from:
 – simple, local update rules,
 – no predefined global metric or constants,
 – and interactions mediated by emergent fields.
 
-The key motivation is to test if macroscopic phenomena, such as particle-like excitations, field-mediated forces, and stable wave patterns, can originate without embedding them explicitly into the governing equations.
+The key motivation is to test if macroscopic phenomena, such as particle-like excitations, field-mediated interactions, and stable wave patterns, can originate without embedding them explicitly into the governing equations.
 
 By isolating and quantifying these emergent behaviors, Lineum offers a controllable environment to evaluate which observed effects might have analogues in known physics, and which are unique to discrete, metric-free systems.
 
@@ -325,7 +329,9 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that f₀ lies exactly on this FFT bin.
 > 5. Confirm the same values in the HTML for `spec6_false_s17/s23/s73` (see Appendix C, Evidence Index).
 
-**Track policy.** This manuscript is the frozen **core** track (**v1.0.4-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+**Track policy.** This manuscript is the frozen **core** track (**v1.0.6-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+
+**File-level scope (whitepapers).** `lineum-core.md` together with `lineum-core-equation-history.md` define the canonical v1.0.x core. All other whitepapers in the repository whose filenames begin with `lineum-exp-…` or `lineum-extension-…` (e.g., `lineum-exp.md`, `lineum-exp-thermo-calibration.md`, `lineum-extension-return-echo.md`, `lineum-extension-silent-gravity.md`, `lineum-extension-spectral-structure.md`, `lineum-extension-vortex-particle-coupling.md`, `lineum-extension-zeta-rnb-resonance.md`) are **by definition outside the v1 core**. They may refer to the same phenomena (Return Echo, Dimensional Transparency, Silent Gravity, Spectral Structure, etc.), but quantitative claims there do not change the canonical scope unless explicitly merged into a future `lineum-core` version.
 
 Future updates and non-canonical experiments will be released as separate preprints; this core v1 freezes the canonical run as `spec6_false_s41`.
 
@@ -424,10 +430,11 @@ The process is characterized by an exponential decrease in |ψ|² amplitude with
 
 ## 5.4 Structural Closure
 
-Following particle decay, residual φ-structures remain localized, maintaining their shape and magnitude over extended timesteps.  
-This memory effect demonstrates φ-field stability independent of active ψ excitation.
+In the v1 core, **Structural Closure** is treated as an **operational consequence** of the φ center-trace half-life metric. Following particle decay, residual φ-structures remain localized, maintaining their shape and magnitude over extended timesteps; the center trace decays on a timescale consistent with the half-life reported in §5.6 and in `*_phi_center_log.csv`. This memory effect demonstrates φ-field stability independent of active ψ excitation and is **in scope** for the canonical validation (see the ablation variants in §5.8, where closure fails when φ or ∇φ terms are removed).
 
-**Note (Return Echo).** In multiple runs, locations of prior linon decay later act as weak attractors for new linons: trajectories revisit identical or ε-near coordinates after a delay. This **return echo** is distinct from Structural Closure: closure denotes a **static φ remnant** after decay; echo denotes a **behavioral bias** that steers future arrivals back to that remnant via local ∇φ shaping. See also the Return Echo hypothesis and trajectory density maps.
+Operationally, we detect Structural Closure whenever a linon decay event is followed by a localized φ remnant whose amplitude remains above background for at least one φ half-life at the former core location (within an ε-neighborhood). Presence/absence is summarized in the ablation table (§5.8) and can be cross-checked in the HTML evidence via `*_phi_center_plot.png` and `*_phi_center_log.csv`.
+
+**Note (Return Echo — extension).** In multiple runs, locations of prior linon decay later act as weak attractors for new linons: trajectories revisit identical or ε-near coordinates after a delay. This **Return Echo** is distinct from Structural Closure: closure denotes a **static φ remnant** after decay; echo denotes a **behavioral bias** that steers future arrivals back to that remnant via local ∇φ shaping. Return Echo is **not** part of the v1 core acceptance list; it is treated as an experimental hypothesis documented in the separate note `lineum-extension-return-echo.md` (trajectory density maps, statistics, and falsifiable tests are defined there).
 
 ## 5.5 Dimensional Transparency _(out of scope in core v1)_
 
@@ -538,11 +545,11 @@ _Evidence:_ see the HTML report `spec6_false_s41_grid256_lineum_report.html` (Qu
 
 # 6. Interpretation
 
-The confirmed phenomena suggest that local field interactions in Lineum can spontaneously produce structures and behaviors commonly associated with particle-like dynamics.
+The confirmed phenomena suggest that local field interactions in Lineum can spontaneously produce structures and behaviors reminiscent of particle-like dynamics.
 
 Particles exhibit **guided motion** along **+∇|φ|** (environmental guidance) **without** any force law or analogy to GR. When convergence occurs, it emerges from **local gradients and basin structure** in φ rather than from an imposed long-range interaction.
 
-The persistence of φ-structures after particle decay (Structural Closure) indicates that the interaction field can store and maintain spatial information independently of active excitations. This property could serve as a basis for long-lived memory or boundary conditions in emergent systems.
+The persistence of φ-structures after particle decay (Structural Closure) indicates that the interaction field can store and maintain spatial information independently of active excitations. In v1 we interpret this strictly through the φ center-trace half-life and localized φ remnants as defined in §5.4; any additional trajectory-level bias (Return Echo) is reserved for the extension track. This memory property could serve as a basis for long-lived boundary conditions or “imprinted” environments in emergent systems.
 
 Dimensional Transparency driven by time-varying κ has been observed only in exploratory runs and is **out of scope** for the v1 core; quantitative claims and artifacts are deferred to the experimental track (**v1.1.x-exp**).
 
@@ -572,7 +579,7 @@ Through controlled simulations, the model consistently produces:
 – **linons** with stable trajectories,
 – guided motion along +∇|φ| (environmental guidance),
 – persistent spin structures (Spin Aura),
-– φ-memory remnants after particle decay (consistent with the center-trace φ half-life metric),
+– φ-memory remnants after particle decay (**Structural Closure**, consistent with the center-trace φ half-life metric),
 – and long-term spectral stability of the canonical tone.
 
 _(“Dimensional Transparency” driven by time-varying κ is out of scope for the v1 core and deferred to the experimental track.)_
@@ -606,6 +613,19 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
 
+**1.0.6 — 2025-11-14 (patch)**
+
+- Abstract: move **Structural Closure** into the validated items list as an in-scope consequence of the φ center-trace half-life; keep **Return Echo** and κ-dynamics explicitly out of scope and delegated to the experimental/extension track.
+- §1 / header: clarify that Structural Closure is in scope for v1.0.x; add a file-level scope note distinguishing `lineum-core` from `lineum-exp-*` and `lineum-extension-*` whitepapers.
+- §5.4 Structural Closure: give an operational definition tied to the φ half-life metric and to concrete artifacts (`*_phi_center_log.csv`, `*_phi_center_plot.png`); explicitly mark Return Echo as an extension-level hypothesis handled in `lineum-extension-return-echo.md`.
+- §6 Interpretation and §7 Conclusion: align wording with the new Structural Closure definition (named, metric-linked), keeping trajectory-bias phenomena in the extension track.
+
+**1.0.5 — 2025-11-14 (patch)**
+
+- Abstract: rephrase the paragraph introducing SI-anchored numbers so they are explicitly framed as **scale illustration only**, not “quantitative signatures close to physical scales”.
+- Abstract: add an explicit sentence stating that the quoted Hz/keV/nm/mass-ratio values are **unit conversions of f₀**, not extra constraints or evidence of a realized physical scale.
+- §2 Motivation: soften “field-mediated forces” to “field-mediated interactions” to avoid suggesting a defined force law in the core scope.
+
 **1.0.4 — 2025-08-23 (patch)**
 
 - Version bump to **1.0.4-core**; insert **DOI** in header + _How to cite_.
@@ -628,7 +648,7 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.4-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.6-core**.
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -828,7 +848,7 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.3-core).**  
+**What’s included (core v1.0.6-core).**  
 All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` prefix.
 
 ### File map (per-seed; canonical examples)
