@@ -156,6 +156,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Připravit krátkou sekci „**možné fyzikální realizace**“: příklady systémů, kde by se podobná excitace mohla principálně objevit (optické mřížky, BEC, nelineární vlnová dynamika) – zatím jen jako „outlook“ bez tvrdých claimů.
 - [ ] Jasně oddělit **core model** (Eq-4 + linony + status Structural Closure podle whitepaperu) od pozdějších **interpretací** (gravitace, temná hmota, SM analogie) i v komunikačních materiálech. Mít možnost fyzikům říct: „tohle je čistě emergentní numerický model, tohle je interpretace navíc.“
 - [ ] U názvů jako „temná hmota“, „gravitace“, „éter“, „preony“… explicitně uvést, že jde o **pracovní analogie v rámci modelu**, nikoli tvrzení o totožnosti s konkrétní entitou Standardního modelu nebo kosmologie.
+- [ ] Připravit **Lineum-motivovaný efektivní model odchylek od Kerr BH** s bezrozměrnými parametry `\boldsymbol\theta_{\rm L}=\{\alpha_S,\beta_\kappa,\delta_{\rm ps}\}`, explicitně formulovaný jako #empirics / #outlook vrstva (ne přímá predikce Eq-4), a navázat ho na existující datové kanály (area theorem z GW, ringdown/QNM, EHT stíny) včetně jasného rozdělení: `\alpha_S` jako prakticky neměřitelná log-korekce pro astrofyzikální BH, hlavní testovatelnost přes `\beta_\kappa` a `\delta_{\rm ps}`.
 
 ### 🔲 L. Falsifikovatelnost a „promotion pipeline“ #meta
 
@@ -179,7 +180,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ---
 
-## 🔬 Priorita: Nejvyšší – explorace mapování na reálnou fyziku
+## 🧪 Priorita: Nejvyšší – explorace _efektivního_ mapování na reálnou fyziku
 
 ### 🔲 1. Temná hmota a temná energie #hypothesis
 
