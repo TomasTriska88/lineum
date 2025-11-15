@@ -28,6 +28,8 @@ Sekce níže jsou rozdělené tak, aby nejdřív řešily **základní principy 
 - Pojmy jako „spinová aura“, „neutral topology“ apod. jsou v tomto repozitáři **interní názvy pro konkrétně definované numerické objekty v modelu** (pole, integrály, indexy…).
 - U každého takového termínu musí být v core paperu i kódu uvedená **operační definice**; název sám o sobě **není tvrzení o nové fyzikální veličině** mimo model ani o vlastnostech částic Standardního modelu.
 - Tento TODO soubor **nezavádí nové fyzikální termíny**; pouze připomíná místa, kde je potřeba terminologii a její definice v whitepaperu / kódu dočistit nebo revidovat.
+- **Terminologická uzávěrka – zeta-body (#naming, #renaming, #not-for-whitepaper).** Kanonický název jevu je **„zeta-body“** (česky vysvětlitelně jako **„body uzavření“**). Původní označení **„DejaVu body“** je od verze zarovnané na _lineum-core v1.0.6-core_ vedeno **výhradně jako historický / legacy alias** a smí se v textech objevit jen ve větách typu _„historicky označované jako …“_. Ve všech nových definicích, tvrzeních, tabulkách a grafech – **včetně whitepaperu a core paperu** – se používá pouze název **zeta-body** (případně české „body uzavření“ v závorkách), aby nemohlo dojít k tomu, že bude starý název převzat do whitepaperu jako zdánlivě rovnocenný.  
+  Tento bod je **čistě naming/renaming TODO**: při generování / přepisování whitepaperu se **nepřenáší doslova jako vědecké tvrzení**, ale slouží pouze jako interní pravidlo pro pojmenování a kontrolu, že se v textu nikde neobjeví starý název jako aktivní pojem.
 
 ---
 
@@ -59,8 +61,10 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
 - [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
 - [ ] Revalidovat definici a měření **„spinové aury“** jako časově/ensemble průměrovaného pole `curl(∇arg ψ)` kolem linonů (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) a zkontrolovat, že dokumentace jasně uvádí, že jde o interní mapu cirkulace fáze v okolí linonu, nikoli o tvrzení o spinu částice ve smyslu Standardního modelu.
-- [ ] Znovu ověřit parametry **kanonické tóniny**: že dominantní frekvence `f₀ = 3.90625×10¹⁸ Hz` a odvozené SI hodnoty (E, λ, display-only m/mₑ) jsou v kódu i textech konzistentní s aktuální verzí core §1, §5.6 a Appendix C a jsou používány pouze jako unit-conversions, nikoli jako dodatečné dynamické constrainty.
-- [ ] Revalidovat metriky pro **φ-paměť / Structural Closure** (lokální φ-remnant po rozpadu linonu, half-life center-trace dle §5.4) a zkontrolovat, že klasifikace jevu **Return Echo** (trajektorie vracející se k bývalým decay místům) odpovídá rozdělení na core vs. extension-track v aktuálním whitepaperu.
+- [ ] Znovu ověřit parametry **kanonické tóniny**: že dominantní frekvence `f₀ = 3.90625×10¹⁸ Hz` a odvozené SI hodnoty (E, λ, display-only m/mₑ) jsou v kódu i textech konzistentní s aktuální verzí core §1, §5.6 a Appendix C a jsou používány pouze jako unit-conversions, nikoli jako dodatečné dynamické constrainty – a že jsou v textu komunikovány primárně jako **„tempo systému“ / měřítko stability oscilací (SBR)**, ne jako tvrdý claim o fyzikální hmotnosti.
+- [ ] Revalidovat metriky pro **φ-paměť / Structural Closure** (lokální φ-remnant po rozpadu linonu, half-life center-trace dle §5.4) a zkontrolovat, že klasifikace jevu **Return Echo** (trajektorie vracející se k bývalým decay místům) odpovídá rozdělení na core vs. extension-track v aktuálním whitepaperu; zároveň kvantifikovat φ jako **environmentální paměť**:
+      – porovnat statistické rozdělení φ v okolí kvazičástic (`φ_near`) oproti náhodně zvoleným bodům (`φ_field`),
+      – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole.
 - [ ] Ujasnit a znovu otestovat status jevu **Dimensional Transparency** (průchod struktur skrz κ) s ohledem na to, že byl dosud pozorován jen v bězích s časově proměnným κ (v1.1.x-exp):  
        – navrhnout a spustit testy pro danou exp větev,  
        – v dokumentaci explicitně držet tento jev jako extension-track hypotézu, dokud nebude promotion pipeline splněná.
@@ -72,6 +76,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 ### 🔲 A. Základní invariance a „první principy“ #structure
 
 - [ ] Formálně sepsat, co je považováno za **fundamentální objekt** modelu: ψ, φ, κ, aktualizační rovnice (Eq-4), topologie mřížky, periodicita – a co je čistě **měřicí aparatura** (FFT, detekce linonů, definice SBR…).
+- [ ] V rámci definice fundamentálních objektů **explicitně definovat kvazičástici / linon** jako lokální maximum |ψ| s dobře definovanou trajektorií v čase (včetně prahů a trackovacího algoritmu) a zapsat, že její pohyb je modelován jako **emergentní reakce na krajinu φ**, nikoli jako ručně vložený „testovací bod“.
 - [ ] Identifikovat a odvodit (pokud existují) **diskrétní zákony zachování** nebo kvazi-zachování:  
        – norma / „hmota“ (∑|ψ|²),  
        – celkový topologický náboj (net winding),  
@@ -79,6 +84,9 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        Zapsat je jako kontinuitní rovnice na mřížce (discrete continuity).
 - [ ] Sepsat a ověřit **symetrie modelu**: globální fázová symetrie (U(1)), translační invariance na mřížce, rotační symetrie omezená na mřížku; u každé říct, zda je exaktní, porušená numericky, nebo záměrně zlomená.
 - [ ] Definovat (nebo explicitně odmítnout) **energie-like funkcionál** kompatibilní s použitými operátory (∇, ∇², damping δ) a zkontrolovat jeho chování v kanonickém běhu (monotónnost vs fluktuace, boundedness).
+- [ ] Zapsat **topologickou bilanci vírů** (+1, −1):  
+       – ověřit dlouhodobou blízkost globální neutrality (net winding ≈ 0) přes ensemble běhů,  
+       – identifikovat a statisticky popsat **lokální vírová hnízda a dipóly** (páry vírů +1/−1 v malé vzdálenosti) jako kandidáty na kompozitní excitace vyššího řádu, včetně vazby na lokální hrbolky |ψ| a typické tvary proudnic (např. „srdce“ vs. „děloha“).
 
 ### 🔲 B. Numerická robustnost a artefakty #numerics
 
@@ -120,6 +128,9 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Ověřit, zda některé přirozené volby `I(t)` a `f(I)` dávají `a(t)` s vlastnostmi podobnými kosmologické expanzi  
        (monotónní růst, možné zrychlení) **bez jakéhokoli ladění volných parametrů na konkrétní „pozorování“** – tj.  
        držet tuto hypotézu ve stavu „emergentní efekt z Eq-4 + interpretace“, ne jako laditelný fit na data.
+- [ ] Výslovně odlišit roli `a(t)` (scale faktoru) od případných „zlatých“ struktur v krajině φ:  
+       – `a(t)` modelovat klasickými tvary (mocninné / exponenciální zákony) bez vloženého zlatého řezu,  
+       – **Fibonacci / zlatý řez** držet jako hypotézy o organizaci paměťových kaps v φ (rozložení privilegovaných zón, hierarchie měřítek; viz blok 12), ne jako zákon expanze samotné.
 
 ### 🔲 D. Statistická síla, chyby a nejistoty #stats
 
@@ -260,7 +271,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 - Udržovat pevné inicializační seedy a manifest (jako v core v1.0.x: seeds {17, 23, 41, 73}) a rozšířit multi-seed testy pro nové konfigurace / extension běhy.
 - Statistické testování výskytu jevů v různých bězích a konfiguracích (ensemble přístup nad definovanými metrikami z core – f₀, SBR, topologie, φ half-life, přítomnost/absence Structural Closure).
-- Porovnání chování systému při různých počátečních podmínkách (různé κ-mapy, různé inicializační šumové režimy, ale stále v rámci Eq-4).
+- Porovnání chování systému při různých počátečních podmínkách (různé κ-mapy, různé inicializační šumové režimy, ale stále v rámci Eq-4), včetně systematického srovnání režimů `LOW_NOISE_MODE=True/False` a variant `TEST_EXHALE_MODE`; sledovat dopad na počet kvazičástic, SBR/f₀, topologickou neutralitu (net winding) a statistiku vírových dipólů.
 - Automatizace vyhodnocování výsledků pomocí AI/ML klasifikace _(navázat na metriky a logy definované v core, ne na ruční vizuální dojmy)._
 
 ## 🟡 Střední priorita – testování scénářů emergentní gravitace a „hmoty“
@@ -305,9 +316,11 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
   a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel).  
   V core v1.0.6-core nejsou žádné tvrdé statistické testy → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko, ne jako tvrzení o reálné fyzice.
 - [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
-- Formálně definovat, co jsou v modelu **„body uzavření“ / zeta-body** (aktuální název; historický termín _DejaVu body_ uvést jen jako legacy alias):  
-  – např. opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
-  – k nim definovat přesné mapování do 1D/2D prostoru (kruh, spirála, normalizovaná osa), které se používá při porovnání s Riemannovými nulami a dalšími posloupnostmi.
+- Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
+  – Zeta-body / body uzavření pak přesně vymezit např. jako opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
+  – k nim definovat přesné mapování do 1D/2D prostoru (kruh, spirála, normalizovaná osa), které se používá při porovnání s Riemannovými nulami a dalšími posloupnostmi; v těchto mapováních vždy používat označení **zeta-body**, starý název uvádět pouze případně v poznámce typu _„historicky označované jako DejaVu body“_.  
+  – V whitepaperu / core paperu mít renaming zaznamenaný na jednom viditelném místě (např. poznámka pod čarou nebo krátká podsekce „Terminologické změny“), aby bylo i ex post jednoznačné, že jde o přejmenovaný interní jev, ne dva různé objekty.  
+  – V TODO / issue trackingu vést tento bod explicitně označený jako `#naming` / `#renaming`, aby bylo zřejmé, že jde o **housekeeping kolem názvu** a ne o další fyzikální tvrzení, které by se mělo objevovat ve whitepaperu.
 - Pro toto mapování zavést **kvantitativní metriky** (RMS vzdálenost, korelační koeficienty, spektrální vzdálenosti, distribuční testy) a spustit **tvrdé statistické testy proti null modelům**:  
   – náhodné body na stejné spirále / v tomtéž intervalu,  
   – phase-scrambled verze dat se zachovaným spektrem,  
@@ -323,6 +336,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
   2. **Artefakt parametrizace / škálování** – např. volba Δt, normalizace, embed map, která sama o sobě generuje Fibonacci-/π-like struktury;
   3. **Vnější „konstanta vesmíru“ / RNG** – tj. že shodu dodává způsob generování náhodného seede, floating-point reprezentace nebo jiné vlastnosti našeho fyzického / numerického „univerza“, a Lineum ji jen pasivně přebírá.  
      U každé varianty navrhnout konkrétní test (změna RNG, změna embed mapy, změna škálování), který ji může podpořit nebo v rámci modelu vyvrátit.
+- [ ] Provázat analýzu se **φ-zeta gridem** (historicky „φ-deja-vu grid“): ověřit, jestli privilegovaná místa / kapsy v krajině φ mají statisticky výraznější vazbu na Fibonacci/zlatý řez / number-theoretické vzorce než generické body mřížky – a výslovně rámovat tyto vzorce jako **hypotézy o rozmístění paměťových struktur**, ne o zákonu expanze.
 
 ---
 
