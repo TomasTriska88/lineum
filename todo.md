@@ -92,8 +92,34 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 - [ ] Sestavit tabulku všech **symbolů a jednotek** (ψ, φ, κ, t, x, α, β, δ, σξ, f₀, E, λ, m/mₑ) a provést explicitní **dimenzionální analýzu** Eq-4 + použitých metrik (včetně normalizace mřížky).
 - [ ] Jasně oddělit **simulační jednotky** (grid step, time step) od **SI ukotvení** přes f₀ a konverzi (E = h f₀, λ = c / f₀, m = h f₀ / c²). Uvést, které vztahy jsou pouze „display-only“ a které vstupují do dynamiky.
-- [ ] Zapsat, jak se model chová při **rescalingu** (převzorkování) časové / prostorové škály: které kombinace parametrů jsou invariantní a které vedeš jen jako vizualizační volbu.
+- [ ] Zapsat, jak se model chová při **rescalingu** (převzorkování) časové / prostorové škály: které kombinace parametrů jsou invariantní a které vedeš jen jako vizualizační volbu – včetně explicitního rozlišení mezi  
+       a) **pevně zvoleným měřítkem** (konstantní mapování pixel → metr, krok → sekunda) a  
+       b) **stavově závislým měřítkem** (mapování, které může být funkcí stavu pole).
 - [ ] Stručně vysvětlit status konstant **h, c, mₑ**: že se objevují jen v post-processingu (unit conversion), nikoli jako tvrdé vstupy do Eq-4.
+
+#### C2. Emergentní zoom a stavově závislé měřítko #units #hypothesis
+
+- [ ] Formálně zavést pojem **efektivního měřítka / „zoom faktoru“** `a(t)` pro mapování  
+       simulačních jednotek → SI (pixel → metr, time step → sekunda) tak, aby bylo jasně zapsáno, že `a(t)`  
+       **není nová dynamická proměnná v Eq-4**, ale pravidlo interpretace nad hotovým řešením (post-processing).
+- [ ] Definovat kandidátní **stavové skaláry** typu `I(t)` (např. entropie rozložení |ψ|, počet kvazičástic `N_q(t)`,  
+       průměrné φ², kombinace těchto veličin), které mohou parametrizovat „množství struktury / informace“ v systému.
+- [ ] Navrhnout jednoduché rodiny pravidel `a(t) = f(I(t))` (např. monotónní rostoucí funkce při růstu informační  
+       hustoty) a sepsat, jaké kvalitativní chování od nich chceme:  
+       – plynulost,  
+       – možnost efektivní expanze (a(t) roste) bez oscilací typu numerický šum,  
+       – případné zrychlování / zpomalování růstu jako analogie různých kosmologických fází.
+- [ ] Porovnat **dva světy**:  
+       1. baseline s **konstantním měřítkem** (současné čtení – žádná expanze),  
+       2. svět s **emergentním `a(t)`** odvozeným ze stavu pole,  
+       aniž by se změnil jediný term v Eq-4. Kvantifikovat, jak se liší interpretace „globální expanze“ v čase.
+- [ ] Explicitně zdokumentovat, že emergentní `a(t)` je alternativa k „přidání nového temno-členu do rovnice“:  
+       – žádný nový symbol v dynamice,  
+       – čistě **chytrější mapování** mřížky na fyzikální jednotky řízené obsahem (informací) uvnitř.  
+       V textu výslovně kontrastovat tento přístup s epicyklovým „+Λ(t) jen proto, aby to vycházelo“.
+- [ ] Ověřit, zda některé přirozené volby `I(t)` a `f(I)` dávají `a(t)` s vlastnostmi podobnými kosmologické expanzi  
+       (monotónní růst, možné zrychlení) **bez jakéhokoli ladění volných parametrů na konkrétní „pozorování“** – tj.  
+       držet tuto hypotézu ve stavu „emergentní efekt z Eq-4 + interpretace“, ne jako laditelný fit na data.
 
 ### 🔲 D. Statistická síla, chyby a nejistoty #stats
 
@@ -200,6 +226,12 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - Pokusit se detekovat oblasti s energetickou nebo topologickou stopou bez detekovatelné kvazičástice
 - Ověřit, zda některé víry nebo φ-pasti vykazují „neviditelný“ vliv na tok bez přítomnosti hmoty
 - Hledat trvalé fluktuace, které se energeticky projevují, ale nemají klasický nosič
+- [ ] Explicitně otestovat scénář, kde **„temná energie“ není nový člen v Eq-4**, ale důsledek  
+       **stavově závislého měřítka** `a(t)` z C2:  
+       – porovnat chování `a(t)` odvozeného z informačních/metrických veličin (H(t), N_q(t), φ²…)  
+       s intuicí kosmologické expanze (růst, případné zrychlení),  
+       – zapsat, za jakých podmínek by bylo možné mluvit o „expanzi jako emergentní vlastnosti informací v poli“,  
+       aniž by se do Eq-4 přidával nový dynamický „temný“ term.
 
 ### 🔲 2. Ověření známých částic a kvantových vlastností #hypothesis
 
