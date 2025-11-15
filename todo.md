@@ -132,6 +132,11 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        – chaotické / nestabilní,  
        – se stabilními linony (core sweet spot).  
        Minimálně 2D řezy (např. α–β, α–δ) se záznamem, kde ještě drží metriky z §4.3.1.
+- [ ] Specificky otestovat **nesymetrické κ-mapy** (např. rohový gradient z minima do maxima) vůči symetrickým konfiguracím (konstantní κ, 1D gradient v ose x/y, šachovnicové / náhodné fleky) a kvantifikovat vliv na:  
+       – statistiku vzniku a životnost linonů,  
+       – rychlost a pravděpodobnost anihilace párových excitací,  
+       – míru „chaotického víření“ oproti triviálnímu šumu.  
+       Výsledky shrnout v core/FAQ tak, aby bylo jasné, že „fyzikálně vypadající“ presety pracují s úmyslně nesymetrickým prostředím, nikoli s perfektně homogenní κ.
 
 ### 🔲 I. Limitní přechody a škálování #test
 
