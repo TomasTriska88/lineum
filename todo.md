@@ -131,6 +131,14 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Výslovně odlišit roli `a(t)` (scale faktoru) od případných „zlatých“ struktur v krajině φ:  
        – `a(t)` modelovat klasickými tvary (mocninné / exponenciální zákony) bez vloženého zlatého řezu,  
        – **Fibonacci / zlatý řez** držet jako hypotézy o organizaci paměťových kaps v φ (rozložení privilegovaných zón, hierarchie měřítek; viz blok 12), ne jako zákon expanze samotné.
+- [ ] (Tomášova hypotéza) Zapsat scénář, v němž je maximální rychlost šíření lokálních excitací v modelu
+      (interní „rychlost světla“ c_eff odvozená např. z grupové rychlosti dominantních módů) vždy menší
+      nebo rovna efektivní „rychlosti přípravy prostoru“ dané růstem `a(t)`. Přeložit to do jazyka Eq-4
+      a post-processingu tak, aby bylo jasné, že:  
+       – „příprava nového prostoru“ je čistě interpretace změny měřítka, ne nový dynamický term;  
+       – c_eff je vlastnost excitací na daném pozadí, ne vložený parametr;  
+       – v žádné interpretaci nesmí dojít k tomu, že excitace „utíkají z nepřipraveného prostoru“ – analog
+      podmínky, že horizont / mezní rychlost je konzistentní s expanzí.
 
 ### 🔲 D. Statistická síla, chyby a nejistoty #stats
 
@@ -247,6 +255,41 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        s intuicí kosmologické expanze (růst, případné zrychlení),  
        – zapsat, za jakých podmínek by bylo možné mluvit o „expanzi jako emergentní vlastnosti informací v poli“,  
        aniž by se do Eq-4 přidával nový dynamický „temný“ term.
+- [ ] (Tomášova hypotéza) Rozpracovat analogii „temná hmota = vzduch, temná energie = vítr“:  
+       – mapovat „vzduch“ na kvazistacionární φ-/ψ-struktury, které samy nenesou zřetelnou linonní excitaci,
+      ale ovlivňují tok ψ;  
+       – mapovat „vítr“ na pomalou, ale globální změnu měřítka `a(t)` a případně na dlouhovlnné módy v φ;  
+       – otestovat, jestli v nízkošumových bězích vznikají lokální víry / proudění ψ, které si nesou
+      „paměť“ předchozí dynamiky (φ-remnanta) a chovají se jako efektivní „vítr“ pro nově vznikající linony.
+- [ ] (Tomášova hypotéza) Pojmout Lineum jako analogii „buňky“, kde obal/hranice musí růst s vnitřním obsahem:  
+       – definovat metriky „růstu obsahu“ (např. počet linonů, integrální |ψ|² v aktivních oblastech) a sledovat,
+      jak na ně reaguje globální i lokální měřítko (případné změny interpretace `a(t)`);  
+       – zkoumat, zda existuje měřitelná „pružnost“ obalu – zpoždění mezi prudkým nárůstem struktury uvnitř
+      a relaxací φ / κ na hranici domény;  
+       – otestovat, zda lze tento lag interpretovat jako efektivní „elasticitu“ prostředí (buňky) bez přidání
+      nového termu do Eq-4.
+- [ ] (Tomášova hypotéza) Zkusit charakterizovat prostředí Linea (φ-krajinu) jako něco mezi kapalinou a plynem:  
+       – zavést jednoduché metriky „viskozity“ (jak rychle zanikají gradienty φ) a „kompresibility“ (jak velkou
+      změnu φ vyvolá daný lokální nárůst |ψ|²);  
+       – porovnat chování těchto metrik v různých parametrech (α, β, δ, κ, σξ) a zjistit, zda existují režimy,
+      které se makroskopicky chovají „plynovitě“ vs. „kapalně“;  
+       – případně tyto režimy použít jako interní analogii „řidšího“ vs. „hustšího“ temného prostředí.
+- [ ] (Kátina hypotéza) Ověřit scénář „temná hmota jako kapsle / rezervoár potenciálních hvězd“:  
+       – v rámci modelu hledat dlouhodobě stabilní oblasti se zvýšeným φ nebo |ψ|², které samy neobsahují
+      jasně detekovatelné linony, ale při vhodném rozrušení (vnější perturbace, kolize) generují kaskádu
+      nových excitací;  
+       – kvantifikovat tyto struktury jako „kapsle“ s kapacitou (např. integrální φ nebo ∑|ψ|² nad prahovou
+      hodnotou) a testovat, zda existují prahové podmínky, kdy se kapsle „otevře“ a rozpadne na více linonů
+      (analog hvězdné porodnice po narušení rovnováhy);  
+       – držet tento scénář explicitně jako [HYPOTHESIS] v rámci temného sektoru Linea, nikoli jako přímé tvrzení
+      o fyzikální temné hmotě v kosmologii.
+- [ ] (Tomášova + Kátina hypotéza) Připravit krátké srovnání těchto vnitřních analogií s mainstream kosmologií
+      (ΛCDM, dynamická temná energie, modifikovaná gravitace):  
+       – sepsat, které prvky jsou jen metafora (vzduch/vítr, kapsle) a nemají přímou fyzikální obdobu;  
+       – kde se naopak přirozeně potkávají s pojmy jako efektivní tlak, equation-of-state parametry w, baryonové
+      vs. nebaryonové složky;  
+       – v dokumentaci jasně oddělit „Lineum-temnou hmotu / energii“ jako interní analogii od reálných kosmologických
+      entit, aby nemohlo docházet k záměně při komunikaci navenek.
 
 ### 🔲 2. Ověření známých částic a kvantových vlastností #hypothesis
 
