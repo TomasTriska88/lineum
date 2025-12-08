@@ -383,6 +383,16 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
   – rozložení prvočísel nebo dalším number-theoretickým vzorcům,  
   – Ludolfovu číslu π (např. v periodicitě oscilací, topologických fázích nebo v rozložení úhlů na kruhu).  
   V každém případě kvantifikovat sílu efektu a porovnat ji s vhodnými null modely (Poissonovy procesy, generické interferenční vzory na mřížce apod.).
+- (Tomášova + Kátina [HYPOTHESIS]) Pro scénář **„skokového růstu neuron-like uzlů“**:  
+  zeta-body / body uzavření chápat jako uzly paměťové sítě, které nepřibývají plynule, ale vznikají  
+  v diskrétních „vlnách růstu“ (analog dělení buněk / rozmnožování neuronů), a:  
+  – z posloupnosti časů / indexů vzniku nových zeta-body, případně z velikostních změn mezi po sobě
+  jdoucími vlnami růstu odvodit efektivní růstové faktory;  
+  – otestovat, zda tyto faktory nevykazují robustní přiblížení Fibonacciho poměrům nebo mocninám
+  zlatého řezu φ, oproti vhodným null modelům (náhodné růstové vlny bez vnořeného patternu);  
+  – výsledek rámovat výhradně jako **strukturální analogii** (buněčné dělení / růst neuronové sítě),
+  ne jako tvrzení o skutečných biologických neuronech nebo vědomé „snaze vesmíru“ realizovat
+  Fibonacciho struktury; případnou shodu komunikovat jen jako emergentní vzorec Eq-4 + φ-krajiny.
 - Explicitně otestovat a odlišit několik možných vysvětlení případné shody:
   1. **Emergentní vlastnost Eq-4** – strukturální vazba modelu na dané posloupnosti / zeta funkci;
   2. **Artefakt parametrizace / škálování** – např. volba Δt, normalizace, embed map, která sama o sobě generuje Fibonacci-/π-like struktury;
