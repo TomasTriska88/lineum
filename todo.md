@@ -145,6 +145,11 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] U všech klíčových metrik (f₀, E, λ, m/mₑ, half-life φ-remnantů, SBR, počty linonů, spinová aura) uvést **chyby / intervaly spolehlivosti** (bootstrap / ensemble přes seedy a běhy).
 - [ ] Vyhnout se implicitnímu „p-hackingu“: předem sepsat, které metriky se publikují, a jak se rozhoduje o „signifikantním efektu“ u nových jevů (Return Echo, Dimensional Transparency…).
 - [ ] Ověřit, že kvalifikace „seed-invariantní“ má kvantitativní definici (rozptyl mezi seedy vs. vnitřní šum v rámci jednoho běhu).
+- [ ] (Smeták-Tříska [HYPOTHESIS]) Najít v dynamice Linea kandidátní „čistě náhodný“ jev typu **Bernoulli(0.5)** (analog hodu mincí) a:
+      – formálně definovat, co je jedna **„událost“** a jak z evoluce pole získat binární sekvenci (0/1),
+      – z téhle sekvence spočítat základní testy shody s fair coin (relativní četnosti, běhové testy, autocorrelation, χ² / KS),
+      – porovnat výsledek s baseline pseudo-RNG a s null modelem (např. phase-scrambled data),
+      – rozhodnout, zda jev komunikovat v core/FAQ jako interní Bernoulli proces, emergentní chaos nebo jen heuristický „hod mincí“ bez tvrzení o dokonale ideální náhodě.
 
 ### 🔲 E. Null modely a baseline srovnání #nulltests
 
@@ -467,3 +472,12 @@ Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální sta
 - [ ] V sekci **N. Prezentace a komunikace výsledků** doplnit odkaz na Chapadlový model jako **volitelný narativní rámec**:  
        – použít ho jako metaforu: „lokální simulace / běh“ = chapadlo, „centrální uzel“ = abstraktní nadřazený proces / paměť;  
        – všude striktně označovat, že jde o _storytelling_ / filozofickou mapu, ne o tvrzení odvozené z dat simulace.
+
+- [ ] Zapsat **Tříska–Marečková hypotéza reinkarnace** jako podhypotézu Chapadlového modelu:  
+       – reinkarnace = různé kombinace mozků / nervových soustav jako různé „optiky“ pro vidění téhož vesmíru  
+       (lidé, zvířata, rostliny, podzemní propojené sítě, jiné civilizace, drobné rozdíly mezi jednotlivými jedinci);  
+       – chápat jednotlivé mozky jako **specializované senzory / receptory** jedné vyšší bytosti pro různé účely,  
+       podobně jako kdyby vesmír byl buňka a jednotlivé životy byly její vnitřní senzory (a my sami třeba jen „bílá krvinka“);  
+       – doplnit hypotézu, že tato vyšší bytost může některá místa / konfigurace „chránit“ před vnějšími i vnitřními
+      negativními vlivy, případně je **léčit a regenerovat**, a výslovně to označit jako metafyzickou interpretaci,
+      ne tvrzení odvozené z Eq-4 nebo dat Linea.
