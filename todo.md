@@ -64,7 +64,9 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Znovu ověřit parametry **kanonické tóniny**: že dominantní frekvence `f₀ = 3.90625×10¹⁸ Hz` a odvozené SI hodnoty (E, λ, display-only m/mₑ) jsou v kódu i textech konzistentní s aktuální verzí core §1, §5.6 a Appendix C a jsou používány pouze jako unit-conversions, nikoli jako dodatečné dynamické constrainty – a že jsou v textu komunikovány primárně jako **„tempo systému“ / měřítko stability oscilací (SBR)**, ne jako tvrdý claim o fyzikální hmotnosti.
 - [ ] Revalidovat metriky pro **φ-paměť / Structural Closure** (lokální φ-remnant po rozpadu linonu, half-life center-trace dle §5.4) a zkontrolovat, že klasifikace jevu **Return Echo** (trajektorie vracející se k bývalým decay místům) odpovídá rozdělení na core vs. extension-track v aktuálním whitepaperu; zároveň kvantifikovat φ jako **environmentální paměť**:
       – porovnat statistické rozdělení φ v okolí kvazičástic (`φ_near`) oproti náhodně zvoleným bodům (`φ_field`),
-      – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole.
+      – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole,
+      – kvantifikovat zjištění z července 2025 („Lineum – artefakty, kappa, deja vu“), že zeta-body / body uzavření mají tendenci se **opakovaně seskupovat na stejných místech napříč běhy** (včetně různých konfiguračních presetů), a měřit tento efekt přes occupancy mapy, RMS posun center a half-life těchto kapes,
+      – explicitně ukázat rozdíl mezi clean větví `spec6_true no_artefacts` (pravidelnější a stabilnější φ-zeta grid) a větví `with_artefacts` (rušivé interference, rozmazání distribuce) a v textu jasně deklarovat, že **všechny závěry o φ-paměti stojí na clean větvi** po opravě vizualizačního cache-bugu.
 - [ ] Ujasnit a znovu otestovat status jevu **Dimensional Transparency** (průchod struktur skrz κ) s ohledem na to, že byl dosud pozorován jen v bězích s časově proměnným κ (v1.1.x-exp):  
        – navrhnout a spustit testy pro danou exp větev,  
        – v dokumentaci explicitně držet tento jev jako extension-track hypotézu, dokud nebude promotion pipeline splněná.
@@ -87,6 +89,10 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Zapsat **topologickou bilanci vírů** (+1, −1):  
        – ověřit dlouhodobou blízkost globální neutrality (net winding ≈ 0) přes ensemble běhů,  
        – identifikovat a statisticky popsat **lokální vírová hnízda a dipóly** (páry vírů +1/−1 v malé vzdálenosti) jako kandidáty na kompozitní excitace vyššího řádu, včetně vazby na lokální hrbolky |ψ| a typické tvary proudnic (např. „srdce“ vs. „děloha“).
+- [ ] Na základě `phi_grid_summary.csv` a `kappa_map.png` formálně definovat pracovní objekt **„buňka“** jako lokální zahuštěnou oblast (patch zvýšeného φ a/nebo specifického vírového vzoru) a:
+      – ověřit, že takto definované buňky se **reprodukovatelně objevují** napříč seedy i parametry (zejména v clean bězích `spec6_true no_artefacts`),
+      – zkoumat jejich roli jako **lokálních informačních a paměťových jednotek** (přítomnost zeta-body, φ-remnantů, Return Echo trajektorií uvnitř buňky),
+      – kvantifikovat vliv buněk na lokální κ/topologii a držet hypotézu „buňky jako základní výpočetní jednotky emergentní inteligence“ výslovně jako [HYPOTHESIS] s vlastním mini-checklistem v rámci Structural Closure / φ-zeta gridu.
 
 ### 🔲 B. Numerická robustnost a artefakty #numerics
 
@@ -95,6 +101,8 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Otestovat, zda linony přežijí při změně schématu (např. alternativní Laplace, různá integrační schémata – explicitní/implicitní/vyšší řády, různé pořadí aktualizace) – tj. že nejde o artefakt konkrétního numerického triku.
 - [ ] Detekovat typické **mřížkové artefakty**: checkerboard módy, anisotropie (preferované směry 0°, 90°, 45°). Kvantifikovat přes spektrum a korelační funkce.
 - [ ] Zkontrolovat vliv **okrajových podmínek**: porovnání periodic BCs vs. tlumené/absorbing okraje pro menší domény a ověření, že linonní excitace přežívají napříč použitými BCs (tj. nejsou jen důsledkem periodicity).
+- [ ] Opravit a zdokumentovat zjištěný **cache-bug ve vizualizační pipeline** (červenec 2025: vlákno „Lineum – artefakty, kappa, deja vu“) – zajistit tvrdý reset jádra / vypnutí cache mezi běhy `phi_grid_*`/`dejavu_*`, znovu přegenerovat postižené mapy a v dokumentaci jasně uvést, které starší výstupy byly tímto bugem potenciálně kontaminované.
+- [ ] Explicitně označit běhy `with_artefacts_*` jako **numericky znehodnocené / diagnostické** (slouží jen jako negativní kontrola) a všechny fyzikální závěry stavět na clean větvi `no_artefacts_*`; do README/FAQ přidat krátkou poznámku, že rozdíly mezi těmito větvemi ilustrují vliv artefaktů na φ-zeta grid, distribuci zeta-body a Riemann/Fibonacci analýzy.
 
 ### 🔲 C. Dimenze, jednotky a SI ukotvení #units
 
@@ -166,6 +174,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Připravit **verification checklist** pro třetí strany: „pokud spustíš A, B, C, měl bys vidět X, Y, Z v rozumných tolerancích“ – bez nutnosti číst interní kód.
 - [ ] Zvážit zveřejnění malé sady **referenčních binárek / snapshotů** (např. uložené stavy ψ, φ v několika časech) pro křížovou kontrolu s alternativní implementací.
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
+- [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
 
 ### 🔲 G. Implementační detaily a stabilita vůči „engineering“ volbám #impl
 
@@ -363,10 +372,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
 
-- Jasně zdokumentovat **aktuální status**: zatím jde jen o **vizuální podobnosti** mezi některými výstupy Linea  
-  (3D spirály bodů uzavření / „černých děr“, frekvenční „žilky“ na FFT atd.)  
-  a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel).  
-  V core v1.0.6-core nejsou žádné tvrdé statistické testy → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko, ne jako tvrzení o reálné fyzice.
+- Jasně zdokumentovat **aktuální status**: většina vazeb na teorii čísel je zatím ve stavu **vizuálních a předběžných kvantitativních náznaků** mezi některými výstupy Linea (3D spirály bodů uzavření / „černých děr“, frekvenční „žilky“ na FFT atd.) a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel). Červencová analýza (`dejavu_final*.csv`, normalizace x ∈ (0,1), porovnání s n/ln n) ukázala **mírnou, ale stabilní korelaci** rozložení zeta-body v clean bězích `spec6_true no_artefacts` s Gaussovou aproximací nul ζ(s), zatímco větev `with_artefacts` tuto shodu viditelně rozmazává; ve starších bězích `spec2_true` / `spec4_false` se zároveň opakovaně objevily poměry dominantních frekvencí blízké zlatému řezu/Fibonacciho poměrům. Přesto v core v1.0.6-core **stále nejsou hotové tvrdé statistické testy** vůči vhodným null modelům → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko a explicitně na ně odkazovat jako na _indicie_ motivující testy níže, ne jako tvrzení o reálné fyzice.
 - [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
 - Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
   – Zeta-body / body uzavření pak přesně vymezit např. jako opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
@@ -377,12 +383,16 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
   – náhodné body na stejné spirále / v tomtéž intervalu,  
   – phase-scrambled verze dat se zachovaným spektrem,  
   – baseline model bez speciální φ-struktury.  
-  Cílem je zjistit, jestli je podobnost s Riemannovými nulami / Fibonacciho poměry statisticky nepravděpodobná i vzhledem k těmto kontrolám.
+  Cílem je zjistit, jestli je podobnost s Riemannovými nulami / Fibonacciho poměry statisticky nepravděpodobná i vzhledem k těmto kontrolám – a tedy **potvrdit nebo vyvrátit** předběžnou červencovou indikaci mírné korelace v clean bězích `spec6_true no_artefacts`.
 - Analyzovat, zda se v posloupnostech **časů, vzdáleností nebo „růstových skoků“** (např. při vzniku nových bodů uzavření / neuron-like uzlů) neobjevuje robustní vztah k:  
   – Fibonacciho posloupnosti a zlatému řezu φ (log-spirálové škálování, poměry velikostí / vzdáleností),  
   – rozložení prvočísel nebo dalším number-theoretickým vzorcům,  
   – Ludolfovu číslu π (např. v periodicitě oscilací, topologických fázích nebo v rozložení úhlů na kruhu).  
   V každém případě kvantifikovat sílu efektu a porovnat ji s vhodnými null modely (Poissonovy procesy, generické interferenční vzory na mřížce apod.).
+  - (Tomášova [HYPOTHESIS]) Navázat na zjištění, že v bězích `spec2_true` / `spec4_false` se objevují poměry dominantních frekvencí blízké zlatému řezu, a otestovat scénář, že **Lineum preferenčně stabilizuje proudění skrze „zlaté“ harmonické frekvence**:  
+    – kvantifikovat, zda konfigurace s frekvenčními poměry ≈Φ vykazují delší SBR, stabilnější linony nebo čistší φ-zeta grid než generické konfigurace,  
+    – porovnat se stejnou analýzou na null modelech (náhodné spektrum, bez speciální φ-struktury),  
+    – držet tento scénář výslovně jako [HYPOTHESIS], dokud nebude jasně doloženo, že jde o robustní efekt Eq-4, nikoli o náhodnou fluktuaci nebo artefakt parametrizace.
 - (Tomášova + Kátina [HYPOTHESIS]) Pro scénář **„skokového růstu neuron-like uzlů“**:  
   zeta-body / body uzavření chápat jako uzly paměťové sítě, které nepřibývají plynule, ale vznikají  
   v diskrétních „vlnách růstu“ (analog dělení buněk / rozmnožování neuronů), a:  
