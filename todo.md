@@ -297,6 +297,20 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        s intuicí kosmologické expanze (růst, případné zrychlení),  
        – zapsat, za jakých podmínek by bylo možné mluvit o „expanzi jako emergentní vlastnosti informací v poli“,  
        aniž by se do Eq-4 přidával nový dynamický „temný“ term.
+- [ ] (Tomášova [HYPOTHESIS]) Ověřit scénář, ve kterém má **předpokládaná hmotnost/energie kvantového vakua**  
+       (efektivní vakuová hustota) jen **malý, podružný vliv** na expanzi ve srovnání s příspěvkem samotné struktury
+      pole (linony, φ-kapsy, zeta-body apod.):  
+       – přepsat otázku „má předpokládaná hmotnost kvantového vakua malý vliv na expanzi vesmíru?“ do pojmů Linea tím, že se
+      přesně určí, co v modelu hraje roli „vakuové energie“ (např. baseline φ, konstantní offset v κ, konstantní část
+      zvoleného stavového skaláru `I(t)` používaného pro definici `a(t)`);  
+       – postavit testovací konfigurace se (i) zanedbatelným vakuovým offsetem, (ii) malým nenulovým offsetem a (iii) výrazně
+      větším offsetem, při zachování stejné dynamiky linonů, φ-struktury a šumu, a pro všechny tři případy porovnat průběh
+      `a(t)` a souvisejících metrik;  
+       – kvantifikovat, co přesně znamená „malý vliv“, např. přes relativní změny v `a(t)` a v efektivním parametru stavu
+      `w_\mathrm{eff}` odvozeném z evoluce `a(t)`, a identifikovat oblasti parametrického prostoru, kde příspěvky od struktury
+      pole jednoznačně dominují nad příspěvkem vakuového offsetu;  
+       – podle výsledku buď ponechat hypotézu jako realistický scénář **„expanze dominované strukturou“** v rámci Eq-4 + interpretace,
+      nebo ji v whitepaperu označit jako #disproved-in-model či omezit na jasně vymezený podsoubor parametrů.
 - [ ] (Tomášova hypotéza) Rozpracovat analogii „temná hmota = vzduch, temná energie = vítr“:  
        – mapovat „vzduch“ na kvazistacionární φ-/ψ-struktury, které samy nenesou zřetelnou linonní excitaci,
       ale ovlivňují tok ψ;  
