@@ -160,6 +160,15 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        – c_eff je vlastnost excitací na daném pozadí, ne vložený parametr;  
        – v žádné interpretaci nesmí dojít k tomu, že excitace „utíkají z nepřipraveného prostoru“ – analog
       podmínky, že horizont / mezní rychlost je konzistentní s expanzí.
+- [ ] (Kátina [HYPOTHESIS]) Prozkoumat scénář **vícevrstvého Linea** („několik vrstev Linea pod sebou“), kde
+      existuje index vrstvy `n` a pole mají tvar ψ⁽ⁿ⁾, φ⁽ⁿ⁾, κ⁽ⁿ⁾:  
+       – navrhnout 1–2 jednoduché typy couplingů mezi vrstvami (např. `κ^{(2)} = κ^{(2)}_0 + f(φ^{(1)})`
+      nebo pomalý přenos `φ^{(1)} → φ^{(2)}` přes zpožděnou odezvu),  
+       – otestovat, zda lze dolní vrstvu vnímat jako „hrubší“ / „hmotnější“ patro a horní jako jemnější efektivní
+      vrstvu, která vidí jen agregované vlastnosti spodní (např. přes průměrované φ / statistiku linonů),  
+       – rozhodnout, zda vícevrtvové scénáře budeme držet jako čistě **interpretační nadstavbu** k jednomu Eq-4
+      (efektivní „patra reality“ v post-processingu), nebo jako samostatnou **extension větev** s explicitním
+      indexem `n` v rovnicích; v dokumentaci to jasně oddělit od core v1.0.6-core.
 
 ### 🔲 D. Statistická síla, chyby a nejistoty #stats
 
