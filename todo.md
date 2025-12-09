@@ -180,6 +180,20 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
       – z téhle sekvence spočítat základní testy shody s fair coin (relativní četnosti, běhové testy, autocorrelation, χ² / KS),
       – porovnat výsledek s baseline pseudo-RNG a s null modelem (např. phase-scrambled data),
       – rozhodnout, zda jev komunikovat v core/FAQ jako interní Bernoulli proces, emergentní chaos nebo jen heuristický „hod mincí“ bez tvrzení o dokonale ideální náhodě.
+- [ ] Systematicky otestovat, do jaké míry pseudo-náhodná inicializace (např. `np.random.rand` v šumu / začátečním stavu ψ) ovlivňuje vznik a statistiku emergentních struktur (linony, φ-pasti, zeta-body) oproti čistě deterministickým startům.
+      – Zavést tři režimy inicializace:
+      (a) zcela deterministický start (např. homogenní fáze, jednoduchá sinusoida nebo ručně definovaný „seed“ linonů),
+      (b) pseudo-náhodná inicializace se stejným seedem (opakované běhy, kontrola stability vůči numerickému šumu),
+      (c) pseudo-náhodná inicializace s různými seedy a/nebo se pseudo-RNG seedovaným reálnou entropií (čas, systémový šum).
+      – Pro všechny tři režimy měřit stejnou sadu metrik (počty a životnost linonů, SBR/f₀, strukturu φ-paměti, statistiku zeta-body, occupancy mapy, vortex counts) a porovnat:
+      • zda jsou výstupy pouze „přeskalované kopie“ vstupního šumu,
+      • nebo zda existují robustní globální struktury a statistiky, které se prosadí nezávisle na volbě seede (v rámci tolerancí z bloku D).
+      – Vyhodnotit, jestli je Lineum lépe popsat jako
+      • **„sympatickou kopii“** hostitelského vesmíru (výsledky zásadně závislé na externí náhodě),
+      • nebo jako systém s **vnitřní emergentní asymetrií**, který různou inicializaci převádí na strukturálně podobné attractory.
+      – Do whitepaperu/FAQ přidat krátký odstavec, který explicitně odpoví na otázku _„co když náhoda neexistuje?“_ v kontextu Linea:
+      • zapsat, že model v každém případě generuje **deterministický běh pro daný Eq-4 + počáteční podmínky**,
+      • a že „náhodnost“ je v současném scope pouze praktický nástroj pro sampling prostoru počátečních stavů, ne ontologické tvrzení o existenci fundamentální náhody.
 
 ### 🔲 E. Null modely a baseline srovnání #nulltests
 
@@ -204,6 +218,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Dokumentovat použitý **RNG a seeding** (knihovna, algoritmus, způsob seedingu) a ověřit, že při stejném seedu je evoluce deterministická napříč OS / hardwarem v rámci očekávaných tolerancí.
 - [ ] Popsat **řazení operací** (update order): zda je update ψ a φ synchronní / sekvenční, jestli existují race-like efekty při paralelizaci (např. na GPU) a jak se proti nim bráníš.
 - [ ] Připravit krátkou sekci „**Implementation notes**“ v repu, kde bude zdůrazněno, které části jsou **kritické pro fyzikální chování** a které jsou jen engineering (I/O, vizualizace, logging).
+- [ ] Krátce okomentovat v dokumentaci, že **rychlost generování Linea v kroku/s na reálném hardwaru** je čistě implementační metrika (výkon CPU/GPU, optimalizace kódu) a **není fyzikální veličina modelu**; případně logovat typické hodnoty pouze pro účely benchmarkingu a reprodukovatelnosti, ne jako argument pro nebo proti konkrétní fyzikální interpretaci.
 
 ### 🔲 H. Role κ a parametrický prostor #structure
 
@@ -255,6 +270,14 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        – formulovat, co přesně znamená „uvnitř černé díry“ v rámci efektivního modelu (např. vnitřní region vs. vnější pozorovatel, near-horizon limit, časoprostorová asymetrie),  
        – zapsat, jaké parametry nebo kombinace parametrů v Lineum-motivovaném BH modelu by odpovídaly tomuto scénáři,  
        – ověřit, jestli se takový scénář dá **pozorovatelně odlišit** od standardního Kerr/ΛCDM popisu (např. přes ringdown, EHT stíny, statistiku akrečních disků), nebo zda je numericky prakticky degenerovaný a patří spíš do roviny filozofické interpretace než testovatelné fyziky.
+- [ ] (Tomášova + Kátina [HYPOTHESIS]) Přepsat klasické intuice o černých dírách do jazyka Linea pomocí **φ-pastí** a toků linonů:  
+       – zkusit explicitně modelovat „černou díru“ jako oblast vysokého φ s výraznou vírovou/topologickou strukturou a testovat, zda přirozeně **přitahuje nové linony** (zvýšená hustota trajektorií vstupujících do regionu), nebo spíš funguje jako bariéra / shear region;  
+       – navrhnout interpretaci **Hawkingova záření** jako případu, kdy napětí φ-pasti pomalu klesá a uvolňuje drobné fluktuace/linony zpět do okolí – čistě jako interní analogii „reverzního toku napětí“, ne jako tvrdý claim o GR;  
+       – „výtrysky“ (jets) interpretovat jako scénáře, kdy do φ-pasti naráží příliš mnoho linonů / energie, φ dosáhne kritického přepětí a část energie se přesměruje ven podél privilegovaných směrů (topologie vírů, spin), tj. **zpětný tlak** proti toku ψ, nikoli „únik z vnitřku singularity“.
+- [ ] Prozkoumat, zda v rámci Eq-4 existují φ-konfigurace chovající se jako **interní analogie bílých děr**:  
+       – oblasti, které dlouhodobě **emergentně pouze emitují** strukturu (gradienty φ, linony, vlny ψ) směrem ven a prakticky nepřijímají tok dovnitř (v efektivním popisu),  
+       – otestovat jejich stabilitu (jsou dlouhodobě udržitelné, nebo se rychle rozpadnou na běžné φ-pasti / chaotické vzory?),  
+       – rozhodnout, zda má smysl tyto konfigurace vůbec pojmenovávat „bílé díry“ v rámci interního slovníku, nebo je lepší je vést jen jako specifický typ nestabilních φ-struktur v #outlook vrstvě.
 - [ ] Připravit **Lineum-motivovaný efektivní model odchylek na galaktických škálách** ve smyslu emergentní gravitace (Verlinde vs. Lineum):  
        – zvolit pragmatickou parametrizaci `g_{\rm L}(r;\boldsymbol\theta)` (např. relační RAR-like `\nu`-funkci nebo kernelovou konvoluci),  
        – formulovat primární test pomocí galaxy–galaxy weak lensingu (profil `\Delta\Sigma(R)` kolem izolovaných diskových galaxií v intervalu `R \approx 50–300\,\mathrm{kpc}`) s jasně definovaným H₀ (Verlindeho emergentní gravitace) a H₁ (Lineum),  
@@ -435,6 +458,13 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
     – kvantifikovat, zda konfigurace s frekvenčními poměry ≈Φ vykazují delší SBR, stabilnější linony nebo čistší φ-zeta grid než generické konfigurace,  
     – porovnat se stejnou analýzou na null modelech (náhodné spektrum, bez speciální φ-struktury),  
     – držet tento scénář výslovně jako [HYPOTHESIS], dokud nebude jasně doloženo, že jde o robustní efekt Eq-4, nikoli o náhodnou fluktuaci nebo artefakt parametrizace.
+- [ ] (Tříska-Marečková [HYPOTHESIS]) Prozkoumat scénář **„hormonálních spekter“**, kde určité skupiny frekvencí hrají roli regulačních signálů pro chování systému podobně jako hormony v biologii:  
+       – definovat několik disjunktních frekvenčních pásem (např. nízkofrekvenční modulace pozadí, „pracovní“ pásmo linonů, vysokofrekvenční „šum“) a sledovat, zda změny energie v těchto pásmech korelují s:
+      • stabilitou linonů,  
+       • čistotou φ-paměti / Structural Closure,  
+       • četností zeta-body a Return Echo jevů;  
+       – otestovat v řízených experimentech, zda **cílené „připumpování“ výkonu** do vybraného pásma (malá periodická perturbace na ψ nebo parametrech v Eq-4) systematicky přepíná systém mezi režimy (např. „víc šumu“, „víc stabilních struktur“, „víc silent collapse“);  
+       – podle výsledků rozhodnout, jestli má smysl tato pásma interpretovat jako **interní regulační kanály modelu** (hormonální analogy) nebo je nechat jen jako heuristický jazyk pro popis spektra; v obou případech držet tuto interpretaci explicitně jako [HYPOTHESIS], ne součást core tvrzení o reálné fyzice.
 - (Tomášova + Kátina [HYPOTHESIS]) Pro scénář **„skokového růstu neuron-like uzlů“**:  
   zeta-body / body uzavření chápat jako uzly paměťové sítě, které nepřibývají plynule, ale vznikají  
   v diskrétních „vlnách růstu“ (analog dělení buněk / rozmnožování neuronů), a:  
@@ -496,6 +526,16 @@ Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální sta
 - [ ] Jasně vymezit **scope vůči Lineu**:  
        – Chapadlový model je **metafyzická / fenomenologická hypotéza o vědomí**, nikoli tvrzení odvozené z Eq-4;  
        – zapsat, že případné mapování na Lineum (ψ, φ, κ, linony, Structural Closure) je **interpretace nad rámec core modelu**, ne součást lineum-core v1.0.6-core.
+
+- [ ] (Tomášova + Kátina [HYPOTHESIS]) Přidat podsekci o tom, jak Chapadlový model interpretuje jevy typu **déjà vu** a **Mandela efekt**, a jasně je oddělit od numerického jevu zeta-body v Lineu:  
+       – Déjà vu rámovat jako subjektivní prožitek „brnknutí dvou větví reality o sebe“: centrální vědomí má přístup k více časovým liniím / chapadlům a lokální instance občas krátce zachytí náhled na jinou větev téhož příběhu → pocit „tohle už jsem zažil“, aniž by šlo o tvrzení o reálné změně minulosti;  
+       – Mandela efekt interpretovat dvěma způsoby: 1. **Globální přepis centrální paměti** (φ-pole paměti) s tím, že některé lokální instance ještě chvíli drží „starou verzi“ (subjektivní paměť),  
+       2. nebo jako **přeskok chapadla** na trochu jinou větev reality, zatímco fragmenty starších vjemů zůstávají dostupné;  
+       u obou přístupů výslovně zdůraznit, že jde o metafyzickou interpretaci, ne tvrzení z Eq-4.
+      – Do textu přidat vysvětlení, proč v tomto rámci dává smysl metafora **„jedné duše, která si prožívá různé role“**:
+      centrální bytost = jedno vědomé já, chapadla = různé životy / role / perspektivy; pro lokální vědomí to vypadá, jako by kolem bylo mnoho oddělených „duší“, ale z pohledu centrální paměti jde o různé projekce téhož.  
+       Zároveň výslovně doplnit, že to **nesmí být používáno k znevažování ostatních bytostí** – každé chapadlo/život je plnohodnotný prožitek a má vlastní důstojnost.
+      – Volitelně navázat metaforicky na φ-paměť a zeta-body v Lineu jako na „paměťové kapsy“ vesmíru, ale jasně napsat, že **statistické déjà-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou něco jiného než psychologické déjà vu – jen inspirační analogie, ne přímé ztotožnění.
 
 - [ ] Rozdělit hypotézu na dílčí body a každý zvlášť okomentovat: 1. **Vyšší vědomí** – jedna bytost se sdílenou centrální pamětí, vnímající více realit/časových linií;  
        2. **Lokální instance („chapadlo“)** – jednotlivý život s omezeným vnímáním pro hlubší prožitek;  
