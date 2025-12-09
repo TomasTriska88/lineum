@@ -10,6 +10,42 @@ from scipy.ndimage import gaussian_filter, maximum_filter
 import os
 from scipy.spatial.distance import euclidean
 import random
+import json
+import datetime
+
+
+def _json_safe(obj):
+    """
+    Převádí numpy typy na primitivní Python (kvůli JSON serializaci).
+    """
+    import numpy as _np
+
+    # Numpy scalars
+    if isinstance(obj, (_np.integer,)):
+        return int(obj)
+    if isinstance(obj, (_np.floating,)):
+        return float(obj)
+
+    # Numpy array
+    if isinstance(obj, _np.ndarray):
+        return obj.tolist()
+
+    # Python primitivní typy necháme být
+    if isinstance(obj, (int, float, bool, str)) or obj is None:
+        return obj
+
+    # Dict → rekurzivně
+    if isinstance(obj, dict):
+        return {k: _json_safe(v) for k, v in obj.items()}
+
+    # List / tuple → rekurzivně
+    if isinstance(obj, (list, tuple)):
+        return [_json_safe(x) for x in obj]
+
+    # Cokoliv jiného odmítneme
+    raise TypeError(
+        f"Object of type {type(obj).__name__} is not JSON serializable")
+
 
 # --- Run config ---
 RUN_ID = 6
@@ -223,6 +259,44 @@ def save_csv(filename, header, rows):
         else:
             df = pd.DataFrame(data)
         df.to_csv(path, index=False)
+        notify_file_creation(path)
+    except Exception as e:
+        notify_file_creation(path, success=False, error=e)
+
+
+def save_manifest(
+    manifest=None,
+    filename=None,
+    run_info=None,
+    metrics=None,
+    data_files=None,
+    extra=None,
+):
+    """
+    Save a JSON manifest for this run for machine parsing.
+
+    Použití:
+      • save_manifest(manifest_dict)
+      • save_manifest("file.json", run_info=..., metrics=..., data_files=...)
+    """
+    # Když nedostaneme hotový manifest, složíme ho z dílků
+    if manifest is None:
+        manifest = {
+            "run": run_info or {},
+            "metrics": metrics or {},
+            "data_files": data_files or [],
+        }
+        if extra:
+            manifest["extra"] = extra
+
+    if filename is None:
+        filename = f"{RUN_TAG}_manifest.json"
+
+    path = os.path.join(output_dir, filename)
+    try:
+        safe = _json_safe(manifest)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(safe, f, ensure_ascii=False, indent=2)
         notify_file_creation(path)
     except Exception as e:
         notify_file_creation(path, success=False, error=e)
@@ -1759,16 +1833,17 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     phi_abs = np.array(frames_phi)
     blackhole_candidates = []
     for tid, group in lifespan_df.groupby("id"):
-        steps = group["step"].values
+        traj_steps = group["step"].values
         ys = group["y"].values.astype(int)
         xs = group["x"].values.astype(int)
         inside_phi = []
-        for s, y, x in zip(steps, ys, xs):
+        for s, y, x in zip(traj_steps, ys, xs):
             if 0 <= s < len(phi_abs):
                 if phi_abs[s, y, x] > 0.25:
                     inside_phi.append(True)
                 else:
                     inside_phi.append(False)
+
         if len(inside_phi) > 5 and all(inside_phi[-5:]):
             blackhole_candidates.append(tid)
     blackhole_count = len(blackhole_candidates)
@@ -1993,4 +2068,87 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         figure0_html=figure0_html
     )
 
-    print("✅ All GIFs and logs have been successfully generated.")
+    # --- JSON manifest tohoto běhu (strojově čitelný souhrn) ---
+    run_meta = {
+        "run_id": int(RUN_ID),
+        "run_tag": str(RUN_TAG),
+        "seed": int(SEED),
+        "run_mode": str(RUN_MODE),
+        "param_tag": str(PARAM_TAG),
+        "kappa_mode": str(KAPPA_MODE),
+        "low_noise_mode": bool(LOW_NOISE_MODE),
+        "test_exhale_mode": bool(TEST_EXHALE_MODE),
+        "grid_size": int(frames_amp[0].shape[0]),
+        "steps": int(steps),
+        "pixel_size_m": float(PIXEL_SIZE),
+        "time_step_s": float(TIME_STEP),
+        "window_W": int(WINDOW_W),
+        "window_hop": int(WINDOW_HOP),
+    }
+
+    metrics = {
+        "dominant_freq_Hz": float(dominant_freq),
+        "sbr": None if (sbr is None or sbr != sbr) else float(sbr),
+        "f0_ci": None if f0_ci is None else [float(f0_ci[0]), float(f0_ci[1])],
+        "sbr_ci": None if sbr_ci is None else [float(sbr_ci[0]), float(sbr_ci[1])],
+        "phi_half_life_steps": int(phi_half_life_steps) if phi_half_life_steps is not None else None,
+        "pct_neutral": float(pct_neutral) if pct_neutral is not None else None,
+        "mean_total_vortices": float(mean_total_vort) if mean_total_vort is not None else None,
+        "max_lifespan_steps": int(max_lifespan),
+        "median_lifespan_steps": int(median_lifespan),
+        "phi_mean_near": float(phi_mean_near),
+        "phi_mean_field": float(phi_mean_field),
+        "phi_std_near": None if phi_std_near is None else float(phi_std_near),
+        "phi_std_field": float(phi_std_field),
+        "low_mass_quasiparticle_count": int(low_mass_count),
+    }
+
+    outputs = {
+        # HTML report
+        "html_report": os.path.join(output_dir, f"{RUN_TAG}_lineum_report.html"),
+
+        # CSV logy (vše přes save_csv má prefix RUN_TAG_)
+        "amplitude_log_csv": os.path.join(output_dir, f"{RUN_TAG}_amplitude_log.csv"),
+        "phi_center_log_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_center_log.csv"),
+        "topo_log_csv": os.path.join(output_dir, f"{RUN_TAG}_topo_log.csv"),
+        "trajectories_csv": os.path.join(output_dir, f"{RUN_TAG}_trajectories.csv"),
+        "multi_spectrum_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv"),
+        "metrics_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_metrics_summary.csv"),
+        "phi_grid_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_grid_summary.csv"),
+        "phi_grid_dejavu_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_grid_dejavu.csv"),
+        "phi_curl_low_mass_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_curl_low_mass.csv"),
+        "spin_aura_profile_csv": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_profile.csv"),
+
+        # Obrázky a GIFy
+        "spectrum_plot_png": os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png"),
+        "phi_center_plot_png": os.path.join(output_dir, f"{RUN_TAG}_phi_center_plot.png"),
+        "topo_charge_plot_png": os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png"),
+        "vortex_count_plot_png": os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png"),
+        "kappa_map_png": os.path.join(output_dir, f"{RUN_TAG}_kappa_map.png"),
+        "figure0_canonical_png": os.path.join(output_dir, f"{RUN_TAG}_figure0_canonical.png"),
+        "spin_aura_avg_png": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"),
+        "spin_aura_map_png": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png"),
+        "gif_amplitude": os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
+        "gif_spin": os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
+        "gif_vortices": os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
+        "gif_particles": os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
+        "gif_flow": os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif"),
+        "gif_full_overlay": os.path.join(output_dir, f"{RUN_TAG}_lineum_full_overlay.gif"),
+
+        # NPY dumpy
+        "frames_vortices_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy"),
+        "frames_curl_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy"),
+        "frames_amp_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy"),
+        "frames_phi_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy"),
+    }
+
+    # Složíme manifest ručně a předáme ho jako první argument
+    manifest = {
+        "run": run_meta,
+        "metrics": metrics or {},
+        "data_files": outputs,
+    }
+
+    save_manifest(manifest, filename=f"{RUN_TAG}_manifest.json")
+
+    print("✅ All GIFs, logs and manifest have been successfully generated.")
