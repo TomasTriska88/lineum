@@ -67,6 +67,19 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
       – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole,
       – kvantifikovat zjištění z července 2025 („Lineum – artefakty, kappa, deja vu“), že zeta-body / body uzavření mají tendenci se **opakovaně seskupovat na stejných místech napříč běhy** (včetně různých konfiguračních presetů), a měřit tento efekt přes occupancy mapy, RMS posun center a half-life těchto kapes,
       – explicitně ukázat rozdíl mezi clean větví `spec6_true no_artefacts` (pravidelnější a stabilnější φ-zeta grid) a větví `with_artefacts` (rušivé interference, rozmazání distribuce) a v textu jasně deklarovat, že **všechny závěry o φ-paměti stojí na clean větvi** po opravě vizualizačního cache-bugu.
+- [ ] (Tříska–Marečková [HYPOTHESIS]) Ověřit, zda pole **φ** v rámci Eq-4 skutečně plní roli **strukturální paměti** systému, nebo zda je nutné zavést rozšířený paměťový mechanismus (zpožděná odezva, hysteréze nebo samostatné paměťové pole μ):
+      – Kvantitativně změřit, jak rychle φ ztrácí informaci o předchozí přítomnosti linonů v režimu **Silent collapse**: definovat metriky „paměťové stopy“ typu
+      • doba, po kterou lze z aktuálního φ jednoznačně rozhodnout, že v daném regionu v minulosti existovala kvazičástice (např. mutual information mezi historií |ψ|² a φ),
+      • half-life informační stopy v φ oproti pozadí v ensemble bězích (seed-average).
+      – Explicitně demonstrovat a kvantifikovat scénáře **„tichého zániku beze stopy“**: zavést pracovní threshold „beze stopy“ (např. lokální φ ≤ (1+ε)·φ_background po ≥ T krocích od zániku) a spočítat četnost těchto případů napříč běhy a parametry.
+      – Navrhnout a implementovat alespoň dva kandidátní mechanismy **strukturální konzervace**:
+      • zpožděnou evoluci φ, kde je reakce funkcí časově průměrovaného |ψ|² z posledních N kroků,
+      • separátní pomalé paměťové pole μ, které akumuluje výskyt kvazičástic (např. integrál |ψ|² nad prahem) a jen pomalu se rozpadá,
+      • případně maximizační pravidlo typu `φ ← max(φ, |ψ|²)` doplněné o pomalý rozpadající se člen;
+      a všechny varianty porovnat se stávající baseline podle stejné sady paměťových metrik (half-life, mutual information, četnost „beze stopy“ zániků).
+      – Formálně zapsat **Tříska–Marečková Hypothesis of Long-Term Structural Memory** do whitepaperu jako minimální podmínku pro to, aby Lineum mohlo být interpretováno jako **konzervativní paměťový model**: buď
+      (a) φ (případně rozšířené o μ) konzervuje informaci o výskytu struktur i po jejich zániku v netriviální míře, nebo
+      (b) je v dokumentaci explicitně deklarováno, že Lineum reprezentuje **model s možností absolutního zániku informace**, tj. že „tichý zánik beze stopy“ je vlastnost modelu, ne numerický artefakt.
 - [ ] Ujasnit a znovu otestovat status jevu **Dimensional Transparency** (průchod struktur skrz κ) s ohledem na to, že byl dosud pozorován jen v bězích s časově proměnným κ (v1.1.x-exp):  
        – navrhnout a spustit testy pro danou exp větev,  
        – v dokumentaci explicitně držet tento jev jako extension-track hypotézu, dokud nebude promotion pipeline splněná.
