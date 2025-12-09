@@ -4,19 +4,20 @@
       <meta charset="UTF-8">
       <title>Lineum Simulation Report</title>
       <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        h1, h2 { color: #2c3e50; }
-        img { margin: 10px; border: 1px solid #ccc; }
-        .grid { display: flex; flex-wrap: wrap; gap: 10px; }
-        table { border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
-      </style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h1, h2 { color: #2c3e50; }
+  .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+  th { background-color: #f4f4f4; }
+  img { max-width: 100%; height: auto; display: block; margin: 10px 0; border: 1px solid #ccc; }
+</style>
+
     </head>
     <body>
         <h1>🧪 Lineum – Emergent Quantum Field</h1>
 
-        <p style="margin-top:-8px;color:#666;"><small>RUN_TAG: spec6_false_s41_dt05_w512 · Δt: 5.00e-22 s · pixel: 1.00e-12 m · commit: 4d4aae5</small></p>
+        <p style="margin-top:-8px;color:#666;"><small>RUN_TAG: spec6_false_s41_dt05_w512 · Δt: 5.00e-22 s · pixel: 1.00e-12 m · commit: 2384034</small></p>
 
         <h2>📦 Data & downloads</h2>
         <ul><li><a href="spec6_false_s41_dt05_w512_amplitude_log.csv">amplitude_log.csv</a></li><li><a href="spec6_false_s41_dt05_w512_spectrum_log.csv">spectrum_log.csv</a></li><li><a href="spec6_false_s41_dt05_w512_phi_center_log.csv">phi_center_log.csv</a></li><li><a href="spec6_false_s41_dt05_w512_topo_log.csv">topo_log.csv</a></li><li><a href="spec6_false_s41_dt05_w512_trajectories.csv">trajectories.csv</a></li><li><a href="spec6_false_s41_dt05_w512_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li><li><a href="spec6_false_s41_dt05_w512_spin_aura_profile.csv">spin_aura_profile.csv</a></li><li><a href="spec6_false_s41_dt05_w512_metrics_summary.csv">metrics_summary.csv</a></li></ul>
@@ -69,6 +70,16 @@
   See <code>metrics_summary.csv</code> in the downloads section for machine-readable values.
 </p>
 
+
+
+<h2>Figure 0 — Canonical anchors</h2>
+<figure>
+  <img src="spec6_false_s41_dt05_w512_figure0_canonical.png" alt="Spectrum (bin-centered) and center trace" />
+  <figcaption style="font-size:0.9em; opacity:0.85; margin-top:4px;">
+    Windowed center trace (zero-mean, Hann) and one-sided spectrum.
+    Peak at f₀ ≈ 3.91e+18 Hz; FFT bin spacing Δf ≈ 3.91e+18 Hz.
+  </figcaption>
+</figure>
 
 
 <h2>📊 Quasiparticle Properties</h2>

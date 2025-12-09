@@ -1,13 +1,13 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.6-core  
+**Version:** 1.0.7-core  
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
-**Scope:** 2D, periodic BCs  
-**Date:** 2025-11-14
+**Scope:** 2D, periodic BCs
+**Date:** 2025-12-09
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.6-core)._ 2025. DOI: 10.5281/zenodo.16934359.
-_This manuscript corresponds to Git tag **v1.0.6-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.7-core)._ 2025. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.7-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -144,7 +144,7 @@ The canonical form is:
 | α | ℝ₊ | coupling | from &#124;ψ&#124;² to φ |
 | β | ℝ₊ | diffusion | φ diffusion strength |
 | ∇ | operator | discrete gradient | central differences |
-| ∇² | operator | discrete Laplacian | 5-point (von Neumann) |
+| ∇² | operator | discrete Laplacian | 4-neighbour (5-point von Neumann; implemented via `diffuse_complex()` in the reference code) |
 | BCs | — | boundary conditions | periodic in x,y |
 | α_eff, β_eff | — | effective params | α_eff = κ·α, β_eff = κ·β (κ modulates α,β) |
 <!-- prettier-ignore-end -->
@@ -181,6 +181,8 @@ $$
 $$
 \nabla^2 f_{i,j} = f_{i+1,j} + f_{i-1,j} + f_{i,j+1} + f_{i,j-1} - 4\,f_{i,j}.
 $$
+
+In the reference implementation this four-neighbour stencil is realized by the helper function `diffuse_complex(...)` in the φ-update; there is **no** 9-point (diagonal) Laplacian in the canonical v1 run. Wider stencils (e.g., 9-point) are treated as exploratory variants outside the v1 core evidence.
 
 **Time stepping.** Explicit Euler with fixed $\Delta t = 1.0\times 10^{-21}\,\mathrm{s}$ (canonical anchor).
 
@@ -329,7 +331,7 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that f₀ lies exactly on this FFT bin.
 > 5. Confirm the same values in the HTML for `spec6_false_s17/s23/s73` (see Appendix C, Evidence Index).
 
-**Track policy.** This manuscript is the frozen **core** track (**v1.0.6-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+**Track policy.** This manuscript is the frozen **core** track (**v1.0.7-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
 
 **File-level scope (whitepapers).** `lineum-core.md` together with `lineum-core-equation-history.md` define the canonical v1.0.x core. All other whitepapers in the repository whose filenames begin with `lineum-exp-…` or `lineum-extension-…` (e.g., `lineum-exp.md`, `lineum-exp-thermo-calibration.md`, `lineum-extension-return-echo.md`, `lineum-extension-silent-gravity.md`, `lineum-extension-spectral-structure.md`, `lineum-extension-vortex-particle-coupling.md`, `lineum-extension-zeta-rnb-resonance.md`) are **by definition outside the v1 core**. They may refer to the same phenomena (Return Echo, Dimensional Transparency, Silent Gravity, Spectral Structure, etc.), but quantitative claims there do not change the canonical scope unless explicitly merged into a future `lineum-core` version.
 
@@ -349,7 +351,7 @@ _Provenance._ Checksums are intentionally omitted (living paper). Provenance is 
 ## 4.8 Threats to validity (core v1)
 
 > **Periodic BC artifacts.** We verify metric invariance (within tolerances) when changing the grid size; figures are illustrative only, acceptance is by metrics.  
-> **Stencil bias.** Results replicate with a 9-point Laplacian (Appendix) in addition to the canonical 5-point stencil.  
+> **Stencil bias.** Canonical results use a four-neighbour (5-point von Neumann) discrete Laplacian implemented via `diffuse_complex()` in the φ-update. Alternative 9-point (diagonal) stencils are treated as exploratory variants and are not part of the v1 core evidence.
 > **Spectral leakage.** FFT on de-meaned windows with a ±2-bin guard around $f_0$ mitigates leakage; SBR is computed on the power spectrum $|\mathrm{FFT}(x)|^2$.  
 > **RNG/seed bias.** We report metrics with 95% CIs across seeds {23, 17, 41, 73}; replication is defined by tolerance bands in §4.3.1.  
 > **Visualization bias.** All metrics derive from numeric logs (CSV). Amplitude gating is **visualization-only** in GIFs; winding/metrics use raw values.
@@ -456,6 +458,7 @@ Operationally, we detect Structural Closure whenever a linon decay event is foll
 
 Fourier analysis of long-duration runs shows that dominant oscillation frequencies remain stable over time, even with particle creation and annihilation events.  
 Typical dominant frequency: ≈ 3.90625×10¹⁸ Hz with <0.5% variation across canonical runs.
+This supports reading f₀ as a dynamical invariant of Eq. (1) rather than a numerical artifact.
 
 _Machine-readable._ Per-run CSV with windowed means and 95% CIs is provided as `{RUN_TAG}_metrics_summary.csv` (e.g., `spec6_false_s41_metrics_summary.csv`; likewise for seeds 23/17/41/73).
 
@@ -613,6 +616,12 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
 
+**1.0.7 — 2025-12-09 (patch)**
+
+- §3 legend / §3.1: explicitly tie the discrete Laplacian to the four-neighbour (5-point von Neumann) stencil implemented via `diffuse_complex()` in the reference code; clarify that no 9-point Laplacian is used in the canonical v1 run.
+- §4.8 Threats to validity: replace the historical note about “replication with a 9-point Laplacian” with a statement that wider stencils are exploratory only and out of the v1 core evidence.
+- Header / metadata: bump version to **1.0.7-core** and update the date to 2025-12-09.
+
 **1.0.6 — 2025-11-14 (patch)**
 
 - Abstract: move **Structural Closure** into the validated items list as an in-scope consequence of the φ center-trace half-life; keep **Return Echo** and κ-dynamics explicitly out of scope and delegated to the experimental/extension track.
@@ -648,7 +657,7 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.6-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.7-core**.
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -848,7 +857,7 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.6-core).**  
+**What’s included (core v1.0.7-core).**
 All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` prefix.
 
 ### File map (per-seed; canonical examples)

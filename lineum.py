@@ -62,7 +62,7 @@ except Exception:
 
 # Optional label for experiment variants (leave "" for baseline)
 # Examples: "w512" (C1), "dt05_w512" (C2), "grid256" (C3)
-PARAM_TAG = ""
+PARAM_TAG = "dt05_w512"
 
 
 # --- Variant resolver (dynamic) ---

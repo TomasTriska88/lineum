@@ -4,19 +4,20 @@
       <meta charset="UTF-8">
       <title>Lineum Simulation Report</title>
       <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        h1, h2 { color: #2c3e50; }
-        img { margin: 10px; border: 1px solid #ccc; }
-        .grid { display: flex; flex-wrap: wrap; gap: 10px; }
-        table { border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
-      </style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h1, h2 { color: #2c3e50; }
+  .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+  th { background-color: #f4f4f4; }
+  img { max-width: 100%; height: auto; display: block; margin: 10px 0; border: 1px solid #ccc; }
+</style>
+
     </head>
     <body>
         <h1>🧪 Lineum – Emergent Quantum Field</h1>
 
-        <p style="margin-top:-8px;color:#666;"><small>RUN_TAG: spec6_false_s41_w512 · Δt: 1.00e-21 s · pixel: 1.00e-12 m · commit: 4d4aae5</small></p>
+        <p style="margin-top:-8px;color:#666;"><small>RUN_TAG: spec6_false_s41_w512 · Δt: 1.00e-21 s · pixel: 1.00e-12 m · commit: 2384034</small></p>
 
         <h2>📦 Data & downloads</h2>
         <ul><li><a href="spec6_false_s41_w512_amplitude_log.csv">amplitude_log.csv</a></li><li><a href="spec6_false_s41_w512_spectrum_log.csv">spectrum_log.csv</a></li><li><a href="spec6_false_s41_w512_phi_center_log.csv">phi_center_log.csv</a></li><li><a href="spec6_false_s41_w512_topo_log.csv">topo_log.csv</a></li><li><a href="spec6_false_s41_w512_trajectories.csv">trajectories.csv</a></li><li><a href="spec6_false_s41_w512_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li><li><a href="spec6_false_s41_w512_spin_aura_profile.csv">spin_aura_profile.csv</a></li><li><a href="spec6_false_s41_w512_metrics_summary.csv">metrics_summary.csv</a></li></ul>
@@ -35,10 +36,10 @@
       <ul>
         <li>🌀 Spontaneous vortex formation (±1 winding)</li>
 <li>🧫 Quasiparticle detections with trackable trajectories</li>
-<li>🎵 Stable single-peak spectrum (f₀ = 3.91e+18 Hz; SBR ≈ 6.51)</li>
+<li>🎵 Stable single-peak spectrum (f₀ = 1.95e+18 Hz; SBR ≈ 6.40)</li>
 <li>🔁 Near-neutral global topological charge over time (winding)</li>
 <li>🌌 Non-zero background φ observed at the center</li>
-<li>⚖️ Display-only effective mass estimate from f₀ (m/mₑ ≈ 3.16e-02)</li>
+<li>⚖️ Display-only effective mass estimate from f₀ (m/mₑ ≈ 1.58e-02)</li>
 <li>🔄 Significant curl activity inside high-φ regions (σ = 9.20e-02)</li>
 <li>🧬 Consistent f₀ across sampled points (low across-grid variance)</li>
 <li>🕒 Emergence of long-lived quasiparticles (max 1000 steps, median 3)</li>
@@ -52,7 +53,7 @@
         <td>483 steps
             (canonical target ≈ 2000)</td></tr>
             <tr><td>SBR (±2-bin guard)</td>
-    <td>6.51  [6.50, 6.51]</td></tr>
+    <td>6.40  [6.39, 6.40]</td></tr>
 
   <tr><td>Topology neutrality</td>
       <td>91.6% of steps with |net charge| ≤ 1
@@ -71,19 +72,29 @@
 
 
 
+<h2>Figure 0 — Canonical anchors</h2>
+<figure>
+  <img src="spec6_false_s41_w512_figure0_canonical.png" alt="Spectrum (bin-centered) and center trace" />
+  <figcaption style="font-size:0.9em; opacity:0.85; margin-top:4px;">
+    Windowed center trace (zero-mean, Hann) and one-sided spectrum.
+    Peak at f₀ ≈ 1.95e+18 Hz; FFT bin spacing Δf ≈ 1.95e+18 Hz.
+  </figcaption>
+</figure>
+
+
 <h2>📊 Quasiparticle Properties</h2>
 <table>
   <tr><th>Property</th><th>Value</th></tr>
   <tr><td>Dominant frequency f₀</td>
-<td>3.91e+18 Hz  [3.91e+18, 3.91e+18]</td></tr>
+<td>1.95e+18 Hz  [1.95e+18, 1.95e+18]</td></tr>
 
 <tr><td>Energy (E = h f₀)</td>
-<td>2.59e-15 J (~16.15 keV)</td></tr>
+<td>1.29e-15 J (~8.08 keV)</td></tr>
 <tr><td>Wavelength (λ = c / f₀)</td>
-<td>7.67e-11 m</td></tr>
+<td>1.53e-10 m</td></tr>
 
-  <tr><td>Effective mass</td><td>2.88e-32 kg</td></tr>
-  <tr><td>Mass relative to electron</td><td>0.0316 (3.16%) × electron mass</td></tr>
+  <tr><td>Effective mass</td><td>1.44e-32 kg</td></tr>
+  <tr><td>Mass relative to electron</td><td>0.0158 (1.58%) × electron mass</td></tr>
   <tr><td>Max lifespan</td><td>1000 steps</td></tr>
   <tr><td>Median lifespan</td><td>3 steps</td></tr>
   <tr><td>Guided motion</td><td>Alignment with +∇|φ| (environmental guidance)</td></tr>
