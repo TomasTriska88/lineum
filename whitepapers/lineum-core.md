@@ -1,13 +1,13 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.7-core  
+**Version:** 1.0.8-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
 **Date:** 2025-12-09
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.7-core)._ 2025. DOI: 10.5281/zenodo.16934359.
-_This manuscript corresponds to Git tag **v1.0.7-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.8-core)._ 2025. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.8-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -456,6 +456,26 @@ Operationally, we detect Structural Closure whenever a linon decay event is foll
 > φ half-life (center): **483 steps**.  
 > Steps / grid: **1000**, **128×128**.
 
+---
+
+> **Additional validation run (spec6_false_s17)**  
+> These metrics provide an independent confirmation that the dominant frequency and SBR
+> remain stable across seeds under identical canonical parameters.
+>
+> **Dominant frequency:** _f₀_ = **3.90625×10¹⁸ Hz**  
+> 95% CI: **[3.90625×10¹⁸, 3.90625×10¹⁸]** (bin-center exact)
+>
+> **SBR (±2-bin guard):** **6.88** [**6.86**, **6.89**]
+> **Topology neutrality:** **91.1%** steps with |net charge| ≤ 1  
+>  **Mean vortex count:** **≈89**  
+>  **φ half-life (center):** **483 steps**
+>
+> The full per-window spectral profile is provided in  
+> `spec6_false_s17_metrics_summary.csv` and  
+> `spec6_false_s17_multi_spectrum_summary.csv`.
+
+---
+
 Fourier analysis of long-duration runs shows that dominant oscillation frequencies remain stable over time, even with particle creation and annihilation events.  
 Typical dominant frequency: ≈ 3.90625×10¹⁸ Hz with <0.5% variation across canonical runs.
 This supports reading f₀ as a dynamical invariant of Eq. (1) rather than a numerical artifact.
@@ -615,6 +635,15 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
+
+**1.0.8 — 2025-12-09 (patch)**
+
+- Correct §5.6 "Additional validation run (spec6_false_s17)" to match the actual HTML and CSV values:
+  • Topology neutrality → 91.1%  
+   • Mean vortex count → ~89  
+   • φ half-life → 483 steps  
+  These values previously reflected outdated metrics from an old report.  
+  No changes to equations, scope, or methodology — numeric correction only.
 
 **1.0.7 — 2025-12-09 (patch)**
 

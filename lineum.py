@@ -50,7 +50,7 @@ def _json_safe(obj):
 # --- Run config ---
 RUN_ID = 6
 RUN_MODE = "false"
-SEED = 41
+SEED = 17
 
 # allow env override for the seed, e.g. LINEUM_SEED=23
 try:
@@ -62,7 +62,7 @@ except Exception:
 
 # Optional label for experiment variants (leave "" for baseline)
 # Examples: "w512" (C1), "dt05_w512" (C2), "grid256" (C3)
-PARAM_TAG = "dt05_w512"
+PARAM_TAG = ""
 
 
 # --- Variant resolver (dynamic) ---
