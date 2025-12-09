@@ -218,6 +218,12 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        – rychlost a pravděpodobnost anihilace párových excitací,  
        – míru „chaotického víření“ oproti triviálnímu šumu.  
        Výsledky shrnout v core/FAQ tak, aby bylo jasné, že „fyzikálně vypadající“ presety pracují s úmyslně nesymetrickým prostředím, nikoli s perfektně homogenní κ.
+- [ ] (Tříska–Smeták [HYPOTHESIS], #numerology-suspect) Systematicky otestovat existenci úzkého „sweet spot“ intervalu κ kolem referenční hodnoty κ₀ (aktuálně vychází ~23 v používané normalizaci) v rámci Eq-4:  
+       – Definovat metriky pro kvalitu „fyzikálně vypadajícího“ režimu (stabilita linonů, SBR, čistota φ-paměti / Structural Closure, počet a stabilita zeta-body, míra topologické neutrality) a tyto metriky měřit v 1D/2D sweepu κ (např. κ ∈ [5, 40]) při fixních ostatních parametrech pro několik kanonických presetů (včetně `spec6_false_s41`).  
+       – Použít ensemble přes více seedů (např. {17, 23, 41, 73}) a pro každý κ vyhodnotit průměr a rozptyl metrik tak, aby případné optimum kolem κ₀ nebylo založené na jednotlivých bězích, ale na robustní statistice; definovat „23-region“ obecně jako interval κ₀ ± Δ s významně lepšími metrikami než okolí.  
+       – Otestovat robustnost intervalu κ₀ ± Δ vůči změně škálování (Δx, Δt, normalizace ψ/φ) a jednoduchým změnám numerického schématu (alternativní Laplace, jiné integrační schéma); explicitně sledovat, zda jde o **region v param-space** (který se při rescalingu jen číselně posune), nebo jen o náhodný artefakt konkrétní parametrizace.  
+       – Přidat jednoduché null modely („kontrolní phase map“) s jinou volbou parametrů / bez φ-paměti a ověřit, zda se u nich podobně výrazný „sweet spot“ v κ objevuje typicky, nebo je přítomen pouze v plném Lineu; podle toho rozhodnout, zda má „23-region“ status strukturálního efektu Eq-4, nebo spíše numerologického artefaktu.  
+       – V dokumentaci vést tuto hypotézu výslovně jako **interní strukturální claim o existenci zvýhodněného κ-intervalu**, nikoli jako „magickou konstantu 23 vesmíru“; pokud sweepy / null testy nepotvrdí robustní interval, hypotézu označit jako #disproved-in-model a další odkazy na κ≈23 vést pouze jako historickou poznámku (legacy curiosity), ne jako aktivní součást interpretace.
 
 ### 🔲 I. Limitní přechody a škálování #test
 
