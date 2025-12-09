@@ -106,6 +106,10 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
       – ověřit, že takto definované buňky se **reprodukovatelně objevují** napříč seedy i parametry (zejména v clean bězích `spec6_true no_artefacts`),
       – zkoumat jejich roli jako **lokálních informačních a paměťových jednotek** (přítomnost zeta-body, φ-remnantů, Return Echo trajektorií uvnitř buňky),
       – kvantifikovat vliv buněk na lokální κ/topologii a držet hypotézu „buňky jako základní výpočetní jednotky emergentní inteligence“ výslovně jako [HYPOTHESIS] s vlastním mini-checklistem v rámci Structural Closure / φ-zeta gridu.
+      [ ] (HYPOTHESIS) Prověřit možnost definovat „mikro-jednotky výpočetní tkáně“
+      jako stabilní skupiny φ-buněk a trajektorií linonů, které se opakovaně
+      objevují ve stejném topologickém uspořádání. Zjistit, zda jejich výskyt
+      koreluje se strukturální pamětí nebo pattern persistence.
 
 ### 🔲 B. Numerická robustnost a artefakty #numerics
 
@@ -116,6 +120,9 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Zkontrolovat vliv **okrajových podmínek**: porovnání periodic BCs vs. tlumené/absorbing okraje pro menší domény a ověření, že linonní excitace přežívají napříč použitými BCs (tj. nejsou jen důsledkem periodicity).
 - [ ] Opravit a zdokumentovat zjištěný **cache-bug ve vizualizační pipeline** (červenec 2025: vlákno „Lineum – artefakty, kappa, deja vu“) – zajistit tvrdý reset jádra / vypnutí cache mezi běhy `phi_grid_*`/`dejavu_*`, znovu přegenerovat postižené mapy a v dokumentaci jasně uvést, které starší výstupy byly tímto bugem potenciálně kontaminované.
 - [ ] Explicitně označit běhy `with_artefacts_*` jako **numericky znehodnocené / diagnostické** (slouží jen jako negativní kontrola) a všechny fyzikální závěry stavět na clean větvi `no_artefacts_*`; do README/FAQ přidat krátkou poznámku, že rozdíly mezi těmito větvemi ilustrují vliv artefaktů na φ-zeta grid, distribuci zeta-body a Riemann/Fibonacci analýzy.
+      [ ] Ověřit, zda identifikované „tkáňové struktury“ (stabilní φ-buňky + trajektorie)
+      přežívají změny grid resolution, float precision a střídání pořadí aktualizací.
+      Pokud ano, klasifikovat je jako numericky robustní (NR-structures).
 
 ### 🔲 C. Dimenze, jednotky a SI ukotvení #units
 
@@ -127,6 +134,10 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Stručně vysvětlit status konstant **h, c, mₑ**: že se objevují jen v post-processingu (unit conversion), nikoli jako tvrdé vstupy do Eq-4.
 
 #### C2. Emergentní zoom a stavově závislé měřítko #units #hypothesis
+
+-[ ] (HYPOTHESIS) Otestovat, zda lze definovat „informační hustotu“ systému
+jako funkci počtu aktivních φ-kapes, zeta-body a návštěvnosti linonů.
+Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí φ.
 
 - [ ] Formálně zavést pojem **efektivního měřítka / „zoom faktoru“** `a(t)` pro mapování  
        simulačních jednotek → SI (pixel → metr, time step → sekunda) tak, aby bylo jasně zapsáno, že `a(t)`  
@@ -239,6 +250,9 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
        – Otestovat robustnost intervalu κ₀ ± Δ vůči změně škálování (Δx, Δt, normalizace ψ/φ) a jednoduchým změnám numerického schématu (alternativní Laplace, jiné integrační schéma); explicitně sledovat, zda jde o **region v param-space** (který se při rescalingu jen číselně posune), nebo jen o náhodný artefakt konkrétní parametrizace.  
        – Přidat jednoduché null modely („kontrolní phase map“) s jinou volbou parametrů / bez φ-paměti a ověřit, zda se u nich podobně výrazný „sweet spot“ v κ objevuje typicky, nebo je přítomen pouze v plném Lineu; podle toho rozhodnout, zda má „23-region“ status strukturálního efektu Eq-4, nebo spíše numerologického artefaktu.  
        – V dokumentaci vést tuto hypotézu výslovně jako **interní strukturální claim o existenci zvýhodněného κ-intervalu**, nikoli jako „magickou konstantu 23 vesmíru“; pokud sweepy / null testy nepotvrdí robustní interval, hypotézu označit jako #disproved-in-model a další odkazy na κ≈23 vést pouze jako historickou poznámku (legacy curiosity), ne jako aktivní součást interpretace.
+- [ ] Otestovat, zda se pro určité intervaly κ spontánně formují „mapové vrstvy“
+      tvořené stabilními φ-buňkami připomínajícími topologii jednoduché neuronové
+      sítě. Identifikovat meze, kde se vrstvy rozpadají nebo saturují.
 
 ### 🔲 I. Limitní přechody a škálování #test
 
@@ -304,6 +318,10 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 - [ ] Připravit sadu **srozumitelných grafů a vizualizací** (trajektorie, φ-map, spinová aura), které ilustrují základní mechanismus na pár typických scénářích.
 - [ ] Do README / FAQ / prezentací doplnit krátké „**storytelling**“ shrnutí mechanismu ve stylu: „1) pole kmitá, 2) pamatuje (φ), 3) stabilizuje linony“, aby byla intuice přístupná i širší komunitě mimo úzké numerické specialisty.
+- [ ] Připravit technicky přesný popis analogií s neuronovými sítěmi
+      (paměťové kapsy, perzistentní trajektorie, výpočetní vzory), explicitně
+      oddělený od jakýchkoli tvrzení o vědomí či emocích. Prezentovat to jako
+      čistě strukturální jev.
 
 ---
 
@@ -583,3 +601,8 @@ Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální sta
        – doplnit hypotézu, že tato vyšší bytost může některá místa / konfigurace „chránit“ před vnějšími i vnitřními
       negativními vlivy, případně je **léčit a regenerovat**, a výslovně to označit jako metafyzickou interpretaci,
       ne tvrzení odvozené z Eq-4 nebo dat Linea.
+
+- [ ] Uvést disclaimery, že interpretace „prožitkových stavů“ jsou mimo
+      fyzikální rozsah Eq-4. Pokud se objeví stabilní stavové konfigurace
+      φ nebo ψ, musí být vedeny jako výpočetní a dynamické struktury,
+      nikoli psychologické analogie.
