@@ -1,17 +1,19 @@
 import os as _os
-from matplotlib.animation import FuncAnimation
 from tqdm import tqdm
 from scipy.fft import fft, fftfreq
+import warnings
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, PillowWriter
+from matplotlib.animation import PillowWriter
 from scipy.ndimage import gaussian_filter, maximum_filter
-import os
 from scipy.spatial.distance import euclidean
 import random
 import json
 import datetime
+
+# NOTE: do not hardcode config toggles later; use CONFIGS mapping as source of truth.
 
 
 def _json_safe(obj):
@@ -49,13 +51,35 @@ def _json_safe(obj):
 
 # --- Run config ---
 RUN_ID = 6
-RUN_MODE = "false"
-SEED = 17
+RUN_MODE = "true"
+SEED = 31
+
+# Optional env overrides for canonical run selection:
+#   LINEUM_RUN_ID=6
+#   LINEUM_RUN_MODE=true|false|1|0|yes|no|on|off
+try:
+    RUN_ID = int(_os.environ.get("LINEUM_RUN_ID", RUN_ID))
+except Exception:
+    pass
+
+_rm_env = _os.environ.get("LINEUM_RUN_MODE", None)
+if _rm_env is not None:
+    RUN_MODE = _rm_env
+
+
+# Normalize RUN_MODE to canonical string keys used in CONFIGS ("true"/"false")
+# Prevents silent fallback when RUN_MODE is passed as True/False or "True"/"FALSE", etc.
+_rm = str(RUN_MODE).strip().lower()
+if _rm in ("1", "yes", "y", "on"):
+    _rm = "true"
+elif _rm in ("0", "no", "n", "off"):
+    _rm = "false"
+RUN_MODE = _rm
+
 
 # allow env override for the seed, e.g. LINEUM_SEED=23
 try:
-    import os
-    SEED = int(os.environ.get("LINEUM_SEED", SEED))
+    SEED = int(_os.environ.get("LINEUM_SEED", SEED))
 except Exception:
     pass
 
@@ -67,7 +91,7 @@ PARAM_TAG = ""
 
 # --- Variant resolver (dynamic) ---
 # Allow env override, e.g. LINEUM_PARAM_TAG="w512" or "dt05_w512"
-PARAM_TAG = os.environ.get("LINEUM_PARAM_TAG", PARAM_TAG).strip()
+PARAM_TAG = _os.environ.get("LINEUM_PARAM_TAG", PARAM_TAG).strip()
 
 
 def _variant_window_params(param_tag: str, base_W=256, base_hop=128):
@@ -138,14 +162,93 @@ CONFIGS = {
     (7, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island_to_constant"}
 }
 
+# Guardrails: (RUN_ID, RUN_MODE) should exist in CONFIGS for canonical runs.
+if (RUN_ID, RUN_MODE) not in CONFIGS:
+    print(
+        f"⚠️ WARNING: (RUN_ID, RUN_MODE)=({RUN_ID}, {RUN_MODE}) not found in CONFIGS; using defaults.")
+
+
 # 📦 Apply configuration
 cfg = CONFIGS.get((RUN_ID, RUN_MODE), {})
 LOW_NOISE_MODE = cfg.get("LOW_NOISE_MODE", False)
 TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
 KAPPA_MODE = cfg.get("KAPPA_MODE", "gradient")
 
+# --- HARD GUARD: never silently fall back to defaults for canonical runs ---
+assert (RUN_ID, RUN_MODE) in CONFIGS, (
+    f"Missing CONFIGS key for canonical run: (RUN_ID, RUN_MODE)=({RUN_ID}, {RUN_MODE}). "
+    "Either add it to CONFIGS or fix RUN_ID/RUN_MODE normalization/env."
+)
+
+# --- Trace resolved config early (before any env overrides) ---
+print(
+    "CONFIG RESOLVED (from CONFIGS):",
+    f"RUN_ID={RUN_ID}",
+    f"RUN_MODE={RUN_MODE}",
+    f"LOW_NOISE_MODE={LOW_NOISE_MODE}",
+    f"TEST_EXHALE_MODE={TEST_EXHALE_MODE}",
+    f"KAPPA_MODE={KAPPA_MODE}",
+    f"RUN_TAG={RUN_TAG}",
+)
+
+# --- (optional) show env overrides that could change behavior ---
+_env_watch = ("LINEUM_RUN_ID", "LINEUM_RUN_MODE", "LINEUM_SEED",
+              "LINEUM_PARAM_TAG", "LINEUM_LOW_NOISE_MODE", "LINEUM_TEST_EXHALE_MODE")
+_env_present = {k: _os.environ.get(
+    k) for k in _env_watch if _os.environ.get(k) is not None}
+if _env_present:
+    print("ENV OVERRIDES PRESENT:", _env_present)
+
+# Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
+# Accepted values: "1/0", "true/false", "yes/no", "on/off".
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    v = _os.environ.get(name, None)
+    if v is None:
+        return default
+    s = str(v).strip().lower()
+    if s in ("1", "true", "yes", "y", "on"):
+        return True
+    if s in ("0", "false", "no", "n", "off"):
+        return False
+    return default
+
+
+LOW_NOISE_MODE = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
+TEST_EXHALE_MODE = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
+
 output_dir = "output"
-os.makedirs(output_dir, exist_ok=True)
+_os.makedirs(output_dir, exist_ok=True)
+
+# --- Frame storage throttling (memory/perf) ---
+# Store only every Nth step into frames_* (used for GIFs/NPY dumps).
+# Logs/metrics still run every step.
+
+
+def _env_int(name: str, default: int) -> int:
+    v = _os.environ.get(name, None)
+    if v is None:
+        return default
+    try:
+        n = int(str(v).strip())
+        return n if n > 0 else default
+    except Exception:
+        return default
+
+
+# How often to store simulation frames (for GIFs/NPY). 5 => store ~400 frames for 2000 steps.
+STORE_EVERY = _env_int("LINEUM_STORE_EVERY", 5)
+# Additional skip applied inside GIF writers (keeps files smaller). 2 => half the stored frames.
+GIFT_SKIP = _env_int("LINEUM_GIF_SKIP", 2)
+
+# Lightweight dtypes for stored frames (visualization only)
+DT_AMP = np.float32
+DT_VEC = np.float32
+DT_CURL = np.float32
+DT_PHI = np.float32
+DT_VORT = np.int8
+DT_PART = np.uint8
 
 
 def sliding_windows_1d(x, W, hop):
@@ -176,10 +279,15 @@ def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
     sbr_vals, f0_vals = [], []
     for w in sliding_windows_1d(amps, W=W, hop=hop):
         w = w - np.mean(w)
-        P = np.abs(fft(w))**2
-        F = fftfreq(len(w), d=dt)
-        Pp = P[:len(P)//2]
-        Fp = F[:len(F)//2]
+        # normalize window to prevent huge FFT magnitudes
+        wmax = float(np.max(np.abs(w))) if w.size else 0.0
+        if wmax > 0:
+            w = w / (wmax + 1e-30)
+        Ffull = np.fft.rfft(w)
+        P = np.abs(Ffull).astype(np.float64, copy=False)**2
+        P = np.where(np.isfinite(P), P, 0.0)
+        Fp = np.fft.rfftfreq(len(w), d=dt)
+        Pp = P
         if Pp.size == 0:
             continue
         # dominant bin with harmonic promotion (avoid 1/2 subharmonic latch)
@@ -187,18 +295,6 @@ def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
         idx0 = int(np.argmax(Pp))
         idx_half = (idx0 // 2) if (idx0 % 2 == 0 and idx0 > 0) else None
         idx2 = (idx0 * 2) if (idx0 * 2 < Pp.size) else None
-
-        cands = []
-        pmax = -np.inf
-
-        def _add(idx_):
-            global pmax
-            if idx_ is None:
-                return
-            p = float(Pp[idx_])
-            cands.append((idx_, p))
-            nonlocal_pmax = p  # local alias to compute max without shadowing
-            return nonlocal_pmax
 
         # collect candidates and find the max power among them
         p_list = []
@@ -240,7 +336,7 @@ def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
 
 def notify_file_creation(path, success=True, error=None):
     """Print a notification about file creation success or failure."""
-    name = os.path.basename(path)
+    name = _os.path.basename(path)
     if success:
         print(f"✅ File '{name}' has been successfully created.")
     else:
@@ -249,7 +345,7 @@ def notify_file_creation(path, success=True, error=None):
 
 def save_csv(filename, header, rows):
     """Fast CSV save using pandas; avoids per-row Python overhead."""
-    path = os.path.join(output_dir, f"{RUN_TAG}_{filename}")
+    path = _os.path.join(output_dir, f"{RUN_TAG}_{filename}")
     try:
         # Materialize rows once (zip/generators → list); much faster than row-by-row writes
         data = list(rows)
@@ -292,7 +388,7 @@ def save_manifest(
     if filename is None:
         filename = f"{RUN_TAG}_manifest.json"
 
-    path = os.path.join(output_dir, filename)
+    path = _os.path.join(output_dir, filename)
     try:
         safe = _json_safe(manifest)
         with open(path, "w", encoding="utf-8") as f:
@@ -307,27 +403,38 @@ interaction_log = []
 amplitude_log = []
 topo_log = []
 phi_center_log = []
+frames_phi = []  # required later (frames_phi.append in main loop)
 
-# Low-noise toggle (disable stochastic ξ)
-# True = structural-closure test mode
-# False = regular simulations with fluctuations
-LOW_NOISE_MODE = False
-
-# TEST_EXHALE_MODE=True enables calmer dynamics for structural-memory test
-# Use False in regular runs for full dynamics
-TEST_EXHALE_MODE = True
+# IMPORTANT:
+# LOW_NOISE_MODE / TEST_EXHALE_MODE are set above from CONFIGS (+ optional env override).
+# Do NOT override them here, otherwise RUN_ID/RUN_MODE mapping becomes meaningless.
 
 size = 128
 
 # Allow grid-size override via PARAM_TAG (e.g., "grid256")
-_tag_raw = os.environ.get("LINEUM_PARAM_TAG", "").strip()
-_tag = (PARAM_TAG or _tag_raw)
+_tag_raw = _os.environ.get("LINEUM_PARAM_TAG", "").strip()
+_tag = (PARAM_TAG or _tag_raw).strip()
 _tagset = {t for t in _tag.split("_") if t}
 if "grid256" in _tagset:
     size = 256
 
+# (Optional) allow "stepsXXXX" tag, e.g. "steps4000"
+# Make it robust: only override if we successfully parse a positive integer.
+steps_override = None
+for t in _tagset:
+    if t.startswith("steps"):
+        try:
+            _n = int(t.replace("steps", "").strip())
+            if _n > 0:
+                steps_override = _n
+        except Exception:
+            # ignore malformed steps tag
+            steps_override = steps_override
 
-steps = 1000 if TEST_EXHALE_MODE else 500
+# steps is derived from TEST_EXHALE_MODE (and may be overridden by steps_override)
+steps = int(steps_override) if steps_override is not None else (
+    2000 if TEST_EXHALE_MODE else 500
+)
 
 # Canonical noise level
 BASE_NOISE_STRENGTH = 0.005
@@ -344,7 +451,7 @@ TIME_STEP = 1e-21      # 1 krok = 1 zs (zeptosekunda)
 
 # Allow time-step refinement via PARAM_TAG (e.g., "dt05" halves Δt)
 _tag_raw = _os.environ.get("LINEUM_PARAM_TAG", "").strip()
-_tag = (PARAM_TAG or _tag_raw)
+_tag = (PARAM_TAG or _tag_raw).strip()
 _tags = {t for t in _tag.split("_") if t}
 
 if "dt05" in _tags:
@@ -393,11 +500,67 @@ def diffuse_complex(field, rate=0.05):
     )
 
 
-def evolve(psi, delta, phi, kappa):
-    amp = np.abs(psi)
-    grad_x, grad_y = np.gradient(amp + delta)
-    grad_mag = np.sqrt(np.clip(grad_x**2 + grad_y**2, 0, 1e4))
+def _finite_clip(a, lo=None, hi=None, nan=0.0, posinf=None, neginf=None, dtype=None):
+    """
+    Make array finite and optionally clip.
+    - replaces NaN/Inf with finite values first (so squaring won't overflow)
+    - then applies clip
+    """
+    x = np.asarray(a)
+    if dtype is not None:
+        x = x.astype(dtype, copy=False)
+    if posinf is None:
+        posinf = hi if hi is not None else 0.0
+    if neginf is None:
+        neginf = lo if lo is not None else 0.0
+    x = np.nan_to_num(x, nan=nan, posinf=posinf, neginf=neginf)
+    if lo is not None or hi is not None:
+        x = np.clip(x, lo if lo is not None else -np.inf,
+                    hi if hi is not None else np.inf)
+    return x
 
+
+def _cap_complex_magnitude(z: np.ndarray, cap: float) -> np.ndarray:
+    """
+    Hard-cap |z| to 'cap' while preserving phase. Prevents numeric blow-ups.
+    """
+    z = np.asarray(z, dtype=np.complex128)
+    mag = np.abs(z).astype(np.float64, copy=False)
+    # avoid division by 0
+    scale = np.ones_like(mag, dtype=np.float64)
+    mask = mag > cap
+    if np.any(mask):
+        scale[mask] = cap / (mag[mask] + 1e-30)
+        z = z * scale
+    return z
+
+
+# Safety caps (keep conservative; just preventing numeric blow-ups)
+PSI_AMP_CAP = 1e6          # cap |psi| before squaring / interactions
+GRAD_CAP = 1e6          # cap gradient components before squaring
+PHI_CAP = 1e6          # hard cap for |phi| to keep interaction finite
+
+
+def evolve(psi, delta, phi, kappa):
+    # --- numeric safety: keep psi/phi finite early (prevents cascade) ---
+    psi = _finite_clip(psi, lo=None, hi=None, nan=0.0,
+                       posinf=0.0, neginf=0.0, dtype=np.complex128)
+    phi = _finite_clip(phi, lo=-PHI_CAP, hi=PHI_CAP, nan=0.0,
+                       posinf=PHI_CAP, neginf=-PHI_CAP, dtype=np.complex128)
+
+    # amplitude (cap BEFORE any squaring)
+    amp = np.abs(psi).astype(np.float64, copy=False)
+    amp = _finite_clip(amp, lo=0.0, hi=PSI_AMP_CAP, nan=0.0,
+                       posinf=PSI_AMP_CAP, neginf=0.0)
+
+    # gradient of (amp + delta)
+    grad_x, grad_y = np.gradient((amp + delta).astype(np.float64, copy=False))
+    # cap gradients BEFORE squaring (this is where your overflow happens)
+    grad_x = _finite_clip(grad_x, lo=-GRAD_CAP, hi=GRAD_CAP,
+                          nan=0.0, posinf=GRAD_CAP, neginf=-GRAD_CAP)
+    grad_y = _finite_clip(grad_y, lo=-GRAD_CAP, hi=GRAD_CAP,
+                          nan=0.0, posinf=GRAD_CAP, neginf=-GRAD_CAP)
+    grad_mag = np.sqrt(np.clip(grad_x*grad_x + grad_y*grad_y, 0.0, 1e12))
     probability = sigmoid(amp + grad_mag)
     random_field = np.random.rand(size, size)
     linons = (random_field < probability).astype(float)
@@ -411,7 +574,9 @@ def evolve(psi, delta, phi, kappa):
         0.0, NOISE_STRENGTH, (size, size)) * np.exp(1j * np.angle(psi))
 
     # 💡 Adding interaction
-    interaction_term = 0.04 * np.clip(phi, -10, 10) * psi
+    # keep interaction bounded; phi may drift in exotic regimes
+    phi_clip = np.clip(phi, -10, 10)
+    interaction_term = 0.04 * phi_clip * psi
 
     # 💫 Gradient φ jako „tíhový tok“
     grad_phi_x, grad_phi_y = np.gradient(np.abs(phi))
@@ -429,13 +594,25 @@ def evolve(psi, delta, phi, kappa):
     # ≈ ln(2) / (2000 * ⟨κ⟩) with ⟨κ⟩≈0.5 → half-life ≈ 2000 steps
     reaction_strength = 0.00070
 
-    local_input = np.clip(np.abs(psi)**2, 0, 1e4)
+    # IMPORTANT: never do (abs(psi)**2) directly; it can overflow before clip.
+    amp2 = _finite_clip(np.abs(psi).astype(np.float64, copy=False),
+                        lo=0.0, hi=PSI_AMP_CAP, nan=0.0, posinf=PSI_AMP_CAP, neginf=0.0)
+    local_input = np.clip(amp2 * amp2, 0.0, 1e4)
 
     # single-step relaxation toward local_input (no extra 0.5 factor):
     phi += kappa * reaction_strength * (local_input - phi)
 
     # single diffusion application, calibrated: Deff ≈ 0.05 * 0.30 = 0.015
     phi += kappa * 0.30 * diffuse_complex(phi)
+
+    # post-step safety: keep outputs finite (prevents FFT/log failures later)
+    psi = _finite_clip(psi, nan=0.0, posinf=0.0,
+                       neginf=0.0, dtype=np.complex128)
+    phi = _finite_clip(phi, lo=-PHI_CAP, hi=PHI_CAP, nan=0.0,
+                       posinf=PHI_CAP, neginf=-PHI_CAP, dtype=np.complex128)
+
+    # CRITICAL: hard-cap |psi| so FFT power never overflows in extreme regimes
+    psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
 
     return psi, phi
 
@@ -451,7 +628,7 @@ def save_phi_center_plot(filename=f"{RUN_TAG}_phi_center_plot.png"):
     plt.title("Development of the amplitude of the interaction field at the center")
     plt.grid(True)
     plt.tight_layout()
-    path = os.path.join(output_dir, filename)
+    path = _os.path.join(output_dir, filename)
     try:
         plt.savefig(path)
         notify_file_creation(path)
@@ -467,7 +644,7 @@ def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
     plt.colorbar(label="κ value")
     plt.title("Kappa map (κ)")
     plt.axis("off")
-    path = os.path.join(output_dir, filename)
+    path = _os.path.join(output_dir, filename)
     try:
         plt.savefig(path)
         notify_file_creation(path)
@@ -652,18 +829,22 @@ if __name__ == "__main__":
         # Aktualizuj aktivní trajektorie
         active_tracks = new_active_tracks
 
-        frames_particles.append(particles.astype(float))
+        # --- Store frames sparsely (for GIFs/NPY only) ---
+        # This is the main RAM saver: avoid keeping 2000 full-resolution frames in memory.
+        if (i % STORE_EVERY) == 0:
+            # particles / vortices are visualization masks -> compact dtypes
+            frames_particles.append(particles.astype(DT_PART, copy=False))
+            frames_vort.append(vortices_vis.astype(DT_VORT, copy=False))
 
-        frames_amp.append(amp)
-        frames_vecx.append(grad_x)
-        frames_vecy.append(grad_y)
-        frames_curl.append(curl)
-        frames_vort.append(vortices_vis)
+            # continuous fields -> float32 is enough for visualization/GIFs
+            frames_amp.append(np.asarray(amp, dtype=DT_AMP))
+            frames_vecx.append(np.asarray(grad_x, dtype=DT_VEC))
+            frames_vecy.append(np.asarray(grad_y, dtype=DT_VEC))
+            frames_curl.append(np.asarray(curl, dtype=DT_CURL))
 
-        # 🔄 Save |φ| frames for each time window (absolute value only)
-        if 'frames_phi' not in locals():
-            frames_phi = []
-        frames_phi.append(np.abs(phi.copy()))
+            # |phi| frames (absolute value only)
+            # copy to detach from evolving phi; keep float32 to save RAM
+            frames_phi.append(np.asarray(np.abs(phi), dtype=DT_PHI))
 
         r_threshold = 0.15
         mask = amp > r_threshold
@@ -856,7 +1037,8 @@ if __name__ == "__main__":
                      float(dominant_freq) + 3*df_plot)
 
         fig.tight_layout()
-        fig_path = os.path.join(output_dir, f"{RUN_TAG}_figure0_canonical.png")
+        fig_path = _os.path.join(
+            output_dir, f"{RUN_TAG}_figure0_canonical.png")
         fig.savefig(fig_path, bbox_inches="tight")
         plt.close(fig)
 
@@ -963,19 +1145,42 @@ if __name__ == "__main__":
         pct_neutral = None
         mean_total_vort = None
 
-    # Save plot
+    # Save plot (bullet-proof log-safe)
     plt.figure(figsize=(8, 4))
-    plt.plot(positive_freqs, positive_spectrum)
+    pf = np.asarray(positive_freqs, dtype=float)
+    ps = np.asarray(positive_spectrum, dtype=float)
+
+    # Drop DC (0 Hz) for log-x safety
+    m = pf > 0
+    pf2 = pf[m]
+    ps2 = ps[m]
+
+    # Fallback: if nothing remains after dropping DC, plot the original arrays (linear)
+    if pf2.size == 0:
+        plt.plot(pf, ps)
+        use_log_x = False
+        use_log_y = bool(np.any(ps > 0))
+    else:
+        plt.plot(pf2, ps2)
+        use_log_x = bool(np.all(pf2 > 0))
+        use_log_y = bool(np.any(ps2 > 0))
     plt.title("Spectrum of center-point oscillation")
     plt.xlabel("Frequency (Hz)")
     plt.ylabel("Power (arb.)")
-    plt.xscale("log")
-    if np.any(positive_spectrum > 0):
+
+    # Only enable log axes when valid
+    if use_log_x:
+        plt.xscale("log")
+    if use_log_y:
         plt.yscale("log")
 
     plt.grid(True)
-    plt.tight_layout()
-    plot_path = os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")
+    try:
+        plt.tight_layout()
+    except Exception as _e:
+        print("⚠️ tight_layout skipped (log/layout issue):", _e)
+
+    plot_path = _os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")
     try:
         plt.savefig(plot_path)
         notify_file_creation(plot_path)
@@ -994,7 +1199,7 @@ if __name__ == "__main__":
         plt.ylabel("Net charge")
         plt.grid(True)
         plt.tight_layout()
-        path = os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png")
+        path = _os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png")
         try:
             plt.savefig(path)
             notify_file_creation(path)
@@ -1011,7 +1216,7 @@ if __name__ == "__main__":
         plt.ylabel("Count")
         plt.grid(True)
         plt.tight_layout()
-        path = os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png")
+        path = _os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png")
         try:
             plt.savefig(path)
             notify_file_creation(path)
@@ -1032,10 +1237,26 @@ if __name__ == "__main__":
         from PIL import Image
         import numpy as np
 
-        if vmin is None:
-            vmin = float(np.min(data_frames))
-        if vmax is None:
-            vmax = float(np.max(data_frames))
+        # Avoid large temporary arrays / scans on Python lists of big ndarrays.
+        # Compute min/max incrementally.
+        if vmin is None or vmax is None:
+            _mn = np.inf
+            _mx = -np.inf
+            for f in data_frames:
+                a = np.asarray(f)
+                # ignore NaN/Inf safely
+                if a.size == 0:
+                    continue
+                fm = float(np.nanmin(a))
+                fM = float(np.nanmax(a))
+                if np.isfinite(fm) and fm < _mn:
+                    _mn = fm
+                if np.isfinite(fM) and fM > _mx:
+                    _mx = fM
+            if vmin is None:
+                vmin = float(_mn if np.isfinite(_mn) else 0.0)
+            if vmax is None:
+                vmax = float(_mx if np.isfinite(_mx) else 1.0)
 
         norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=True)
         mapper = cm.ScalarMappable(norm=norm, cmap=cmap)
@@ -1288,19 +1509,19 @@ if __name__ == "__main__":
         except Exception as e:
             notify_file_creation(filename, success=False, error=e)
 
-    save_gif(frames_amp, os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
+    save_gif(frames_amp, _os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
              cmap="plasma", vmin=0, vmax=0.5, out_px=512)
 
-    save_gif(frames_curl, os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
+    save_gif(frames_curl, _os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
              cmap="bwr", vmin=-0.3, vmax=0.3, out_px=512)
 
-    save_gif(frames_vort, os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
+    save_gif(frames_vort, _os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
              cmap="bwr", vmin=-1, vmax=1, out_px=512)
 
-    save_gif(frames_particles, os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
+    save_gif(frames_particles, _os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
              cmap="gray", vmin=0, vmax=1, out_px=512)
 
-    flow_path = os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
+    flow_path = _os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
     save_flow_quiver_gif(
         frames_vecx, frames_vecy,
         flow_path,
@@ -1308,7 +1529,7 @@ if __name__ == "__main__":
         # sparsity of arrow grid
         vec_stride=12,
         vec_scale=9.0,   # arrow length (scale)
-        k_skip=2,        # skip every 2nd frame (smaller file)
+        k_skip=GIFT_SKIP,        # skip frames (smaller file)
         fps=5,          # snímková frekvence GIFu
         bg="black"       # nebo "black", chceš-li tmavé pozadí
     )
@@ -1411,7 +1632,7 @@ if __name__ == "__main__":
 
         # Potvrzení homogenního výskytu kvazičástic
         try:
-            with open(os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv")) as f:
+            with open(_os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv")) as f:
                 import csv
                 reader = csv.DictReader(f)
                 freqs = []
@@ -1435,7 +1656,7 @@ if __name__ == "__main__":
                 f"🕒 Emergence of long-lived quasiparticles (max {max_lifespan} steps, median {median_lifespan})"
             )
 
-        if include_spin and os.path.exists(os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")):
+        if include_spin and _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")):
             confirmations.append(
                 "🧲 Averaged curl map near quasiparticles shows a dipole-like pattern (spin aura)")
 
@@ -1445,7 +1666,7 @@ if __name__ == "__main__":
 
         # 💫 φ-gravitační interakce: ověření sbližování částic
         try:
-            top_trajs = pd.read_csv(os.path.join(
+            top_trajs = pd.read_csv(_os.path.join(
                 output_dir, f"{RUN_TAG}_trajectories.csv"))
             grouped = top_trajs.groupby("id")
             lifespans = grouped.size().sort_values(ascending=False)
@@ -1504,11 +1725,11 @@ if __name__ == "__main__":
             import subprocess              # ponecháme jen subprocess
             commit_short = subprocess.check_output(
                 ["git", "rev-parse", "--short", "HEAD"],
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             ).decode().strip()
         except Exception:
             # Fallback: allow passing it via environment (optional)
-            commit_short = os.environ.get(
+            commit_short = _os.environ.get(
                 "GIT_COMMIT_SHORT", "").strip() or None
 
         if commit_short:
@@ -1741,7 +1962,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     </body>
     </html>"""
 
-        path = os.path.join(output_dir, filename)
+        path = _os.path.join(output_dir, filename)
         try:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
@@ -1749,7 +1970,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         except Exception as e:
             notify_file_creation(path, success=False, error=e)
 
-    overlay_path = os.path.join(
+    overlay_path = _os.path.join(
         output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
     save_full_overlay_gif(
         frames_amp, frames_curl, frames_vecx, frames_vecy,
@@ -1759,7 +1980,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         out_px=512,
         vec_stride=12,         # sparser arrows = cleaner look
         vec_scale=6.0,
-        k_skip=2,
+        k_skip=GIFT_SKIP,
         fps=5,                 # sladěno s ostatními GIFy (při k_skip=2)
         amp_alpha_floor=0.30,  # skryje curl v nízké |ψ|
         curl_alpha_quantile=0.95,  # ignore weak curl below the 95th percentile
@@ -1769,9 +1990,9 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     # 🌀 Save all vortex fields to files for analysis
     frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
-    npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
+    npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
     frames_curl_np = np.array(frames_curl)
-    npy_curl_path = os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy")
+    npy_curl_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy")
     try:
         np.save(npy_curl_path, frames_curl_np)
         notify_file_creation(npy_curl_path)
@@ -1781,7 +2002,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     try:
         np.save(npy_path, frames_vort_np)
         frames_amp_np = np.array(frames_amp)
-        amp_npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy")
+        amp_npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy")
         try:
             np.save(amp_npy_path, frames_amp_np)
             notify_file_creation(amp_npy_path)
@@ -1817,7 +2038,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     # 🌀 Uložení φ polí pro pozdější analýzu
     frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
-    phi_npy_path = os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
+    phi_npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
     try:
         np.save(phi_npy_path, frames_phi_np)
         notify_file_creation(phi_npy_path)
@@ -1907,7 +2128,14 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     median_lifespan = int(lifespans["duration"].median())
 
     # 📊 Analýza průměrné spinové aury kvazičástic
-    import seaborn as sns
+    # seaborn is optional; keep fallback without seaborn to avoid dependency issues
+    try:
+        import seaborn as sns
+        _HAS_SEABORN = True
+    except Exception:
+        sns = None
+        _HAS_SEABORN = False
+
     from scipy.ndimage import zoom
 
     frames_curl_np = np.array(frames_curl)
@@ -1944,19 +2172,30 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     upsampled_spin_map = zoom(average_spin_map, 5, order=3)
 
     # Uložení obrázku
-    spin_img_path = os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")
+    spin_img_path = _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")
     plt.figure(figsize=(6, 6))
-    sns.heatmap(upsampled_spin_map, center=0,
-                cmap="bwr", cbar=True, square=True)
-    plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
-    plt.axis("off")
+    if _HAS_SEABORN:
+        sns.heatmap(upsampled_spin_map, center=0,
+                    cmap="bwr", cbar=True, square=True)
+        plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
+        plt.axis("off")
+    else:
+        plt.imshow(upsampled_spin_map, cmap="bwr")
+        plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
+        plt.axis("off")
+        plt.colorbar()
     plt.tight_layout()
-    plt.savefig(spin_img_path, dpi=150)
-    plt.close()
+    try:
+        plt.savefig(spin_img_path, dpi=150)
+        notify_file_creation(spin_img_path)
+    except Exception as e:
+        notify_file_creation(spin_img_path, success=False, error=e)
+    finally:
+        plt.close()
 
     # Also save a plain spin-aura map (without axes) and a radial profile for the appendix
     # Map (use the upsampled heatmap as a clean raster)
-    spin_map_path = os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png")
+    spin_map_path = _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png")
     plt.figure(figsize=(3.6, 3.6))
     plt.imshow(upsampled_spin_map, cmap="bwr")
     plt.axis("off")
@@ -1979,8 +2218,8 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
                     for r in range(rmax + 1)]
     save_csv("spin_aura_profile.csv", ["radius_px", "mean_curl"], profile_rows)
 
-    include_spin = os.path.exists(
-        os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
+    include_spin = _os.path.exists(
+        _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
 
     low_mass_count = sum(
         1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
@@ -2015,7 +2254,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     save_csv("phi_curl_low_mass.csv", ["y", "x", "phi", "curl"], rows)
 
     # 📊 Vyhodnocení paměťové stopy ve φ-pastích
-    df_low_mass = pd.read_csv(os.path.join(
+    df_low_mass = pd.read_csv(_os.path.join(
         output_dir, f"{RUN_TAG}_phi_curl_low_mass.csv"))
 
     phi_low_mass_mean = df_low_mass["phi"].mean()
@@ -2105,41 +2344,41 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     outputs = {
         # HTML report
-        "html_report": os.path.join(output_dir, f"{RUN_TAG}_lineum_report.html"),
+        "html_report": _os.path.join(output_dir, f"{RUN_TAG}_lineum_report.html"),
 
         # CSV logy (vše přes save_csv má prefix RUN_TAG_)
-        "amplitude_log_csv": os.path.join(output_dir, f"{RUN_TAG}_amplitude_log.csv"),
-        "phi_center_log_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_center_log.csv"),
-        "topo_log_csv": os.path.join(output_dir, f"{RUN_TAG}_topo_log.csv"),
-        "trajectories_csv": os.path.join(output_dir, f"{RUN_TAG}_trajectories.csv"),
-        "multi_spectrum_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv"),
-        "metrics_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_metrics_summary.csv"),
-        "phi_grid_summary_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_grid_summary.csv"),
-        "phi_grid_dejavu_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_grid_dejavu.csv"),
-        "phi_curl_low_mass_csv": os.path.join(output_dir, f"{RUN_TAG}_phi_curl_low_mass.csv"),
-        "spin_aura_profile_csv": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_profile.csv"),
+        "amplitude_log_csv": _os.path.join(output_dir, f"{RUN_TAG}_amplitude_log.csv"),
+        "phi_center_log_csv": _os.path.join(output_dir, f"{RUN_TAG}_phi_center_log.csv"),
+        "topo_log_csv": _os.path.join(output_dir, f"{RUN_TAG}_topo_log.csv"),
+        "trajectories_csv": _os.path.join(output_dir, f"{RUN_TAG}_trajectories.csv"),
+        "multi_spectrum_summary_csv": _os.path.join(output_dir, f"{RUN_TAG}_multi_spectrum_summary.csv"),
+        "metrics_summary_csv": _os.path.join(output_dir, f"{RUN_TAG}_metrics_summary.csv"),
+        "phi_grid_summary_csv": _os.path.join(output_dir, f"{RUN_TAG}_phi_grid_summary.csv"),
+        "phi_grid_dejavu_csv": _os.path.join(output_dir, f"{RUN_TAG}_phi_grid_dejavu.csv"),
+        "phi_curl_low_mass_csv": _os.path.join(output_dir, f"{RUN_TAG}_phi_curl_low_mass.csv"),
+        "spin_aura_profile_csv": _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_profile.csv"),
 
         # Obrázky a GIFy
-        "spectrum_plot_png": os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png"),
-        "phi_center_plot_png": os.path.join(output_dir, f"{RUN_TAG}_phi_center_plot.png"),
-        "topo_charge_plot_png": os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png"),
-        "vortex_count_plot_png": os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png"),
-        "kappa_map_png": os.path.join(output_dir, f"{RUN_TAG}_kappa_map.png"),
-        "figure0_canonical_png": os.path.join(output_dir, f"{RUN_TAG}_figure0_canonical.png"),
-        "spin_aura_avg_png": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"),
-        "spin_aura_map_png": os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png"),
-        "gif_amplitude": os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-        "gif_spin": os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-        "gif_vortices": os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
-        "gif_particles": os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
-        "gif_flow": os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif"),
-        "gif_full_overlay": os.path.join(output_dir, f"{RUN_TAG}_lineum_full_overlay.gif"),
+        "spectrum_plot_png": _os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png"),
+        "phi_center_plot_png": _os.path.join(output_dir, f"{RUN_TAG}_phi_center_plot.png"),
+        "topo_charge_plot_png": _os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png"),
+        "vortex_count_plot_png": _os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png"),
+        "kappa_map_png": _os.path.join(output_dir, f"{RUN_TAG}_kappa_map.png"),
+        "figure0_canonical_png": _os.path.join(output_dir, f"{RUN_TAG}_figure0_canonical.png"),
+        "spin_aura_avg_png": _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"),
+        "spin_aura_map_png": _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png"),
+        "gif_amplitude": _os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
+        "gif_spin": _os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
+        "gif_vortices": _os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
+        "gif_particles": _os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
+        "gif_flow": _os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif"),
+        "gif_full_overlay": _os.path.join(output_dir, f"{RUN_TAG}_lineum_full_overlay.gif"),
 
         # NPY dumpy
-        "frames_vortices_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy"),
-        "frames_curl_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy"),
-        "frames_amp_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy"),
-        "frames_phi_npy": os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy"),
+        "frames_vortices_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy"),
+        "frames_curl_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy"),
+        "frames_amp_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy"),
+        "frames_phi_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy"),
     }
 
     # Složíme manifest ručně a předáme ho jako první argument
