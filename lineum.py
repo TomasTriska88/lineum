@@ -1445,20 +1445,21 @@ if __name__ == "__main__":
     # Compute FFT
     do_legacy_fft = (np.isnan(f0_mean) or np.isnan(
         sbr_mean) or len(amplitudes) <= 20000)
+    positive_freqs = None
+    positive_spectrum = None
     if do_legacy_fft:
         fft_result = fft(amplitudes)
         frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
         spectrum = np.abs(fft_result)**2
-    else:
-        frequencies = None
-        spectrum = None
+        positive_freqs = frequencies[:len(frequencies)//2]
+        positive_spectrum = spectrum[:len(spectrum)//2]
 
     # Keep positive frequencies only
     if do_legacy_fft:
         positive_freqs = frequencies[:len(frequencies)//2]
         positive_spectrum = spectrum[:len(spectrum)//2]
 
-    if do_legacy_fft:
+    if do_legacy_fft and positive_spectrum is not None and len(positive_spectrum) > 0:
         dominant_index = int(np.argmax(positive_spectrum))
         dominant_freq = float(positive_freqs[dominant_index])  # Hz
     else:
@@ -1467,21 +1468,26 @@ if __name__ == "__main__":
             f0_mean == f0_mean) else float("nan")
 
     # --- Spectral Balance Ratio (SBR) with ±2-bin guard around f0
-    guard = 2
-    peak_power = positive_spectrum[dominant_index]
-    mask = np.ones_like(positive_spectrum, dtype=bool)
-    l = max(dominant_index - guard, 0)
-    r = min(dominant_index + guard + 1, len(positive_spectrum))
-    mask[l:r] = False
-    rest_power = np.mean(positive_spectrum[mask]) if np.any(mask) else np.nan
-    sbr = peak_power / \
-        rest_power if (rest_power and rest_power > 0) else np.nan
+    # Only valid for legacy FFT branch.
+    if do_legacy_fft and positive_spectrum is not None and dominant_index is not None:
+        guard = 2
+        peak_power = float(positive_spectrum[dominant_index])
+        mask = np.ones_like(positive_spectrum, dtype=bool)
+        l = max(dominant_index - guard, 0)
+        r = min(dominant_index + guard + 1, len(positive_spectrum))
+        mask[l:r] = False
+        rest_power = float(np.mean(positive_spectrum[mask])) if np.any(
+            mask) else float("nan")
+        sbr = (peak_power / rest_power) if (rest_power ==
+                                            rest_power and rest_power > 0) else float("nan")
+    else:
+        sbr = float("nan")
 
     # Prefer robust windowed estimates if valid (fallback to single-shot if not)
     if not np.isnan(f0_mean):
-        dominant_freq = f0_mean
+        dominant_freq = float(f0_mean)
     if not np.isnan(sbr_mean):
-        sbr = sbr_mean
+        sbr = float(sbr_mean)
 
         # --- Figure 0: canonical spectrum + time trace (auto-generated) ---
     figure0_html = ""
@@ -1648,13 +1654,18 @@ if __name__ == "__main__":
 
     # Save plot (bullet-proof log-safe)
     plt.figure(figsize=(8, 4))
-    pf = np.asarray(positive_freqs, dtype=float)
-    ps = np.asarray(positive_spectrum, dtype=float)
+    if not (do_legacy_fft and positive_freqs is not None and positive_spectrum is not None):
+        print("⚠️ spectrum_plot skipped (legacy FFT disabled; Figure 0 already provides a windowed spectrum).")
+        pf = None
+        ps = None
+    else:
+        pf = np.asarray(positive_freqs, dtype=float)
+        ps = np.asarray(positive_spectrum, dtype=float)
 
-    # Drop DC (0 Hz) for log-x safety
-    m = pf > 0
-    pf2 = pf[m]
-    ps2 = ps[m]
+    if pf is not None:
+        m = pf > 0
+        pf2 = pf[m]
+        ps2 = ps[m]
 
     # Fallback: if nothing remains after dropping DC, plot the original arrays (linear)
     if pf2.size == 0:
@@ -1681,14 +1692,15 @@ if __name__ == "__main__":
     except Exception as _e:
         print("⚠️ tight_layout skipped (log/layout issue):", _e)
 
-    plot_path = _os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")
-    try:
-        plt.savefig(plot_path)
-        notify_file_creation(plot_path)
-    except Exception as e:
-        notify_file_creation(plot_path, success=False, error=e)
-    finally:
-        plt.close()
+    if pf is not None:
+        plot_path = _os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")
+        try:
+            plt.savefig(plot_path)
+            notify_file_creation(plot_path)
+        except Exception as e:
+            notify_file_creation(plot_path, success=False, error=e)
+        finally:
+            plt.close()
 
     # --- Topology plots (to match the HTML report)
     if not topo_df.empty:
