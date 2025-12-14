@@ -494,8 +494,8 @@ RESUME_ENABLED = _env_bool("LINEUM_RESUME", True)
 INFINITE_MODE = _env_bool("LINEUM_INFINITE", False)
 METRICS_EXPORT_EVERY = _env_int("LINEUM_METRICS_EXPORT_EVERY", 25)
 
-+  # 0 = keep full history (default)
-+  # LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs.
+# 0 = keep full history (default)
+# LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs.
 ROLLING_WINDOW = _env_int("LINEUM_ROLLING_WINDOW", 0)
 if INFINITE_MODE and (not ROLLING_WINDOW or ROLLING_WINDOW <= 0):
     # keep RAM bounded in service mode even if user forgot to set it
