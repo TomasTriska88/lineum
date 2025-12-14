@@ -2795,7 +2795,23 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
             cutouts.append(cutout)
 
     average_spin_map = np.mean(cutouts, axis=0)
-    upsampled_spin_map = zoom(average_spin_map, 5, order=3)
+    # ---- Guard: spin-aura requires stored frames / non-empty spin maps ----
+    # In fast runs (LINEUM_SAVE_FRAMES=0), average_spin_map can be empty or invalid.
+    try:
+        _spin_ok = average_spin_map is not None
+        if _spin_ok:
+            average_spin_map = np.asarray(average_spin_map)
+            _spin_ok = (average_spin_map.ndim >=
+                        2 and average_spin_map.size > 0)
+    except Exception:
+        _spin_ok = False
+
+    if not _spin_ok:
+        print(
+            "⚠️ Skipping: spin-aura upsample and related plots (no stored spin/phi frames).")
+        upsampled_spin_map = None
+    else:
+        upsampled_spin_map = zoom(average_spin_map, 5, order=3)
 
     if not np.all(np.isfinite(upsampled_spin_map)):
         upsampled_spin_map = np.nan_to_num(
