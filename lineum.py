@@ -2794,75 +2794,93 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
                                     half_size+1, x-half_size:x+half_size+1]
             cutouts.append(cutout)
 
-    average_spin_map = np.mean(cutouts, axis=0)
-    # ---- Guard: spin-aura requires stored frames / non-empty spin maps ----
-    # In fast runs (LINEUM_SAVE_FRAMES=0), average_spin_map can be empty or invalid.
-    try:
-        _spin_ok = average_spin_map is not None
-        if _spin_ok:
-            average_spin_map = np.asarray(average_spin_map)
-            _spin_ok = (average_spin_map.ndim >=
-                        2 and average_spin_map.size > 0)
-    except Exception:
-        _spin_ok = False
-
-    if not _spin_ok:
-        print(
-            "⚠️ Skipping: spin-aura upsample and related plots (no stored spin/phi frames).")
+    # ---- Spin-aura: requires stored frames AND non-empty cutouts ----
+    if not cutouts:
+        print("⚠️ Skipping: spin-aura upsample and related plots (no cutouts; likely no stored frames).")
+        average_spin_map = None
         upsampled_spin_map = None
     else:
-        upsampled_spin_map = zoom(average_spin_map, 5, order=3)
+        average_spin_map = np.mean(cutouts, axis=0)
 
-    if not np.all(np.isfinite(upsampled_spin_map)):
-        upsampled_spin_map = np.nan_to_num(
-            upsampled_spin_map, nan=0.0, posinf=0.0, neginf=0.0)
+        # Guard: ensure we have a real 2D numeric array
+        try:
+            average_spin_map = np.asarray(average_spin_map)
+            _spin_ok = (average_spin_map.ndim ==
+                        2 and average_spin_map.size > 0)
+        except Exception:
+            _spin_ok = False
 
-    # Uložení obrázku
-    spin_img_path = _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")
-    plt.figure(figsize=(6, 6))
-    if _HAS_SEABORN:
-        sns.heatmap(upsampled_spin_map, center=0,
-                    cmap="bwr", cbar=True, square=True)
-        plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
-        plt.axis("off")
-    else:
+        if not _spin_ok:
+            print(
+                "⚠️ Skipping: spin-aura upsample and related plots (invalid average_spin_map).")
+            upsampled_spin_map = None
+        else:
+            upsampled_spin_map = zoom(average_spin_map, 5, order=3)
+
+            # Clean NaN/Inf only if the map exists and is numeric
+            try:
+                upsampled_spin_map = np.asarray(
+                    upsampled_spin_map, dtype=float)
+                if not np.all(np.isfinite(upsampled_spin_map)):
+                    upsampled_spin_map = np.nan_to_num(
+                        upsampled_spin_map, nan=0.0, posinf=0.0, neginf=0.0
+                    )
+            except Exception:
+                print(
+                    "⚠️ Skipping: spin-aura plots (upsampled map not a finite float array).")
+                upsampled_spin_map = None
+
+    # Only export plots/profile if we actually have a valid map
+    if upsampled_spin_map is not None:
+        # Uložení obrázku
+        spin_img_path = _os.path.join(
+            output_dir, f"{RUN_TAG}_spin_aura_avg.png")
+        plt.figure(figsize=(6, 6))
+        if _HAS_SEABORN:
+            sns.heatmap(upsampled_spin_map, center=0,
+                        cmap="bwr", cbar=True, square=True)
+            plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
+            plt.axis("off")
+        else:
+            plt.imshow(upsampled_spin_map, cmap="bwr")
+            plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
+            plt.axis("off")
+            plt.colorbar()
+        plt.tight_layout()
+        try:
+            plt.savefig(spin_img_path, dpi=150)
+            notify_file_creation(spin_img_path)
+        except Exception as e:
+            notify_file_creation(spin_img_path, success=False, error=e)
+        finally:
+            plt.close()
+
+        # Plain map
+        spin_map_path = _os.path.join(
+            output_dir, f"{RUN_TAG}_spin_aura_map.png")
+        plt.figure(figsize=(3.6, 3.6))
         plt.imshow(upsampled_spin_map, cmap="bwr")
-        plt.title("🧲 Averaged spin aura (curl ∇arg(ψ))")
         plt.axis("off")
-        plt.colorbar()
-    plt.tight_layout()
-    try:
-        plt.savefig(spin_img_path, dpi=150)
-        notify_file_creation(spin_img_path)
-    except Exception as e:
-        notify_file_creation(spin_img_path, success=False, error=e)
-    finally:
-        plt.close()
+        plt.tight_layout(pad=0)
+        try:
+            plt.savefig(spin_map_path, bbox_inches="tight",
+                        pad_inches=0, dpi=150)
+            notify_file_creation(spin_map_path)
+        except Exception as e:
+            notify_file_creation(spin_map_path, success=False, error=e)
+        finally:
+            plt.close()
 
-    # Also save a plain spin-aura map (without axes) and a radial profile for the appendix
-    # Map (use the upsampled heatmap as a clean raster)
-    spin_map_path = _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_map.png")
-    plt.figure(figsize=(3.6, 3.6))
-    plt.imshow(upsampled_spin_map, cmap="bwr")
-    plt.axis("off")
-    plt.tight_layout(pad=0)
-    try:
-        plt.savefig(spin_map_path, bbox_inches="tight", pad_inches=0, dpi=150)
-        notify_file_creation(spin_map_path)
-    except Exception as e:
-        notify_file_creation(spin_map_path, success=False, error=e)
-    finally:
-        plt.close()
-
-    # Radial profile from the non-upsampled average map
-    yy, xx = np.indices(average_spin_map.shape)
-    cy, cx = average_spin_map.shape[0] // 2, average_spin_map.shape[1] // 2
-    rr = np.sqrt((yy - cy)**2 + (xx - cx)**2)
-    rbin = rr.astype(int)
-    rmax = rbin.max()
-    profile_rows = [(int(r), float(average_spin_map[rbin == r].mean()))
-                    for r in range(rmax + 1)]
-    save_csv("spin_aura_profile.csv", ["radius_px", "mean_curl"], profile_rows)
+        # Radial profile from the non-upsampled average map
+        yy, xx = np.indices(average_spin_map.shape)
+        cy, cx = average_spin_map.shape[0] // 2, average_spin_map.shape[1] // 2
+        rr = np.sqrt((yy - cy)**2 + (xx - cx)**2)
+        rbin = rr.astype(int)
+        rmax = rbin.max()
+        profile_rows = [(int(r), float(average_spin_map[rbin == r].mean()))
+                        for r in range(rmax + 1)]
+        save_csv("spin_aura_profile.csv", [
+                 "radius_px", "mean_curl"], profile_rows)
 
     include_spin = _os.path.exists(
         _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
