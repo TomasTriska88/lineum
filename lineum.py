@@ -82,8 +82,8 @@ def _env_str(name: str, default: str = "") -> str:
 
 # --- Run config ---
 RUN_ID = 6
-RUN_MODE = "true"
-SEED = 31
+RUN_MODE = "false"
+SEED = 41
 
 # Optional env overrides for canonical run selection:
 #   LINEUM_RUN_ID=6
