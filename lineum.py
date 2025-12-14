@@ -485,19 +485,23 @@ probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 
 # 0 = keep full history (default)
 # LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs; it does not affect CSV outputs unless you wire it.
+#
+# (moved above) Stability / service-mode controls
+#
+
+# 0 = keep full history (default)
+# LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs.
 ROLLING_WINDOW = _env_int("LINEUM_ROLLING_WINDOW", 0)
 if INFINITE_MODE and (not ROLLING_WINDOW or ROLLING_WINDOW <= 0):
     # keep RAM bounded in service mode even if user forgot to set it
     ROLLING_WINDOW = 2000
+
 if ROLLING_WINDOW and ROLLING_WINDOW > 0:
     multi_amp_logs = {pt: deque(maxlen=ROLLING_WINDOW) for pt in probe_points}
 else:
     multi_amp_logs = {pt: [] for pt in probe_points}
 
-#
 # Optional: cap in-memory logs too (keeps RAM bounded in infinite/service mode)
-# IMPORTANT: define BEFORE we create logs.
-#
 LOG_ROLLING_WINDOW = _env_int(
     "LINEUM_LOG_ROLLING_WINDOW",
     ROLLING_WINDOW if (ROLLING_WINDOW and ROLLING_WINDOW > 0) else 0
