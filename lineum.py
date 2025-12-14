@@ -1,4 +1,4 @@
-from typing import MutableSequence, Deque, Union
+from typing import MutableSequence, Deque, Union, Optional, Tuple
 from collections import deque
 import datetime
 import json
@@ -611,13 +611,13 @@ def _checkpoint_dir() -> str:
     return d
 
 
-def _checkpoint_paths(step_idx: int) -> tuple[str, str]:
+def _checkpoint_paths(step_idx: int) -> Tuple[str, str]:
     d = _checkpoint_dir()
     stem = f"{RUN_TAG}_ckpt_{step_idx:08d}"
     return (os.path.join(d, stem + ".npz"), os.path.join(d, stem + ".json"))
 
 
-def _find_latest_checkpoint() -> tuple[str | None, str | None, int | None]:
+def _find_latest_checkpoint() -> Tuple[Optional[str], Optional[str], Optional[int]]:
     d = _checkpoint_dir()
     if not os.path.isdir(d):
         return (None, None, None)
@@ -704,7 +704,7 @@ def save_checkpoint(step_idx: int, psi: np.ndarray, phi: np.ndarray, delta: np.n
     _atomic_write_json(meta_path, meta)
 
 
-def load_checkpoint(npz_path: str, meta_path: str | None):
+def load_checkpoint(npz_path: str, meta_path: Optional[str]):
     data = np.load(npz_path, allow_pickle=False)
     step_idx = int(data["step"][0])
     psi = data["psi"]
@@ -986,7 +986,7 @@ def detect_vortices(phase: np.ndarray) -> np.ndarray:
     return vortices
 
 
-VORTEX_VIS_PERCENTILE = 5.0  # visualization-only gate: keep lowest 5% amplitud
+VORTEX_VIS_PERCENTILE = 5.0  # visualization-only gate: keep lowest 5% amplitudes
 
 
 LogSeq = Union[list, deque]
@@ -2295,18 +2295,32 @@ if __name__ == "__main__":
         labels_text = " · ".join(labels)
 
         # --- Data links for convenience (relative to report location)
-        data_links_html = (
-            f'<ul>'
-            f'<li><a href="{RUN_TAG}_amplitude_log.csv">amplitude_log.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_spectrum_log.csv">spectrum_log.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_phi_center_log.csv">phi_center_log.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_topo_log.csv">topo_log.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_trajectories.csv">trajectories.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_multi_spectrum_summary.csv">multi_spectrum_summary.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_spin_aura_profile.csv">spin_aura_profile.csv</a></li>'
-            f'<li><a href="{RUN_TAG}_metrics_summary.csv">metrics_summary.csv</a></li>'
-            f'</ul>'
-        )
+        # IMPORTANT: some files are optional (e.g., spectrum_log.csv when legacy FFT is disabled).
+        def _link_if_exists(rel_name: str, label: str) -> str:
+            p = _os.path.join(output_dir, rel_name)
+            return f'<li><a href="{rel_name}">{label}</a></li>' if _os.path.exists(p) else ""
+
+        _links = []
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_amplitude_log.csv", "amplitude_log.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_phi_center_log.csv", "phi_center_log.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_topo_log.csv", "topo_log.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_trajectories.csv", "trajectories.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_multi_spectrum_summary.csv", "multi_spectrum_summary.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_spin_aura_profile.csv", "spin_aura_profile.csv"))
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_metrics_summary.csv", "metrics_summary.csv"))
+        # optional legacy FFT export
+        _links.append(_link_if_exists(
+            f"{RUN_TAG}_spectrum_log.csv", "spectrum_log.csv"))
+
+        _links = [x for x in _links if x]
+        data_links_html = f"<ul>{''.join(_links)}</ul>" if _links else "<p><em>No downloadable files found.</em></p>"
 
         # --- Derived display numbers from f0 (safe)
         try:
@@ -2435,45 +2449,51 @@ if __name__ == "__main__":
 
       <h2>📈 Key Plots</h2>
       <div class="grid">
-        <div><img src="{RUN_TAG}_topo_charge_plot.png" alt="Topological charge plot"></div>
-        <div><img src="{RUN_TAG}_vortex_count_plot.png" alt="Vortex count plot"></div>
-        <div><img src="{RUN_TAG}_spectrum_plot.png" alt="Spectrum plot"></div>
-        <div><img src="{RUN_TAG}_phi_center_plot.png" alt="φ center plot"></div>
+        {f'<div><img src="{RUN_TAG}_topo_charge_plot.png" alt="Topological charge plot"></div>' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_topo_charge_plot.png")) else ''}
+        {f'<div><img src="{RUN_TAG}_vortex_count_plot.png" alt="Vortex count plot"></div>' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_vortex_count_plot.png")) else ''}
+        {f'<div><img src="{RUN_TAG}_spectrum_plot.png" alt="Spectrum plot"></div>' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_spectrum_plot.png")) else ''}
+        {f'<div><img src="{RUN_TAG}_phi_center_plot.png" alt="φ center plot"></div>' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_phi_center_plot.png")) else ''}
       </div>
 
             <h2>🎞️ Field Evolution GIFs</h2>
       <div class="grid">
+        {f'''
         <figure>
           <img src="{RUN_TAG}_lineum_amplitude.gif" alt="Amplitude |ψ|" title="Amplitude |ψ|">
           <figcaption>Amplitude |ψ|</figcaption>
-        </figure>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif")) else ''}
 
+        {f'''
         <figure>
           <img src="{RUN_TAG}_lineum_spin.gif" alt="Spin-like curl map" title="Spin-like curl map">
           <figcaption>Spin-like curl map</figcaption>
-        </figure>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif")) else ''}
 
+        {f'''
         <figure>
           <img src="{RUN_TAG}_lineum_vortices.gif" alt="Vortex cores (±1 winding)" title="Vortex cores (±1 winding)">
           <figcaption>Vortex cores (±1 winding)</figcaption>
-        </figure>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif")) else ''}
 
+        {f'''
         <figure>
           <img src="{RUN_TAG}_lineum_particles.gif" alt="Tracked quasiparticles" title="Tracked quasiparticles">
           <figcaption>Tracked quasiparticles</figcaption>
-        </figure>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif")) else ''}
 
+        {f'''
         <figure>
           <img src="{RUN_TAG}_lineum_flow.gif" alt="Flow field arrows (∇φ)" title="Flow field arrows (∇φ)">
           <figcaption>Flow field arrows (∇φ)</figcaption>
-        </figure>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")) else ''}
 
+        {f'''
         <figure>
-  <img src="{RUN_TAG}_lineum_full_overlay.gif"
-       alt="Composite overlay (masked curl)"
-       title="Composite overlay (masked curl)">
-  <figcaption>Composite overlay (masked curl)</figcaption>
-</figure>
+          <img src="{RUN_TAG}_lineum_full_overlay.gif"
+               alt="Composite overlay (masked curl)"
+               title="Composite overlay (masked curl)">
+          <figcaption>Composite overlay (masked curl)</figcaption>
+        </figure>''' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")) else ''}
 
       </div>
 
@@ -2485,7 +2505,7 @@ The resulting map shows a robust dipole-like pattern (“spin aura”). We repor
 flow pattern in the model; no claim is made about quantum spin.
 </p>
 
-<div><img src="{RUN_TAG}_spin_aura_avg.png" alt="Spin aura"></div>
+{f'<div><img src="{RUN_TAG}_spin_aura_avg.png" alt="Spin aura"></div>' if _os.path.exists(_os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")) else '<p><em>Spin-aura image not available for this run (frames may be disabled).</em></p>'}
 
 
       <h2>📚 Glossary & Naming Rationale</h2>
