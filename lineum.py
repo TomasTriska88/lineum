@@ -486,11 +486,16 @@ probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 # 0 = keep full history (default)
 # LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs; it does not affect CSV outputs unless you wire it.
 #
-# (moved above) Stability / service-mode controls
 #
+# Stability / service-mode controls (MUST be defined before ROLLING_WINDOW uses INFINITE_MODE)
+#
+CHECKPOINT_EVERY = _env_int("LINEUM_CHECKPOINT_EVERY", 25)  # recommended 10–50
+RESUME_ENABLED = _env_bool("LINEUM_RESUME", True)
+INFINITE_MODE = _env_bool("LINEUM_INFINITE", False)
+METRICS_EXPORT_EVERY = _env_int("LINEUM_METRICS_EXPORT_EVERY", 25)
 
-# 0 = keep full history (default)
-# LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs.
++  # 0 = keep full history (default)
++  # LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs.
 ROLLING_WINDOW = _env_int("LINEUM_ROLLING_WINDOW", 0)
 if INFINITE_MODE and (not ROLLING_WINDOW or ROLLING_WINDOW <= 0):
     # keep RAM bounded in service mode even if user forgot to set it
@@ -569,13 +574,7 @@ PHI_INTERACTION_CAP = float(_os.environ.get(
     "LINEUM_PHI_INTERACTION_CAP", "10.0") or "10.0")
 
 
-#
-# Stability / service-mode controls
-#
-CHECKPOINT_EVERY = _env_int("LINEUM_CHECKPOINT_EVERY", 25)  # recommended 10–50
-RESUME_ENABLED = _env_bool("LINEUM_RESUME", True)
-INFINITE_MODE = _env_bool("LINEUM_INFINITE", False)
-METRICS_EXPORT_EVERY = _env_int("LINEUM_METRICS_EXPORT_EVERY", 25)
+# (moved выше) Stability / service-mode controls are defined earlier to avoid NameError.
 
 
 def _atomic_write_bytes(path: str, data: bytes) -> None:
@@ -1012,7 +1011,7 @@ def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh
 
     if amp_thresh is None:
         # default: robust 5th percentile
-        amp_thresh = float(np.percentile(amp, 5.0))
+        amp_thresh = float(np.percentile(amp, VORTEX_VIS_PERCENTILE))
     mask = (amp <= amp_thresh)
     out = np.zeros_like(vortices)
     out[:-1, :-1] = vortices[:-1, :-1] * mask[:-1, :-1]
