@@ -486,6 +486,9 @@ probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 # 0 = keep full history (default)
 # LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs; it does not affect CSV outputs unless you wire it.
 ROLLING_WINDOW = _env_int("LINEUM_ROLLING_WINDOW", 0)
+if INFINITE_MODE and (not ROLLING_WINDOW or ROLLING_WINDOW <= 0):
+    # keep RAM bounded in service mode even if user forgot to set it
+    ROLLING_WINDOW = 2000
 if ROLLING_WINDOW and ROLLING_WINDOW > 0:
     multi_amp_logs = {pt: deque(maxlen=ROLLING_WINDOW) for pt in probe_points}
 else:
@@ -1127,7 +1130,9 @@ if __name__ == "__main__":
     neighborhood_size = 3
     radius_log = []
     if not resumed:
-        trajectories = []  # seznam (id, step, y, x, size)
+        _traj_cap = _env_int("LINEUM_TRAJ_MAX", 200000 if INFINITE_MODE else 0)
+        trajectories = deque(maxlen=_traj_cap) if (
+            _traj_cap and _traj_cap > 0) else []
         active_tracks = {}  # id -> (y, x)
         next_id = 0
 
@@ -1662,6 +1667,8 @@ if __name__ == "__main__":
         pf = np.asarray(positive_freqs, dtype=float)
         ps = np.asarray(positive_spectrum, dtype=float)
 
+    pf2 = np.asarray([], dtype=float)
+    ps2 = np.asarray([], dtype=float)
     if pf is not None:
         m = pf > 0
         pf2 = pf[m]
