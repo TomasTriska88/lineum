@@ -1,17 +1,20 @@
-import os as _os
-from tqdm import tqdm
-from scipy.fft import fft, fftfreq
-import warnings
-import sys
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.animation import PillowWriter
-from scipy.ndimage import gaussian_filter, maximum_filter
-from scipy.spatial.distance import euclidean
-import random
-import json
+from typing import MutableSequence, Deque, Union
+from collections import deque
 import datetime
+import json
+import math
+import random
+from scipy.spatial.distance import euclidean
+from scipy.ndimage import gaussian_filter, maximum_filter
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import sys
+from scipy.fft import fft, fftfreq
+from tqdm import tqdm
+import os as _os
+import os
+from typing import Optional
 
 # NOTE: do not hardcode config toggles later; use CONFIGS mapping as source of truth.
 
@@ -47,6 +50,34 @@ def _json_safe(obj):
     # Cokoliv jiného odmítneme
     raise TypeError(
         f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    v = _os.environ.get(name, None)
+    if v is None:
+        return default
+    s = str(v).strip().lower()
+    if s in ("1", "true", "yes", "y", "on"):
+        return True
+    if s in ("0", "false", "no", "n", "off"):
+        return False
+    return default
+
+
+def _env_int(name: str, default: int) -> int:
+    v = _os.environ.get(name, None)
+    if v is None:
+        return default
+    try:
+        n = int(str(v).strip())
+        return n
+    except Exception:
+        return default
+
+
+def _env_str(name: str, default: str = "") -> str:
+    v = _os.environ.get(name, None)
+    return default if v is None else str(v)
 
 
 # --- Run config ---
@@ -115,7 +146,11 @@ def _variant_window_params(param_tag: str, base_W=256, base_hop=128):
 WINDOW_W, WINDOW_HOP = _variant_window_params(PARAM_TAG)
 
 
-RUN_TAG = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}{('_' + PARAM_TAG) if PARAM_TAG else ''}"
+_RUN_TAG_DERIVED = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}{('_' + PARAM_TAG) if PARAM_TAG else ''}"
+
+# Optional explicit override for the whole run tag (e.g. audit labels)
+# If provided, it MUST win for all filenames, manifests, HTML links, etc.
+RUN_TAG = _os.environ.get("LINEUM_RUN_TAG", "").strip() or _RUN_TAG_DERIVED
 
 np.random.seed(SEED)
 random.seed(SEED)
@@ -189,11 +224,15 @@ print(
     f"TEST_EXHALE_MODE={TEST_EXHALE_MODE}",
     f"KAPPA_MODE={KAPPA_MODE}",
     f"RUN_TAG={RUN_TAG}",
+    f"RUN_TAG_DERIVED={_RUN_TAG_DERIVED}",
 )
 
 # --- (optional) show env overrides that could change behavior ---
 _env_watch = ("LINEUM_RUN_ID", "LINEUM_RUN_MODE", "LINEUM_SEED",
-              "LINEUM_PARAM_TAG", "LINEUM_LOW_NOISE_MODE", "LINEUM_TEST_EXHALE_MODE")
+              "LINEUM_PARAM_TAG", "LINEUM_RUN_TAG",
+              "LINEUM_LOW_NOISE_MODE", "LINEUM_TEST_EXHALE_MODE",
+              "LINEUM_STEPS", "LINEUM_SAVE_GIFS", "LINEUM_SAVE_FRAMES", "LINEUM_SAVE_PNGS",
+              "LINEUM_PHI_INTERACTION_CAP")
 _env_present = {k: _os.environ.get(
     k) for k in _env_watch if _os.environ.get(k) is not None}
 if _env_present:
@@ -201,18 +240,6 @@ if _env_present:
 
 # Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
 # Accepted values: "1/0", "true/false", "yes/no", "on/off".
-
-
-def _env_bool(name: str, default: bool) -> bool:
-    v = _os.environ.get(name, None)
-    if v is None:
-        return default
-    s = str(v).strip().lower()
-    if s in ("1", "true", "yes", "y", "on"):
-        return True
-    if s in ("0", "false", "no", "n", "off"):
-        return False
-    return default
 
 
 LOW_NOISE_MODE = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
@@ -224,17 +251,6 @@ _os.makedirs(output_dir, exist_ok=True)
 # --- Frame storage throttling (memory/perf) ---
 # Store only every Nth step into frames_* (used for GIFs/NPY dumps).
 # Logs/metrics still run every step.
-
-
-def _env_int(name: str, default: int) -> int:
-    v = _os.environ.get(name, None)
-    if v is None:
-        return default
-    try:
-        n = int(str(v).strip())
-        return n if n > 0 else default
-    except Exception:
-        return default
 
 
 # How often to store simulation frames (for GIFs/NPY). 5 => store ~400 frames for 2000 steps.
@@ -397,17 +413,10 @@ def save_manifest(
     except Exception as e:
         notify_file_creation(path, success=False, error=e)
 
-
-particle_log = []
-interaction_log = []
-amplitude_log = []
-topo_log = []
-phi_center_log = []
-frames_phi = []  # required later (frames_phi.append in main loop)
-
 # IMPORTANT:
 # LOW_NOISE_MODE / TEST_EXHALE_MODE are set above from CONFIGS (+ optional env override).
 # Do NOT override them here, otherwise RUN_ID/RUN_MODE mapping becomes meaningless.
+
 
 size = 128
 
@@ -417,6 +426,32 @@ _tag = (PARAM_TAG or _tag_raw).strip()
 _tagset = {t for t in _tag.split("_") if t}
 if "grid256" in _tagset:
     size = 256
+
+# Allow window settings via PARAM_TAG:
+#   - "w256" -> overrides WINDOW_W
+#   - "hop128" or "h128" -> overrides WINDOW_HOP
+for t in _tagset:
+    if t.startswith("w"):
+        try:
+            _w = int(t[1:].strip())
+            if _w > 0:
+                WINDOW_W = _w
+        except Exception:
+            pass
+    if t.startswith("hop"):
+        try:
+            _h = int(t.replace("hop", "").strip())
+            if _h > 0:
+                WINDOW_HOP = _h
+        except Exception:
+            pass
+    if t.startswith("h") and not t.startswith("hop"):
+        try:
+            _h = int(t[1:].strip())
+            if _h > 0:
+                WINDOW_HOP = _h
+        except Exception:
+            pass
 
 # (Optional) allow "stepsXXXX" tag, e.g. "steps4000"
 # Make it robust: only override if we successfully parse a positive integer.
@@ -436,6 +471,11 @@ steps = int(steps_override) if steps_override is not None else (
     2000 if TEST_EXHALE_MODE else 500
 )
 
+# Optional explicit env override (keeps your PowerShell baseline flexible)
+steps_env = _env_int("LINEUM_STEPS", -1)
+if steps_env and steps_env > 0:
+    steps = int(steps_env)
+
 # Canonical noise level
 BASE_NOISE_STRENGTH = 0.005
 NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
@@ -443,7 +483,42 @@ NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
 # Probe points whose amplitude we track
 probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 
-multi_amp_logs = {pt: [] for pt in probe_points}
+# 0 = keep full history (default)
+# LINEUM_ROLLING_WINDOW applies to "rolling exports" and multi-probe logs; it does not affect CSV outputs unless you wire it.
+ROLLING_WINDOW = _env_int("LINEUM_ROLLING_WINDOW", 0)
+if ROLLING_WINDOW and ROLLING_WINDOW > 0:
+    multi_amp_logs = {pt: deque(maxlen=ROLLING_WINDOW) for pt in probe_points}
+else:
+    multi_amp_logs = {pt: [] for pt in probe_points}
+
+#
+# Optional: cap in-memory logs too (keeps RAM bounded in infinite/service mode)
+# IMPORTANT: define BEFORE we create logs.
+#
+LOG_ROLLING_WINDOW = _env_int(
+    "LINEUM_LOG_ROLLING_WINDOW",
+    ROLLING_WINDOW if (ROLLING_WINDOW and ROLLING_WINDOW > 0) else 0
+)
+
+
+def _maybe_rolling_list():
+    return deque(maxlen=LOG_ROLLING_WINDOW) if (LOG_ROLLING_WINDOW and LOG_ROLLING_WINDOW > 0) else []
+
+
+# create logs AFTER ROLLING_WINDOW exists
+particle_log = _maybe_rolling_list()
+interaction_log = _maybe_rolling_list()
+amplitude_log = _maybe_rolling_list()
+topo_log = _maybe_rolling_list()
+phi_center_log = _maybe_rolling_list()
+
+
+def _tail(seq, n: int):
+    if not n or n <= 0:
+        return list(seq) if not isinstance(seq, list) else seq
+    if isinstance(seq, deque):
+        return list(seq)[-n:]
+    return seq[-n:] if isinstance(seq, list) else list(seq)[-n:]
 
 
 PIXEL_SIZE = 1e-12     # 1 pixel = 1 pm (pikometr)
@@ -457,14 +532,220 @@ _tags = {t for t in _tag.split("_") if t}
 if "dt05" in _tags:
     TIME_STEP *= 0.5
 
+#
+# Output minimization toggles (your PowerShell audit baseline expects these)
+#
+SAVE_GIFS = _env_bool("LINEUM_SAVE_GIFS", True)
+SAVE_FRAMES = _env_bool("LINEUM_SAVE_FRAMES", True)
+SAVE_PNGS = _env_bool("LINEUM_SAVE_PNGS", True)
+
+STORE_EVERY = _env_int("LINEUM_STORE_EVERY", STORE_EVERY)
+GIF_SKIP = _env_int("LINEUM_GIF_SKIP", GIFT_SKIP)
+
+#
+# Optional experimental φ-injection near detected quasiparticles.
+# IMPORTANT: default OFF to keep canonical core behavior stable for audits/whitepaper runs.
+# Enable via env:
+#   LINEUM_PHI_INJECTION=0.2
+#
+PHI_INJECTION_AMOUNT = float(_os.environ.get(
+    "LINEUM_PHI_INJECTION", "0") or "0")
+
+#
+# Interaction cap for coupling term (φ * ψ):
+# Keep default at the old hardcoded 10.0, but make it configurable + auditable.
+# This is intentionally separate from PHI_CAP (global numeric safety cap).
+# Enable via env:
+#   LINEUM_PHI_INTERACTION_CAP=10
+#
+PHI_INTERACTION_CAP = float(_os.environ.get(
+    "LINEUM_PHI_INTERACTION_CAP", "10.0") or "10.0")
+
+
+#
+# Stability / service-mode controls
+#
+CHECKPOINT_EVERY = _env_int("LINEUM_CHECKPOINT_EVERY", 25)  # recommended 10–50
+RESUME_ENABLED = _env_bool("LINEUM_RESUME", True)
+INFINITE_MODE = _env_bool("LINEUM_INFINITE", False)
+METRICS_EXPORT_EVERY = _env_int("LINEUM_METRICS_EXPORT_EVERY", 25)
+
+
+def _atomic_write_bytes(path: str, data: bytes) -> None:
+    tmp = path + ".tmp"
+    with open(tmp, "wb") as f:
+        f.write(data)
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except Exception:
+            pass
+    os.replace(tmp, path)
+
+
+def _atomic_write_json(path: str, payload: dict) -> None:
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(_json_safe(payload), f, ensure_ascii=False, indent=2)
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except Exception:
+            pass
+    os.replace(tmp, path)
+
+
+def _checkpoint_dir() -> str:
+    base = _env_str("LINEUM_CHECKPOINT_DIR", "").strip()
+    if base:
+        d = base
+    else:
+        d = os.path.join(output_dir, "checkpoints")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _checkpoint_paths(step_idx: int) -> tuple[str, str]:
+    d = _checkpoint_dir()
+    stem = f"{RUN_TAG}_ckpt_{step_idx:08d}"
+    return (os.path.join(d, stem + ".npz"), os.path.join(d, stem + ".json"))
+
+
+def _find_latest_checkpoint() -> tuple[str | None, str | None, int | None]:
+    d = _checkpoint_dir()
+    if not os.path.isdir(d):
+        return (None, None, None)
+    best = None
+    best_step = None
+    for fn in os.listdir(d):
+        if not fn.startswith(f"{RUN_TAG}_ckpt_") or not fn.endswith(".npz"):
+            continue
+        try:
+            step_str = fn.replace(f"{RUN_TAG}_ckpt_", "").replace(".npz", "")
+            step = int(step_str)
+        except Exception:
+            continue
+        if best_step is None or step > best_step:
+            best_step = step
+            best = os.path.join(d, fn)
+    if best is None:
+        return (None, None, None)
+    meta = best.replace(".npz", ".json")
+    return (best, meta if os.path.exists(meta) else None, best_step)
+
+
+def save_checkpoint(step_idx: int, psi: np.ndarray, phi: np.ndarray, delta: np.ndarray, kappa: np.ndarray,
+                    next_id: int, active_tracks: dict, trajectories: list,
+                    logs: dict) -> None:
+    npz_path, meta_path = _checkpoint_paths(step_idx)
+
+    # Pack RNG states (best-effort; JSON-safe via repr)
+    rng_np = np.random.get_state()
+    rng_py = random.getstate()
+
+    # Save arrays (binary) atomically
+    # IMPORTANT:
+    #   np.savez_compressed() appends ".npz" if the filename does NOT end with ".npz".
+    #   Using "<name>.npz.tmp" would silently create "<name>.npz.tmp.npz" and os.replace() would fail.
+    tmp_npz = npz_path + ".tmp.npz"
+    try:
+        np.savez_compressed(
+            tmp_npz,
+            step=np.array([step_idx], dtype=np.int64),
+            psi=psi,
+            phi=phi,
+            delta=delta,
+            kappa=kappa,
+            next_id=np.array([next_id], dtype=np.int64),
+            # NOTE: active_tracks / trajectories / logs go to JSON (smaller, flexible)
+        )
+        # best-effort flush to disk before rename (Windows/Linux safe)
+        try:
+            with open(tmp_npz, "rb") as _f:
+                try:
+                    os.fsync(_f.fileno())
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        os.replace(tmp_npz, npz_path)
+    finally:
+        # cleanup in case something failed before replace
+        try:
+            if os.path.exists(tmp_npz) and (not os.path.exists(npz_path)):
+                os.remove(tmp_npz)
+        except Exception:
+            pass
+
+    # Save meta (JSON) atomically
+    meta = {
+        "run_tag": RUN_TAG,
+        "step": int(step_idx),
+        "size": int(size),
+        "time_step": float(TIME_STEP),
+        "kappa_mode": KAPPA_MODE,
+        "param_tag": _tag,
+        "next_id": int(next_id),
+        "active_tracks": active_tracks,
+        # keep last chunk only
+        "trajectories_tail": trajectories[-min(len(trajectories), 5000):] if isinstance(trajectories, list) else list(trajectories)[-min(len(trajectories), 5000):],
+        "logs_tail": logs,
+        "rng_np": repr(rng_np),
+        "rng_py": repr(rng_py),
+        "rng_restore_policy": "not_restored (arrays-only resume)",
+        "created_utc": datetime.datetime.utcnow().isoformat() + "Z",
+    }
+    _atomic_write_json(meta_path, meta)
+
+
+def load_checkpoint(npz_path: str, meta_path: str | None):
+    data = np.load(npz_path, allow_pickle=False)
+    step_idx = int(data["step"][0])
+    psi = data["psi"]
+    phi = data["phi"]
+    delta = data["delta"]
+    kappa = data["kappa"]
+    next_id = int(data["next_id"][0]) if "next_id" in data else 0
+
+    active_tracks = {}
+    trajectories_tail = []
+    logs_tail = {}
+    if meta_path and os.path.exists(meta_path):
+        try:
+            with open(meta_path, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+            active_tracks = meta.get("active_tracks", {}) or {}
+            trajectories_tail = meta.get("trajectories_tail", []) or []
+            logs_tail = meta.get("logs_tail", {}) or {}
+            # RNG restore best-effort (repr -> eval is unsafe; we intentionally do NOT eval here)
+            # For reproducibility, rely on deterministic resume from arrays; RNG is a minor factor in most runs.
+        except Exception:
+            pass
+
+    return step_idx, psi, phi, delta, kappa, next_id, active_tracks, trajectories_tail, logs_tail
+
+
+def export_rolling_metrics(step_idx: int, payload: dict) -> None:
+    # single compact JSON for “last X” consumption by external tools
+    path = os.path.join(output_dir, f"{RUN_TAG}_rolling_metrics.json")
+    out = {
+        "run_tag": RUN_TAG,
+        "step": int(step_idx),
+        "updated_utc": datetime.datetime.utcnow().isoformat() + "Z",
+        "data": payload,
+    }
+    _atomic_write_json(path, out)
+
 
 def sigmoid(x, k=5):
     return 1 / (1 + np.exp(-k * (x - 0.0)))
 
 
-def generate_kappa(step, total_steps=steps):
+def generate_kappa(step, total_steps=None):
     """Postupná změna z island na constant"""
-    progress = step / total_steps
+    if total_steps is None:
+        total_steps = 1
+    progress = step / float(max(1, total_steps))
     core = np.zeros((size, size))
     core[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
     core = gaussian_filter(core, sigma=5)
@@ -487,7 +768,8 @@ def initialize_fields():
 
 
 def initialize_interaction_field():
-    return np.zeros((size, size), dtype=np.complex128)
+    # φ is a scalar background field (real). Keep it float for stability and interpretability.
+    return np.zeros((size, size), dtype=np.float64)
 
 
 def diffuse_complex(field, rate=0.05):
@@ -497,6 +779,17 @@ def diffuse_complex(field, rate=0.05):
         np.roll(field, 1, axis=1) +
         np.roll(field, -1, axis=1) -
         4 * field
+    )
+
+
+def diffuse_real(field: np.ndarray, rate=0.05) -> np.ndarray:
+    field = np.asarray(field, dtype=np.float64)
+    return rate * (
+        np.roll(field, 1, axis=0) +
+        np.roll(field, -1, axis=0) +
+        np.roll(field, 1, axis=1) +
+        np.roll(field, -1, axis=1) -
+        4.0 * field
     )
 
 
@@ -535,6 +828,17 @@ def _cap_complex_magnitude(z: np.ndarray, cap: float) -> np.ndarray:
     return z
 
 
+def _finite_complex(z: np.ndarray, nan: float = 0.0) -> np.ndarray:
+    """
+    Make complex array finite without using np.clip (which is invalid for complex).
+    Replaces NaN/Inf in real/imag parts independently.
+    """
+    z = np.asarray(z, dtype=np.complex128)
+    re = np.nan_to_num(z.real, nan=nan, posinf=0.0, neginf=0.0)
+    im = np.nan_to_num(z.imag, nan=nan, posinf=0.0, neginf=0.0)
+    return re + 1j * im
+
+
 # Safety caps (keep conservative; just preventing numeric blow-ups)
 PSI_AMP_CAP = 1e6          # cap |psi| before squaring / interactions
 GRAD_CAP = 1e6          # cap gradient components before squaring
@@ -542,11 +846,10 @@ PHI_CAP = 1e6          # hard cap for |phi| to keep interaction finite
 
 
 def evolve(psi, delta, phi, kappa):
-    # --- numeric safety: keep psi/phi finite early (prevents cascade) ---
-    psi = _finite_clip(psi, lo=None, hi=None, nan=0.0,
-                       posinf=0.0, neginf=0.0, dtype=np.complex128)
-    phi = _finite_clip(phi, lo=-PHI_CAP, hi=PHI_CAP, nan=0.0,
-                       posinf=PHI_CAP, neginf=-PHI_CAP, dtype=np.complex128)
+    # ψ is complex; φ is real scalar.
+    psi = _finite_complex(psi, nan=0.0)
+    phi = _finite_clip(phi, lo=0.0, hi=PHI_CAP, nan=0.0,
+                       posinf=PHI_CAP, neginf=0.0, dtype=np.float64)
 
     # amplitude (cap BEFORE any squaring)
     amp = np.abs(psi).astype(np.float64, copy=False)
@@ -573,13 +876,14 @@ def evolve(psi, delta, phi, kappa):
     fluctuation = np.random.normal(
         0.0, NOISE_STRENGTH, (size, size)) * np.exp(1j * np.angle(psi))
 
-    # 💡 Adding interaction
-    # keep interaction bounded; phi may drift in exotic regimes
-    phi_clip = np.clip(phi, -10, 10)
-    interaction_term = 0.04 * phi_clip * psi
+    # 💡 Adding interaction (φ is real scalar; keep bounded)
+    # NOTE: previously hardcoded to 10.0; now configurable via LINEUM_PHI_INTERACTION_CAP
+    phi_int = _finite_clip(phi, lo=0.0, hi=float(PHI_INTERACTION_CAP), nan=0.0,
+                           posinf=float(PHI_INTERACTION_CAP), neginf=0.0, dtype=np.float64)
+    interaction_term = 0.04 * phi_int * psi
 
     # 💫 Gradient φ jako „tíhový tok“
-    grad_phi_x, grad_phi_y = np.gradient(np.abs(phi))
+    grad_phi_x, grad_phi_y = np.gradient(phi)
     phi_flow_term = -0.004 * (grad_phi_x + 1j * grad_phi_y)
     psi += phi_flow_term
 
@@ -599,17 +903,16 @@ def evolve(psi, delta, phi, kappa):
                         lo=0.0, hi=PSI_AMP_CAP, nan=0.0, posinf=PSI_AMP_CAP, neginf=0.0)
     local_input = np.clip(amp2 * amp2, 0.0, 1e4)
 
-    # single-step relaxation toward local_input (no extra 0.5 factor):
+    # single-step relaxation toward local_input:
     phi += kappa * reaction_strength * (local_input - phi)
 
-    # single diffusion application, calibrated: Deff ≈ 0.05 * 0.30 = 0.015
-    phi += kappa * 0.30 * diffuse_complex(phi)
+    # diffusion on real φ: use real Laplacian diffusion
+    phi += kappa * 0.30 * diffuse_real(phi)
 
-    # post-step safety: keep outputs finite (prevents FFT/log failures later)
-    psi = _finite_clip(psi, nan=0.0, posinf=0.0,
-                       neginf=0.0, dtype=np.complex128)
-    phi = _finite_clip(phi, lo=-PHI_CAP, hi=PHI_CAP, nan=0.0,
-                       posinf=PHI_CAP, neginf=-PHI_CAP, dtype=np.complex128)
+    # post-step safety
+    psi = _finite_complex(psi, nan=0.0)
+    phi = _finite_clip(phi, lo=0.0, hi=PHI_CAP, nan=0.0,
+                       posinf=PHI_CAP, neginf=0.0, dtype=np.float64)
 
     # CRITICAL: hard-cap |psi| so FFT power never overflows in extreme regimes
     psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
@@ -680,7 +983,10 @@ def detect_vortices(phase: np.ndarray) -> np.ndarray:
 VORTEX_VIS_PERCENTILE = 5.0  # visualization-only gate: keep lowest 5% amplitud
 
 
-def update_topology_log(raw_vortices: np.ndarray, step_idx: int, topo_log: list) -> None:
+LogSeq = Union[list, deque]
+
+
+def update_topology_log(raw_vortices: np.ndarray, step_idx: int, topo_log: LogSeq) -> None:
     """
     Append RAW topology counts for this step into topo_log: (step, +1, -1, net, total).
     """
@@ -707,193 +1013,379 @@ def gate_vortices_by_amplitude(vortices: np.ndarray, amp: np.ndarray, amp_thresh
 
 
 if __name__ == "__main__":
-    # Inicializace polí
-    psi, delta = initialize_fields()
-    phi = initialize_interaction_field()
-    # ladicí pole, zatím statické (všude 1.0)
+    # Optionally resume from last checkpoint (same RUN_TAG)
+    step_start = 0
+    resumed = False
+    resume_npz, resume_meta, resume_step = (None, None, None)
+    if RESUME_ENABLED:
+        resume_npz, resume_meta, resume_step = _find_latest_checkpoint()
+    if RESUME_ENABLED and resume_npz and resume_step is not None:
+        try:
+            step_start, psi, phi, delta, kappa, next_id, active_tracks, trajectories, logs_tail = load_checkpoint(
+                resume_npz, resume_meta)
+            resumed = True
+            # Continue AFTER the checkpointed step to avoid duplicating that step's logs.
+            step_start = int(step_start) + 1
+            # Restore logs (tail only, keeps memory bounded)
+            try:
+                for row in (logs_tail.get("particle_log", []) or []):
+                    particle_log.append(tuple(row))
+                for row in (logs_tail.get("interaction_log", []) or []):
+                    interaction_log.append(tuple(row))
+                for row in (logs_tail.get("amplitude_log", []) or []):
+                    amplitude_log.append(tuple(row))
+                for row in (logs_tail.get("topo_log", []) or []):
+                    topo_log.append(tuple(row))
+                for row in (logs_tail.get("phi_center_log", []) or []):
+                    phi_center_log.append(tuple(row))
+            except Exception:
+                pass
+        except Exception:
+            resumed = False
 
-    kappa = np.ones((size, size), dtype=np.float64)
+    if not resumed:
+        # Inicializace polí
+        psi, delta = initialize_fields()
+        phi = initialize_interaction_field()
+        # ladicí pole, zatím statické (všude 1.0)
+        kappa = np.ones((size, size), dtype=np.float64)
 
-    if KAPPA_MODE == "gradient":
-        for y in range(size):
-            kappa[y, :] = np.linspace(0.1, 1.0, size)
-        save_kappa_map(kappa)
+        if KAPPA_MODE == "gradient":
+            for y in range(size):
+                kappa[y, :] = np.linspace(0.1, 1.0, size)
+            save_kappa_map(kappa)
 
-    elif KAPPA_MODE == "constant":
-        kappa *= 0.5  # nebo jiná zvolená konstanta
-        save_kappa_map(kappa)
+        elif KAPPA_MODE == "constant":
+            kappa *= 0.5  # nebo jiná zvolená konstanta
+            save_kappa_map(kappa)
 
-    elif KAPPA_MODE == "island":
-        from scipy.ndimage import gaussian_filter
-        kappa *= 0.0
-        kappa[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
-        kappa = gaussian_filter(kappa, sigma=5)
-        save_kappa_map(kappa)
+        elif KAPPA_MODE == "island":
+            from scipy.ndimage import gaussian_filter
+            kappa *= 0.0
+            kappa[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
+            kappa = gaussian_filter(kappa, sigma=5)
+            save_kappa_map(kappa)
 
+    WANT_FRAMES = bool(SAVE_GIFS or SAVE_FRAMES or SAVE_PNGS)
+    # In infinite/service mode, never accumulate frames in RAM (would grow without bound).
+    if INFINITE_MODE:
+        WANT_FRAMES = False
     frames_amp, frames_vecx, frames_vecy, frames_curl, frames_vort, frames_particles = [
     ], [], [], [], [], []
+    frames_phi = []
+    # stored simulation step for each stored frame (aligns frames_* to sim steps)
+    frames_step_idx = []
+    # O(1) mapping: sim_step -> stored frame index
+    frames_step_to_idx = {}
+
+    def _has_frames() -> bool:
+        """
+        True if we actually stored at least one throttled frame (aligned via frames_step_idx).
+        Many post-run analyses (spin aura, phi-near-particles, NPY dumps, GIFs) depend on this.
+        """
+        return len(frames_step_idx) > 0
+
+    def _warn_skip(msg: str) -> None:
+        print(f"⚠️ Skipping: {msg}")
+
+    def _nonempty(lst) -> bool:
+        try:
+            return lst is not None and len(lst) > 0
+        except Exception:
+            return False
+
+    def _frame_idx_for_step(step: int) -> Optional[int]:
+        """
+        Map simulation step -> stored frame index (for frames_* arrays).
+        Returns None if that step was not stored (because of STORE_EVERY or resume alignment).
+        """
+        return frames_step_to_idx.get(int(step))
+
+    def _phi_frame_idx(step: int) -> Optional[int]:
+        """
+        Map simulation step -> frames_phi index, respecting STORE_EVERY throttling.
+        Returns None if that step was not stored.
+        """
+        if step < 0:
+            return None
+        return frames_step_to_idx.get(int(step))
+
+    def _phi_at(step: int, y: int, x: int) -> Optional[float]:
+        """
+        Safe accessor for |phi| at a given simulation step (returns None if frame not stored).
+        """
+        idx = _phi_frame_idx(int(step))
+        if idx is None:
+            return None
+        if 0 <= y < size and 0 <= x < size:
+            return float(frames_phi[idx][y, x])
+        return None
+
     # print("🔄 Starting field calculations:")
 
     threshold = 0.12
     neighborhood_size = 3
     radius_log = []
-    trajectories = []  # seznam (id, step, y, x, size)
-    active_tracks = {}  # id -> (y, x)
-    next_id = 0
+    if not resumed:
+        trajectories = []  # seznam (id, step, y, x, size)
+        active_tracks = {}  # id -> (y, x)
+        next_id = 0
 
     # Ladicí konstanta aplikovaná na víc složek systému
     TUNING_CONST = 1 / 137
     APPLY_TUNING = True
 
-    # print("🔄 Initializing the field and interaction field.")
-    for i in tqdm(range(steps), desc="Processing steps", unit="step"):
-        # Removed manual progress print
+    # Service-friendly loop:
+    # - finite: steps iterations
+    # - infinite: run forever (until killed), relying on checkpoint + rolling export
+    def _iter_steps():
+        if INFINITE_MODE:
+            i = step_start
+            while True:
+                yield i
+                i += 1
+        else:
+            for i in range(step_start, steps):
+                yield i
 
-        if KAPPA_MODE == "island_to_constant":
-            kappa = generate_kappa(i)
+    def _build_logs_tail():
+        # Keep JSON compact. Prefer LOG_ROLLING_WINDOW if set; else fall back to 2000.
+        n = int(LOG_ROLLING_WINDOW) if (
+            LOG_ROLLING_WINDOW and LOG_ROLLING_WINDOW > 0) else 2000
+        return {
+            "particle_log": _tail(particle_log, n),
+            "interaction_log": _tail(interaction_log, n),
+            "amplitude_log": _tail(amplitude_log, n),
+            "topo_log": _tail(topo_log, n),
+            "phi_center_log": _tail(phi_center_log, n),
+        }
 
-        psi, phi = evolve(psi, delta, phi, kappa)
-        amp = np.abs(psi)
+    def _export_service_snapshot(step_idx: int):
+        # (your existing metrics/logging continues here)
+        # Lightweight rolling export for external consumers:
+        # - last X rows (X=LINEUM_ROLLING_WINDOW) where available
+        # - do NOT write heavy frames/PNGs/GIFs here
+        if not (ROLLING_WINDOW and ROLLING_WINDOW > 0):
+            # still export "latest" in a tiny form, even without a window
+            n = 1
+        else:
+            n = int(ROLLING_WINDOW)
+        payload = {
+            "window": int(n),
+            "latest": {
+                "center_amp": None if (len(amplitude_log) == 0) else float(_tail(amplitude_log, 1)[0][1]),
+                "phi_center_abs": None if (len(phi_center_log) == 0) else float(_tail(phi_center_log, 1)[0][1]),
+                "vortices_total": None if (len(topo_log) == 0) else int(_tail(topo_log, 1)[0][4]),
+                "net_charge": None if (len(topo_log) == 0) else int(_tail(topo_log, 1)[0][3]),
+                "particles_count": None if (len(particle_log) == 0) else int(_tail(particle_log, 1)[0][3]),
+            },
+            "tail": {
+                "amplitude_log": _tail(amplitude_log, n),
+                "phi_center_log": _tail(phi_center_log, n),
+                "topo_log": _tail(topo_log, n),
+                "particle_log": _tail(particle_log, n),
+                "interaction_log": _tail(interaction_log, n),
+            },
+        }
+        export_rolling_metrics(step_idx, payload)
 
-        phase = np.angle(psi)
+    pbar = tqdm(_iter_steps(), desc="Processing steps",
+                unit="step") if not INFINITE_MODE else _iter_steps()
+    i = step_start - 1
+    try:
+        for i in pbar:
 
-        # Phase-safe central differences with periodic boundary:
-        # wrap differences as angle(exp(i Δθ)) to avoid ±π jumps artefacts
-        dph_dx = 0.5 * \
-            np.angle(
-                np.exp(1j * (np.roll(phase, -1, axis=1) - np.roll(phase, 1, axis=1))))
-        dph_dy = 0.5 * \
-            np.angle(
-                np.exp(1j * (np.roll(phase, -1, axis=0) - np.roll(phase, 1, axis=0))))
+            if KAPPA_MODE == "island_to_constant":
+                kappa = generate_kappa(i)
 
-        # keep names used later (for vector field/GIFs)
-        grad_x = dph_dx
-        grad_y = dph_dy
+            psi, phi = evolve(psi, delta, phi, kappa)
+            amp = np.abs(psi)
 
-        # curl(∇phase) via central differences (periodic)
-        dFy_dx = 0.5 * (np.roll(grad_y, -1, axis=1) -
-                        np.roll(grad_y, 1, axis=1))
-        dFx_dy = 0.5 * (np.roll(grad_x, -1, axis=0) -
-                        np.roll(grad_x, 1, axis=0))
+            phase = np.angle(psi)
 
-        curl = (dFy_dx - dFx_dy) * kappa
+            # Phase-safe central differences with periodic boundary:
+            # wrap differences as angle(exp(i Δθ)) to avoid ±π jumps artefacts
+            dph_dx = 0.5 * \
+                np.angle(
+                    np.exp(1j * (np.roll(phase, -1, axis=1) - np.roll(phase, 1, axis=1))))
+            dph_dy = 0.5 * \
+                np.angle(
+                    np.exp(1j * (np.roll(phase, -1, axis=0) - np.roll(phase, 1, axis=0))))
 
-        # RAW vortices for metrics/CSV
-        raw_vortices = detect_vortices(phase)
-        # append to topology log
-        update_topology_log(raw_vortices, i, topo_log)
-        vortices_vis = gate_vortices_by_amplitude(
-            raw_vortices, amp)  # visualization-only (for GIF)
+            # keep names used later (for vector field/GIFs)
+            grad_x = dph_dx
+            grad_y = dph_dy
 
-        local_max = (amp == maximum_filter(amp, size=neighborhood_size))
-        particles = (amp > threshold) & local_max
-        coords = np.argwhere(particles)
+            # curl(∇phase) via central differences (periodic)
+            dFy_dx = 0.5 * (np.roll(grad_y, -1, axis=1) -
+                            np.roll(grad_y, 1, axis=1))
+            dFx_dy = 0.5 * (np.roll(grad_x, -1, axis=0) -
+                            np.roll(grad_x, 1, axis=0))
+            curl = (dFy_dx - dFx_dy) * kappa
 
-        # 💥 Experimentální injekce do φ – lokální posílení v místě částic
-        injection_amount = 0.2
-        for cy, cx in coords:
-            y_min = max(cy - 1, 0)
-            y_max = min(cy + 2, size)
-            x_min = max(cx - 1, 0)
-            x_max = min(cx + 2, size)
-            phi[y_min:y_max, x_min:x_max] += injection_amount
+            # RAW vortices for metrics/CSV
+            raw_vortices = detect_vortices(phase)
+            update_topology_log(raw_vortices, i, topo_log)
+            vortices_vis = gate_vortices_by_amplitude(
+                raw_vortices, amp)  # visualization-only (for GIF)
 
-        # Pro každou nově detekovanou částici
-        assigned = set()
-        new_active_tracks = {}
+            local_max = (amp == maximum_filter(amp, size=neighborhood_size))
+            particles = (amp > threshold) & local_max
+            coords = np.argwhere(particles)
 
-        for cy, cx in coords:
-            pos = np.array([cy, cx])
-            min_dist = float("inf")
-            closest_id = None
+            # 💥 (optional) Experimental φ-injection near detected quasiparticles.
+            # Default OFF for canonical runs; enable explicitly via LINEUM_PHI_INJECTION.
+            if PHI_INJECTION_AMOUNT and PHI_INJECTION_AMOUNT != 0.0:
+                injection_amount = float(PHI_INJECTION_AMOUNT)
+                for cy, cx in coords:
+                    y_min = max(cy - 1, 0)
+                    y_max = min(cy + 2, size)
+                    x_min = max(cx - 1, 0)
+                    x_max = min(cx + 2, size)
+                    phi[y_min:y_max, x_min:x_max] += injection_amount
 
-            # Najdi nejbližší aktivní trajektorii
-            for tid, last_pos in active_tracks.items():
-                dist = np.linalg.norm(pos - last_pos)
-                if dist < 3.0 and tid not in assigned:
-                    if dist < min_dist:
+            # Trackování trajektorií (greedy match)
+            assigned = set()
+            new_active_tracks = {}
+            for cy, cx in coords:
+                pos = np.array([cy, cx])
+                min_dist = float("inf")
+                closest_id = None
+                for tid, last_pos in active_tracks.items():
+                    dist = np.linalg.norm(pos - last_pos)
+                    if dist < 3.0 and tid not in assigned and dist < min_dist:
                         min_dist = dist
                         closest_id = tid
+                if closest_id is not None:
+                    new_active_tracks[closest_id] = pos
+                    assigned.add(closest_id)
+                    trajectories.append(
+                        (closest_id, i, cy, cx, float(amp[cy, cx])))
+                else:
+                    new_active_tracks[next_id] = pos
+                    trajectories.append(
+                        (next_id, i, cy, cx, float(amp[cy, cx])))
+                    next_id += 1
+            active_tracks = new_active_tracks
 
-            if closest_id is not None:
-                # Navazujeme na předchozí trajektorii
-                new_active_tracks[closest_id] = pos
-                assigned.add(closest_id)
-                trajectories.append((closest_id, i, cy, cx, amp[cy, cx]))
+            # --- Store frames sparsely (for GIFs/NPY only) ---
+            # Guarded by WANT_FRAMES to avoid unbounded RAM growth in service mode.
+            if WANT_FRAMES and ((i % STORE_EVERY) == 0):
+                # particles / vortices are visualization masks -> compact dtypes
+                frames_particles.append(particles.astype(DT_PART, copy=False))
+                frames_vort.append(vortices_vis.astype(DT_VORT, copy=False))
+
+                # continuous fields -> float32 is enough for visualization/GIFs
+                frames_amp.append(np.asarray(amp, dtype=DT_AMP))
+                frames_vecx.append(np.asarray(grad_x, dtype=DT_VEC))
+                frames_vecy.append(np.asarray(grad_y, dtype=DT_VEC))
+                frames_curl.append(np.asarray(curl, dtype=DT_CURL))
+
+                # φ frames (φ is real)
+                frames_phi.append(np.asarray(phi, dtype=DT_PHI))
+                frames_step_idx.append(int(i))
+                frames_step_to_idx[int(i)] = len(frames_step_idx) - 1
+
+            r_threshold = 0.15
+            mask = amp > r_threshold
+            coords_r = np.argwhere(mask)
+            center = np.array([size//2, size//2])
+            if coords_r.size > 0:
+                distances = np.linalg.norm(coords_r - center, axis=1)
+                avg_radius = float(np.mean(distances))
             else:
-                # Nová trajektorie
-                new_active_tracks[next_id] = pos
-                trajectories.append((next_id, i, cy, cx, amp[cy, cx]))
-                next_id += 1
+                avg_radius = 0.0
+            radius_log.append((i, avg_radius))
 
-        # Aktualizuj aktivní trajektorie
-        active_tracks = new_active_tracks
-
-        # --- Store frames sparsely (for GIFs/NPY only) ---
-        # This is the main RAM saver: avoid keeping 2000 full-resolution frames in memory.
-        if (i % STORE_EVERY) == 0:
-            # particles / vortices are visualization masks -> compact dtypes
-            frames_particles.append(particles.astype(DT_PART, copy=False))
-            frames_vort.append(vortices_vis.astype(DT_VORT, copy=False))
-
-            # continuous fields -> float32 is enough for visualization/GIFs
-            frames_amp.append(np.asarray(amp, dtype=DT_AMP))
-            frames_vecx.append(np.asarray(grad_x, dtype=DT_VEC))
-            frames_vecy.append(np.asarray(grad_y, dtype=DT_VEC))
-            frames_curl.append(np.asarray(curl, dtype=DT_CURL))
-
-            # |phi| frames (absolute value only)
-            # copy to detach from evolving phi; keep float32 to save RAM
-            frames_phi.append(np.asarray(np.abs(phi), dtype=DT_PHI))
-
-        r_threshold = 0.15
-        mask = amp > r_threshold
-        coords = np.argwhere(mask)
-        center = np.array([size//2, size//2])
-        if coords.size > 0:
-            distances = np.linalg.norm(coords - center, axis=1)
-            avg_radius = np.mean(distances)
-        else:
-            avg_radius = 0.0
-        radius_log.append((i, avg_radius))
-
-        # Removed manual progress print
-
-        if coords.size > 0:
-            centroid = coords.mean(axis=0)
-            particle_log.append((i, centroid[0], centroid[1], len(coords)))
-        else:
-            particle_log.append((i, np.nan, np.nan, 0))
-
-        radius = 5
-        if coords.size > 0:
-            center_y, center_x = centroid.round().astype(int)
-            y_min = max(center_y - radius, 0)
-            y_max = min(center_y + radius + 1, size)
-            x_min = max(center_x - radius, 0)
-            x_max = min(center_x + radius + 1, size)
-            local_vortices = raw_vortices[y_min:y_max, x_min:x_max]
-            pos_count = np.sum(local_vortices == 1)
-            neg_count = np.sum(local_vortices == -1)
-        else:
-            pos_count = 0
-            neg_count = 0
-        interaction_log.append(
-            (i, pos_count, neg_count, pos_count - neg_count))
-
-        center_y, center_x = size // 2, size // 2
-        central_amp = amp[center_y, center_x]
-
-        # print(f"🔄 Step {i+1}/{steps}: Saving data and updating logs.")
-        amplitude_log.append((i, central_amp))
-        phi_center_log.append((i, np.abs(phi[center_y, center_x])))
-
-        for pt in probe_points:
-            y, x = pt
-            if 0 <= y < size and 0 <= x < size:
-                multi_amp_logs[pt].append(np.abs(psi[y, x]))
+            if coords.size > 0:
+                centroid = coords.mean(axis=0)
+                particle_log.append(
+                    (i, float(centroid[0]), float(centroid[1]), int(len(coords))))
             else:
-                multi_amp_logs[pt].append(np.nan)
+                centroid = None
+                particle_log.append((i, np.nan, np.nan, 0))
+
+            radius = 5
+            if centroid is not None:
+                center_y, center_x = centroid.round().astype(int)
+                y_min = max(center_y - radius, 0)
+                y_max = min(center_y + radius + 1, size)
+                x_min = max(center_x - radius, 0)
+                x_max = min(center_x + radius + 1, size)
+                local_vortices = raw_vortices[y_min:y_max, x_min:x_max]
+                pos_count = int(np.sum(local_vortices == 1))
+                neg_count = int(np.sum(local_vortices == -1))
+            else:
+                pos_count = 0
+                neg_count = 0
+            interaction_log.append(
+                (i, pos_count, neg_count, int(pos_count - neg_count)))
+
+            center_y, center_x = size // 2, size // 2
+            central_amp = amp[center_y, center_x]
+            amplitude_log.append((i, float(central_amp)))
+            phi_center_log.append((i, float(phi[center_y, center_x])))
+
+            for pt in probe_points:
+                y, x = pt
+                if 0 <= y < size and 0 <= x < size:
+                    multi_amp_logs[pt].append(np.abs(psi[y, x]))
+                else:
+                    multi_amp_logs[pt].append(np.nan)
+
+            # --- Service-mode persistence: checkpoint + rolling export ---
+            if CHECKPOINT_EVERY and CHECKPOINT_EVERY > 0 and (i % CHECKPOINT_EVERY) == 0:
+                try:
+                    save_checkpoint(
+                        step_idx=int(i),
+                        psi=psi,
+                        phi=phi,
+                        delta=delta,
+                        kappa=kappa,
+                        next_id=int(next_id),
+                        active_tracks={int(k): [int(v[0]), int(v[1])] for k, v in active_tracks.items(
+                        )} if isinstance(active_tracks, dict) else {},
+                        trajectories=trajectories,
+                        logs=_build_logs_tail(),
+                    )
+                except Exception as _e:
+                    print("⚠️ checkpoint failed:", _e)
+
+            if METRICS_EXPORT_EVERY and METRICS_EXPORT_EVERY > 0 and (i % METRICS_EXPORT_EVERY) == 0:
+                try:
+                    _export_service_snapshot(int(i))
+                except Exception as _e:
+                    print("⚠️ rolling export failed:", _e)
+
+    except KeyboardInterrupt:
+        print("\n⏹️ Interrupted by user (KeyboardInterrupt). Saving a final checkpoint/snapshot...")
+        try:
+            if CHECKPOINT_EVERY and CHECKPOINT_EVERY > 0:
+                save_checkpoint(
+                    step_idx=int(i),
+                    psi=psi,
+                    phi=phi,
+                    delta=delta,
+                    kappa=kappa,
+                    next_id=int(next_id),
+                    active_tracks={int(k): [int(v[0]), int(v[1])] for k, v in active_tracks.items(
+                    )} if isinstance(active_tracks, dict) else {},
+                    trajectories=trajectories,
+                    logs=_build_logs_tail(),
+                )
+        except Exception as _e:
+            print("⚠️ final checkpoint failed:", _e)
+        try:
+            if i >= 0:
+                _export_service_snapshot(int(i))
+        except Exception as _e:
+            print("⚠️ final rolling export failed:", _e)
+
+    # In infinite/service mode, we typically do not want to generate huge end-of-run exports.
+    # Finite runs proceed with the full export pipeline as before.
+    if INFINITE_MODE:
+        print("✅ Infinite/service run: rolling exports + checkpoints are active. Skipping end-of-run heavy exports.")
+        sys.exit(0)
 
     save_csv("radius_log.csv", ["step", "avg_radius"], radius_log)
 
@@ -951,17 +1443,28 @@ if __name__ == "__main__":
     amplitudes -= np.mean(amplitudes)
 
     # Compute FFT
-    fft_result = fft(amplitudes)
-    frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
-    spectrum = np.abs(fft_result)**2
+    do_legacy_fft = (np.isnan(f0_mean) or np.isnan(
+        sbr_mean) or len(amplitudes) <= 20000)
+    if do_legacy_fft:
+        fft_result = fft(amplitudes)
+        frequencies = fftfreq(len(amplitudes), d=TIME_STEP)
+        spectrum = np.abs(fft_result)**2
+    else:
+        frequencies = None
+        spectrum = None
 
     # Keep positive frequencies only
-    positive_freqs = frequencies[:len(frequencies)//2]
-    positive_spectrum = spectrum[:len(spectrum)//2]
+    if do_legacy_fft:
+        positive_freqs = frequencies[:len(frequencies)//2]
+        positive_spectrum = spectrum[:len(spectrum)//2]
 
-    # Find the dominant frequency
-    dominant_index = np.argmax(positive_spectrum)
-    dominant_freq = positive_freqs[dominant_index]  # v Hz
+    if do_legacy_fft:
+        dominant_index = int(np.argmax(positive_spectrum))
+        dominant_freq = float(positive_freqs[dominant_index])  # Hz
+    else:
+        dominant_index = None
+        dominant_freq = float(f0_mean) if (
+            f0_mean == f0_mean) else float("nan")
 
     # --- Spectral Balance Ratio (SBR) with ±2-bin guard around f0
     guard = 2
@@ -1073,11 +1576,9 @@ if __name__ == "__main__":
     mass_ratio = mass / electron_mass
 
     # Uložení do CSV
-    save_csv(
-        "spectrum_log.csv",
-        ["frequency_Hz", "amplitude"],
-        zip(positive_freqs, positive_spectrum),
-    )
+    if do_legacy_fft:
+        save_csv("spectrum_log.csv", ["frequency_Hz", "amplitude"], zip(
+            positive_freqs, positive_spectrum))
 
     # Nyní exportuj jen čisté trajektorie
     save_csv(
@@ -1226,6 +1727,15 @@ if __name__ == "__main__":
             plt.close()
 
     # Funkce pro uložení GIFů
+
+    # NOTE:
+    # GIF/overlay generation requires stored frames. When SAVE_GIFS/SAVE_FRAMES/SAVE_PNGS are disabled,
+    # WANT_FRAMES can be False and frames_* stay empty -> downstream would crash.
+    #
+    # We therefore guard all frame-dependent exports below on:
+    #   (a) WANT_FRAMES is True (finite run with storage enabled), and
+    #   (b) _has_frames() is True (at least one frame was stored).
+    #
 
     def save_gif(data_frames, filename, cmap='viridis', vmin=None, vmax=None,
                  out_px=None, resample='nearest'):
@@ -1509,30 +2019,53 @@ if __name__ == "__main__":
         except Exception as e:
             notify_file_creation(filename, success=False, error=e)
 
-    save_gif(frames_amp, _os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
-             cmap="plasma", vmin=0, vmax=0.5, out_px=512)
+    # --- GIF exports (guarded) ---
+    if SAVE_GIFS:
+        if WANT_FRAMES and _has_frames():
+            if _nonempty(frames_amp):
+                save_gif(frames_amp, _os.path.join(output_dir, f"{RUN_TAG}_lineum_amplitude.gif"),
+                         cmap="plasma", vmin=0, vmax=0.5, out_px=512)
+            else:
+                _warn_skip("GIF amplitude (frames_amp is empty)")
 
-    save_gif(frames_curl, _os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
-             cmap="bwr", vmin=-0.3, vmax=0.3, out_px=512)
+            if _nonempty(frames_curl):
+                save_gif(frames_curl, _os.path.join(output_dir, f"{RUN_TAG}_lineum_spin.gif"),
+                         cmap="bwr", vmin=-0.3, vmax=0.3, out_px=512)
+            else:
+                _warn_skip("GIF spin (frames_curl is empty)")
 
-    save_gif(frames_vort, _os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
-             cmap="bwr", vmin=-1, vmax=1, out_px=512)
+            if _nonempty(frames_vort):
+                save_gif(frames_vort, _os.path.join(output_dir, f"{RUN_TAG}_lineum_vortices.gif"),
+                         cmap="bwr", vmin=-1, vmax=1, out_px=512)
+            else:
+                _warn_skip("GIF vortices (frames_vort is empty)")
 
-    save_gif(frames_particles, _os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
-             cmap="gray", vmin=0, vmax=1, out_px=512)
+            if _nonempty(frames_particles):
+                save_gif(frames_particles, _os.path.join(output_dir, f"{RUN_TAG}_lineum_particles.gif"),
+                         cmap="gray", vmin=0, vmax=1, out_px=512)
+            else:
+                _warn_skip("GIF particles (frames_particles is empty)")
 
-    flow_path = _os.path.join(output_dir, f"{RUN_TAG}_lineum_flow.gif")
-    save_flow_quiver_gif(
-        frames_vecx, frames_vecy,
-        flow_path,
-        out_px=512,      # output GIF size in pixels
-        # sparsity of arrow grid
-        vec_stride=12,
-        vec_scale=9.0,   # arrow length (scale)
-        k_skip=GIFT_SKIP,        # skip frames (smaller file)
-        fps=5,          # snímková frekvence GIFu
-        bg="black"       # nebo "black", chceš-li tmavé pozadí
-    )
+            if _nonempty(frames_vecx) and _nonempty(frames_vecy):
+                flow_path = _os.path.join(
+                    output_dir, f"{RUN_TAG}_lineum_flow.gif")
+                save_flow_quiver_gif(
+                    frames_vecx, frames_vecy,
+                    flow_path,
+                    out_px=512,      # output GIF size in pixels
+                    vec_stride=12,   # sparsity of arrow grid
+                    vec_scale=9.0,   # arrow length (scale)
+                    k_skip=GIFT_SKIP,  # skip frames (smaller file)
+                    fps=5,          # snímková frekvence GIFu
+                    bg="black"      # nebo "black", chceš-li tmavé pozadí
+                )
+            else:
+                _warn_skip("GIF flow (frames_vecx/frames_vecy empty)")
+        else:
+            _warn_skip(
+                "GIF exports (no stored frames; set LINEUM_SAVE_FRAMES/PNGS/GIFS or disable this stage)")
+    else:
+        _warn_skip("GIF exports (LINEUM_SAVE_GIFS=0)")
 
     def generate_html_report(
         filename=f"{RUN_TAG}_lineum_report.html",
@@ -1626,7 +2159,9 @@ if __name__ == "__main__":
         #     confirmations.append(
         #         f"🌉 Podezření na {wormhole_count} případů červí díry (skoková relokace mezi φ-zónami)")
 
-        if curl_std > 0.05:
+        _curl_std = 0.0 if ("curl_std" not in globals()
+                            or curl_std is None) else float(curl_std)
+        if _curl_std > 0.05:
             confirmations.append(
                 f"🔄 Significant curl activity inside high-φ regions (σ = {curl_std:.2e})")
 
@@ -1868,7 +2403,8 @@ if __name__ == "__main__":
 
       <h2>🌀 Simulation Summary</h2>
       <ul>
-        <li><strong>Steps:</strong> {len(frames_amp)}</li>
+        <li><strong>Steps (sim):</strong> {steps}</li>
+        <li><strong>Frames stored:</strong> {len(frames_step_idx)}</li>
         <li><strong>Field size:</strong> {size} × {size}</li>
         <li><strong>Quasiparticles detected:</strong> {'✅ Yes' if quasiparticles_present else '❌ No'}</li>
         <li><strong>Vortices detected:</strong> {'✅ Yes' if vortices_present else '❌ No'}</li>
@@ -1970,88 +2506,115 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         except Exception as e:
             notify_file_creation(path, success=False, error=e)
 
-    overlay_path = _os.path.join(
-        output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
-    save_full_overlay_gif(
-        frames_amp, frames_curl, frames_vecx, frames_vecy,
-        overlay_path,
-        vmin_amp=0.0, vmax_amp=0.5,
-        vmin_curl=-0.3, vmax_curl=0.3,
-        out_px=512,
-        vec_stride=12,         # sparser arrows = cleaner look
-        vec_scale=6.0,
-        k_skip=GIFT_SKIP,
-        fps=5,                 # sladěno s ostatními GIFy (při k_skip=2)
-        amp_alpha_floor=0.30,  # skryje curl v nízké |ψ|
-        curl_alpha_quantile=0.95,  # ignore weak curl below the 95th percentile
-        alpha_scale=80,        # gentler overall curl alpha
-        resample="bilinear"
-    )
+    # --- Full overlay GIF (guarded) ---
+    if SAVE_GIFS:
+        if WANT_FRAMES and _has_frames() and _nonempty(frames_amp) and _nonempty(frames_curl) and _nonempty(frames_vecx) and _nonempty(frames_vecy):
+            overlay_path = _os.path.join(
+                output_dir, f"{RUN_TAG}_lineum_full_overlay.gif")
+            save_full_overlay_gif(
+                frames_amp, frames_curl, frames_vecx, frames_vecy,
+                overlay_path,
+                vmin_amp=0.0, vmax_amp=0.5,
+                vmin_curl=-0.3, vmax_curl=0.3,
+                out_px=512,
+                vec_stride=12,         # sparser arrows = cleaner look
+                vec_scale=6.0,
+                k_skip=GIFT_SKIP,
+                # sladěno s ostatními GIFy (při k_skip=2)
+                fps=5,
+                amp_alpha_floor=0.30,  # skryje curl v nízké |ψ|
+                curl_alpha_quantile=0.95,  # ignore weak curl below the 95th percentile
+                alpha_scale=80,        # gentler overall curl alpha
+                resample="bilinear"
+            )
+        else:
+            _warn_skip("full overlay GIF (missing stored frames)")
 
-    # 🌀 Save all vortex fields to files for analysis
-    frames_vort_np = np.array(frames_vort)  # shape: (steps, size, size)
-    npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
-    frames_curl_np = np.array(frames_curl)
-    npy_curl_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy")
-    try:
-        np.save(npy_curl_path, frames_curl_np)
-        notify_file_creation(npy_curl_path)
-    except Exception as e:
-        notify_file_creation(npy_curl_path, success=False, error=e)
-
-    try:
-        np.save(npy_path, frames_vort_np)
-        frames_amp_np = np.array(frames_amp)
-        amp_npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy")
+    # --- NPY dumps (guarded) ---
+    if WANT_FRAMES and _has_frames():
+        # 🌀 Save all vortex fields to files for analysis
+        frames_vort_np = np.array(frames_vort)  # shape: (n_frames, size, size)
+        npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_vortices.npy")
+        frames_curl_np = np.array(frames_curl)
+        npy_curl_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_curl.npy")
         try:
-            np.save(amp_npy_path, frames_amp_np)
-            notify_file_creation(amp_npy_path)
+            np.save(npy_curl_path, frames_curl_np)
+            notify_file_creation(npy_curl_path)
         except Exception as e:
-            notify_file_creation(amp_npy_path, success=False, error=e)
+            notify_file_creation(npy_curl_path, success=False, error=e)
 
-        notify_file_creation(npy_path)
-    except Exception as e:
-        notify_file_creation(npy_path, success=False, error=e)
+        try:
+            np.save(npy_path, frames_vort_np)
+            frames_amp_np = np.array(frames_amp)
+            amp_npy_path = _os.path.join(
+                output_dir, f"{RUN_TAG}_frames_amp.npy")
+            try:
+                np.save(amp_npy_path, frames_amp_np)
+                notify_file_creation(amp_npy_path)
+            except Exception as e:
+                notify_file_creation(amp_npy_path, success=False, error=e)
+
+            notify_file_creation(npy_path)
+        except Exception as e:
+            notify_file_creation(npy_path, success=False, error=e)
+    else:
+        _warn_skip("NPY dumps (no stored frames)")
 
     # 🧪 Analýza φ v okolí kvazičástic
     import random
     phi_values_near_particles = []
     phi_values_field = []
 
-    for row in trajectories:
-        step, y, x = int(row[1]), int(row[2]), int(row[3])
-        if 0 <= step < len(frames_phi):
-            phi_frame = frames_phi[step]
+    if WANT_FRAMES and _has_frames() and _nonempty(frames_phi):
+        for row in trajectories:
+            step, y, x = int(row[1]), int(row[2]), int(row[3])
+            fi = _phi_frame_idx(step)
+            if fi is None:
+                continue
+            phi_frame = frames_phi[fi]
+
             if 2 < y < size - 3 and 2 < x < size - 3:
                 local_phi = phi_frame[y-2:y+3, x-2:x+3].flatten()
                 phi_values_near_particles.extend(local_phi)
 
-        # random points outside particles
-        for _ in range(5):
-            ry, rx = random.randint(0, size - 1), random.randint(0, size - 1)
-            phi_values_field.append(frames_phi[step][ry, rx])
+            # random points in field (same stored frame)
+            for _ in range(5):
+                ry, rx = random.randint(
+                    0, size - 1), random.randint(0, size - 1)
+                phi_values_field.append(float(phi_frame[ry, rx]))
 
-    phi_mean_near = np.mean(phi_values_near_particles)
-    phi_std_near = np.std(phi_values_near_particles)
-    phi_mean_field = np.mean(phi_values_field)
-    phi_std_field = np.std(phi_values_field)
+        phi_mean_near = float(np.mean(phi_values_near_particles)
+                              ) if phi_values_near_particles else 0.0
+        phi_std_near = float(np.std(phi_values_near_particles)
+                             ) if phi_values_near_particles else 0.0
+        phi_mean_field = float(np.mean(phi_values_field)
+                               ) if phi_values_field else 0.0
+        phi_std_field = float(np.std(phi_values_field)
+                              ) if phi_values_field else 0.0
 
-    # 🌀 Uložení φ polí pro pozdější analýzu
-    frames_phi_np = np.array(frames_phi)  # φ v čase, pouze absolutní hodnota
-    phi_npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
-    try:
-        np.save(phi_npy_path, frames_phi_np)
-        notify_file_creation(phi_npy_path)
-    except Exception as e:
-        notify_file_creation(phi_npy_path, success=False, error=e)
+        # 🌀 Uložení φ polí pro pozdější analýzu
+        frames_phi_np = np.array(frames_phi)  # φ v čase (throttled)
+        phi_npy_path = _os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy")
+        try:
+            np.save(phi_npy_path, frames_phi_np)
+            notify_file_creation(phi_npy_path)
+        except Exception as e:
+            notify_file_creation(phi_npy_path, success=False, error=e)
+    else:
+        _warn_skip(
+            "phi-near-particles analysis + frames_phi.npy (no stored phi frames)")
+        phi_mean_near = 0.0
+        phi_std_near = None
+        phi_mean_field = 0.0
+        phi_std_field = 1.0
 
     if KAPPA_MODE == "island_to_constant":
-        save_kappa_map(kappa)
+        kappa = generate_kappa(i, total_steps=steps)
 
     # 📈 Výpočet životnosti kvazičástic
     lifespan_df = pd.DataFrame(trajectories, columns=[
         "id", "step", "y", "x", "amplitude"])
-    phi_abs = np.array(frames_phi)
+    # frames_phi is throttled; use _phi_at(step, y, x) to access step-aligned values.
     blackhole_candidates = []
     for tid, group in lifespan_df.groupby("id"):
         traj_steps = group["step"].values
@@ -2059,11 +2622,10 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         xs = group["x"].values.astype(int)
         inside_phi = []
         for s, y, x in zip(traj_steps, ys, xs):
-            if 0 <= s < len(phi_abs):
-                if phi_abs[s, y, x] > 0.25:
-                    inside_phi.append(True)
-                else:
-                    inside_phi.append(False)
+            v = _phi_at(int(s), int(y), int(x))
+            if v is None:
+                continue
+            inside_phi.append(bool(v > 0.25))
 
         if len(inside_phi) > 5 and all(inside_phi[-5:]):
             blackhole_candidates.append(tid)
@@ -2077,9 +2639,9 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         last_step = traj["step"].max()
         row = traj[traj["step"] == last_step].iloc[0]
         y, x = int(row["y"]), int(row["x"])
-        if 0 <= last_step < len(phi_abs):
-            phi_val = phi_abs[last_step, y, x]
-            phi_at_death.append(phi_val)
+        v = _phi_at(int(last_step), int(y), int(x))
+        if v is not None:
+            phi_at_death.append(float(v))
 
     if phi_at_death:
         avg_phi_death = np.mean(phi_at_death)
@@ -2108,14 +2670,16 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         prev = None
         for _, row in group.iterrows():
             step, y, x = int(row["step"]), int(row["y"]), int(row["x"])
-            if 0 <= step < len(phi_abs):
-                if phi_abs[step, y, x] > 0.25:
-                    if prev:
-                        dist = euclidean((y, x), prev)
-                        if dist > 20:
-                            wormhole_count += 1
-                            break
-                    prev = (y, x)
+            v = _phi_at(step, y, x)
+            if v is None:
+                continue
+            if v > 0.25:
+                if prev:
+                    dist = euclidean((y, x), prev)
+                    if dist > 20:
+                        wormhole_count += 1
+                        break
+                prev = (y, x)
 
     lifespans = lifespan_df.groupby("id")["step"].agg(["min", "max"])
     lifespans["duration"] = lifespans["max"] - lifespans["min"] + 1
@@ -2141,12 +2705,29 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     frames_curl_np = np.array(frames_curl)
 
     curl_inside_phi = []
-    for step in range(len(frames_curl_np)):
-        mask = phi_abs[step] > 0.25
-        curl_inside_phi.extend(frames_curl_np[step][mask])
+    if not (WANT_FRAMES and _has_frames() and _nonempty(frames_phi) and _nonempty(frames_curl)):
+        _warn_skip("spin-aura + curl-in-phi stats (missing stored frames)")
+        curl_mean = 0.0
+        curl_std = 0.0
+        average_spin_map = None
+        upsampled_spin_map = None
+        cutouts = []
+    else:
+        for step in range(len(frames_curl_np)):
+            # step here is frame-index, not simulation step; align by stored step index
+            if step >= len(frames_step_idx):
+                continue
+            sim_step = int(frames_step_idx[step])
+            fi = _phi_frame_idx(sim_step)
+            if fi is None:
+                continue
+            mask = frames_phi[fi] > 0.25
+            curl_inside_phi.extend(frames_curl_np[step][mask])
 
-    curl_mean = np.mean(curl_inside_phi)
-    curl_std = np.std(curl_inside_phi)
+            curl_mean = float(np.mean(curl_inside_phi)
+                              ) if curl_inside_phi else 0.0
+            curl_std = float(np.std(curl_inside_phi)
+                             ) if curl_inside_phi else 0.0
 
     lifespan_df = pd.DataFrame(trajectories, columns=[
         "id", "step", "y", "x", "amplitude"])
@@ -2159,17 +2740,24 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         y = int(row["y"])
         x = int(row["x"])
 
+        fi = _frame_idx_for_step(step)
+        if fi is None:
+            continue
         if (
-            0 <= step < len(frames_curl_np)
+            0 <= fi < len(frames_curl_np)
             and half_size <= y < frames_curl_np.shape[1] - half_size
             and half_size <= x < frames_curl_np.shape[2] - half_size
         ):
-            cutout = frames_curl_np[step, y - half_size: y +
-                                    half_size + 1, x - half_size: x + half_size + 1]
+            cutout = frames_curl_np[fi, y-half_size:y +
+                                    half_size+1, x-half_size:x+half_size+1]
             cutouts.append(cutout)
 
     average_spin_map = np.mean(cutouts, axis=0)
     upsampled_spin_map = zoom(average_spin_map, 5, order=3)
+
+    if not np.all(np.isfinite(upsampled_spin_map)):
+        upsampled_spin_map = np.nan_to_num(
+            upsampled_spin_map, nan=0.0, posinf=0.0, neginf=0.0)
 
     # Uložení obrázku
     spin_img_path = _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png")
@@ -2220,6 +2808,10 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     include_spin = _os.path.exists(
         _os.path.join(output_dir, f"{RUN_TAG}_spin_aura_avg.png"))
+
+    # If we skipped frame-dependent analyses, guard downstream reads (avoid crash on missing CSV).
+    if not (WANT_FRAMES and _has_frames()):
+        include_spin = False
 
     low_mass_count = sum(
         1 for d in multi_spectrum_details if d["mass_ratio"] < 0.01)
@@ -2317,12 +2909,17 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         "kappa_mode": str(KAPPA_MODE),
         "low_noise_mode": bool(LOW_NOISE_MODE),
         "test_exhale_mode": bool(TEST_EXHALE_MODE),
-        "grid_size": int(frames_amp[0].shape[0]),
+        # Never depend on frames_* being present (they can be disabled).
+        "grid_size": int(size),
         "steps": int(steps),
         "pixel_size_m": float(PIXEL_SIZE),
         "time_step_s": float(TIME_STEP),
         "window_W": int(WINDOW_W),
         "window_hop": int(WINDOW_HOP),
+        "phi_interaction_cap": float(PHI_INTERACTION_CAP),
+        "phi_cap": float(PHI_CAP),
+        "psi_amp_cap": float(PSI_AMP_CAP),
+        "grad_cap": float(GRAD_CAP),
     }
 
     metrics = {
