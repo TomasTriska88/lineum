@@ -52,6 +52,30 @@ def _json_safe(obj):
         f"Object of type {type(obj).__name__} is not JSON serializable")
 
 
+def _atomic_write_bytes(path: str, data: bytes) -> None:
+    tmp = path + ".tmp"
+    with open(tmp, "wb") as f:
+        f.write(data)
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except Exception:
+            pass
+    os.replace(tmp, path)
+
+
+def _atomic_write_json(path: str, payload: dict) -> None:
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(_json_safe(payload), f, ensure_ascii=False, indent=2)
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except Exception:
+            pass
+    os.replace(tmp, path)
+
+
 def _env_bool(name: str, default: bool) -> bool:
     v = _os.environ.get(name, None)
     if v is None:
@@ -245,8 +269,65 @@ if _env_present:
 LOW_NOISE_MODE = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
 TEST_EXHALE_MODE = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
 
-output_dir = "output"
-_os.makedirs(output_dir, exist_ok=True)
+# --- Output Directory Logic ---
+
+# Base output directory (kořen)
+BASE_OUTPUT_DIR = _env_str("LINEUM_BASE_OUTPUT_DIR", "output")
+_os.makedirs(BASE_OUTPUT_DIR, exist_ok=True)
+
+# Global placeholders (populated by setup_output_globals)
+output_dir = None
+_ckpt_dir = None
+RUN_DIR_NAME = None
+
+# Update latest_run.txt (Atomic)
+def _update_latest_run_pointer(base_dir: str, run_rel_path: str):
+    try:
+        ptr_path = _os.path.join(base_dir, "latest_run.txt")
+        _atomic_write_bytes(ptr_path, run_rel_path.encode('utf-8'))
+    except Exception as e:
+        print(f"⚠️ Failed to update latest_run.txt: {e}")
+
+def setup_output_globals(resume_checkpoint: Optional[str] = None):
+    """
+    Sets up global output_dir and _ckpt_dir.
+    If resuming from a checkpoint inside a 'runs' folder, reuses that folder.
+    Otherwise creates a new timestamped run folder.
+    """
+    global output_dir, _ckpt_dir, RUN_DIR_NAME
+
+    # 1. Try to derive from resume checkpoint
+    reused = False
+    if resume_checkpoint:
+        # Expected: .../runs/<RUN_TAG>_<TIMESTAMP>/checkpoints/<ckpt>.npz
+        # Parent: .../runs/<RUN_TAG>_<TIMESTAMP>/checkpoints
+        # Grandparent: .../runs/<RUN_TAG>_<TIMESTAMP>
+        try:
+            ckpt_parent = _os.path.dirname(_os.path.abspath(resume_checkpoint))
+            if _os.path.basename(ckpt_parent) == "checkpoints":
+                candidate_run_dir = _os.path.dirname(ckpt_parent)
+                # Verify it looks like a run dir (optional sanity check)
+                if _os.path.exists(candidate_run_dir):
+                    output_dir = candidate_run_dir
+                    _ckpt_dir = ckpt_parent
+                    RUN_DIR_NAME = _os.path.relpath(output_dir, BASE_OUTPUT_DIR)
+                    reused = True
+                    print(f"♻️ RESUME-IN-PLACE: Reusing output directory: {output_dir}")
+        except Exception as e:
+            print(f"⚠️ Failed to derive run dir from checkpoint: {e}")
+
+    # 2. If not reusing, create new timestamped dir
+    if not reused:
+        _ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        RUN_DIR_NAME = f"runs/{RUN_TAG}_{_ts}"
+        output_dir = _os.path.join(BASE_OUTPUT_DIR, RUN_DIR_NAME)
+        _os.makedirs(output_dir, exist_ok=True)
+        _ckpt_dir = _os.path.join(output_dir, "checkpoints")
+        _os.makedirs(_ckpt_dir, exist_ok=True)
+        print(f"📂 Output directory: {output_dir}")
+
+    # 3. Always update pointer to where we are writing
+    _update_latest_run_pointer(BASE_OUTPUT_DIR, RUN_DIR_NAME)
 
 # --- Frame storage throttling (memory/perf) ---
 # Store only every Nth step into frames_* (used for GIFs/NPY dumps).
@@ -490,6 +571,7 @@ probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 # Stability / service-mode controls (MUST be defined before ROLLING_WINDOW uses INFINITE_MODE)
 #
 CHECKPOINT_EVERY = _env_int("LINEUM_CHECKPOINT_EVERY", 25)  # recommended 10–50
+SAVE_STATE = _env_bool("LINEUM_SAVE_STATE", False)
 RESUME_ENABLED = _env_bool("LINEUM_RESUME", True)
 INFINITE_MODE = _env_bool("LINEUM_INFINITE", False)
 METRICS_EXPORT_EVERY = _env_int("LINEUM_METRICS_EXPORT_EVERY", 25)
@@ -577,28 +659,6 @@ PHI_INTERACTION_CAP = float(_os.environ.get(
 # (moved выше) Stability / service-mode controls are defined earlier to avoid NameError.
 
 
-def _atomic_write_bytes(path: str, data: bytes) -> None:
-    tmp = path + ".tmp"
-    with open(tmp, "wb") as f:
-        f.write(data)
-        f.flush()
-        try:
-            os.fsync(f.fileno())
-        except Exception:
-            pass
-    os.replace(tmp, path)
-
-
-def _atomic_write_json(path: str, payload: dict) -> None:
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(_json_safe(payload), f, ensure_ascii=False, indent=2)
-        f.flush()
-        try:
-            os.fsync(f.fileno())
-        except Exception:
-            pass
-    os.replace(tmp, path)
 
 
 def _checkpoint_dir() -> str:
@@ -617,27 +677,148 @@ def _checkpoint_paths(step_idx: int) -> Tuple[str, str]:
     return (os.path.join(d, stem + ".npz"), os.path.join(d, stem + ".json"))
 
 
-def _find_latest_checkpoint() -> Tuple[Optional[str], Optional[str], Optional[int]]:
-    d = _checkpoint_dir()
-    if not os.path.isdir(d):
-        return (None, None, None)
-    best = None
-    best_step = None
-    for fn in os.listdir(d):
-        if not fn.startswith(f"{RUN_TAG}_ckpt_") or not fn.endswith(".npz"):
-            continue
+def _find_latest_checkpoint(explicit_path: Optional[str] = None, base_output_dir: str = BASE_OUTPUT_DIR) -> Optional[str]:
+    """
+    Finds the best candidate for resumption.
+    Priority:
+    1. Explicit path (arg or env)
+    2. Latest run (via latest_run.txt -> run_dir/checkpoints/*.npz)
+    3. Legacy fallback (output/checkpoints/*.npz or output/*.npz)
+    """
+    # 1. Explicit path
+    if explicit_path and os.path.isfile(explicit_path):
+        print(f"🔄 Resuming from explicit checkpoint: {explicit_path}")
+        return explicit_path
+
+    # Env override
+    env_ckpt = _env_str("LINEUM_CHECKPOINT", "")
+    if env_ckpt and os.path.isfile(env_ckpt):
+        print(f"🔄 Resuming from LINEUM_CHECKPOINT: {env_ckpt}")
+        return env_ckpt
+    
+    candidates = []
+
+    def _scan_dir(d, priority):
+        if not os.path.isdir(d):
+            return
+        for fn in os.listdir(d):
+            if fn.endswith(".npz"):
+                fp = os.path.join(d, fn)
+                try:
+                    stat = os.stat(fp)
+                    candidates.append({
+                        "path": fp,
+                        "mtime": stat.st_mtime,
+                        "size": stat.st_size,
+                        "priority": priority
+                    })
+                except Exception:
+                    pass
+
+    # 2. Latest Run
+    latest_run_ptr = os.path.join(base_output_dir, "latest_run.txt")
+    if os.path.isfile(latest_run_ptr):
         try:
-            step_str = fn.replace(f"{RUN_TAG}_ckpt_", "").replace(".npz", "")
-            step = int(step_str)
+            with open(latest_run_ptr, "r", encoding="utf-8") as f:
+                rel_path = f.read().strip()
+            
+            # Sanity check: must be inside base_output_dir
+            run_dir = os.path.join(base_output_dir, rel_path)
+            # Normalize and check common prefix to prevent path traversal
+            if os.path.abspath(run_dir).startswith(os.path.abspath(base_output_dir)):
+                 run_ckpt_dir = os.path.join(run_dir, "checkpoints")
+                 _scan_dir(run_ckpt_dir, priority=2)
+        except Exception as e:
+            print(f"⚠️ Failed to read latest_run.txt: {e}")
+
+    # 3. Legacy Fallback
+    _scan_dir(os.path.join(base_output_dir, "checkpoints"), priority=3)
+    _scan_dir(base_output_dir, priority=3)
+
+    if not candidates:
+        return None
+
+    # Sort: Priority (asc aka 2 < 3), then Mtime (desc), then Size (desc)
+    candidates.sort(key=lambda x: (x["priority"], -x["mtime"], -x["size"]))
+    
+    best = candidates[0]["path"]
+    print(f"🔄 Found latest checkpoint (prio={candidates[0]['priority']}): {best}")
+    return best
+
+
+
+def save_state_checkpoint(run_dir: str, run_prefix: str, step_idx: int,
+                          psi: np.ndarray, phi: np.ndarray, kappa: np.ndarray, delta: np.ndarray,
+                          active_tracks: dict, next_id: int) -> Optional[str]:
+    """
+    Uloží minimální deterministický stav (pro restart) do NPZ (bez pickle).
+    Vrací relativní cestu k vytvořenému souboru (vůči run_dir), nebo None při chybě.
+    """
+    # Force checkpoints subdir
+    ckpt_subdir = os.path.join(run_dir, "checkpoints")
+    os.makedirs(ckpt_subdir, exist_ok=True)
+
+    filename = f"checkpoints/{run_prefix}_state_step{step_idx}.npz"
+    path = os.path.join(run_dir, filename)
+    tmp_path = path + ".tmp.npz"
+
+    # 1. Tracky: rozpad na pole
+    ids = sorted(active_tracks.keys())
+    track_ids = np.array(ids, dtype=np.int64)
+    if len(ids) > 0:
+        track_pos_xy = np.array([active_tracks[tid] for tid in ids], dtype=np.float64)
+    else:
+        track_pos_xy = np.zeros((0, 2), dtype=np.float64)
+
+    # 2. RNG: rozpad state (numpy global)
+    # state = ('MT19937', keys, pos, has_gauss, cached_gauss)
+    rng_algo_str, rng_keys, rng_pos, rng_has_gauss, rng_cached_gauss = np.random.get_state()
+
+    # 3. Uložení
+    try:
+        np.savez_compressed(
+            tmp_path,
+            # Fyzikální pole
+            psi=psi,
+            phi=phi,
+            kappa=kappa,
+            delta=delta,
+            # Meta
+            step_index=step_idx,
+            next_id=next_id,
+            # Tracks
+            track_ids=track_ids,
+            track_pos_xy=track_pos_xy,
+            # RNG (legacy numpy global) - breakdown
+            rng_algo=rng_algo_str,
+            rng_keys=rng_keys,
+            rng_pos=rng_pos,
+            rng_has_gauss=rng_has_gauss,
+            rng_cached_gauss=rng_cached_gauss
+        )
+        # Flush
+        try:
+            with open(tmp_path, "rb") as f:
+                os.fsync(f.fileno())
         except Exception:
-            continue
-        if best_step is None or step > best_step:
-            best_step = step
-            best = os.path.join(d, fn)
-    if best is None:
-        return (None, None, None)
-    meta = best.replace(".npz", ".json")
-    return (best, meta if os.path.exists(meta) else None, best_step)
+            pass
+        
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+        os.replace(tmp_path, path)
+        notify_file_creation(path)
+        return filename
+    except Exception as e:
+        print(f"⚠️ save_state_checkpoint failed: {e}")
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except Exception:
+                pass
+        return None
 
 
 def save_checkpoint(step_idx: int, psi: np.ndarray, phi: np.ndarray, delta: np.ndarray, kappa: np.ndarray,
@@ -704,29 +885,65 @@ def save_checkpoint(step_idx: int, psi: np.ndarray, phi: np.ndarray, delta: np.n
     _atomic_write_json(meta_path, meta)
 
 
-def load_checkpoint(npz_path: str, meta_path: Optional[str]):
+def load_checkpoint(npz_path: str, meta_path: Optional[str] = None):
+    print(f"📦 Loading checkpoint from: {npz_path}")
     data = np.load(npz_path, allow_pickle=False)
-    step_idx = int(data["step"][0])
+    
+    # Handle both old 'step' (array) and new 'step_index' (scalar)
+    if "step_index" in data:
+        step_idx = int(data["step_index"])
+    else:
+        step_idx = int(data["step"][0])
+
     psi = data["psi"]
     phi = data["phi"]
-    delta = data["delta"]
+    delta = data["delta"] if "delta" in data else generate_structured_delta()
     kappa = data["kappa"]
-    next_id = int(data["next_id"][0]) if "next_id" in data else 0
+    
+    # Handle next_id
+    if "next_id" in data:
+        val = data["next_id"]
+        next_id = int(val.item()) if val.ndim == 0 else int(val[0])
+    else:
+        next_id = 0
 
     active_tracks = {}
     trajectories_tail = []
     logs_tail = {}
-    if meta_path and os.path.exists(meta_path):
+
+    # 1. Try new format tracks (numpy arrays in npz)
+    if "track_ids" in data and "track_pos_xy" in data:
+        t_ids = data["track_ids"]
+        t_pos = data["track_pos_xy"]
+        if len(t_ids) == len(t_pos):
+            for i, tid in enumerate(t_ids):
+                # Ensure simple python types
+                active_tracks[int(tid)] = [float(t_pos[i, 0]), float(t_pos[i, 1])]
+    
+    # 2. Fallback to legacy metadata if available
+    if (not active_tracks) and meta_path and os.path.exists(meta_path):
         try:
             with open(meta_path, "r", encoding="utf-8") as f:
                 meta = json.load(f)
             active_tracks = meta.get("active_tracks", {}) or {}
             trajectories_tail = meta.get("trajectories_tail", []) or []
             logs_tail = meta.get("logs_tail", {}) or {}
-            # RNG restore best-effort (repr -> eval is unsafe; we intentionally do NOT eval here)
-            # For reproducibility, rely on deterministic resume from arrays; RNG is a minor factor in most runs.
         except Exception:
             pass
+            
+    # 3. Restore RNG if available (New format)
+    # state = ('MT19937', keys, pos, has_gauss, cached_gauss)
+    if "rng_algo" in data and "rng_keys" in data:
+        try:
+            r_algo = str(data["rng_algo"])
+            r_keys = data["rng_keys"]
+            r_pos = int(data["rng_pos"])
+            r_has = int(data["rng_has_gauss"])
+            r_cached = float(data["rng_cached_gauss"])
+            np.random.set_state((r_algo, r_keys, r_pos, r_has, r_cached))
+            print("🎲 RNG state restored from checkpoint.")
+        except Exception as e:
+            print(f"⚠️ Failed to restore RNG state: {e}")
 
     return step_idx, psi, phi, delta, kappa, next_id, active_tracks, trajectories_tail, logs_tail
 
@@ -1022,13 +1239,17 @@ if __name__ == "__main__":
     # Optionally resume from last checkpoint (same RUN_TAG)
     step_start = 0
     resumed = False
-    resume_npz, resume_meta, resume_step = (None, None, None)
+    resume_npz = None
     if RESUME_ENABLED:
-        resume_npz, resume_meta, resume_step = _find_latest_checkpoint()
-    if RESUME_ENABLED and resume_npz and resume_step is not None:
+        resume_npz = _find_latest_checkpoint(base_output_dir=BASE_OUTPUT_DIR)
+
+    # Setup output directory (either new or reused from checkpoint)
+    setup_output_globals(resume_npz)
+
+    if RESUME_ENABLED and resume_npz:
         try:
             step_start, psi, phi, delta, kappa, next_id, active_tracks, trajectories, logs_tail = load_checkpoint(
-                resume_npz, resume_meta)
+                resume_npz)
             resumed = True
             # Continue AFTER the checkpointed step to avoid duplicating that step's logs.
             step_start = int(step_start) + 1
@@ -1613,8 +1834,12 @@ if __name__ == "__main__":
         positive_freqs = freqs[:len(freqs)//2]
         positive_spectrum = spectrum[:len(spectrum)//2]
 
-        dom_idx = np.argmax(positive_spectrum)
-        dom_freq = positive_freqs[dom_idx]
+        if positive_spectrum.size == 0:
+            dom_idx = 0
+            dom_freq = 0.0
+        else:
+            dom_idx = np.argmax(positive_spectrum)
+            dom_freq = positive_freqs[dom_idx]
 
         # Lokální přepočet – NEPŘEPISUJE globální mass/mass_ratio
         energy_i = h * dom_freq
@@ -2947,7 +3172,9 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     # sanity guard – the display mass must be exactly hf0/c^2
     _mass_from_f = (_H * dominant_freq) / (_C**2)
-    assert abs(mass - _mass_from_f) / _mass_from_f < 1e-6, "mass/f0 mismatch"
+    if dominant_freq > 1e-12 and np.isfinite(dominant_freq):
+        # Relative error check (safe against div/0 due to if-guard)
+        assert abs(mass - _mass_from_f) / _mass_from_f < 1e-6, "mass/f0 mismatch"
 
     generate_html_report(
         mass=mass,
@@ -3053,6 +3280,23 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         "frames_amp_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_amp.npy"),
         "frames_phi_npy": _os.path.join(output_dir, f"{RUN_TAG}_frames_phi.npy"),
     }
+
+
+    # State checkpoint (if enabled)
+    latest_ckpt_path = None
+    if SAVE_STATE:
+        try:
+            # Uložení stavu po posledním kroku (i)
+            # Pokud běh skončil normálně, i je poslední krok.
+            # Pokud byl přerušen, i je krok přerušení.
+            latest_ckpt_path = save_state_checkpoint(
+                output_dir, RUN_TAG, int(i),
+                psi, phi, kappa, delta, active_tracks, int(next_id)
+            )
+            if latest_ckpt_path:
+                outputs["latest_state_checkpoint"] = latest_ckpt_path
+        except Exception as e:
+            print(f"⚠️ Failed to save state checkpoint: {e}")
 
     # Složíme manifest ručně a předáme ho jako první argument
     manifest = {

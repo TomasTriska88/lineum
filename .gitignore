@@ -1,2 +1,14 @@
 __pycache__/
 /.vscode
+
+# Temporary helper scripts (Antigravity scratch convention)
+.scratch/
+
+# Simulation output (generated, not versioned)
+output/
+verify_output/
+test_out/
+
+# Temp files
+*.tmp
+*.log
