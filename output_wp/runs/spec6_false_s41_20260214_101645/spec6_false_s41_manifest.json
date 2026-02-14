@@ -24,7 +24,8 @@
       "beta": 0.015,
       "delta": 0.00462,
       "sigma_xi": 0.005
-    }
+    },
+    "topo_log_stride": 25
   },
   "code_fingerprint": {
     "sha256": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f",
@@ -107,5 +108,18 @@
       "contract_path": "contracts/lineum-core-1.0.9-core.contract.json",
       "tool": "whitepaper_contract.py"
     }
+  },
+  "invariants": {
+    "dim": "2D",
+    "bcs": "periodic",
+    "precision": "float64"
+  },
+  "provenance": {
+    "patched_by": "whitepaper_contract",
+    "patched_at": "2026-02-14T20:32:09.363522+00:00",
+    "reason": "add invariants and topo log stride for contract suite"
+  },
+  "logging": {
+    "topo_log_stride": 25
   }
 }

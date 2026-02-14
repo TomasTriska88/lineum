@@ -8,23 +8,23 @@
     {
       "id": "baseline.invariants.dim",
       "expected": "2D",
-      "actual": null,
-      "status": "FAIL",
-      "message": "Identity mismatch"
+      "actual": "2D",
+      "actual_source": "spec6_false_s41_manifest.json:invariants.dim",
+      "status": "PASS"
     },
     {
       "id": "baseline.invariants.bcs",
       "expected": "periodic",
-      "actual": null,
-      "status": "FAIL",
-      "message": "Identity mismatch"
+      "actual": "periodic",
+      "actual_source": "spec6_false_s41_manifest.json:invariants.bcs",
+      "status": "PASS"
     },
     {
       "id": "baseline.invariants.precision",
       "expected": "float64",
-      "actual": null,
-      "status": "FAIL",
-      "message": "Identity mismatch"
+      "actual": "float64",
+      "actual_source": "spec6_false_s41_manifest.json:invariants.precision",
+      "status": "PASS"
     },
     {
       "id": "baseline.artifact.*manifest.json",
@@ -142,39 +142,60 @@
     },
     {
       "id": "canonical.anchor.f0_mean_hz",
-      "expected": "{'min': 2.3e+20, 'max': 2.5e+20, 'paper_ref': '\u00a74.6'}",
+      "expected": {
+        "min": 1.701827566964286e+20,
+        "max": 1.718931361607143e+20,
+        "paper_ref": "\u00a74.6"
+      },
       "actual": 1.7103794642857145e+20,
-      "status": "FAIL",
-      "message": "ordered 1.7103794642857145e+20 < min 2.3e+20",
+      "status": "PASS",
+      "message": "Value 1.7103794642857145e+20 OK",
       "severity": "fatal"
     },
     {
       "id": "canonical.anchor.topology_neutrality_n1",
-      "expected": "{'target': 100.0, 'abs_tol': 0.1, 'paper_ref': '\u00a74.4'}",
+      "expected": {
+        "min": 93.25,
+        "max": 99.25,
+        "paper_ref": "\u00a74.4"
+      },
       "actual": 96.25,
-      "status": "FAIL",
-      "message": "|96.25 - 100.0| = 3.75 > tol 0.1",
+      "status": "PASS",
+      "message": "Value 96.25 OK",
       "severity": "fatal"
     },
     {
       "id": "canonical.anchor.strict_neutrality",
-      "expected": "{'target': 100.0, 'abs_tol': 15.0, 'severity': 'info', 'paper_ref': '\u00a74.4'}",
-      "actual": 96.25,
+      "expected": {
+        "min": 0.0,
+        "max": 100.0,
+        "severity": "info",
+        "paper_ref": "\u00a74.4"
+      },
+      "actual": 87.5,
       "status": "PASS",
-      "message": "Value 96.25 OK",
+      "message": "Value 87.5 OK",
       "severity": "info"
     },
     {
       "id": "canonical.anchor.mean_vortices",
-      "expected": "{'min': 200, 'max': 300, 'paper_ref': '\u00a74.4'}",
+      "expected": {
+        "min": 88.8975,
+        "max": 108.6525,
+        "paper_ref": "\u00a74.4"
+      },
       "actual": 98.775,
-      "status": "FAIL",
-      "message": "ordered 98.775 < min 200",
+      "status": "PASS",
+      "message": "Value 98.775 OK",
       "severity": "fatal"
     },
     {
       "id": "canonical.anchor.low_mass_qp_count",
-      "expected": "{'target': 49, 'abs_tol': 0, 'paper_ref': '\u00a74.7'}",
+      "expected": {
+        "target": 49,
+        "abs_tol": 0,
+        "paper_ref": "\u00a74.7"
+      },
       "actual": 49,
       "status": "PASS",
       "message": "Value 49.0 OK",
@@ -182,7 +203,10 @@
     },
     {
       "id": "canonical.anchor.max_lifespan_steps",
-      "expected": "{'min': 500, 'paper_ref': '\u00a74.5'}",
+      "expected": {
+        "min": 500,
+        "paper_ref": "\u00a74.5"
+      },
       "actual": 1626,
       "status": "PASS",
       "message": "Value 1626.0 OK",
@@ -190,15 +214,22 @@
     },
     {
       "id": "canonical.anchor.phi_half_life_steps",
-      "expected": "{'min': 1500, 'max': 2500, 'paper_ref': '\u00a74.6'}",
+      "expected": {
+        "min": 836,
+        "max": 1254,
+        "paper_ref": "\u00a74.6"
+      },
       "actual": 1045,
-      "status": "FAIL",
-      "message": "ordered 1045.0 < min 1500",
+      "status": "PASS",
+      "message": "Value 1045.0 OK",
       "severity": "fatal"
     },
     {
       "id": "canonical.anchor.sbr_mean",
-      "expected": "{'min': 100.0, 'paper_ref': '\u00a74.6'}",
+      "expected": {
+        "min": 100.0,
+        "paper_ref": "\u00a74.6"
+      },
       "actual": 193.96540862232067,
       "status": "PASS",
       "message": "Value 193.96540862232067 OK",
@@ -280,7 +311,44 @@
       "files_found": [
         "spec6_false_s41_phi_center_log.csv"
       ]
+    },
+    {
+      "id": "canonical.artifact.*lineum_report.html",
+      "expected": "exists",
+      "actual": "exists",
+      "status": "PASS",
+      "files_found": [
+        "spec6_false_s41_lineum_report.html"
+      ]
+    },
+    {
+      "id": "canonical.artifact.*figure0_canonical.png",
+      "expected": "exists",
+      "actual": "exists",
+      "status": "PASS",
+      "files_found": [
+        "spec6_false_s41_figure0_canonical.png"
+      ]
+    },
+    {
+      "id": "canonical.artifact.*spin_aura_map.png",
+      "expected": "exists",
+      "actual": "exists",
+      "status": "PASS",
+      "files_found": [
+        "spec6_false_s41_spin_aura_map.png"
+      ]
+    },
+    {
+      "id": "canonical.artifact.*spin_aura_profile.csv",
+      "expected": "exists",
+      "actual": "exists",
+      "status": "PASS",
+      "files_found": [
+        "spec6_false_s41_spin_aura_profile.csv"
+      ]
     }
   ],
-  "status": "FAIL"
+  "status": "PASS",
+  "manifest_sha256": "61b793247cb0da5c75cdcb800187e7d14858442361aba90572184378b85bf17b"
 }
