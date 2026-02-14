@@ -1,8 +1,0 @@
-﻿
-Name                              Length LastWriteTime     
-----                              ------ -------------     
-spec6_false_s41_ckpt_00000000.npz 501664 14.02.2026 2:38:44
-spec6_false_s41_ckpt_00000025.npz 502049 14.02.2026 2:34:14
-spec6_false_s41_state_step0.npz   511601 14.02.2026 2:15:49
-
-
