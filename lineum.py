@@ -587,6 +587,31 @@ def save_manifest(
         if extra:
             manifest["extra"] = extra
 
+    # ---------------------------------------------------------
+    # ENFORCE CRITICAL METADATA (runs passed from main() might miss these)
+    # ---------------------------------------------------------
+    if "invariants" not in manifest:
+        manifest["invariants"] = {
+            "dim": "2D",
+            "bcs": "periodic",
+            "precision": "float64"
+        }
+
+    if "logging" not in manifest:
+        manifest["logging"] = {
+            "topo_log_stride": TRACK_EVERY
+        }
+
+    if "code_fingerprint" not in manifest:
+        ENFORCED_FILES = ["lineum.py", "tools/whitepaper_contract.py"]
+        try:
+            manifest["code_fingerprint"] = _compute_code_fingerprint(
+                ENFORCED_FILES, 
+                normalized_newlines=True
+            )
+        except Exception as e:
+            print(f"[!] Warning: Failed to compute code_fingerprint: {e}")
+
     if filename is None:
         filename = f"{RUN_TAG}_manifest.json"
 
