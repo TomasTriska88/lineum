@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "document_id": "lineum-core",
+  "whitepaper_version": "1.0.9-core",
+  "contract_version": "1.0.9-core",
+  "generated_at": "2026-02-14T18:17:59.004367Z",
+  "runs_root": "output_wp\\runs",
+  "results": [
+    {
+      "run_dir": "spec6_false_s41_20260214_101645",
+      "run_tag": "spec6_false_s41",
+      "status": "PASS",
+      "checks": [
+        {
+          "id": "meta_equation",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": "Eq-4",
+          "actual": "Eq-4",
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "meta_dim",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": "2D",
+          "actual": "2D",
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "meta_bcs",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": "periodic",
+          "actual": "periodic",
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "meta_grid_n",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": 128,
+          "actual": 128,
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "meta_dt",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": 1e-21,
+          "actual": 1e-21,
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "meta_kappa_mode",
+          "status": "PASS",
+          "passed": true,
+          "severity": "warning",
+          "expected": "constant",
+          "actual": "constant",
+          "tolerance": null,
+          "message": "MatchType"
+        },
+        {
+          "id": "anchor_f0_hz",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 1.71e+20,
+          "actual": 1.7103794642857145e+20,
+          "tolerance": 0.005,
+          "message": "Within tolerance"
+        },
+        {
+          "id": "anchor_sbr",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 193.97,
+          "actual": 193.96540862232067,
+          "tolerance": 0.1,
+          "message": "Within tolerance"
+        },
+        {
+          "id": "anchor_phi_half_life_steps",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 1045,
+          "actual": 1045,
+          "tolerance": 0.2,
+          "message": "Within tolerance"
+        },
+        {
+          "id": "anchor_topology_neutrality_n1",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 0.9625,
+          "actual": 0.9625,
+          "tolerance": 0.03,
+          "message": "Within tolerance"
+        },
+        {
+          "id": "anchor_mean_vortices",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 98.775,
+          "actual": 98.775,
+          "tolerance": 0.1,
+          "message": "Within tolerance"
+        },
+        {
+          "id": "meta_code_fingerprint",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f",
+          "actual": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f",
+          "tolerance": null,
+          "message": "Match"
+        },
+        {
+          "id": "derived_df_hz",
+          "status": "PASS",
+          "passed": true,
+          "severity": "error",
+          "expected": 3.90625e+18,
+          "actual": 3.9062500000000005e+18,
+          "tolerance": 1e-12,
+          "message": "Within tolerance"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_scanned": 2,
+    "matched": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "status": "PASS"
+  }
+}

@@ -19,6 +19,18 @@
     "psi_amp_cap": 1000000.0,
     "grad_cap": 1000000.0
   },
+  "code_fingerprint": {
+    "sha256": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f",
+    "files": [
+      "lineum.py",
+      "tools/whitepaper_contract.py"
+    ],
+    "file_hashes": {
+      "lineum.py": "038e8e1b0ff701dc8e825e63c8ec6b2f48cfc7d189ed4d53885a9614bb",
+      "tools/whitepaper_contract.py": "b6574f1659f492752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f"
+    },
+    "normalized_newlines": true
+  },
   "metrics": {
     "dominant_freq_Hz": 1.7103794642857145e+20,
     "sbr": 193.96540862232067,

@@ -622,6 +622,7 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 
 - Bump core version to **1.0.9-core** and update header date to **2026-02-14** (refined snapshot now explicitly tied to the `spec6_false_s41_20260214_101645` evidence directory).
 - Fix internal version references so the “frozen core track” wording matches the current patch level (**v1.0.9-core**).
+- Add Whitepaper Contract Runner (`tools/whitepaper_contract.py`) producing `whitepaper_contract_result.json` for audit runs; no changes to Eq/scope.
 
 **1.0.8 — 2025-12-09 (patch)**
 

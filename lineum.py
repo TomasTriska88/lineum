@@ -15,6 +15,69 @@ from tqdm import tqdm
 import os as _os
 import os
 import glob
+import hashlib
+import subprocess
+
+# --- Fingerprinting ---
+def _compute_code_fingerprint(files, normalized_newlines=True):
+    """
+    Computes a deterministic SHA256 fingerprint for a list of files.
+    - Paths are normalized to be relative to the script directory and use '/' separators.
+    - If normalized_newlines=True, CRLF is converted to LF before hashing.
+    - Individual file hashes are tracked.
+    - A combined multi-file hash is computed from "path:hash" lines.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_hashes = {}
+    
+    # Process individual files
+    for fpath in sorted(files):
+        # Normalize path to repo-root-relative with '/'
+        abs_path = os.path.abspath(fpath)
+        if not abs_path.startswith(script_dir):
+            # If it's outside, just use the basename or path as provided? 
+            # Requirements say "repo-root-relative".
+            rel_path = os.path.relpath(abs_path, script_dir).replace("\\", "/")
+        else:
+            rel_path = os.path.relpath(abs_path, script_dir).replace("\\", "/")
+
+        if not os.path.exists(abs_path):
+            raise FileNotFoundError(f"Fingerprint failed: Missing file '{abs_path}'")
+            
+        with open(abs_path, "rb") as f:
+            content = f.read()
+            
+        if normalized_newlines:
+            content = content.replace(b"\r\n", b"\n")
+            
+        file_hash = hashlib.sha256(content).hexdigest()
+        file_hashes[rel_path] = file_hash
+
+    # Compute aggregate metadata hash
+    # Sort by rel_path to ensure determinism
+    meta_lines = []
+    for path in sorted(file_hashes.keys()):
+        meta_lines.append(f"{path}:{file_hashes[path]}")
+    
+    meta_blob = "\n".join(meta_lines).encode("utf-8")
+    combined_sha256 = hashlib.sha256(meta_blob).hexdigest()
+        
+    return {
+        "sha256": combined_sha256,
+        "files": sorted(file_hashes.keys()),
+        "file_hashes": file_hashes,
+        "normalized_newlines": normalized_newlines
+    }
+
+def _get_git_info():
+    """Returns git info (commit, dirty) if available. Info only."""
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+        status = subprocess.check_output(["git", "status", "--porcelain"], stderr=subprocess.DEVNULL).decode().strip()
+        return {"commit": commit, "dirty": bool(status)}
+    except Exception:
+        return None
+
 
 # NOTE: do not hardcode config toggles later; use CONFIGS mapping as source of truth.
 
@@ -502,6 +565,25 @@ def save_manifest(
             "metrics": metrics or {},
             "data_files": data_files or [],
         }
+
+        # Calculate fingerprints
+        # ENFORCED: Simulation Core & Verifier (since it handles derived metrics)
+        ENFORCED_FILES = ["lineum.py", "tools/whitepaper_contract.py"]
+        
+        try:
+            manifest["code_fingerprint"] = _compute_code_fingerprint(
+                ENFORCED_FILES, 
+                normalized_newlines=True
+            )
+        except Exception as e:
+            # Re-raise or handle? Requirements say FAIL if missing.
+            # In save_manifest, failing here will likely crash the run's finalization.
+            # That's good - we shouldn't save a broken manifest.
+            raise e
+            
+        # Info: Git
+        manifest["git_info"] = _get_git_info()
+        
         if extra:
             manifest["extra"] = extra
 
