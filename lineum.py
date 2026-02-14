@@ -82,37 +82,161 @@ def _get_git_info():
 # NOTE: do not hardcode config toggles later; use CONFIGS mapping as source of truth.
 
 
-def _json_safe(obj):
+def _canonical_val_str(obj):
     """
-    Převádí numpy typy na primitivní Python (kvůli JSON serializaci).
+    Deterministic string representation for hashing and preview.
+    - float: .17g, -0.0 -> 0.0, NaN/Inf as tokens
+    - bool: "True"/"False"
+    - numpy: cast to python primitive
+    - recursive: handles nested structures
     """
     import numpy as _np
 
-    # Numpy scalars
+    # Booleans (must check before int because bool is int subclass)
+    if isinstance(obj, bool):
+        return str(obj)
+
+    # Numpy scalars -> Python primitives
     if isinstance(obj, (_np.integer,)):
-        return int(obj)
-    if isinstance(obj, (_np.floating,)):
-        return float(obj)
+        obj = int(obj)
+    elif isinstance(obj, (_np.floating,)):
+        obj = float(obj)
 
-    # Numpy array
-    if isinstance(obj, _np.ndarray):
-        return obj.tolist()
+    # Numbers
+    if isinstance(obj, (int, float)):
+        if isinstance(obj, float):
+            if not math.isfinite(obj):
+                if math.isnan(obj): return "NaN"
+                return "Infinity" if obj > 0 else "-Infinity"
+            if obj == 0.0: obj = 0.0 # Normalize -0.0
+            return format(obj, ".17g")
+        return str(obj)
 
-    # Python primitivní typy necháme být
-    if isinstance(obj, (int, float, bool, str)) or obj is None:
+    # Strings
+    if isinstance(obj, str):
         return obj
 
-    # Dict → rekurzivně
-    if isinstance(obj, dict):
-        return {k: _json_safe(v) for k, v in obj.items()}
+    # Bytes / Bytearray -> Hex
+    if isinstance(obj, (bytes, bytearray)):
+        return obj.hex()
 
-    # List / tuple → rekurzivně
+    # None
+    if obj is None:
+        return "None"
+
+    # Collections (Recursive)
     if isinstance(obj, (list, tuple)):
-        return [_json_safe(x) for x in obj]
+        return "[" + ",".join(_canonical_val_str(x) for x in obj) + "]"
+    
+    if isinstance(obj, set):
+        # Deterministic sort for mixed types
+        # Key uses (type_name, canonical_str) for absolute stability
+        sorted_elements = sorted(list(obj), key=lambda x: (type(x).__name__, _canonical_val_str(x)))
+        return "{" + ",".join(_canonical_val_str(x) for x in sorted_elements) + "}"
 
-    # Cokoliv jiného odmítneme
-    raise TypeError(
-        f"Object of type {type(obj).__name__} is not JSON serializable")
+    if isinstance(obj, dict):
+        # Non-string keys are stringified as (type:val) to avoid collisions
+        def _safe_key(k):
+            if isinstance(k, str): return k
+            return f"({type(k).__name__}:{_canonical_val_str(k)})"
+        
+        sorted_keys = sorted(obj.keys(), key=_safe_key)
+        parts = []
+        for k in sorted_keys:
+            parts.append(f"{_safe_key(k)}:{_canonical_val_str(obj[k])}")
+        return "{" + ",".join(parts) + "}"
+
+    # Fallback for complex objects (e.g. RNG state bits)
+    return str(obj)
+
+
+def _canonical_json_normalize(obj):
+    """
+    Recursively normalize objects for json.dumps(allow_nan=False).
+    Converts numbers/special values into their stable serializable forms.
+    """
+    import numpy as _np
+
+    if isinstance(obj, bool): return obj # bool must be before int
+    if isinstance(obj, (_np.integer,)): return int(obj)
+    if isinstance(obj, (_np.floating,)): obj = float(obj)
+
+    if isinstance(obj, float):
+        if not math.isfinite(obj):
+            if math.isnan(obj): return "NaN"
+            return "Infinity" if obj > 0 else "-Infinity"
+        if obj == 0.0: return 0.0 # Normalize -0.0
+        # For actual snapshot we keep as float, formatting happens in hash-view
+        return obj
+    
+    if isinstance(obj, (int, str)) or obj is None:
+        return obj
+
+    if isinstance(obj, (bytes, bytearray)):
+        return obj.hex()
+
+    if isinstance(obj, (list, tuple)):
+        return [_canonical_json_normalize(x) for x in obj]
+    
+    if isinstance(obj, set):
+        # Sets must become sorted lists for JSON stability
+        return sorted([_canonical_json_normalize(x) for x in obj], 
+                      key=lambda x: (type(x).__name__, _canonical_val_str(x)))
+
+    if isinstance(obj, dict):
+        res = {}
+        for k, v in obj.items():
+            # JSON keys must be strings
+            sk = k if isinstance(k, str) else f"({type(k).__name__}:{_canonical_val_str(k)})"
+            res[sk] = _canonical_json_normalize(v)
+        return res
+
+    return str(obj)
+
+
+def _compute_canonical_hash(obj):
+    """
+    Deterministic SHA256 from object.
+    Uses strict normalization and json.dumps parameters.
+    """
+    norm = _canonical_json_normalize(obj)
+    # Using separators=(",", ":") to eliminate whitespace variations.
+    # allow_nan=False is a hard guard (normalization should have handled it).
+    blob = json.dumps(norm, sort_keys=True, allow_nan=False, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(blob).hexdigest()
+
+
+def _json_safe(obj):
+    """
+    Převádí numpy typy na primitivní Python (kvůli JSON serializaci).
+    Nyní využívá unifikovanou normalizaci pro stabilitu.
+    """
+    return _canonical_json_normalize(obj)
+
+
+def _compute_binary_kappa_hash(kappa_map):
+    """
+    Deterministic SHA256 of binary kappa data.
+    Enforces C-order, little-endian float64.
+    Fails if contains non-finite values or is an object array.
+    """
+    import numpy as _np
+    
+    # Fail-fast guards
+    if not _np.isfinite(kappa_map).all():
+        raise ValueError("Binary Kappa Hash failed: Map contains NaN or Infinity.")
+        
+    try:
+        # astype("<f8") handles little-endian float64
+        # ascontiguousarray(..., order='C') ensures memory layout stability
+        clean = _np.ascontiguousarray(kappa_map, dtype="<f8")
+        if clean.dtype.kind == 'O': 
+            raise TypeError("Binary Kappa Hash failed: Received object array.")
+        
+        blob = clean.tobytes()
+        return hashlib.sha256(blob).hexdigest()
+    except Exception as e:
+        raise RuntimeError(f"Binary Kappa Hash failed during binary conversion: {e}")
 
 
 def _atomic_write_bytes(path: str, data: bytes) -> None:
@@ -284,17 +408,35 @@ CONFIGS = {
     (7, "true"): {"LOW_NOISE_MODE": True, "TEST_EXHALE_MODE": False, "KAPPA_MODE": "island_to_constant"}
 }
 
-# Guardrails: (RUN_ID, RUN_MODE) should exist in CONFIGS for canonical runs.
-if (RUN_ID, RUN_MODE) not in CONFIGS:
-    print(
-        f"[!] WARNING: (RUN_ID, RUN_MODE)=({RUN_ID}, {RUN_MODE}) not found in CONFIGS; using defaults.")
-
-
-# 📦 Apply configuration
+# --- Resolve and Capture Configuration Snapshot ---
 cfg = CONFIGS.get((RUN_ID, RUN_MODE), {})
 LOW_NOISE_MODE = cfg.get("LOW_NOISE_MODE", False)
 TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
 KAPPA_MODE = cfg.get("KAPPA_MODE", "gradient")
+
+# Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
+_LNM_ENV = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
+_TEM_ENV = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
+
+# Capture all relevant variables before any other logic modifies them
+RESOLVED_CONFIG = {
+    "run_id": RUN_ID,
+    "run_mode": RUN_MODE,
+    "seed": SEED,
+    "param_tag": PARAM_TAG,
+    "low_noise_mode": _LNM_ENV,
+    "test_exhale_mode": _TEM_ENV,
+    "kappa_mode": KAPPA_MODE,
+    "window_w": WINDOW_W,
+    "window_hop": WINDOW_HOP,
+    "phi_interaction_cap": _env_int("LINEUM_PHI_INTERACTION_CAP", 0),
+    "steps": _env_int("LINEUM_STEPS", 2000),
+    "store_every": _env_int("LINEUM_STORE_EVERY", 5)
+}
+RESOLVED_CONFIG_HASH = _compute_canonical_hash(RESOLVED_CONFIG)
+
+LOW_NOISE_MODE = _LNM_ENV
+TEST_EXHALE_MODE = _TEM_ENV
 
 # --- HARD GUARD: never silently fall back to defaults for canonical runs ---
 assert (RUN_ID, RUN_MODE) in CONFIGS, (
@@ -459,64 +601,87 @@ def bootstrap_mean_ci(vals, B=1000, alpha=0.05, rng=np.random):
 
 
 def window_sbr_and_f0(amplitudes, dt, W=256, hop=128, guard=2):
-    """Windowed SBR and f0 using the same SBR definition as the single-shot path."""
+    """
+    Windowed SBR and f0 using parabolic 3-bin interpolation for precise f0.
+    Metadata is captured for audit suite transparency.
+    """
     amps = np.asarray(amplitudes, dtype=float)
     sbr_vals, f0_vals = [], []
+    
+    # Audit Metadata (Stateless)
+    SR = 1.0 / dt
+    DF = SR / W
+    NYQUIST = SR / 2.0
+    
     for w in sliding_windows_1d(amps, W=W, hop=hop):
+        # DC removal (subtract mean)
         w = w - np.mean(w)
-        # normalize window to prevent huge FFT magnitudes
-        wmax = float(np.max(np.abs(w))) if w.size else 0.0
-        if wmax > 0:
-            w = w / (wmax + 1e-30)
-        Ffull = np.fft.rfft(w)
+        
+        # Hann window application
+        wh = w * np.hanning(len(w))
+        
+        # FFT (Real)
+        Ffull = np.fft.rfft(wh)
         P = np.abs(Ffull).astype(np.float64, copy=False)**2
         P = np.where(np.isfinite(P), P, 0.0)
         Fp = np.fft.rfftfreq(len(w), d=dt)
         Pp = P
         if Pp.size == 0:
             continue
-        # dominant bin with harmonic promotion (avoid 1/2 subharmonic latch)
-        # Fundamental-first peak selection across {½, 1×, 2×} to avoid latching to harmonics
+
+        # Dominant bin search
         idx0 = int(np.argmax(Pp))
-        idx_half = (idx0 // 2) if (idx0 % 2 == 0 and idx0 > 0) else None
-        idx2 = (idx0 * 2) if (idx0 * 2 < Pp.size) else None
-
-        # collect candidates and find the max power among them
-        p_list = []
-        for _i in (idx_half, idx0, idx2):
-            if _i is not None:
-                p_list.append(float(Pp[_i]))
-        pmax = max(p_list) if p_list else -np.inf
-
-        # keep candidates within 75% of the strongest and pick the lowest index (favor fundamental)
-        kept = []
-        for _i in (idx_half, idx0, idx2):
-            if _i is None:
-                continue
-            if float(Pp[_i]) >= 0.75 * pmax:
-                kept.append(_i)
-
-        idx = (min(kept) if kept else idx0)
-        peak = float(Pp[idx])
-
-        # mean background excluding ±guard bins around the chosen peak
+        pmax = float(Pp[idx0])
+        
+        # Background estimation (excluding ±guard)
         mask = np.ones_like(Pp, dtype=bool)
-        l = max(idx - guard, 0)
-        r = min(idx + guard + 1, Pp.size)
+        l = max(idx0 - guard, 0)
+        r = min(idx0 + guard + 1, Pp.size)
         mask[l:r] = False
         bg = float(np.mean(Pp[mask])) if np.any(mask) else np.nan
-
         if bg > 0:
-            sbr_vals.append(peak / bg)
+            sbr_vals.append(pmax / bg)
 
-        # store promoted/demoted frequency (fundamental-biased)
-        f0_vals.append(float(Fp[idx]))
+        # Precise f0: Parabolic 3-bin Interpolation
+        if 0 < idx0 < Pp.size - 1:
+            p_prev = float(Pp[idx0 - 1])
+            p_curr = float(Pp[idx0])
+            p_next = float(Pp[idx0 + 1])
+            
+            denom = 2 * p_curr - p_prev - p_next
+            # Robustness threshold: avoid division by zero or jittery unstable peaks
+            if abs(denom) > 1e-12 * p_curr:
+                offset = 0.5 * (p_prev - p_next) / denom
+                best_idx = idx0 + offset
+            else:
+                best_idx = float(idx0) # Fallback to bin center
+        else:
+            best_idx = float(idx0) # Fallback for edge cases
+            
+        f0_vals.append(best_idx * DF)
 
     sbr_mean, sbr_ci = bootstrap_mean_ci(sbr_vals) if sbr_vals else (
         float('nan'), (float('nan'), float('nan')))
     f0_mean,  f0_ci = bootstrap_mean_ci(f0_vals) if f0_vals else (
         float('nan'), (float('nan'), float('nan')))
-    return (sbr_mean, sbr_ci), (f0_mean, f0_ci)
+        
+    # Carry metadata for report
+    meta = {
+        "dt": float(dt),
+        "sampling_rate_hz": float(SR),
+        "df_hz": float(DF),
+        "nyquist_hz": float(NYQUIST),
+        "window_length": int(W),
+        "hop_length": int(hop),
+        "guard_bins": int(guard),
+        "window_function": "Hann",
+        "dc_remove": True,
+        "fft_type": "RFFT",
+        "estimator": "parabolic_3_bin",
+        "estimator_threshold": 1e-12
+    }
+    
+    return (sbr_mean, sbr_ci), (f0_mean, f0_ci), meta
 
 
 def notify_file_creation(path, success=True, error=None):
@@ -589,15 +754,46 @@ def save_manifest(
         if extra:
             manifest["extra"] = extra
 
-    # ---------------------------------------------------------
     # ENFORCE CRITICAL METADATA (runs passed from main() might miss these)
     # ---------------------------------------------------------
     if "invariants" not in manifest:
         manifest["invariants"] = {
             "dim": "2D",
             "bcs": "periodic",
-            "precision": "float64"
+            "precision": "float64",
+            "stencil": "classic_laplace",
+            "grid_size": size,
+            "dt": 0.01 # Baseline dt
         }
+    
+    # Bundle resolved config and provenance
+    manifest["run_configuration"] = {
+        "resolved_config": RESOLVED_CONFIG,
+        "resolved_config_hash": RESOLVED_CONFIG_HASH
+    }
+    
+    # RNG Provenance
+    rng_backend = "unknown"
+    rng_state_hash = None
+    try:
+        # Check for np.random (legacy RandomState)
+        if hasattr(np.random, "get_state"):
+            state = np.random.get_state()
+            rng_backend = str(state[0]) # e.g. "MT19937"
+            rng_state_hash = _compute_canonical_hash(state)
+        
+        # Check if we have a Generator (modern API)
+        # Note: Generator doesn't have a global singleton state like RandomState,
+        # but if we initialized with np.random.seed, it mostly affects the legacy pool.
+        # If we use np.random.default_rng(SEED), we should track that Generator.
+    except Exception:
+        pass
+        
+    manifest["provenance"] = {
+        "rng_backend": rng_backend,
+        "seed": SEED,
+        "rng_state_hash": rng_state_hash
+    }
 
     if "logging" not in manifest:
         manifest["logging"] = {
@@ -1313,19 +1509,27 @@ def save_phi_center_plot(filename=f"{RUN_TAG}_phi_center_plot.png"):
 
 
 def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
-    plt.figure(figsize=(6, 6))
-    plt.imshow(kappa, cmap="inferno", vmin=0, vmax=1)
-    plt.colorbar(label="κ value")
-    plt.title("Kappa map (κ)")
-    plt.axis("off")
+    """
+    Save kappa map visualization and track its binary hash for audit.
+    """
+    # Recalculate hash on every save to ensure consistency
+    k_hash = _compute_binary_kappa_hash(kappa)
+    print(f"[*] Kappa Map Binary Hash: {k_hash}")
+    
     path = _os.path.join(output_dir, filename)
     try:
+        plt.figure(figsize=(6, 5))
+        plt.imshow(kappa, origin='lower', cmap='viridis')
+        plt.colorbar(label='Kappa (κ)')
+        plt.title(f"Kappa Map ({KAPPA_MODE})\n{k_hash[:8]}...")
+        plt.tight_layout()
         plt.savefig(path)
+        plt.close()
         notify_file_creation(path)
     except Exception as e:
         notify_file_creation(path, success=False, error=e)
-    finally:
-        plt.close()
+    
+    return k_hash
 
 
 def detect_vortices(phase: np.ndarray) -> np.ndarray:
@@ -1497,24 +1701,29 @@ if __name__ == "__main__":
         # Inicializace polí
         psi, delta = initialize_fields()
         phi = initialize_interaction_field()
-        # ladicí pole, zatím statické (všude 1.0)
+        # Ladicí pole (KAPPA)
         kappa = np.ones((size, size), dtype=np.float64)
 
         if KAPPA_MODE == "gradient":
             for y in range(size):
                 kappa[y, :] = np.linspace(0.1, 1.0, size)
-            save_kappa_map(kappa)
-
         elif KAPPA_MODE == "constant":
-            kappa *= 0.5  # nebo jiná zvolená konstanta
-            save_kappa_map(kappa)
-
+            kappa *= 0.5
         elif KAPPA_MODE == "island":
             from scipy.ndimage import gaussian_filter
             kappa *= 0.0
             kappa[size//2 - 5:size//2 + 5, size//2 - 5:size//2 + 5] = 1.0
             kappa = gaussian_filter(kappa, sigma=5)
-            save_kappa_map(kappa)
+
+        # Enforce C-order and guards BEFORE first hash/save
+        kappa = np.ascontiguousarray(kappa, dtype=np.float64)
+        if not np.isfinite(kappa).all():
+             raise ValueError(f"CRITICAL: Kappa initialization resulted in non-finite values ({KAPPA_MODE})")
+        
+        KAPPA_HASH = save_kappa_map(kappa)
+        
+        # Track spatial means for dynamic stats if needed
+        kappa_spatial_means = []
 
     WANT_FRAMES = bool(SAVE_GIFS or SAVE_FRAMES or SAVE_PNGS)
     # In infinite/service mode, never accumulate frames in RAM (would grow without bound).
@@ -1655,6 +1864,9 @@ if __name__ == "__main__":
 
             if KAPPA_MODE == "island_to_constant":
                 kappa = generate_kappa(i)
+                
+            # Track kappa spatial mean for temporal metrics
+            kappa_spatial_means.append(float(np.mean(kappa)))
 
             psi, phi = evolve(psi, delta, phi, kappa)
             amp = np.abs(psi)
@@ -1869,7 +2081,8 @@ if __name__ == "__main__":
     times = np.arange(len(amplitudes)) * TIME_STEP  # čas v sekundách
 
     # Windowed estimates + 95% CI (W=256, hop=128, guard=2)
-    (sbr_mean, sbr_ci), (f0_mean, f0_ci) = window_sbr_and_f0(
+    spectral_meta = {}
+    (sbr_mean, sbr_ci), (f0_mean, f0_ci), spectral_meta = window_sbr_and_f0(
         amplitudes, TIME_STEP, W=WINDOW_W, hop=WINDOW_HOP, guard=2)
 
     # Export a compact metrics summary with CIs
@@ -3468,12 +3681,39 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         "grad_cap": float(GRAD_CAP),
     }
 
+    # --- Structural Closure (Phi Half-life) ---
+    phi_half_life_steps = None
+    phi_half_life_status = "OK"
+    steady_state_val = None
+    
+    if len(phi_center_log) > 0:
+        # Synced sequence from phi_center_log (logged steps only)
+        phi_logged = np.array([row[1] for row in phi_center_log])
+        n_logged = len(phi_logged)
+        
+        # Steady state: trailing 10% (min 1 frame)
+        window_size = max(1, int(math.floor(0.1 * n_logged)))
+        steady_state_val = float(np.mean(phi_logged[-window_size:]))
+        
+        if steady_state_val < 0.01:
+            phi_half_life_status = "N/A_LOW_STEADY_STATE"
+            phi_half_life_steps = None
+        else:
+            phi_half = 0.5 * steady_state_val
+            # Find first step in the same logged sequence
+            for idx, val in enumerate(phi_logged):
+                if val >= phi_half:
+                    phi_half_life_steps = int(phi_center_log[idx][0])
+                    break
+
     metrics = {
         "dominant_freq_Hz": float(dominant_freq),
         "sbr": None if (sbr is None or sbr != sbr) else float(sbr),
         "f0_ci": None if f0_ci is None else [float(f0_ci[0]), float(f0_ci[1])],
         "sbr_ci": None if sbr_ci is None else [float(sbr_ci[0]), float(sbr_ci[1])],
-        "phi_half_life_steps": int(phi_half_life_steps) if phi_half_life_steps is not None else None,
+        "phi_half_life_steps": phi_half_life_steps,
+        "phi_half_life_status": phi_half_life_status,
+        "phi_steady_state": steady_state_val,
         "pct_neutral": float(pct_neutral) if pct_neutral is not None else None,
         "mean_total_vortices": float(mean_total_vort) if mean_total_vort is not None else None,
         "max_lifespan_steps": int(max_lifespan),
@@ -3554,12 +3794,43 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         "sbr_guard_bins": 2,
     }
 
-    # Složíme manifest ručně a předáme ho jako první argument
+    # --- Kappa Metadata & Stats ---
+    # Determine if κ is static or dynamic for stats basis
+    is_dynamic_kappa = (KAPPA_MODE == "island_to_constant") # or others if added
+    
+    # Kappa spatial stats (from the final state)
+    kappa_final_mean = float(np.mean(kappa))
+    kappa_final_std = float(np.std(kappa))
+    
+    # Kappa temporal stats (of spatial means)
+    kappa_mean_of_means = None
+    kappa_std_of_means = None
+    if is_dynamic_kappa and len(kappa_spatial_means) > 0:
+        kappa_mean_of_means = float(np.mean(kappa_spatial_means))
+        kappa_std_of_means = float(np.std(kappa_spatial_means))
+
     manifest = {
         "run": run_meta,
-        "analysis_config": analysis_config,
+        "spectral_pipeline": spectral_meta,
+        "kappa": {
+            "mode": KAPPA_MODE,
+            "hash": KAPPA_HASH,
+            "hash_basis": "map_at_init", # static for now, dynamic could update this
+            "is_dynamic": is_dynamic_kappa,
+            "stats": {
+                "spatial_final_mean": kappa_final_mean,
+                "spatial_final_std": kappa_final_std,
+                "temporal_mean_of_spatial_means": kappa_mean_of_means,
+                "temporal_std_of_spatial_means": kappa_std_of_means
+            }
+        },
         "metrics": metrics or {},
         "data_files": outputs,
+        "topology": {
+            "computed_over": "logged_frames_only",
+            "includes_step_0": True,
+            "raw_winding_used": True
+        }
     }
 
     save_manifest(manifest, filename=f"{RUN_TAG}_manifest.json")

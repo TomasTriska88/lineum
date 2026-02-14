@@ -9,6 +9,9 @@ __pycache__/
 output/
 verify_output/
 test_out/
+output_verification*/
+verify_audit*/
+audit_verification*/
 
 # Temp files
 *.tmp
