@@ -1722,8 +1722,8 @@ if __name__ == "__main__":
         
         KAPPA_HASH = save_kappa_map(kappa)
         
-        # Track spatial means for dynamic stats if needed
-        kappa_spatial_means = []
+    # Track spatial means for dynamic stats if needed (Always initialize to avoid NameError)
+    kappa_spatial_means = []
 
     WANT_FRAMES = bool(SAVE_GIFS or SAVE_FRAMES or SAVE_PNGS)
     # In infinite/service mode, never accumulate frames in RAM (would grow without bound).
