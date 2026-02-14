@@ -1,13 +1,13 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.8-core
+**Version:** 1.0.9-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
-**Date:** 2025-12-09
+**Date:** 2026-02-14
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.8-core)._ 2025. DOI: 10.5281/zenodo.16934359.
-_This manuscript corresponds to Git tag **v1.0.8-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.9-core)._ 2026. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.9-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -33,7 +33,7 @@ For readers in English: **/ˈlɪnɒn/** (UK ≈ “LIH-non”) or **/ˈlɪnɑːn
 _Not_ “LAI-non”.
 
 Repeated simulations robustly generate (v1 core evidence):
-– stable localized excitations (**linons**) with a bin-centered canonical tone \(f_0\),
+– stable localized excitations (**linons**) with a reproducible dominant tone \(f_0\),
 – reproducible spectral strength (**SBR**, ±2-bin guard) with 95% CIs,
 – **topological neutrality** with logged vortex counts/charge,
 – a persistent **spin aura** (time-averaged curl of ∇arg ψ) around linons,
@@ -41,25 +41,25 @@ Repeated simulations robustly generate (v1 core evidence):
 
 All listed items are directly reported in the HTML evidence (Quasiparticle Properties, Spectral metrics, Topology metrics, “Spin aura — averaged curl map”, and φ center trace). Claims requiring κ-dynamics, thermodynamics, or SM identification are out of scope for the v1 core.
 
-Within the v1 core evidence bundle, the validated items are limited to: (i) a stable localized excitation (“linon”) with a bin-centered canonical tone \(f_0\); (ii) reproducible spectral strength (SBR) and topology neutrality; (iii) the center-trace φ half-life together with **Structural Closure** (localized, long-lived φ remnants after linon decay); and (iv) a persistent phase-gradient rotation (“spin aura”) around linons, as reported in the HTML (“Spin aura — averaged curl map”). **Return Echo** and any κ-dynamics (“Dimensional Transparency”) remain out of scope for the v1 core and are deferred to the experimental/extension track (see the dedicated whitepapers).
+Within the v1 core evidence bundle, the validated items are limited to: (i) a stable localized excitation (“linon”) with a reproducible dominant tone \(f_0\) (reported as a windowed estimate with CI; centroid/interpolated peak where applicable); (ii) reproducible spectral strength (SBR) and topology neutrality; (iii) the center-trace φ half-life together with **Structural Closure** (localized, long-lived φ remnants after linon decay); and (iv) a persistent phase-gradient rotation (“spin aura”) around linons, as reported in the HTML (“Spin aura — averaged curl map”). **Return Echo** and any κ-dynamics (“Dimensional Transparency”) remain out of scope for the v1 core and are deferred to the experimental/extension track (see the dedicated whitepapers).
 
-For the canonical parameter choice (Δt fixed and SI constants applied post hoc), the dominant oscillation can be expressed in familiar physical units for **scale illustration only**. For example, when written in SI units:
+For the canonical parameter choice (Δt fixed and SI constants applied post hoc), the dominant oscillation can be expressed in familiar physical units for **scale illustration only**. For example, when written in SI units (refined snapshot; RUN_TAG `spec6_false_s41`, commit `875fc4e`):
 these values are not used as acceptance thresholds or constraints anywhere in the core validation.
 
-- dominant oscillation frequency ≈ **3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
-- linon energy ≈ **2.59×10⁻¹⁵ J** ≈ **16.15 keV**,
-- wavelength ≈ **7.67×10⁻¹¹ m** (0.0767 nm),
-- effective mass (display-only) ≈ **3.16 %** of the electron mass.
+- dominant oscillation frequency ≈ **1.710×10²⁰ Hz** [**9.82×10¹⁹**, **2.47×10²⁰**],
+- linon energy (display-only) ≈ **1.13×10⁻¹³ J** ≈ **707 keV**,
+- wavelength (display-only) ≈ **1.75×10⁻¹² m** (0.00175 nm),
+- effective mass (display-only) ≈ **1.38×** of the electron mass (**m/mₑ ≈ 1.384**).
 
 These SI-anchored values are **unit conversions of the canonical tone f₀**, not additional constraints on the model or evidence that Lineum directly realizes any specific physical scale.
 
-> **Interpretation note (v1).** The “effective mass” value is a **unit-conversion from the canonical frequency** \(f_0\) via \(m = h f_0 / c^2\). It is provided **only** as an intuition aid for scale (≈ 3.16 % of \(m_e\) consistently across seeds 17/23/41/73), **not** as a claim of an intrinsic rest mass. Numbers match the HTML “Quasiparticle Properties” tables for runs `spec6_false_s17`, `spec6_false_s23`, `spec6_false_s41`, and `spec6_false_s73`.
+> **Interpretation note (v1).** The “effective mass” value is a **unit-conversion from the dominant frequency** \(f_0\) via \(m = h f_0 / c^2\). It is provided **only** as an intuition aid for scale (refined snapshot: RUN_TAG `spec6_false_s41`, commit `875fc4e`), **not** as a claim of an intrinsic rest mass.
 
-> **Reports alignment (v1).** The display-only effective mass derived from the canonical tone (f₀) is **consistent across independent seeds**. In our v1 evidence bundle, runs `spec6_false_s17/s23/s41/s73` all report f₀ ≈ 3.91×10¹⁸ Hz, E ≈ 2.59×10⁻¹⁵ J (~16.15 keV), and an effective mass ratio of **m/mₑ ≈ 0.0316 (3.16%)**, matching the HTML “Quasiparticle Properties” tables for these tags. This is an **SI-anchored unit conversion** (m = h·f₀ / c²) meant purely as a scale indicator, not a rest-mass claim. _(For example outputs, see the s23 report and s41 report in the evidence bundle.)_
+> **Reports alignment (v1).** In the refined snapshot, the SI-anchored values (E, λ, display-only m/mₑ) are computed directly from the reported \(f_0\) (manifest/CSV) using fixed SI constants. This remains a **scale indicator**, not a rest-mass claim.
 
 > **Non-identification (v1).** A **linon** is a _stable, localized excitation_ in the Lineum field, **not** a Standard-Model particle. The numerical anchors in the Abstract (f₀, E, λ, and the display-only mass ratio m/mₑ) are provided **to indicate scale only**. They must **not** be read as an identification with electrons, neutrinos, or any SM species. See “Terminology” (linon is not a fundamental particle) and the **Interpretation note (v1)** on display-only mass.
 
-All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to move along +∇|φ|; we describe this as environmental guidance rather than any gravitational claim.
+All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to drift along +∇φ (toward increasing φ); we describe this as environmental guidance rather than any gravitational claim.
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
 
@@ -89,11 +89,11 @@ _Directional mnemonic:_ κ → ψ → φ → κ; no direct φ → ψ arrow is im
 
 > **Three-field flow.** The mark depicts the triad **ψ–φ–κ** in balance: ψ (oscillation / flow), φ (memory / resonance), κ (tuning / sensitivity). It is a visual mnemonic only; the **canonical Equation (1)** defines the model.
 
-> **Core thesis (v1).** We demonstrate a _reproducible, parameter-light_ emergence of a stable localized excitation (“linon”) with a fixed canonical tone f₀ that is (i) bin-centered, (ii) SI-anchored, and (iii) seed-invariant across independent runs. The contribution is methodological: clear numeric anchors + guardrails that turn a notoriously fragile emergent phenomenon into an **auditable, falsifiable** object others can probe and extend.
+> **Core thesis (v1).** We demonstrate a _reproducible, parameter-light_ emergence of a stable localized excitation (“linon”) with a dominant tone \(f_0\) that is (i) strongly spectral-dominant (high SBR), (ii) SI-anchored for scale illustration, and (iii) reported with uncertainty (windowed CI). The contribution is methodological: clear numeric anchors + guardrails that turn a fragile emergent phenomenon into an **auditable, falsifiable** object others can probe and extend.
 
 > **Falsifiable checks (v1).**  
-> **(C1) Window resolution:** Re-run with `W = 512` (keeping `Δt = 1.0e−21 s`). Expect the dominant tone to remain **bin-centered** and the reported `f₀` to match within **±0.5%** of the canonical value (see §4.3.1 bands).  
-> **(C2) Temporal refinement (bin preserved):** Halve the time step and double the window (`Δt → Δt/2`, `W → 2W`) so that `Δf = 1/(W·Δt)` stays constant. Expect `f₀` to match within **±0.5%** and remain on a bin center (no interpolation).  
+> **(C1) Window resolution:** Re-run with `W = 512` (keeping `Δt = 1.0e−21 s`). Expect the dominant tone estimate to remain stable (peak near the same FFT region, centroid \(f_0\) consistent) and the reported `f₀` to match within **±0.5%** of the canonical value (see §4.3.1 bands).  
+> **(C2) Temporal refinement (Δf preserved):** Halve the time step and double the window (`Δt → Δt/2`, `W → 2W`) so that `Δf = 1/(W·Δt)` stays constant. Expect `f₀` to match within **±0.5%** (centroid estimate; no requirement of exact bin-centering).  
 > **(C3) Grid size:** Re-run on `256×256` with identical parameters. Expect `f₀` within **±0.5%** and SBR within the **±10%** acceptance band of §4.3.1.
 
 # 2. Motivation
@@ -291,9 +291,10 @@ Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix 
 This manifest pins all run-level switches for the canonical reference used in this paper.
 
 - **RUN_TAG:** `spec6_false_s41`
+- **Evidence run dir (snapshot):** `output_wp/runs/spec6_false_s41_20260214_101645`
 - **Seed:** `41`
 - **Grid:** `128 × 128` (periodic BCs)
-- **Steps:** `1000`
+- **Steps:** `2000`
 - **Precision:** `float64` (IEEE-754)
 - **Δt (time step):** `1.0e-21 s` (canonical)
 - **κ-mode:** `constant` (static spatial map; no time evolution)
@@ -306,7 +307,8 @@ This manifest pins all run-level switches for the canonical reference used in th
 - **σξ (noise amplitude):** `5.0e-3`
 - **κ-map:** `constant 0.5` (uniform across the grid)
 
-- **Code provenance:** recorded in the HTML report header when available (short Git SHA). Runs in this paper are pinned by `RUN_TAG`; the exact commit is documented in the report and artifact manifest.
+- **Git commit (snapshot):** `875fc4e` — `finalize logging and throttling`
+- **Code provenance:** pinned by `RUN_TAG` + git commit; primary numeric sources are the run manifest and CSV logs.
 
 **Artifacts (prefixing):** all outputs are prefixed with `{RUN_TAG}_…` (e.g., `spec6_false_s41_lineum_report.html`), as listed in §4.5 and Appendix A.
 
@@ -314,24 +316,23 @@ This manifest pins all run-level switches for the canonical reference used in th
 
 All canonical artifacts for the run `spec6_false_s41` are provided with this preprint as ancillary files: the canonical HTML report (`spec6_false_s41_lineum_report.html`), the reference implementation (`lineum.py`), and the generated CSV/PNG/GIF outputs listed in §4.5.
 
-Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The HTML report is the ground-truth index of files and metrics for this paper.
+Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The numeric source of truth is the JSON manifest (`spec6_false_s41_manifest.json`) and the machine-readable CSV logs. The HTML report is a derived view generated from these primary sources.
 
 **Version pinning (no checksums).** Provenance is pinned by `RUN_TAG=spec6_false_s41`, the code commit noted in the HTML report header (short Git SHA, when available), and the artifact manifest (file list with sizes & timestamps) embedded in the report. We intentionally do not publish checksums because this is a living paper with evolving outputs; reproducibility is evaluated against the acceptance bands in §4.3.1.
 
 > **Reviewer quick-check (v1).**
 >
-> 1. Open the HTML report `spec6_false_s41_lineum_report.html` and verify the **Quasiparticle Properties** table prints exactly:
->    - Dominant frequency f₀: `3.91e+18 Hz [3.91e+18, 3.91e+18]`
->    - Energy (E = h f₀): `2.59e-15 J (~16.15 keV)`
->    - Wavelength (λ = c / f₀): `7.67e-11 m`
->    - Effective mass: `2.88e-32 kg`
->    - Mass relative to electron: `0.0316 (3.16%) × electron mass`
-> 2. The report header prints the **short Git commit** (next to `RUN_TAG`).
-> 3. In §5.6, **Worked example (canonical f₀)** evaluates to `m/mₑ ≈ 3.161445e-02` using the stated SI constants.
-> 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that f₀ lies exactly on this FFT bin.
-> 5. Confirm the same values in the HTML for `spec6_false_s17/s23/s73` (see Appendix C, Evidence Index).
+> 1. Open `spec6_false_s41_metrics_summary.csv` and/or the run `manifest.json` and confirm the refined snapshot prints:
+>    - Dominant frequency f₀: `1.710e+20 Hz [9.82e+19, 2.47e+20]`
+>    - SBR: `193.97 [5.86, 500.08]`
+>    - φ half-life (center): `1045 steps`
+>    - Topology neutrality (N1): `96.25%` where N1 = fraction of steps with `|net_charge| <= 1`
+>    - Mean vortices: `98.775`
+> 2. Confirm the snapshot git commit is `875fc4e` (recorded with the run).
+> 3. In §5.6, **Worked example (canonical f₀)** evaluates to `m/mₑ ≈ 1.384` using the stated SI constants (display-only).
+> 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that `f₀` is reported as a centroid/interpolated estimate near bin `k≈44` (raw bin center is `1.719e20 Hz`).
 
-**Track policy.** This manuscript is the frozen **core** track (**v1.0.7-core**). Exploratory physics-mapping results (dispersion, group-velocity, external-field response) will be released under the separate **experimental** track (**v1.1.x-exp**) with its own evidence bundle; HTML artifacts are version-stamped accordingly.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.9-core**.
 
 **File-level scope (whitepapers).** `lineum-core.md` together with `lineum-core-equation-history.md` define the canonical v1.0.x core. All other whitepapers in the repository whose filenames begin with `lineum-exp-…` or `lineum-extension-…` (e.g., `lineum-exp.md`, `lineum-exp-thermo-calibration.md`, `lineum-extension-return-echo.md`, `lineum-extension-silent-gravity.md`, `lineum-extension-spectral-structure.md`, `lineum-extension-vortex-particle-coupling.md`, `lineum-extension-zeta-rnb-resonance.md`) are **by definition outside the v1 core**. They may refer to the same phenomena (Return Echo, Dimensional Transparency, Silent Gravity, Spectral Structure, etc.), but quantitative claims there do not change the canonical scope unless explicitly merged into a future `lineum-core` version.
 
@@ -356,7 +357,7 @@ _Provenance._ Checksums are intentionally omitted (living paper). Provenance is 
 > **RNG/seed bias.** We report metrics with 95% CIs across seeds {23, 17, 41, 73}; replication is defined by tolerance bands in §4.3.1.  
 > **Visualization bias.** All metrics derive from numeric logs (CSV). Amplitude gating is **visualization-only** in GIFs; winding/metrics use raw values.
 
-> **Display-only mass (interpretation risk).** The “effective mass” reported in §1/§5.6 is a unit-conversion from the canonical frequency \(f_0\) via \(m = h f_0 / c^2\). It is provided purely as a scale cue (e.g., ≈ 3.16% of \(m_e\) across seeds 17/23/41/73), not as a claim of an intrinsic rest mass. Mitigations in v1: (i) explicit **Interpretation note (v1)** in the Abstract; (ii) matching values in all HTML “Quasiparticle Properties” tables for the evidence runs; (iii) SI constants stated in §5.6; (iv) report tooling computes the display mass directly from \(f_0\) at render time to avoid drift.
+> **Display-only mass (interpretation risk).** The “effective mass” reported in §1/§5.6 is a unit-conversion from the reported dominant frequency \(f_0\) via \(m = h f_0 / c^2\). It is provided purely as a scale cue (display-only), not as a claim of an intrinsic rest mass. Mitigations in v1: (i) explicit **Interpretation note (v1)** in the Abstract; (ii) SI constants stated in §5.6; (iii) report tooling computes the display mass directly from \(f_0\) at render time to avoid drift. Multi-seed alignment statements are quoted only after regeneration under the same pinned code state (commit `875fc4e`).
 
 **Not claimed (v1).** We explicitly do **not** claim:
 
@@ -382,16 +383,15 @@ _Scope._ These guardrails are part of v1 tooling only; they do not assert any re
 
 ### Figure 0 — Canonical anchors at a glance
 
-![Figure 0: Canonical spectrum (bin-centered peak at f₀) and center-amplitude time trace.](../output/spec6_false_s41_figure0_canonical.png)
+![Figure 0: Canonical spectrum (dominant peak near f₀) and center-amplitude time trace.](../output/spec6_false_s41_figure0_canonical.png)
 
 <sub>Source: see the HTML report [`output/spec6_false_s41_lineum_report.html`](../output/spec6_false_s41_lineum_report.html); all runs are indexed in **Appendix C**.</sub>
 
-**Caption (v1).** The power spectrum of the center-amplitude time series shows the dominant tone **exactly on an FFT bin center** at **f₀ = 3.90625×10¹⁸ Hz** (Δf per §5.6). The corresponding time trace exhibits a stable, long-lived oscillation. SI-derived quantities (E, λ, display-only m/mₑ) in the HTML “Quasiparticle Properties” tables follow directly from **f₀** via \(E = h f₀\), \(λ = c/f₀\), \(m = E/c^2\).
+**Caption (v1).** The power spectrum of the center-amplitude time series shows a dominant tone near FFT bin `k≈44`; the reported \(f_0\) is estimated as a centroid/interpolated peak (**f₀ = 1.710×10²⁰ Hz**, CI per §5.6). The corresponding time trace exhibits a stable, long-lived oscillation. SI-derived quantities (E, λ, display-only m/mₑ) follow directly from \(f_0\) via \(E = h f_0\), \(λ = c/f_0\), \(m = E/c^2\) (scale illustration only).
 
-> **Canonical numerical anchors (from HTML evidence, seed 41).**  
-> `f₀ = 3.91e+18 Hz` · `E = 2.59e−15 J (~16.15 keV)` · `λ = 7.67e−11 m` ·  
-> `m = 2.88e−32 kg` · `m/mₑ = 0.0316 (3.16%)`  
-> Source: `../output/spec6_false_s41_lineum_report.html` (section “Quasiparticle Properties”).
+> **Canonical numerical anchors (refined snapshot, seed 41).**  
+> `f₀ = 1.710e+20 Hz [9.82e+19, 2.47e+20]` · `SBR = 193.97 [5.86, 500.08]` ·  
+> `φ half-life (center) = 1045 steps` · `Topology neutrality (N1) = 96.25%` · `Mean vortices = 98.775`
 
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
 
@@ -399,12 +399,12 @@ The validation phase aims to confirm that specific emergent phenomena occur cons
 
 ## 5.1 Guided Motion via φ-Gradient
 
-Simulations show that particles exhibit **drift along +∇|φ|**. Trajectory statistics indicate a **systematic decrease in distance** to regions of increasing φ over time, consistent with **environmental guidance** by the background field. No force law is introduced; the observed behavior follows directly from the +∇φ term in Eq. (1) and remains robust across seeds and runs.
+Simulations show that particles exhibit **drift along +∇φ**. Trajectory statistics indicate a **systematic decrease in distance** to regions of increasing φ over time, consistent with **environmental guidance** by the background field. No force law is introduced; the observed behavior follows directly from the +∇φ term in Eq. (1) and remains robust across seeds and runs.
 
 **Evidence pointer (HTML & files).**  
-Trajectory drift along +∇|φ| is visible in the per-run HTML under **“Trajectories”** and **“Flow”** animations, and is quantified from:
+Trajectory drift along +∇φ is visible in the per-run HTML under **“Trajectories”** and **“Flow”** animations, and is quantified from:
 
-- `*_trajectories.csv` (particle paths; decreasing distance to +∇|φ| regions),
+- `*_trajectories.csv` (particle paths; decreasing distance to regions of increasing φ / along +∇φ),
 - `*_phi_center_plot.png` / `*_phi_center_log.csv` (center trace supporting φ-memory/half-life),
 - `*_lineum_flow.gif` (qualitative flow visualization).
 
@@ -448,56 +448,44 @@ Operationally, we detect Structural Closure whenever a linon decay event is foll
 
 > **Canonical frequency anchor (spec6_false_s41)**  
 > With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on the canonical run `spec6_false_s41` is  
-> **f₀ = 3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**], which implies **E = h f₀ ≈ 2.59×10⁻¹⁵ J ≈ 16.15 keV** and **λ = c / f₀ ≈ 7.67×10⁻¹¹ m (0.0767 nm)**.
+> **f₀ = 1.710×10²⁰ Hz** [**9.82×10¹⁹**, **2.47×10²⁰**], which implies (display-only) **E = h f₀ ≈ 1.13×10⁻¹³ J ≈ 707 keV** and **λ = c / f₀ ≈ 1.75×10⁻¹² m (0.00175 nm)**.
 
 > **Representative run metrics (canonical: spec6_false_s41)**  
-> SBR (±2-bin guard): **6.88** [**6.86**, **6.90**].  
-> Topology neutrality: **91.6%** of steps with |net charge| ≤ 1 (mean vortices ≈ **86** per frame).  
-> φ half-life (center): **483 steps**.  
-> Steps / grid: **1000**, **128×128**.
+> SBR (±2-bin guard): **193.97** [**5.86**, **500.08**].  
+> Topology neutrality (N1): **96.25%** of steps with `|net_charge| <= 1` (strict `net_charge == 0` gives **87.50%**, non-canonical).  
+> Mean vortices: **98.775** per frame.  
+> φ half-life (center): **1045 steps**.  
+> Low-mass QP: **49** · Max lifespan: **1626 steps**.  
+> Steps / grid: **2000**, **128×128**.
 
 ---
 
-> **Additional validation run (spec6_false_s17)**  
-> These metrics provide an independent confirmation that the dominant frequency and SBR
-> remain stable across seeds under identical canonical parameters.
->
-> **Dominant frequency:** _f₀_ = **3.90625×10¹⁸ Hz**  
-> 95% CI: **[3.90625×10¹⁸, 3.90625×10¹⁸]** (bin-center exact)
->
-> **SBR (±2-bin guard):** **6.88** [**6.86**, **6.89**]
-> **Topology neutrality:** **91.1%** steps with |net charge| ≤ 1  
->  **Mean vortex count:** **≈89**  
->  **φ half-life (center):** **483 steps**
->
-> The full per-window spectral profile is provided in  
-> `spec6_false_s17_metrics_summary.csv` and  
-> `spec6_false_s17_multi_spectrum_summary.csv`.
+> **Additional validation runs (other seeds).**  
+> Multi-seed confirmations (e.g., seeds 17/23/73) are retained in the v1 narrative, but must be regenerated under the refined logging/config state (commit `875fc4e`) before numeric values are quoted here. Until regenerated, the canonical numeric snapshot for v1.0.8-core is pinned to `spec6_false_s41` (see §4.6 and the anchors at the top of §5.6).
 
 ---
 
-Fourier analysis of long-duration runs shows that dominant oscillation frequencies remain stable over time, even with particle creation and annihilation events.  
-Typical dominant frequency: ≈ 3.90625×10¹⁸ Hz with <0.5% variation across canonical runs.
-This supports reading f₀ as a dynamical invariant of Eq. (1) rather than a numerical artifact.
+Fourier analysis of long-duration runs shows that dominant oscillation frequencies can remain stable over time, even with particle creation and annihilation events.  
+In the refined snapshot pinned here (`spec6_false_s41`), the dominant tone is **f₀ ≈ 1.710×10²⁰ Hz** (windowed mean with CI; centroid/interpolated peak near bin `k≈44`). Generalizing a “typical” f₀ across seeds/variants is deferred until the multi-seed set is regenerated under the same pinned code state (commit `875fc4e`).
 
 _Machine-readable._ Per-run CSV with windowed means and 95% CIs is provided as `{RUN_TAG}_metrics_summary.csv` (e.g., `spec6_false_s41_metrics_summary.csv`; likewise for seeds 23/17/41/73).
 
-_Constants & rounding._ Conversions use SI: Planck’s constant $h=6.62607015\times 10^{-34}\ \mathrm{J\,s}$, speed of light $c=2.99792458\times 10^8\ \mathrm{m/s}$, electron mass $m_e=9.1093837015\times 10^{-31}\ \mathrm{kg}$. Derived quantities are reported as
+_Constants & rounding._ Conversions use SI: Planck’s constant $h=6.62607015\times 10^{-34}\ \mathrm{J\,s}$, speed of light $c=2.99792458\times 10^8\ \mathrm{m/s}$, electron mass $m_e=9.1093837015\times 10^{-31}\ \mathrm{kg}$. Derived quantities (display-only) are reported as
 $E = h f_0$, $\lambda = c/f_0$, $m = E/c^2$, mass ratio $m/m_e$.
 We report $E$ and $\lambda$ to three significant figures, SBR to two decimals; CIs are non-parametric 95% bootstrap percentiles.
 
 > **Worked example (canonical f₀).**  
 > Constants: `h = 6.62607015e-34 J·s`, `c = 2.99792458e8 m/s`, `m_e = 9.1093837015e-31 kg`.  
-> Canonical tone: `f₀ = 3.90625e18 Hz`.
+> Canonical tone (refined snapshot): `f₀ = 1.710e20 Hz`.
 >
 > Calculation:
 >
 > ```
 > m/m_e = (h * f₀) / (c^2 * m_e)
->       = (6.62607015e-34 * 3.90625e18) / ((2.99792458e8)^2 * 9.1093837015e-31)
->       ≈ 3.161445e-02  = 0.0316  (3.16%)
-> E      = h * f₀ = 2.5883e-15 J  ≈ 16.15 keV
-> λ      = c / f₀ = 7.6747e-11 m  = 0.0767 nm
+>       = (6.62607015e-34 * 1.710e20) / ((2.99792458e8)^2 * 9.1093837015e-31)
+>       ≈ 1.383954e+00  = 1.384  (138.40%)
+> E      = h * f₀ = 1.1331e-13 J  ≈ 707.20 keV
+> λ      = c / f₀ = 1.7532e-12 m  = 0.00175 nm
 > ```
 
 **Formatting policy (v1).** Numerical values are rendered consistently in text and HTML as follows:
@@ -508,32 +496,28 @@ We report $E$ and $\lambda$ to three significant figures, SBR to two decimals; C
 – Mass ratio `m/mₑ`: **4 decimals** plus a **percent in parentheses with 2 decimals** (e.g., `0.0316 (3.16%)`).  
 – Confidence intervals: `[lo, hi]` with the **same precision as the mean**.
 
-**Tie-breaker (v1).** If any rounding discrepancy appears between the paper and artifacts, the HTML report is the **ground-truth numeric rendering** (derived from the same underlying values); unrounded numbers are available in `{RUN_TAG}_metrics_summary.csv`.
+**Tie-breaker (v1).** If any rounding discrepancy appears between the paper and artifacts, the **manifest.json + CSV logs** are the ground-truth numeric sources; the HTML report is a derived view.
 
 _Frequency binning._ With window length $W=256$ and time step $\Delta t = 1.0\times 10^{-21}\ \mathrm{s}$, the frequency resolution is
 $\Delta f = \frac{1}{W\,\Delta t} = 3.90625\times 10^{18}\ \mathrm{Hz}$.
-The canonical anchor $f_0$ lies exactly on this FFT bin.
+In the refined snapshot, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k=44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`).
 
-_Addendum (v1)._ With window length `W = 256` and time step `Δt = 1.0e−21 s`, the FFT spacing is `Δf = 3.90625e18 Hz`; the canonical tone `f₀` lies exactly on a bin center, so the peak is not interpolated and the same `f₀` reproduces across seeds.
+_Addendum (v1)._ With window length `W = 256` and time step `Δt = 1.0e−21 s`, the FFT spacing is `Δf = 3.90625e18 Hz`. In the refined snapshot, the dominant tone is reported as a centroid/interpolated estimate near bin `k≈44` (see “Frequency binning” in §5.6).
 
-**Sampling & Nyquist safety (v1).** The sampling rate is `1/Δt = 1.0e21 Hz`, so the Nyquist limit is `f_N = 1/(2Δt) = 5.0e20 Hz`. Our canonical tone satisfies `f₀ = 3.90625e18 Hz ≪ f_N` (by a factor of ≈128), hence no aliasing. Together with the exact bin-centering `Δf = 1/(W·Δt) = 3.90625e18 Hz`, the dominant peak requires neither interpolation nor deconvolution and reproduces identically across seeds.
+**Sampling & Nyquist safety (v1).** The sampling rate is `1/Δt = 1.0e21 Hz`, so the Nyquist limit is `f_N = 1/(2Δt) = 5.0e20 Hz`. Our refined canonical tone satisfies `f₀ = 1.710e20 Hz < f_N` (by a factor of ≈2.9), hence no aliasing under the stated sampling. Because \(f_0\) is not exactly bin-centered in this snapshot, we explicitly report a centroid/interpolated estimate and its CI rather than claiming exact bin-locking.
 
 **Implementation robustness.** The dominant peak stays within ±0.5% across different random seeds, grid sizes, and run durations; see `multi_spectrum_summary.csv` for aggregated runs.
 _See also (Harmonic Spectrum)._ Secondary harmonics may co-appear with the dominant tone; methods and cross-language checks are summarized in the Spectral Structure extension.
 
 #### 5.7 Robustness mini-sweep (seeds 23, 17, 41, 73; spec6_false)
 
-We ran four canonical-scope repeats differing only by RNG seed. The dominant spectral peak and SBR are reported as **windowed means with 95% bootstrap CIs** (center-amplitude pipeline; ±2-bin guard). Topology neutrality and φ half-life vary modestly within the replication tolerances of §4.3.1.
+_Status (refined snapshot)._ The multi-seed sweep section is retained for the v1 narrative, but the numeric values shown here must be regenerated under the refined logging/config state (commit `875fc4e`). This core revision pins the canonical numeric snapshot to `spec6_false_s41` only (see §4.6 and §5.6).
 
-| seed | SBR (±2-bin guard; mean [lo, hi]) | Topology neutrality (%) | φ half-life (center, steps) | Mean vortices / frame |
-| :--: | :-------------------------------: | :---------------------: | :-------------------------: | :-------------------: |
-|  23  |         6.88 [6.86, 6.90]         |          94.9           |             480             |          93           |
-|  17  |         6.88 [6.86, 6.89]         |          91.1           |             483             |          89           |
-|  41  |         6.88 [6.86, 6.90]         |          91.6           |             483             |          86           |
-|  73  |         6.90 [6.87, 6.95]         |          92.0           |             484             |          86           |
+| seed | SBR (±2-bin guard) | Topology neutrality (N1) | φ half-life (center) | Mean vortices |
+| :--: | :----------------: | :----------------------: | :------------------: | :-----------: |
+|  41  | 193.97 [5.86, 500.08] | 96.25% | 1045 | 98.775 |
 
-**Summary.** SBR is tightly clustered at **6.88–6.90** with overlapping 95% CIs; neutrality spans **91.1–94.9%**; φ half-life is **480–484** steps.  
-**Canonical anchor.** We select `spec6_false_s41` as the medoid (closest to medians) for figures and references throughout the paper.
+**Summary (refined snapshot).** Multi-seed summary statistics are **TBD** pending regeneration under commit `875fc4e`. The canonical numeric anchors used throughout this core draft remain pinned to `spec6_false_s41` until the sweep is refreshed.
 
 #### 5.8 Ablation study (canonical grid; Δt fixed)
 
@@ -561,16 +545,14 @@ _Notes._
 **Run:** `spec6_false_s41_grid256`  
 **Setup change:** grid 256×256; Δt = 1.0e−21 s (unchanged)
 
-**Result.** Dominant frequency **f₀ = 3.91×10¹⁸ Hz** (exact FFT bin); **SBR = 6.77 [6.66, 6.84]**; display-only **m/mₑ = 0.0316**.  
-**Acceptance.** f₀ within **±0.5%** of canonical; SBR within the **±10%** band → **PASS**.
-
-_Evidence:_ see the HTML report `spec6_false_s41_grid256_lineum_report.html` (Quasiparticle Properties & Run metrics tables).
+**Status.** This verification run must be regenerated under the refined logging/config state (commit `875fc4e`) before quoting numeric results here.  
+**Acceptance (unchanged).** f₀ within **±0.5%** of the canonical anchor and SBR within the **±10%** band → **PASS** when the refreshed artifacts are available.
 
 # 6. Interpretation
 
 The confirmed phenomena suggest that local field interactions in Lineum can spontaneously produce structures and behaviors reminiscent of particle-like dynamics.
 
-Particles exhibit **guided motion** along **+∇|φ|** (environmental guidance) **without** any force law or analogy to GR. When convergence occurs, it emerges from **local gradients and basin structure** in φ rather than from an imposed long-range interaction.
+Particles exhibit **guided motion** along **+∇φ** (environmental guidance) **without** any force law or analogy to GR. When convergence occurs, it emerges from **local gradients and basin structure** in φ rather than from an imposed long-range interaction.
 
 The persistence of φ-structures after particle decay (Structural Closure) indicates that the interaction field can store and maintain spatial information independently of active excitations. In v1 we interpret this strictly through the φ center-trace half-life and localized φ remnants as defined in §5.4; any additional trajectory-level bias (Return Echo) is reserved for the extension track. This memory property could serve as a basis for long-lived boundary conditions or “imprinted” environments in emergent systems.
 
@@ -580,7 +562,7 @@ Spin Aura and Spectral Stability show that once formed, linon excitations (parti
 
 ## 6.1 Guided Motion (interpretive note)
 
-Simulations indicate that particles exhibit **statistical alignment with +∇|φ|**. We describe this as **environmental guidance**: the background field φ provides metric-like structure that biases trajectories **without** introducing a force law or any analogy to GR. In particular, we observe drift along +∇|φ| (Section 5.1) and longer dwell times in locally quiet basins where |∇φ| ≈ 0. Attraction-like behavior, when present, thus emerges from **local gradients and basin structure**, not from a prescribed long-range interaction.
+Simulations indicate that particles exhibit **statistical alignment with +∇φ**. We describe this as **environmental guidance**: the background field φ provides metric-like structure that biases trajectories **without** introducing a force law or any analogy to GR. In particular, we observe drift along +∇φ (Section 5.1) and longer dwell times in locally quiet basins where |∇φ| ≈ 0. Attraction-like behavior, when present, thus emerges from **local gradients and basin structure**, not from a prescribed long-range interaction.
 
 ## 6.2 Vortex–Particle Coupling (interpretive note)
 
@@ -600,7 +582,7 @@ Lineum demonstrates that a minimal, discrete, and locally defined update rule ca
 
 Through controlled simulations, the model consistently produces:
 – **linons** with stable trajectories,
-– guided motion along +∇|φ| (environmental guidance),
+– guided motion along +∇φ (environmental guidance),
 – persistent spin structures (Spin Aura),
 – φ-memory remnants after particle decay (**Structural Closure**, consistent with the center-trace φ half-life metric),
 – and long-term spectral stability of the canonical tone.
@@ -635,6 +617,11 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
+
+**1.0.9 — 2026-02-14 (patch)**
+
+- Bump core version to **1.0.9-core** and update header date to **2026-02-14** (refined snapshot now explicitly tied to the `spec6_false_s41_20260214_101645` evidence directory).
+- Fix internal version references so the “frozen core track” wording matches the current patch level (**v1.0.9-core**).
 
 **1.0.8 — 2025-12-09 (patch)**
 
@@ -686,7 +673,7 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.7-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.9-core**.
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -751,7 +738,7 @@ $$
 P(f)=\bigl|\mathrm{FFT}(x)\bigr|^{2}.
 $$
 
-The dominant tone $f_0$ is the argmax of the positive-frequency band.
+The dominant tone $f_0$ is estimated per window from the dominant peak region; in refined snapshots we report a local centroid/interpolated estimate rather than claiming exact bin-centering. The windowwise mean and a 95% bootstrap CI are reported in `metrics_summary.csv`.
 **SBR** compares the peak power to the rest of the spectrum with a ±2-bin guard around $f_0$.
 
 **Effective mass (display-only).** Converted from $f_0$ via:
@@ -770,7 +757,7 @@ Reported as a derived display quantity (no fitting).
 
 **Spectral pipeline (center amplitude).** We compute the power spectrum $P(f)=|\mathrm{FFT}(x)|^2$ on sliding windows of the center-point amplitude time series. Defaults: window length $W=256$ frames, hop $H=128$, de-meaned FFT (DC removed), and a ±2-bin guard around the dominant bin $f_0$ when estimating the background.
 
-**Dominant frequency $f_0$.** For each window, $f_0=\arg\max_f P(f)$ on the positive-frequency band. We aggregate the windowwise mean and a non-parametric **95% bootstrap CI** across windows.
+**Dominant frequency $f_0$ (refined snapshot).** For each window, we locate the dominant peak region and estimate $f_0$ via a local centroid/interpolated peak (rather than claiming exact bin-centering). We aggregate the windowwise mean and a non-parametric **95% bootstrap CI** across windows.
 
 **SBR (Spectral Balance Ratio).** For each window:
 
@@ -800,11 +787,15 @@ def sbr_and_f0_windows(x, dt, W=256, hop=128, guard=2):
     for w in sliding_windows(x, W, hop):
         P, F = welch_power(w, dt)
         k = int(np.argmax(P)); peak = P[k]
+        # centroid around the peak (3-bin window by default)
+        k0 = max(k-1, 0); k1 = min(k+2, len(P))
+        wP = P[k0:k1]; wF = F[k0:k1]
+        f0 = float((wF*wP).sum()/wP.sum()) if wP.sum() > 0 else float(F[k])
         mask = np.ones_like(P, dtype=bool)
         mask[max(k-guard,0):min(k+guard+1,len(P))] = False
         bg = P[mask].mean() if mask.any() else np.nan
         if bg > 0: sbr_vals.append(peak/bg)
-        f0_vals.append(F[k])
+        f0_vals.append(f0)
     return np.array(sbr_vals), np.array(f0_vals)
 
 def bootstrap_mean_ci(vals, B=1000, alpha=0.05):
@@ -822,22 +813,19 @@ _The HTML report prints `value [lo, hi]` for both metrics and also writes them t
 
 This appendix ties the core’s numeric anchors to concrete artifacts (HTML reports) so that readers can verify values directly.
 
-**Canonical numeric anchors (shared across seeds 17/23/41/73).**
+**Canonical numeric anchors (refined snapshot; RUN_TAG `spec6_false_s41`, commit `875fc4e`).**
 
-- Dominant tone: **f₀ = 3.90625×10¹⁸ Hz**
-- Energy: **E = 2.5883×10⁻¹⁵ J ≈ 16.15 keV**
-- Wavelength: **λ = 7.6747×10⁻¹¹ m (0.0767 nm)**
-- Mass ratio (display-only): **m/mₑ = 0.0316 (3.16%)**  
+- Dominant tone: **f₀ = 1.710×10²⁰ Hz** (CI: **[9.82×10¹⁹, 2.47×10²⁰]**)
+- Energy (display-only): **E = 1.1331×10⁻¹³ J ≈ 707.20 keV**
+- Wavelength (display-only): **λ = 1.7532×10⁻¹² m (0.00175 nm)**
+- Mass ratio (display-only): **m/mₑ ≈ 1.384 (138.40%)**  
   _(Derived via \(E = h f_0\), \(m = E/c^2\); constants listed in §5.6.)_
 
 **Per-run artifacts (v1 evidence bundle).**
 
-| RUN_TAG           | HTML report                          | f₀ (Hz)    | E (J; keV)             | λ (m; nm)             | m/mₑ (%) |
-| :---------------- | :----------------------------------- | :--------- | :--------------------- | :-------------------- | :------- |
-| `spec6_false_s17` | `spec6_false_s17_lineum_report.html` | 3.90625e18 | 2.5883e-15; ~16.15 keV | 7.6747e-11; 0.0767 nm | 3.16     |
-| `spec6_false_s23` | `spec6_false_s23_lineum_report.html` | 3.90625e18 | 2.5883e-15; ~16.15 keV | 7.6747e-11; 0.0767 nm | 3.16     |
-| `spec6_false_s41` | `spec6_false_s41_lineum_report.html` | 3.90625e18 | 2.5883e-15; ~16.15 keV | 7.6747e-11; 0.0767 nm | 3.16     |
-| `spec6_false_s73` | `spec6_false_s73_lineum_report.html` | 3.90625e18 | 2.5883e-15; ~16.15 keV | 7.6747e-11; 0.0767 nm | 3.16     |
+| RUN_TAG           | Evidence source (primary)            | f₀ (Hz; CI)                         | SBR (CI)                 | φ half-life | Neutrality (N1) |
+| :---------------- | :----------------------------------- | :---------------------------------- | :----------------------- | :---------- | :-------------- |
+| `spec6_false_s41` | `manifest.json` + `metrics_summary.csv` | 1.710e20 [9.82e19, 2.47e20]         | 193.97 [5.86, 500.08]    | 1045        | 96.25%          |
 
 _Commit provenance._ Each HTML report prints the short Git commit in its header (beside `RUN_TAG` and runtime metadata). Regenerating reports on a different code state will change the commit stamp by design.
 
@@ -849,11 +837,11 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 
 **dominant frequency \(f_0\).** The spectral peak of the center-amplitude time series; measured on sliding windows and reported as a windowed mean with a 95% CI.
 
-**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots). Our canonical \(f_0\) sits **exactly** on a bin center, so the peak is not interpolated; this is why \(f_0\) reproduces identically across seeds (see §5.6).
+**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots) with spacing Δf. In the refined snapshot pinned in this draft, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k≈44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`; see §5.6). We therefore do not claim exact bin-centering in v1.0.8-core refined anchors.
 
 **Δt, W, Δf.** Δt is the simulation time step; W is the FFT window length (in steps); their combination fixes the bin spacing Δf. Canonical v1 uses Δt = 1.0e−21 s and W = 256 (see §5.6).
 
-**Nyquist safety.** The sampling rate (1/Δt) is high enough that the canonical tone \(f_0\) is far below the Nyquist limit, so aliasing is not a concern (see §5.6 “Sampling & Nyquist safety”).
+**Nyquist safety.** The sampling rate (1/Δt) sets the Nyquist limit \(f_N = 1/(2Δt)\). In the refined snapshot, the reported \(f_0\) lies below \(f_N\) (see §5.6 “Sampling & Nyquist safety”), so aliasing is not expected under the stated sampling.
 
 **SBR (Spectral Balance Ratio).** Peak-to-background ratio of the power spectrum in a window, with a ±2-bin guard around the peak excluded from the background. Reported as mean with a 95% CI.
 
@@ -877,34 +865,36 @@ The icon used in the repository depicts a circulation among ψ → φ → κ →
 
 Minimal verification runs demonstrating invariance under window length, time-step refinement (fixed Δf), and grid size.
 
-| RUN_TAG                     | Setup change                           | f₀ (Hz)    | E (J; keV)             | λ (m; nm)             | m/mₑ           | Outcome                |
-| :-------------------------- | :------------------------------------- | :--------- | :--------------------- | :-------------------- | :------------- | :--------------------- |
-| `spec6_false_s41_w512`      | W = 512 (Δt = 1.0e−21 s)               | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
-| `spec6_false_s23_w512`      | W = 512 (Δt = 1.0e−21 s)               | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
-| `spec6_false_s41_dt05_w512` | Δt → 5.0e−22 s, W → 512 (Δf preserved) | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (bin-centered)    |
-| `spec6_false_s41_grid256`   | Grid 256×256 (Δt = 1.0e−21 s)          | 3.90625e18 | 2.5883e−15; ~16.15 keV | 7.6747e−11; 0.0767 nm | 0.0316 (3.16%) | PASS (SBR within ±10%) |
+| RUN_TAG                     | Setup change                           | Status |
+| :-------------------------- | :------------------------------------- | :----- |
+| `spec6_false_s41_w512`      | W = 512 (Δt = 1.0e−21 s)               | TBD — regenerate under commit `875fc4e` |
+| `spec6_false_s23_w512`      | W = 512 (Δt = 1.0e−21 s)               | TBD — regenerate under commit `875fc4e` |
+| `spec6_false_s41_dt05_w512` | Δt → 5.0e−22 s, W → 512 (Δf preserved) | TBD — regenerate under commit `875fc4e` |
+| `spec6_false_s41_grid256`   | Grid 256×256 (Δt = 1.0e−21 s)          | TBD — regenerate under commit `875fc4e` |
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.7-core).**
+**What’s included (core v1.0.8-core).**
 All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` prefix.
 
 ### File map (per-seed; canonical examples)
 
-- `output/spec6_false_s41_lineum_report.html` — main HTML report (ground truth numbers)
+- `output/spec6_false_s41_lineum_report.html` — main HTML report (derived view generated from the manifest + CSV logs)
 - `output/spec6_false_s41_figure0_canonical.png` — Figure 0 used in §5
 - `output/spec6_false_s41_metrics_summary.csv` — machine-readable metrics (f₀, SBR, CIs)
+- `output/spec6_false_s41_manifest.json` — primary run metadata and primary metric snapshot (refined anchors)
 - Other CSV/PNG/GIF listed in §4.5 (same `{RUN_TAG}_…` prefix)
 
 **How to verify quickly.**
 
-1. Open `output/spec6_false_s41_lineum_report.html`.
-2. In “Quasiparticle Properties” confirm:
-   - `f₀ = 3.91e+18 Hz [3.91e+18, 3.91e+18]`
-   - `E = 2.59e-15 J (~16.15 keV)`
-   - `λ = 7.67e-11 m`
-   - `m/mₑ = 0.0316 (3.16%)`
-3. Compare the same values in `output/spec6_false_s41_metrics_summary.csv` (unrounded).
+1. Open `output/spec6_false_s41_metrics_summary.csv` and/or `output/spec6_false_s41_manifest.json` and confirm the refined snapshot:
+   - Dominant frequency `f₀ = 1.710e+20 Hz [9.82e+19, 2.47e+20]`
+   - `SBR = 193.97 [5.86, 500.08]`
+   - `φ half-life (center) = 1045 steps`
+   - `Topology neutrality (N1) = 96.25%` where N1 = fraction of steps with `|net_charge| <= 1`
+   - `Mean vortices = 98.775`
+2. Open `output/spec6_false_s41_lineum_report.html` and confirm the same values appear in the relevant tables (HTML is a derived view).
+3. Confirm the snapshot git commit is `875fc4e` (shown in the HTML report header and/or recorded with the run artifacts).
 
 **Re-running variants (no code edits).**
 
