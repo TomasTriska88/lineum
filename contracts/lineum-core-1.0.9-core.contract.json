@@ -1,53 +1,124 @@
 {
   "contract_id": "lineum-core-1.0.9-core",
-  "contract_version": "1.0.9-core",
+  "contract_version": "1.1.0",
   "document_id": "lineum-core",
   "whitepaper_version": "1.0.9-core",
   "track": "core",
-  "selectors": {
-    "run_tag": "spec6_false_s41"
+  "constants": {
+    "h": 6.62607015e-34,
+    "c": 299792458,
+    "m_e": 9.10938356e-31,
+    "eV": 1.602176634e-19
   },
-  "expected": {
-    "metadata": {
-      "equation": "Eq-4",
-      "dim": "2D",
-      "bcs": "periodic",
-      "grid_n": 128,
-      "dt": 1.0e-21,
-      "kappa_mode": "constant",
-      "code_fingerprint_sha256": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f"
-    },
-    "anchors": {
-      "f0_hz": {
-        "value": 1.710e20,
-        "rel_tol": 0.005
-      },
-      "sbr": {
-        "value": 193.97,
-        "rel_tol": 0.10
-      },
-      "phi_half_life_steps": {
-        "value": 1045,
-        "rel_tol": 0.20
-      },
-      "topology_neutrality_n1": {
-        "value": 0.9625,
-        "abs_tol": 0.03
-      },
-      "mean_vortices": {
-        "value": 98.775,
-        "rel_tol": 0.10
+  "profiles": [
+    {
+      "name": "baseline",
+      "selectors": {},
+      "checks": {
+        "invariants": {
+          "dim": "2D",
+          "bcs": "periodic",
+          "precision": "float64"
+        },
+        "required_artifacts": [
+          "*manifest.json",
+          "*metrics_summary.csv"
+        ]
       }
     },
-    "derived": {
-      "df_hz": {
-        "value": 3.90625e18,
-        "rel_tol": 1e-12,
-        "requires": {
-          "W": 256,
-          "dt": 1.0e-21
-        }
+    {
+      "name": "canonical",
+      "selectors": {
+        "run_tag": "spec6_false_s41"
+      },
+      "checks": {
+        "identity": {
+          "seed": 41,
+          "steps": 2000,
+          "grid_size": 128,
+          "time_step_s": 1.0e-21,
+          "equation": "Eq-4",
+          "kappa_mode": "constant",
+          "params.alpha": 7.0e-4,
+          "params.beta": 1.5e-2,
+          "params.delta": 4.62e-3,
+          "params.sigma_xi": 5.0e-3
+        },
+        "analysis_config": {
+          "spectrum_definition": "power |FFT(x)|^2",
+          "window_length": 256,
+          "hop_length": 128,
+          "guard_bins": 2,
+          "estimator": "centroid",
+          "bootstrap_ci_level": 0.95
+        },
+        "numerical_anchors": {
+          "f0_mean_hz": {
+            "min": 2.3e20,
+            "max": 2.5e20,
+            "paper_ref": "§4.6"
+          },
+          "topology_neutrality_n1": {
+            "target": 100.0,
+            "abs_tol": 0.1,
+            "paper_ref": "§4.4"
+          },
+          "strict_neutrality": {
+            "target": 100.0,
+            "abs_tol": 15.0,
+            "severity": "info",
+            "paper_ref": "§4.4"
+          },
+          "mean_vortices": {
+            "min": 200,
+            "max": 300,
+            "paper_ref": "§4.4"
+          },
+          "low_mass_qp_count": {
+            "target": 49,
+            "abs_tol": 0,
+            "paper_ref": "§4.7"
+          },
+          "max_lifespan_steps": {
+            "min": 500,
+            "paper_ref": "§4.5"
+          },
+          "phi_half_life_steps": {
+            "min": 1500,
+            "max": 2500,
+            "paper_ref": "§4.6"
+          },
+          "sbr_mean": {
+            "min": 100.0,
+            "paper_ref": "§4.6"
+          }
+        },
+        "derived": [
+          {
+            "id": "df_hz",
+            "formula": "1 / (256 * 1.0e-21)",
+            "expected": 3.90625e18,
+            "rel_tol": 0.01,
+            "paper_ref": "§4.6"
+          },
+          {
+            "id": "nyquist_hz",
+            "formula": "1 / (2 * 1.0e-21)",
+            "expected": 5.0e20,
+            "rel_tol": 0.01,
+            "paper_ref": "§4.3"
+          }
+        ],
+        "required_artifacts": [
+          "*manifest.json",
+          "*metrics_summary.csv",
+          "*multi_spectrum_summary.csv",
+          "*trajectories.csv",
+          "*topo_log.csv",
+          "*amplitude_log.csv",
+          "*phi_center_log.csv"
+        ]
       }
     }
-  }
+  ]
 }

@@ -3514,9 +3514,23 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         except Exception as e:
             print(f"⚠️ Failed to save state checkpoint: {e}")
 
+    # --- Analysis Config (Explicit commitment for audit) ---
+    analysis_config = {
+        "spectrum_definition": "power |FFT(x)|^2",
+        "window_type": "Hann",
+        "window_length": int(WINDOW_W) if WINDOW_W else 256,
+        "hop_length": int(WINDOW_HOP) if WINDOW_HOP else 128,
+        "guard_bins": 2,
+        "estimator": "centroid",
+        "bootstrap_iterations": 1000,
+        "bootstrap_ci_level": 0.95,
+        "sbr_guard_bins": 2,
+    }
+
     # Složíme manifest ručně a předáme ho jako první argument
     manifest = {
         "run": run_meta,
+        "analysis_config": analysis_config,
         "metrics": metrics or {},
         "data_files": outputs,
     }

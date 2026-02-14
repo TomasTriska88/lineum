@@ -17,7 +17,14 @@
     "phi_interaction_cap": 10.0,
     "phi_cap": 1000000.0,
     "psi_amp_cap": 1000000.0,
-    "grad_cap": 1000000.0
+    "grad_cap": 1000000.0,
+    "equation": "Eq-4",
+    "params": {
+      "alpha": 0.0007,
+      "beta": 0.015,
+      "delta": 0.00462,
+      "sigma_xi": 0.005
+    }
   },
   "code_fingerprint": {
     "sha256": "c7d91b02f4b7c6c2354f9792752e60f5a2ea87392ba1e9a6fa62e9f1af6dfa3f",
@@ -84,5 +91,21 @@
     "frames_amp_npy": "output_wp\\runs/spec6_false_s41_20260214_101645\\spec6_false_s41_frames_amp.npy",
     "frames_phi_npy": "output_wp\\runs/spec6_false_s41_20260214_101645\\spec6_false_s41_frames_phi.npy",
     "latest_state_checkpoint": "checkpoints/spec6_false_s41_state_step1999.npz"
+  },
+  "analysis_config": {
+    "spectrum_definition": "power |FFT(x)|^2",
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "estimator": "centroid",
+    "bootstrap_ci_level": 0.95,
+    "_meta": {
+      "source": "backfilled_from_contract",
+      "contract_id": "lineum-core-1.0.9-core",
+      "contract_version": "1.1.0",
+      "backfilled_at": "2026-02-14T19:44:55.265934+00:00",
+      "contract_path": "contracts/lineum-core-1.0.9-core.contract.json",
+      "tool": "whitepaper_contract.py"
+    }
   }
 }

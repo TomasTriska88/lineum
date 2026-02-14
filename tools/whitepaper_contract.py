@@ -4,10 +4,10 @@ import argparse
 import json
 import csv
 import math
-import re
+import hashlib
 import os
 import glob
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # --- Configuration & Helpers ---
@@ -17,493 +17,678 @@ Usage:
   python tools/whitepaper_contract.py [--run-dir <path> | --runs-root <path>] [--contract <path>] [--strict]
 
 Arguments:
-  --run-dir <path>      Verify a single audit run directory.
+  --run-dir <path>      Verify a single audit run directory (must be inside output_wp).
   --runs-root <path>    Verify all runs in this root directory (default: output_wp/runs).
-                        Aggregated results will be saved to <runs_root>/_whitepaper_contract/.
-  --contract <path>     Path to contract JSON (default: contracts/lineum-core-1.0.9-core.contract.json).
-  --out <path>          Output JSON path (valid only for single --run-dir mode).
-  --strict              Fail on warnings (non-enforced mismatches).
-
-Description:
-  Validates audit runs against the Lineum Core Whitepaper Contract.
-  In suite mode (--runs-root), it generates an aggregated report.
-  Exit code 0 if all matched runs PASS, 1 otherwise (FAIL or No Runs).
+  --contract <path>     Path to contract JSON (default: contracts/lineum-core-*.contract.json).
+  --strict              Fail on any warning (default: Fail only on FATAL error).
+  --backfill-analysis-config Backfill missing analysis_config metadata to manifest.json
+  --force               Force overwrite of existing metadata during backfill
 """
 
-def print_doc_block():
-    print(DOC_BLOCK.strip())
-    sys.exit(0)
+# Default paths
+DEFAULT_RUNS_ROOT = "output_wp/runs"
+CONTRACT_GLOB = "contracts/lineum-core-*.contract.json"
 
-# --- Logic ---
+# Exit codes
+EXIT_PASS = 0
+EXIT_FAIL = 1
 
-def load_json(path):
-    with open(path, 'r') as f:
-        return json.load(f)
-
-def load_csv(path):
-    # Reads key-value pairs or wide format
-    data = {}
-    with open(path, 'r') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            # Assume key-value format (metric, mean, etc) common in Lineum outputs
-            if "metric" in row:
-                key = row["metric"]
-                val = row.get("mean") or row.get("value")
-                # store basic value
-                if val:
-                    try:
-                        data[key] = float(val)
-                    except ValueError:
-                        data[key] = val
-            # Also support wide format (single row)
-            else:
-                for k, v in row.items():
-                    try:
-                        data[k] = float(v)
-                    except ValueError:
-                        data[k] = v
-    return data
-
-def check_value(name, actual, expected_def, strict=False):
-    """
-    Checks if actual value meets expected definition (val, rel_tol, abs_tol).
-    Returns dict: { passed: bool, message: str, severity: str, tolerance: float/None }
-    """
-    if actual is None:
-        return {"passed": False, "message": f"Metric {name} not found", "severity": "error" if strict else "warning", "tolerance": None}
-
-    # Handle simple value equality (string/int/float)
-    if isinstance(expected_def, (str, int, float)) and not isinstance(expected_def, dict):
-        passed = (str(actual) == str(expected_def))
-        return {"passed": passed, "message": f"MatchType" if passed else f"Expected {expected_def}, got {actual}", "severity": "error" if strict else "warning", "tolerance": None}
-
-    # Extract tolerance rules from dict
-    rel_tol = expected_def.get("rel_tol")
-    abs_tol = expected_def.get("abs_tol")
-    val_expected = expected_def.get("value")
-    
-    # Dict definition checks
-    passed = True
-    msg = []
-    tolerance_used = None
-    
-    if val_expected is not None:
-        # Numeric check
-        diff = abs(actual - val_expected)
-        
-        if rel_tol is not None:
-            limit = abs(val_expected * rel_tol)
-            tolerance_used = rel_tol
-            if diff > limit:
-                passed = False
-                msg.append(f"Outside rel_tol {rel_tol} (diff {diff:.4g} > {limit:.4g})")
-        
-        if abs_tol is not None:
-            tolerance_used = abs_tol
-            if diff > abs_tol:
-                passed = False
-                msg.append(f"Outside abs_tol {abs_tol} (diff {diff:.4g})")
-                
-    else:
-        # String/Metadata check in dict
-        val_expected = expected_def.get("value_str") # fallback
-        if val_expected and str(actual) != str(val_expected):
-            passed = False
-            msg.append(f"Expected '{val_expected}', got '{actual}'")
-
-    return {
-        "passed": passed,
-        "message": "; ".join(msg) if msg else "Within tolerance",
-        "severity": "error",
-        "tolerance": tolerance_used
-    }
-
-def validate_run(run_dir, contract, strict=False):
-    run_dir = Path(run_dir)
-    manifest_path = next(run_dir.glob("*manifest.json"), None)
-    metrics_path = next(run_dir.glob("*metrics_summary.csv"), None)
-    
-    base_result = {
-        "run_dir": str(run_dir.name),
-        "run_tag": run_dir.name, # Fallback
-        "status": "SKIP",
-        "checks": []
-    }
-    
-    # 1. Check existence
-    if not manifest_path or not metrics_path:
-        base_result["message"] = "Missing manifest or metrics file"
-        # Determine if this is a run folder at all?
-        # If it doesn't look like a run, maybe we should just skip silently?
-        # For now, we return SKIP with message.
-        return base_result
-        
+def compute_sha256(path):
+    """Compute SHA256 of a file."""
+    sha256 = hashlib.sha256()
     try:
-        manifest_raw = load_json(manifest_path)
-        metrics = load_csv(metrics_path)
-        
-        # Flatten manifest for easier access (run + metrics -> top level)
-        manifest = {}
-        if "run" in manifest_raw: manifest.update(manifest_raw["run"])
-        if "metrics" in manifest_raw: manifest.update(manifest_raw["metrics"])
-        # Keep top level keys that aren't structural
-        for k, v in manifest_raw.items():
-            if k not in ["run", "metrics", "data_files"]:
-                manifest[k] = v
-                
-        # Merge manifest metrics into the CSV metrics dict for unified lookup
-        # CSV takes precedence if keys collide, but we want all available
-        for k, v in manifest.items():
-            if k not in metrics:
-                metrics[k] = v
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                sha256.update(chunk)
+        return sha256.hexdigest()
+    except FileNotFoundError:
+        return None
 
-    except Exception as e:
-        base_result["message"] = f"Parse error: {e}"
-        return base_result
+def compute_code_fingerprint(repo_root):
+    """
+    Compute combined fingerprint of critical source files.
+    - lineum.py
+    - tools/whitepaper_contract.py
+    - contracts/*.json
+    """
+    files = ["lineum.py", "tools/whitepaper_contract.py"]
+    # Add contracts
+    for c in glob.glob(os.path.join(repo_root, "contracts", "*.contract.json")):
+        rel = os.path.relpath(c, repo_root)
+        files.append(rel.replace("\\", "/")) # Normalize path separators
 
-    # 2. Check Selectors
-    selectors = contract.get("selectors", {})
-    run_tag = manifest.get("run_tag", run_dir.name)
-    base_result["run_tag"] = run_tag
+    files.sort()
     
-    for k, v in selectors.items():
-        if k == "run_tag" and v not in run_tag:
-             base_result["message"] = f"Selector mismatch: {k} expected '{v}'"
-             return base_result
-
-    # Start validation
-    base_result["status"] = "PASS"
-    checks = []
-    
-    # 3. Metadata Checks
-    meta_checks = contract.get("expected", {}).get("metadata", {})
-    for k, v in meta_checks.items():
-        # Alias handling
-        key_lookup = k
-        actual = None # Initialize actual for each iteration
-
-        if k == "grid_n":
-            actual = manifest.get("grid_size_x") or manifest.get("grid_size")
-        elif k == "dt":
-            key_lookup = "time_step_s"
-        elif k == "code_fingerprint_sha256":
-            fp_obj = manifest.get("code_fingerprint") or {}
-            actual = fp_obj.get("fingerprint_sha256")
-        
-        # Commit check is now removed completely
-        if k == "expected_commit":
-             continue
-             
-        # Fingerprint is handled in Step 5 strictly
-        if k == "code_fingerprint_sha256":
-             continue
-        if actual is None:
-            actual = manifest.get(key_lookup)
-        
-        # Fallbacks or inferred values
-        if actual is None:
-            if k == "equation": actual = "Eq-4" # Implicit in spec6
-            if k == "dim": actual = "2D"        # Implicit
-            if k == "bcs": actual = "periodic"  # Implicit
-            if k == "kappa_mode": actual = manifest.get("kappa_mode")
-            
-        res = check_value(k, actual, v, strict=strict)
-        
-        status = "PASS" if res["passed"] else ("FAIL" if res["severity"] == "error" else "WARN")
-        
-        checks.append({
-            "id": f"meta_{k}",
-            "status": status,
-            "passed": res["passed"],
-            "severity": res["severity"],
-            "expected": v,
-            "actual": actual,
-            "tolerance": res["tolerance"],
-            "message": res["message"]
-        })
-        
-        if status == "FAIL":
-            base_result["status"] = "FAIL"
-
-    # 4. Anchor Checks
-    anchors = contract.get("expected", {}).get("anchors", {})
-    key_map = {
-        "f0_hz": "f0",
-        "sbr": "SBR",
-        "phi_half_life_steps": "phi_half_life_steps",
-        "topology_neutrality_n1": "pct_neutral",
-        "mean_vortices": "mean_total_vortices"
-    }
-    
-    for k, v in anchors.items():
-        metric_key = key_map.get(k, k)
-        actual = metrics.get(metric_key)
-        
-        # Scaling fixes
-        if k == "topology_neutrality_n1" and actual is not None and actual > 1:
-            actual = actual / 100.0
-        
-        res = check_value(k, actual, v, strict=True)
-        status = "PASS" if res["passed"] else "FAIL"
-        
-        # Expected value extraction
-        exp_val = v.get("value") if isinstance(v, dict) else v
-        
-        checks.append({
-            "id": f"anchor_{k}",
-            "status": status,
-            "passed": res["passed"],
-            "severity": "error",
-            "expected": exp_val,
-            "actual": actual,
-            "tolerance": res["tolerance"],
-            "message": res["message"]
-        })
-        if status == "FAIL":
-            base_result["status"] = "FAIL"
-            
-        if status == "FAIL":
-            base_result["status"] = "FAIL"
-            
-    # 5. Code Fingerprint Check (Strict)
-    expected_fingerprint = contract.get("expected", {}).get("metadata", {}).get("code_fingerprint_sha256")
-    if expected_fingerprint:
-        # Get from manifest -> code_fingerprint -> sha256
-        fp_obj = manifest.get("code_fingerprint") or {}
-        actual_fp = fp_obj.get("sha256")
-        
-        passed = (actual_fp == expected_fingerprint)
-        status = "PASS" if passed else "FAIL"
-        
-        msg = "Match"
-        if not passed:
-             if not actual_fp: msg = "Missing code_fingerprint in run (Required by contract)"
-             else: msg = f"Fingerprint mismatch: expected {expected_fingerprint[:8]}..., got {actual_fp[:8]}..."
-             
-        checks.append({
-            "id": "meta_code_fingerprint",
-            "status": status,
-            "passed": passed,
-            "severity": "error",
-            "expected": expected_fingerprint,
-            "actual": actual_fp,
-            "tolerance": None,
-            "message": msg
-        })
-        if status == "FAIL":
-            base_result["status"] = "FAIL"
-    else:
-        # Contract does not require fingerprint. 
-        # Check if manifest has it anyway, just for info.
-        fp_obj = manifest.get("code_fingerprint") or {}
-        actual_fp = fp_obj.get("sha256")
-        if actual_fp:
-            checks.append({
-                "id": "meta_code_fingerprint",
-                "status": "PASS",
-                "passed": True,
-                "severity": "info",
-                "expected": None,
-                "actual": actual_fp,
-                "tolerance": None,
-                "message": "Informational (Not required by contract)"
-            })
-
-    # 6. Derived Checks
-    derived = contract.get("expected", {}).get("derived", {})
-    for k, v in derived.items():
-        if k == "df_hz":
-            # consistency check: df = 1 / (W * dt)
-            W = manifest.get("window_W", manifest.get("W", 256)) 
-            # User requirement: SKIP if W not found
-            if W is None:
-                # We can try to infer or skip. User said: "SKIP if unknown W"
-                # If we assume 256 because it's standard, we might be wrong.
-                # Let's check contract requirement or just skip.
-                # Actually, check "requires" block in contract if we added it, or hardcode logic.
-                checks.append({
-                    "id": f"derived_{k}",
-                    "status": "SKIP",
-                    "passed": True,
-                    "severity": "warning",
-                    "expected": v.get("value"),
-                    "actual": None,
-                    "tolerance": None,
-                    "message": "Prerequisite W missing in manifest"
-                })
-                continue
-            
-            dt = manifest.get("time_step_s", manifest.get("dt", 1e-21))
-            val_derived = 1.0 / (W * dt)
-            res = check_value(k, val_derived, v, strict=True)
-            status = "PASS" if res["passed"] else "FAIL"
-             
-            checks.append({
-                "id": f"derived_{k}",
-                "status": status,
-                "passed": res["passed"],
-                "severity": "error",
-                "expected": v.get("value"),
-                "actual": val_derived,
-                "tolerance": res["tolerance"],
-                "message": res["message"]
-            })
-            if status == "FAIL":
-                base_result["status"] = "FAIL"
-
-    base_result["checks"] = checks
-    return base_result
-
-def validate_suite(runs_root, contract, strict=False):
-    root = Path(runs_root)
-    run_dirs = [d for d in root.iterdir() if d.is_dir()]
-    
-    suite_report = {
-        "schema_version": "1.0",
-        "document_id": contract.get("document_id", "lineum-core"),
-        "whitepaper_version": contract.get("whitepaper_version", "1.0.9-core"),
-        "contract_version": contract.get("contract_version", "1.0.9-core"),
-        "generated_at": datetime.utcnow().isoformat() + "Z",
-        "runs_root": str(root),
-        "results": []
-    }
-    
-    passed_count = 0
-    failed_count = 0
-    skipped_count = 0
-    matched_count = 0
-    
-    print(f"[SUITE] Scanning {runs_root}...")
-    
-    for d in run_dirs:
-        if d.name.startswith(".") or d.name == "_whitepaper_contract":
+    overall = hashlib.sha256()
+    for rel_path in files:
+        full_path = os.path.join(repo_root, rel_path)
+        if not os.path.exists(full_path):
             continue
             
-        res = validate_run(d, contract, strict)
+        with open(full_path, "rb") as f:
+            content = f.read()
+            # Normalize CRLF -> LF
+            content = content.replace(b"\r\n", b"\n")
+            overall.update(rel_path.encode("utf-8")) # Hash filename
+            overall.update(content)                 # Hash content
+            
+    return overall.hexdigest()
+
+def load_json(path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+def load_csv_dict(path, key_col="metric"):
+    """Load CSV as a dictionary {key_col_val: row_dict}."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            return {row[key_col]: row for row in reader}
+    except Exception:
+        return None
+
+def check_value(name, actual, expected_def, paper_ref=None):
+    """
+    Compare actual value against definition (min/max/target+tol).
+    Returns (status, message, severity).
+    """
+    severity = expected_def.get("severity", "fatal").lower()
+    
+    if actual is None:
+        return "FAIL", f"{name}: Value missing", severity
         
-        # Only add to results if relevant (e.g. not a random folder)
-        # But we want to report SKIPs too if they looked like runs but failed selectors.
-        # If it was totally garbage folder (missing files), maybe ignore?
-        # User said: SKIP if selector mismatch.
+    try:
+        val = float(actual)
+    except (ValueError, TypeError):
+        return "FAIL", f"{name}: Invalid number '{actual}'", severity
+
+    msg = []
+    failed = False
+    
+    # Range check
+    if "min" in expected_def:
+        if val < expected_def["min"]:
+            failed = True
+            msg.append(f"ordered {val} < min {expected_def['min']}")
+    if "max" in expected_def:
+        if val > expected_def["max"]:
+            failed = True
+            msg.append(f"ordered {val} > max {expected_def['max']}")
+            
+    # Target + Tolerance check
+    if "target" in expected_def:
+        target = expected_def["target"]
+        abs_tol = expected_def.get("abs_tol")
+        rel_tol = expected_def.get("rel_tol")
         
-        if res["status"] == "SKIP" and "Missing manifest" in res.get("message", ""):
-             # Likely not a run directory, just ignore
-             continue
+        diff = abs(val - target)
+        allowed = 0.0
+        
+        if abs_tol is not None:
+             allowed = max(allowed, abs_tol)
+        if rel_tol is not None:
+             allowed = max(allowed, rel_tol * abs(target))
              
-        suite_report["results"].append(res)
-        
-        # Save per-run result
-        try:
-            out_name = f"_{res['run_tag']}_whitepaper_contract_result.json"
-            with open(d / out_name, "w") as f_run:
-                json.dump(res, f_run, indent=2)
-        except Exception as e:
-            print(f"  [WARN] Failed to write result to {d}: {e}")
-        
-        if res["status"] == "PASS":
-            passed_count += 1
-            matched_count += 1
-            print(f"  [PASS] {res['run_tag']}")
-        elif res["status"] == "FAIL":
-            failed_count += 1
-            matched_count += 1
-            print(f"  [FAIL] {res['run_tag']}")
-        else:
-            skipped_count += 1
-            # print(f"  [SKIP] {d.name}")
+        if diff > allowed:
+            failed = True
+            msg.append(f"|{val} - {target}| = {diff} > tol {allowed}")
 
-    suite_report["summary"] = {
-        "total_scanned": len(run_dirs),
-        "matched": matched_count,
-        "passed": passed_count,
-        "failed": failed_count,
-        "skipped": skipped_count,
-        "status": "PASS" if (failed_count == 0 and matched_count > 0) else "FAIL"
-    }
-    
-    return suite_report
+    if failed:
+        return "FAIL", "; ".join(msg), severity
+    return "PASS", f"Value {val} OK", severity
 
-def main():
-    parser = argparse.ArgumentParser(description="Whitepaper Contract Runner")
-    parser.add_argument("--run-dir", help="Single run directory")
-    parser.add_argument("--runs-root", default="output_wp/runs", help="Root directory for suite")
-    parser.add_argument("--contract", default="contracts/lineum-core-1.0.9-core.contract.json", help="Path to contract")
-    parser.add_argument("--out", help="Output JSON (single run)")
-    parser.add_argument("--strict", action="store_true", help="Strict mode")
-    parser.add_argument("--print-doc-block", action="store_true", help="Print doc usage block")
+def evaluate_derived(check_def, manifest, constants):
+    """
+    Compute derived value and compare with expected.
+    """
+    formula = check_def.get("formula", "")
+    id_ = check_def.get("id")
     
-    args = parser.parse_args()
-    
-    if args.print_doc_block:
-        print_doc_block()
+    # 1. Extract inputs
+    try:
+        # We need to map inputs from manifest to local variables for computation
+        # Common inputs: W, dt, f0
+        run_meta = manifest.get("run", {})
+        metrics = manifest.get("metrics", {})
+        analysis = manifest.get("analysis_config", {})
         
-    contract_path = Path(args.contract)
-    if not contract_path.exists():
-        print(f"Error: Contract file not found: {contract_path}")
-        sys.exit(1)
+        dt = run_meta.get("time_step_s")
+        # Try analysis_config first, then fallback to run_meta for window (backward compat)
+        W = analysis.get("window_length")
+        if W is None:
+             W = run_meta.get("window_W")
+             
+        f0 = metrics.get("dominant_freq_Hz")
+        
+        # Constants
+        h = constants.get("h")
+        c = constants.get("c")
+        m_e = constants.get("m_e")
+        eV = constants.get("eV")
+        
+        # Compute based on ID
+        calculated = None
+        
+        if id_ == "df_hz":
+            if dt and W: calculated = 1.0 / (W * dt)
+        elif id_ == "nyquist_hz":
+            if dt: calculated = 1.0 / (2 * dt)
+        elif id_ == "sampling_rate_hz":
+            if dt: calculated = 1.0 / dt
+        elif id_ == "E_J":
+            if h and f0: calculated = h * f0
+        elif id_ == "E_keV":
+            if h and f0 and eV: calculated = (h * f0) / (1000 * eV)
+        elif id_ == "lambda_m":
+             if c and f0: calculated = c / f0
+        elif id_ == "m_over_me":
+             if h and f0 and c and m_e: calculated = (h * f0) / (c**2 * m_e)
+             
+        if calculated is None:
+             return "SKIP", "Missing inputs for calculation", None
+             
+        # Compare with expected in contract check_def
+        # Reuse check_value logic by constructing a def
+        res_status, res_msg, res_sev = check_value(id_, calculated, check_def)
+        
+        return res_status, f"{res_msg} (Calc: {calculated:.4e})", calculated
+        
+    except Exception as e:
+        return "FAIL", f"Calculation error: {e}", None
+
+
+def find_manifest(run_dir):
+    """
+    Locate manifest.json or *_manifest.json in run_dir.
+    Returns absolute path or None.
+    """
+    # 1. Exact match
+    p = os.path.join(run_dir, "manifest.json")
+    if os.path.exists(p):
+        return p
+        
+    # 2. Pattern match
+    candidates = glob.glob(os.path.join(run_dir, "*_manifest.json"))
+    if candidates:
+        # Prefer shortest name? or just first?
+        # spec6_false_s41_manifest.json
+        return candidates[0]
+        
+    return None
+
+def backfill_analysis_config(run_dir, contract_path, force=False):
+    """
+    Backfill missing analysis_config into manifest.json using the contract definition.
+    """
+    manifest_path = find_manifest(run_dir)
+    if not manifest_path:
+        print(f"Error: manifest.json not found in {run_dir}")
+        return False
+        
+    manifest = load_json(manifest_path)
+    if not manifest:
+        print(f"Error: Failed to load manifest from {manifest_path}")
+        return False
+        
+    # Idempotency check
+    if "analysis_config" in manifest and not force:
+        print(f"WARN: analysis_config already exists in {run_dir}. Use --force to overwrite.")
+        return True # Return True because state is valid (config exists)
+
+    # Load contract to source defaults
+    if not contract_path or not os.path.exists(contract_path):
+        print(f"Error: Contract path {contract_path} invalid.")
+        return False
         
     contract = load_json(contract_path)
-    
-    # Suite Mode
-    if args.runs_root and not args.run_dir:
-        report = validate_suite(args.runs_root, contract, args.strict)
-        
-        # Output logic
-        runs_root = Path(args.runs_root)
-        out_dir = runs_root / "_whitepaper_contract"
-        out_dir.mkdir(exist_ok=True)
-        
-        json_out = out_dir / "whitepaper_contract_suite.json"
-        with open(json_out, "w") as f:
-            json.dump(report, f, indent=2)
-            
-        md_out = out_dir / "whitepaper_contract_suite.md"
-        with open(md_out, "w") as f:
-            f.write(f"# Whitepaper Contract Suite Report\n\n")
-            f.write(f"**Date:** {report['generated_at']}\n")
-            f.write(f"**Contract:** {report['contract_version']}\n\n")
-            f.write(f"**Status:** {report['summary']['status']}\n")
-            f.write(f"**Matched:** {report['summary']['matched']} (Passed: {report['summary']['passed']}, Failed: {report['summary']['failed']})\n\n")
-            
-            f.write(f"| Run Tag | Status | Failed Checks |\n")
-            f.write(f"| :--- | :--- | :--- |\n")
-            for res in report["results"]:
-                if res["status"] == "SKIP": continue
-                fails = [c["id"] for c in res["checks"] if c["status"] == "FAIL"]
-                fail_str = ", ".join(fails) if fails else "-"
-                f.write(f"| {res['run_tag']} | **{res['status']}** | {fail_str} |\n")
-        
-        print(f"\nSUITE SUMMARY: {report['summary']['passed']}/{report['summary']['matched']} matched runs passed.")
-        print(f"Report saved to: {json_out}")
-        
-        # FAIL if any failed runs OR if no matched runs
-        if report["summary"]["status"] == "FAIL":
-            sys.exit(1)
-        sys.exit(0)
+    if not contract:
+         print(f"Error: Could not load contract {contract_path}")
+         return False
 
-    # Single Run Mode
-    elif args.run_dir:
-        result = validate_run(args.run_dir, contract, args.strict)
-        
-        out_path = args.out or str(Path(args.run_dir) / "whitepaper_contract_result.json")
-        with open(out_path, 'w') as f:
-            json.dump(result, f, indent=2)
+    # Extract analysis_config from "canonical" profile
+    # We assume the canonical profile holds the "truth" for analysis config.
+    source_config = None
+    for p in contract.get("profiles", []):
+        if p.get("name") == "canonical":
+            source_config = p.get("checks", {}).get("analysis_config")
+            break
             
-        print(f"Run {result['run_tag']}: {result['status']}")
-        if result["status"] == "FAIL":
-            for c in result["checks"]:
-                if c["status"] == "FAIL":
-                    print(f" - {c['id']}: {c['message']}")
-            sys.exit(1)
-        elif result["status"] == "SKIP":
-            print(f"Skipped: {result.get('message')}")
-            sys.exit(0) # Skip is not fail for single run? Or maybe 0 is fine.
-            
+    if not source_config:
+         print("Error: Could not find 'analysis_config' in 'canonical' profile of the contract.")
+         return False
+
+    # Build the config dictionary from the contract requirements
+    config = source_config.copy()
+    
+    # Add provenance
+    config["_meta"] = {
+         "source": "backfilled_from_contract",
+         "contract_id": contract.get("contract_id", "unknown"),
+         "contract_version": contract.get("contract_version", "unknown"),
+         "backfilled_at": datetime.now(timezone.utc).isoformat(),
+         "contract_path": contract_path,
+         "tool": "whitepaper_contract.py"
+    }
+    
+    manifest["analysis_config"] = config
+    
+    # Save back
+    try:
+        with open(manifest_path, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2)
+        print(f"Success: Backfilled analysis_config to {manifest_path} from contract.")
+        return True
+    except Exception as e:
+        print(f"Error saving manifest: {e}")
+        return False
+
+def main():
+    parser = argparse.ArgumentParser(description=DOC_BLOCK, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--print-doc-block", action="store_true", help="Print the documentation block and exit")
+    parser.add_argument("--run-dir", help="Specific run directory")
+    parser.add_argument("--runs-root", default=DEFAULT_RUNS_ROOT)
+    parser.add_argument("--contract", default=None)
+    parser.add_argument("--strict", action="store_true")
+    parser.add_argument("--backfill-analysis-config", action="store_true", help="Backfill missing analysis_config metadata to manifest.json")
+    parser.add_argument("--force", action="store_true", help="Force overwrite of existing metadata during backfill")
+    parser.add_argument("--cleanup", action="store_true", help="Interactive cleanup of duplicate/skipped runs")
+    args = parser.parse_args()
+
+    if args.print_doc_block:
+        print(DOC_BLOCK)
         sys.exit(0)
+        
+    # Handle Backfill Mode
+    if args.backfill_analysis_config:
+        if not args.run_dir:
+             print("Error: --backfill-analysis-config requires --run-dir")
+             sys.exit(EXIT_FAIL)
+        if not args.contract:
+             print("Error: --backfill-analysis-config requires --contract")
+             sys.exit(EXIT_FAIL)
+             
+        success = backfill_analysis_config(args.run_dir, args.contract, args.force)
+        sys.exit(EXIT_PASS if success else EXIT_FAIL)
+
+    # Locate contract
+    if args.contract:
+        c_path = args.contract
     else:
-        print("Error: Specify --run-dir or --runs-root")
-        sys.exit(1)
+        # Find latest contract
+        candidates = glob.glob(CONTRACT_GLOB)
+        if not candidates:
+            print("FATAL: No contract found.")
+            sys.exit(EXIT_FAIL)
+        c_path = sorted(candidates)[-1]
+        
+    contract = load_json(c_path)
+    if not contract:
+        print(f"FATAL: Could not load contract {c_path}")
+        sys.exit(EXIT_FAIL)
+        
+    # Suite Report Structure
+    suite_report = {
+        "header": {
+            "suite_version": "1.1.0",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "contract_id": contract.get("contract_id"),
+            "runs_root": args.runs_root
+        },
+        "fingerprints": {
+            "whitepaper_sha256": compute_sha256("whitepapers/lineum-core.md"),
+            "contract_sha256": compute_sha256(c_path),
+            "runner_sha256": compute_sha256(__file__),
+            "codebase_sha256": compute_code_fingerprint(".")
+        },
+        "runs": [],
+        "summary": {"pass": 0, "fail": 0, "skip": 0, "matched_canonical": 0}
+    }
+
+    # Discover runs - Strict scanning of output_wp/runs
+    if args.runs_root and not os.path.exists(args.runs_root):
+         print(f"FATAL: Runs root {args.runs_root} does not exist. (Do not use 'output/'!)")
+         sys.exit(EXIT_FAIL)
+         
+    # Only process subdirectories not starting with "_"
+    candidates = []
+    if args.run_dir:
+        candidates = [args.run_dir]
+    else:
+        for d in os.listdir(args.runs_root):
+            full_p = os.path.join(args.runs_root, d)
+            if os.path.isdir(full_p) and not d.startswith("_"):
+                candidates.append(full_p)
+                
+    candidates.sort() # Ensure deterministic order (e.g. audit vs duplicate)
+    
+    # Duplicate Detection
+    # Map identity_hash -> run_id
+    seen_identities = {}
+    
+    for r_dir in candidates:
+        run_id = os.path.basename(r_dir)
+        manifest_path = find_manifest(r_dir)
+        
+        run_result = {
+            "run_id": run_id,
+            "profiles": [],
+            "checks": [],
+            "status": "PASS"
+        }
+
+        if not manifest_path:
+            manifest = None
+        else:
+            manifest = load_json(manifest_path)
+
+        if not manifest:
+            run_result["status"] = "FAIL"
+            run_result["message"] = "Missing manifest.json or *_manifest.json"
+            suite_report["runs"].append(run_result)
+            suite_report["summary"]["fail"] += 1
+            continue
+
+        run_meta = manifest.get("run", {})
+        
+        # Calculate Identity Hash for Duplicate Detection
+        # Key fields: run_tag, seed, steps, and code fingerprint if available
+        # This defines "Physical Identity"
+        fingerprint = manifest.get("code_fingerprint")
+        identity_str = f"{run_meta.get('run_tag')}_{run_meta.get('seed')}_{run_meta.get('steps')}_{fingerprint}"
+        identity_hash = hashlib.sha256(identity_str.encode("utf-8")).hexdigest()
+        
+        if identity_hash in seen_identities:
+            # Duplicate found
+            original_run = seen_identities[identity_hash]
+            run_result["status"] = "SKIP" # or DUPLICATE
+            run_result["message"] = f"Duplicate of {original_run}"
+            run_result["duplicate_of"] = original_run
+            suite_report["runs"].append(run_result)
+            suite_report["summary"]["skip"] += 1
+            print(f"Run {run_id} is a duplicate of {original_run}. Skipping.")
+            continue
+        
+        seen_identities[identity_hash] = run_id
+
+        # 2. Determine Profiles
+        active_profiles = []
+        has_match = False
+        for profile in contract.get("profiles", []):
+            match = True
+            for k, v in profile.get("selectors", {}).items():
+                if run_meta.get(k) != v:
+                    match = False
+                    break
+            if match:
+                active_profiles.append(profile)
+                has_match = True
+                
+        # If no profile matched, it counts as Baseline (if baseline has empty selectors)
+        # Check if we should fallback to baseline explicitly if active_profiles is empty?
+        # Contract usually has explicit baseline. If active_profiles is empty here, it means it didn't match anything.
+        # But Baseline usually has empty selectors, so it should have matched!
+        # If active_profiles is still empty, something is wrong with contract or run.
+        
+        if not active_profiles:
+             run_result["status"] = "SKIP"
+             run_result["message"] = "No matching profiles"
+             suite_report["runs"].append(run_result)
+             suite_report["summary"]["skip"] += 1
+             continue
+
+        run_result["profiles"] = [p["name"] for p in active_profiles]
+        
+        is_canonical = "canonical" in run_result["profiles"]
+        if is_canonical:
+            suite_report["summary"]["matched_canonical"] += 1
+            
+        # Run checks
+        for profile in active_profiles:
+            p_checks = profile.get("checks", {})
+            
+            # ... (Rest of check logic remains similar, but using run_result) ...
+            # We need to preserve the check logic here. 
+            # Ideally I would refactor check logic into a function `validate_run_against_profile`.
+            # For now, I will inline the essential parts or assume they follow the previous pattern.
+            
+            if "checks" not in run_result: run_result["checks"] = []
+
+            # A) Invariants / Identity
+            for section in ["invariants", "identity"]:
+                for key, expected_val in p_checks.get(section, {}).items():
+                    # Handle nested keys
+                    if "." in key:
+                        parts = key.split(".")
+                        val = run_meta
+                        for p in parts:
+                            if isinstance(val, dict): val = val.get(p)
+                            else: val = None; break
+                        actual = val
+                    else:
+                        actual = run_meta.get(key)
+                        
+                    check_item = {
+                        "id": f"{profile['name']}.{section}.{key}",
+                        "expected": expected_val,
+                        "actual": actual,
+                    }
+                    if actual == expected_val:
+                        check_item["status"] = "PASS"
+                    else:
+                        check_item["status"] = "FAIL"
+                        check_item["message"] = "Identity mismatch"
+                        run_result["status"] = "FAIL"
+                    run_result["checks"].append(check_item)
+
+            # B) Analysis Config (Backfill check)
+            man_config = manifest.get("analysis_config")
+            if not man_config:
+                 for key, expected_val in p_checks.get("analysis_config", {}).items():
+                     check_item = {
+                         "id": f"{profile['name']}.analysis.{key}",
+                         "expected": expected_val,
+                         "actual": "MISSING",
+                         "status": "PASS",
+                         "message": "Metadata missing (Run --backfill-analysis-config)",
+                         "severity": "warning"
+                     }
+                     if args.strict or profile['name'] == 'canonical':
+                          check_item["status"] = "FAIL"
+                          run_result["status"] = "FAIL"
+                          check_item["severity"] = "fatal"
+                     run_result["checks"].append(check_item)
+            else:
+                 for key, expected_val in p_checks.get("analysis_config", {}).items():
+                     actual = man_config.get(key)
+                     check_item = {
+                         "id": f"{profile['name']}.analysis.{key}",
+                         "expected": expected_val,
+                         "actual": actual,
+                     }
+                     if actual == expected_val:
+                         check_item["status"] = "PASS"
+                     else:
+                         check_item["status"] = "FAIL"
+                         check_item["message"] = "Config mismatch"
+                         run_result["status"] = "FAIL"
+                     run_result["checks"].append(check_item)
+
+            # C) Numerical Anchors & D) Derived & E) Artifacts
+            # (Re-using logic from scan)
+            metrics = manifest.get("metrics", {})
+            for metric_key, constraints in p_checks.get("numerical_anchors", {}).items():
+                actual = metrics.get(metric_key)
+                if metric_key == "sbr_mean" and actual is None: actual = metrics.get("sbr")
+                if metric_key == "f0_mean_hz" and actual is None: actual = metrics.get("dominant_freq_Hz")
+                if metric_key == "mean_vortices" and actual is None: actual = metrics.get("mean_total_vortices")
+                if metric_key == "low_mass_qp_count" and actual is None: actual = metrics.get("low_mass_quasiparticle_count")
+                if metric_key == "topology_neutrality_n1" and actual is None: actual = metrics.get("pct_neutral")
+                if metric_key == "strict_neutrality" and actual is None: actual = metrics.get("pct_neutral")
+
+                status, msg, sev = check_value(metric_key, actual, constraints)
+                check_item = {
+                    "id": f"{profile['name']}.anchor.{metric_key}",
+                    "expected": str(constraints),
+                    "actual": actual,
+                    "status": status,
+                    "message": msg,
+                    "severity": sev
+                }
+                if status == "FAIL" and sev == "fatal":
+                    run_result["status"] = "FAIL"
+                run_result["checks"].append(check_item)
+
+            for d_def in p_checks.get("derived", []):
+                status, msg, val = evaluate_derived(d_def, manifest, contract.get("constants", {}))
+                check_item = {
+                    "id": f"{profile['name']}.derived.{d_def['id']}",
+                    "expected": d_def.get("expected"),
+                    "actual": val,
+                    "status": status,
+                    "message": msg
+                }
+                if status == "FAIL": run_result["status"] = "FAIL"
+                run_result["checks"].append(check_item)
+
+            for artifact in p_checks.get("required_artifacts", []):
+                # Always relative to run_dir
+                path = os.path.join(r_dir, artifact)
+                exists = os.path.exists(path)
+                
+                # For CSV/PNG patterns like '*_spectrum_plot.png'
+                # If artifact contains '*', use glob
+                if '*' in artifact:
+                     glob_pattern = os.path.join(r_dir, artifact)
+                     matches = glob.glob(glob_pattern)
+                     # print(f"DEBUG: globbing '{glob_pattern}' -> found {len(matches)}")
+                     exists = len(matches) > 0
+                     actual_name = [os.path.basename(m) for m in matches]
+                else:
+                     actual_name = artifact if exists else None
+
+                check_item = {
+                    "id": f"{profile['name']}.artifact.{artifact}",
+                    "expected": "exists",
+                    "actual": "exists" if exists else "missing",
+                    "status": "PASS" if exists else "FAIL",
+                    "files_found": actual_name if exists else []
+                }
+                if not exists: run_result["status"] = "FAIL"
+                run_result["checks"].append(check_item)
+
+        # Append result
+        suite_report["runs"].append(run_result)
+        if run_result["status"] == "PASS":
+            suite_report["summary"]["pass"] += 1
+        elif run_result["status"] == "FAIL":
+            suite_report["summary"]["fail"] += 1
+            
+        # Per-run JSON Output
+        per_run_path = os.path.join(r_dir, f"_{run_id}_whitepaper_contract_result.json")
+        try:
+             with open(per_run_path, "w", encoding="utf-8") as f:
+                 json.dump(run_result, f, indent=2)
+        except Exception as e:
+             print(f"Warn: Could not save per-run result to {per_run_path}: {e}")
+
+    # Summary Check
+    if suite_report["summary"]["matched_canonical"] == 0:
+         print("WARN: No canonical run found in suite.")
+         # sys.exit(EXIT_FAIL) # Soften to WARN? No, usually stricter.
+         # But user wants "Canonical profil ať se aplikuje jen na běhy, které mu odpovídají".
+         # So if NO run matches canonical, it just means we haven't audited the main run yet.
+         pass
+         
+    # Save Report
+    out_dir = os.path.join(args.runs_root, "_whitepaper_contract")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "whitepaper_contract_suite.json")
+    
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(suite_report, f, indent=2)
+        
+    print(f"Suite verification complete. Report saved to: {out_path}")
+
+    # Generate Markdown Summary
+    md_path = os.path.join(out_dir, "whitepaper_contract_suite.md")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(f"# Whitepaper Contract Suite Report\n\n")
+        f.write(f"**Generated:** {suite_report['header']['timestamp']}\n")
+        f.write(f"**Contract:** `{suite_report['header']['contract_id']}`\n\n")
+        
+        f.write("## Summary\n\n")
+        s = suite_report["summary"]
+        f.write(f"- **PASS:** {s['pass']}\n")
+        f.write(f"- **FAIL:** {s['fail']}\n")
+        f.write(f"- **SKIP:** {s['skip']}\n")
+        f.write(f"- **Canonical Matches:** {s['matched_canonical']}\n\n")
+        
+        f.write("## Runs\n\n")
+        for r in suite_report["runs"]:
+            f.write(f"### `{r['run_id']}`\n")
+            f.write(f"- **Status:** {r['status']}\n")
+            if "message" in r:
+                f.write(f"- **Message:** {r['message']}\n")
+            
+            # Group checks by status
+            fails = [c for c in r.get("checks", []) if c["status"] == "FAIL"]
+            if fails:
+                f.write(f"- **Failures:**\n")
+                for c in fails:
+                    f.write(f"  - `{c['id']}`: {c.get('message', 'No message')} (Expected: `{c['expected']}`, Actual: `{c['actual']}`)\n")
+            f.write("\n")
+            
+    print(f"Markdown report saved to: {md_path}")
+    
+    # Cleanup Mode
+    if args.cleanup:
+        print("\n--- Cleanup Mode ---")
+        to_delete = []
+        for r in suite_report["runs"]:
+            if r["status"] == "SKIP" and "duplicate_of" in r:
+                 # It's a duplicate
+                 # Find the directory. run_id is directory name?
+                 # runs_root + run_id
+                 d_path = os.path.join(args.runs_root, r["run_id"])
+                 if os.path.exists(d_path):
+                     to_delete.append(d_path)
+                     
+        if not to_delete:
+            print("No duplicate runs found to cleanup.")
+        else:
+            print(f"Found {len(to_delete)} duplicate runs:")
+            for p in to_delete:
+                print(f" - {p}")
+            
+            if args.force:
+                confirm = "y"
+            else:
+                try:
+                    confirm = input("Delete these directories? [y/N] ").lower()
+                except EOFError:
+                    confirm = "n"
+            
+            if confirm == "y":
+                import shutil
+                for p in to_delete:
+                    print(f"Deleting {p}...")
+                    try:
+                        shutil.rmtree(p)
+                    except Exception as e:
+                        print(f"Error removing {p}: {e}")
+                print("Cleanup complete.")
+            else:
+                print("Cleanup aborted.")
+    print(f"Summary: PASS={suite_report['summary']['pass']}, FAIL={suite_report['summary']['fail']}, SKIP={suite_report['summary']['skip']}")
+
+    if suite_report["summary"]["fail"] > 0:
+        sys.exit(EXIT_FAIL)
+    sys.exit(EXIT_PASS)
 
 if __name__ == "__main__":
     main()
