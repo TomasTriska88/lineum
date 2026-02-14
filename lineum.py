@@ -335,6 +335,8 @@ TEST_EXHALE_MODE = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
 # --- Output Directory Logic ---
 
 # Base output directory (kořen)
+# [IMPORTANT] "output_wp" is reserved STRICTLY for audit/whitepaper runs. 
+# Do NOT use it for diagnostic tests or temporary diagnostic scripts.
 BASE_OUTPUT_DIR = _env_str("LINEUM_BASE_OUTPUT_DIR", "output")
 _os.makedirs(BASE_OUTPUT_DIR, exist_ok=True)
 
