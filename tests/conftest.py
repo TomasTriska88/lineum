@@ -56,6 +56,9 @@ def run_lineum(project_root, base_env):
             encoding="utf-8",
             errors="replace",
         )
+        if result.returncode != 0:
+            print(f"STDOUT:\n{result.stdout}")
+            print(f"STDERR:\n{result.stderr}")
         assert result.returncode == 0, (
             f"lineum.py failed (exit {result.returncode})\n"
             f"--- STDOUT (last 30 lines) ---\n"

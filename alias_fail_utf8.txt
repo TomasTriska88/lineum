@@ -1,0 +1,35 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.7, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\TomßÜ\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\TomßÜ\Documents\GitHub\lineum-core
+configfile: pytest.ini
+plugins: anyio-4.8.0
+collecting ... CONFIG RESOLVED (from CONFIGS): RUN_ID=6 RUN_MODE=false LOW_NOISE_MODE=False TEST_EXHALE_MODE=True KAPPA_MODE=constant RUN_TAG=spec6_false_s41 RUN_TAG_DERIVED=spec6_false_s41
+collected 1 item
+
+tests/test_resume_safeguards.py::test_resume_alias_support FAILED
+
+================================== FAILURES ===================================
+__________________________ test_resume_alias_support __________________________
+
+tmp_path = WindowsPath('C:/Users/TomßÜ/AppData/Local/Temp/pytest-of-TomßÜ/pytest-66/test_resume_alias_support0')
+capsys = <_pytest.capture.CaptureFixture object at 0x000001F5EA85A4D0>
+
+    def test_resume_alias_support(tmp_path, capsys):
+        """Verify that LINEUM_RESUME_CHECKPOINT works as an alias."""
+        ckpt_path = tmp_path / "alias_ckpt.npz"
+        ckpt_path.touch()
+    
+        with patch.dict(os.environ, {"LINEUM_RESUME_CHECKPOINT": str(ckpt_path)}, clear=True):
+            found = lineum._find_latest_checkpoint()
+            assert found == str(ckpt_path)
+    
+        captured = capsys.readouterr()
+>       assert "WARNING: deprecated alias LINEUM_RESUME_CHECKPOINT" in captured.out
+E       AssertionError: assert 'WARNING: deprecated alias LINEUM_RESUME_CHECKPOINT' in '[*] Resuming from environment: C:\\Users\\TomßÜ\\AppData\\Local\\Temp\\pytest-of-TomßÜ\\pytest-66\\test_resume_alias_support0\\alias_ckpt.npz\n'
+E        +  where '[*] Resuming from environment: C:\\Users\\TomßÜ\\AppData\\Local\\Temp\\pytest-of-TomßÜ\\pytest-66\\test_resume_alias_support0\\alias_ckpt.npz\n' = CaptureResult(out='[*] Resuming from environment: C:\\Users\\TomßÜ\\AppData\\Local\\Temp\\pytest-of-TomßÜ\\pytest-66\\test_resume_alias_support0\\alias_ckpt.npz\n', err='').out
+
+tests\test_resume_safeguards.py:20: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_resume_safeguards.py::test_resume_alias_support - Assertion...
+============================== 1 failed in 2.20s ==============================

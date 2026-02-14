@@ -96,7 +96,7 @@ def test_two_runs_separate_dirs(run_lineum, base_output_dir):
 def test_resume_in_place(run_lineum, base_output_dir, project_root, base_env):
     """Resuming reuses the existing run directory (no new dir created)."""
     # 1. Initial run
-    run_lineum({"LINEUM_RUN_TAG": "run_orig", "LINEUM_STEPS": "1"})
+    res = run_lineum({"LINEUM_RUN_TAG": "run_orig", "LINEUM_STEPS": "1"})
 
     runs_dir = os.path.join(base_output_dir, "runs")
     run_dirs = [
@@ -111,6 +111,9 @@ def test_resume_in_place(run_lineum, base_output_dir, project_root, base_env):
     ckpt_dir = os.path.join(original_dir, "checkpoints")
     assert os.path.isdir(ckpt_dir)
     ckpts = glob.glob(os.path.join(ckpt_dir, "*.npz"))
+    if not ckpts:
+        print(f"DEBUG: Initial run STDOUT:\n{res.stdout}")
+        print(f"DEBUG: Initial run STDERR:\n{res.stderr}")
     assert len(ckpts) > 0, "Initial run should create a checkpoint"
 
     # 2. Resume — different tag should be ignored
