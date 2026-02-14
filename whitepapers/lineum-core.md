@@ -1,24 +1,25 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.9-core
+**Version:** 1.0.14-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
 **Date:** 2026-02-14
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.9-core)._ 2026. DOI: 10.5281/zenodo.16934359.
-_This manuscript corresponds to Git tag **v1.0.9-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.14-core)._ 2026. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.14-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
 > **Δt:** 1.0×10⁻²¹ s • **Seed:** 41 • **RUN_TAG:** spec6_false_s41  
 > **κ-mode:** constant • **Noise:** zero-mean, σξ ≪ 1 (canonical low)  
 > **Operators:** ∇ (central), ∇² (5-point von Neumann)  
-> **Out of scope:** 3D, time-varying κ, zeta/RNB correlations, Return Echo, Vortex–Particle coupling, and other interpretive add-ons. These are intentionally excluded from the core and deferred to **future work**; they are not part of this submission. **Structural Closure is in scope for v1.0.x** and is treated as an operational consequence of the φ center-trace half-life metric (see §5.4).
+> **Out of scope:** 3D, time-varying κ, zeta/RNB correlations, Return Echo, **quantitative Vortex–Particle coupling claims/taxonomy**, and other interpretive add-ons. These are intentionally excluded from the core and deferred to **future work**; they are not part of this submission. **Structural Closure is in scope for v1.0.x** and is treated as an operational consequence of the φ center-trace half-life metric (see §5.4).
 
 # 1. Abstract
 
-Lineum is a functional model of an emergent quantum field based on a simple, local, and discrete update equation for the evolution of a complex scalar field ψ, coupled with an interaction field φ and an experimental tuning field κ. The model does not assume any explicit constants, spacetime metric, or global symmetries, yet numerical simulations consistently produce stable and complex structures resembling phenomena known from physics.
+Lineum is a minimal discrete coupled-field model defined by a local update rule on a 2D periodic grid. It evolves a complex field ψ coupled to a real interaction/memory field φ and a static tuning map κ. The model does not assume any *physical* constants (e.g., c, ħ, G), spacetime metric, or continuum symmetries; instead it uses dimensionless control parameters (α, β, δ) within the numerical scheme. Simulations under pinned settings reproducibly generate stable, quantifiable behaviors. Where we use physics terms (e.g., “quasi-particle”, “spin”), they are strictly analogical labels for operationally defined measurements, not claims of equivalence to any continuum field theory.
+
 
 The system evolves according to a coupled three-field update rule (see [Equation (1)](#eq1) (Version 4) in Section 3), which governs the primary field ψ, the interaction field φ, and the spatial tuning map κ.
 
@@ -26,11 +27,45 @@ The system evolves according to a coupled three-field update rule (see [Equation
 
 **Pronunciation (model name).** _Lineum_ = Czech **/ˈlɪ.nɛ.um/** (short **i**, three syllables: “**LIH-neh-oom**”, stress on the first).  
 For readers in English: **/ˈlɪniəm/** (UK/US ≈ “**LIH-nee-um**”).  
-_Not_ “LAI-nee-um” or “lee-NAY-um”.
 
-**Pronunciation.** _linon_ = Czech **/ˈlɪnon/** (short **i** as in “list”, stress on the first syllable).  
+**Pronunciation (phenomenon).** _linon_ = Czech **/ˈlɪnon/** (short **i**, stress on the first syllable).  
 For readers in English: **/ˈlɪnɒn/** (UK ≈ “LIH-non”) or **/ˈlɪnɑːn/** (US ≈ “LIH-nahn”).  
 _Not_ “LAI-non”.
+
+
+### Plain-language summary (non-technical)
+
+If you strip the math down to the basics, Lineum is “just” a grid of numbers that gets updated locally, step by step:
+
+- **ψ is the fast, wavy carrier** (a complex oscillation on the grid).
+- **φ is the slow “memory/envelope”** that reacts to where ψ has high intensity and then diffuses.
+- **κ is a static sensitivity map** (in core v1 it does not evolve).
+
+What we **actually show (and pin to the evidence HTML/CSV)** in core v1 is not “new physics”, but reproducible, auditable *behavior* under a pinned numerical scheme:
+
+
+- a **stable localized excitation** (linon) that lives a long time on the grid,
+- a **dominant tone** \(f_0\) measured with uncertainty (windowed mean + 95% CI across windows within a run),
+
+- a **strong spectral dominance** (SBR) of that tone,
+- **topological neutrality** (net vortex charge stays neutral within tolerance, evaluated on logged frames as declared in the manifest),
+
+- a persistent **spin-like aura** pattern around linons (operational map + radial profile),
+- and a measurable **φ center-trace half-life**, including **Structural Closure** (localized φ remnants persist after linon decay, operationally defined).
+
+
+What we **do not claim** in core v1: Standard-Model identification, gravity/GR mapping, thermodynamics, or any phenomenon requiring time-varying κ. Those belong to separate experimental/extension tracks.
+
+### Physics translation (informal; analogy only)
+
+Readers with a conventional physics background can think of a linon as a **stable localized oscillatory mode on a lattice** in a **nonlinear, dissipative, coupled-field system**. In spirit, it is closer to **a breather/soliton-like localized state** (in discrete nonlinear media) than to a fundamental particle.
+
+Informally:
+
+- the **φ-update** looks like a **reaction–diffusion / relaxation** channel driven by \(|\psi|^2\),
+- the **ψ-update** combines **damping**, **local coupling** (φ·ψ), **diffusion** (∇²ψ), and a drift term **+∇φ** that behaves *like advection by a potential gradient*.
+
+This is an **interpretive translation** to familiar language (e.g., “discrete nonlinear waves”, “reaction–diffusion”, “CGLE-like behavior”), not a claim of equivalence to any specific continuum field theory.
 
 Repeated simulations robustly generate (v1 core evidence):
 – stable localized excitations (**linons**) with a reproducible dominant tone \(f_0\),
@@ -53,13 +88,23 @@ these values are not used as acceptance thresholds or constraints anywhere in th
 
 These SI-anchored values are **unit conversions of the canonical tone f₀**, not additional constraints on the model or evidence that Lineum directly realizes any specific physical scale.
 
+> **Plain-language warning.** This is the same kind of conversion you’d do if you take a frequency and compute “what energy would a photon of that frequency have”. It gives a **sense of scale**, but it does **not** turn the linon into “a photon/electron/etc.” and it does **not** assert a real-world rest mass.
+
+
 > **Interpretation note (v1).** The “effective mass” value is a **unit-conversion from the dominant frequency** \(f_0\) via \(m = h f_0 / c^2\). It is provided **only** as an intuition aid for scale (refined snapshot: RUN_TAG `spec6_false_s41`, commit `875fc4e`), **not** as a claim of an intrinsic rest mass.
 
 > **Reports alignment (v1).** In the refined snapshot, the SI-anchored values (E, λ, display-only m/mₑ) are computed directly from the reported \(f_0\) (manifest/CSV) using fixed SI constants. This remains a **scale indicator**, not a rest-mass claim.
 
 > **Non-identification (v1).** A **linon** is a _stable, localized excitation_ in the Lineum field, **not** a Standard-Model particle. The numerical anchors in the Abstract (f₀, E, λ, and the display-only mass ratio m/mₑ) are provided **to indicate scale only**. They must **not** be read as an identification with electrons, neutrinos, or any SM species. See “Terminology” (linon is not a fundamental particle) and the **Interpretation note (v1)** on display-only mass.
+ 
+> **Topology logging note (v1).** Topology metrics (neutrality and mean vortex counts) are computed from `*_topo_log.csv`,
+> which is **decimated** (logged every `logging.topo_log_stride` steps as declared in the run manifest).
+> In the canonical run `spec6_false_s41`, `topo_log_stride = 25`, hence topology metrics are computed over **logged frames**
+> (N=81 frames; steps 0..2000). This decimation is deterministic, declared in the manifest, and validated by the contract suite.
 
-All phenomena emerge without fine-tuned initial input, relying solely on local operations on a discrete grid. No predefined forces are included. Particles tend to drift along +∇φ (toward increasing φ); we describe this as environmental guidance rather than any gravitational claim.
+
+All reported phenomena arise from local operations on a discrete grid starting from a defined class of small random initializations (see §4.1) without per-run manual tuning. No predefined force law is included. Linons tend to drift along +∇φ (toward increasing φ); we describe this as environmental guidance rather than any gravitational claim.
+
 
 The system is reproducible, robust to noise and dissipation, and open for independent verification and further hypothesis testing.
 
@@ -82,10 +127,10 @@ The system is reproducible, robust to noise and dissipation, and open for indepe
 - **Leaf (right) → φ (memory / envelope).**  
   _Why:_ the broad lamina reads as an **envelope**, while venation evokes a stored **pattern/context**; φ is the **memory** field used in nearby/field means and the center-trace half-life metric.
 - **Outer loop → circulation / interplay.**  
-  _Why:_ a closed path **ψ → φ → κ → (back)** as a mnemonic of interplay; **no law or metric is implied**.
+  _Why:_ a closed interplay **κ → (α_eff,β_eff) → φ ↔ ψ** as a mnemonic of coupling/modulation; **no law or metric is implied**.
 - **Design note.** Uniform line weight → no hierarchy; shapes are **not** used as data encodings anywhere in the paper.
 
-_Directional mnemonic:_ κ → ψ → φ → κ; no direct φ → ψ arrow is implied in the core (memory influences the medium/tuning, not the carrier itself).
+_Directional mnemonic (mnemonic only):_ κ (tuning) modulates the local response parameters, ψ drives φ via |ψ|², and φ feeds back into ψ via the canonical coupling terms (φψ and +∇φ) as defined in Eq. (1). Do not infer causality from the icon beyond the explicit update rule.
 
 > **Three-field flow.** The mark depicts the triad **ψ–φ–κ** in balance: ψ (oscillation / flow), φ (memory / resonance), κ (tuning / sensitivity). It is a visual mnemonic only; the **canonical Equation (1)** defines the model.
 
@@ -124,7 +169,7 @@ The canonical form is:
 | Equation | Description |
 | --- | --- |
 | **ψ ← ψ + 𝛌̃ + ξ + φψ − δψ + ∇²ψ + ∇φ** | primary field evolution |
-| **φ ← φ + α (&#124;ψ&#124;² − φ) + β ∇²φ** | interaction field response |
+| **φ ← φ + α_eff (&#124;ψ&#124;² − φ) + β_eff ∇²φ** | interaction field response |
 | **κ ← κ(x, y)** | spatial tuning map |
 <!-- prettier-ignore-end -->
 
@@ -161,11 +206,13 @@ The canonical form is:
 |   κ   | spatial tuning (static, const.) | 0.5 everywhere  |
 <!-- prettier-ignore-end -->
 
+_Parameter note._ In Eq. (1), the φ-update uses **α_eff = κ·α** and **β_eff = κ·β**. In the canonical run (κ = 0.5 everywhere), this means **α_eff = 3.5×10⁻⁴** and **β_eff = 7.5×10⁻³** (α,β in the table are the base parameters).
+
 _Scope note (canonical dimensionality)._ All results in this core paper use a **2D discrete grid with periodic boundary conditions**. Any 3D extensions or non-periodic boundaries are treated as **supplementary variants** and are not part of the canonical Eq. 1.
 
 **Sign convention.** The +∇φ term in the ψ-update induces drift toward increasing φ (movement along the φ-gradient).
 
-**Note (κ as static map).** In the canonical rule, **κ** is a **static spatial map** (no time evolution). Any experiments that evolve κ belong to supplementary variants, not to Eq. 1. In applications, κ may locally scale parameters (e.g., α_eff = κ·α, β_eff = κ·β), but it does not replace **α** or **β** in the φ-update.
+**Note (κ as static map).** In the canonical rule, **κ** is a **static spatial map** (no time evolution). Any experiments that evolve κ belong to supplementary variants, not to Eq. 1. In Eq. (1) we write the φ-update in terms of locally effective parameters α_eff = κ·α and β_eff = κ·β to make this modulation explicit. Here α and β remain the base (global) parameters; κ modulates them spatially rather than “replacing” them. In the canonical run κ = 0.5 everywhere, hence α_eff and β_eff are constant.
 
 No explicit spacetime geometry, global constants, or long-range interactions are predefined. All behavior results from repeated local updates of these fields.
 
@@ -185,6 +232,8 @@ $$
 In the reference implementation this four-neighbour stencil is realized by the helper function `diffuse_complex(...)` in the φ-update; there is **no** 9-point (diagonal) Laplacian in the canonical v1 run. Wider stencils (e.g., 9-point) are treated as exploratory variants outside the v1 core evidence.
 
 **Time stepping.** Explicit Euler with fixed $\Delta t = 1.0\times 10^{-21}\,\mathrm{s}$ (canonical anchor).
+**Interpretation note (Δt).** In the core, $\Delta t$ functions as a conventional unit label that fixes spectral bin spacing via $\Delta f = 1/(W\,\Delta t)$. The validation criteria depend on the measured spectral peak and on dimensionless metric tolerances, not on any external calibration of “seconds” to physical time.
+
 
 **Stability sanity.** For diffusion-like terms a heuristic CFL bound is
 
@@ -253,10 +302,14 @@ We do not require bit-for-bit equality across languages/backends. Small numerica
 
 – **Dominant frequency f₀:** within ±0.5%  
 – **SBR (±2-bin guard):** within ±10%  
-– **Topology neutrality:** fraction of steps with |net charge| ≤ 1 within ±3% (abs.)  
+– **Topology neutrality (N1):** fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1` within ±3% (abs.)  
+  _Note:_ in v1 this is computed on decimated topology logs (see §4.6 / Appendix A). If another implementation logs topology
+  every step, downsample to the canonical cadence or emit `topo_log.csv` with the canonical `logging.topo_log_stride`.
+– **Strict neutrality (N0):** fraction of **logged frames** with `net_charge == 0` (reported as **info-only**; not an acceptance gate).  
 – **Lifetimes:** median in [2,5] steps; max ≥ 500 steps  
 – **φ half-life (center):** within ±20%  
-– **Vortex counts/frame:** within ±10%
+– **Vortex counts/frame:** within ±10% (computed over logged frames in `topo_log.csv`; see §4.6 / Appendix A)
+
 
 **Precision note.** All reference runs use IEEE-754 double precision (float64). Language choice (Python/Julia/C++/…) does not change numerical semantics; replication is evaluated by the metric tolerances above, not bitwise equality.
 
@@ -279,7 +332,10 @@ Detection is performed using automated field analysis:
 
 For each run, the system generates:
 
-- **CSV (per run):** `*_amplitude_log.csv`, `*_spectrum_log.csv`, `*_phi_center_log.csv`, `*_topo_log.csv`, `*_trajectories.csv`, `*_multi_spectrum_summary.csv`, `*_spin_aura_profile.csv`, `*_metrics_summary.csv`.
+- **CSV (per run):** `*_amplitude_log.csv`, `*_spectrum_log.csv`, `*_phi_center_log.csv`, `*_topo_log.csv`, `*_trajectories.csv`,
+  `*_multi_spectrum_summary.csv`, `*_spin_aura_profile.csv`, `*_metrics_summary.csv`.
+- **Topology logging cadence:** `*_topo_log.csv` is logged every `logging.topo_log_stride` steps (declared in the manifest; canonical: 25).
+
 - **PNG (figures):** `*_spectrum_plot.png`, `*_topo_charge_plot.png`, `*_vortex_count_plot.png`, `*_spin_aura_map.png`, `*_phi_center_plot.png`.
 - **GIF (animations):** `*_lineum_amplitude.gif`, `*_lineum_spin.gif`, `*_lineum_vortices.gif`,
   `*_lineum_particles.gif`, `*_lineum_flow.gif`, `*_lineum_full_overlay.gif`.
@@ -306,6 +362,8 @@ This manifest pins all run-level switches for the canonical reference used in th
 - **δ (ψ damping):** `4.62e-3`
 - **σξ (noise amplitude):** `5.0e-3`
 - **κ-map:** `constant 0.5` (uniform across the grid)
+- **logging.topo_log_stride:** `25` (topology log cadence; topo metrics are computed over logged frames)
+
 
 - **Git commit (snapshot):** `875fc4e` — `finalize logging and throttling`
 - **Code provenance:** pinned by `RUN_TAG` + git commit; primary numeric sources are the run manifest and CSV logs.
@@ -318,7 +376,9 @@ All canonical artifacts for the run `spec6_false_s41` are provided with this pre
 
 Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The numeric source of truth is the JSON manifest (`spec6_false_s41_manifest.json`) and the machine-readable CSV logs. The HTML report is a derived view generated from these primary sources.
 
-**Version pinning (no checksums).** Provenance is pinned by `RUN_TAG=spec6_false_s41`, the code commit noted in the HTML report header (short Git SHA, when available), and the artifact manifest (file list with sizes & timestamps) embedded in the report. We intentionally do not publish checksums because this is a living paper with evolving outputs; reproducibility is evaluated against the acceptance bands in §4.3.1.
+**Version pinning (DOI snapshots vs drafts).** Provenance is pinned by `RUN_TAG=spec6_false_s41`, the code commit noted in the HTML report header (short Git SHA, when available), and the artifact manifest embedded in the report.
+For **DOI-published snapshots**, we additionally provide a `sha256sums.txt` (or equivalent) for the evidence bundle to support integrity checks. For non-DOI working drafts, checksums may be omitted while the paper is actively edited; reproducibility is still evaluated against the acceptance bands in §4.3.1.
+
 
 > **Reviewer quick-check (v1).**
 >
@@ -326,13 +386,20 @@ Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e�
 >    - Dominant frequency f₀: `1.710e+20 Hz [9.82e+19, 2.47e+20]`
 >    - SBR: `193.97 [5.86, 500.08]`
 >    - φ half-life (center): `1045 steps`
->    - Topology neutrality (N1): `96.25%` where N1 = fraction of steps with `|net_charge| <= 1`
->    - Mean vortices: `98.775`
+>    - Topology neutrality (N1): `96.25%` where N1 = fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`
+>      (canonical: `logging.topo_log_stride = 25`, hence N=81 logged frames for steps 0..2000)
+>    - Mean vortices (logged frames): `98.775`
+
 > 2. Confirm the snapshot git commit is `875fc4e` (recorded with the run).
+> 2b. If a DOI snapshot is used, optionally verify file integrity via the provided `sha256sums.txt`.
+
 > 3. In §5.6, **Worked example (canonical f₀)** evaluates to `m/mₑ ≈ 1.384` using the stated SI constants (display-only).
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that `f₀` is reported as a centroid/interpolated estimate near bin `k≈44` (raw bin center is `1.719e20 Hz`).
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.9-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.14-core**.
+
+
+
 
 **File-level scope (whitepapers).** `lineum-core.md` together with `lineum-core-equation-history.md` define the canonical v1.0.x core. All other whitepapers in the repository whose filenames begin with `lineum-exp-…` or `lineum-extension-…` (e.g., `lineum-exp.md`, `lineum-exp-thermo-calibration.md`, `lineum-extension-return-echo.md`, `lineum-extension-silent-gravity.md`, `lineum-extension-spectral-structure.md`, `lineum-extension-vortex-particle-coupling.md`, `lineum-extension-zeta-rnb-resonance.md`) are **by definition outside the v1 core**. They may refer to the same phenomena (Return Echo, Dimensional Transparency, Silent Gravity, Spectral Structure, etc.), but quantitative claims there do not change the canonical scope unless explicitly merged into a future `lineum-core` version.
 
@@ -354,8 +421,13 @@ _Provenance._ Checksums are intentionally omitted (living paper). Provenance is 
 > **Periodic BC artifacts.** We verify metric invariance (within tolerances) when changing the grid size; figures are illustrative only, acceptance is by metrics.  
 > **Stencil bias.** Canonical results use a four-neighbour (5-point von Neumann) discrete Laplacian implemented via `diffuse_complex()` in the φ-update. Alternative 9-point (diagonal) stencils are treated as exploratory variants and are not part of the v1 core evidence.
 > **Spectral leakage.** FFT on de-meaned windows with a ±2-bin guard around $f_0$ mitigates leakage; SBR is computed on the power spectrum $|\mathrm{FFT}(x)|^2$.  
-> **RNG/seed bias.** We report metrics with 95% CIs across seeds {23, 17, 41, 73}; replication is defined by tolerance bands in §4.3.1.  
+> **RNG/seed bias.** We provide multiple seeds {23, 17, 41, 73} as separate evidence bundles. Each run reports windowed 95% CIs (within-run). Cross-seed aggregates (if shown) are reported only after regeneration under a single pinned code state; replication is defined by tolerance bands in §4.3.1.
+  
 > **Visualization bias.** All metrics derive from numeric logs (CSV). Amplitude gating is **visualization-only** in GIFs; winding/metrics use raw values.
+> **Topology log decimation.** `topo_log.csv` may be decimated (logged every `logging.topo_log_stride` steps; canonical: 25).
+> Topology neutrality (N1/N0) and mean vortices are therefore computed over **logged frames**, not every simulation step.
+> This cadence is declared in the manifest and validated by the contract suite to prevent ambiguity.
+
 
 > **Display-only mass (interpretation risk).** The “effective mass” reported in §1/§5.6 is a unit-conversion from the reported dominant frequency \(f_0\) via \(m = h f_0 / c^2\). It is provided purely as a scale cue (display-only), not as a claim of an intrinsic rest mass. Mitigations in v1: (i) explicit **Interpretation note (v1)** in the Abstract; (ii) SI constants stated in §5.6; (iii) report tooling computes the display mass directly from \(f_0\) at render time to avoid drift. Multi-seed alignment statements are quoted only after regeneration under the same pinned code state (commit `875fc4e`).
 
@@ -391,11 +463,14 @@ _Scope._ These guardrails are part of v1 tooling only; they do not assert any re
 
 > **Canonical numerical anchors (refined snapshot, seed 41).**  
 > `f₀ = 1.710e+20 Hz [9.82e+19, 2.47e+20]` · `SBR = 193.97 [5.86, 500.08]` ·  
-> `φ half-life (center) = 1045 steps` · `Topology neutrality (N1) = 96.25%` · `Mean vortices = 98.775`
+> `φ half-life (center) = 1045 steps` · `Topology neutrality (N1; logged frames) = 96.25%` · `Strict neutrality (N0; info-only; logged frames) = 87.50%` · `Mean vortices (logged frames) = 98.775`  
+> _Context:_ `logging.topo_log_stride = 25` ⇒ N=81 logged frames; steps 0..2000.
+
 
 The validation phase aims to confirm that specific emergent phenomena occur consistently under controlled conditions, and to quantify their characteristics.
 
-**Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** ($f_0$) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length $W=256$ frames, hop $H=128$ frames) with a ±2-bin guard around $f_0$ in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify run-to-run and within-run variability without fitting any external model.
+**Metrics & 95% CI.** We report two primary spectral metrics for reproducibility: the **dominant frequency** ($f_0$) and the **Spectral Balance Ratio (SBR)**. Both are estimated on the amplitude time-series at the field center using **sliding windows** (length $W=256$ frames, hop $H=128$ frames) with a ±2-bin guard around $f_0$ in the background power. For each metric we aggregate the **windowwise mean** and a **non-parametric 95% bootstrap confidence interval** across windows; the HTML report prints values as `value [lo, hi]`. When the windowed estimate is available it **supersedes the single-shot FFT value**; otherwise the single-shot is shown as a fallback. These intervals quantify within-run variability without fitting any external model. Cross-seed aggregation is reported only when the multi-seed set is regenerated under the same pinned code state.
+
 
 ## 5.1 Guided Motion via φ-Gradient
 
@@ -452,8 +527,11 @@ Operationally, we detect Structural Closure whenever a linon decay event is foll
 
 > **Representative run metrics (canonical: spec6_false_s41)**  
 > SBR (±2-bin guard): **193.97** [**5.86**, **500.08**].  
-> Topology neutrality (N1): **96.25%** of steps with `|net_charge| <= 1` (strict `net_charge == 0` gives **87.50%**, non-canonical).  
-> Mean vortices: **98.775** per frame.  
+> Topology neutrality (N1): **96.25%** of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`
+> (canonical `logging.topo_log_stride = 25`, hence N=81 frames; steps 0..2000).  
+> Strict neutrality (N0; info-only): **87.50%** of **logged frames** with `net_charge == 0`.  
+> Mean vortices (logged frames): **98.775** per logged frame.  
+
 > φ half-life (center): **1045 steps**.  
 > Low-mass QP: **49** · Max lifespan: **1626 steps**.  
 > Steps / grid: **2000**, **128×128**.
@@ -506,7 +584,8 @@ _Addendum (v1)._ With window length `W = 256` and time step `Δt = 1.0e−21 s`,
 
 **Sampling & Nyquist safety (v1).** The sampling rate is `1/Δt = 1.0e21 Hz`, so the Nyquist limit is `f_N = 1/(2Δt) = 5.0e20 Hz`. Our refined canonical tone satisfies `f₀ = 1.710e20 Hz < f_N` (by a factor of ≈2.9), hence no aliasing under the stated sampling. Because \(f_0\) is not exactly bin-centered in this snapshot, we explicitly report a centroid/interpolated estimate and its CI rather than claiming exact bin-locking.
 
-**Implementation robustness.** The dominant peak stays within ±0.5% across different random seeds, grid sizes, and run durations; see `multi_spectrum_summary.csv` for aggregated runs.
+**Implementation robustness.** Where invariance across seeds/grid sizes/durations is claimed, it must be backed by regenerated artifacts under a single pinned code state and should be referenced explicitly. In this draft, the canonical numeric anchors are pinned to `spec6_false_s41`; other runs are provided as additional evidence but are not used for aggregate claims until refreshed.
+
 _See also (Harmonic Spectrum)._ Secondary harmonics may co-appear with the dominant tone; methods and cross-language checks are summarized in the Spectral Structure extension.
 
 #### 5.7 Robustness mini-sweep (seeds 23, 17, 41, 73; spec6_false)
@@ -566,7 +645,9 @@ Simulations indicate that particles exhibit **statistical alignment with +∇φ*
 
 ## 6.2 Vortex–Particle Coupling (interpretive note)
 
-Stable linons frequently co-occur with small sets of phase vortices. Empirically, triads of co-rotating vortices (↺↺↺) form long-lived, near-equilateral configurations with a symmetric φ basin between the cores; we interpret these as **vortex-coupled quasi-particles**. For visualization, rotation sense (↺/↻) serves as a particle/antiparticle tag in this model, while the binding topology (e.g., triangle vs. chain) encodes species. The core paper does not fix a taxonomy; it only records that vortex triads correlate with (i) persistent interferential structure in `arg ψ`, (ii) a low-∇φ region at the triangle centroid, and (iii) ≥20-step spatial stability. Quantitative detection rules and symbols are described in the supplementary Vortex–Particle Coupling note.
+Stable linons frequently co-occur with small sets of phase vortices. In multiple runs we observe compact vortex clusters (often triads) that remain spatially coherent for many steps and coincide with a locally quiet φ basin near their centroid. In this core v1, we treat this only as a **descriptive co-occurrence** between (i) stable linons, (ii) structured `arg ψ` winding, and (iii) locally low |∇φ| regions.
+
+**Scope guardrail (v1).** We do **not** define a particle/antiparticle tagging scheme, species taxonomy, or quantitative binding criteria here. Any taxonomy, symbols, and thresholds are **out of scope** for the v1 core and belong to the dedicated extension note, which also defines falsifiable detection rules.
 
 ## 6.3 Law Transition (interpretive note)
 
@@ -618,11 +699,51 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting.
 
+**1.0.14 — 2026-02-14 (patch)**
+
+- Fix icon loop legend so it does not imply ψ→κ coupling in core v1 (κ is static); loop now matches Eq. (1) modulation/coupling.
+- Add parameter note clarifying `α_eff` and `β_eff` values for the canonical run (`κ=0.5`).
+- Soften §6.2 to avoid taxonomy/tagging claims in core v1; reserve quantitative coupling rules for the extension note.
+- Bump core version to **1.0.14-core**.
+
+**1.0.13 — 2026-02-14 (patch)**
+
+- Refine "Out of scope" to explicitly include "quantitative Vortex–Particle coupling claims/taxonomy".
+- Update icon mnemonic to clarify parameter modulation and decoupling of visual causality from update rules.
+- Explicitly use `α_eff` and `β_eff` in the Equation (1) table.
+- Clarify κ modulation note regarding effective parameters in the φ-update.
+- Bump core version to **1.0.13-core**.
+
+**1.0.12 — 2026-02-14 (patch)**
+
+- Refine model description in Abstract (focus on discrete coupled-field, dimensionless parameters, and analogical terminology).
+- Add interpretation note for $\Delta t$ as a conventional unit label.
+- Update version pinning to distinguish between DOI snapshots (integrity-checked via sha256) and working drafts.
+- Clarify within-run vs. cross-seed metric reporting (CIs and aggregation).
+- Bump core version to **1.0.12-core**.
+
+
+**1.0.11 — 2026-02-14 (patch)**
+
+- Refine pronunciation terminology for "linon" (distinguish model vs. phenomenon).
+- Bump core version to **1.0.11-core**; no changes to Eq-4, artifacts, or validations.
+
+
+**1.0.10 — 2026-02-14 (patch)**
+
+- Add **Plain-language summary** and **Physics translation (analogy-only)** to the Abstract to reduce misinterpretation risk (especially around SI conversions and “particle” wording).
+- No changes to Eq-4, scope, metrics, artifacts, or acceptance bands — documentation clarity only.
+
+
 **1.0.9 — 2026-02-14 (patch)**
 
 - Bump core version to **1.0.9-core** and update header date to **2026-02-14** (refined snapshot now explicitly tied to the `spec6_false_s41_20260214_101645` evidence directory).
 - Fix internal version references so the “frozen core track” wording matches the current patch level (**v1.0.9-core**).
 - Add Whitepaper Contract Runner (`tools/whitepaper_contract.py`) producing `whitepaper_contract_result.json` for audit runs; no changes to Eq/scope.
+- Clarify topology logging cadence: `topo_log.csv` is decimated by `logging.topo_log_stride` (canonical: 25), and
+  topology neutrality (N1/N0) + mean vortices are computed over **logged frames** (N=81 for steps 0..2000) as declared
+  in the manifest and validated by the contract suite.
+
 
 **1.0.8 — 2025-12-09 (patch)**
 
@@ -674,7 +795,10 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.9-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.14-core**.
+
+
+
 
 **1.0.2 — 2025-08-21 (patch)**
 
@@ -750,7 +874,11 @@ $$
 
 Reported as a derived display quantity (no fitting).
 
-**Topology neutrality.** Fraction of steps with |net charge| ≤ 1, computed from `topo_log.csv`.
+**Topology neutrality (N1).** Fraction of **logged frames** with `|net_charge| <= 1`, computed from `topo_log.csv`.
+`topo_log.csv` may be decimated; the cadence is declared in the run manifest as `logging.topo_log_stride`
+(canonical: 25 → N=81 logged frames over steps 0..2000). Neutrality is therefore computed over logged frames.
+**Strict neutrality (N0; info-only).** Fraction of **logged frames** with `net_charge == 0`.
+
 
 **Cross-implementation note.** Exact pixelwise equality across languages/backends is not required; replication is defined via metric tolerances in §4.3.1 on the canonical run (`spec6_false_s41`).
 
@@ -838,7 +966,11 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 
 **dominant frequency \(f_0\).** The spectral peak of the center-amplitude time series; measured on sliding windows and reported as a windowed mean with a 95% CI.
 
-**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots) with spacing Δf. In the refined snapshot pinned in this draft, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k≈44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`; see §5.6). We therefore do not claim exact bin-centering in v1.0.8-core refined anchors.
+**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots) with spacing Δf. In the refined snapshot pinned in this draft, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k≈44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`; see §5.6). We therefore do not claim exact bin-centering in v1.0.14-core refined anchors.
+
+
+
+
 
 **Δt, W, Δf.** Δt is the simulation time step; W is the FFT window length (in steps); their combination fixes the bin spacing Δf. Canonical v1 uses Δt = 1.0e−21 s and W = 256 (see §5.6).
 
@@ -846,7 +978,10 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 
 **SBR (Spectral Balance Ratio).** Peak-to-background ratio of the power spectrum in a window, with a ±2-bin guard around the peak excluded from the background. Reported as mean with a 95% CI.
 
-**topology neutrality.** Share of steps where the net vortex charge (winding) on the grid is |net| ≤ 1. Used as a stability/neutrality indicator (§5, Appendix B).
+**topology neutrality (N1).** Fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`.  
+The logging cadence is declared in the run manifest as `logging.topo_log_stride` (canonical: 25 → N=81 frames over steps 0..2000).  
+**Strict neutrality (N0; info-only).** Fraction of **logged frames** with `net_charge == 0`.
+
 
 **φ-trap.** A localized region of the interaction field φ that tends to capture or retain linons (observational term; no force law is assumed).
 
@@ -860,7 +995,7 @@ _Reader aid; not part of the core claims._
 - **φ** — memory/envelope (stores local context; used for nearby/field means in the HTML metrics).
 - **κ** — tuning/balance field (slow control parameter; fixed in the core canonical setup).
 
-The icon used in the repository depicts a circulation among ψ → φ → κ → (back) and has no physical implication beyond this glossary.
+The icon used in the repository depicts a coupling interplay **κ → (α_eff,β_eff) → φ ↔ ψ** and has no physical implication beyond this glossary.
 
 ## Appendix E — Verification runs (v1)
 
@@ -875,7 +1010,11 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.8-core).**
+**What’s included (core v1.0.14-core).**
+
+
+
+
 All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` prefix.
 
 ### File map (per-seed; canonical examples)
@@ -892,8 +1031,11 @@ All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` pre
    - Dominant frequency `f₀ = 1.710e+20 Hz [9.82e+19, 2.47e+20]`
    - `SBR = 193.97 [5.86, 500.08]`
    - `φ half-life (center) = 1045 steps`
-   - `Topology neutrality (N1) = 96.25%` where N1 = fraction of steps with `|net_charge| <= 1`
-   - `Mean vortices = 98.775`
+   - `Topology neutrality (N1) = 96.25%` where N1 = fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`
+     (canonical: `logging.topo_log_stride = 25`, N=81 frames; steps 0..2000)
+   - `Strict neutrality (N0; info-only) = 87.50%` where N0 = fraction of **logged frames** with `net_charge == 0`
+   - `Mean vortices (logged frames) = 98.775`
+
 2. Open `output/spec6_false_s41_lineum_report.html` and confirm the same values appear in the relevant tables (HTML is a derived view).
 3. Confirm the snapshot git commit is `875fc4e` (shown in the HTML report header and/or recorded with the run artifacts).
 
