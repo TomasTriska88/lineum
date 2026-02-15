@@ -796,14 +796,15 @@ _Notes._
 **Acceptance (v1; [TEST]).** Expect the **same contract-aligned bands as §4.3.1** (no bespoke tolerances):
 `f0_mean_hz` in **[1.84e20, 1.87e20] Hz** and `sbr_mean` **≥ 3000**. Other validated anchors should remain within their §4.3.1 bands.
 
-## 5.10 Global Phase Locking (Collective Breathing)
+## 5.10 Global Phase Locking (Visual Observation)
 
-**[OBS]** Simulations show periodic, collective synchronization of linon trajectories, manifesting as a rhythmic "approach-retreat" cycle relative to each other and focal φ-basins.
+**[OBS]** Simulations exhibit a rhythmic "breathing" behavior where linon trajectories appear to synchronize in a collective approach-retreat cycle.
 
-> **Contract scope (v1).** “Global Phase Locking” is **not contract-validated** in v1.0.18-core. It is an emergent 
-> observation documented in the animation artifacts (e.g., `*_lineum_particles.gif`) and spectral stability logs.
+> **Contract scope (v1).** “Global Phase Locking” is treated here as a **tentative visual observation [OBS]** only. 
+> It is **not contract-validated** in v1.0.18-core and currently lacks established numeric acceptance criteria 
+> or dedicated contract keys. It is documented primarily via simulation animations (e.g., `*_lineum_particles.gif`).
 
-**Interpretive note.** We treat this "breathing" behavior as a visual proxy for **Global Phase Locking**, where the discrete phases of individual localized excitations align via the coupled ψ-φ feedback loop. This collective resonance is concurrent with periods of high **SBR** and corresponds to state-space regions of localized stability. In audit GIFs, this appears as a coherent pulsation of the system's center of mass or relative particle distances.
+**Interpretive note.** While visually compelling as a proxy for rhythmic phase alignment in the ψ-φ loop, this phenomenon requires further quantitative definition (e.g., inter-linon distance spectral analysis) before it can be elevated beyond a descriptive observation. It is included here to mark a Reproducible Visual Phenomenon that warrants future empirical investigation.
 
 # 6. Interpretation
 
