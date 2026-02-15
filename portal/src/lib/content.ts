@@ -54,31 +54,31 @@ export const content = {
             {
                 id: 'psi',
                 label: 'Emergent Life',
-                description: 'The <span style="color: #00d2ff">cyan</span> cores. Not solid matter, but waves that behave like particles. Their <span style="color: #fff">color cycles</span> as they "breathe".',
+                description: 'The <span style="color: #00d2ff">cyan</span> points of light. Not solid matter, but waves of energy. They pulse and cycle colors as they "breathe" in their own rhythm.',
                 color: palette.psi
             },
             {
                 id: 'kappa',
                 label: 'Safe Zones',
-                description: 'The <span style="color: #7eb8ff">deep blue</span> grid. A background map of stability—particles can only survive in the <span style="color: #1a3a5a">darker</span> valleys.',
+                description: 'The <span style="color: #7eb8ff">deep blue</span> background. It acts like a terrain map—particles can only survive in the <span style="color: #1a3a5a">darker</span> valleys. Lighter areas force them to move.',
                 color: palette.kappa
             },
             {
                 id: 'phi',
                 label: 'Ghost Trails',
-                description: 'The <span style="color: #8a2be2">violet</span> path. The universe "remembering" history. Past movements shape future collisions.',
+                description: 'The <span style="color: #8a2be2">violet</span> streaks leaving a trace behind moving dots. Like the wake behind a boat, showing exactly where the particle has been.',
                 color: palette.phi
             },
             {
                 id: 'warp',
                 label: 'Space Warp',
-                description: 'The <span style="color: #ff00ff">magenta</span> distortion. When many particles cluster, they bend space itself, creating gravity-like wells.',
+                description: 'The <span style="color: #ff00ff">magenta</span> distortion. When many particles cluster together, they bend the space around them, creating gravity-like wells.',
                 color: palette.warp
             },
             {
                 id: 'coupling',
                 label: 'Binding Forces',
-                description: 'Faint <span style="color: #ff007f">rose</span> lines. Invisible energy filaments that hold complex structures together.',
+                description: 'Faint <span style="color: #ff007f">rose</span> lines. Invisible energy filaments that form connections between particles to hold complex structures together.',
                 color: palette.coupling
             }
         ]
