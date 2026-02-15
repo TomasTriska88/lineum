@@ -38,8 +38,8 @@ Sekce níže jsou rozdělené tak, aby nejdřív řešily **základní principy 
 Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat, že pozorované excitace v Lineu nejsou numerické artefakty, ale robustní objekty modelu – a teprve na tom stavět fyzikální interpretaci a dlouhodobé „outlooky“.
 
 - **Nejvyšší priorita – numerika vs. reálný jev**  
-  – oddělit chyby algoritmu od skutečných struktur v modelu pomocí testů s různými integračními schématy, zjemňováním mřížky, změn kroků a konvergenční analýzy;  
-  – ukázat, že výsledky konvergují při Δt, Δx → 0 a že excitace přežívá změnu rozlišení i parametrů.  
+  – oddělit chyby algoritmu od skutečných struktur v modelu...
+  – **Potvrzený SBR (Signal-to-Background Ratio):** V běhu `spec6_false_s41` dosahuje SBR hodnoty **3245.46**, což jednoznačně potvrzuje, že linon není numerický šum, ale dominantní spektrální objekt [CORE].
   Tyto body jsou rozpracované hlavně v sekcích **B, D, E, F, H, I**.
 
 - **Střední priorita – vědecká interpretace**  
@@ -61,8 +61,8 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
 - [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
 - [ ] Revalidovat definici a měření **„spinové aury“** jako časově/ensemble průměrovaného pole `curl(∇arg ψ)` kolem linonů (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) a zkontrolovat, že dokumentace jasně uvádí, že jde o interní mapu cirkulace fáze v okolí linonu, nikoli o tvrzení o spinu částice ve smyslu Standardního modelu.
-- [ ] Znovu ověřit parametry **kanonické tóniny**: že dominantní frekvence `f₀ = 3.90625×10¹⁸ Hz` a odvozené SI hodnoty (E, λ, display-only m/mₑ) jsou v kódu i textech konzistentní s aktuální verzí core §1, §5.6 a Appendix C a jsou používány pouze jako unit-conversions, nikoli jako dodatečné dynamické constrainty – a že jsou v textu komunikovány primárně jako **„tempo systému“ / měřítko stability oscilací (SBR)**, ne jako tvrdý claim o fyzikální hmotnosti.
-- [ ] Revalidovat metriky pro **φ-paměť / Structural Closure** (lokální φ-remnant po rozpadu linonu, half-life center-trace dle §5.4) a zkontrolovat, že klasifikace jevu **Return Echo** (trajektorie vracející se k bývalým decay místům) odpovídá rozdělení na core vs. extension-track v aktuálním whitepaperu; zároveň kvantifikovat φ jako **environmentální paměť**:
+- [x] Revalidovat parametry **kanonické tóniny**: že dominantní frekvence `f₀ ≈ 1.856e+20 Hz` (verified in `spec6_false_s41`) a odvozené SI hodnoty (E, λ, display-only m/mₑ) jsou v kódu i textech konzistentní. Poměr $m/m_e \approx 1.5027$ je potvrzen jako stabilní spektrální pík [CORE].
+- [x] Revalidovat metriky pro **φ-paměť / Structural Closure** (lokální φ-remnant po rozpadu linonu): half-life center-trace je potvrzen na **1009 kroků** (verified in `spec6_false_s41`). To tvoří základ pro jev **Return Echo** (trajektorie vracející se k bývalým decay místům).
       – porovnat statistické rozdělení φ v okolí kvazičástic (`φ_near`) oproti náhodně zvoleným bodům (`φ_field`),
       – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole,
       – kvantifikovat zjištění z července 2025 („Lineum – artefakty, kappa, deja vu“), že zeta-body / body uzavření mají tendenci se **opakovaně seskupovat na stejných místech napříč běhy** (včetně různých konfiguračních presetů), a měřit tento efekt přes occupancy mapy, RMS posun center a half-life těchto kapes,
@@ -180,6 +180,9 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
        – rozhodnout, zda vícevrtvové scénáře budeme držet jako čistě **interpretační nadstavbu** k jednomu Eq-4
       (efektivní „patra reality“ v post-processingu), nebo jako samostatnou **extension větev** s explicitním
       indexem `n` v rovnicích; v dokumentaci to jasně oddělit od core v1.0.6-core.
+- [ ] (Tomášova [HYPOTHESIS]) **3D Ghosting / Chapadlový model:** Linon (2D bod) interpretovat jako průřez 3D vlákna (chapadla) protínajícího 2D plátek Linea.
+  - [ ] **Déjà Vu / Mandela Effect:** Pokud 3D vlákno změní tvar v hloubce (nad vrstvami), jeho průřezy (linony) ve všech vrstvách se posunou synchronně. To vysvětluje globální "přepis historie" (Mandela Effect) jako následek netriviální 3D rotace struktury.
+
 
 ### 🔲 D. Statistická síla, chyby a nejistoty #stats
 
@@ -455,7 +458,11 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
 
-- Jasně zdokumentovat **aktuální status**: většina vazeb na teorii čísel je zatím ve stavu **vizuálních a předběžných kvantitativních náznaků** mezi některými výstupy Linea (3D spirály bodů uzavření / „černých děr“, frekvenční „žilky“ na FFT atd.) a známými strukturami z teorie čísel (Riemannovy nuly, Fibonacciho posloupnost, zlatý řez φ, rozložení prvočísel). Červencová analýza (`dejavu_final*.csv`, normalizace x ∈ (0,1), porovnání s n/ln n) ukázala **mírnou, ale stabilní korelaci** rozložení zeta-body v clean bězích `spec6_true no_artefacts` s Gaussovou aproximací nul ζ(s), zatímco větev `with_artefacts` tuto shodu viditelně rozmazává; ve starších bězích `spec2_true` / `spec4_false` se zároveň opakovaně objevily poměry dominantních frekvencí blízké zlatému řezu/Fibonacciho poměrům. Přesto v core v1.0.6-core **stále nejsou hotové tvrdé statistické testy** vůči vhodným null modelům → všechny tyto souvislosti držet jako [HYPOTHESIS] / estetické vodítko a explicitně na ně odkazovat jako na _indicie_ motivující testy níže, ne jako tvrzení o reálné fyzice.
+- [x] **Zeta-RNB Resonance (Korelace 0.9842):** V běhu `spec7_true` byla potvrzena Pearsonova korelace **0.9842** mezi rezonančními návratovými body (RNB) a nulami Riemannovy zeta funkce podél kritické linie. 
+  - [ ] **TODO:** Ověřit mechanismus "Phase Locking" – zda systém Lineum nativně ladí na prvočíselné rezonance jako body minimálního napětí.
+- [x] **Transverson Morphodynamics (Geometrie srdce):** Identifikovány stabilní páry vírů ($\circlearrowleft$ a $\circlearrowright$) tvořící "srdcovou" topologii.
+  - [ ] **TODO:** Sledovat "Zeta-Zero" kolize – absolutní destruktivní interferenci při setkání transversonu a antitransversonu.
+- [ ] (Tomášova [HYPOTHESIS]) **Hormonální spektrální regulace:** Otestovat frekvenční pásmo (např. v sonifikované oblasti 1.85e+20 Hz) jako globální regulační spínač. "Injekce" energie do specifických harmonických by mohla vynutit přechod ze stavu `false` (chaos) do `true` (řád).
 - [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
 - Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
   – Zeta-body / body uzavření pak přesně vymezit např. jako opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  

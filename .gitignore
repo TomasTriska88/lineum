@@ -16,6 +16,17 @@ audit_verification*/
 # Temp files
 *.tmp
 *.log
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+.svelte-kit/
+build/
 
 # Local debug/proof artifacts (Antigravity)
 repro_*.py
