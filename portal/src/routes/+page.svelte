@@ -1,6 +1,6 @@
 <script lang="ts">
     import FieldShader from "$lib/components/FieldShader.svelte";
-    import PhenomenaLegend from "$lib/components/PhenomenaLegend.svelte";
+    import Legend from "$lib/components/Legend.svelte";
     import { content } from "$lib/content";
 </script>
 
@@ -21,7 +21,11 @@
         <div class="logo">
             <span class="logo-symbol">{content.hero.symbol}</span>
             <span class="logo-text">Lineum</span>
-            <PhenomenaLegend />
+            <Legend
+                title={content.legend.title}
+                subtitle={content.legend.subtitle}
+                items={content.legend.items}
+            />
         </div>
         <h1>{content.hero.title}</h1>
         <p>

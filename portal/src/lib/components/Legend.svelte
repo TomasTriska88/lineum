@@ -1,11 +1,17 @@
 <script lang="ts">
     import { scale } from "svelte/transition";
-    import { content } from "$lib/content";
+
+    export let title: string;
+    export let subtitle: string;
+    export let items: {
+        id: string;
+        label: string;
+        description: string;
+        color: string;
+    }[];
 
     let isOpen = false;
     let containerEl: HTMLDivElement;
-
-    const phenomena = content.legend.items;
 
     function toggle() {
         isOpen = !isOpen;
@@ -23,7 +29,7 @@
 <div
     class="legend-container"
     role="region"
-    aria-label="Physics Legend"
+    aria-label="Visualization Legend"
     bind:this={containerEl}
 >
     <div class="trigger-wrapper">
@@ -32,6 +38,7 @@
             class:active={isOpen}
             on:click|stopPropagation={toggle}
             aria-label="Toggle legend"
+            aria-expanded={isOpen}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -58,15 +65,17 @@
             on:click|stopPropagation
             on:keydown|stopPropagation
             role="dialog"
+            aria-modal="false"
+            tabindex="-1"
         >
             <header>
-                <h3>{content.legend.title}</h3>
-                <p>{content.legend.subtitle}</p>
+                <h3>{title}</h3>
+                <p>{subtitle}</p>
             </header>
 
-            <ul class="phenomena-list">
-                {#each phenomena as item}
-                    <li class="phenomena-item">
+            <ul class="legend-list">
+                {#each items as item}
+                    <li class="legend-item">
                         <div
                             class="dot"
                             style="background-color: {item.color}"
@@ -96,7 +105,6 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        cursor: pointer;
     }
 
     .trigger-icon {
@@ -139,6 +147,10 @@
         margin-top: 12px;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
         transform-origin: top right;
+
+        /* Scrollbar styling */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
     }
 
     header {
@@ -160,7 +172,7 @@
         color: rgba(255, 255, 255, 0.5);
     }
 
-    .phenomena-list {
+    .legend-list {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -169,7 +181,7 @@
         gap: 14px;
     }
 
-    .phenomena-item {
+    .legend-item {
         display: flex;
         gap: 12px;
         align-items: flex-start;
