@@ -82,7 +82,7 @@
                         ></div>
                         <div class="content">
                             <h4>{item.label}</h4>
-                            <p>{item.description}</p>
+                            <p>{@html item.description}</p>
                         </div>
                     </li>
                 {/each}
