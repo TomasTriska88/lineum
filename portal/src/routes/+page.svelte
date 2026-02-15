@@ -1,5 +1,6 @@
 <script lang="ts">
     import FieldShader from "$lib/components/FieldShader.svelte";
+    import PhenomenaLegend from "$lib/components/PhenomenaLegend.svelte";
 </script>
 
 <svelte:head>
@@ -13,6 +14,7 @@
 <section class="hero">
     <div class="shader-overlay">
         <FieldShader />
+        <PhenomenaLegend />
     </div>
 
     <div class="hero-content container">
