@@ -1,6 +1,7 @@
 <script lang="ts">
     import FieldShader from "$lib/components/FieldShader.svelte";
     import PhenomenaLegend from "$lib/components/PhenomenaLegend.svelte";
+    import { content } from "$lib/content";
 </script>
 
 <svelte:head>
@@ -14,23 +15,23 @@
 <section class="hero">
     <div class="shader-overlay">
         <FieldShader />
-        <PhenomenaLegend />
     </div>
 
     <div class="hero-content container">
         <div class="logo">
-            <span class="logo-symbol">Λ</span>
+            <span class="logo-symbol">{content.hero.symbol}</span>
             <span class="logo-text">Lineum</span>
+            <PhenomenaLegend />
         </div>
-        <h1>Věda o polích, která dýchají.</h1>
+        <h1>{content.hero.title}</h1>
         <p>
-            Odkrýváme vznik stabilních excitací (Linonů) v diskrétních polích. <br
-            /> Bez globálních konstant. Bez předdefinované metrické geometrie. Jen
-            čistá lokální kauzalita.
+            {content.hero.subtitle}
         </p>
         <div class="cta-group">
-            <a href="/wiki" class="btn btn-primary">Lineum Core v1.0.17</a>
-            <a href="#evidence" class="btn btn-outline">Auditní Důkazy</a>
+            <a href="/wiki" class="btn btn-primary">{content.hero.cta_wiki}</a>
+            <a href="#evidence" class="btn btn-outline"
+                >{content.hero.cta_audit}</a
+            >
         </div>
     </div>
 </section>
@@ -38,55 +39,41 @@
 <section id="layman" class="info-section">
     <div class="container grid-2">
         <div class="text-block">
-            <span class="label">Pro laiky</span>
-            <h2>Co je to Lineum?</h2>
-            <p>
-                Představte si vesmír ne jako prázdnotu, ale jako jemnou
-                digitální mřížku. Lineum je model, který ukazuje, jak se v tomto
-                prostředí mohou "samy od sebe" vytvořit stabilní vlny, které se
-                chovají jako částice.
-            </p>
-            <p>
-                Není to jen simulace; je to hledání základních pravidel, ze
-                kterých vzniká hmota.
-            </p>
+            <span class="label">{content.sections.layman.label}</span>
+            <h2>{content.sections.layman.title}</h2>
+            <p>{content.sections.layman.p1}</p>
+            <p>{content.sections.layman.p2}</p>
         </div>
         <div class="visual-placeholder">
-            <!-- Future: Interactive Lottie or Simplified Canvas -->
-            <div class="placeholder-box">Visual Metaphor</div>
+            <div class="placeholder-box">
+                {content.sections.layman.visual_label}
+            </div>
         </div>
     </div>
 </section>
 
 <section id="scientist" class="info-section alternate">
     <div class="container">
-        <span class="label">Pro vědce</span>
-        <h2>Deep Science & Auditable Reality</h2>
+        <span class="label">{content.sections.scientist.label}</span>
+        <h2>{content.sections.scientist.title}</h2>
         <div class="scientific-grid">
             <div class="card">
-                <h3>Bílá Kniha (v1.0.17)</h3>
-                <p>
-                    Kompletní derivace rovnice, numerické schéma a interpretace
-                    výsledků.
-                </p>
-                <a href="/wiki">Otevřít Wiki →</a>
+                <h3>{content.sections.scientist.whitepaper.title}</h3>
+                <p>{content.sections.scientist.whitepaper.desc}</p>
+                <a href="/wiki">{content.sections.scientist.whitepaper.link}</a>
             </div>
             <div class="card">
-                <h3>Zenodo (DOI)</h3>
-                <p>
-                    Oficiální vědecký archiv s garantovanou dohledatelností dat.
-                </p>
+                <h3>{content.sections.scientist.zenodo.title}</h3>
+                <p>{content.sections.scientist.zenodo.desc}</p>
                 <a
                     href="https://doi.org/10.5281/zenodo.16934359"
-                    target="_blank">10.5281/zenodo...</a
+                    target="_blank">{content.sections.scientist.zenodo.link}</a
                 >
             </div>
             <div class="card">
-                <h3>Audit Hub</h3>
-                <p>
-                    Každý run je ověřitelný. Transparentnost od prvního seedu.
-                </p>
-                <a href="/audits">Prohlédnout audity →</a>
+                <h3>{content.sections.scientist.audit.title}</h3>
+                <p>{content.sections.scientist.audit.desc}</p>
+                <a href="/audits">{content.sections.scientist.audit.link}</a>
             </div>
         </div>
     </div>
@@ -94,14 +81,14 @@
 
 <footer class="container">
     <div class="footer-content">
-        <p>© 2026 Lineum Project • lineum.io</p>
+        <p>{content.footer.copy}</p>
         <div class="footer-links">
             <a href="https://revolut.me/tomastriska" target="_blank"
-                >Podpořit projekt (Revolut)</a
+                >{content.footer.support}</a
             >
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
-                target="_blank">GitHub</a
+                target="_blank">{content.footer.github}</a
             >
         </div>
     </div>
@@ -113,7 +100,9 @@
         display: flex;
         align-items: center;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
+        margin-top: -64px;
+        padding-top: 64px;
     }
 
     .shader-overlay {

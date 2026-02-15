@@ -1,5 +1,5 @@
 <script>
-    import '../app.css';
+    import "../app.css";
 </script>
 
 <nav>
@@ -8,7 +8,8 @@
         <div class="nav-links">
             <a href="/wiki">Bílá Kniha</a>
             <a href="#scientist">Pro vědce</a>
-            <a href="https://revolut.me/tomastriska" class="nav-cta">Podpořit</a>
+            <a href="https://revolut.me/tomastriska" class="nav-cta">Podpořit</a
+            >
         </div>
     </div>
 </nav>
@@ -71,5 +72,6 @@
     main {
         position: relative;
         z-index: 1;
+        padding-top: 64px;
     }
 </style>

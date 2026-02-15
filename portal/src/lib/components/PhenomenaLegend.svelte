@@ -1,81 +1,67 @@
 <script lang="ts">
-    import { fade, scale } from "svelte/transition";
+    import { scale } from "svelte/transition";
+    import { content } from "$lib/content";
 
     let isOpen = false;
+    let containerEl: HTMLDivElement;
 
-    const phenomena = [
-        {
-            id: "psi",
-            label: "ψ Phase Colors",
-            description:
-                "The rotating hue in linon cores represents the complex phase angle arg(ψ).",
-            color: "#00d2ff",
-        },
-        {
-            id: "kappa",
-            label: "Stability Islands",
-            description:
-                "Voronoi geometry showing regions of localized stability in the κ map substrate.",
-            color: "#1a3a5a",
-        },
-        {
-            id: "phi",
-            label: "Field Memory",
-            description:
-                'The "Return Echo" (trailing ghosts) visualizes the persistence of the interaction field φ.',
-            color: "#8a2be2",
-        },
-        {
-            id: "warp",
-            label: "Field Curvature",
-            description:
-                "Topological warping of the background represents the singular nature of vortex clusters.",
-            color: "#ff00ff",
-        },
-        {
-            id: "coupling",
-            label: "Interaction Filaments",
-            description:
-                "Lines of tension between linons representing non-linear interaction coupling.",
-            color: "#ff007f",
-        },
-    ];
+    const phenomena = content.legend.items;
+
+    function toggle() {
+        isOpen = !isOpen;
+    }
+
+    function handleClickOutside(e: MouseEvent) {
+        if (isOpen && containerEl && !containerEl.contains(e.target as Node)) {
+            isOpen = false;
+        }
+    }
 </script>
+
+<svelte:window on:click={handleClickOutside} />
 
 <div
     class="legend-container"
     role="region"
     aria-label="Physics Legend"
-    on:mouseenter={() => (isOpen = true)}
-    on:mouseleave={() => (isOpen = false)}
+    bind:this={containerEl}
 >
-    <div class="trigger-icon" class:active={isOpen}>
-        <!-- Fallback SVG since I can't be sure about lucide-svelte -->
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+    <div class="trigger-wrapper">
+        <button
+            class="trigger-icon"
+            class:active={isOpen}
+            on:click|stopPropagation={toggle}
+            aria-label="Toggle legend"
         >
-            <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path
-                d="M12 8h.01"
-            />
-        </svg>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path
+                    d="M12 8h.01"
+                />
+            </svg>
+        </button>
     </div>
 
     {#if isOpen}
         <div
             class="legend-card"
             transition:scale={{ duration: 200, start: 0.9 }}
+            on:click|stopPropagation
+            on:keydown|stopPropagation
+            role="dialog"
         >
             <header>
-                <h3>Physics Reference</h3>
-                <p>Emergent phenomena in Lineum</p>
+                <h3>{content.legend.title}</h3>
+                <p>{content.legend.subtitle}</p>
             </header>
 
             <ul class="phenomena-list">
@@ -98,13 +84,19 @@
 
 <style>
     .legend-container {
-        position: absolute;
-        bottom: 24px;
-        right: 24px;
+        position: relative;
         z-index: 1000;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        margin-left: auto;
+    }
+
+    .trigger-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
     }
 
     .trigger-icon {
@@ -117,10 +109,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: rgba(255, 255, 255, 0.6);
-        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
         transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        padding: 0;
     }
 
     .trigger-icon:hover,
@@ -132,15 +125,20 @@
     }
 
     .legend-card {
+        position: absolute;
+        top: 100%;
+        right: 0;
         width: 320px;
+        max-height: calc(100vh - 250px);
+        overflow-y: auto;
         background: rgba(10, 10, 18, 0.85);
         backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 16px;
         padding: 20px;
-        margin-bottom: 12px;
+        margin-top: 12px;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-        transform-origin: bottom right;
+        transform-origin: top right;
     }
 
     header {
