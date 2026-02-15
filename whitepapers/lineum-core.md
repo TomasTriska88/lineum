@@ -1,5 +1,5 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.17-core
+**Version:** 1.0.18-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
@@ -9,8 +9,8 @@
 **How to cite:** Tomáš Tříska. _Lineum Core (v1.0.17-core)._ 2026. DOI: 10.5281/zenodo.16934359.
 _This manuscript corresponds to Git tag **v1.0.17-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
-**Contract evidence (core v1.0.17-core).** All numeric claims in this manuscript that are presented as *validated* are limited
-to what is asserted by the contract suite `lineum-core-1.0.17-core` (contract_version `1.1.5`), including the embedded
+**Contract evidence (core v1.0.18-core).** All numeric claims in this manuscript that are presented as *validated* are limited
+to what is asserted by the contract suite `lineum-core-1.0.18-core` (contract_version `1.1.5`), including the embedded
 canonical run `spec6_false_s41_20260215_023130` and its declared fingerprints.
 
 > **Status tags (v1.0.17-core).** To make the manuscript audit-proof, we label claim strength explicitly:
@@ -796,9 +796,16 @@ _Notes._
 **Acceptance (v1; [TEST]).** Expect the **same contract-aligned bands as §4.3.1** (no bespoke tolerances):
 `f0_mean_hz` in **[1.84e20, 1.87e20] Hz** and `sbr_mean` **≥ 3000**. Other validated anchors should remain within their §4.3.1 bands.
 
-# 6. Interpretation
+## 5.10 Global Phase Locking (Collective Breathing)
 
-The phenomena observed in the canonical evidence suggest that local field interactions in Lineum can produce structures and behaviors reminiscent of particle-like dynamics (analogy only; see Abstract scope notes).
+**[OBS]** Simulations show periodic, collective synchronization of linon trajectories, manifesting as a rhythmic "approach-retreat" cycle relative to each other and focal φ-basins.
+
+> **Contract scope (v1).** “Global Phase Locking” is **not contract-validated** in v1.0.18-core. It is an emergent 
+> observation documented in the animation artifacts (e.g., `*_lineum_particles.gif`) and spectral stability logs.
+
+**Interpretive note.** We treat this "breathing" behavior as a visual proxy for **Global Phase Locking**, where the discrete phases of individual localized excitations align via the coupled ψ-φ feedback loop. This collective resonance is concurrent with periods of high **SBR** and corresponds to state-space regions of localized stability. In audit GIFs, this appears as a coherent pulsation of the system's center of mass or relative particle distances.
+
+# 6. Interpretation
 
 Particles exhibit **guided motion** along **+∇φ** (environmental guidance) **without** any force law or analogy to GR. When convergence occurs, it emerges from **local gradients and basin structure** in φ rather than from an imposed long-range interaction.
 
@@ -859,6 +866,11 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
 - **PATCH**: wording, typos, figures, formatting, audit enhancements.
+
+**1.0.18 — 2026-02-15 (patch)**
+
+- Add §5.10 **Global Phase Locking (Collective Breathing)** as an explicit observational [OBS] section.
+- Sync version references to **1.0.18-core**.
 
 **1.0.17 — 2026-02-15 (patch)**
 
