@@ -137,7 +137,7 @@
             float interf = sin(uv.x * 30.0 + sin(t)) * cos(uv.y * 30.0 - t) * 0.02;
             color += interf * linon_cyan * phi_field;
 
-            color *= 1.2 - length(uv) * 0.8;
+            color *= 1.1 - length(uv) * 0.3;
             gl_FragColor = vec4(color, 1.0);
         }
     `;
