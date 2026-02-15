@@ -25,6 +25,7 @@
                 title={content.legend.title}
                 subtitle={content.legend.subtitle}
                 items={content.legend.items}
+                faq={content.legend.faq}
             />
         </div>
         <h1>{content.hero.title}</h1>

@@ -33,9 +33,10 @@
 
         // --- Golden Mean Hyper-Fidelity Palette ---
         vec3 space_black  = vec3(0.004, 0.004, 0.012);
-        vec3 nebula_purp = vec3(0.18, 0.05, 0.42);  // Phi (Memory)
+        vec3 nebula_purp = vec3(0.18, 0.05, 0.42);  // Phi (Memory) - Restored to subtle plum
         vec3 nebula_mag  = vec3(0.48, 0.05, 0.32);  // Struct. Closure
         vec3 kappa_blue  = vec3(0.045, 0.13, 0.28); // Kappa (Substrate)
+        vec3 ghost_color = vec3(0.5, 0.6, 0.85);    // Neutral Spectral Indigo for Trails
 
         float hash(vec2 p) {
             return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -85,7 +86,9 @@
             // --- 🧊 2. Starfield & Kappa Islands ---
             float stars = pow(hash(floor(uv_orig * 95.0)), 55.0);
             float islands = kappa_islands(uv_orig, t);
-            vec3 color = space_black + stars * 0.35 + islands * kappa_blue * 0.18;
+            // Enhanced Kappa barevnost: Mix blue and subtle magenta for the islands
+            vec3 kappa_color = mix(kappa_blue, nebula_mag * 0.4, 0.5 + 0.5 * sin(t * 0.5));
+            vec3 color = space_black + stars * 0.35 + islands * kappa_color * 0.45; // Increased intensity (was 0.18)
 
             // --- ⚡ 3. Field Dynamics & Phase Mapping ---
             float phi_field = 0.0;
@@ -105,21 +108,34 @@
                 float d_phi = length(uv - phi_center);
 
                 // --- 🧬 Phi & Structural Closure ---
-                phi_field += 0.095 / (d_phi + 0.36);
-                closure_ripples += sin(d_psi * 32.0 - t * 11.0) * (0.013 / (d_psi + 0.16));
+                // Balanced "Golden Mean" field accumulation
+                phi_field += 0.42 / (d_phi + 0.38); // Middle ground (was 0.85)
+                closure_ripples += sin(d_psi * 42.0 - t * 11.0) * (0.016 / (d_psi + 0.12)); 
+                
 
-                // --- 👻 Return Echo (Ghosts) ---
-                vec2 ghost_pos = phi_center + vec2(0.2 * sin((t-1.6) * 3.2 + offset), 0.2 * cos((t-1.6) * 3.2 + offset));
-                ghosts += 0.0045 / (length(uv - ghost_pos) + 0.11);
+                // --- 👻 Ghost Trails (7-stage Subtle Wake) ---
+                for(int j = 1; j <= 7; j++) {
+                    float step_back = float(j) * 0.038; 
+                    vec2 h_phi = vec2(0.6 * sin((t-step_back) * 0.11 + offset), 0.4 * cos((t-step_back) * 0.16 + offset * 1.3));
+                    vec2 h_psi = h_phi + vec2(0.2 * sin((t-step_back) * 3.2 + offset), 0.2 * cos((t-step_back) * 3.2 + offset));
+                    
+                    float d_trail = length(uv - h_psi);
+                    float fade = 1.0 - (float(j) / 8.0);
+                    // Even sharper decay and lower intensity for "companion" feel
+                    ghosts += fade * exp(-d_trail * 180.0) * 0.25; 
+                }
 
                 // --- 🌈 Phase-Hue Mapping (arg ψ) ---
                 float ang = atan(uv.y - psi_pos.y, uv.x - psi_pos.x);
                 float phase = ang + t * 13.5 + offset;
                 vec3 hue = phase_to_hue(phase);
-                psi_visual += (0.019 / (d_psi + 0.055)) * hue;
                 
-                // Singularity Sparkle
-                psi_visual += (0.0009 / (d_psi + 0.009)) * vec3(1.0);
+                // Needle-sharp Linon Point (True Singularity)
+                // Even higher slope (220.0) for razor-sharp focus
+                psi_visual += exp(-d_psi * 220.0) * hue * 1.5;
+                psi_visual += (0.003 / (d_psi + 0.012)) * hue * 0.4; // Very minimal glow
+                
+                psi_visual += exp(-d_psi * 550.0) * vec3(1.5);
             }
 
             // --- 🕸️ 4. Filamentary Tension ---
@@ -137,17 +153,28 @@
                 }
             }
 
-            // --- 🖌️ 5. Final Composite ---
-            vec3 nebula = mix(space_black, nebula_purp, phi_field * 0.38);
-            nebula = mix(nebula, nebula_mag, smoothstep(0.78, 2.1, phi_field));
+            // --- 🖌️ 5. Final Composite (Balanced Phase Clouds) ---
+            // Balanced contrast cloud base
+            float cloud_mask = smoothstep(0.1, 0.5, phi_field * 0.42);
+            vec3 nebula = mix(space_black, nebula_purp, cloud_mask * 0.65);
             
-            // Precision Contours
-            float cntr = fract(phi_field * 6.5);
-            nebula += (smoothstep(0.0, 0.015, cntr) - smoothstep(0.015, 0.03, cntr)) * nebula_mag * 0.25;
+            // Sharp Phase Transition (The 'Cloud' Boundary)
+            float threshold = 0.55;
+            float boundary = smoothstep(threshold - 0.08, threshold, phi_field);
+            nebula = mix(nebula, nebula_mag, boundary * 0.45);
+            
+            // Subtle "Topological Rails" (Phase Lines)
+            // Visible inside clouds, gives clear intuition of Linon pathing
+            float rails = smoothstep(0.025, 0.0, abs(fract(phi_field * 16.0) - 0.5));
+            nebula += rails * nebula_mag * 0.45 * cloud_mask;
+            
+            // Rim Light / Sharp Edge definition
+            float rim = smoothstep(0.04, 0.0, abs(phi_field - threshold));
+            nebula += rim * nebula_mag * 0.7; 
             
             color += nebula;
-            color += closure_ripples * nebula_mag * 0.6;
-            color += ghosts * nebula_purp * 0.35;
+            color += closure_ripples * nebula_mag * 1.15; 
+            color += ghosts * ghost_color * 1.5; // Discrete comet tail
             color += filaments * nebula_mag * 0.25;
             color += psi_visual;
 

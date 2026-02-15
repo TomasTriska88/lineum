@@ -1,7 +1,7 @@
 export const palette = {
     psi: '#00d2ff',  // ψ Phase — cyan
     kappa: '#1a3a5a',  // κ Stability — deep blue
-    phi: '#8a2be2',  // φ Memory — violet
+    phi: '#818cf8',  // φ Memory — ghost indigo
     warp: '#ff00ff',  // Field Curvature — magenta
     coupling: '#ff007f',  // Interaction Filaments — rose
     bg: '#0a0a0f',  // Background
@@ -53,33 +53,51 @@ export const content = {
         items: [
             {
                 id: 'psi',
-                label: 'Emergent Life',
-                description: 'The <span style="color: #00d2ff">cyan points</span> themselves. They are not solid matter, but waves that pulse and cycle colors as they "breathe".',
+                label: 'Emergent Life (ψ-Phase)',
+                description: 'The primary entities of the field. These <b>Point Singularities</b> wander through the vacuum, shifting colors based on their internal phase state (Cyan: Stable, Magenta: Transition, Yellow: Peak).',
                 color: palette.psi
             },
             {
                 id: 'kappa',
-                label: 'Safe Zones',
-                description: 'The <span style="color: #7eb8ff">background landscape</span>. It acts like a terrain map—particles slide off the <span style="color: #fff">lighter</span> hills and settle in the safe, dark valleys.',
+                label: 'Safe Zones (κ-Field)',
+                description: 'Regions of high vacuum stability. These appear as a <b>blue-to-magenta spectral mist</b> where Linons are less likely to experience rapid phase shifts.',
                 color: palette.kappa
             },
             {
                 id: 'phi',
-                label: 'Ghost Trails',
-                description: 'The <span style="color: #8a2be2">violet wake</span> trailing *behind* the moving points. It shows the history of where the particle has been.',
+                label: 'Ghost Trails (φ-Memory)',
+                description: 'The <span style="color: #818cf8">compact spectral wake</span> trailing *behind* moving particles. It acts as a subtle companion, showing the **Memory (φ)** of recent movement without disrupting the primary field.',
                 color: palette.phi
             },
             {
                 id: 'warp',
-                label: 'Space Warp',
-                description: 'The <span style="color: #ff00ff">magenta halo</span> *surrounding* dense clusters. When particles group up, they bend the space around them.',
+                label: 'Space Warp (Curvature)',
+                description: 'Dynamic **contour lines** (resembling "rubber bands") and magenta halos surrounding clusters. These are ripples in the κ-field created as mass-like particles bend space around them.',
                 color: palette.warp
             },
             {
                 id: 'coupling',
-                label: 'Binding Forces',
-                description: 'Faint <span style="color: #ff007f">rose lines</span> connecting *between* separate points. These invisible filaments hold complex structures together.',
+                label: 'Interaction Filaments (Coupling)',
+                description: 'Transient links between particles. These represent **quantum entanglement** or phase-coupling, where the movement of one Linon instantaneously affects the other through the field.',
                 color: palette.coupling
+            }
+        ],
+        faq: [
+            {
+                q: 'Kde je vidět "strukturální uzavření" (Structural Closure)?',
+                a: 'Uzavření se projevuje těmi <b>ostrými barevnými hranicemi</b> a prstenci kolem Linonů. Jsou to matematické hranice, kde se lineum-pole vrací samo do sebe (auto-referenční smyčka), což dává částicím jejich stabilitu.'
+            },
+            {
+                q: 'Proč Linony obíhají pořád stejně?',
+                a: 'Nejde o gravitaci, ale o <b>fázové uzamčení</b> ke geometrii vakua. Linony neobíhají "něco", ale následují fixní topografické vlny v poli, které jsou dány základní rovnicí Lineum.'
+            },
+            {
+                q: 'Proč se Linony nikdy nesrazí?',
+                a: 'Linony nejsou pevná tělesa, ale vlnové interference. Když se k sobě přiblíží, jejich fázové gradienty vytvoří <b>nepřekonatelnou topologickou bariéru</b>, která je odrazí dříve, než by došlo ke kontaktu.'
+            },
+            {
+                q: 'Proč se Linony navzájem nepřitahují?',
+                a: 'V tomto poli neexistuje náboj ani hmotnost v klasickém smyslu. Jejich interakce je čistě <b>informační a geometrická</b> — reagují na zakřivení pole (Warp), nikoliv na sebe navzájem.'
             }
         ]
     },
