@@ -4010,3 +4010,18 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     save_manifest(manifest, filename=f"{RUN_TAG}_manifest.json")
 
     print("All GIFs, logs and manifest have been successfully generated.")
+
+    # 🧪 Lab Integration (Automatic audit data extraction)
+    # Triggered only for audit profiles to keep lab in sync with whitepaper runs
+    if AUDIT_SCOPE and os.path.exists(os.path.join("lab", "extract_audit_data.py")):
+        print("\n🧪 [LAB] Audit detected. Triggering automatic data extraction...")
+        try:
+            # Use same python executable to ensure environment consistency
+            result = subprocess.run([sys.executable, os.path.join("lab", "extract_audit_data.py")], 
+                                    capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ [LAB] Audit data extracted successfully for laboratory.")
+            else:
+                print(f"⚠️ [LAB] Extraction failed:\n{result.stderr}")
+        except Exception as e:
+            print(f"⚠️ [LAB] Error triggering extraction: {e}")

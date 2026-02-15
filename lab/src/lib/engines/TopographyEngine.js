@@ -20,7 +20,7 @@ export class TopographyEngine {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(40, 40, 40);
+        this.camera.position.set(50, 50, 50);
         this.camera.lookAt(0, 0, 0);
 
         this.initLights();
@@ -74,21 +74,23 @@ export class TopographyEngine {
         this.solidPlane = new THREE.Mesh(this.geometry, solidMaterial);
         this.terrainGroup.add(this.solidPlane);
 
-        this.initChapadla();
+        this.initLinony();
     }
 
-    initChapadla() {
-        this.chapadla = [];
-        const fiberMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
+    initLinony() {
+        this.linony = [];
+        const fiberMaterial = new THREE.LineBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.8 });
 
         // Create 3D fibers (lines) that extend from 2D plane into "depth"
         this.trajData.forEach(traj => {
-            const points = [];
-            // Extend a line from the 2D plane (y=0 in ThreeJS terms here, but used as z in paper)
-            // To make it look like a Fiber, we give it vertical depth
-            const x = (traj.path[0][0] - 64) * 0.5;
-            const z = (traj.path[0][1] - 64) * 0.5;
+            // Find first valid point to set initial fiber position
+            const firstValid = traj.path.find(p => p !== null);
+            if (!firstValid) return;
 
+            const x = (firstValid[0] - 64) * 0.5;
+            const z = (firstValid[1] - 64) * 0.5;
+
+            const points = [];
             points.push(new THREE.Vector3(x, 50, z)); // Top
             points.push(new THREE.Vector3(x, -50, z)); // Bottom
 
@@ -97,7 +99,7 @@ export class TopographyEngine {
 
             // Add a glowing core at the intersection
             const coreGeom = new THREE.SphereGeometry(0.5, 8, 8);
-            const coreMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 1.0 });
             const core = new THREE.Mesh(coreGeom, coreMat);
 
             const group = new THREE.Group();
@@ -105,7 +107,7 @@ export class TopographyEngine {
             group.add(core);
 
             this.terrainGroup.add(group);
-            this.chapadla.push({ group, traj, core });
+            this.linony.push({ group, traj, core, line });
         });
     }
 
@@ -126,7 +128,7 @@ export class TopographyEngine {
             }
         }
         const meanPhi = sum / count;
-        const hScale = -0.5; // Inverted (-) to create WELLS (jímky) and increased for visibility
+        const hScale = -0.2; // Reduced to prevent "over-the-screen" mountains
 
         const segments = 128;
         for (let i = 0; i < positions.length; i += 3) {
@@ -147,23 +149,49 @@ export class TopographyEngine {
         this.geometry.computeVertexNormals();
         this.geometry.attributes.position.needsUpdate = true;
 
-        // Update Chapadla positions
-        this.chapadla.forEach(c => {
-            // 1:1 mapping now that we use all frames (every 10 steps)
-            const stepIdx = Math.min(this.currentFrameIndex, c.traj.path.length - 1);
-            const pos = c.traj.path[stepIdx];
+        // Update linony positions and visual states
+        this.linony.forEach(c => {
+            const path = c.traj.path;
 
-            const tx = (pos[0] - 64) * 0.5;
-            const tz = (pos[1] - 64) * 0.5;
+            // 👁️ Precise Visibility Gate: only show if we have a valid point for this frame index
+            const point = path[this.currentFrameIndex];
+
+            if (!point) {
+                c.group.visible = false;
+                return;
+            }
+
+            c.group.visible = true;
+
+            const x = point[0]; // x is at index 0 in [x, y, amp, step]
+            const y = point[1]; // y is at index 1
+            const amplitude = point[2];
+
+            const tx = (x - 64) * 0.5;
+            const tz = (y - 64) * 0.5;
 
             c.group.position.set(tx, 0, tz);
 
             // Core height follows the local Φ-well depth
-            const ix = Math.floor(pos[0] / 2);
-            const iy = Math.floor(pos[1] / 2);
+            const vx = (tx / 80 + 0.5) * 63;
+            const vz = (tz / 80 + 0.5) * 63;
+            const ix = Math.floor(vx);
+            const iy = Math.floor(vz);
+
             if (ix >= 0 && ix < 64 && iy >= 0 && iy < 64) {
                 const relativePhi = frame[iy][ix] - meanPhi;
                 c.core.position.y = relativePhi * hScale;
+            }
+
+            // 👻 Ghost state for unborn linony (amplitude-based)
+            if (amplitude < 100000) {
+                c.core.material.opacity = 0.2;
+                c.core.scale.set(0.5, 0.5, 0.5);
+                c.line.material.opacity = 0.1;
+            } else {
+                c.core.material.opacity = 1.0;
+                c.core.scale.set(1.0, 1.0, 1.0);
+                c.line.material.opacity = 0.5;
             }
         });
 
@@ -195,6 +223,17 @@ export class TopographyEngine {
 
         this.terrainGroup.rotation.y += 0.001;
         this.renderer.render(this.scene, this.camera);
+    }
+
+    jumpToFrame(index) {
+        if (index >= 0 && index < this.frameCount) {
+            this.currentFrameIndex = index;
+            this.frameTimeCounter = 0;
+            this.updateTopography();
+            if (this.onFrameUpdate) {
+                this.onFrameUpdate(this.currentFrameIndex);
+            }
+        }
     }
 
     onResize() {

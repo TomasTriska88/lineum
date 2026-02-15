@@ -34,7 +34,7 @@
                 style="left: {(currentVal / 40) * 100}%"
             >
                 <div class="needle-glow"></div>
-                <div class="needle-label">FREKVENCE LÍNONŮ (f₀)</div>
+                <div class="needle-label">FREKVENCE LINONŮ (f₀)</div>
             </div>
         </div>
     </div>

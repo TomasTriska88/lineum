@@ -10,6 +10,7 @@
     let totalFrames = 0;
     let playbackSpeed = 1.0;
     let resonanceData = null; // 🔬 Spectral data
+    let metadata = null; // 📦 Audit metadata
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
@@ -27,9 +28,13 @@
         const resRes = await fetch(`/data/resonance_audit.json?t=${t}`);
         resonanceData = await resRes.json();
 
+        const metaRes = await fetch(`/data/metadata.json?t=${t}`);
+        metadata = await metaRes.json();
+
         totalFrames = phiData.metadata.frame_count;
 
         engine = new TopographyEngine(container, phiData, trajData);
+        engine.playbackSpeed = playbackSpeed;
 
         // 📡 Hook into engine's frame updates instead of polling
         engine.onFrameUpdate = (newFrame) => {
@@ -50,7 +55,7 @@
     {#if loading}
         <div class="loader">
             <div class="spinner"></div>
-            <p>OBNOVOVÁNÍ DAT AUDITU...</p>
+            <p>NAČÍTÁNÍ AUDITNÍCH DAT (JSON BIN)...</p>
         </div>
     {/if}
 
@@ -72,6 +77,27 @@
                 <span class="label">SNÍMEK:</span>
                 <span class="value">{frame} / {totalFrames}</span>
             </div>
+            <div class="stat">
+                <span class="label">ZDROJ:</span>
+                <span class="value">{metadata?.run_tag || "Audit"}</span>
+            </div>
+            <div class="stat">
+                <span class="label">STAV:</span>
+                <span class="value"
+                    >{frame >= (metadata?.birth_frame || 391)
+                        ? "DETEKCE LINONŮ"
+                        : "ZÁBĚH POLE Φ"}</span
+                >
+                {#if metadata && frame < metadata.birth_frame}
+                    <button
+                        class="jump-btn"
+                        on:click={() =>
+                            engine.jumpToFrame(metadata.birth_frame)}
+                    >
+                        SKOČIT NA ZROZENÍ [{metadata.birth_frame}]
+                    </button>
+                {/if}
+            </div>
             <div class="stat speed-control">
                 <span class="label">RYCHLOST:</span>
                 <span class="value">{playbackSpeed.toFixed(1)}x</span>
@@ -91,17 +117,28 @@
             {#if frame >= 4 && frame <= 15}
                 <div class="event-marker">DETEKVÁN POČÁTEČNÍ RÁZ [§5.1]</div>
             {/if}
+
+            {#if frame >= 391}
+                <div class="event-marker">DETEKCE LINONŮ [zrození]</div>
+            {/if}
         </div>
 
         <div class="guide-panel">
             <h3>PRŮVODCE LABEM</h3>
             <div class="guide-item">
-                <strong>Vlákna (Chapadla):</strong> Dráhy, po kterých se pohybují
-                částice v poli. Sledují "jímky" (prohlubně) v paměti prostoru.
+                <strong>Co sledovat:</strong> Linony jsou energetická jádra, která
+                se aktivně snaží najít oblasti s nejvyšší intenzitou pole Φ. V této
+                3D vizualizaci se tedy pohybují směrem k "vrcholům" (hřebenům) topografie.
             </div>
             <div class="guide-item">
-                <strong>Jímky v poli Φ:</strong> Tato 3D krajina ukazuje "hustotu"
-                paměti. Línony se přirozeně stahují tam, kde je pole hlubší.
+                <strong>Linony:</strong> Dráhy a částice v poli. Dokud nedosáhnou
+                kritické amplitudy, vidíte je jen jako "duchy". Po zrození (snímek
+                391) začnou aktivně vyhledávat lokální maxima pole Φ.
+            </div>
+            <div class="guide-item">
+                <strong>Topografie pole Φ:</strong> Tato 3D krajina ukazuje energetickou
+                hustotu. Linony se přirozeně stahují na vrcholky a hřebeny, což v
+                laboratoři vidíte jako pohyb kuliček "do kopce".
             </div>
             <div class="guide-item">
                 <strong>Zeta Nuly:</strong> "Matematické uzly" vesmíru. Pokud se
@@ -130,9 +167,12 @@
         position: absolute;
         top: 32px;
         left: 32px;
+        bottom: 32px;
         pointer-events: none;
         z-index: 10;
         max-width: 400px;
+        display: flex;
+        flex-direction: column;
     }
 
     .overlay * {
@@ -183,6 +223,24 @@
         font-size: 0.8rem;
         color: #fff;
         font-family: monospace;
+    }
+
+    .jump-btn {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        font-size: 0.6rem;
+        padding: 4px 8px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+        margin-left: 8px;
+    }
+
+    .jump-btn:hover {
+        background: rgba(0, 255, 255, 0.3);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     input[type="range"] {
@@ -243,6 +301,8 @@
         border: 1px solid rgba(0, 255, 255, 0.2);
         padding: 20px;
         backdrop-filter: blur(5px);
+        overflow-y: auto;
+        pointer-events: all;
     }
 
     .guide-panel h3 {
