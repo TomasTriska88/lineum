@@ -32,4 +32,13 @@ To verify kappa map integrity, you may set:
 ## 4. Execution
    ```powershell
    python lineum.py
+   python tools/whitepaper_contract.py --runs-root output_wp/runs --contract contracts/lineum-core-1.0.15-core.contract.json --strict
+   ```
+
+## 5. Finalization (Mandatory)
+   ALWAYS commit the full evidence path:
+   ```powershell
+   git add output_wp/
+   git commit -m "Audit PASS: [version] - Full Evidence Lock"
+   git push
    ```
