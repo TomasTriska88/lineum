@@ -31,85 +31,97 @@
         #define COUNT 6
         #define PI 3.14159265359
 
-        // --- Galaxy & Lab Palette ---
-        vec3 space_black  = vec3(0.01, 0.01, 0.03);
-        vec3 nebula_purp = vec3(0.25, 0.1, 0.5);   // Phi (Memory)
-        vec3 nebula_mag  = vec3(0.6, 0.1, 0.4);   // Struct. Closure
-        vec3 linon_cyan  = vec3(0.1, 0.8, 0.9);   // Psi (Core)
-        vec3 kappa_grid  = vec3(0.1, 0.2, 0.4);   // Kappa (Substrate)
+        // --- Hyper-Fidelity Palette ---
+        vec3 space_black  = vec3(0.005, 0.005, 0.015);
+        vec3 nebula_purp = vec3(0.2, 0.05, 0.45);  // Phi (Memory)
+        vec3 nebula_mag  = vec3(0.5, 0.05, 0.35);  // Struct. Closure
+        vec3 kappa_blue  = vec3(0.05, 0.15, 0.3);  // Kappa (Substrate)
 
         float hash(vec2 p) {
             return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
         }
 
-        // --- 🧪 Lab Hook: Hexagonal Kappa Map Substrate ---
-        float kappa_map(vec2 p, float t) {
-            p *= 2.0; // scale
-            vec2 r = vec2(1.0, 1.732);
-            vec2 h = r * 0.5;
-            vec2 a = mod(p, r) - h;
-            vec2 b = mod(p - h, r) - h;
-            vec2 g = length(a) < length(b) ? a : b;
-            float hex = smoothstep(0.02, 0.0, abs(max(abs(g.x) * 0.866 + g.y * 0.5, g.y) - 0.45));
-            return hex * (0.5 + 0.5 * sin(t * 0.5 + p.x * 0.5));
+        // --- 🧪 Hue from Phase (arg ψ) ---
+        vec3 phase_to_hue(float a) {
+            vec3 c = cos(a + vec3(0.0, 2.094, 4.188)) * 0.5 + 0.5;
+            return mix(vec3(0.1, 0.8, 0.9), c, 0.6);
+        }
+
+        // --- 🧪 Voronoi Kappa Islands ---
+        float kappa_islands(vec2 p, float t) {
+            vec2 g = floor(p * 1.5);
+            vec2 f = fract(p * 1.5);
+            float min_d = 1.0;
+            for(int y = -1; y <= 1; y++) {
+                for(int x = -1; x <= 1; x++) {
+                    vec2 neighbor = vec2(float(x), float(y));
+                    vec2 point = vec2(hash(g + neighbor), hash(g + neighbor + 121.1));
+                    point = 0.5 + 0.5 * sin(t * 0.2 + 6.2831 * point);
+                    float d = length(neighbor + point - f);
+                    min_d = min(min_d, d);
+                }
+            }
+            return smoothstep(0.4, 0.0, min_d);
         }
 
         void main() {
             vec2 uv_orig = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
             float t = u_time * 0.3;
             
-            // --- 🌀 1. Topological Warping (Field Curvature) ---
+            // --- 🌀 1. Topological Warping ---
             vec2 uv = uv_orig;
             for(int i = 0; i < COUNT; i++) {
                 float offset = float(i) * (PI * 2.0 / float(COUNT));
-                vec2 center = vec2(0.6 * sin(t * 0.15 + offset), 0.4 * cos(t * 0.2 + offset * 1.2));
+                vec2 center = vec2(0.6 * sin(t * 0.12 + offset), 0.4 * cos(t * 0.18 + offset * 1.3));
                 float dist = length(uv - center);
-                // Swirl effect: proportional to 1/r (phase winding singularity)
-                float swirl = 0.05 / (dist + 0.15);
+                float swirl = 0.07 / (dist + 0.2);
                 float s = sin(swirl); float c = cos(swirl);
                 uv -= center;
                 uv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);
                 uv += center;
             }
 
-            // --- 🧊 2. Starfield & Kappa Substrate ---
-            float stars = pow(hash(floor(uv_orig * 120.0)), 40.0);
-            float kappa = kappa_map(uv_orig, t);
-            vec3 color = space_black + stars * 0.2 + kappa * kappa_grid * 0.15;
+            // --- 🧊 2. Starfield & Kappa Islands ---
+            float stars = pow(hash(floor(uv_orig * 100.0)), 50.0);
+            float islands = kappa_islands(uv_orig, t);
+            vec3 color = space_black + stars * 0.4 + islands * kappa_blue * 0.2;
 
-            // --- ⚡ 3. Field Dynamics Sim ---
-            float psi_amp = 0.0;
+            // --- ⚡ 3. Field Dynamics & Phase Mapping ---
             float phi_field = 0.0;
             float closure_ripples = 0.0;
-            float phase_winding = 0.0;
+            vec3 psi_visual = vec3(0.0);
+            float ghosts = 0.0;
             
             vec2 linon_pos[COUNT];
 
             for(int i = 0; i < COUNT; i++) {
                 float offset = float(i) * (PI * 2.0 / float(COUNT));
-                vec2 phi_center = vec2(0.6 * sin(t * 0.15 + offset), 0.4 * cos(t * 0.2 + offset * 1.2));
-                vec2 psi_pos = phi_center + vec2(0.2 * sin(t * 4.0 + offset), 0.2 * cos(t * 4.0 + offset));
+                vec2 phi_center = vec2(0.6 * sin(t * 0.12 + offset), 0.4 * cos(t * 0.18 + offset * 1.3));
+                vec2 psi_pos = phi_center + vec2(0.2 * sin(t * 3.5 + offset), 0.2 * cos(t * 3.5 + offset));
                 linon_pos[i] = psi_pos;
 
                 float d_psi = length(uv - psi_pos);
                 float d_phi = length(uv - phi_center);
 
-                // Phi buildup (slow field memory)
-                phi_field += 0.12 / (d_phi + 0.3);
+                // --- 🧬 Phi & Structural Closure ---
+                phi_field += 0.1 / (d_phi + 0.35);
+                closure_ripples += sin(d_psi * 35.0 - t * 12.0) * (0.015 / (d_psi + 0.15));
 
-                // Psi core (fast localized excitation) with Spin Aura
+                // --- 👻 Return Echo (Ghosts) ---
+                vec2 ghost_pos = phi_center + vec2(0.2 * sin((t-1.5) * 3.5 + offset), 0.2 * cos((t-1.5) * 3.5 + offset));
+                ghosts += 0.005 / (length(uv - ghost_pos) + 0.1);
+
+                // --- 🌈 Phase-Hue Mapping (arg ψ) ---
                 float ang = atan(uv.y - psi_pos.y, uv.x - psi_pos.x);
-                float spin = sin(ang + t * 12.0) * 0.5 + 0.5;
-                psi_amp += (0.015 / (d_psi + 0.04)) * mix(0.8, 1.0, spin);
-
-                // Vortex singularity (High bit)
-                phase_winding += 0.001 / (d_psi + 0.006);
-
-                // 🧪 Structural Closure Ripples (nonlinear feedback)
-                closure_ripples += sin(d_psi * 40.0 - t * 15.0) * (0.01 / (d_psi + 0.1));
+                float phase = ang + t * 15.0 + offset;
+                vec3 hue = phase_to_hue(phase);
+                psi_visual += (0.02 / (d_psi + 0.05)) * hue;
+                
+                // Singularity Sparkle
+                psi_visual += (0.001 / (d_psi + 0.008)) * vec3(1.0);
             }
 
-            // --- 🕸️ 4. Filamentary Tension (Coupling) ---
+            // --- 🕸️ 4. Filamentary Tension ---
             float filaments = 0.0;
             for(int i = 0; i < COUNT; i++) {
                 for(int j = 0; j < COUNT; j++) {
@@ -118,35 +130,31 @@
                         vec2 v = p2 - p1; vec2 w = uv - p1;
                         float b = clamp(dot(w, v) / dot(v, v), 0.0, 1.0);
                         float d = length(uv - (p1 + b * v));
-                        float prox = smoothstep(1.5, 0.0, length(p1 - p2));
-                        filaments += (0.0015 / (d + 0.025)) * prox;
+                        float prox = smoothstep(1.3, 0.0, length(p1 - p2));
+                        filaments += (0.0012 / (d + 0.03)) * prox;
                     }
                 }
             }
 
             // --- 🖌️ 5. Final Composite ---
-            vec3 nebula = mix(space_black, nebula_purp, phi_field * 0.45);
-            nebula = mix(nebula, nebula_mag, smoothstep(0.7, 1.8, phi_field));
+            vec3 nebula = mix(space_black, nebula_purp, phi_field * 0.4);
+            nebula = mix(nebula, nebula_mag, smoothstep(0.75, 2.0, phi_field));
             
-            // Field Contours
-            float layers = 8.0;
-            float cntr = fract(phi_field * layers);
-            nebula += (smoothstep(0.0, 0.02, cntr) - smoothstep(0.02, 0.04, cntr)) * nebula_mag * 0.25;
+            // Precision Contours
+            float cntr = fract(phi_field * 7.0);
+            nebula += (smoothstep(0.0, 0.02, cntr) - smoothstep(0.02, 0.04, cntr)) * nebula_mag * 0.3;
             
             color += nebula;
-            color += closure_ripples * nebula_mag * 0.6; // Structural feedback
-            color += filaments * nebula_mag * 0.4;
-            color += psi_amp * linon_cyan;
-            color += phase_winding * vec3(1.0);
-
-            // Sync Vacuum Noise
-            color += hash(uv_orig + t) * VACUUM_FLUCTUATION * 2.0 * nebula_purp;
+            color += closure_ripples * nebula_mag * 0.7;
+            color += ghosts * nebula_purp * 0.4; // Return Echo ghosts
+            color += filaments * nebula_mag * 0.3;
+            color += psi_visual;
 
             // Interference
-            color += sin(uv.x * 30.0 + sin(t)) * cos(uv.y * 30.0 - t) * 0.02 * linon_cyan * phi_field;
+            color += sin(uv.x * 40.0 + sin(t)) * cos(uv.y * 40.0 - t) * 0.015 * nebula_purp * phi_field;
 
-            // Lab-Grade Vignette
-            color *= 1.1 - length(uv_orig) * 0.5;
+            // Hyper-Fidelity Vignette
+            color *= 1.15 - length(uv_orig) * 0.6;
             gl_FragColor = vec4(color, 1.0);
         }
     `;
