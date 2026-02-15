@@ -970,6 +970,14 @@ if steps_env and steps_env > 0:
 BASE_NOISE_STRENGTH = 0.005
 NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
 
+# --- Tesla-Edison Synchronicity (Portal Hook) ---
+DISSIPATION_RATE = 0.00462  # ln(2)/150 → half-life 150 steps
+REACTION_STRENGTH = 0.00070 # ln(2)/(2000*0.5) → half-life 2000 steps
+PSI_PHI_COUPLING = 0.004    # Gravity-like flow strength
+PHI_INTERACTION_STRENGTH = 0.04 # |phi| influence on psi
+PHI_DIFFUSION = 0.30        # Spatial spread of phi
+PSI_DIFFUSION = 0.05        # Spatial spread of psi
+
 # Probe points whose amplitude we track
 probe_points = [(y, x) for y in range(0, size, 20) for x in range(0, size, 20)]
 
@@ -1537,10 +1545,8 @@ def evolve(psi, delta, phi, kappa):
 
     psi += linon_complex + fluctuation + interaction_term
 
-    dissipation_rate = 0.00462  # ln(2)/150 → half-life 150 steps
-    psi -= dissipation_rate * psi
-
-    psi += diffuse_complex(psi)
+    psi -= DISSIPATION_RATE * psi
+    psi += diffuse_complex(psi, rate=PSI_DIFFUSION)
 
     # 🌀 Canonical φ-evolution: slow memory + single calibrated diffusion
     # ≈ ln(2) / (2000 * ⟨κ⟩) with ⟨κ⟩≈0.5 → half-life ≈ 2000 steps
@@ -1552,10 +1558,10 @@ def evolve(psi, delta, phi, kappa):
     local_input = np.clip(amp2 * amp2, 0.0, 1e4)
 
     # single-step relaxation toward local_input:
-    phi += kappa * reaction_strength * (local_input - phi)
+    phi += kappa * REACTION_STRENGTH * (local_input - phi)
 
     # diffusion on real φ: use real Laplacian diffusion
-    phi += kappa * 0.30 * diffuse_real(phi)
+    phi += kappa * PHI_DIFFUSION * diffuse_real(phi, rate=0.05)
 
     # post-step safety
     psi = _finite_complex(psi, nan=0.0)
@@ -1566,6 +1572,38 @@ def evolve(psi, delta, phi, kappa):
     psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
 
     return psi, phi
+
+
+def export_portal_params():
+    """
+    Export current physics constants for the Portal's Tesla-Edison Hook.
+    Enables automatic visual alignment with the simulation.
+    """
+    path = os.path.join(output_dir, "portal_params.json")
+    params = {
+        "version": "1.0.17-core",
+        "updated_utc": datetime.datetime.utcnow().isoformat() + "Z",
+        "dissipation_rate": float(DISSIPATION_RATE),
+        "reaction_strength": float(REACTION_STRENGTH),
+        "psi_phi_coupling": float(PSI_PHI_COUPLING),
+        "phi_interaction_strength": float(PHI_INTERACTION_STRENGTH),
+        "phi_diffusion": float(PHI_DIFFUSION),
+        "psi_diffusion": float(PSI_DIFFUSION),
+        "noise_strength": float(NOISE_STRENGTH),
+        "phi_cap": float(PHI_CAP),
+        "psi_amp_cap": float(PSI_AMP_CAP)
+    }
+    _atomic_write_json(path, params)
+    notify_file_creation(path)
+    
+    # Also copy to portal src if it exists for easier build-time sync
+    portal_static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "portal", "static", "portal_params.json"))
+    if os.path.exists(os.path.dirname(portal_static_path)):
+        try:
+            _atomic_write_json(portal_static_path, params)
+            print(f"[Portal Hook] Synchronized params to: {portal_static_path}")
+        except Exception as e:
+            print(f"[Portal Hook] Failed to sync to portal directory: {e}")
 
 
 def save_phi_center_plot(filename=f"{RUN_TAG}_phi_center_plot.png"):
@@ -3783,6 +3821,9 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         f0_ci=f0_ci,
         figure0_html=figure0_html
     )
+
+    # --- Tesla-Edison Synchronicity Hook ---
+    export_portal_params()
 
     # --- JSON manifest tohoto běhu (strojově čitelný souhrn) ---
     run_meta = {
