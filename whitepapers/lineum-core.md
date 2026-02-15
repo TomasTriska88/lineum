@@ -1,13 +1,13 @@
 **Document ID:** lineum-core  
-**Version:** 1.0.14-core
+**Version:** 1.0.15-core
 **Status:** Draft  
 **Equation:** Eq-4 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
-**Date:** 2026-02-14
+**Date:** 2026-02-15
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.14-core)._ 2026. DOI: 10.5281/zenodo.16934359.
-_This manuscript corresponds to Git tag **v1.0.14-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.15-core)._ 2026. DOI: 10.5281/zenodo.16934359.
+_This manuscript corresponds to Git tag **v1.0.15-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 > **Canonical Scope (v1.0.x)**  
 > **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
@@ -377,7 +377,7 @@ All canonical artifacts for the run `spec6_false_s41` are provided with this pre
 Reproduction uses the manifest in §4.6 (seed `41`, grid `128×128`, Δt `1.0e−21 s`, κ static). The numeric source of truth is the JSON manifest (`spec6_false_s41_manifest.json`) and the machine-readable CSV logs. The HTML report is a derived view generated from these primary sources.
 
 **Version pinning (DOI snapshots vs drafts).** Provenance is pinned by `RUN_TAG=spec6_false_s41`, the code commit noted in the HTML report header (short Git SHA, when available), and the artifact manifest embedded in the report.
-For **DOI-published snapshots**, we additionally provide a `sha256sums.txt` (or equivalent) for the evidence bundle to support integrity checks. For non-DOI working drafts, checksums may be omitted while the paper is actively edited; reproducibility is still evaluated against the acceptance bands in §4.3.1.
+For **DOI-published snapshots**, we provide a `sha256sums.txt` (or equivalent) for the evidence bundle to support external integrity checks. For non-DOI working drafts, reproducibility is evaluated against the acceptance bands in §4.3.1.
 
 
 > **Reviewer quick-check (v1).**
@@ -396,7 +396,7 @@ For **DOI-published snapshots**, we additionally provide a `sha256sums.txt` (or 
 > 3. In §5.6, **Worked example (canonical f₀)** evaluates to `m/mₑ ≈ 1.384` using the stated SI constants (display-only).
 > 4. In §5.6 **Frequency binning**, verify Δf = 1/(W·Δt) = `3.90625e18 Hz` and that `f₀` is reported as a centroid/interpolated estimate near bin `k≈44` (raw bin center is `1.719e20 Hz`).
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.14-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.15-core**.
 
 
 
@@ -414,7 +414,7 @@ Future updates and non-canonical experiments will be released as separate prepri
 |  41  | `spec6_false_s41_lineum_report.html` | `spec6_false_s41_metrics_summary.csv` |
 |  73  | `spec6_false_s73_lineum_report.html` | `spec6_false_s73_metrics_summary.csv` |
 
-_Provenance._ Checksums are intentionally omitted (living paper). Provenance is pinned by `RUN_TAG`, the short git commit shown in the report header (when available), and the artifact manifest inside each HTML report.
+_Provenance._ Data integrity for DOI snapshots is verified via `sha256sums.txt`. Provenance is further pinned by `RUN_TAG`, the short git commit shown in the report header, and the `audit_scope` manifest fingerprints.
 
 ## 4.8 Threats to validity (core v1)
 
@@ -450,6 +450,67 @@ To prevent drift and ease auditing, the report tooling enforces the following sa
 - **Pinned runs.** Evidence is pinned by `RUN_TAG` (seeds 17/23/41/73 for v1). Reproduction is evaluated by the metric tolerances in §4.3.1 rather than bitwise equality.
 
 _Scope._ These guardrails are part of v1 tooling only; they do not assert any rest-mass claim—“effective mass” remains a scale indicator derived from \(f_0\).
+
+## 4.10 Audit Profile and Verification (Stateless Audit 1.0)
+
+To ensure the highest integrity of v1 "whitepaper core" runs, we introduce the **Stateless Audit** mechanism. This mechanism enforces that an audit run proceeds with a precisely defined configuration that cannot be inadvertently changed (e.g., via a forgotten environment variable).
+
+### 4.10.1 Profile Activation
+The **Audit Profile** is activated via the `LINEUM_AUDIT_PROFILE` environment variable. When set to `whitepaper_core`, the system enforces a strict "hash gate" that prevents execution if the resolved runtime configuration deviates from the canonical values defined below. **Canonical PASS** requires executing the locked profile for the full simulation length (`steps=2000`) and verifying the result against the contract suite.
+
+### 4.10.2 Canonical Audit Scope (Locked Configuration)
+The following parameters are "locked" in the audit profile and form the basis of the `audit_scope_hash`:
+
+| Parameter | Canonical Value (v1.0.x) | Meaning |
+| :--- | :--- | :--- |
+| **run_id** | `6` | Canonical parameter set identifier |
+| **steps** | `2000` | Simulation length (audit minimum) |
+| **run_mode** | `false` | Standard mode (infinite_mode off) |
+| **seed** | `41` | RNG initialization (deterministic) |
+| **kappa_mode** | `constant` | Uniform κ (scalar 0.5 everywhere) |
+| **low_noise_mode** | `false` | Canonical (low) noise; low_noise_mode flag off |
+| **test_exhale_mode** | `true` | Active trace analytics (v1.0.x required) |
+| **resume** | `false` | Start from step 0 (no checkpoint drift) |
+| **base_output_dir**| `"output_wp"` | Dedicated directory for audit evidence |
+| **kappa_hash_basis**| `"N/A"` | (Not used for uniform map) |
+| **kappa_schedule_id**| `"N/A"` | (Not used for v1.0.x) |
+| **kappa_stride** | `"N/A"` | (Not used for v1.0.x) |
+
+> [!NOTE]
+> Audit runs generate outputs in `output_wp/`. Publicly published versions and links in this document refer to `output/`, which is an export (copy) of the canonical run from the audit folder.
+
+### 4.10.4 Verification Protocol
+The `tools/whitepaper_contract.py` suite compares the run results to the requirements in `contracts/`.
+- **Smoke Verification**: Validation of manifest parsing, anchor wiring, and drift detection (may use reduced steps).
+- **Canonical Verification**: Full evidence-run validation (2000 steps). A successful suite report (`PASS`) on the canonical evidence is mandatory for formal release verification.
+
+### 4.10.3 Verification Mechanism (Hash Gate)
+1. **audit_scope_hash**: SHA256 fingerprint of the locked configuration above.
+2. **scope_fingerprint**: Unique run identifier (identical to `audit_scope_hash`).
+3. **code_fingerprint**: SHA256 fingerprint of source files (`lineum.py`, `tools/whitepaper_contract.py`). To ensure cross-platform stability (CRLF vs LF), files are normalized to **LF** before hashing.
+
+### 4.10.5 Canonical Reference Fingerprints (v1.0.15-core)
+The following values are derived from the locked `whitepaper_core` definitions and must be matched by any canonical audit run report for formal validation.
+
+| Field | Canonical Expected Value (SHA256) |
+| :--- | :--- |
+| **audit_scope_hash** | `7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5` |
+| **scope_fingerprint** | `7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5` |
+| **code_fingerprint** | `48ea56d33508a9579e01afde42e3522e6d491d6c68a3b9631d926c431fe6390c` |
+| **kappa_map_bin_hash** | `31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a` |
+
+> [!NOTE]
+> The `code_fingerprint` was updated in v1.0.15-core (patch) to include vectorized performance optimizations (`cdist`) necessary for processing full 2000-step canonical runs within minutes.
+
+> [!IMPORTANT]
+> A run is considered **Verified** only if its generated manifest contains these exact fingerprints and its `steps` count equals 2000.
+
+Verification occurs in two phases:
+- **At startup (`lineum.py`)**: Check that `audit_scope_actual_hash == audit_scope_expected_hash`.
+- **Subsequently (`whitepaper_contract.py`)**: The contract suite verifies the presence of `AUDIT_SCOPE` in the manifest and matching of all hashes against the defined contract.
+
+### 4.10.4 Data Verification (Kappa Map)
+The audit profile optionally supports binary integrity checking of the kappa map via `LINEUM_EXPECTED_KAPPA_MAP_HASH`. If set, the system verifies the bitwise match of the generated map before simulation begins.
 
 # 5. Validation
 
@@ -539,7 +600,7 @@ Operationally, we detect Structural Closure whenever a linon decay event is foll
 ---
 
 > **Additional validation runs (other seeds).**  
-> Multi-seed confirmations (e.g., seeds 17/23/73) are retained in the v1 narrative, but must be regenerated under the refined logging/config state (commit `875fc4e`) before numeric values are quoted here. Until regenerated, the canonical numeric snapshot for v1.0.8-core is pinned to `spec6_false_s41` (see §4.6 and the anchors at the top of §5.6).
+> Multi-seed confirmations (e.g., seeds 17/23/73) are retained in the v1 narrative, but must be regenerated under the refined logging/config state (commit `875fc4e`) before numeric values are quoted here. Until regenerated, the canonical numeric snapshot for v1.0.15-core is pinned to `spec6_false_s41` (see §4.6 and the anchors at the top of §5.6).
 
 ---
 
@@ -697,7 +758,15 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 
 - **MAJOR**: changes to the canonical equation or scope (e.g., 3D instead of 2D).
 - **MINOR**: new sections/notes, validation expansions; no breaking changes.
-- **PATCH**: wording, typos, figures, formatting.
+- **PATCH**: wording, typos, figures, formatting, audit enhancements.
+
+**1.0.15 — 2026-02-15 (patch)**
+
+- Implement **Stateless Audit 1.0** mechanism (Audit Lock).
+- Add `audit_scope` logic and fail-fast protection for `whitepaper_core` profile.
+- Explicitly document locked configuration parameters and hashing mechanism in §4.10.
+- Decouple code and data fingerprints from the primary configuration hash gate.
+- Bump core version to **1.0.15-core**.
 
 **1.0.14 — 2026-02-14 (patch)**
 
@@ -795,7 +864,7 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 - §5.9: add **Verification run — C3 (grid-size invariance)**.
 - Appendix C/D/E: add **Evidence Index (v1)**, **Glossary (v1)**, and **Verification runs (v1)**.
 
-_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **1.0.14-core**.
+_Branching note._ Further physics-mapping tests (dispersion, group velocity, external-field response) will be published under the experimental track **v1.1.x-exp**; the core canonical scope remains frozen in **v1.0.15-core**.
 
 
 
@@ -966,7 +1035,7 @@ _Commit provenance._ Each HTML report prints the short Git commit in its header 
 
 **dominant frequency \(f_0\).** The spectral peak of the center-amplitude time series; measured on sliding windows and reported as a windowed mean with a 95% CI.
 
-**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots) with spacing Δf. In the refined snapshot pinned in this draft, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k≈44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`; see §5.6). We therefore do not claim exact bin-centering in v1.0.14-core refined anchors.
+**FFT bin / bin-centering.** FFT groups frequencies into equal “bins” (slots) with spacing Δf. In the refined snapshot pinned in this draft, \(f_0\) is reported as a centroid/interpolated estimate near raw bin `k≈44` (raw bin center `k·Δf = 1.719×10²⁰ Hz`; centroid index `k≈43.79` gives `f₀≈1.710×10²⁰ Hz`; see §5.6). We therefore do not claim exact bin-centering in v1.0.15-core refined anchors.
 
 
 
@@ -1010,7 +1079,7 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.14-core).**
+**What’s included (core v1.0.15-core).**
 
 
 

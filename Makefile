@@ -28,5 +28,6 @@ clean:
 	rm -rf __pycache__
 	rm -rf $(TOOLS)/__pycache__
 	rm -rf output_wp/runs/_whitepaper_contract/
+	rm -f contract_*.txt
 
 .PHONY: check verify test install clean

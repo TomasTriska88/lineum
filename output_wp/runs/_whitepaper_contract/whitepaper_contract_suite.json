@@ -1,0 +1,559 @@
+{
+  "suite_schema_version": "1.0.0",
+  "header": {
+    "timestamp": "2026-02-15T03:22:00.057544+00:00",
+    "contract_id": "lineum-core-1.0.15-core",
+    "contract_version": "1.1.5",
+    "tool_id": "lineum_audit_suite_gen",
+    "tool_version": "1.0.14-core"
+  },
+  "fingerprints": {
+    "whitepaper_sha256": "b6f345d836e0172e97ef5078adf0dbd106c96b7dc21daa2ce4c48ae19d956cef",
+    "contract_sha256": "d04df24444d598122e32cf2131164f8c8291c2c1b9daae9526d7ec12d422517e",
+    "codebase_sha256": "eb82acfa7ef56bed79a591f95cef981daf48630a85d69dd3d58836f4024d8974"
+  },
+  "embedded_context": {
+    "runs": {
+      "spec6_false_s41_20260215_023130": {
+        "manifest": {
+          "run": {
+            "run_id": 6,
+            "run_tag": "spec6_false_s41",
+            "seed": 41,
+            "run_mode": false,
+            "steps": 2000,
+            "grid_size": 128,
+            "pixel_size_m": 1e-12,
+            "time_step_s": 1e-21,
+            "equation": "Eq-4",
+            "kappa_mode": "constant",
+            "params": {
+              "alpha": 0.0007,
+              "beta": 0.015,
+              "delta": 0.00462,
+              "sigma_xi": 0.005
+            }
+          },
+          "invariants": {
+            "dim": "2D",
+            "bcs": "periodic",
+            "precision": "float64",
+            "stencil": "classic_laplace",
+            "grid_size": 128,
+            "dt": 0.01
+          },
+          "analysis_config": {
+            "spectrum_definition": "power |FFT(x)|^2",
+            "window_length": 256,
+            "hop_length": 128,
+            "guard_bins": 2,
+            "estimator": "centroid",
+            "bootstrap_ci_level": 0.95
+          },
+          "metrics": {
+            "dominant_freq_Hz": 1.856777545095882e+20,
+            "f0_mean_hz": 1.856777545095882e+20,
+            "sbr": 3245.4600764773872,
+            "sbr_mean": 3245.4600764773872,
+            "phi_center": 4431.842082321052,
+            "phi_steady_state": 4232.881964031552,
+            "vortices_total": 20,
+            "mean_vortices": 59.1455,
+            "net_charge": 0,
+            "topology_neutrality_n1": 94.19999999999999,
+            "strict_neutrality": 88.94999999999999,
+            "particles_count": 4530,
+            "low_mass_qp_count": 49,
+            "max_lifespan_steps": 44,
+            "phi_half_life_steps": 1009,
+            "phi_half_life_status": "OK"
+          },
+          "audit_scope": {
+            "profile": "whitepaper_core",
+            "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+            "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
+          },
+          "code_fingerprint": {
+            "sha256": "48ea56d33508a9579e01afde42e3522e6d491d6c68a3b9631d926c431fe6390c"
+          },
+          "kappa": {
+            "mode": "constant",
+            "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+            "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a"
+          },
+          "run_configuration": {
+            "resolved_config_hash": "153015216b84e8d54df8e78983d93354638ce9be2763a14d40e6baa748d9b6bc"
+          },
+          "data_files": {}
+        },
+        "manifest_sha256": "6596ec3b15f9368b494043458c52755f20f00522342f2789719858c311d0b14e",
+        "spectral_pipeline": {},
+        "run_configuration": {
+          "resolved_config_hash": "153015216b84e8d54df8e78983d93354638ce9be2763a14d40e6baa748d9b6bc"
+        },
+        "provenance": {},
+        "audit_scope": {
+          "profile": "whitepaper_core",
+          "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
+        },
+        "kappa": {
+          "mode": "constant",
+          "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+          "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "run_id": "spec6_false_s41_20260215_023130",
+      "profiles": [
+        "baseline",
+        "canonical"
+      ],
+      "checks": [
+        {
+          "id": "baseline.audit_scope.hash_gate",
+          "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "status": "PASS",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.audit_scope.actual_hash"
+          }
+        },
+        {
+          "id": "baseline.invariants.dim",
+          "expected": "2D",
+          "actual": "2D",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.dim",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.dim"
+          }
+        },
+        {
+          "id": "baseline.invariants.bcs",
+          "expected": "periodic",
+          "actual": "periodic",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.bcs",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.bcs"
+          }
+        },
+        {
+          "id": "baseline.invariants.precision",
+          "expected": "float64",
+          "actual": "float64",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.precision",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.precision"
+          }
+        },
+        {
+          "id": "baseline.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "baseline.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.audit_scope.hash_gate",
+          "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "status": "PASS",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.audit_scope.actual_hash"
+          }
+        },
+        {
+          "id": "canonical.identity.seed",
+          "expected": 41,
+          "actual": 41,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.seed",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.seed"
+          }
+        },
+        {
+          "id": "canonical.identity.steps",
+          "expected": 2000,
+          "actual": 2000,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.steps"
+          }
+        },
+        {
+          "id": "canonical.identity.grid_size",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.grid_size",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.grid_size"
+          }
+        },
+        {
+          "id": "canonical.identity.time_step_s",
+          "expected": 1e-21,
+          "actual": 1e-21,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.time_step_s",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.time_step_s"
+          }
+        },
+        {
+          "id": "canonical.identity.equation",
+          "expected": "Eq-4",
+          "actual": "Eq-4",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.equation",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.equation"
+          }
+        },
+        {
+          "id": "canonical.identity.kappa_mode",
+          "expected": "constant",
+          "actual": "constant",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.kappa_mode",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.kappa_mode"
+          }
+        },
+        {
+          "id": "canonical.identity.params.alpha",
+          "expected": 0.0007,
+          "actual": 0.0007,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.alpha",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.alpha"
+          }
+        },
+        {
+          "id": "canonical.identity.params.beta",
+          "expected": 0.015,
+          "actual": 0.015,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.beta",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.beta"
+          }
+        },
+        {
+          "id": "canonical.identity.params.delta",
+          "expected": 0.00462,
+          "actual": 0.00462,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.delta",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.delta"
+          }
+        },
+        {
+          "id": "canonical.identity.params.sigma_xi",
+          "expected": 0.005,
+          "actual": 0.005,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.sigma_xi",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.sigma_xi"
+          }
+        },
+        {
+          "id": "canonical.analysis.spectrum_definition",
+          "expected": "power |FFT(x)|^2",
+          "actual": "power |FFT(x)|^2",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.spectrum_definition",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.spectrum_definition"
+          }
+        },
+        {
+          "id": "canonical.analysis.window_length",
+          "expected": 256,
+          "actual": 256,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.window_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.window_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.hop_length",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.hop_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.hop_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.guard_bins",
+          "expected": 2,
+          "actual": 2,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.guard_bins",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.guard_bins"
+          }
+        },
+        {
+          "id": "canonical.analysis.estimator",
+          "expected": "centroid",
+          "actual": "centroid",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.estimator",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.estimator"
+          }
+        },
+        {
+          "id": "canonical.analysis.bootstrap_ci_level",
+          "expected": 0.95,
+          "actual": 0.95,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.bootstrap_ci_level",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.bootstrap_ci_level"
+          }
+        },
+        {
+          "id": "canonical.anchor.f0_mean_hz",
+          "expected": {
+            "min": 1.84e+20,
+            "max": 1.87e+20,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 1.856777545095882e+20,
+          "status": "PASS",
+          "message": "Value 1.856777545095882e+20 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.f0_mean_hz"
+          }
+        },
+        {
+          "id": "canonical.anchor.topology_neutrality_n1",
+          "expected": {
+            "min": 93.0,
+            "max": 99.5,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 94.19999999999999,
+          "status": "PASS",
+          "message": "Value 94.19999999999999 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.topology_neutrality_n1",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.topology_neutrality_n1"
+          }
+        },
+        {
+          "id": "canonical.anchor.strict_neutrality",
+          "expected": {
+            "min": 0.0,
+            "max": 100.0,
+            "severity": "info",
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 88.94999999999999,
+          "status": "PASS",
+          "message": "Value 88.94999999999999 OK",
+          "severity": "info",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.strict_neutrality",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.strict_neutrality"
+          }
+        },
+        {
+          "id": "canonical.anchor.mean_vortices",
+          "expected": {
+            "min": 55.0,
+            "max": 65.0,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 59.1455,
+          "status": "PASS",
+          "message": "Value 59.1455 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.mean_vortices"
+          }
+        },
+        {
+          "id": "canonical.anchor.low_mass_qp_count",
+          "expected": {
+            "target": 49,
+            "abs_tol": 0,
+            "paper_ref": "\u00a74.7"
+          },
+          "actual": 49,
+          "status": "PASS",
+          "message": "Value 49.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.low_mass_qp_count",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.low_mass_qp_count"
+          }
+        },
+        {
+          "id": "canonical.anchor.max_lifespan_steps",
+          "expected": {
+            "min": 40,
+            "paper_ref": "\u00a74.5"
+          },
+          "actual": 44,
+          "status": "PASS",
+          "message": "Value 44.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.max_lifespan_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.max_lifespan_steps"
+          }
+        },
+        {
+          "id": "canonical.anchor.phi_half_life_steps",
+          "expected": {
+            "min": 900,
+            "max": 1100,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 1009,
+          "status": "PASS",
+          "message": "Value 1009.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.phi_half_life_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.phi_half_life_steps"
+          }
+        },
+        {
+          "id": "canonical.anchor.sbr_mean",
+          "expected": {
+            "min": 3000.0,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 3245.4600764773872,
+          "status": "PASS",
+          "message": "Value 3245.4600764773872 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.sbr_mean",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.sbr_mean"
+          }
+        },
+        {
+          "id": "canonical.derived.df_hz",
+          "expected": 3.90625e+18,
+          "actual": 3.9062500000000005e+18,
+          "status": "PASS",
+          "message": "Value 3.9062500000000005e+18 OK (3.9063e+18)",
+          "actual_source": {
+            "primary": "calculated: 1 / (256 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
+          }
+        },
+        {
+          "id": "canonical.derived.nyquist_hz",
+          "expected": 5e+20,
+          "actual": 5.0000000000000007e+20,
+          "status": "PASS",
+          "message": "Value 5.0000000000000007e+20 OK (5.0000e+20)",
+          "actual_source": {
+            "primary": "calculated: 1 / (2 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
+          }
+        },
+        {
+          "id": "canonical.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*multi_spectrum_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*trajectories.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*topo_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*amplitude_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*phi_center_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*lineum_report.html",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*figure0_canonical.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*kappa_map.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "pass": 1,
+    "fail": 0,
+    "skip": 0,
+    "matched_canonical": 1
+  }
+}

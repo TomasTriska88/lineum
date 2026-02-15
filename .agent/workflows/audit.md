@@ -16,17 +16,18 @@ Before execution, ALWAYS clear all LINEUM variables to prevent leakage from prev
 
 ## 2. Canonical Settings
 Set these exact variables (and NO others) to lock the audit profile:
+   - `LINEUM_AUDIT_PROFILE = "whitepaper_core"` (Locked canonical profile)
    - `LINEUM_BASE_OUTPUT_DIR = "output_wp"` (Strictly for audit/whitepaper runs)
-   - `LINEUM_RUN_ID = "6"` (Canonical audit profile)
-   - `LINEUM_RUN_MODE = "false"` (Core audit mode)
+   - `LINEUM_RUN_ID = "6"` (Canonical audit run ID)
+   - `LINEUM_RUN_MODE = "false"` (Standard run mode)
    - `LINEUM_SEED = "41"` (Deterministic seed)
    - `LINEUM_STEPS = "2000"` (Explicit step lock)
+   - `LINEUM_TEST_EXHALE_MODE = "true"` (Active trace analytics)
    - `LINEUM_RESUME = "false"` (Always fresh from step 0)
 
-## 3. The "Latest" Rule
-> [!IMPORTANT]
-> **NEVER** set any version or commit-related environment variables (e.g., `LINEUM_VERSION`) manually. 
-> The system must automatically capture code fingerprints and git metadata from the source code itself to ensure provenance.
+## 3. Optional Data Lock
+To verify kappa map integrity, you may set:
+   - `LINEUM_EXPECTED_KAPPA_MAP_HASH = "..."` 
 
 ## 4. Execution
    ```powershell

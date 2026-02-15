@@ -300,6 +300,8 @@ def main():
             "manifest_sha256": compute_sha256(m_path),
             "spectral_pipeline": manifest.get("spectral_pipeline", {}),
             "run_configuration": manifest.get("run_configuration", {}),
+            "provenance": manifest.get("provenance", {}),
+            "audit_scope": manifest.get("audit_scope", {}),
             "kappa": manifest.get("kappa", {})
         }
 
@@ -322,6 +324,54 @@ def main():
             p_name = profile["name"]
             checks = profile.get("checks", {})
 
+            # 0. Audit Scope (Mandatory if present)
+            audit_scope = manifest.get("audit_scope")
+            if audit_scope:
+                 # Hash Gate
+                 expected_hash = audit_scope.get("expected_hash")
+                 # Fallback to contract-defined hash if manifest doesn't have it or it's null
+                 if expected_hash is None:
+                     expected_hash = checks.get("audit_scope", {}).get("expected_hash")
+                 
+                 actual_hash = audit_scope.get("actual_hash")
+                 status = "PASS" if (expected_hash and actual_hash and expected_hash == actual_hash) else "FAIL"
+                 res = {
+                     "id": f"{p_name}.audit_scope.hash_gate",
+                     "expected": expected_hash,
+                     "actual": actual_hash,
+                     "status": status,
+                     "severity": "fatal"
+                 }
+                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:audit_scope.actual_hash", "embedded": f"embedded_context.runs.{run_id}.manifest.audit_scope.actual_hash"}
+                 if status == "FAIL": run_result["status"] = "FAIL"
+                 run_result["checks"].append(res)
+                 
+                 # Locked Keys Check (Dual Source)
+                 if "diff_keys" in audit_scope and audit_scope["diff_keys"]:
+                     res = {
+                         "id": f"{p_name}.audit_scope.locked_keys",
+                         "expected": [],
+                         "actual": audit_scope["diff_keys"],
+                         "status": "FAIL",
+                         "severity": "fatal"
+                     }
+                     run_result["status"] = "FAIL"
+                     run_result["checks"].append(res)
+
+            # Code Fingerprint Check (vs Current Suite)
+            # Only relevant if we want to ensure the run matches the *current* tools
+            # But the contract might be running on old data. 
+            # We'll just log it as a check if configured, or implicit.
+            # User requirement: "contract suite (contract JSON + checky v whitepaper_contract.py)"
+            cf = manifest.get("code_fingerprint", {}).get("sha256")
+            if cf:
+                # We don't necessarily fail here unless we enforce it, but let's record it.
+                # If we want to enforce it matches the *current* codebase:
+                current_cf = suite_report["fingerprints"]["codebase_sha256"]
+                # We won't fail hard on mismatch (reproducibility vs current HEAD), 
+                # but we can optionally add a warn/fail if strict mode is on?
+                pass 
+
             # 1. Invariants
             for k, ev in checks.get("invariants", {}).items():
                 av = manifest.get("invariants", {}).get(k)
@@ -332,7 +382,17 @@ def main():
 
             # 2. Identity
             for k, ev in checks.get("identity", {}).items():
-                av = run_meta.get(k) if "." not in k else manifest.get("run", {}).get(k.split(".")[-1]) # Simple nesting
+                # Correct nested lookup for dot-notation keys
+                parts = k.split(".")
+                curr = run_meta
+                for p in parts:
+                    if isinstance(curr, dict):
+                        curr = curr.get(p)
+                    else:
+                        curr = None
+                        break
+                av = curr
+                
                 res = {"id": f"{p_name}.identity.{k}", "expected": ev, "actual": av, "status": "PASS" if av == ev else "FAIL"}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:run.{k}", "embedded": f"embedded_context.runs.{run_id}.manifest.run.{k}"}
                 if res["status"] == "FAIL": run_result["status"] = "FAIL"
@@ -359,12 +419,30 @@ def main():
                      p_src, e_src = "kappa.hash", "manifest.kappa.hash"
                 elif mk == "topology_neutrality_n1": av = n1
                 elif mk == "strict_neutrality": av = n0
+                elif mk == "scope_fingerprint":
+                     av = manifest.get("audit_scope", {}).get("actual_hash")
+                     p_src, e_src = "audit_scope.actual_hash", "manifest.audit_scope.actual_hash"
+                elif mk == "kappa_map_binary_hash":
+                     av = manifest.get("kappa", {}).get("binary_hash")
+                     p_src, e_src = "kappa.binary_hash", "manifest.kappa.binary_hash"
 
                 status, msg, sev = check_value(mk, av, constr)
                 res = {"id": f"{p_name}.anchor.{mk}", "expected": constr, "actual": av, "status": status, "message": msg, "severity": sev}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:{p_src}", "embedded": f"embedded_context.runs.{run_id}.{e_src}"}
                 if status == "FAIL" and sev == "fatal": run_result["status"] = "FAIL"
                 run_result["checks"].append(res)
+
+            # Mandatory Presence check
+            if p_name == "canonical" and not manifest.get("audit_scope"):
+                 res = {
+                     "id": f"{p_name}.audit_scope.mandatory_presence",
+                     "expected": "present",
+                     "actual": "missing",
+                     "status": "FAIL",
+                     "severity": "fatal"
+                 }
+                 run_result["status"] = "FAIL"
+                 run_result["checks"].append(res)
 
             # 5. Derived
             for d in checks.get("derived", []):

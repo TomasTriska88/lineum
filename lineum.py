@@ -4,7 +4,7 @@ import datetime
 import json
 import math
 import random
-from scipy.spatial.distance import euclidean
+from scipy.spatial.distance import euclidean, cdist
 from scipy.ndimage import gaussian_filter, maximum_filter
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -415,8 +415,10 @@ TEST_EXHALE_MODE = cfg.get("TEST_EXHALE_MODE", False)
 KAPPA_MODE = cfg.get("KAPPA_MODE", "gradient")
 
 # Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
+# Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
 _LNM_ENV = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
 _TEM_ENV = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
+_KM_ENV = _env_str("LINEUM_KAPPA_MODE", KAPPA_MODE)
 
 # Capture all relevant variables before any other logic modifies them
 RESOLVED_CONFIG = {
@@ -426,7 +428,7 @@ RESOLVED_CONFIG = {
     "param_tag": PARAM_TAG,
     "low_noise_mode": _LNM_ENV,
     "test_exhale_mode": _TEM_ENV,
-    "kappa_mode": KAPPA_MODE,
+    "kappa_mode": _KM_ENV,
     "window_w": WINDOW_W,
     "window_hop": WINDOW_HOP,
     "phi_interaction_cap": _env_int("LINEUM_PHI_INTERACTION_CAP", 0),
@@ -437,6 +439,86 @@ RESOLVED_CONFIG_HASH = _compute_canonical_hash(RESOLVED_CONFIG)
 
 LOW_NOISE_MODE = _LNM_ENV
 TEST_EXHALE_MODE = _TEM_ENV
+KAPPA_MODE = _KM_ENV
+
+# --- AUDIT LOCK / SCOPE GATE (Whitepaper 1.0) ---
+_AUDIT_PROFILE = _os.environ.get("LINEUM_AUDIT_PROFILE", "")
+AUDIT_SCOPE = None
+
+if _AUDIT_PROFILE == "whitepaper_core":
+    print("\n🔒 [AUDIT] PROFILE ACTIVATED: whitepaper_core")
+    
+    # 1. Expected Canonical Scope (Locked Values)
+    _SCOPE_EXPECTED = {
+        "test_exhale_mode": True,
+        "low_noise_mode": False,
+        "steps": 2000,
+        "seed": 41,
+        "run_id": 6,
+        "run_mode": False,   # normalized bool
+        "resume": False,     # normalized bool
+        "base_output_dir": "output_wp", # normalized path
+        "kappa_mode": "constant",
+        "kappa_hash_basis": "N/A",
+        "kappa_schedule_id": "N/A",
+        "kappa_stride": "N/A"
+    }
+
+    # 2. Actual Runtime Scope
+    # Normalize path for comparison (Windows/Linux compatibility)
+    _base_out_norm = _os.path.normpath(_env_str("LINEUM_BASE_OUTPUT_DIR", "output"))
+    if _os.name == "nt":
+        _base_out_norm = _os.path.normcase(_base_out_norm)
+
+    _SCOPE_ACTUAL = {
+        "test_exhale_mode": RESOLVED_CONFIG["test_exhale_mode"],
+        "low_noise_mode": RESOLVED_CONFIG["low_noise_mode"],
+        "steps": RESOLVED_CONFIG["steps"],
+        "seed": RESOLVED_CONFIG["seed"],
+        "run_id": RESOLVED_CONFIG["run_id"],
+        "run_mode": _rm == "true", # _rm is already normalized string "true"/"false"
+        "resume": _env_bool("LINEUM_RESUME", False),
+        "base_output_dir": _base_out_norm,
+        "kappa_mode": RESOLVED_CONFIG["kappa_mode"],
+        "kappa_hash_basis": "N/A",
+        "kappa_schedule_id": "N/A",
+        "kappa_stride": "N/A"
+    }
+
+    # 3. Canonical Hashing
+    _expected_hash = _compute_canonical_hash(_SCOPE_EXPECTED)
+    _actual_hash = _compute_canonical_hash(_SCOPE_ACTUAL)
+
+    # 4. Diff Calculation
+    _diff_keys = []
+    for k in _SCOPE_EXPECTED:
+        v_exp = _SCOPE_EXPECTED[k]
+        v_act = _SCOPE_ACTUAL.get(k, "MISSING")
+        # Canonical string comparison to avoid type glitches
+        if _canonical_val_str(v_exp) != _canonical_val_str(v_act):
+            _diff_keys.append(k)
+
+    AUDIT_SCOPE = {
+        "profile": "whitepaper_core",
+        "expected": _SCOPE_EXPECTED,
+        "actual": _SCOPE_ACTUAL,
+        "expected_hash": _expected_hash,
+        "actual_hash": _actual_hash,
+        "diff_keys": _diff_keys
+    }
+
+    # 5. Fail-Fast Gate
+    if _expected_hash != _actual_hash:
+        print("\n❌ [AUDIT] FATAL ERROR: Runtime scope does not match Whitepaper Core profile!")
+        print(f"   Expected Hash: {_expected_hash}")
+        print(f"   Actual Hash:   {_actual_hash}")
+        print("\n   Drift Detected (Expected vs Actual):")
+        for k in _diff_keys:
+            print(f"   - {k}: {_SCOPE_EXPECTED[k]} != {_SCOPE_ACTUAL[k]}")
+        print("\n   Aborting run to prevent audit contamination.")
+        sys.exit(1)
+
+    print(f"✅ [AUDIT] Scope Verified. Hash: {_actual_hash}")
 
 # --- HARD GUARD: never silently fall back to defaults for canonical runs ---
 assert (RUN_ID, RUN_MODE) in CONFIGS, (
@@ -456,23 +538,19 @@ print(
     f"RUN_TAG_DERIVED={_RUN_TAG_DERIVED}",
 )
 
+if AUDIT_SCOPE:
+    print(f"AUDIT_SCOPE_HASH={AUDIT_SCOPE.get('actual_hash')}")
+
 # --- (optional) show env overrides that could change behavior ---
 _env_watch = ("LINEUM_RUN_ID", "LINEUM_RUN_MODE", "LINEUM_SEED",
               "LINEUM_PARAM_TAG", "LINEUM_RUN_TAG",
-              "LINEUM_LOW_NOISE_MODE", "LINEUM_TEST_EXHALE_MODE",
+              "LINEUM_LOW_NOISE_MODE", "LINEUM_TEST_EXHALE_MODE", "LINEUM_KAPPA_MODE",
               "LINEUM_STEPS", "LINEUM_SAVE_GIFS", "LINEUM_SAVE_FRAMES", "LINEUM_SAVE_PNGS",
-              "LINEUM_PHI_INTERACTION_CAP")
+              "LINEUM_PHI_INTERACTION_CAP", "LINEUM_AUDIT_PROFILE", "LINEUM_EXPECTED_KAPPA_MAP_HASH")
 _env_present = {k: _os.environ.get(
     k) for k in _env_watch if _os.environ.get(k) is not None}
 if _env_present:
     print("ENV OVERRIDES PRESENT:", _env_present)
-
-# Allow env override for toggles (optional), WITHOUT changing defaults from CONFIGS.
-# Accepted values: "1/0", "true/false", "yes/no", "on/off".
-
-
-LOW_NOISE_MODE = _env_bool("LINEUM_LOW_NOISE_MODE", LOW_NOISE_MODE)
-TEST_EXHALE_MODE = _env_bool("LINEUM_TEST_EXHALE_MODE", TEST_EXHALE_MODE)
 
 # --- Output Directory Logic ---
 
@@ -799,6 +877,9 @@ def save_manifest(
         manifest["logging"] = {
             "topo_log_stride": TRACK_EVERY
         }
+
+    if AUDIT_SCOPE and "audit_scope" not in manifest:
+        manifest["audit_scope"] = AUDIT_SCOPE
 
     if "code_fingerprint" not in manifest:
         ENFORCED_FILES = ["lineum.py", "tools/whitepaper_contract.py"]
@@ -1515,6 +1596,19 @@ def save_kappa_map(kappa, filename=f"{RUN_TAG}_kappa_map.png"):
     # Recalculate hash on every save to ensure consistency
     k_hash = _compute_binary_kappa_hash(kappa)
     print(f"[*] Kappa Map Binary Hash: {k_hash}")
+
+    # --- Optional Fail-Fast for Kappa Hash ---
+    _expect_k_hash = _os.environ.get("LINEUM_EXPECTED_KAPPA_MAP_HASH", "").strip()
+    if _expect_k_hash and _AUDIT_PROFILE == "whitepaper_core":
+         if k_hash != _expect_k_hash:
+             print("\n❌ [AUDIT] FATAL ERROR: Kappa Map Hash Mismatch!")
+             print(f"   Expected: {_expect_k_hash}")
+             print(f"   Actual:   {k_hash}")
+             print("\n   Aborting run to prevent audit drift.")
+             sys.exit(1)
+         else:
+             print("✅ [AUDIT] Kappa Map Hash Verified.")
+
     
     path = _os.path.join(output_dir, filename)
     try:
@@ -1640,26 +1734,59 @@ def _track_quasiparticles_slow(coords, active_tracks, next_id, step_idx, amp, tr
     return new_active_tracks, next_id
 
 def _track_quasiparticles_fast(coords, active_tracks, next_id, step_idx, amp, trajectories):
-    """Refactored fast tracking logic."""
-    assigned = set()
-    new_active_tracks = {}
-    for cy, cx in coords:
-        pos = np.array([cy, cx])
-        min_dist = float("inf")
-        closest_id = None
-        for tid, last_pos in active_tracks.items():
-            dist = np.linalg.norm(pos - last_pos)
-            if dist < 3.0 and tid not in assigned and dist < min_dist:
-                min_dist = dist
-                closest_id = tid
-        if closest_id is not None:
-            new_active_tracks[closest_id] = pos
-            assigned.add(closest_id)
-            trajectories.append((int(closest_id), int(step_idx), int(cy), int(cx), float(amp[int(cy), int(cx)])))
-        else:
-            new_active_tracks[next_id] = pos
+    """Refactored fast tracking logic (vectorized for performance)."""
+    if len(coords) == 0:
+        return {}, next_id
+
+    # active_tracks: {tid: [y, x]}
+    if not active_tracks:
+        # Initial assignment
+        new_active_tracks = {}
+        for cy, cx in coords:
+            new_active_tracks[next_id] = np.array([float(cy), float(cx)])
             trajectories.append((int(next_id), int(step_idx), int(cy), int(cx), float(amp[int(cy), int(cx)])))
             next_id += 1
+        return new_active_tracks, next_id
+
+    tids = list(active_tracks.keys())
+    tpos = np.array(list(active_tracks.values()), dtype=np.float64) # (M, 2)
+    cpos = np.array(coords, dtype=np.float64) # (N, 2)
+
+    # All-to-all distances: (N, M)
+    dists = cdist(cpos, tpos)
+    
+    assigned_tids = set()
+    new_active_tracks = {}
+    
+    # Greedy matching (preserving existing logic as much as possible)
+    for i in range(len(cpos)):
+        cy, cx = coords[i]
+        dists_i = dists[i]
+        
+        # Find closest track within threshold (3.0) that is not yet assigned
+        best_tid_idx = -1
+        min_d = 3.0
+        
+        # We still loop over M to check 'assigned', but calculations are already done.
+        for j in range(len(tids)):
+            tid = tids[j]
+            if tid in assigned_tids: continue
+            
+            d = dists_i[j]
+            if d < min_d:
+                min_d = d
+                best_tid_idx = j
+        
+        if best_tid_idx != -1:
+            tid = tids[best_tid_idx]
+            new_active_tracks[tid] = np.array([float(cy), float(cx)])
+            assigned_tids.add(tid)
+            trajectories.append((int(tid), int(step_idx), int(cy), int(cx), float(amp[int(cy), int(cx)])))
+        else:
+            new_active_tracks[next_id] = np.array([float(cy), float(cx)])
+            trajectories.append((int(next_id), int(step_idx), int(cy), int(cx), float(amp[int(cy), int(cx)])))
+            next_id += 1
+
     return new_active_tracks, next_id
 
 if __name__ == "__main__":
@@ -1786,9 +1913,8 @@ if __name__ == "__main__":
     neighborhood_size = 3
     radius_log = []
     if not resumed:
-        _traj_cap = _env_int("LINEUM_TRAJ_MAX", 200000 if INFINITE_MODE else 0)
-        trajectories = deque(maxlen=_traj_cap) if (
-            _traj_cap and _traj_cap > 0) else []
+        _traj_cap = _env_int("LINEUM_TRAJ_MAX", 200000)
+        trajectories = deque(maxlen=_traj_cap)
         active_tracks = {}  # id -> (y, x)
         next_id = 0
     
@@ -3708,14 +3834,18 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
 
     metrics = {
         "dominant_freq_Hz": float(dominant_freq),
+        "f0_mean_hz": float(dominant_freq),
         "sbr": None if (sbr is None or sbr != sbr) else float(sbr),
+        "sbr_mean": None if (sbr is None or sbr != sbr) else float(sbr),
         "f0_ci": None if f0_ci is None else [float(f0_ci[0]), float(f0_ci[1])],
         "sbr_ci": None if sbr_ci is None else [float(sbr_ci[0]), float(sbr_ci[1])],
         "phi_half_life_steps": phi_half_life_steps,
         "phi_half_life_status": phi_half_life_status,
         "phi_steady_state": steady_state_val,
         "pct_neutral": float(pct_neutral) if pct_neutral is not None else None,
+        "topology_neutrality_n1": float(pct_neutral) if pct_neutral is not None else None,
         "mean_total_vortices": float(mean_total_vort) if mean_total_vort is not None else None,
+        "mean_vortices": float(mean_total_vort) if mean_total_vort is not None else None,
         "max_lifespan_steps": int(max_lifespan),
         "median_lifespan_steps": int(median_lifespan),
         "phi_mean_near": float(phi_mean_near),
@@ -3723,6 +3853,7 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
         "phi_std_near": None if phi_std_near is None else float(phi_std_near),
         "phi_std_field": float(phi_std_field),
         "low_mass_quasiparticle_count": int(low_mass_count),
+        "low_mass_qp_count": int(low_mass_count),
     }
 
     outputs = {
@@ -3812,9 +3943,11 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
     manifest = {
         "run": run_meta,
         "spectral_pipeline": spectral_meta,
+        "analysis_config": analysis_config,
         "kappa": {
             "mode": KAPPA_MODE,
             "hash": KAPPA_HASH,
+            "binary_hash": KAPPA_HASH,
             "hash_basis": "map_at_init", # static for now, dynamic could update this
             "is_dynamic": is_dynamic_kappa,
             "stats": {

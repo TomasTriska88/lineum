@@ -1,0 +1,71 @@
+{
+  "run": {
+    "run_id": 6,
+    "run_tag": "spec6_false_s41",
+    "seed": 41,
+    "run_mode": false,
+    "steps": 2000,
+    "grid_size": 128,
+    "pixel_size_m": 1e-12,
+    "time_step_s": 1e-21,
+    "equation": "Eq-4",
+    "kappa_mode": "constant",
+    "params": {
+      "alpha": 0.0007,
+      "beta": 0.015,
+      "delta": 0.00462,
+      "sigma_xi": 0.005
+    }
+  },
+  "invariants": {
+    "dim": "2D",
+    "bcs": "periodic",
+    "precision": "float64",
+    "stencil": "classic_laplace",
+    "grid_size": 128,
+    "dt": 0.01
+  },
+  "analysis_config": {
+    "spectrum_definition": "power |FFT(x)|^2",
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "estimator": "centroid",
+    "bootstrap_ci_level": 0.95
+  },
+  "metrics": {
+    "dominant_freq_Hz": 1.856777545095882e+20,
+    "f0_mean_hz": 1.856777545095882e+20,
+    "sbr": 3245.4600764773872,
+    "sbr_mean": 3245.4600764773872,
+    "phi_center": 4431.842082321052,
+    "phi_steady_state": 4232.881964031552,
+    "vortices_total": 20,
+    "mean_vortices": 59.1455,
+    "net_charge": 0,
+    "topology_neutrality_n1": 94.19999999999999,
+    "strict_neutrality": 88.94999999999999,
+    "particles_count": 4530,
+    "low_mass_qp_count": 49,
+    "max_lifespan_steps": 44,
+    "phi_half_life_steps": 1009,
+    "phi_half_life_status": "OK"
+  },
+  "audit_scope": {
+    "profile": "whitepaper_core",
+    "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+    "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
+  },
+  "code_fingerprint": {
+    "sha256": "48ea56d33508a9579e01afde42e3522e6d491d6c68a3b9631d926c431fe6390c"
+  },
+  "kappa": {
+    "mode": "constant",
+    "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+    "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a"
+  },
+  "run_configuration": {
+    "resolved_config_hash": "153015216b84e8d54df8e78983d93354638ce9be2763a14d40e6baa748d9b6bc"
+  },
+  "data_files": {}
+}

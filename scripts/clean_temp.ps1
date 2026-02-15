@@ -8,6 +8,7 @@ $patterns = @(
     "final_*.txt",
     "alias_*.txt",
     "test_output*.txt",
+    "contract_*.txt",
     "debug_*.py",
     "debug_*.txt"
 )
