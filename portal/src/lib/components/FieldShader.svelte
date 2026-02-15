@@ -28,6 +28,7 @@
         #define PSI_DIFFUSION 0.05
         #define VACUUM_FLUCTUATION 0.005
 
+        #define COUNT 6
         #define PI 3.14159265359
 
         // --- Galaxy Palette ---
@@ -55,7 +56,6 @@
             float filament = 0.0;
             float phase_winding = 0.0;
             
-            const int COUNT = 6;
             vec2 linon_pos[COUNT];
 
             for(int i = 0; i < COUNT; i++) {
@@ -92,22 +92,25 @@
 
             // --- Filamentary Tension (Connections) ---
             for(int i = 0; i < COUNT; i++) {
-                for(int j = i+1; j < COUNT; j++) {
-                    vec2 p1 = linon_pos[i];
-                    vec2 p2 = linon_pos[j];
-                    
-                    // Simple segment distance
-                    vec2 v = p2 - p1;
-                    vec2 w = uv - p1;
-                    float c1 = dot(w, v);
-                    float c2 = dot(v, v);
-                    float b = clamp(c1 / c2, 0.0, 1.0);
-                    vec2 pb = p1 + b * v;
-                    float d = length(uv - pb);
-                    
-                    // Only show filaments for nearby excitations (phi coupling)
-                    float proximity = smoothstep(1.5, 0.0, length(p1 - p2));
-                    filament += (0.001 / (d + 0.02)) * proximity;
+                // Nested loops in WebGL 1.0 MUST have constant bounds and simple initializers
+                for(int j = 0; j < COUNT; j++) {
+                    if (j > i) {
+                        vec2 p1 = linon_pos[i];
+                        vec2 p2 = linon_pos[j];
+                        
+                        // Simple segment distance
+                        vec2 v = p2 - p1;
+                        vec2 w = uv - p1;
+                        float c1 = dot(w, v);
+                        float c2 = dot(v, v);
+                        float b = clamp(c1 / c2, 0.0, 1.0);
+                        vec2 pb = p1 + b * v;
+                        float d = length(uv - pb);
+                        
+                        // Only show filaments for nearby excitations (phi coupling)
+                        float proximity = smoothstep(1.5, 0.0, length(p1 - p2));
+                        filament += (0.001 / (d + 0.02)) * proximity;
+                    }
                 }
             }
 
@@ -116,7 +119,8 @@
             nebula = mix(nebula, nebula_mag, smoothstep(0.8, 2.0, phi_field));
             
             // Contours (Topography of the Vacuum)
-            float contours = fract(phi_field * 10.0);
+            float layers = 10.0;
+            float contours = fract(phi_field * layers);
             float edge = smoothstep(0.0, 0.02, contours) - smoothstep(0.02, 0.04, contours);
             nebula += edge * nebula_mag * 0.3;
             
