@@ -60,7 +60,7 @@ export const content = {
             {
                 id: 'kappa',
                 label: 'Safe Zones',
-                description: 'The <span style="color: #7eb8ff">deep blue</span> background. It acts like a terrain map—particles can only survive in the <span style="color: #1a3a5a">darker</span> valleys. Lighter areas force them to move.',
+                description: 'The <span style="color: #7eb8ff">deep blue</span> background. It forms a landscape of stability—particles slide off the <span style="color: #fff">lighter</span> hills and settle in the safe, dark valleys.',
                 color: palette.kappa
             },
             {
