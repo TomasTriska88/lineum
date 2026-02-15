@@ -133,9 +133,33 @@
                 // Needle-sharp Linon Point (True Singularity)
                 // Even higher slope (220.0) for razor-sharp focus
                 psi_visual += exp(-d_psi * 220.0) * hue * 1.5;
-                psi_visual += (0.003 / (d_psi + 0.012)) * hue * 0.4; // Very minimal glow
-                
+                psi_visual += (0.003 / (d_psi + 0.012)) * hue * 0.4; // Very minimal                // Singularity Sparkle - High intensity needle center
                 psi_visual += exp(-d_psi * 550.0) * vec3(1.5);
+
+                // --- 🧬 2.5 Geodetic Tension (Dashed Force Vector) ---
+                vec2 dir = normalize(phi_center - psi_pos);
+                vec2 perp = vec2(-dir.y, dir.x);
+                vec2 diff = uv - psi_pos;
+                float projection = dot(diff, dir);
+                float lateral = dot(diff, perp);
+                
+                float line_len = length(phi_center - psi_pos) * 0.75;
+                float line_mask = step(0.005, projection) * step(projection, line_len);
+                
+                // 1. Dashed Line Body
+                float dash = step(0.5, fract(projection * 18.0 - t * 15.0));
+                float d_line = abs(lateral);
+                float line_vis = smoothstep(0.004, 0.0, d_line) * dash * 0.6;
+                
+                // 2. Arrowhead Tip (at line_len) - Now microscopic and hollow
+                float dist_from_tip = projection - line_len;
+                // Tiny "V" shape rather than solid triangle
+                float arrow_v = smoothstep(0.0, -0.02, dist_from_tip) * 0.012;
+                float arrow_vis = smoothstep(arrow_v, arrow_v - 0.003, abs(lateral)) 
+                                 * smoothstep(arrow_v - 0.006, arrow_v, abs(lateral)) // Hollow effect
+                                 * step(dist_from_tip, 0.0) * step(-0.025, dist_from_tip);
+                
+                psi_visual += (line_vis + arrow_vis * 1.2) * nebula_mag * line_mask;
             }
 
             // --- 🕸️ 4. Filamentary Tension ---

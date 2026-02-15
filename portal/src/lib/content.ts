@@ -76,6 +76,12 @@ export const content = {
                 color: palette.warp
             },
             {
+                id: 'tension',
+                label: 'Tension Vectors',
+                description: 'Digital pointers showing the direction of field attraction. These represent **Geodetic Tension**—the force of field geometry pulling on each Linon.',
+                color: '#ff00ff'
+            },
+            {
                 id: 'coupling',
                 label: 'Interaction Filaments (Coupling)',
                 description: 'Transient links between particles. These represent **quantum entanglement** or phase-coupling, where the movement of one Linon instantaneously affects the other through the field.',

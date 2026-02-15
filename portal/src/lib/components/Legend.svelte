@@ -454,6 +454,49 @@
         }
     }
 
+    /* 4.5 Tension Vector - Geodetic Force (Dashed) */
+    .visual-tension {
+        width: 1px;
+        height: 20px;
+        background: repeating-linear-gradient(
+            to bottom,
+            var(--color) 0,
+            var(--color) 4px,
+            transparent 4px,
+            transparent 8px
+        );
+        box-shadow: 0 0 8px var(--color);
+        animation: force-flow 1.5s infinite linear;
+        position: relative;
+        transform-origin: bottom;
+    }
+    .visual-tension::before {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: -2px;
+        width: 3px;
+        height: 3px;
+        border-left: 1px solid #fff;
+        border-top: 1px solid #fff;
+        transform: rotate(45deg);
+        opacity: 0.8;
+    }
+
+    @keyframes force-flow {
+        0% {
+            background-position: 0 0;
+            opacity: 0.6;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            background-position: 0 16px;
+            opacity: 0.6;
+        }
+    }
+
     /* 5. Coupling (Bonds) - Connection Line */
     .visual-coupling {
         width: 20px;
