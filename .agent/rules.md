@@ -21,3 +21,8 @@ These rules govern agent behavior and documentation standards for the Lineum Cor
     1. The current whitepaper in the `whitepapers/` folder.
     2. The most recent audit runs located in the `output_wp/` folder.
 - **Cross-Thread Awareness**: The agent must maintain this protocol even when switching between different conversation threads or laboratory tasks.
+
+## 5. Permission Protocol
+- **Strict Permission for Git**: The agent MUST NEVER perform `git push` or `git commit` without explicit permission from the USER for each specific set of changes.
+- **Auto-run Permission**: The agent is encouraged to use `SafeToAutoRun: true` for non-destructive commands (e.g., `npm test`, `python script.py`, `ls`, `git status`) to minimize user interruptions. User approval is still required for Git mutations unless specified otherwise.
+- **Verification First**: Before requesting permission to commit, the agent should verify the changes via automated tests and provide a clear summary of what will be committed.

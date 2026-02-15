@@ -38,19 +38,36 @@ TRAJ_PATH = os.path.join(RUN_DIR, "spec6_false_s41_trajectories.csv")
 print(f"Loading {TRAJ_PATH}...")
 df = pd.read_csv(TRAJ_PATH)
 
-# Select top 20 longest trajectories
-traj_lengths = df.groupby('id').size()
-top_ids = traj_lengths.sort_values(ascending=False).head(20).index.tolist()
+# Select top 20 trajectories by duration
+traj_info = df.groupby('id')['step'].agg(['min', 'max', 'count'])
+traj_info['duration'] = traj_info['max'] - traj_info['min']
+top_ids = traj_info.sort_values('duration', ascending=False).head(20).index.tolist()
 
 trajectories_data = []
 for tid in top_ids:
     t_df = df[df['id'] == tid].sort_values('step')
-    # Filter only every 10 steps to smooth/decimate
-    t_decimated = t_df.iloc[::10]
+    
+    # We need to map 2000 steps to 400 frames
+    # Each frame represents steps [i*5, (i+1)*5)
+    path = []
+    for i in range(400):
+        target_step = i * 5
+        # Find the closest step in this trajectory
+        # This ensures we have exactly 400 points even if the particle started late or ended early
+        step_row = t_df[t_df['step'] <= target_step].tail(1)
+        if step_row.empty:
+            step_row = t_df.head(1) # Start at first known pos if requested step is before birth
+        
+        path.append(step_row[['x', 'y']].values.tolist()[0])
+        
     trajectories_data.append({
         "id": int(tid),
-        "path": t_decimated[['x', 'y']].values.tolist()
+        "path": path
     })
+
+with open(os.path.join(LAB_DATA_DIR, "trajectories_audit.json"), "w") as f:
+    json.dump(trajectories_data, f)
+print("Saved trajectories_audit.json")
 
 # 3. Extract Resonance Data (f0 evolution vs Zeta Zeros)
 # Non-trivial zeros of Riemann Zeta function (imaginary parts)
