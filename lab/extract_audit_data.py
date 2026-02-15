@@ -68,7 +68,7 @@ phi_log['phi_norm'] = (phi_log['phi_center_abs'] / phi_log['phi_center_abs'].max
 
 resonance_payload = {
     "zeta_zeros": ZETA_ZEROS,
-    "phi_evolution": phi_log.iloc[::10]['phi_norm'].tolist(), # Sync with 200 frames
+    "phi_evolution": phi_log.iloc[::5]['phi_norm'].tolist(), # Sync with 400 frames (2000 steps / 5)
     "f0_canonical": 1.856777545095882e+20
 }
 
