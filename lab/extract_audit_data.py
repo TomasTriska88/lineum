@@ -79,11 +79,55 @@ def process_run(run_dir):
     # 4. Resonance & Harmonics
     phi_center_path = os.path.join(run_dir, f"{run_tag}_phi_center_log.csv")
     phi_log = pd.read_csv(phi_center_path)
-    phi_norm = (phi_log['phi_center_abs'] / phi_log['phi_center_abs'].max() * 40).tolist()[::step_per_frame]
+    phi_abs = phi_log['phi_center_abs'].values
+    phi_norm = (phi_abs / phi_abs.max() * 40).tolist()[::step_per_frame]
     
-    zeta_zeros = [14.134725, 21.022040, 25.010858, 30.424876, 32.935062]
+    zeta_zeros = [14.134725, 21.022040, 25.010858, 30.424876, 32.935062, 37.586178, 40.918719, 43.327073, 48.005151, 49.773832, 52.970321, 56.446248, 59.347044, 60.831779, 62.839]
     with open(os.path.join(target_dir, "resonance.json"), "w") as f:
-        json.dump({"zeta_zeros": zeta_zeros, "phi_evolution": phi_norm}, f)
+        json.dump({"zeta_zeros": zeta_zeros[:5], "phi_evolution": phi_norm}, f)
+
+    # --- 6. ADVANCED ANALYSIS (Riemann & Fourier) ---
+    # a) Fourier Spectrum Analysis (Image 1)
+    # Perform FFT on the full phi_center_abs signal
+    fft_vals = np.abs(np.fft.rfft(phi_abs))
+    fft_norm = (fft_vals / fft_vals.max() * 10).tolist()[:50] # Normalize and take first 50 components
+    
+    # b) Riemann Correlation (Image 2/3)
+    # Identify "DejaVu Points" (Significant events: Top intensity indices)
+    # This ensures points are distributed over time and have variance for correlation
+    top_indices = np.argsort(phi_abs)[-50:]
+    dejavu_raw = sorted(top_indices.tolist())
+    dejavu_points = dejavu_raw
+    
+    def normalize_list(l):
+        if not l: return []
+        mx = max(l)
+        return [(x / mx) for x in l]
+
+    zeta_zeros_full = [14.134725, 21.022040, 25.010858, 30.424876, 32.935062, 37.586178, 40.918719, 43.327073, 48.005151, 49.773832, 52.970321, 56.446248, 59.347044, 60.831779, 62.839, 65.112, 67.079, 69.115, 72.067, 75.704, 77.144, 79.337, 82.910, 84.735, 87.425, 88.809, 92.491, 94.651, 95.883, 98.831, 101.317, 103.725, 105.446, 107.168, 111.029, 111.874, 114.320, 116.226, 118.790, 121.370, 122.946, 124.256, 127.516, 129.578, 131.087, 133.497, 134.756, 138.116, 139.736, 141.123]
+    
+    norm_dejavu = normalize_list(dejavu_points)
+    norm_riemann = normalize_list(zeta_zeros_full[:len(norm_dejavu)])
+    
+    # Metrics
+    pearson_r = 0.0
+    euclidean_dist = 0.0
+    if len(norm_dejavu) > 1:
+        pearson_r = float(np.corrcoef(norm_dejavu, norm_riemann)[0, 1])
+        euclidean_dist = float(np.linalg.norm(np.array(norm_dejavu) - np.array(norm_riemann)))
+
+    discovery_data = {
+        "fourier_spectrum": [float(x) for x in fft_norm],
+        "dejavu_points": [int(x) for x in dejavu_points],
+        "norm_dejavu": [float(x) for x in norm_dejavu],
+        "norm_riemann": [float(x) for x in norm_riemann],
+        "pearson_r": float(pearson_r),
+        "euclidean_dist": float(euclidean_dist),
+        "zeta_zeros_ref": [float(x) for x in zeta_zeros_full[:len(norm_dejavu)]]
+    }
+    
+    with open(os.path.join(target_dir, "discovery.json"), "w") as f:
+        json.dump(discovery_data, f)
 
     # Simplified harmonics (reusing logic)
     phi_const = (1 + 5**0.5) / 2
@@ -101,7 +145,7 @@ def process_run(run_dir):
                 h_score = 1 - min(1, abs(b - golden_b) / golden_b)
             except: pass
         frame_harmonics.append(float(h_score))
-        c_score = max(0, 1.0 - (min([abs(phi_norm[i] - z) for z in zeta_zeros]) / 5.0))
+        c_score = max(0, 1.0 - (min([abs(phi_norm[i] - z) for z in zeta_zeros[:5]]) / 5.0))
         frame_correlation.append(float(c_score))
 
     with open(os.path.join(target_dir, "harmonics.json"), "w") as f:
@@ -121,6 +165,10 @@ def process_run(run_dir):
     with open(os.path.join(target_dir, "stretching_data.json"), "w") as f:
         json.dump({"times": [i*step_per_frame for i in range(frame_count)], "variances": all_vars, "distances": all_dists}, f)
 
+    # Update meta with discovery stats
+    meta["pearson_r"] = pearson_r
+    meta["euclidean_dist"] = euclidean_dist
+    
     return meta
 
 # Main Execution

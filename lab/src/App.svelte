@@ -3,6 +3,7 @@
     import { TopographyEngine } from "./lib/engines/TopographyEngine";
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
     import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte";
+    import HypothesisTester from "./lib/components/HypothesisTester.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -151,6 +152,13 @@
                 >
                     Tidal
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "hypothesis"}
+                    on:click={() => (activeTab = "hypothesis")}
+                >
+                    {$t("discovery_analysis")}
+                </button>
             </div>
 
             <div class="tab-content">
@@ -225,6 +233,8 @@
                     />
                 {:else if activeTab === "tidal"}
                     <TidalAnalyzer {dataRoot} />
+                {:else if activeTab === "hypothesis"}
+                    <HypothesisTester {dataRoot} />
                 {/if}
             </div>
         </div>

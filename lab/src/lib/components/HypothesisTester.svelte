@@ -1,0 +1,263 @@
+<script>
+    import { onMount } from "svelte";
+    import Chart from "chart.js/auto";
+    import { t } from "../i18n";
+
+    export let dataRoot = "";
+
+    let discoveryData = null;
+    let fourierCanvas;
+    let riemannCanvas;
+    let fourierChart;
+    let riemannChart;
+
+    $: if (dataRoot) {
+        loadDiscovery();
+    }
+
+    async function loadDiscovery() {
+        try {
+            const res = await fetch(
+                `${dataRoot}/discovery.json?t=${Date.now()}`,
+            );
+            discoveryData = await res.json();
+            renderCharts();
+        } catch (e) {
+            console.error("Failed to load discovery data", e);
+        }
+    }
+
+    function renderCharts() {
+        if (!discoveryData) return;
+        renderFourier();
+        renderRiemann();
+    }
+
+    function renderFourier() {
+        if (!fourierCanvas) return;
+        if (fourierChart) fourierChart.destroy();
+
+        const ctx = fourierCanvas.getContext("2d");
+        fourierChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: discoveryData.fourier_spectrum.map((_, i) =>
+                    (i / 100).toFixed(2),
+                ),
+                datasets: [
+                    {
+                        label: "Riemann - frekvenční spektrum",
+                        data: discoveryData.fourier_spectrum,
+                        borderColor: "#ffaa00",
+                        backgroundColor: "rgba(255, 170, 0, 0.2)",
+                        tension: 0.1,
+                        pointRadius: 2,
+                        borderWidth: 1.5,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                },
+                scales: {
+                    x: {
+                        grid: { color: "rgba(0, 255, 255, 0.1)" },
+                        ticks: { color: "#00ffff", font: { size: 10 } },
+                        title: {
+                            display: true,
+                            text: "Frekvenční složka (relativní index)",
+                            color: "#00ffff",
+                        },
+                    },
+                    y: {
+                        grid: { color: "rgba(0, 255, 255, 0.1)" },
+                        ticks: { color: "#00ffff" },
+                        title: {
+                            display: true,
+                            text: "Amplituda",
+                            color: "#00ffff",
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    function renderRiemann() {
+        if (!riemannCanvas) return;
+        if (riemannChart) riemannChart.destroy();
+
+        const ctx = riemannCanvas.getContext("2d");
+        riemannChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: discoveryData.norm_riemann.map((_, i) => i),
+                datasets: [
+                    {
+                        label: "Riemannovy nuly",
+                        data: discoveryData.norm_riemann,
+                        borderColor: "#cc0000",
+                        backgroundColor: "transparent",
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0,
+                    },
+                    {
+                        label: "DejaVu body (Lineum)",
+                        data: discoveryData.norm_dejavu,
+                        borderColor: "#ffaa00",
+                        backgroundColor: "#ffaa00",
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        tension: 0,
+                        showLine: true,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: "#00ffff", boxWidth: 12 },
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { color: "rgba(0, 255, 255, 0.1)" },
+                        ticks: { color: "#00ffff" },
+                        title: {
+                            display: true,
+                            text: "Index",
+                            color: "#00ffff",
+                        },
+                    },
+                    y: {
+                        grid: { color: "rgba(0, 255, 255, 0.1)" },
+                        ticks: { color: "#00ffff" },
+                        title: {
+                            display: true,
+                            text: "Normalizovaná hodnota",
+                            color: "#00ffff",
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    onMount(() => {
+        if (dataRoot) loadDiscovery();
+    });
+</script>
+
+<div class="hypothesis-tester">
+    <div class="panel-header">
+        <div class="panel-title">{$t("discovery_analysis")}</div>
+    </div>
+
+    <div class="discovery-metrics">
+        <div class="metric">
+            <span class="label">{$t("pearson_correlation")}</span>
+            <span class="value" class:high={discoveryData?.pearson_r > 0.9}>
+                {discoveryData?.pearson_r?.toFixed(4) || "0.0000"}
+            </span>
+        </div>
+        <div class="metric">
+            <span class="label">{$t("euclidean_distance")}</span>
+            <span class="value">
+                {discoveryData?.euclidean_dist?.toFixed(4) || "0.0000"}
+            </span>
+        </div>
+    </div>
+
+    <div class="chart-section">
+        <h3>{$t("fourier_title")}</h3>
+        <div class="chart-container">
+            <canvas bind:this={fourierCanvas}></canvas>
+        </div>
+    </div>
+
+    <div class="chart-section">
+        <h3>{$t("riemann_title")}</h3>
+        <div class="chart-container">
+            <canvas bind:this={riemannCanvas}></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hypothesis-tester {
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(0, 20, 20, 0.5);
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        color: #00ffff;
+        font-family: "Courier New", Courier, monospace;
+    }
+
+    .panel-header {
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        padding-bottom: 10px;
+    }
+
+    .panel-title {
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .discovery-metrics {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 25px;
+        background: rgba(0, 255, 255, 0.05);
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .metric {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .metric .label {
+        font-size: 0.6rem;
+        opacity: 0.7;
+        margin-bottom: 4px;
+    }
+
+    .metric .value {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .metric .value.high {
+        color: #00ff00;
+        text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+
+    .chart-section {
+        margin-bottom: 30px;
+    }
+
+    h3 {
+        font-size: 0.7rem;
+        margin-bottom: 10px;
+        opacity: 0.8;
+        border-left: 3px solid #ffaa00;
+        padding-left: 10px;
+    }
+
+    .chart-container {
+        height: 200px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+    }
+</style>

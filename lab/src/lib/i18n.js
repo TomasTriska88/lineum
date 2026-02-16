@@ -62,7 +62,12 @@ export const translations = {
         intensity_label: "INTENZITA REZONANCE [NORMOVÁNO]",
         freq_label: "FREKVENCE LINONŮ (f₀)",
         metrics_harmony: "HARMONIE Φ:",
-        metrics_correlation: "KORELACE S NAŠÍM VESMÍREM:"
+        metrics_correlation: "KORELACE S NAŠÍM VESMÍREM:",
+        discovery_analysis: "OVĚŘOVÁNÍ HYPOTÉZ",
+        fourier_title: "Fourierova analýza tvaru (prvních 50 frekvencí)",
+        riemann_title: "Srovnání Riemannových nul a DejaVu bodů",
+        pearson_correlation: "Pearsonova korelace (R)",
+        euclidean_distance: "Euklidovská vzdálenost"
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -125,7 +130,12 @@ export const translations = {
         intensity_label: "RESONANCE INTENSITY [NORMALIZED]",
         freq_label: "LINON FREQUENCY (f₀)",
         metrics_harmony: "HARMONY Φ:",
-        metrics_correlation: "CORRELATION WITH OUR UNIVERSE:"
+        metrics_correlation: "CORRELATION WITH OUR UNIVERSE:",
+        discovery_analysis: "HYPOTHESIS DISCOVERY",
+        fourier_title: "Fourier Shape Analysis (Top 50 Frequencies)",
+        riemann_title: "Riemann Zeros vs DejaVu Points",
+        pearson_correlation: "Pearson Correlation (R)",
+        euclidean_distance: "Euclidean Distance"
     }
 };
 
