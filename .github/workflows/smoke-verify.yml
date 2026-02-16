@@ -1,0 +1,24 @@
+name: Post-Deployment Smoke Test
+
+on:
+  deployment_status:
+
+jobs:
+  smoke-test:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: pip install requests
+        
+      - name: Run Smoke Verification
+        run: python tools/verify_deploy.py
+        env:
+          TARGET_URL: ${{ github.event.deployment.payload.web_url || 'https://lineum.io' }}
