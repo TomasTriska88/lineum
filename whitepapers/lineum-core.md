@@ -316,7 +316,7 @@ In practice we verify stability empirically via Section 5 metrics (SBR, topologi
 
 Simulations are performed on a discrete square grid with periodic boundary conditions. Each step updates ψ and φ according to the canonical equation; **κ is a static spatial map** that is sampled (not evolved) at each step. We apply the discrete Laplacian for diffusion terms and nearest-neighbor operations for gradients.
 
-## 4.1 Grid and Initialization
+## 4.1 Grid and Initialization {#calibration-seed}
 
 – **Canonical grid:** 128×128 cells (periodic BCs). All results reported in this core paper use this grid.  
 – **Exploratory grids (non-canonical):** 256×256 or 512×512 may be used for visualization or stress tests, but they are not part of the canonical results.  
@@ -361,7 +361,7 @@ for t in range(T):
         save_state(...)
 ```
 
-## 4.3 Reproducibility
+## 4.3 Reproducibility {#resonance-scanner}
 
 All runs are initialized with fixed random seeds so that the **reference implementation** behaves deterministically under the same runtime/locked profile.  
 Simulation parameters and κ-maps are stored alongside results to allow exact replication.
@@ -390,7 +390,7 @@ Other informal tolerances and narrative checks may be used for developer debuggi
 
 Replicators must pin `Δt`, pixel size, grid size, seed, κ-mode, and use the provided manifest. Cross-language runs are encouraged; comparisons should be reported via these metrics rather than pixel-wise diffs.
 
-## 4.4 Detection of Phenomena
+## 4.4 Detection of Phenomena {#topology-neutrality}
 
 Detected phenomena in the core study include:
 – formation and motion of **linons**,
@@ -403,7 +403,7 @@ Detection is performed using automated field analysis:
 – identifying vortex cores via phase winding,  
 – qualitative φ-basin / trapping patterns (observational term; not contract-validated in v1).
 
-## 4.5 Output
+## 4.5 Output {#lifespan}
 
 For each run, the system generates:
 
@@ -417,7 +417,7 @@ For each run, the system generates:
 
 Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix A for the prefix convention.
 
-## 4.6 Reproduction Manifest (canonical run)
+## 4.6 Reproduction Manifest (canonical run) {#phi-half-life}
 
 This manifest pins all run-level switches for the canonical reference used in this paper.
 
@@ -450,7 +450,7 @@ _Kappa hash note (uniform map)._ Even for κ=constant, `kappa_map_bin_hash` refe
 
 **Artifacts (prefixing):** all outputs are prefixed with `{RUN_TAG}_…` (e.g., `spec6_false_s41_lineum_report.html`), as listed in §4.5 and Appendix A.
 
-## 4.7 Data & Code Availability
+## 4.7 Data & Code Availability {#particle-taxonomy}
 
 All canonical artifacts for the run `spec6_false_s41` are provided with this preprint as ancillary files: the canonical HTML report (`spec6_false_s41_lineum_report.html`), the reference implementation (`lineum.py`), and the generated CSV/PNG/GIF outputs listed in §4.5.
 
@@ -1381,3 +1381,24 @@ sha256sum \
 
 **DOI snapshot integrity (when applicable)**
 - [ ] `sha256sums.txt` included and verified.
+
+## Appendix I — Technical Maintenance & Anchor ID System
+
+To prevent "Audit Drift" (where section number changes break external references), this manuscript uses **persistent Anchor IDs**.
+
+### I.1 Usage Policy
+Every section or subsection that is referenced by a **Contract Suite** (`paper_ref`) or the **Laboratory UI** should have a hidden anchor ID attached to its header.
+
+**Syntax (Markdown):**
+`### Section Title {#anchor-id}`
+
+### I.2 Mandatory Anchors
+The following anchors are reserved and must remain constant across manuscript revisions:
+- `{#resonance-scanner}`: Links to §4.3 (Spectral Resonance Analysis).
+- `{#topology-neutrality}`: Links to §4.4 (Topological Neutrality).
+- `{#phi-half-life}`: Links to §4.6 (Field Φ Stability & Half-Life).
+- `{#particle-taxonomy}`: Links to §4.7 (Linon Detection & Quasiparticles).
+- `{#calibration-seed}`: Links to §4.1 (Initial Conditions & Seed Verification).
+
+### I.3 Agent Instruction (Maintenance)
+**IMPORTANT for AI Agents:** When moving or renaming headers, you MUST preserve the exact anchor ID string. If a new metric is added to the contract suite, you MUST create a corresponding anchor ID in the section describing that metric.
