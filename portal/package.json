@@ -13,7 +13,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"check:i18n": "node scripts/check-czech.js",
 		"test": "vitest run",
-		"prebuild": "npm run test"
+		"sync": "node scripts/sync-data.js",
+		"prebuild": "npm run sync && npm run test"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^5.2.11",

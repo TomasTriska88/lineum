@@ -10,9 +10,8 @@ export async function GET({ params }) {
         throw error(400, 'Invalid filename');
     }
 
-    // Path in monorepo: we are in portal/src/routes/source/[filename]/+server.ts
-    // Project root (portal/) is usually current working directory
-    const filePath = path.join(process.cwd(), '..', 'source', filename);
+    // Path in monorepo: we synced root/source to portal/src/lib/data/source
+    const filePath = path.join(process.cwd(), 'src', 'lib', 'data', 'source', filename);
 
     if (!fs.existsSync(filePath)) {
         console.error(`Asset not found: ${filePath}`);
