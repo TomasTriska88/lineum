@@ -1,11 +1,9 @@
 <script>
     import { onMount } from "svelte";
-    import Chart from "chart.js/auto";
+    import InteractiveChart from "./InteractiveChart.svelte";
 
     export let dataRoot = "";
 
-    let chartCanvas;
-    let chart;
     let stretchingData = null;
 
     // Reactive data fetch when dataRoot changes
@@ -17,19 +15,14 @@
         try {
             const res = await fetch(`${dataRoot}/stretching_data.json`);
             stretchingData = await res.json();
-            renderChart();
         } catch (e) {
             console.error("Failed to load stretching data", e);
         }
     }
 
-    function renderChart() {
-        if (!stretchingData || !chartCanvas) return;
-
-        if (chart) chart.destroy();
-
-        const ctx = chartCanvas.getContext("2d");
-        chart = new Chart(ctx, {
+    function getChartConfig() {
+        if (!stretchingData) return {};
+        return {
             type: "line",
             data: {
                 labels: stretchingData.times,
@@ -65,9 +58,17 @@
                 },
                 plugins: {
                     legend: { display: false },
+                    zoom: {
+                        zoom: {
+                            wheel: { enabled: true },
+                            pinch: { enabled: true },
+                            mode: "x",
+                        },
+                        pan: { enabled: true, mode: "x" },
+                    },
                 },
             },
-        });
+        };
     }
 </script>
 
@@ -79,9 +80,13 @@
         </p>
     </div>
 
-    <div class="chart-container">
-        <canvas bind:this={chartCanvas}></canvas>
-    </div>
+    {#if stretchingData}
+        <InteractiveChart
+            title="Tidal Dispersion Spectrum"
+            config={getChartConfig()}
+            on:maximize
+        />
+    {/if}
 
     {#if stretchingData}
         {@const minVar = Math.min(
@@ -136,13 +141,6 @@
         font-size: 0.7rem;
         color: #888;
         margin: 4px 0 0 0;
-    }
-
-    .chart-container {
-        height: 200px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(0, 255, 255, 0.1);
-        padding: 10px;
     }
 
     .metrics-grid {

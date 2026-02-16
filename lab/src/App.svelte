@@ -4,6 +4,7 @@
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
     import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte";
     import HypothesisTester from "./lib/components/HypothesisTester.svelte";
+    import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -19,6 +20,10 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
+
+    // Global Modal State
+    let maximizedChart = null; // { title, config }
+    let error = null;
 
     // Persist active tab across reloads
     const savedTab = localStorage.getItem("lab_active_tab");
@@ -42,11 +47,18 @@
     };
 
     onMount(async () => {
-        const res = await fetch("/data/manifest.json");
-        manifest = await res.json();
-        if (manifest.length > 0) {
-            // Default to the first (latest) run in manifest
-            await loadRun(manifest[0].run_id);
+        try {
+            const res = await fetch("/data/manifest.json");
+            if (!res.ok) throw new Error("Manifest not found");
+            manifest = await res.json();
+            if (manifest.length > 0) {
+                // Default to the first (latest) run in manifest
+                await loadRun(manifest[0].run_id);
+            }
+        } catch (e) {
+            console.error("Initialization failed:", e);
+            error = e.message;
+            loading = false;
         }
     });
 
@@ -100,6 +112,14 @@
         <div class="loader">
             <div class="spinner"></div>
             <p>{$t("loading")}</p>
+        </div>
+    {:else if error}
+        <div class="loader">
+            <div class="error-msg">
+                <h3>INITIALIZATION FAILURE</h3>
+                <p>{error}</p>
+                <button on:click={() => window.location.reload()}>RETRY</button>
+            </div>
         </div>
     {/if}
 
@@ -256,9 +276,15 @@
                         harmonics={harmonicData}
                     />
                 {:else if activeTab === "tidal"}
-                    <TidalAnalyzer {dataRoot} />
+                    <TidalAnalyzer
+                        {dataRoot}
+                        on:maximize={(e) => (maximizedChart = e.detail)}
+                    />
                 {:else if activeTab === "hypothesis"}
-                    <HypothesisTester {dataRoot} />
+                    <HypothesisTester
+                        {dataRoot}
+                        on:maximize={(e) => (maximizedChart = e.detail)}
+                    />
                 {/if}
             </div>
         </div>
@@ -288,8 +314,52 @@
                 </div>
             </div>
         </div>
+
+        <div class="sandbox-disclaimer">
+            <div class="disclaimer-header">
+                <span class="warning-icon">!</span>
+                <strong>{$t("sandbox_title")}</strong>
+            </div>
+            <p>{$t("sandbox_warning")}</p>
+        </div>
     </div>
+
+    {#if maximizedChart}
+        <div
+            class="global-modal-overlay"
+            on:click|self={() => (maximizedChart = null)}
+            role="dialog"
+            aria-modal="true"
+            on:keydown={(e) => e.key === "Escape" && (maximizedChart = null)}
+            tabindex="-1"
+        >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>{maximizedChart.title}</h3>
+                    <button
+                        type="button"
+                        class="close-btn"
+                        on:click={() => (maximizedChart = null)}
+                        aria-label="Close">&times;</button
+                    >
+                </div>
+                <div class="modal-body">
+                    {#key maximizedChart}
+                        <InteractiveChart
+                            title={maximizedChart.title}
+                            config={maximizedChart.config}
+                            showMax={false}
+                        />
+                    {/key}
+                </div>
+            </div>
+        </div>
+    {/if}
 </main>
+
+<svelte:window
+    on:keydown={(e) => e.key === "Escape" && (maximizedChart = null)}
+/>
 
 <style>
     main {
@@ -301,24 +371,40 @@
     }
 
     .canvas-container {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
+        z-index: 1;
+        pointer-events: none;
     }
 
     .overlay {
         position: absolute;
-        inset: 32px;
+        top: 32px;
+        left: 32px;
+        right: 32px;
+        bottom: 32px;
         pointer-events: none;
         z-index: 100;
         display: grid;
         grid-template-columns: 400px 1fr 400px;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto 60px 1fr auto;
+        grid-template-areas:
+            "header header header"
+            "alert alert alert"
+            "left . right"
+            "footer footer footer";
         gap: 20px;
-        min-height: calc(100vh - 64px); /* Stabilize layout */
+        box-sizing: border-box;
+        overflow: hidden;
     }
 
     .header-section {
-        grid-column: 1 / 4;
+        grid-area: header;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         pointer-events: all;
     }
 
@@ -367,12 +453,12 @@
     }
 
     .central-alert-system {
-        grid-column: 2;
-        grid-row: 1;
+        grid-area: alert;
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         pointer-events: none;
+        min-height: 50px;
     }
 
     .side-panel {
@@ -381,16 +467,15 @@
         flex-direction: column;
         gap: 20px;
         min-height: 0; /* Crucial for scrolling inside grid/flex */
+        height: 100%;
     }
 
     .side-panel-left {
-        grid-column: 1;
-        grid-row: 2;
+        grid-area: left;
     }
 
     .side-panel-right {
-        grid-column: 3;
-        grid-row: 2;
+        grid-area: right;
     }
 
     h1 {
@@ -512,6 +597,41 @@
         box-shadow: inset 0 -2px 0 #00ffff;
     }
 
+    /* Sandbox Disclaimer Styling */
+    .sandbox-disclaimer {
+        grid-area: footer;
+        background: rgba(255, 170, 0, 0.08);
+        border: 1px solid rgba(255, 170, 0, 0.4);
+        padding: 15px;
+        margin-top: auto;
+        backdrop-filter: blur(10px);
+        border-radius: 4px;
+        pointer-events: all;
+    }
+
+    .disclaimer-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: #ffaa00;
+    }
+
+    .disclaimer-header strong {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .sandbox-disclaimer p {
+        margin: 0;
+        font-size: 0.65rem;
+        line-height: 1.5;
+        color: #eee;
+        opacity: 0.8;
+        font-style: italic;
+    }
+
     .tab-content {
         flex: 1;
         overflow-y: auto;
@@ -519,6 +639,7 @@
         backdrop-filter: blur(10px);
         scrollbar-width: thin;
         scrollbar-color: rgba(0, 255, 255, 0.3) transparent;
+        border-bottom: 1px solid rgba(0, 255, 255, 0.1);
     }
 
     .tab-content::-webkit-scrollbar {
@@ -637,11 +758,36 @@
         opacity: 0.5;
     }
 
+    .error-msg {
+        text-align: center;
+        background: rgba(255, 0, 0, 0.1);
+        border: 1px solid #ff0000;
+        padding: 40px;
+        color: #ff0000;
+        max-width: 400px;
+    }
+
+    .error-msg h3 {
+        margin-top: 0;
+        letter-spacing: 4px;
+        font-size: 1.2rem;
+    }
+
+    .error-msg button {
+        margin-top: 20px;
+        background: #ff0000;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
     .event-marker {
         background: rgba(255, 170, 0, 0.3);
         color: #fff;
-        padding: 10px 20px;
-        font-size: 0.8rem;
+        padding: 6px 16px;
+        font-size: 0.7rem;
         font-weight: bold;
         border: 2px solid #ffaa00;
         text-align: center;
@@ -651,6 +797,7 @@
         backdrop-filter: blur(10px);
         box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
         pointer-events: all;
+        letter-spacing: 2px;
     }
 
     @keyframes pulse-alert {
@@ -702,5 +849,69 @@
         50% {
             opacity: 0.6;
         }
+    }
+
+    /* Global Modal Overlay */
+    .global-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(20px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        pointer-events: all;
+    }
+
+    .global-modal-overlay .modal-content {
+        width: 100%;
+        max-width: 1300px;
+        height: 100%;
+        max-height: 85vh;
+        background: #050505;
+        border: 1px solid #00ffff;
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+        box-shadow: 0 0 100px rgba(0, 255, 255, 0.3);
+        position: relative;
+    }
+
+    .global-modal-overlay .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+        padding-bottom: 15px;
+    }
+
+    .global-modal-overlay .modal-header h3 {
+        font-size: 1.2rem;
+        letter-spacing: 4px;
+        color: #00ffff;
+        margin: 0;
+        border: none;
+    }
+
+    .global-modal-overlay .modal-body {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .global-modal-overlay .close-btn {
+        background: transparent;
+        border: none;
+        color: #00ffff;
+        font-size: 2.5rem;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.2s;
+    }
+
+    .global-modal-overlay .close-btn:hover {
+        color: #fff;
     }
 </style>
