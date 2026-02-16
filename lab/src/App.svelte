@@ -11,6 +11,9 @@
     let frame = 0;
     let totalFrames = 0;
     let playbackSpeed = 1.0;
+    let manifest = [];
+    let selectedRunId = "";
+    let dataRoot = ""; // Path to current run data
     let resonanceData = null; // 🔬 Spectral data
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
@@ -31,42 +34,57 @@
     };
 
     onMount(async () => {
-        // Load audit data with cache-busting
-        const t_now = Date.now();
-        const phiRes = await fetch(`/data/phi_frames.json?t=${t_now}`);
-        const phiData = await phiRes.json();
-
-        const trajRes = await fetch(`/data/trajectories.json?t=${t_now}`);
-        const trajData = await trajRes.json();
-
-        const resRes = await fetch(`/data/resonance.json?t=${t_now}`);
-        resonanceData = await resRes.json();
-
-        const metaRes = await fetch(`/data/metadata.json?t=${t_now}`);
-        metadata = await metaRes.json();
-
-        const harmRes = await fetch(`/data/harmonics.json?t=${t_now}`);
-        harmonicData = await harmRes.json();
-
-        totalFrames = phiData.metadata.frame_count;
-
-        engine = new TopographyEngine(container, phiData, trajData);
-        engine.harmonicData = harmonicData;
-        engine.playbackSpeed = playbackSpeed;
-
-        // 📡 Hook into engine's frame updates instead of polling
-        engine.onFrameUpdate = (newFrame) => {
-            frame = newFrame;
-        };
-
-        engine.animate();
-
-        loading = false;
-
-        return () => {
-            engine.dispose();
-        };
+        const res = await fetch("/data/manifest.json");
+        manifest = await res.json();
+        if (manifest.length > 0) {
+            // Default to the first (latest) run in manifest
+            await loadRun(manifest[0].run_id);
+        }
     });
+
+    async function loadRun(runId) {
+        loading = true;
+        selectedRunId = runId;
+        dataRoot = `/data/runs/${runId}`;
+        const t_now = Date.now();
+
+        try {
+            if (engine) engine.dispose();
+
+            const phiRes = await fetch(
+                `${dataRoot}/phi_frames.json?t=${t_now}`,
+            );
+            const phiData = await phiRes.json();
+
+            const trajRes = await fetch(
+                `${dataRoot}/trajectories.json?t=${t_now}`,
+            );
+            const trajData = await trajRes.json();
+
+            const resRes = await fetch(`${dataRoot}/resonance.json?t=${t_now}`);
+            resonanceData = await resRes.json();
+
+            const metaRes = await fetch(`${dataRoot}/metadata.json?t=${t_now}`);
+            metadata = await metaRes.json();
+
+            const harmRes = await fetch(
+                `${dataRoot}/harmonics.json?t=${t_now}`,
+            );
+            harmonicData = await harmRes.json();
+
+            totalFrames = phiData.metadata.frame_count;
+
+            engine = new TopographyEngine(container, phiData, trajData);
+            engine.harmonicData = harmonicData;
+            engine.playbackSpeed = playbackSpeed;
+            engine.onFrameUpdate = (newFrame) => (frame = newFrame);
+            engine.animate();
+
+            loading = false;
+        } catch (e) {
+            console.error("Failed to load run:", runId, e);
+        }
+    }
 </script>
 
 <main>
@@ -82,9 +100,24 @@
         <div class="header-section">
             <div class="header-top">
                 <h1>{$t("simulakrum")}</h1>
-                <button class="lang-btn" on:click={toggleLanguage}>
-                    {$locale === "cs" ? "EN" : "CZ"}
-                </button>
+                <div class="header-controls">
+                    {#if manifest.length > 1}
+                        <select
+                            class="run-selector"
+                            bind:value={selectedRunId}
+                            on:change={(e) => loadRun(e.target.value)}
+                        >
+                            {#each manifest as run}
+                                <option value={run.run_id}>
+                                    {run.run_tag} ({run.timestamp})
+                                </option>
+                            {/each}
+                        </select>
+                    {/if}
+                    <button class="lang-btn" on:click={toggleLanguage}>
+                        {$locale === "cs" ? "EN" : "CZ"}
+                    </button>
+                </div>
             </div>
             <p class="subtitle">{$t("sub_title")}</p>
         </div>
@@ -191,7 +224,7 @@
                         harmonics={harmonicData}
                     />
                 {:else if activeTab === "tidal"}
-                    <TidalAnalyzer />
+                    <TidalAnalyzer {dataRoot} />
                 {/if}
             </div>
         </div>
@@ -258,7 +291,28 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        max-width: 400px;
+        margin-bottom: 5px;
+    }
+
+    .header-controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .run-selector {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        color: #00ffff;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .run-selector option {
+        background: #050505;
+        color: #fff;
     }
 
     .lang-btn {

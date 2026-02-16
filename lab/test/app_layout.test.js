@@ -16,7 +16,9 @@ describe('Lab UI Structural Integrity (Invariant Test)', () => {
             '.value',
             '.jump-btn',
             '.speed-control',
-            '.toggle-btn'
+            '.toggle-btn',
+            '.run-selector',
+            '.header-controls'
         ];
 
         requiredClasses.forEach(cls => {
@@ -40,6 +42,6 @@ describe('Lab UI Structural Integrity (Invariant Test)', () => {
 
     it('should have the TidalAnalyzer component imported and used', () => {
         expect(content).toContain('import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte"');
-        expect(content).toContain('<TidalAnalyzer />');
+        expect(content).toContain('<TidalAnalyzer {dataRoot} />');
     });
 });

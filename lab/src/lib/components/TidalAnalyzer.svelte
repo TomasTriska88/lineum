@@ -2,24 +2,31 @@
     import { onMount } from "svelte";
     import Chart from "chart.js/auto";
 
+    export let dataRoot = "";
+
     let chartCanvas;
     let chart;
     let stretchingData = null;
 
-    onMount(async () => {
+    // Reactive data fetch when dataRoot changes
+    $: if (dataRoot) {
+        loadData();
+    }
+
+    async function loadData() {
         try {
-            // In a real environment, we'd fetch from a stable path.
-            // For the diagnostic, we use the scratch data if available.
-            const res = await fetch("/data/stretching_data.json");
+            const res = await fetch(`${dataRoot}/stretching_data.json`);
             stretchingData = await res.json();
             renderChart();
         } catch (e) {
             console.error("Failed to load stretching data", e);
         }
-    });
+    }
 
     function renderChart() {
         if (!stretchingData || !chartCanvas) return;
+
+        if (chart) chart.destroy();
 
         const ctx = chartCanvas.getContext("2d");
         chart = new Chart(ctx, {

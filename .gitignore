@@ -31,8 +31,9 @@ vite.config.js.timestamp-*
 *.mjs.map
 
 # Lab data (generated, matched by extract_audit_data.py)
+lab/public/data/runs/*
 lab/public/data/*.json
-!lab/public/data/metadata.json
+!lab/public/data/manifest.json
 
 # Local debug/proof artifacts (Antigravity)
 repro_*.py
