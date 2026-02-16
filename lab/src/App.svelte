@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { TopographyEngine } from "./lib/engines/TopographyEngine";
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
+    import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -14,7 +15,7 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
-    let activeTab = "stats"; // "scanner" | "stats"
+    let activeTab = "stats"; // "scanner" | "stats" | "tidal"
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
@@ -110,6 +111,13 @@
                 >
                     {$t("tab_scanner")}
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "tidal"}
+                    on:click={() => (activeTab = "tidal")}
+                >
+                    Tidal
+                </button>
             </div>
 
             <div class="tab-content">
@@ -176,12 +184,14 @@
                             </button>
                         </div>
                     </div>
-                {:else}
+                {:else if activeTab === "scanner"}
                     <ZetaScanner
                         {frame}
                         data={resonanceData}
                         harmonics={harmonicData}
                     />
+                {:else if activeTab === "tidal"}
+                    <TidalAnalyzer />
                 {/if}
             </div>
         </div>

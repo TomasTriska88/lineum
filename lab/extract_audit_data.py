@@ -188,4 +188,49 @@ harmonic_payload = {
 
 with open(os.path.join(LAB_DATA_DIR, "harmonics.json"), "w") as f:
     json.dump(harmonic_payload, f)
-print(f"Saved harmonics.json with {len(frame_harmonics)} dynamic steps.")
+# 6. Automated Tidal Analysis (Stretching)
+print("Performing automated Tidal Stretching analysis...")
+
+# Logic: Find linons that are near each other and move toward high phi
+# To simplify for the pipeline: 
+# 1. We'll take the top 5 longest-lived linons as a "sample cluster"
+# 2. Or, better: Calculate the variance of ALL active linons per frame 
+#    relative to their moving center, weighted by distance to phi-trap.
+# Let's use the variance of the top 20 linons tracked above.
+
+all_variances = []
+all_distances = []
+center_phi = np.array([64, 64]) # Assuming center is the main trap area
+
+for i in range(FRAME_COUNT):
+    active_positions = []
+    for traj in trajectories_data:
+        p = traj['path'][i]
+        if p is not None:
+            active_positions.append([p[0], p[1]])
+    
+    if len(active_positions) >= 2:
+        pts = np.array(active_positions)
+        var = np.var(pts[:, 0]) + np.var(pts[:, 1])
+        
+        # Mean distance to center
+        mean_pos = np.mean(pts, axis=0)
+        dist = np.sqrt(np.sum((mean_pos - center_phi)**2))
+        
+        all_variances.append(float(var))
+        all_distances.append(float(dist))
+    else:
+        all_variances.append(0.0)
+        all_distances.append(128.0) # Far away
+
+stretching_payload = {
+    "times": [i * STEP_PER_FRAME for i in range(FRAME_COUNT)],
+    "variances": all_variances,
+    "distances": all_distances
+}
+
+with open(os.path.join(LAB_DATA_DIR, "stretching_data.json"), "w") as f:
+    json.dump(stretching_payload, f)
+print(f"Saved stretching_data.json (Automated from Audit)")
+
+print("\n--- Pipeline Complete: Lab Data Sync Successful ---")

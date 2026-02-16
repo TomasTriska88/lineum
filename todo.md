@@ -428,6 +428,10 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 - Simulovat shluk kvazičástic, sledovat deformaci při pohybu k φ-maximu
 - Porovnat tvar a polohu shluku v čase
 - [ ] Vizualizace přeskupení |ψ| a overlay s φ
+- [ ] (Tříska [HYPOTHESIS]) **Tidal Stretching (Přílivové natahování):** Ověřit mechanistický model natahování objektu složeného z linonů při přiblížení k masivní φ-pasti.
+      - [ ] Nasimulovat shluk (cluster) linonů a měřit rozptyl (varianci) jejich pozic v čase.
+      - [ ] Potvrdit, že linony na "přední" straně zrychlují dříve/více kvůli gradientu φ, což vede k natažení a rozpadu objektu na jednotlivé linony (spagetifikace).
+      - [ ] Sledovat, zda po rozpadu dochází k individuálnímu "uzavření" (Structural Closure) linonů v centru pasti.
 
 ### 🔲 8. Rychlost přiblížení objektů podle „hmotnosti“ #test
 
