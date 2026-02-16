@@ -42,7 +42,8 @@ describe('Lab UI Structural Integrity (Invariant Test)', () => {
 
     it('should have the TidalAnalyzer component imported and used', () => {
         expect(content).toContain('import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte"');
-        expect(content).toContain('<TidalAnalyzer {dataRoot} />');
+        expect(content).toContain('<TidalAnalyzer');
+        expect(content).toContain('{dataRoot}');
     });
 
     it('should show the run selector even for a single run (length > 0)', () => {

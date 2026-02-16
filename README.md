@@ -100,6 +100,18 @@ Manuscript text & figures in `whitepaper/`: CC BY 4.0 (see the license note in `
 
 ---
 
+## Verification & Testing
+
+This project enforces a **"No Temporary Tests"** policy. All changes must be verified using permanent, reusable test suites. Diagnostic or "quick" scratch scripts are only for exploration and should not be used as final proof of work.
+
+- **Lineum Core**: `pytest tests/` (Physics, simulation logic)
+- **Portal (Wiki)**: `cd portal && npm run test` (Loaders, metadata, assets)
+- **Simulacrum (Lab)**: `cd lab && npm run test` (Visualizations, harmonics)
+
+Refer to [Running Tests](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/.agent/workflows/test.md) for detailed instructions.
+
+---
+
 _Notes:_ This `README` supersedes older wiki/sample paths. Canonical artifacts for the core release live in `output/`.
 
 ---

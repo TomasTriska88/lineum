@@ -1,5 +1,15 @@
 <script lang="ts">
     import { content } from "$lib/content";
+    export let data;
+    const { papers } = data;
+
+    // Group papers by category
+    const categories = ["Core", "Extension", "Experiment", "Other"];
+    $: groupedPapers = categories.reduce((acc, cat) => {
+        const list = papers.filter((p) => p.category === cat);
+        if (list.length > 0) acc.push({ label: cat, list });
+        return acc;
+    }, [] as any[]);
 </script>
 
 <svelte:head>
@@ -12,7 +22,7 @@
             <div class="toc-sticky">
                 <h3>Navigation</h3>
                 <ul>
-                    <li><a href="#whitepaper">Whitepaper</a></li>
+                    <li><a href="#whitepapers">Whitepapers</a></li>
                     <li><a href="#glossary">Glossary</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
@@ -20,85 +30,88 @@
         </aside>
 
         <article class="paper">
-            <section id="whitepaper" class="card">
-                <span class="label">DOC // CORE</span>
-                <h1>Lineum Core Whitepaper</h1>
-                <p class="version">v1.0.18-core &bull; 2026-02-15</p>
+            <section id="whitepapers" class="card">
+                <span class="label">DOC // EXPLORE</span>
+                <h1>Research & Documentation</h1>
                 <p>
-                    The canonical whitepaper describing the Lineum model, its
-                    discrete coupled-field update rule, and the full evidence
-                    bundle for the pinned canonical run
-                    <code>spec6_false_s41</code>.
+                    The conceptual foundations and technical documentation of
+                    the Lineum project.
                 </p>
-                <div class="meta-grid">
-                    <div class="meta-item">
-                        <span class="meta-key">Equation</span>
-                        <span class="meta-val">Eq-4 (κ static)</span>
+
+                {#each groupedPapers as group}
+                    <div class="category-group">
+                        <h2 class="cat-label">{group.label}</h2>
+                        <div class="papers-list">
+                            {#each group.list as paper}
+                                <div class="paper-item">
+                                    <div class="paper-info">
+                                        <h3>{paper.title}</h3>
+                                        <p class="version">
+                                            {paper.version} • {paper.date}
+                                        </p>
+                                    </div>
+                                    <a href="/wiki/{paper.slug}" class="btn"
+                                        >Read Paper &rarr;</a
+                                    >
+                                </div>
+                            {/each}
+                        </div>
                     </div>
-                    <div class="meta-item">
-                        <span class="meta-key">Scope</span>
-                        <span class="meta-val">2D, periodic BCs, 128×128</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-key">Seed</span>
-                        <span class="meta-val">41</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-key">DOI</span>
-                        <span class="meta-val">10.5281/zenodo.16934359</span>
-                    </div>
-                </div>
-                <a
-                    href="https://github.com/TomasTriska88/lineum-private/blob/main/whitepapers/lineum-core.md"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn"
-                >
-                    Read Full Whitepaper &rarr;
-                </a>
+                {/each}
             </section>
 
             <section id="glossary" class="card">
                 <span class="label">REF // TERMS</span>
                 <h2>Glossary</h2>
-                <dl>
-                    <dt>Linon</dt>
-                    <dd>
-                        A stable, localized excitation of |ψ|² — a
-                        quasi-particle analogue emergent from the Lineum rule. <em
-                            >Not</em
-                        > a fundamental particle.
-                    </dd>
+                <dl class="glossary-list">
+                    <div class="g-item">
+                        <dt>Linon</dt>
+                        <dd>
+                            A stable, localized excitation of |ψ|² — a
+                            quasi-particle analogue emergent from the Lineum
+                            rule.
+                        </dd>
+                    </div>
 
-                    <dt>ψ (psi)</dt>
-                    <dd>
-                        The primary complex scalar field; |ψ|² = density, arg ψ
-                        = phase.
-                    </dd>
+                    <div class="g-item">
+                        <dt>ψ (psi)</dt>
+                        <dd>
+                            The primary complex scalar field; |ψ|² = density,
+                            arg ψ = phase.
+                        </dd>
+                    </div>
 
-                    <dt>φ (phi)</dt>
-                    <dd>
-                        The interaction/memory field; accumulates response to
-                        |ψ|².
-                    </dd>
+                    <div class="g-item">
+                        <dt>φ (phi)</dt>
+                        <dd>
+                            The interaction/memory field; accumulates response
+                            to |ψ|².
+                        </dd>
+                    </div>
 
-                    <dt>κ (kappa)</dt>
-                    <dd>
-                        Static spatial tuning map; modulates α and β locally
-                        (α_eff = κ·α, β_eff = κ·β).
-                    </dd>
+                    <div class="g-item">
+                        <dt>κ (kappa)</dt>
+                        <dd>
+                            Static spatial tuning map; modulates α and β locally
+                            (α_eff = κ·α, β_eff = κ·β).
+                        </dd>
+                    </div>
 
-                    <dt>SBR</dt>
-                    <dd>
-                        Spectral Balance Ratio — measures dominance of the
-                        fundamental tone f₀ over background.
-                    </dd>
+                    <div class="g-item">
+                        <dt>SBR</dt>
+                        <dd>
+                            Spectral Balance Ratio — measures dominance of the
+                            fundamental tone f₀ over background.
+                        </dd>
+                    </div>
 
-                    <dt>Structural Closure</dt>
-                    <dd>
-                        Operational consequence of the φ center-trace half-life;
-                        φ retains memory after ψ decay.
-                    </dd>
+                    <div class="g-item">
+                        <dt>Structural Closure</dt>
+                        <dd>
+                            Operational consequence of the φ center-trace
+                            half-life; φ retains memory after ψ decay.
+                        </dd>
+                    </div>
                 </dl>
             </section>
 
@@ -106,33 +119,36 @@
                 <span class="label">INFO // FAQ</span>
                 <h2>Frequently Asked Questions</h2>
 
-                <details>
-                    <summary>Is Lineum a physics simulation?</summary>
-                    <p>
-                        No. Lineum is a minimal discrete coupled-field model. It
-                        does not assume physical constants, spacetime metrics,
-                        or continuum symmetries. Physics terms used are strictly
-                        analogical labels.
-                    </p>
-                </details>
+                <div class="faq-list">
+                    <details>
+                        <summary>Is Lineum a physics simulation?</summary>
+                        <p>
+                            No. Lineum is a minimal discrete coupled-field
+                            model. It does not assume physical constants,
+                            spacetime metrics, or continuum symmetries. Physics
+                            terms used are strictly analogical labels.
+                        </p>
+                    </details>
 
-                <details>
-                    <summary>What does "validated" mean?</summary>
-                    <p>
-                        A claim marked [VALIDATED] is enforced by the contract
-                        suite with numeric acceptance bands and is traceable to
-                        a specific contract key and artifact.
-                    </p>
-                </details>
+                    <details>
+                        <summary>What does "validated" mean?</summary>
+                        <p>
+                            A claim marked [VALIDATED] is enforced by the
+                            contract suite with numeric acceptance bands and is
+                            traceable to a specific contract key and artifact.
+                        </p>
+                    </details>
 
-                <details>
-                    <summary>Can I replicate the results?</summary>
-                    <p>
-                        Yes. The canonical run is fully pinned by the manifest,
-                        seed, grid, and Δt. Replication is evaluated by metric
-                        tolerances, not bitwise equality.
-                    </p>
-                </details>
+                    <details>
+                        <summary>Can I replicate the results?</summary>
+                        <p>
+                            Yes. The canonical run is fully pinned by the
+                            manifest, seed, grid, and Δt. Replication is
+                            evaluated by metric tolerances, not bitwise
+                            equality.
+                        </p>
+                    </details>
+                </div>
             </section>
         </article>
     </div>
@@ -212,152 +228,120 @@
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
         background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.7));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
-    h2 {
-        font-size: 1.4rem;
-        font-weight: 600;
+    .category-group {
+        margin-top: 3rem;
+    }
+
+    .cat-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-color);
+        border-bottom: 1px solid rgba(126, 184, 255, 0.2);
+        padding-bottom: 0.5rem;
         margin-bottom: 1.5rem;
+    }
+
+    .papers-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .paper-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .paper-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(4px);
+    }
+
+    .paper-info h3 {
+        margin: 0;
+        font-size: 1rem;
         color: rgba(255, 255, 255, 0.9);
     }
 
-    .version {
+    .paper-info .version {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.3);
         font-family: var(--font-mono, monospace);
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.35);
-        margin-bottom: 1.5rem;
     }
 
-    p {
-        line-height: 1.7;
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 1.5rem;
-    }
-
-    code {
-        background: rgba(255, 255, 255, 0.06);
-        padding: 0.15rem 0.4rem;
-        border-radius: 3px;
-        font-size: 0.85em;
-        font-family: var(--font-mono, monospace);
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* --- Meta Grid --- */
-    .meta-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-        margin-bottom: 2rem;
-    }
-
-    .meta-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .meta-key {
-        font-family: var(--font-mono, monospace);
-        font-size: 0.65rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.25);
-    }
-
-    .meta-val {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* --- Button --- */
     .btn {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 6px;
-        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.8rem;
+        color: var(--accent-color);
         text-decoration: none;
-        font-size: 0.9rem;
-        transition: all 0.25s;
-        background: rgba(255, 255, 255, 0.04);
+        font-weight: 500;
     }
 
-    .btn:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
-        color: #fff;
+    /* --- Glossary & FAQ Styling --- */
+    .glossary-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 1rem;
     }
 
-    /* --- Glossary --- */
-    dl {
-        margin: 0;
-    }
-
-    dt {
+    .g-item dt {
         font-weight: 600;
-        color: rgba(255, 255, 255, 0.85);
-        margin-top: 1.25rem;
+        color: white;
         font-size: 1rem;
+        margin-bottom: 0.4rem;
     }
 
-    dt:first-of-type {
-        margin-top: 0;
-    }
-
-    dd {
-        margin-left: 0;
-        padding-left: 1rem;
-        border-left: 2px solid rgba(255, 255, 255, 0.06);
-        color: rgba(255, 255, 255, 0.55);
+    .g-item dd {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.5);
         line-height: 1.6;
-        margin-top: 0.3rem;
+        font-size: 0.95rem;
+    }
+
+    .faq-list details {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
         margin-bottom: 0.75rem;
+        overflow: hidden;
     }
 
-    /* --- FAQ --- */
-    details {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 1rem 0;
-    }
-
-    details:last-child {
-        border-bottom: none;
-    }
-
-    summary {
+    .faq-list summary {
+        padding: 1.25rem;
         cursor: pointer;
         font-weight: 500;
-        color: rgba(255, 255, 255, 0.8);
-        list-style: none;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
+        color: rgba(255, 255, 255, 0.85);
+        user-select: none;
     }
 
-    summary::before {
-        content: "+";
-        font-family: var(--font-mono, monospace);
+    .faq-list summary:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .faq-list p {
+        padding: 0.5rem 1.25rem 1.5rem 1.25rem;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.3);
-        transition: transform 0.2s;
-    }
-
-    details[open] summary::before {
-        content: "−";
-        color: var(--accent-color, #7eb8ff);
-    }
-
-    details p {
-        margin-top: 0.75rem;
-        padding-left: 1.65rem;
+        line-height: 1.6;
     }
 
     @media (max-width: 1024px) {
@@ -366,6 +350,11 @@
         }
         .toc {
             display: none;
+        }
+        .paper-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
         }
     }
 </style>

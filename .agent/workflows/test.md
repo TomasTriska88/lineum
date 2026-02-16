@@ -4,25 +4,35 @@ description: How to run the test suite after code changes
 
 # Running Tests
 
-## Full suite (unit + integration)
+This project follows a strict **"No Temporary Tests"** policy. All tests must be integrated into the permanent test suites defined below.
+
+## 1. Lineum Core (Python)
+Located in the root directory. Tests cover physics, simulation logic, and output structure.
 // turbo
 ```bash
 pytest tests/ -v
 ```
 
-## Unit tests only (fast, ~1s)
+## 2. Portal (Frontend/Wiki)
+Located in the `portal/` directory. Tests cover Wiki loaders, metadata extraction, and asset routing.
 // turbo
 ```bash
-pytest tests/ -v -m "not integration"
+cd portal
+npm run test
 ```
 
-## Integration tests only (slower, ~20s, runs lineum.py as subprocess)
+## 3. Simulacrum (Lab)
+Located in the `lab/` directory. Tests cover visualization components and harmonic analysis.
 // turbo
 ```bash
-pytest tests/ -v -m integration
+cd lab
+npm run test
 ```
 
 ## When to run
-- **Always** after modifying `lineum.py`
-- **Always** before committing
-- After adding new tests
+- **Always** after any code changes.
+- **Always** before committing.
+- After adding new features (you MUST add a permanent test in the corresponding `tests/` or `src/.../*.test.ts` file).
+
+## Policy: Reusable Tests
+Never use temporary "scratch" or diagnostic scripts for verification if they can be implemented as a test case in the suites above. Using `.scratch/` is allowed for quick exploration ONLY, not for final verification of a task.

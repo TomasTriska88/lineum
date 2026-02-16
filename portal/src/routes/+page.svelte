@@ -78,7 +78,7 @@
             <div class="card">
                 <h3>{content.sections.scientist.simulacrum.title}</h3>
                 <p>{content.sections.scientist.simulacrum.desc}</p>
-                <a href="https://simulacrum.lineum.io"
+                <a href="https://simulacrum.lineum.io" target="simulacrum"
                     >{content.sections.scientist.simulacrum.link}</a
                 >
             </div>
@@ -90,9 +90,7 @@
     <div class="footer-content">
         <p>{content.footer.copy}</p>
         <div class="footer-links">
-            <a href="https://revolut.me/tomastriska" target="_blank"
-                >{content.footer.support}</a
-            >
+            <a href="/support">{content.footer.support}</a>
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
                 target="_blank">{content.footer.github}</a

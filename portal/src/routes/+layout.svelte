@@ -6,11 +6,13 @@
     <div class="container nav-content">
         <a href="/" class="nav-logo">Lineum</a>
         <div class="nav-links">
-            <a href="/wiki">Bílá Kniha</a>
-            <a href="https://simulacrum.lineum.io">Simulakrum</a>
-            <a href="#scientist">Pro vědce</a>
-            <a href="https://revolut.me/tomastriska" class="nav-cta">Podpořit</a
+            <a href="/wiki">Wiki</a>
+            <a href="/wiki#faq">FAQ</a>
+            <a href="https://simulacrum.lineum.io" target="simulacrum"
+                >Simulacrum</a
             >
+            <a href="/#scientist">For Scientists</a>
+            <a href="/support" class="nav-cta">Support</a>
         </div>
     </div>
 </nav>
@@ -73,6 +75,6 @@
     main {
         position: relative;
         z-index: 1;
-        padding-top: 64px;
+        padding-top: 80px;
     }
 </style>

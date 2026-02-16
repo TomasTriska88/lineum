@@ -86,7 +86,7 @@
             // --- 🧊 2. Starfield & Kappa Islands ---
             float stars = pow(hash(floor(uv_orig * 95.0)), 55.0);
             float islands = kappa_islands(uv_orig, t);
-            // Enhanced Kappa barevnost: Mix blue and subtle magenta for the islands
+            // Enhanced Kappa coloring: Mix blue and subtle magenta for the islands
             vec3 kappa_color = mix(kappa_blue, nebula_mag * 0.4, 0.5 + 0.5 * sin(t * 0.5));
             vec3 color = space_black + stars * 0.35 + islands * kappa_color * 0.45; // Increased intensity (was 0.18)
 

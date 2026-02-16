@@ -99,10 +99,11 @@
             engine.playbackSpeed = playbackSpeed;
             engine.onFrameUpdate = (newFrame) => (frame = newFrame);
             engine.animate();
-
-            loading = false;
         } catch (e) {
             console.error("Failed to load run:", runId, e);
+            error = e.message || "Failed to load data";
+        } finally {
+            loading = false;
         }
     }
 </script>
