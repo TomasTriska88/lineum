@@ -82,7 +82,8 @@ export const translations = {
         chart_label_riemann: "Riemannovy nuly",
         chart_label_dejavu: "DejaVu body (Lineum)",
         chart_label_normalized: "Normalizovaná hodnota",
-        chart_label_index: "Index"
+        chart_label_index: "Index",
+        data_source: "ZDROJ: discovery.json"
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -165,7 +166,8 @@ export const translations = {
         chart_label_riemann: "Riemann Zeros",
         chart_label_dejavu: "DejaVu Points (Lineum)",
         chart_label_normalized: "Normalized Value",
-        chart_label_index: "Index"
+        chart_label_index: "Index",
+        data_source: "SOURCE: discovery.json"
     }
 };
 

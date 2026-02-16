@@ -372,6 +372,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        min-height: 0; /* Crucial for scrolling inside grid/flex */
     }
 
     .side-panel-left {
@@ -440,6 +441,20 @@
         letter-spacing: 1px;
         color: #fff;
         text-transform: uppercase;
+    }
+
+    /* Provance Badge */
+    :global(.data-badge) {
+        display: inline-block;
+        font-size: 0.55rem;
+        background: rgba(0, 255, 255, 0.2);
+        color: #00ffff;
+        padding: 1px 4px;
+        border-radius: 2px;
+        margin-left: 8px;
+        vertical-align: middle;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     @keyframes blink {

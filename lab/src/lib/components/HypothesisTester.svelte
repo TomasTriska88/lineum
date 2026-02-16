@@ -163,7 +163,11 @@
         <div class="insight-card">
             <div class="card-icon">🧩</div>
             <div class="card-content">
-                <strong>LINEUM LEGO-UNIVERSE</strong>
+                <strong
+                    >LINEUM LEGO-UNIVERSE <span class="data-badge"
+                        >{$t("data_source")}</span
+                    ></strong
+                >
                 <p>{$t("insight_lego_universe")}</p>
             </div>
         </div>
@@ -173,7 +177,11 @@
         >
             <div class="card-icon">⚡</div>
             <div class="card-content">
-                <strong>THE PRIME BEAT</strong>
+                <strong
+                    >THE PRIME BEAT <span class="data-badge"
+                        >{$t("data_source")}</span
+                    ></strong
+                >
                 <p>{$t("insight_riemann_meaning")}</p>
             </div>
         </div>
