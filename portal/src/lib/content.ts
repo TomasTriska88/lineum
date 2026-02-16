@@ -39,10 +39,10 @@ export const content = {
                 desc: 'Oficiální vědecký archiv s garantovanou dohledatelností dat.',
                 link: '10.5281/zenodo...'
             },
-            audit: {
-                title: 'Audit Hub',
-                desc: 'Každý run je ověřitelný. Transparentnost od prvního seedu.',
-                link: 'Prohlédnout audity →'
+            simulacrum: {
+                title: 'Simulakrum',
+                desc: 'Interaktivní laboratoř a prohlížeč auditních dat. Sledujte fázové posuny v reálném čase.',
+                link: 'Vstoupit do laboratoře →'
             }
         }
     },

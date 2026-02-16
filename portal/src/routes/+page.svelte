@@ -76,9 +76,11 @@
                 >
             </div>
             <div class="card">
-                <h3>{content.sections.scientist.audit.title}</h3>
-                <p>{content.sections.scientist.audit.desc}</p>
-                <a href="/lab">{content.sections.scientist.audit.link}</a>
+                <h3>{content.sections.scientist.simulacrum.title}</h3>
+                <p>{content.sections.scientist.simulacrum.desc}</p>
+                <a href="https://simulacrum.lineum.io"
+                    >{content.sections.scientist.simulacrum.link}</a
+                >
             </div>
         </div>
     </div>

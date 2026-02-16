@@ -7,7 +7,7 @@
         <a href="/" class="nav-logo">Lineum</a>
         <div class="nav-links">
             <a href="/wiki">Bílá Kniha</a>
-            <a href="/lab">Laboratoř</a>
+            <a href="https://simulacrum.lineum.io">Simulakrum</a>
             <a href="#scientist">Pro vědce</a>
             <a href="https://revolut.me/tomastriska" class="nav-cta">Podpořit</a
             >

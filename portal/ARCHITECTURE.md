@@ -4,20 +4,22 @@ This document describes the technical architecture of the Lineum Portal, its com
 
 ## 🏗 High-Level Architecture
 
-The project is divided into three main layers that together form the Lineum ecosystem.
+The project is a monorepo containing three core services that form the Lineum ecosystem.
 
 ```mermaid
-    User((User)) --> ZT[Cloudflare Access / Zero Trust]
-    ZT --> CF[Cloudflare DNS / Proxy]
-    CF --> Frontend[SvelteKit Frontend / Portal]
-    Frontend --> API[Python API Engine]
-    Frontend --> CMS[Directus CMS]
+    User((User)) --> ZT["Cloudflare Access (OTP Security)"]
+    ZT --> CF["Lineum.io (Proxy)"]
+    CF --> Portal["Portal (SvelteKit)"]
+    CF --> Lab["Simulakrum (Lab)"]
+    Portal --> API["Python API Engine"]
+    Portal --> CMS["Directus CMS"]
     API --> CMS
-    API --> DB[(DB / Data Storage)]
-    API --> Workers[Background Generators]
+    API --> DB["(DB / Data Storage)"]
+    API --> Workers["Background Generators"]
     
     subgraph "Infrastructure (Railway.app)"
-        Frontend
+        Portal
+        Lab
         API
         CMS
         Workers
@@ -26,76 +28,53 @@ The project is divided into three main layers that together form the Lineum ecos
 
 ## 🛠 Tech Stack
 
-### 1. Frontend: Lineum Portal & Lab
+### 1. Frontend: Lineum Portal (Primary)
 - **Framework:** [SvelteKit](https://kit.svelte.dev/)
-- **Language:** TypeScript
-- **Key Features:**
-  - **Portal:** Main entry point, documentation, and presentation.
-  - **Lab:** Interactive laboratory environment for simulations and analysis (utilizes Three.js and Chart.js).
-- **Deployment:** Automated build on Railway.app on every push to `main`.
+- **Adapter:** `@sveltejs/adapter-node` (for production stability on Railway).
+- **Role:** Main public-facing portal, documentation, and coordination.
 
-### 2. Backend: API & Processing
+### 2. Frontend: Simulakrum (Research Lab)
+- **Framework:** Vite + Svelte (Standalone static service).
+- **Public URL:** [simulacrum.lineum.io](https://simulacrum.lineum.io)
+- **Data Engine:** WebGL/Three.js for 3D field visualization.
+- **Data Source:** Audit JSON payloads (synced to the repo) from the Python engine.
+
+### 3. Backend: API & Processing
 - **Language:** Python 3.x
 - **Key Components:**
-  - **Lineum Core Engine:** The mathematical and simulation core of the project.
-  - **FastAPI / Flask:** (Planned) To serve the paid API.
-  - **Background Generators:** Continuous 24/7 processes generating data for simulations and the API.
+  - **Lineum Core Engine:** Mathematical core for field simulations.
+  - **Background Generators:** 24/7 worker processes generating the data seen in the Simulakrum.
 
-### 3. CMS & Data Management: Directus
+### 4. CMS: Directus
 - **Platform:** [Directus](https://directus.io/) (Headless CMS)
-- **Role:** Centralized data management, content for the Portal, and administrative interface for simulations.
-- **Hosting:** Self-hosted on Railway.app (Docker-based).
+- **Hosting:** Dockerized on Railway.app.
+- **Role:** Centralized data management and content.
 
-### 4. Infrastructure (Hosting)
-- **Platform:** [Railway.app](https://railway.app)
-  - **Model:** PaaS (Platform as a Service) – zero server management.
-  - **Scaling:** Usage-based (billing based on actual CPU and RAM consumption).
-- **DNS & Domain:** [Cloudflare](https://www.cloudflare.com/)
-  - **Domain:** `lineum.io`
-  - **Security:** SSL, DDoS protection, and speed optimization via Cloudflare Proxy.
+### 5. Infrastructure & Networking
+- **Platform:** [Railway.app](https://railway.app) (Monorepo deployment via `railway.json`).
+- **Security:** [Cloudflare Zero Trust](https://one.dash.cloudflare.com/) (Access).
+  - **Authorization:** Restricted to specific emails via **One-Time PIN (OTP)**.
+  - **Coverage:** Universal protection for both `lineum.io` and `*.lineum.io` subdomains.
 
-## 🌿 Git Workflow & Branching
+## 🌿 Git Workflow & Deployment
 
-To maintain stability and enable automated deployments, we use a structured branching strategy:
+We use a two-tier branching strategy to ensure production uptime:
 
-- **`main` Branch:**
-  - **Purpose:** Production-ready code and stable releases.
-  - **Deployment:** Automatically triggers deployment to the production environment on Railway.app.
-  - **Access:** Only merged from `dev` after verification.
-- **`dev` Branch:**
-  - **Purpose:** Primary working branch for active development and hypothesis testing.
-  - **Sync:** All new features and lab experiments are committed here first.
-- **Workflow:**
-  1. Development happens on `dev`.
-  2. Once a milestone is reached and tested, `dev` is merged into `main`.
-  3. Merge to `main` triggers the live infrastructure update.
+- **`main` Branch:** 
+  - Represents the **Live Production** state.
+  - Automatic deployment to Railway is triggered on every push.
+- **`dev` Branch:** 
+  - Active development for new features and simulation parameters.
+  - Merged into `main` only after verified stability.
 
-## 🚀 Automation & Deployment
+### Monorepo Orchestration
+Infrastructure is defined as code in [railway.json](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/railway.json), allowing Railway to simultaneously manage the Portal (port 3000) and Simulakrum (port 8080) from a single repository.
 
-Deployment is handled collaboratively via **GitHub Actions**:
-- **Verification:** Every change undergoes testing.
-- **Approval:** Production deployment can require manual confirmation by the user.
-- **Transparency:** Infrastructure configuration is stored as code (`railway.json` / workflow files).
+## 🔒 Security Policy
+The alpha phase is strictly protected. Access requires an email address whitelisted in the Cloudflare Access dashboard. Unauthorized traffic is blocked at the edge before reaching Railway servers.
 
 ## 📖 Living Document Policy
-
-This document is a **Living Document**. It MUST be updated whenever:
-- New infrastructure components are added or modified.
-- Deployment automation (CI/CD) workflows are established or changed.
-- Domain or security settings (DNS, SSL, Cloudflare) are updated.
-- Significant architectural shifts occur in the Portal or Lab.
-
-Both the user and the AI assistant are responsible for keeping this overview in sync with the actual state of the repository.
-
-## 🔒 Security & Access Control
-
-During the Alpha/Development phase, access is restricted using **Cloudflare Zero Trust (Access)**:
-- **Authentication:** Users must verify their identity via a **One-Time Pin (OTP)** sent to their authorized email address.
-- **Authorized Users:**
-  - Jiri Hernik
-  - Tomas Triska
-  - Vlastimil Smetak
-- **Scope:** The entire domain `lineum.io` is protected, blocking unauthorized access to the Portal, Lab, and Directus CMS.
+This document is a **Living Document**. To ensure the AI assistant (Antigravity) and the User are always aligned, this file MUST be updated manually or automatically whenever infrastructure components change. **Antigravity is authorized to update this file proactively as changes are executed.**
 
 ---
 *Last update: February 16, 2026*
