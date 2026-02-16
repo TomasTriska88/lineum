@@ -489,6 +489,24 @@
         box-shadow: inset 0 -2px 0 #00ffff;
     }
 
+    .tab-content {
+        flex: 1;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 255, 255, 0.3) transparent;
+    }
+
+    .tab-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .tab-content::-webkit-scrollbar-thumb {
+        background: rgba(0, 255, 255, 0.3);
+        border-radius: 3px;
+    }
+
     .stats-panel {
         background: rgba(0, 0, 0, 0.5);
         border-left: 2px solid #00ffff;

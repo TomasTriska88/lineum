@@ -46,7 +46,7 @@
                 ),
                 datasets: [
                     {
-                        label: "Riemann - frekvenční spektrum",
+                        label: $t("chart_label_fourier"),
                         data: discoveryData.fourier_spectrum,
                         borderColor: "#ffaa00",
                         backgroundColor: "rgba(255, 170, 0, 0.2)",
@@ -68,7 +68,7 @@
                         ticks: { color: "#00ffff", font: { size: 10 } },
                         title: {
                             display: true,
-                            text: "Frekvenční složka (relativní index)",
+                            text: $t("chart_label_component"),
                             color: "#00ffff",
                         },
                     },
@@ -77,7 +77,7 @@
                         ticks: { color: "#00ffff" },
                         title: {
                             display: true,
-                            text: "Amplituda",
+                            text: $t("chart_label_amplitude"),
                             color: "#00ffff",
                         },
                     },
@@ -97,7 +97,7 @@
                 labels: discoveryData.norm_riemann.map((_, i) => i),
                 datasets: [
                     {
-                        label: "Riemannovy nuly",
+                        label: $t("chart_label_riemann"),
                         data: discoveryData.norm_riemann,
                         borderColor: "#cc0000",
                         backgroundColor: "transparent",
@@ -106,7 +106,7 @@
                         tension: 0,
                     },
                     {
-                        label: "DejaVu body (Lineum)",
+                        label: $t("chart_label_dejavu"),
                         data: discoveryData.norm_dejavu,
                         borderColor: "#ffaa00",
                         backgroundColor: "#ffaa00",
@@ -131,7 +131,7 @@
                         ticks: { color: "#00ffff" },
                         title: {
                             display: true,
-                            text: "Index",
+                            text: $t("chart_label_index"),
                             color: "#00ffff",
                         },
                     },
@@ -140,7 +140,7 @@
                         ticks: { color: "#00ffff" },
                         title: {
                             display: true,
-                            text: "Normalizovaná hodnota",
+                            text: $t("chart_label_normalized"),
                             color: "#00ffff",
                         },
                     },
@@ -223,7 +223,6 @@
 
 <style>
     .hypothesis-tester {
-        margin-top: 15px;
         padding: 15px;
         background: rgba(0, 20, 20, 0.5);
         border: 1px solid rgba(0, 255, 255, 0.2);

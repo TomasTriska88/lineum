@@ -75,7 +75,14 @@ export const translations = {
         status_tuning: "LADĚNÍ GEOMETRIE",
         status_chaos: "STOCHASTICKÝ ŠUM (CHAOS)",
         insight_lego_universe: "Lineum je jako 'Lego-verze' našeho vesmíru. I když je z jiného materiálu, drží pohromadě díky stejné matematické statice.",
-        insight_riemann_meaning: "Tato shoda potvrzuje, že náš digitální organismus 'dýchá' ve stejném rytmu jako prvočísla v realitě."
+        insight_riemann_meaning: "Tato shoda potvrzuje, že náš digitální organismus 'dýchá' ve stejném rytmu jako prvočísla v realitě.",
+        chart_label_fourier: "Riemann - frekvenční spektrum",
+        chart_label_amplitude: "Amplituda",
+        chart_label_component: "Frekvenční složka (relativní index)",
+        chart_label_riemann: "Riemannovy nuly",
+        chart_label_dejavu: "DejaVu body (Lineum)",
+        chart_label_normalized: "Normalizovaná hodnota",
+        chart_label_index: "Index"
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -151,7 +158,14 @@ export const translations = {
         status_tuning: "GEOMETRY TUNING",
         status_chaos: "STOCHASTIC NOISE (CHAOS)",
         insight_lego_universe: "Lineum is like a 'Lego-version' of our universe. Even with different materials, it stays together using the same mathematical statics.",
-        insight_riemann_meaning: "This alignment confirms that our digital organism 'breathes' with the same rhythm as prime numbers in reality."
+        insight_riemann_meaning: "This alignment confirms that our digital organism 'breathes' with the same rhythm as prime numbers in reality.",
+        chart_label_fourier: "Riemann - Frequency Spectrum",
+        chart_label_amplitude: "Amplitude",
+        chart_label_component: "Frequency Component (Relative Index)",
+        chart_label_riemann: "Riemann Zeros",
+        chart_label_dejavu: "DejaVu Points (Lineum)",
+        chart_label_normalized: "Normalized Value",
+        chart_label_index: "Index"
     }
 };
 
