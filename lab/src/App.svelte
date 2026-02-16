@@ -393,6 +393,7 @@
         cursor: pointer;
         font-size: 0.7rem;
         letter-spacing: 1px;
+        text-transform: uppercase;
         transition: all 0.2s;
     }
 

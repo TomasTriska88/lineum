@@ -129,6 +129,7 @@
         font-size: 0.9rem;
         color: #00ffff;
         letter-spacing: 1px;
+        text-transform: uppercase;
     }
 
     .desc {
