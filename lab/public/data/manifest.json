@@ -5,7 +5,7 @@
         "timestamp": "20260215_023130",
         "birth_frame": 391,
         "frame_count": 400,
-        "pearson_r": 0.9961299168203142,
-        "euclidean_dist": 3.1778233129497737
+        "pearson_r": 0.9961299168203144,
+        "euclidean_dist": 0.5136243556801225
     }
 ]

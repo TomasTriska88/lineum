@@ -83,7 +83,10 @@ export const translations = {
         chart_label_dejavu: "DejaVu body (Lineum)",
         chart_label_normalized: "Normalizovaná hodnota",
         chart_label_index: "Index",
-        data_source: "ZDROJ: discovery.json"
+        data_source: "ZDROJ: discovery.json",
+        chart_ghost_chaos: "STOCHASTICKÝ ŠUM (REF)",
+        chart_ghost_order: "IDEÁLNÍ RESONANCE (REF)",
+        zoom_tip: "Tip: Použijte kolečko myši pro ZOOM, tažení pro POSUN"
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -167,7 +170,10 @@ export const translations = {
         chart_label_dejavu: "DejaVu Points (Lineum)",
         chart_label_normalized: "Normalized Value",
         chart_label_index: "Index",
-        data_source: "SOURCE: discovery.json"
+        data_source: "SOURCE: discovery.json",
+        chart_ghost_chaos: "STOCHASTIC NOISE (REF)",
+        chart_ghost_order: "IDEAL RESONANCE (REF)",
+        zoom_tip: "Tip: Use mouse wheel to ZOOM, drag to PAN"
     }
 };
 

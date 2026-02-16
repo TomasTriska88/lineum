@@ -1,7 +1,10 @@
 <script>
     import { onMount } from "svelte";
     import Chart from "chart.js/auto";
+    import zoomPlugin from "chartjs-plugin-zoom";
     import { t } from "../i18n";
+
+    Chart.register(zoomPlugin);
 
     export let dataRoot = "";
 
@@ -50,17 +53,37 @@
                         data: discoveryData.fourier_spectrum,
                         borderColor: "#ffaa00",
                         backgroundColor: "rgba(255, 170, 0, 0.2)",
-                        tension: 0.1,
-                        pointRadius: 2,
-                        borderWidth: 1.5,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        borderWidth: 2,
+                    },
+                    {
+                        label: $t("chart_ghost_chaos"),
+                        data: discoveryData.fourier_spectrum.map(
+                            () => Math.random() * 2,
+                        ),
+                        borderColor: "rgba(0, 255, 255, 0.1)",
+                        borderDash: [5, 5],
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false,
                     },
                 ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { intersect: false, mode: "index" },
                 plugins: {
                     legend: { display: false },
+                    zoom: {
+                        zoom: {
+                            wheel: { enabled: true },
+                            pinch: { enabled: true },
+                            mode: "x",
+                        },
+                        pan: { enabled: true, mode: "x" },
+                    },
                 },
                 scales: {
                     x: {
@@ -97,13 +120,24 @@
                 labels: discoveryData.norm_riemann.map((_, i) => i),
                 datasets: [
                     {
+                        label: $t("chart_ghost_order"),
+                        data: discoveryData.norm_riemann.map(
+                            (_, i) =>
+                                i / (discoveryData.norm_riemann.length - 1),
+                        ),
+                        borderColor: "rgba(0, 255, 0, 0.2)",
+                        borderDash: [10, 5],
+                        borderWidth: 1,
+                        pointRadius: 0,
+                    },
+                    {
                         label: $t("chart_label_riemann"),
                         data: discoveryData.norm_riemann,
                         borderColor: "#cc0000",
                         backgroundColor: "transparent",
                         borderWidth: 2,
                         pointRadius: 0,
-                        tension: 0,
+                        tension: 0.2,
                     },
                     {
                         label: $t("chart_label_dejavu"),
@@ -111,8 +145,8 @@
                         borderColor: "#ffaa00",
                         backgroundColor: "#ffaa00",
                         borderWidth: 2,
-                        pointRadius: 3,
-                        tension: 0,
+                        pointRadius: 4,
+                        tension: 0.2,
                         showLine: true,
                     },
                 ],
@@ -120,15 +154,28 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { intersect: false, mode: "index" },
                 plugins: {
                     legend: {
-                        labels: { color: "#00ffff", boxWidth: 12 },
+                        labels: {
+                            color: "#00ffff",
+                            boxWidth: 12,
+                            font: { size: 9 },
+                        },
+                    },
+                    zoom: {
+                        zoom: {
+                            wheel: { enabled: true },
+                            pinch: { enabled: true },
+                            mode: "xy",
+                        },
+                        pan: { enabled: true, mode: "xy" },
                     },
                 },
                 scales: {
                     x: {
                         grid: { color: "rgba(0, 255, 255, 0.1)" },
-                        ticks: { color: "#00ffff" },
+                        ticks: { color: "#00ffff", font: { size: 9 } },
                         title: {
                             display: true,
                             text: $t("chart_label_index"),
@@ -136,6 +183,8 @@
                         },
                     },
                     y: {
+                        min: -0.1,
+                        max: 1.1,
                         grid: { color: "rgba(0, 255, 255, 0.1)" },
                         ticks: { color: "#00ffff" },
                         title: {
@@ -215,17 +264,29 @@
     </div>
 
     <div class="chart-section">
-        <h3>{$t("fourier_title")}</h3>
+        <div class="chart-header">
+            <h3>{$t("fourier_title")}</h3>
+            <button class="zoom-reset" on:click={() => fourierChart.resetZoom()}
+                >RESET ZOOM</button
+            >
+        </div>
         <div class="chart-container">
             <canvas bind:this={fourierCanvas}></canvas>
         </div>
+        <p class="chart-tip">{$t("zoom_tip")}</p>
     </div>
 
     <div class="chart-section">
-        <h3>{$t("riemann_title")}</h3>
+        <div class="chart-header">
+            <h3>{$t("riemann_title")}</h3>
+            <button class="zoom-reset" on:click={() => riemannChart.resetZoom()}
+                >RESET ZOOM</button
+            >
+        </div>
         <div class="chart-container">
             <canvas bind:this={riemannCanvas}></canvas>
         </div>
+        <p class="chart-tip">{$t("zoom_tip")}</p>
     </div>
 </div>
 
@@ -340,11 +401,32 @@
 
     .chart-section {
         margin-bottom: 30px;
+        position: relative;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .zoom-reset {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        color: #00ffff;
+        font-size: 0.6rem;
+        padding: 2px 6px;
+        cursor: pointer;
+    }
+
+    .zoom-reset:hover {
+        background: rgba(0, 255, 255, 0.2);
     }
 
     h3 {
         font-size: 0.7rem;
-        margin-bottom: 10px;
+        margin: 0;
         opacity: 0.8;
         border-left: 3px solid #ffaa00;
         padding-left: 10px;
@@ -354,5 +436,13 @@
         height: 200px;
         width: 100%;
         background: rgba(0, 0, 0, 0.2);
+        cursor: crosshair;
+    }
+
+    .chart-tip {
+        font-size: 0.6rem;
+        opacity: 0.5;
+        margin-top: 5px;
+        font-style: italic;
     }
 </style>
