@@ -613,3 +613,24 @@ Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální sta
       fyzikální rozsah Eq-4. Pokud se objeví stabilní stavové konfigurace
       φ nebo ψ, musí být vedeny jako výpočetní a dynamické struktury,
       nikoli psychologické analogie.
+
+---
+
+## 🌐 P. Portál a Infrastruktura (Milníky do budoucna)
+
+Tato sekce obsahuje úkoly související s webovou prezentací a technickým zázemím projektu, které nejsou kritické pro model, ale jsou nutné pro veřejné nasazení.
+
+- [x] Přidat odkaz na Laboratoř do hlavního menu Portálu
+- [ ] **Zabezpečení přístupu (Gatekeeper)**:
+    - Implementovat JWT-based přihlašování na Portálu.
+    - Vytvořit proxy vrstvu pro Laboratoř, která bude vyžadovat platný token pro přístup k JSON datům.
+    - Definovat role (Auditor, Scientist) a omezit viditelnost diagnostických dat.
+- [ ] **Správa konfigurace a tajných údajů (Secrets)**:
+    - Přejít z lokálních `.env` souborů na vzdálenou správu (např. DigitalOcean App Platform Secrets).
+    - Zajistit, že žádné citlivé klíče nebo privátní URL nejsou v Git repozitáři.
+- [ ] **Hosting a Deployment**:
+    - Vybrat a nastavit finální hosting (DigitalOcean / Vercel / Cloudflare).
+    - Nastavit CI/CD pipeline pro automatické nasazení po pushi do `main`.
+
+> [!NOTE]  
+> Specifické frontendové úkoly a technické detaily Portálu jsou sledovány lokálně v [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).

@@ -78,7 +78,7 @@
             <div class="card">
                 <h3>{content.sections.scientist.audit.title}</h3>
                 <p>{content.sections.scientist.audit.desc}</p>
-                <a href="/audits">{content.sections.scientist.audit.link}</a>
+                <a href="/lab">{content.sections.scientist.audit.link}</a>
             </div>
         </div>
     </div>

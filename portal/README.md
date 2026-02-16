@@ -37,6 +37,19 @@ To create a production version of your app:
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+- Build the project: `npm run build`
+- Preview the build: `npm run preview`
+
+---
+
+## 🛠 Task Tracking & Roadmap
+
+> [!IMPORTANT]  
+> Podle protokolu **Dual Context Check** jsou tyto lokální úkoly sledovány synchronně s hlavní [todo.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/todo.md) v kořeni projektu.
+
+### Aktuální technické úkoly
+- [ ] Refaktorovat `FieldShader.svelte` pro lepší výkon na mobilních zařízeních.
+- [ ] Implementovat Skeleton UI pro načítání auditních dat.
+- [ ] Přidat interaktivní tutoriál pro laiky (§4.1).
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
