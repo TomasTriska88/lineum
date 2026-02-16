@@ -26,19 +26,19 @@
     onMount(async () => {
         // Load audit data with cache-busting
         const t = Date.now();
-        const phiRes = await fetch(`/data/phi_audit_frames.json?t=${t}`);
+        const phiRes = await fetch(`/data/phi_frames.json?t=${t}`);
         const phiData = await phiRes.json();
 
-        const trajRes = await fetch(`/data/trajectories_audit.json?t=${t}`);
+        const trajRes = await fetch(`/data/trajectories.json?t=${t}`);
         const trajData = await trajRes.json();
 
-        const resRes = await fetch(`/data/resonance_audit.json?t=${t}`);
+        const resRes = await fetch(`/data/resonance.json?t=${t}`);
         resonanceData = await resRes.json();
 
         const metaRes = await fetch(`/data/metadata.json?t=${t}`);
         metadata = await metaRes.json();
 
-        const harmRes = await fetch(`/data/harmonics_audit.json?t=${t}`);
+        const harmRes = await fetch(`/data/harmonics.json?t=${t}`);
         harmonicData = await harmRes.json();
 
         totalFrames = phiData.metadata.frame_count;

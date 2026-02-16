@@ -27,7 +27,10 @@ export class TopographyEngine {
 
         this.initLights();
         this.initGrid();
+        this.initLinony();
         this.initHarmonics();
+
+        this.updateTopography(); // 🖼️ Initial render for frame 0
 
         window.addEventListener('resize', this.onResize.bind(this));
     }

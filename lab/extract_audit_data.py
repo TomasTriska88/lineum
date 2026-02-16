@@ -14,8 +14,7 @@ if os.path.exists(LATEST_RUN_PTR):
         rel_run = f.read().strip()
     RUN_DIR = os.path.join(OUTPUT_WP, rel_run)
 else:
-    # Fallback to hardcoded if ptr missing
-    RUN_DIR = os.path.join(OUTPUT_WP, "runs", "spec6_false_s41_20260215_023130")
+    raise FileNotFoundError(f"Could not find latest_run.txt in {OUTPUT_WP}")
 
 RUN_TAG = os.path.basename(RUN_DIR).split('_2026')[0] # Extract specX_mode_sY
 print(f"Targeting Run: {RUN_TAG} at {RUN_DIR}")
@@ -42,9 +41,9 @@ phi_payload = {
     "frames": phi_lowres
 }
 
-with open(os.path.join(LAB_DATA_DIR, "phi_audit_frames.json"), "w") as f:
+with open(os.path.join(LAB_DATA_DIR, "phi_frames.json"), "w") as f:
     json.dump(phi_payload, f)
-print("Saved phi_audit_frames.json")
+print("Saved phi_frames.json")
 
 # 2. Extract Key Trajectories
 TRAJ_PATH = os.path.join(RUN_DIR, "spec6_false_s41_trajectories.csv")
@@ -88,9 +87,9 @@ for tid in top_ids:
         "path": path
     })
 
-with open(os.path.join(LAB_DATA_DIR, "trajectories_audit.json"), "w") as f:
+with open(os.path.join(LAB_DATA_DIR, "trajectories.json"), "w") as f:
     json.dump(trajectories_data, f)
-print("Saved trajectories_audit.json")
+print("Saved trajectories.json")
 
 # ⚖️ Calculate Global Birth Frame (when most linons have appeared)
 # For simplicity: use the median of birth steps among the top 20
@@ -125,9 +124,9 @@ resonance_payload = {
     "f0_canonical": 1.856777545095882e+20
 }
 
-with open(os.path.join(LAB_DATA_DIR, "resonance_audit.json"), "w") as f:
+with open(os.path.join(LAB_DATA_DIR, "resonance.json"), "w") as f:
     json.dump(resonance_payload, f)
-print("Saved resonance_audit.json")
+print("Saved resonance.json")
 
 # 5. Harmonic Analysis (Fibonacci & Golden Spiral)
 # Check for geometric ideals in the simulation data
@@ -173,6 +172,6 @@ harmonic_payload = {
     "harmonic_index": float(np.mean(spiral_scores)) if spiral_scores else 0.5
 }
 
-with open(os.path.join(LAB_DATA_DIR, "harmonics_audit.json"), "w") as f:
+with open(os.path.join(LAB_DATA_DIR, "harmonics.json"), "w") as f:
     json.dump(harmonic_payload, f)
-print(f"Saved harmonics_audit.json: {harmonic_payload}")
+print(f"Saved harmonics.json: {harmonic_payload}")
