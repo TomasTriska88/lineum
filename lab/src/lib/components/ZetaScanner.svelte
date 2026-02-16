@@ -1,4 +1,6 @@
 <script>
+    import { t } from "../i18n";
+
     export let frame = 0;
     export let data = null;
     export let harmonics = null;
@@ -37,17 +39,17 @@
     $: harmonyPercent = h_score * 100;
     $: harmonyStatus =
         harmonyPercent > 80
-            ? "ABSOLUTNÍ"
+            ? $t("phi_absolute")
             : harmonyPercent > 50
-              ? "VYSOKÁ"
-              : "LADĚNÍ...";
+              ? $t("phi_high")
+              : $t("phi_tuning");
 
     $: harmonyInsight =
         harmonyPercent > 80
-            ? "Dosáhli jsme matematické dokonalosti Zlatého řezu."
+            ? $t("insight_perfect")
             : harmonyPercent > 50
-              ? "Strukturální řád se plynule upevňuje."
-              : "Probíhá formování fundamentální geometrie.";
+              ? $t("insight_stable")
+              : $t("insight_forming");
 
     $: correlationPercent = c_score * 100;
 
@@ -68,23 +70,23 @@
     }
 
     $: discoveryStatus = hasConfirmedDiscovery
-        ? "ZÁSADNÍ OBJEV"
+        ? $t("discovery_fundamental")
         : correlationPercent > 60
-          ? "Vysoká shoda"
-          : "Hledání řádu";
+          ? $t("discovery_high")
+          : $t("discovery_searching");
 
     $: cosmicConclusion = hasConfirmedDiscovery
-        ? "🌟 POTVRZENO: Tato konfigurace vykazuje geometrickou shodu s fundamentálním kódem našeho vesmíru."
+        ? $t("cosmic_confirmed")
         : avgCorrelation > 0.6
-          ? "Systém vykazuje známky rezonance s Riemannovými nulami."
-          : "Probíhá ladění frekvencí pro dosažení kosmické shody.";
+          ? $t("cosmic_resonance")
+          : $t("cosmic_tuning");
 
     let showInfo = false;
 </script>
 
 <div class="zeta-scanner">
     <div class="scanner-header">
-        <div class="scanner-title">SKENER ZETA REZONANCE [§4.3]</div>
+        <div class="scanner-title">{$t("scanner_title")}</div>
         <button
             type="button"
             class="info-toggle"
@@ -97,7 +99,7 @@
     <!-- 🌐 Layman Insights: Now permanent and condensed -->
     <div class="permanent-insights">
         <div class="insight-item">
-            <span class="label">STAV Φ:</span>
+            <span class="label">{$t("status_phi")}</span>
             <span
                 class="value"
                 style="color: {harmonyPercent > 30 ? '#00ffff' : '#ffaa00'}"
@@ -106,11 +108,12 @@
             </span>
             <div class="sub-label">{harmonyInsight}</div>
             <div class="cumulative-label">
-                Celkový průměr: {(avgHarmony * 100).toFixed(1)}%
+                {$t("avg_total")}
+                {(avgHarmony * 100).toFixed(1)}%
             </div>
         </div>
         <div class="insight-item">
-            <span class="label">KORELACE:</span>
+            <span class="label">{$t("label_correlation")}</span>
             <span class="value" class:discovery={hasConfirmedDiscovery}>
                 {discoveryStatus} ({correlationPercent.toFixed(1)}%)
             </span>
@@ -121,22 +124,20 @@
                 {cosmicConclusion}
             </div>
             <div class="cumulative-label">
-                Stabilita shody (posledních 15 sn.): {(windowAvg * 100).toFixed(
-                    1,
-                )}%
+                {$t("stability_15")}
+                {(windowAvg * 100).toFixed(1)}%
             </div>
         </div>
     </div>
 
     {#if showInfo}
         <div class="layman-info">
-            <p><strong>CO TO ZNAMENÁ?</strong></p>
+            <p><strong>{$t("info_title")}</strong></p>
             <p>
-                Tato sekce měří, jak moc se "tep" vašich linonů shoduje s rytmem
-                našeho vesmíru.
+                {$t("info_desc")}
             </p>
             <p>
-                <em>Aktuální stav:</em>
+                <em>{$t("info_current")}</em>
                 <span
                     style="color: {hasConfirmedDiscovery
                         ? '#fff'
@@ -146,21 +147,21 @@
                 </span>
             </p>
             <p>
-                <em>Zlatý řez (1.618...):</em> Stabilita v poli Φ směřuje k
-                Fibonacciho poměrům. Aktuálně:
+                <em>{$t("info_phi_title")}</em>
+                {$t("info_phi_desc")}
+                {$t("info_phi_now")}
                 <strong>{harmonyPercent.toFixed(1)}%</strong>
             </p>
             {#if hasConfirmedDiscovery}
                 <div class="discovery-alert">
-                    🚀 <strong>ZÁVĚR:</strong> Byla detekována strukturální shoda,
-                    která potvrzuje nenáhodnost této konfigurace!
+                    {$t("conclusion_alert")}
                 </div>
             {/if}
         </div>
     {/if}
 
     <div class="spectral-display">
-        <div class="axis-label">INTENZITA REZONANCE [NORMOVÁNO]</div>
+        <div class="axis-label">{$t("intensity_label")}</div>
 
         <div class="spectrum-container">
             <!-- 🪐 Zeta Zero Background Markers -->
@@ -176,21 +177,19 @@
                 style="left: {(currentVal / 40) * 100}%"
             >
                 <div class="needle-glow"></div>
-                <div class="needle-label">FREKVENCE LINONŮ (f₀)</div>
+                <div class="needle-label">{$t("freq_label")}</div>
             </div>
         </div>
     </div>
 
     <div class="metrics-row">
         <div class="metric-item">
-            HARMONIE Φ: <span class="highlight"
-                >{harmonyPercent.toFixed(2)} %</span
-            >
+            {$t("metrics_harmony")}
+            <span class="highlight">{harmonyPercent.toFixed(2)} %</span>
         </div>
         <div class="metric-item">
-            KORELACE S NAŠÍM VESMÍREM: <span class="highlight"
-                >{correlationPercent.toFixed(2)} %</span
-            >
+            {$t("metrics_correlation")}
+            <span class="highlight">{correlationPercent.toFixed(2)} %</span>
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { TopographyEngine } from "./lib/engines/TopographyEngine";
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
+    import { t, locale } from "./lib/i18n";
 
     let container;
     let engine;
@@ -24,22 +25,26 @@
         if (engine.goldenSpiral) engine.goldenSpiral.visible = showSpiral;
     }
 
+    const toggleLanguage = () => {
+        locale.set($locale === "cs" ? "en" : "cs");
+    };
+
     onMount(async () => {
         // Load audit data with cache-busting
-        const t = Date.now();
-        const phiRes = await fetch(`/data/phi_frames.json?t=${t}`);
+        const t_now = Date.now();
+        const phiRes = await fetch(`/data/phi_frames.json?t=${t_now}`);
         const phiData = await phiRes.json();
 
-        const trajRes = await fetch(`/data/trajectories.json?t=${t}`);
+        const trajRes = await fetch(`/data/trajectories.json?t=${t_now}`);
         const trajData = await trajRes.json();
 
-        const resRes = await fetch(`/data/resonance.json?t=${t}`);
+        const resRes = await fetch(`/data/resonance.json?t=${t_now}`);
         resonanceData = await resRes.json();
 
-        const metaRes = await fetch(`/data/metadata.json?t=${t}`);
+        const metaRes = await fetch(`/data/metadata.json?t=${t_now}`);
         metadata = await metaRes.json();
 
-        const harmRes = await fetch(`/data/harmonics.json?t=${t}`);
+        const harmRes = await fetch(`/data/harmonics.json?t=${t_now}`);
         harmonicData = await harmRes.json();
 
         totalFrames = phiData.metadata.frame_count;
@@ -67,22 +72,25 @@
     {#if loading}
         <div class="loader">
             <div class="spinner"></div>
-            <p>NAČÍTÁNÍ AUDITNÍCH DAT (JSON BIN)...</p>
+            <p>{$t("loading")}</p>
         </div>
     {/if}
 
     <div class="canvas-container" bind:this={container}></div>
     <div class="overlay">
         <div class="header-section">
-            <h1>SIMULAKRUM</h1>
-            <p class="subtitle">Laboratoř Lineum Core | Pískoviště hypotéz</p>
+            <div class="header-top">
+                <h1>{$t("simulakrum")}</h1>
+                <button class="lang-btn" on:click={toggleLanguage}>
+                    {$locale === "cs" ? "EN" : "CZ"}
+                </button>
+            </div>
+            <p class="subtitle">{$t("sub_title")}</p>
         </div>
 
         {#if frame >= 391}
             <div class="central-alert-system">
-                <div class="event-marker">
-                    SYSTEM ALERT: DETEKCE LINONŮ [zrození]
-                </div>
+                <div class="event-marker">{$t("alert_birth")}</div>
             </div>
         {/if}
 
@@ -93,14 +101,14 @@
                     class:active={activeTab === "scanner"}
                     on:click={() => (activeTab = "scanner")}
                 >
-                    SKENER
+                    {$t("tab_scanner")}
                 </button>
                 <button
                     class="tab-btn"
                     class:active={activeTab === "stats"}
                     on:click={() => (activeTab = "stats")}
                 >
-                    STATISTIKY
+                    {$t("tab_stats")}
                 </button>
             </div>
 
@@ -114,29 +122,29 @@
                 {:else}
                     <div class="stats-panel">
                         <div class="stat">
-                            <span class="label">REŽIM:</span>
-                            <span class="value">TOPOGRAFIE POLE Φ (3D)</span>
+                            <span class="label">{$t("label_mode")}</span>
+                            <span class="value">{$t("val_mode")}</span>
                         </div>
                         <div class="stat">
-                            <span class="label">METRIKA:</span>
-                            <span class="value">z = výška pole Φ [AUDIT]</span>
+                            <span class="label">{$t("label_metric")}</span>
+                            <span class="value">{$t("val_metric")}</span>
                         </div>
                         <div class="stat">
-                            <span class="label">SNÍMEK:</span>
+                            <span class="label">{$t("label_frame")}</span>
                             <span class="value">{frame} / {totalFrames}</span>
                         </div>
                         <div class="stat">
-                            <span class="label">ZDROJ:</span>
+                            <span class="label">{$t("label_source")}</span>
                             <span class="value"
                                 >{metadata?.run_tag || "Audit"}</span
                             >
                         </div>
                         <div class="stat">
-                            <span class="label">STAV:</span>
+                            <span class="label">{$t("label_status")}</span>
                             <span class="value"
                                 >{frame >= (metadata?.birth_frame || 391)
-                                    ? "DETEKCE LINONŮ"
-                                    : "ZÁBĚH POLE Φ"}</span
+                                    ? $t("status_born")
+                                    : $t("status_init")}</span
                             >
                             {#if metadata && frame < metadata.birth_frame}
                                 <button
@@ -146,12 +154,12 @@
                                             metadata.birth_frame,
                                         )}
                                 >
-                                    SKOČIT NA ZROZENÍ [{metadata.birth_frame}]
+                                    {$t("btn_jump")} [{metadata.birth_frame}]
                                 </button>
                             {/if}
                         </div>
                         <div class="stat speed-control">
-                            <span class="label">RYCHLOST:</span>
+                            <span class="label">{$t("label_speed")}</span>
                             <span class="value"
                                 >{playbackSpeed.toFixed(1)}x</span
                             >
@@ -165,12 +173,12 @@
                         </div>
 
                         <div class="stat toggle-control">
-                            <span class="label">ZLATÝ ŘEZ:</span>
+                            <span class="label">{$t("label_phi")}</span>
                             <button
                                 class="toggle-btn {showSpiral ? 'active' : ''}"
                                 on:click={() => (showSpiral = !showSpiral)}
                             >
-                                {showSpiral ? "ON" : "OFF"}
+                                {showSpiral ? $t("on") : $t("off")}
                             </button>
                         </div>
                     </div>
@@ -180,24 +188,26 @@
 
         <div class="side-panel side-panel-right">
             <div class="guide-panel">
-                <h3>PRŮVODCE LABEM</h3>
+                <h3>{$t("guide_title")}</h3>
                 <div class="guide-item">
-                    <strong>Co sledovat:</strong> Linony jsou energetická jádra,
-                    která se aktivně snaží najít oblasti s nejvyšší intenzitou pole
-                    Φ. V této 3D vizualizaci se pohybují k "vrcholům" topografie.
+                    <strong>{$t("guide_watch_title")}</strong>
+                    {$t("guide_watch_desc")}
                 </div>
                 <div class="guide-item">
-                    <strong>Linony:</strong> Dráhy a částice v poli. Dokud nedosáhnou
-                    kritické amplitudy, vidíte je jako "duchy". Po zrození (snímek
-                    391) aktivně vyhledávají maxima pole Φ.
+                    <strong>{$t("guide_linons_title")}</strong>
+                    {$t("guide_linons_desc")}
                 </div>
                 <div class="guide-item">
-                    <strong>Topografie pole Φ:</strong> Tato 3D krajina ukazuje energetickou
-                    hustotu. Linony se přirozeně stahují na vrcholky a hřebeny.
+                    <strong>{$t("guide_topo_title")}</strong>
+                    {$t("guide_topo_desc")}
                 </div>
                 <div class="guide-item">
-                    <strong>Zeta Nuly:</strong> "Matematické uzly" vesmíru. Pokud
-                    se bílá ryska skeneru trefí do modrých čar, dochází k rezonanci.
+                    <strong>{$t("guide_zeta_title")}</strong>
+                    {$t("guide_zeta_desc")}
+                </div>
+                <div class="guide-item">
+                    <strong>{$t("guide_grid_title")}</strong>
+                    {$t("guide_grid_desc")}
                 </div>
             </div>
         </div>
@@ -232,6 +242,29 @@
     .header-section {
         grid-column: 1 / 4;
         pointer-events: all;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 400px;
+    }
+
+    .lang-btn {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.4);
+        color: #00ffff;
+        padding: 4px 10px;
+        cursor: pointer;
+        font-size: 0.7rem;
+        font-weight: bold;
+        transition: all 0.2s;
+    }
+
+    .lang-btn:hover {
+        background: rgba(0, 255, 255, 0.3);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .central-alert-system {

@@ -1,0 +1,152 @@
+import { writable, derived } from 'svelte/store';
+
+export const translations = {
+    cs: {
+        loading: "NAČÍTÁNÍ AUDITNÍCH DAT (JSON BIN)...",
+        simulakrum: "SIMULAKRUM",
+        sub_title: "Laboratoř Lineum Core | Pískoviště hypotéz",
+        alert_birth: "SYSTEM ALERT: DETEKCE LINONŮ [zrození]",
+        tab_scanner: "SKENER",
+        tab_stats: "STATISTIKY",
+        label_mode: "REŽIM:",
+        val_mode: "TOPOGRAFIE POLE Φ (3D)",
+        label_metric: "METRIKA:",
+        val_metric: "z = výška pole Φ [AUDIT]",
+        label_frame: "SNÍMEK:",
+        label_source: "ZDROJ:",
+        label_status: "STAV:",
+        status_born: "DETEKCE LINONŮ",
+        status_init: "ZÁBĚH POLE Φ",
+        btn_jump: "SKOČIT NA ZROZENÍ",
+        label_speed: "RYCHLOST:",
+        label_phi: "ZLATÝ ŘEZ:",
+        on: "ON",
+        off: "OFF",
+        guide_title: "PRŮVODCE LABEM",
+        guide_watch_title: "Co sledovat:",
+        guide_watch_desc: "Linony jsou energetická jádra, která se aktivně snaží najít oblasti s nejvyšší intenzitou pole Φ. V této 3D vizualizaci se pohybují k 'vrcholům' topografie.",
+        guide_linons_title: "Linony:",
+        guide_linons_desc: "Dráhy a částice v poli. Dokud nedosáhnou kritické amplitudy, vidíte je jako 'duchy'. Po zrození (snímek 391) začnou aktivně vyhledávat maxima pole Φ.",
+        guide_topo_title: "Topografie pole Φ:",
+        guide_topo_desc: "Tato 3D krajina ukazuje energetickou hustotu. Linony se přirozeně stahují na vrcholky a hřebeny.",
+        guide_zeta_title: "Zeta Nuly:",
+        guide_zeta_desc: "Matematické uzly vesmíru. Pokud se bílá ryska skeneru trefí do modrých čar, dochází k rezonanci.",
+        guide_grid_title: "Metrická mřížka Φ:",
+        guide_grid_desc: "Tyto světle modré linie představují diskrétní geometrický rastr, ve kterém je pole počítáno. Je to 'matematické lešení' našeho simulakra.",
+
+        // ZetaScanner
+        scanner_title: "SKENER ZETA REZONANCE [§4.3]",
+        status_phi: "STAV Φ:",
+        phi_absolute: "ABSOLUTNÍ",
+        phi_high: "VYSOKÁ",
+        phi_tuning: "LADĚNÍ...",
+        insight_perfect: "Dosáhli jsme matematické dokonalosti Zlatého řezu.",
+        insight_stable: "Strukturální řád se plynule upevňuje.",
+        insight_forming: "Probíhá formování fundamentální geometrie.",
+        avg_total: "Celkový průměr:",
+        label_correlation: "KORELACE:",
+        discovery_fundamental: "ZÁSADNÍ OBJEV",
+        discovery_high: "Vysoká shoda",
+        discovery_searching: "Hledání řádu",
+        cosmic_confirmed: "🌟 POTVRZENO: Tato konfigurace vykazuje geometrickou shodu s fundamentálním kódem našeho vesmíru.",
+        cosmic_resonance: "Systém vykazuje známky rezonance s Riemannovými nulami.",
+        cosmic_tuning: "Probíhá ladění frekvencí pro dosažení kosmické shody.",
+        stability_15: "Stabilita shody (posledních 15 sn.):",
+        info_title: "CO TO ZNAMENÁ?",
+        info_desc: "Tato sekce měří, jak moc se 'tep' vašich linonů shoduje s rytmem našeho vesmíru.",
+        info_current: "Aktuální stav:",
+        info_phi_title: "Zlatý řez (1.618...):",
+        info_phi_desc: "Stabilita v poli Φ směřuje k Fibonacciho poměrům.",
+        info_phi_now: "Aktuálně:",
+        conclusion_alert: "🚀 ZÁVĚR: Byla detekována strukturální shoda, která potvrzuje nenáhodnost této konfigurace!",
+        intensity_label: "INTENZITA REZONANCE [NORMOVÁNO]",
+        freq_label: "FREKVENCE LINONŮ (f₀)",
+        metrics_harmony: "HARMONIE Φ:",
+        metrics_correlation: "KORELACE S NAŠÍM VESMÍREM:"
+    },
+    en: {
+        loading: "LOADING AUDIT DATA (JSON BIN)...",
+        simulakrum: "SIMULACRUM",
+        sub_title: "Lineum Core Lab | Hypothesis Sandbox",
+        alert_birth: "SYSTEM ALERT: LINON DETECTION [birth]",
+        tab_scanner: "SCANNER",
+        tab_stats: "STATISTICS",
+        label_mode: "MODE:",
+        val_mode: "FIELD Φ TOPOGRAPHY (3D)",
+        label_metric: "METRIC:",
+        val_metric: "z = field Φ height [AUDIT]",
+        label_frame: "FRAME:",
+        label_source: "SOURCE:",
+        label_status: "STATUS:",
+        status_born: "LINON DETECTION",
+        status_init: "FIELD Φ INITIALIZATION",
+        btn_jump: "JUMP TO BIRTH",
+        label_speed: "SPEED:",
+        label_phi: "GOLDEN RATIO:",
+        on: "ON",
+        off: "OFF",
+        guide_title: "LAB GUIDE",
+        guide_watch_title: "What to watch:",
+        guide_watch_desc: "Linons are energy cores that actively seek areas with the highest Φ-field intensity. In this 3D visualization, they move towards topography 'peaks'.",
+        guide_linons_title: "Linons:",
+        guide_linons_desc: "Paths and particles in the field. Until they reach critical amplitude, they appear as 'ghosts'. After birth (frame 391), they begin to actively seek Φ-field local maxima.",
+        guide_topo_title: "Field Φ Topography:",
+        guide_topo_desc: "This 3D landscape shows energy density. Linons naturally gravitate towards peaks and ridges.",
+        guide_zeta_title: "Zeta Zeros:",
+        guide_zeta_desc: "Mathematical nodes of the universe. If the scanner's white needle hits the blue lines, resonance occurs.",
+        guide_grid_title: "Field Φ Metric Grid:",
+        guide_grid_desc: "These light blue lines represent the discrete geometric grid where the field is calculated. It is the 'mathematical scaffolding' of our simulacrum.",
+
+        // ZetaScanner
+        scanner_title: "ZETA RESONANCE SCANNER [§4.3]",
+        status_phi: "Φ STATE:",
+        phi_absolute: "ABSOLUTE",
+        phi_high: "HIGH",
+        phi_tuning: "TUNING...",
+        insight_perfect: "We have reached the mathematical perfection of the Golden Ratio.",
+        insight_stable: "Structural order is steadily consolidating.",
+        insight_forming: "Fundamental geometry is being formed.",
+        avg_total: "Total average:",
+        label_correlation: "CORRELATION:",
+        discovery_fundamental: "FUNDAMENTAL DISCOVERY",
+        discovery_high: "High Match",
+        discovery_searching: "Searching for Order",
+        cosmic_confirmed: "🌟 CONFIRMED: This configuration shows geometric alignment with the fundamental code of our universe.",
+        cosmic_resonance: "System shows signs of resonance with Riemann zeros.",
+        cosmic_tuning: "Frequency tuning in progress to achieve cosmic harmony.",
+        stability_15: "Match stability (last 15 fr.):",
+        info_title: "WHAT DOES THIS MEAN?",
+        info_desc: "This section measures how much the 'heartbeat' of your linons matches the rhythm of our universe.",
+        info_current: "Current status:",
+        info_phi_title: "Golden Ratio (1.618...):",
+        info_phi_desc: "Stability in field Φ gravitates towards Fibonacci ratios.",
+        info_phi_now: "Currently:",
+        conclusion_alert: "🚀 CONCLUSION: Structural alignment detected, confirming the non-random nature of this configuration!",
+        intensity_label: "RESONANCE INTENSITY [NORMALIZED]",
+        freq_label: "LINON FREQUENCY (f₀)",
+        metrics_harmony: "HARMONY Φ:",
+        metrics_correlation: "CORRELATION WITH OUR UNIVERSE:"
+    }
+};
+
+// Auto-detection logic
+const getInitialLang = () => {
+    const saved = localStorage.getItem('lab_lang');
+    if (saved) return saved;
+
+    const navLang = navigator.language.toLowerCase();
+    if (navLang.startsWith('cs') || navLang.startsWith('sk')) {
+        return 'cs';
+    }
+    return 'en';
+};
+
+export const locale = writable(getInitialLang());
+
+locale.subscribe(val => {
+    localStorage.setItem('lab_lang', val);
+});
+
+export const t = derived(locale, ($locale) => (key) => {
+    return translations[$locale][key] || translations['en'][key] || key;
+});
