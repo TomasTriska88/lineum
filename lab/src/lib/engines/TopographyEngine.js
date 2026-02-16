@@ -8,7 +8,8 @@ export class TopographyEngine {
 
         this.currentFrameIndex = 0;
         this.frameCount = phiData.metadata.frame_count;
-        this.playbackSpeed = 1.0; // ⚡ New: Control playback speed
+        this.playbackSpeed = 1.0;
+        this.frameTimeCounter = 0;
         this.lastTime = performance.now();
 
         this.showSpiral = false; // 🌀 Toggle for Golden Spiral overlay
