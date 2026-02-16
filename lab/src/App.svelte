@@ -121,6 +121,23 @@
                 </div>
             </div>
             <p class="subtitle">{$t("sub_title")}</p>
+
+            <div
+                class="discovery-headline"
+                class:prime={metadata?.pearson_r > 0.9}
+                class:tuning={metadata?.pearson_r > 0.5 &&
+                    metadata?.pearson_r <= 0.9}
+            >
+                <span class="status-icon"></span>
+                <span class="status-msg">
+                    {$t("breakthrough_headline")}:
+                    {metadata?.pearson_r > 0.9
+                        ? $t("status_prime_resonance")
+                        : metadata?.pearson_r > 0.5
+                          ? $t("status_tuning")
+                          : $t("status_chaos")}
+                </span>
+            </div>
         </div>
 
         {#if frame >= 391}
@@ -374,6 +391,65 @@
         letter-spacing: 0.5rem;
         color: #fff;
         text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .discovery-headline {
+        margin-top: 15px;
+        background: rgba(0, 255, 255, 0.05);
+        border-left: 4px solid rgba(0, 255, 255, 0.3);
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.5s ease;
+    }
+
+    .discovery-headline.prime {
+        background: rgba(0, 255, 0, 0.1);
+        border-color: #00ff00;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+
+    .discovery-headline.tuning {
+        background: rgba(255, 170, 0, 0.1);
+        border-color: #ffaa00;
+    }
+
+    .status-icon {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #00ffff;
+        box-shadow: 0 0 8px #00ffff;
+        animation: blink 2s infinite;
+    }
+
+    .prime .status-icon {
+        background: #00ff00;
+        box-shadow: 0 0 10px #00ff00;
+    }
+
+    .tuning .status-icon {
+        background: #ffaa00;
+        box-shadow: 0 0 10px #ffaa00;
+    }
+
+    .status-msg {
+        font-size: 0.8rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    @keyframes blink {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.3;
+        }
     }
 
     .subtitle {

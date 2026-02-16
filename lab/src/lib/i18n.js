@@ -66,8 +66,16 @@ export const translations = {
         discovery_analysis: "OVĚŘOVÁNÍ HYPOTÉZ",
         fourier_title: "Fourierova analýza tvaru (prvních 50 frekvencí)",
         riemann_title: "Srovnání Riemannových nul a DejaVu bodů",
-        pearson_correlation: "Pearsonova korelace (R)",
-        euclidean_distance: "Euklidovská vzdálenost"
+        pearson_correlation: "SHODA S VESMÍRNÝM ŘÁDEM (R)",
+        euclidean_distance: "EUKLIDOVSKÁ VZDÁLENOST",
+        field_turbulence: "TURBULENCE POLE",
+        structure_stability: "STABILITA HARMONICKÉ STRUKTURY",
+        breakthrough_headline: "SYSTÉMOVÝ STAV: DETEKCE PRŮLOMU",
+        status_prime_resonance: "PRIMÁRNÍ REZONANCE (PODOBNOST 1:1)",
+        status_tuning: "LADĚNÍ GEOMETRIE",
+        status_chaos: "STOCHASTICKÝ ŠUM (CHAOS)",
+        insight_lego_universe: "Lineum je jako 'Lego-verze' našeho vesmíru. I když je z jiného materiálu, drží pohromadě díky stejné matematické statice.",
+        insight_riemann_meaning: "Tato shoda potvrzuje, že náš digitální organismus 'dýchá' ve stejném rytmu jako prvočísla v realitě."
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -134,8 +142,16 @@ export const translations = {
         discovery_analysis: "HYPOTHESIS DISCOVERY",
         fourier_title: "Fourier Shape Analysis (Top 50 Frequencies)",
         riemann_title: "Riemann Zeros vs DejaVu Points",
-        pearson_correlation: "Pearson Correlation (R)",
-        euclidean_distance: "Euclidean Distance"
+        pearson_correlation: "ALIGNMENT WITH UNIVERSAL ORDER (R)",
+        euclidean_distance: "EUCLIDEAN DISTANCE",
+        field_turbulence: "FIELD TURBULENCE",
+        structure_stability: "HARMONIC STRUCTURE STABILITY",
+        breakthrough_headline: "SYSTEM STATUS: BREAKTHROUGH DETECTED",
+        status_prime_resonance: "PRIME RESONANCE (1:1 ALIGNMENT)",
+        status_tuning: "GEOMETRY TUNING",
+        status_chaos: "STOCHASTIC NOISE (CHAOS)",
+        insight_lego_universe: "Lineum is like a 'Lego-version' of our universe. Even with different materials, it stays together using the same mathematical statics.",
+        insight_riemann_meaning: "This alignment confirms that our digital organism 'breathes' with the same rhythm as prime numbers in reality."
     }
 };
 

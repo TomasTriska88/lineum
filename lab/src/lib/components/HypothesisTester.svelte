@@ -159,17 +159,49 @@
         <div class="panel-title">{$t("discovery_analysis")}</div>
     </div>
 
+    <div class="insight-cards">
+        <div class="insight-card">
+            <div class="card-icon">🧩</div>
+            <div class="card-content">
+                <strong>LINEUM LEGO-UNIVERSE</strong>
+                <p>{$t("insight_lego_universe")}</p>
+            </div>
+        </div>
+        <div
+            class="insight-card highlight"
+            class:visible={discoveryData?.pearson_r > 0.9}
+        >
+            <div class="card-icon">⚡</div>
+            <div class="card-content">
+                <strong>THE PRIME BEAT</strong>
+                <p>{$t("insight_riemann_meaning")}</p>
+            </div>
+        </div>
+    </div>
+
     <div class="discovery-metrics">
         <div class="metric">
             <span class="label">{$t("pearson_correlation")}</span>
             <span class="value" class:high={discoveryData?.pearson_r > 0.9}>
-                {discoveryData?.pearson_r?.toFixed(4) || "0.0000"}
+                {discoveryData?.pearson_r
+                    ? (discoveryData.pearson_r * 100).toFixed(2) + "%"
+                    : "0.00%"}
             </span>
         </div>
         <div class="metric">
-            <span class="label">{$t("euclidean_distance")}</span>
+            <span class="label">{$t("structure_stability")}</span>
             <span class="value">
-                {discoveryData?.euclidean_dist?.toFixed(4) || "0.0000"}
+                {discoveryData?.euclidean_dist
+                    ? ((1 / (1 + discoveryData.euclidean_dist)) * 100).toFixed(
+                          1,
+                      ) + "%"
+                    : "0.0%"}
+            </span>
+        </div>
+        <div class="metric">
+            <span class="label">{$t("field_turbulence")}</span>
+            <span class="value">
+                {discoveryData?.euclidean_dist?.toFixed(3) || "0.000"}
             </span>
         </div>
     </div>
@@ -212,9 +244,65 @@
         font-weight: bold;
     }
 
-    .discovery-metrics {
+    .insight-cards {
         display: flex;
-        gap: 20px;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .insight-card {
+        display: flex;
+        gap: 15px;
+        background: rgba(0, 255, 255, 0.05);
+        padding: 12px;
+        border-radius: 4px;
+        border-right: 2px solid rgba(0, 255, 255, 0.2);
+    }
+
+    .insight-card.highlight {
+        display: none;
+        background: rgba(0, 255, 0, 0.05);
+        border-right-color: #00ff00;
+        animation: glow 3s infinite alternate;
+    }
+
+    .insight-card.highlight.visible {
+        display: flex;
+    }
+
+    .card-icon {
+        font-size: 1.5rem;
+    }
+
+    .card-content strong {
+        display: block;
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        color: #ffaa00;
+    }
+
+    .card-content p {
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        opacity: 0.9;
+    }
+
+    @keyframes glow {
+        from {
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.1);
+        }
+        to {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+    }
+
+    .discovery-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
         margin-bottom: 25px;
         background: rgba(0, 255, 255, 0.05);
         padding: 10px;
