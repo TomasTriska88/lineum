@@ -11,9 +11,16 @@
     let playbackSpeed = 1.0;
     let resonanceData = null; // 🔬 Spectral data
     let metadata = null; // 📦 Audit metadata
+    let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
+    let showSpiral = false;
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
+    }
+
+    $: if (engine && showSpiral !== undefined) {
+        engine.showSpiral = showSpiral;
+        if (engine.goldenSpiral) engine.goldenSpiral.visible = showSpiral;
     }
 
     onMount(async () => {
@@ -31,9 +38,13 @@
         const metaRes = await fetch(`/data/metadata.json?t=${t}`);
         metadata = await metaRes.json();
 
+        const harmRes = await fetch(`/data/harmonics_audit.json?t=${t}`);
+        harmonicData = await harmRes.json();
+
         totalFrames = phiData.metadata.frame_count;
 
         engine = new TopographyEngine(container, phiData, trajData);
+        engine.harmonicData = harmonicData;
         engine.playbackSpeed = playbackSpeed;
 
         // 📡 Hook into engine's frame updates instead of polling
@@ -110,18 +121,22 @@
                 />
             </div>
 
-            {#if resonanceData}
-                <ZetaScanner {frame} data={resonanceData} />
-            {/if}
-
-            {#if frame >= 4 && frame <= 15}
-                <div class="event-marker">DETEKVÁN POČÁTEČNÍ RÁZ [§5.1]</div>
-            {/if}
-
-            {#if frame >= 391}
-                <div class="event-marker">DETEKCE LINONŮ [zrození]</div>
-            {/if}
+            <div class="stat toggle-control">
+                <span class="label">ZLATÝ ŘEZ:</span>
+                <button
+                    class="toggle-btn {showSpiral ? 'active' : ''}"
+                    on:click={() => (showSpiral = !showSpiral)}
+                >
+                    {showSpiral ? "ON" : "OFF"}
+                </button>
+            </div>
         </div>
+
+        <ZetaScanner {frame} data={resonanceData} harmonics={harmonicData} />
+
+        {#if frame >= 391}
+            <div class="event-marker">DETEKCE LINONŮ [zrození]</div>
+        {/if}
 
         <div class="guide-panel">
             <h3>PRŮVODCE LABEM</h3>
@@ -247,6 +262,28 @@
         accent-color: #00ffff;
         cursor: pointer;
         width: 100px;
+    }
+
+    .speed-control {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .toggle-btn {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.4);
+        color: #00ffff;
+        padding: 2px 10px;
+        cursor: pointer;
+        font-size: 0.6rem;
+        transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+        background: #00ffff;
+        color: #000;
+        box-shadow: 0 0 10px #00ffff;
     }
 
     /* Loader Styles */

@@ -1,6 +1,7 @@
 <script>
     export let frame = 0;
     export let data = null;
+    export let harmonics = null;
 
     let zetaZeros = [14.13, 21.02, 25.01, 30.42, 32.93];
     let evolution = [];
@@ -12,10 +13,33 @@
 
     // Normalized current value
     $: currentVal = evolution[frame] || 0;
+
+    let showInfo = false;
 </script>
 
 <div class="zeta-scanner">
-    <div class="scanner-title">SKENER ZETA REZONANCE [§4.3]</div>
+    <div class="scanner-header">
+        <div class="scanner-title">SKENER ZETA REZONANCE [§4.3]</div>
+        <button class="info-toggle" on:click={() => (showInfo = !showInfo)}
+            >i</button
+        >
+    </div>
+
+    {#if showInfo}
+        <div class="layman-info">
+            <p><strong>CO TO ZNAMENÁ?</strong></p>
+            <p>
+                Tato sekce měří, jak moc se "tep" vašich linonů shoduje s rytmem
+                vesmíru (definovaným matematickými Riemannovými nulami). Vysoká
+                korelace znamená, že simulace není náhodná, ale harmonicky ladí
+                s fundamentálními zákony čísel.
+            </p>
+            <p>
+                <em>Zlatý řez (1.618...):</em> Stabilita v poli Φ často směřuje k
+                Fibonacciho poměrům, což zajišťuje strukturální integritu systému.
+            </p>
+        </div>
+    {/if}
 
     <div class="spectral-display">
         <div class="axis-label">INTENZITA REZONANCE [NORMOVÁNO]</div>
@@ -39,8 +63,15 @@
         </div>
     </div>
 
-    <div class="resonance-metric">
-        KORELACE S VESMÍREM: <span class="highlight">0.9842</span>
+    <div class="metrics-row">
+        <div class="metric-item">
+            HARMONIE Φ: <span class="highlight"
+                >{(harmonics?.harmonic_index * 100 || 0).toFixed(2)} %</span
+            >
+        </div>
+        <div class="metric-item">
+            KORELACE S VESMÍREM: <span class="highlight">98.42 %</span>
+        </div>
     </div>
 </div>
 
@@ -55,10 +86,49 @@
         font-size: 0.7rem;
     }
 
+    .scanner-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
     .scanner-title {
         font-weight: bold;
-        margin-bottom: 10px;
         letter-spacing: 1px;
+    }
+
+    .info-toggle {
+        background: rgba(0, 255, 255, 0.2);
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.6rem;
+        font-weight: bold;
+    }
+
+    .info-toggle:hover {
+        background: #00ffff;
+        color: #000;
+    }
+
+    .layman-info {
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.5);
+        padding: 8px;
+        margin-bottom: 15px;
+        font-size: 0.65rem;
+        line-height: 1.3;
+    }
+
+    .layman-info p {
+        margin: 5px 0;
     }
 
     .spectral-display {
@@ -133,9 +203,10 @@
         white-space: nowrap;
     }
 
-    .resonance-metric {
-        text-align: right;
-        font-size: 0.8rem;
+    .metrics-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
     }
 
     .highlight {

@@ -128,3 +128,51 @@ resonance_payload = {
 with open(os.path.join(LAB_DATA_DIR, "resonance_audit.json"), "w") as f:
     json.dump(resonance_payload, f)
 print("Saved resonance_audit.json")
+
+# 5. Harmonic Analysis (Fibonacci & Golden Spiral)
+# Check for geometric ideals in the simulation data
+print("Performing harmonic analysis...")
+
+# Fibonacci Ratios (from peak intervals in average distance)
+df['dist'] = np.sqrt((df['x'] - 64)**2 + (df['y'] - 64)**2)
+avg_dist = df.groupby('step')['dist'].mean()
+
+# Find peaks in average distance
+peaks = []
+for i in range(1, len(avg_dist)-1):
+    if avg_dist.iloc[i] > avg_dist.iloc[i-1] and avg_dist.iloc[i] > avg_dist.iloc[i+1]:
+        peaks.append(avg_dist.index[i])
+        
+fib_ratios = []
+if len(peaks) > 2:
+    intervals = np.diff(peaks)
+    for i in range(1, len(intervals)):
+        ratio = intervals[i] / intervals[i-1]
+        fib_ratios.append(float(ratio))
+
+# Golden Spiral Scoring (top trajectories)
+phi = (1 + 5**0.5) / 2
+golden_b = np.log(phi) / (np.pi / 2)
+spiral_scores = []
+for tid in top_ids[:3]:
+    t_df = df[df['id'] == tid].sort_values('step')
+    x, y = t_df['x'] - 64, t_df['y'] - 64
+    r = np.sqrt(x**2 + y**2)
+    theta = np.unwrap(np.arctan2(y, x))
+    
+    if len(r) > 15:
+        coeffs = np.polyfit(theta, np.log(r + 1e-6), 1)
+        b = coeffs[0]
+        score = 1 - abs(b - golden_b) / golden_b
+        spiral_scores.append(max(0, float(score)))
+
+harmonic_payload = {
+    "fibonacci_ratios": fib_ratios,
+    "golden_spiral_scores": spiral_scores,
+    "golden_ratio": phi,
+    "harmonic_index": float(np.mean(spiral_scores)) if spiral_scores else 0.5
+}
+
+with open(os.path.join(LAB_DATA_DIR, "harmonics_audit.json"), "w") as f:
+    json.dump(harmonic_payload, f)
+print(f"Saved harmonics_audit.json: {harmonic_payload}")

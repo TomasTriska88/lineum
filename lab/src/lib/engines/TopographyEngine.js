@@ -9,8 +9,10 @@ export class TopographyEngine {
         this.currentFrameIndex = 0;
         this.frameCount = phiData.metadata.frame_count;
         this.playbackSpeed = 1.0; // ⚡ New: Control playback speed
-        this.frameTimeCounter = 0;
         this.lastTime = performance.now();
+
+        this.showSpiral = false; // 🌀 Toggle for Golden Spiral overlay
+        this.harmonicData = null;
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -25,6 +27,7 @@ export class TopographyEngine {
 
         this.initLights();
         this.initGrid();
+        this.initHarmonics();
 
         window.addEventListener('resize', this.onResize.bind(this));
     }
@@ -109,6 +112,36 @@ export class TopographyEngine {
             this.terrainGroup.add(group);
             this.linony.push({ group, traj, core, line });
         });
+    }
+
+    initHarmonics() {
+        this.harmonicsGroup = new THREE.Group();
+        this.scene.add(this.harmonicsGroup);
+
+        // Golden Spiral Geometry (Conceptual Ideal)
+        const points = [];
+        const a = 0.5; // Scale
+        const phi = (1 + Math.sqrt(5)) / 2;
+        const b = Math.log(phi) / (Math.PI / 2);
+
+        for (let theta = 0; theta < Math.PI * 6; theta += 0.1) {
+            const r = a * Math.exp(b * theta);
+            const x = r * Math.cos(theta);
+            const z = r * Math.sin(theta);
+            points.push(new THREE.Vector3(x, 0, z));
+        }
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({
+            color: 0xff00ff,
+            transparent: true,
+            opacity: 0.4,
+            dashSize: 1,
+            gapSize: 0.5
+        });
+        this.goldenSpiral = new THREE.Line(geometry, material);
+        this.goldenSpiral.visible = false;
+        this.harmonicsGroup.add(this.goldenSpiral);
     }
 
     updateTopography() {
