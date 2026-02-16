@@ -40,4 +40,23 @@ describe('Zeta Scanner Revolutionary Logic', () => {
         expect(result.isRevolutionaryOld).toBe(false);
         expect(result.isRevolutionaryNew).toBe(true);
     });
+
+    it('should remain true even if correlation drops (persistent state)', () => {
+        let hasBeenFundamental = false;
+        const data = new Array(30).fill(0.1)      // Noise
+            .concat(new Array(15).fill(0.95))    // Discovery!
+            .concat(new Array(10).fill(0.1));    // Drop
+
+        // At frame 44 (end of discovery), it should be true
+        const res1 = calculateRevolutionary(data, 44);
+        if (res1.isRevolutionaryNew) hasBeenFundamental = true;
+        expect(hasBeenFundamental).toBe(true);
+
+        // At frame 54 (after drop), it should STAY true in our logic
+        // (The test simulates the Svelte reactive latch: if (isFund) hasBeenFund = true)
+        const res2 = calculateRevolutionary(data, 54);
+        if (res2.isRevolutionaryNew) hasBeenFundamental = true;
+
+        expect(hasBeenFundamental).toBe(true);
+    });
 });

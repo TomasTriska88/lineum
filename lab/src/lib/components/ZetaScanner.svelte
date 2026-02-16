@@ -62,13 +62,18 @@
 
     $: isFundamentalDiscovery = windowAvg > 0.8 && frame > 10;
 
-    $: discoveryStatus = isFundamentalDiscovery
+    let hasConfirmedDiscovery = false;
+    $: if (isFundamentalDiscovery) {
+        hasConfirmedDiscovery = true;
+    }
+
+    $: discoveryStatus = hasConfirmedDiscovery
         ? "ZÁSADNÍ OBJEV"
         : correlationPercent > 60
           ? "Vysoká shoda"
           : "Hledání řádu";
 
-    $: cosmicConclusion = isFundamentalDiscovery
+    $: cosmicConclusion = hasConfirmedDiscovery
         ? "🌟 POTVRZENO: Tato konfigurace vykazuje geometrickou shodu s fundamentálním kódem našeho vesmíru."
         : avgCorrelation > 0.6
           ? "Systém vykazuje známky rezonance s Riemannovými nulami."
@@ -106,12 +111,12 @@
         </div>
         <div class="insight-item">
             <span class="label">KORELACE:</span>
-            <span class="value" class:discovery={isFundamentalDiscovery}>
+            <span class="value" class:discovery={hasConfirmedDiscovery}>
                 {discoveryStatus} ({correlationPercent.toFixed(1)}%)
             </span>
             <div
                 class="sub-label conclusion-text"
-                class:revolutionary={isFundamentalDiscovery}
+                class:revolutionary={hasConfirmedDiscovery}
             >
                 {cosmicConclusion}
             </div>
@@ -131,9 +136,26 @@
                 našeho vesmíru.
             </p>
             <p>
-                <em>Zlatý řez (1.618...):</em> Stabilita v poli Φ často směřuje k
-                Fibonacciho poměrům.
+                <em>Aktuální stav:</em>
+                <span
+                    style="color: {hasConfirmedDiscovery
+                        ? '#fff'
+                        : '#00ffff'}; font-weight: bold;"
+                >
+                    {discoveryStatus} ({correlationPercent.toFixed(1)}%)
+                </span>
             </p>
+            <p>
+                <em>Zlatý řez (1.618...):</em> Stabilita v poli Φ směřuje k
+                Fibonacciho poměrům. Aktuálně:
+                <strong>{harmonyPercent.toFixed(1)}%</strong>
+            </p>
+            {#if hasConfirmedDiscovery}
+                <div class="discovery-alert">
+                    🚀 <strong>ZÁVĚR:</strong> Byla detekována strukturální shoda,
+                    která potvrzuje nenáhodnost této konfigurace!
+                </div>
+            {/if}
         </div>
     {/if}
 
@@ -308,6 +330,16 @@
         margin-top: 4px;
         border-top: 1px dotted rgba(0, 255, 255, 0.2);
         padding-top: 2px;
+    }
+
+    .discovery-alert {
+        margin-top: 10px;
+        padding: 5px;
+        background: rgba(255, 170, 0, 0.2);
+        border: 1px solid #ffaa00;
+        color: #fff;
+        font-weight: bold;
+        text-shadow: 0 0 5px #000;
     }
 
     .spectral-display {

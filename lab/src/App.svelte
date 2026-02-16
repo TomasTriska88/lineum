@@ -13,6 +13,7 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
+    let activeTab = "scanner"; // "scanner" | "stats"
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
@@ -72,93 +73,132 @@
 
     <div class="canvas-container" bind:this={container}></div>
     <div class="overlay">
-        <h1>SIMULAKRUM</h1>
-        <p class="subtitle">Laboratoř Lineum Core | Pískoviště hypotéz</p>
+        <div class="header-section">
+            <h1>SIMULAKRUM</h1>
+            <p class="subtitle">Laboratoř Lineum Core | Pískoviště hypotéz</p>
+        </div>
 
-        <div class="stats-panel">
-            <div class="stat">
-                <span class="label">REŽIM:</span>
-                <span class="value">TOPOGRAFIE POLE Φ (3D)</span>
+        {#if frame >= 391}
+            <div class="central-alert-system">
+                <div class="event-marker">
+                    SYSTEM ALERT: DETEKCE LINONŮ [zrození]
+                </div>
             </div>
-            <div class="stat">
-                <span class="label">METRIKA:</span>
-                <span class="value">z = výška pole Φ [AUDIT]</span>
-            </div>
-            <div class="stat">
-                <span class="label">SNÍMEK:</span>
-                <span class="value">{frame} / {totalFrames}</span>
-            </div>
-            <div class="stat">
-                <span class="label">ZDROJ:</span>
-                <span class="value">{metadata?.run_tag || "Audit"}</span>
-            </div>
-            <div class="stat">
-                <span class="label">STAV:</span>
-                <span class="value"
-                    >{frame >= (metadata?.birth_frame || 391)
-                        ? "DETEKCE LINONŮ"
-                        : "ZÁBĚH POLE Φ"}</span
-                >
-                {#if metadata && frame < metadata.birth_frame}
-                    <button
-                        class="jump-btn"
-                        on:click={() =>
-                            engine.jumpToFrame(metadata.birth_frame)}
-                    >
-                        SKOČIT NA ZROZENÍ [{metadata.birth_frame}]
-                    </button>
-                {/if}
-            </div>
-            <div class="stat speed-control">
-                <span class="label">RYCHLOST:</span>
-                <span class="value">{playbackSpeed.toFixed(1)}x</span>
-                <input
-                    type="range"
-                    min="0.1"
-                    max="5.0"
-                    step="0.1"
-                    bind:value={playbackSpeed}
-                />
-            </div>
+        {/if}
 
-            <div class="stat toggle-control">
-                <span class="label">ZLATÝ ŘEZ:</span>
+        <div class="side-panel side-panel-left">
+            <div class="panel-tabs">
                 <button
-                    class="toggle-btn {showSpiral ? 'active' : ''}"
-                    on:click={() => (showSpiral = !showSpiral)}
+                    class="tab-btn"
+                    class:active={activeTab === "scanner"}
+                    on:click={() => (activeTab = "scanner")}
                 >
-                    {showSpiral ? "ON" : "OFF"}
+                    SKENER
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "stats"}
+                    on:click={() => (activeTab = "stats")}
+                >
+                    STATISTIKY
+                </button>
+            </div>
+
+            <div class="tab-content">
+                {#if activeTab === "scanner"}
+                    <ZetaScanner
+                        {frame}
+                        data={resonanceData}
+                        harmonics={harmonicData}
+                    />
+                {:else}
+                    <div class="stats-panel">
+                        <div class="stat">
+                            <span class="label">REŽIM:</span>
+                            <span class="value">TOPOGRAFIE POLE Φ (3D)</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">METRIKA:</span>
+                            <span class="value">z = výška pole Φ [AUDIT]</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">SNÍMEK:</span>
+                            <span class="value">{frame} / {totalFrames}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">ZDROJ:</span>
+                            <span class="value"
+                                >{metadata?.run_tag || "Audit"}</span
+                            >
+                        </div>
+                        <div class="stat">
+                            <span class="label">STAV:</span>
+                            <span class="value"
+                                >{frame >= (metadata?.birth_frame || 391)
+                                    ? "DETEKCE LINONŮ"
+                                    : "ZÁBĚH POLE Φ"}</span
+                            >
+                            {#if metadata && frame < metadata.birth_frame}
+                                <button
+                                    class="jump-btn"
+                                    on:click={() =>
+                                        engine.jumpToFrame(
+                                            metadata.birth_frame,
+                                        )}
+                                >
+                                    SKOČIT NA ZROZENÍ [{metadata.birth_frame}]
+                                </button>
+                            {/if}
+                        </div>
+                        <div class="stat speed-control">
+                            <span class="label">RYCHLOST:</span>
+                            <span class="value"
+                                >{playbackSpeed.toFixed(1)}x</span
+                            >
+                            <input
+                                type="range"
+                                min="0.1"
+                                max="5.0"
+                                step="0.1"
+                                bind:value={playbackSpeed}
+                            />
+                        </div>
+
+                        <div class="stat toggle-control">
+                            <span class="label">ZLATÝ ŘEZ:</span>
+                            <button
+                                class="toggle-btn {showSpiral ? 'active' : ''}"
+                                on:click={() => (showSpiral = !showSpiral)}
+                            >
+                                {showSpiral ? "ON" : "OFF"}
+                            </button>
+                        </div>
+                    </div>
+                {/if}
             </div>
         </div>
 
-        <ZetaScanner {frame} data={resonanceData} harmonics={harmonicData} />
-
-        {#if frame >= 391}
-            <div class="event-marker">DETEKCE LINONŮ [zrození]</div>
-        {/if}
-
-        <div class="guide-panel">
-            <h3>PRŮVODCE LABEM</h3>
-            <div class="guide-item">
-                <strong>Co sledovat:</strong> Linony jsou energetická jádra, která
-                se aktivně snaží najít oblasti s nejvyšší intenzitou pole Φ. V této
-                3D vizualizaci se tedy pohybují směrem k "vrcholům" (hřebenům) topografie.
-            </div>
-            <div class="guide-item">
-                <strong>Linony:</strong> Dráhy a částice v poli. Dokud nedosáhnou
-                kritické amplitudy, vidíte je jen jako "duchy". Po zrození (snímek
-                391) začnou aktivně vyhledávat lokální maxima pole Φ.
-            </div>
-            <div class="guide-item">
-                <strong>Topografie pole Φ:</strong> Tato 3D krajina ukazuje energetickou
-                hustotu. Linony se přirozeně stahují na vrcholky a hřebeny, což v
-                laboratoři vidíte jako pohyb kuliček "do kopce".
-            </div>
-            <div class="guide-item">
-                <strong>Zeta Nuly:</strong> "Matematické uzly" vesmíru. Pokud se
-                bílá ryska spektrálního skeneru trefí do modrých čar (Zeta), dochází
-                k rezonanci a stabilizaci částic.
+        <div class="side-panel side-panel-right">
+            <div class="guide-panel">
+                <h3>PRŮVODCE LABEM</h3>
+                <div class="guide-item">
+                    <strong>Co sledovat:</strong> Linony jsou energetická jádra,
+                    která se aktivně snaží najít oblasti s nejvyšší intenzitou pole
+                    Φ. V této 3D vizualizaci se pohybují k "vrcholům" topografie.
+                </div>
+                <div class="guide-item">
+                    <strong>Linony:</strong> Dráhy a částice v poli. Dokud nedosáhnou
+                    kritické amplitudy, vidíte je jako "duchy". Po zrození (snímek
+                    391) aktivně vyhledávají maxima pole Φ.
+                </div>
+                <div class="guide-item">
+                    <strong>Topografie pole Φ:</strong> Tato 3D krajina ukazuje energetickou
+                    hustotu. Linony se přirozeně stahují na vrcholky a hřebeny.
+                </div>
+                <div class="guide-item">
+                    <strong>Zeta Nuly:</strong> "Matematické uzly" vesmíru. Pokud
+                    se bílá ryska skeneru trefí do modrých čar, dochází k rezonanci.
+                </div>
             </div>
         </div>
     </div>
@@ -180,19 +220,44 @@
 
     .overlay {
         position: absolute;
-        top: 32px;
-        left: 32px;
-        bottom: 32px;
+        inset: 32px;
         pointer-events: none;
-        z-index: 100; /* Higher priority */
-        max-width: 400px;
-        display: flex;
-        flex-direction: column;
+        z-index: 100;
+        display: grid;
+        grid-template-columns: 400px 1fr 400px;
+        grid-template-rows: auto 1fr;
+        gap: 20px;
     }
 
-    .overlay > * {
+    .header-section {
+        grid-column: 1 / 4;
         pointer-events: all;
-        position: relative;
+    }
+
+    .central-alert-system {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        pointer-events: none;
+    }
+
+    .side-panel {
+        pointer-events: all;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .side-panel-left {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .side-panel-right {
+        grid-column: 3;
+        grid-row: 2;
     }
 
     h1 {
@@ -214,8 +279,33 @@
         text-transform: uppercase;
     }
 
+    /* Tabs Styling */
+    .panel-tabs {
+        display: flex;
+        gap: 2px;
+        background: rgba(0, 255, 255, 0.1);
+        padding: 2px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: rgba(0, 255, 255, 0.5);
+        padding: 8px;
+        cursor: pointer;
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+        background: rgba(0, 255, 255, 0.2);
+        color: #00ffff;
+        box-shadow: inset 0 -2px 0 #00ffff;
+    }
+
     .stats-panel {
-        margin-top: 40px;
         background: rgba(0, 0, 0, 0.5);
         border-left: 2px solid #00ffff;
         padding: 16px;
@@ -296,7 +386,7 @@
         align-items: center;
         justify-content: center;
         background: #050505;
-        z-index: 100;
+        z-index: 200;
     }
 
     .spinner {
@@ -323,51 +413,69 @@
     }
 
     .event-marker {
-        margin-top: 10px;
-        background: rgba(255, 0, 0, 0.3);
-        color: #ffaa00;
-        padding: 5px;
-        font-size: 0.7rem;
-        border: 1px solid #ffaa00;
+        background: rgba(255, 170, 0, 0.3);
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        border: 2px solid #ffaa00;
         text-align: center;
-        animation: blink 1s infinite;
+        animation:
+            blink 1s infinite,
+            pulse-alert 2s infinite;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+        pointer-events: all;
+    }
+
+    @keyframes pulse-alert {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
     }
 
     .guide-panel {
-        margin-top: 40px;
         background: rgba(0, 40, 40, 0.4);
-        border: 1px solid rgba(0, 255, 255, 0.2);
-        padding: 20px;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        padding: 24px;
         backdrop-filter: blur(5px);
-        overflow-y: auto;
-        pointer-events: all;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     }
 
     .guide-panel h3 {
         margin-top: 0;
         margin-bottom: 20px;
         font-size: 0.9rem;
-        letter-spacing: 0.1rem;
+        letter-spacing: 0.2rem;
         border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-        padding-bottom: 10px;
+        padding-bottom: 15px;
+        text-transform: uppercase;
+        color: #00ffff;
     }
 
     .guide-item {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         font-size: 0.75rem;
-        line-height: 1.4;
-        color: #ddd;
+        line-height: 1.6;
+        color: #eee;
     }
 
     .guide-item strong {
         color: #00ffff;
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+        letter-spacing: 1px;
     }
 
     @keyframes blink {
         50% {
-            opacity: 0.5;
+            opacity: 0.6;
         }
     }
 </style>
