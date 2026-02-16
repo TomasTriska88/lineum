@@ -14,6 +14,11 @@
     let fourierChart;
     let riemannChart;
 
+    // Modal state
+    let maximizedChart = null; // null | "fourier" | "riemann"
+    let modalCanvas;
+    let modalChart;
+
     $: if (dataRoot) {
         loadDiscovery();
     }
@@ -34,14 +39,30 @@
         if (!discoveryData) return;
         renderFourier();
         renderRiemann();
+        if (maximizedChart) renderModalChart();
     }
 
-    function renderFourier() {
-        if (!fourierCanvas) return;
-        if (fourierChart) fourierChart.destroy();
+    function renderModalChart() {
+        if (!modalCanvas || !maximizedChart) return;
+        if (modalChart) modalChart.destroy();
 
-        const ctx = fourierCanvas.getContext("2d");
-        fourierChart = new Chart(ctx, {
+        const ctx = modalCanvas.getContext("2d");
+        const sourceData =
+            maximizedChart === "fourier"
+                ? getFourierConfig()
+                : getRiemannConfig();
+
+        modalChart = new Chart(ctx, {
+            ...sourceData,
+            options: {
+                ...sourceData.options,
+                maintainAspectRatio: false,
+            },
+        });
+    }
+
+    function getFourierConfig() {
+        return {
             type: "line",
             data: {
                 labels: discoveryData.fourier_spectrum.map((_, i) =>
@@ -106,15 +127,11 @@
                     },
                 },
             },
-        });
+        };
     }
 
-    function renderRiemann() {
-        if (!riemannCanvas) return;
-        if (riemannChart) riemannChart.destroy();
-
-        const ctx = riemannCanvas.getContext("2d");
-        riemannChart = new Chart(ctx, {
+    function getRiemannConfig() {
+        return {
             type: "line",
             data: {
                 labels: discoveryData.norm_riemann.map((_, i) => i),
@@ -195,7 +212,34 @@
                     },
                 },
             },
-        });
+        };
+    }
+
+    function renderFourier() {
+        if (!fourierCanvas) return;
+        if (fourierChart) fourierChart.destroy();
+
+        const ctx = fourierCanvas.getContext("2d");
+        fourierChart = new Chart(ctx, getFourierConfig());
+    }
+
+    function renderRiemann() {
+        if (!riemannCanvas) return;
+        if (riemannChart) riemannChart.destroy();
+
+        const ctx = riemannCanvas.getContext("2d");
+        riemannChart = new Chart(ctx, getRiemannConfig());
+    }
+
+    function openModal(type) {
+        maximizedChart = type;
+        // Wait for next tick to bind modalCanvas
+        setTimeout(renderModalChart, 10);
+    }
+
+    function closeModal() {
+        if (modalChart) modalChart.destroy();
+        maximizedChart = null;
     }
 
     onMount(() => {
@@ -266,9 +310,15 @@
     <div class="chart-section">
         <div class="chart-header">
             <h3>{$t("fourier_title")}</h3>
-            <button class="zoom-reset" on:click={() => fourierChart.resetZoom()}
-                >RESET ZOOM</button
-            >
+            <div class="header-actions">
+                <button class="icon-btn" on:click={() => openModal("fourier")}
+                    >MAX</button
+                >
+                <button
+                    class="zoom-reset"
+                    on:click={() => fourierChart.resetZoom()}>RESET</button
+                >
+            </div>
         </div>
         <div class="chart-container">
             <canvas bind:this={fourierCanvas}></canvas>
@@ -284,9 +334,15 @@
     <div class="chart-section">
         <div class="chart-header">
             <h3>{$t("riemann_title")}</h3>
-            <button class="zoom-reset" on:click={() => riemannChart.resetZoom()}
-                >RESET ZOOM</button
-            >
+            <div class="header-actions">
+                <button class="icon-btn" on:click={() => openModal("riemann")}
+                    >MAX</button
+                >
+                <button
+                    class="zoom-reset"
+                    on:click={() => riemannChart.resetZoom()}>RESET</button
+                >
+            </div>
         </div>
         <div class="chart-container">
             <canvas bind:this={riemannCanvas}></canvas>
@@ -298,6 +354,34 @@
             <p>{$t("insight_riemann_desc")}</p>
         </div>
     </div>
+
+    {#if maximizedChart}
+        <div class="chart-modal" on:click|self={closeModal}>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        {maximizedChart === "fourier"
+                            ? $t("fourier_title")
+                            : $t("riemann_title")}
+                    </h3>
+                    <button class="close-btn" on:click={closeModal}
+                        >&times;</button
+                    >
+                </div>
+                <div class="modal-body">
+                    <canvas bind:this={modalCanvas}></canvas>
+                </div>
+                <div class="modal-footer">
+                    <p class="chart-tip">{$t("zoom_tip")}</p>
+                    <button
+                        class="zoom-reset"
+                        on:click={() => modalChart.resetZoom()}
+                        >RESET ZOOM</button
+                    >
+                </div>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -455,6 +539,88 @@
         margin-top: 5px;
         font-style: italic;
         margin-bottom: 15px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .icon-btn {
+        background: rgba(0, 255, 255, 0.2);
+        border: 1px solid rgba(0, 255, 255, 0.5);
+        color: #00ffff;
+        font-size: 0.55rem;
+        padding: 2px 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .icon-btn:hover {
+        background: rgba(0, 255, 255, 0.4);
+    }
+
+    /* Modal Styles */
+    .chart-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        pointer-events: all;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 1200px;
+        height: 100%;
+        max-height: 800px;
+        background: #050505;
+        border: 1px solid #00ffff;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        padding-bottom: 10px;
+    }
+
+    .modal-body {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(0, 255, 255, 0.1);
+    }
+
+    .close-btn {
+        background: transparent;
+        border: none;
+        color: #00ffff;
+        font-size: 2rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .close-btn:hover {
+        color: #fff;
     }
 
     .narrative-guide {

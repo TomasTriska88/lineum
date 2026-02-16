@@ -19,7 +19,14 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
-    let activeTab = "stats"; // "scanner" | "stats" | "tidal"
+
+    // Persist active tab across reloads
+    const savedTab = localStorage.getItem("lab_active_tab");
+    let activeTab = savedTab || "stats";
+
+    $: if (activeTab) {
+        localStorage.setItem("lab_active_tab", activeTab);
+    }
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
@@ -307,6 +314,7 @@
         grid-template-columns: 400px 1fr 400px;
         grid-template-rows: auto 1fr;
         gap: 20px;
+        min-height: calc(100vh - 64px); /* Stabilize layout */
     }
 
     .header-section {
