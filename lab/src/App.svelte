@@ -14,7 +14,7 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
-    let activeTab = "scanner"; // "scanner" | "stats"
+    let activeTab = "stats"; // "scanner" | "stats"
 
     $: if (engine && playbackSpeed !== undefined) {
         engine.playbackSpeed = playbackSpeed;
@@ -98,28 +98,22 @@
             <div class="panel-tabs">
                 <button
                     class="tab-btn"
-                    class:active={activeTab === "scanner"}
-                    on:click={() => (activeTab = "scanner")}
-                >
-                    {$t("tab_scanner")}
-                </button>
-                <button
-                    class="tab-btn"
                     class:active={activeTab === "stats"}
                     on:click={() => (activeTab = "stats")}
                 >
                     {$t("tab_stats")}
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "scanner"}
+                    on:click={() => (activeTab = "scanner")}
+                >
+                    {$t("tab_scanner")}
+                </button>
             </div>
 
             <div class="tab-content">
-                {#if activeTab === "scanner"}
-                    <ZetaScanner
-                        {frame}
-                        data={resonanceData}
-                        harmonics={harmonicData}
-                    />
-                {:else}
+                {#if activeTab === "stats"}
                     <div class="stats-panel">
                         <div class="stat">
                             <span class="label">{$t("label_mode")}</span>
@@ -182,6 +176,12 @@
                             </button>
                         </div>
                     </div>
+                {:else}
+                    <ZetaScanner
+                        {frame}
+                        data={resonanceData}
+                        harmonics={harmonicData}
+                    />
                 {/if}
             </div>
         </div>
