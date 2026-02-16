@@ -101,7 +101,7 @@
             <div class="header-top">
                 <h1>{$t("simulakrum")}</h1>
                 <div class="header-controls">
-                    {#if manifest.length > 1}
+                    {#if manifest.length > 0}
                         <select
                             class="run-selector"
                             bind:value={selectedRunId}

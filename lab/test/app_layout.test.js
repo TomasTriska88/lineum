@@ -44,4 +44,15 @@ describe('Lab UI Structural Integrity (Invariant Test)', () => {
         expect(content).toContain('import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte"');
         expect(content).toContain('<TidalAnalyzer {dataRoot} />');
     });
+
+    it('should show the run selector even for a single run (length > 0)', () => {
+        // Ensuring we didn't hide the selector for single runs
+        expect(content).toContain('{#if manifest.length > 0}');
+        expect(content).toContain('class="run-selector"');
+    });
+
+    it('should have the reactive run loading logic', () => {
+        expect(content).toContain('on:change={(e) => loadRun(e.target.value)}');
+        expect(content).toContain('async function loadRun(runId)');
+    });
 });
