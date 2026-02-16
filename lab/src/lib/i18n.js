@@ -79,14 +79,18 @@ export const translations = {
         chart_label_fourier: "Riemann - frekvenční spektrum",
         chart_label_amplitude: "Amplituda",
         chart_label_component: "Frekvenční složka (relativní index)",
-        chart_label_riemann: "Riemannovy nuly",
-        chart_label_dejavu: "DejaVu body (Lineum)",
-        chart_label_normalized: "Normalizovaná hodnota",
-        chart_label_index: "Index",
+        chart_label_riemann: "VZOREC VESMÍRU (BÍLÁ LINKA)",
+        chart_label_dejavu: "VÝVOJ LINEUM (ORANŽOVÉ BODY)",
+        chart_label_normalized: "STAV HARMONIE",
+        chart_label_index: "ČASOVÁ OSA VÝVOJE",
         data_source: "ZDROJ: discovery.json",
         chart_ghost_chaos: "STOCHASTICKÝ ŠUM (REF)",
         chart_ghost_order: "IDEÁLNÍ RESONANCE (REF)",
-        zoom_tip: "Tip: Použijte kolečko myši pro ZOOM, tažení pro POSUN"
+        zoom_tip: "Tip: Použijte kolečko myši pro ZOOM, tažení pro POSUN",
+        insight_riemann_title: "CO V GRAFU VIDÍTE?",
+        insight_riemann_desc: "Aby nastala shoda, musí oranžové body (Lineum) co nejpřesněji 'sedět' na bílé lince (Vesmír). Čím více se překrývají, tím lépe. Hodnota 'Turbulence pole' by naopak měla klesat k nule – to znamená, že se náš digitální svět přestal chvět a našel svůj klid v řádu vesmíru.",
+        insight_fourier_title: "POLE A JEHO MELODIE",
+        insight_fourier_desc: "Tento graf ukazuje 'hudbu', kterou pole hraje. Ostré špičky znamenají čistý tón a stabilní strukturu, zatímco náhodný šum by znamenal rozpad a smrt."
     },
     en: {
         loading: "LOADING AUDIT DATA (JSON BIN)...",
@@ -166,14 +170,18 @@ export const translations = {
         chart_label_fourier: "Riemann - Frequency Spectrum",
         chart_label_amplitude: "Amplitude",
         chart_label_component: "Frequency Component (Relative Index)",
-        chart_label_riemann: "Riemann Zeros",
-        chart_label_dejavu: "DejaVu Points (Lineum)",
-        chart_label_normalized: "Normalized Value",
-        chart_label_index: "Index",
+        chart_label_riemann: "UNIVERSAL PATTERN (WHITE LINE)",
+        chart_label_dejavu: "LINEUM DEVELOPMENT (ORANGE POINTS)",
+        chart_label_normalized: "HARMONY STATE",
+        chart_label_index: "DEVELOPMENT TIMELINE",
         data_source: "SOURCE: discovery.json",
         chart_ghost_chaos: "STOCHASTIC NOISE (REF)",
         chart_ghost_order: "IDEAL RESONANCE (REF)",
-        zoom_tip: "Tip: Use mouse wheel to ZOOM, drag to PAN"
+        zoom_tip: "Tip: Use mouse wheel to ZOOM, drag to PAN",
+        insight_riemann_title: "WHAT DO YOU SEE?",
+        insight_riemann_desc: "For a perfect match, the orange points (Lineum) must sit as closely as possible on the white line (Universe). The more they overlap, the better. Conversely, the 'Field Turbulence' should drop toward zero – meaning our digital world has stopped trembling and found its peace in the order of the universe.",
+        insight_fourier_title: "FIELD MELODY",
+        insight_fourier_desc: "This chart shows the 'music' the field is playing. Sharp peaks mean a clear tone and stable structure, while random noise would mean decay and death."
     }
 };
 

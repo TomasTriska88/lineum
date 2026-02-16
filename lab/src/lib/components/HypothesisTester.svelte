@@ -133,9 +133,9 @@
                     {
                         label: $t("chart_label_riemann"),
                         data: discoveryData.norm_riemann,
-                        borderColor: "#cc0000",
+                        borderColor: "rgba(255, 255, 255, 0.5)",
                         backgroundColor: "transparent",
-                        borderWidth: 2,
+                        borderWidth: 1.5,
                         pointRadius: 0,
                         tension: 0.2,
                     },
@@ -274,6 +274,11 @@
             <canvas bind:this={fourierCanvas}></canvas>
         </div>
         <p class="chart-tip">{$t("zoom_tip")}</p>
+
+        <div class="narrative-guide">
+            <div class="guide-header">{$t("insight_fourier_title")}</div>
+            <p>{$t("insight_fourier_desc")}</p>
+        </div>
     </div>
 
     <div class="chart-section">
@@ -287,6 +292,11 @@
             <canvas bind:this={riemannCanvas}></canvas>
         </div>
         <p class="chart-tip">{$t("zoom_tip")}</p>
+
+        <div class="narrative-guide highlight">
+            <div class="guide-header">{$t("insight_riemann_title")}</div>
+            <p>{$t("insight_riemann_desc")}</p>
+        </div>
     </div>
 </div>
 
@@ -444,5 +454,38 @@
         opacity: 0.5;
         margin-top: 5px;
         font-style: italic;
+        margin-bottom: 15px;
+    }
+
+    .narrative-guide {
+        background: rgba(255, 170, 0, 0.05);
+        border-left: 2px solid #ffaa00;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 0 4px 4px 0;
+    }
+
+    .narrative-guide.highlight {
+        background: rgba(0, 255, 0, 0.05);
+        border-left-color: #00ff00;
+    }
+
+    .guide-header {
+        font-size: 0.65rem;
+        font-weight: bold;
+        color: #ffaa00;
+        margin-bottom: 5px;
+        letter-spacing: 1px;
+    }
+
+    .narrative-guide.highlight .guide-header {
+        color: #00ff00;
+    }
+
+    .narrative-guide p {
+        margin: 0;
+        font-size: 0.7rem;
+        line-height: 1.4;
+        opacity: 0.8;
     }
 </style>
