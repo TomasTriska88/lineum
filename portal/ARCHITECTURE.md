@@ -7,8 +7,8 @@ This document describes the technical architecture of the Lineum Portal, its com
 The project is divided into three main layers that together form the Lineum ecosystem.
 
 ```mermaid
-graph TD
-    User((User)) --> CF[Cloudflare DNS / Proxy]
+    User((User)) --> ZT[Cloudflare Access / Zero Trust]
+    ZT --> CF[Cloudflare DNS / Proxy]
     CF --> Frontend[SvelteKit Frontend / Portal]
     Frontend --> API[Python API Engine]
     Frontend --> CMS[Directus CMS]
@@ -54,6 +54,22 @@ graph TD
   - **Domain:** `lineum.io`
   - **Security:** SSL, DDoS protection, and speed optimization via Cloudflare Proxy.
 
+## 🌿 Git Workflow & Branching
+
+To maintain stability and enable automated deployments, we use a structured branching strategy:
+
+- **`main` Branch:**
+  - **Purpose:** Production-ready code and stable releases.
+  - **Deployment:** Automatically triggers deployment to the production environment on Railway.app.
+  - **Access:** Only merged from `dev` after verification.
+- **`dev` Branch:**
+  - **Purpose:** Primary working branch for active development and hypothesis testing.
+  - **Sync:** All new features and lab experiments are committed here first.
+- **Workflow:**
+  1. Development happens on `dev`.
+  2. Once a milestone is reached and tested, `dev` is merged into `main`.
+  3. Merge to `main` triggers the live infrastructure update.
+
 ## 🚀 Automation & Deployment
 
 Deployment is handled collaboratively via **GitHub Actions**:
@@ -70,6 +86,16 @@ This document is a **Living Document**. It MUST be updated whenever:
 - Significant architectural shifts occur in the Portal or Lab.
 
 Both the user and the AI assistant are responsible for keeping this overview in sync with the actual state of the repository.
+
+## 🔒 Security & Access Control
+
+During the Alpha/Development phase, access is restricted using **Cloudflare Zero Trust (Access)**:
+- **Authentication:** Users must verify their identity via a **One-Time Pin (OTP)** sent to their authorized email address.
+- **Authorized Users:**
+  - Jiri Hernik
+  - Tomas Triska
+  - Vlastimil Smetak
+- **Scope:** The entire domain `lineum.io` is protected, blocking unauthorized access to the Portal, Lab, and Directus CMS.
 
 ---
 *Last update: February 16, 2026*
