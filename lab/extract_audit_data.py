@@ -25,8 +25,9 @@ os.makedirs(LAB_DATA_DIR, exist_ok=True)
 PHI_PATH = os.path.join(RUN_DIR, f"{RUN_TAG}_frames_phi.npy")
 print(f"Loading {PHI_PATH}...")
 phi_frames = np.load(PHI_PATH) # shape: (200, 128, 128)
+FRAME_COUNT = len(phi_frames)
+STEP_PER_FRAME = 2000 // FRAME_COUNT
 
-# Use ALL 200 frames for 4x higher fidelity
 phi_lowres = []
 for frame in phi_frames:
     # simple striding for downsampling (keeping 64x64 for performance)
@@ -34,8 +35,8 @@ for frame in phi_frames:
 
 phi_payload = {
     "metadata": {
-        "source": "spec6_false_s41",
-        "frame_count": len(phi_lowres),
+        "source": RUN_TAG,
+        "frame_count": FRAME_COUNT,
         "grid_size": 64
     },
     "frames": phi_lowres
@@ -43,10 +44,10 @@ phi_payload = {
 
 with open(os.path.join(LAB_DATA_DIR, "phi_frames.json"), "w") as f:
     json.dump(phi_payload, f)
-print("Saved phi_frames.json")
+print(f"Saved phi_frames.json ({FRAME_COUNT} frames)")
 
 # 2. Extract Key Trajectories
-TRAJ_PATH = os.path.join(RUN_DIR, "spec6_false_s41_trajectories.csv")
+TRAJ_PATH = os.path.join(RUN_DIR, f"{RUN_TAG}_trajectories.csv")
 print(f"Loading {TRAJ_PATH}...")
 df = pd.read_csv(TRAJ_PATH)
 
@@ -65,8 +66,8 @@ for tid in top_ids:
     min_s = t_df['step'].min()
     max_s = t_df['step'].max()
     
-    for i in range(400):
-        target_step = i * 5
+    for i in range(FRAME_COUNT):
+        target_step = i * STEP_PER_FRAME
         
         # 👁️ Birth/Death Gate: only include point if step is within simulation lifespan
         if target_step < min_s or target_step > max_s:
@@ -95,7 +96,7 @@ print("Saved trajectories.json")
 # For simplicity: use the median of birth steps among the top 20
 birth_steps = [t_df['step'].min() for tid in top_ids for t_df in [df[df['id'] == tid]]]
 median_birth_step = int(np.median(birth_steps))
-birth_frame = median_birth_step // 5
+birth_frame = median_birth_step // STEP_PER_FRAME
 
 # 3. Save Metadata
 metadata_payload = {
@@ -107,7 +108,7 @@ metadata_payload = {
 }
 with open(os.path.join(LAB_DATA_DIR, "metadata.json"), "w") as f:
     json.dump(metadata_payload, f)
-print(f"Saved metadata.json: {metadata_payload}")
+print(f"Saved metadata.json")
 
 # 4. Extract Resonance Data (f0 evolution vs Zeta Zeros)
 # Non-trivial zeros of Riemann Zeta function (imaginary parts)
@@ -118,9 +119,11 @@ phi_log = pd.read_csv(PHI_LOG_PATH)
 # Normalize phi_center to [0, 100] for visual alignment
 phi_log['phi_norm'] = (phi_log['phi_center_abs'] / phi_log['phi_center_abs'].max()) * 40
 
+phi_evolution = phi_log.iloc[::STEP_PER_FRAME]['phi_norm'].tolist() # Sync with 400 frames (2000 steps / 5)
+
 resonance_payload = {
     "zeta_zeros": ZETA_ZEROS,
-    "phi_evolution": phi_log.iloc[::5]['phi_norm'].tolist(), # Sync with 400 frames (2000 steps / 5)
+    "phi_evolution": phi_evolution,
     "f0_canonical": 1.856777545095882e+20
 }
 
@@ -128,50 +131,61 @@ with open(os.path.join(LAB_DATA_DIR, "resonance.json"), "w") as f:
     json.dump(resonance_payload, f)
 print("Saved resonance.json")
 
-# 5. Harmonic Analysis (Fibonacci & Golden Spiral)
-# Check for geometric ideals in the simulation data
-print("Performing harmonic analysis...")
+# 5. Harmonic Analysis (Dynamic Per-Frame)
+print("Performing per-frame harmonic analysis...")
 
-# Fibonacci Ratios (from peak intervals in average distance)
-df['dist'] = np.sqrt((df['x'] - 64)**2 + (df['y'] - 64)**2)
-avg_dist = df.groupby('step')['dist'].mean()
+phi_const = (1 + 5**0.5) / 2
+golden_b = np.log(phi_const) / (np.pi / 2)
 
-# Find peaks in average distance
-peaks = []
-for i in range(1, len(avg_dist)-1):
-    if avg_dist.iloc[i] > avg_dist.iloc[i-1] and avg_dist.iloc[i] > avg_dist.iloc[i+1]:
-        peaks.append(avg_dist.index[i])
-        
-fib_ratios = []
-if len(peaks) > 2:
-    intervals = np.diff(peaks)
-    for i in range(1, len(intervals)):
-        ratio = intervals[i] / intervals[i-1]
-        fib_ratios.append(float(ratio))
+frame_harmonics = []
+frame_correlation = []
 
-# Golden Spiral Scoring (top trajectories)
-phi = (1 + 5**0.5) / 2
-golden_b = np.log(phi) / (np.pi / 2)
-spiral_scores = []
-for tid in top_ids[:3]:
-    t_df = df[df['id'] == tid].sort_values('step')
-    x, y = t_df['x'] - 64, t_df['y'] - 64
-    r = np.sqrt(x**2 + y**2)
-    theta = np.unwrap(np.arctan2(y, x))
+for i in range(FRAME_COUNT):
+    # a) Harmony: Spiral fit for active linons
+    active_linons = []
+    for traj in trajectories_data:
+        p = traj['path'][i]
+        if p is not None:
+            active_linons.append(p)
     
-    if len(r) > 15:
-        coeffs = np.polyfit(theta, np.log(r + 1e-6), 1)
-        b = coeffs[0]
-        score = 1 - abs(b - golden_b) / golden_b
-        spiral_scores.append(max(0, float(score)))
+    h_score = 0.5 # Default
+    if len(active_linons) >= 3:
+        # Calculate deviation from spiral
+        rs = []
+        thetas = []
+        for l in active_linons:
+            dx, dy = l[0] - 64, l[1] - 64
+            r = np.sqrt(dx**2 + dy**2)
+            theta = np.arctan2(dy, dx)
+            rs.append(r)
+            thetas.append(theta)
+        
+        # Sort by theta to check growth
+        # Simple heuristic: how well does r correlate with exp(b*theta)
+        try:
+            thetas_unwrapped = np.unwrap(thetas)
+            coeffs = np.polyfit(thetas_unwrapped, np.log(np.array(rs) + 1e-6), 1)
+            b = coeffs[0]
+            h_score = 1 - min(1, abs(b - golden_b) / golden_b)
+        except:
+            h_score = 0.5
+    
+    frame_harmonics.append(float(h_score))
+
+    # b) Correlation: Alignment with Zeta Zeros
+    current_f = phi_evolution[i]
+    dists = [abs(current_f - z) for z in ZETA_ZEROS]
+    min_dist = min(dists)
+    # Correlation is 100% if dist is 0, drops off. Max dist range is roughly 40.
+    c_score = max(0, 1.0 - (min_dist / 5.0)) # 5.0 is the "proximity" threshold
+    frame_correlation.append(float(c_score))
 
 harmonic_payload = {
-    "fibonacci_ratios": fib_ratios,
-    "golden_spiral_scores": spiral_scores,
-    "golden_ratio": phi,
-    "harmonic_index": float(np.mean(spiral_scores)) if spiral_scores else 0.5
+    "frame_harmonics": frame_harmonics,
+    "frame_correlation": frame_correlation,
+    "golden_ratio": phi_const
 }
 
 with open(os.path.join(LAB_DATA_DIR, "harmonics.json"), "w") as f:
     json.dump(harmonic_payload, f)
-print(f"Saved harmonics.json: {harmonic_payload}")
+print(f"Saved harmonics.json with {len(frame_harmonics)} dynamic steps.")

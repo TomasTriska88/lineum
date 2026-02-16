@@ -12,9 +12,9 @@ describe('Laboratory Data Synchronization', () => {
     };
 
     it('should have consistent frame counts across all audit data', () => {
-        const phiData = readJson('phi_audit_frames.json');
-        const resonanceData = readJson('resonance_audit.json');
-        const trajData = readJson('trajectories_audit.json');
+        const phiData = readJson('phi_frames.json');
+        const resonanceData = readJson('resonance.json');
+        const trajData = readJson('trajectories.json');
 
         expect(phiData).not.toBeNull();
         expect(resonanceData).not.toBeNull();

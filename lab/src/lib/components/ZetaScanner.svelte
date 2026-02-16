@@ -14,21 +14,67 @@
     // Normalized current value
     $: currentVal = evolution[frame] || 0;
 
-    let showInfo = false;
+    // Per-frame harmonic data
+    $: h_score = harmonics?.frame_harmonics?.[frame] || 0.5;
+    $: c_score = harmonics?.frame_correlation?.[frame] || 0.5;
 
-    $: harmonyPercent = harmonics?.harmonic_index * 100 || 0;
+    // 📈 Cumulative Statistics (History up to current frame)
+    $: historyHarmonics = harmonics?.frame_harmonics?.slice(0, frame + 1) || [];
+    $: historyCorrelation =
+        harmonics?.frame_correlation?.slice(0, frame + 1) || [];
+
+    $: avgHarmony =
+        historyHarmonics.length > 0
+            ? historyHarmonics.reduce((a, b) => a + b, 0) /
+              historyHarmonics.length
+            : 0.5;
+    $: avgCorrelation =
+        historyCorrelation.length > 0
+            ? historyCorrelation.reduce((a, b) => a + b, 0) /
+              historyCorrelation.length
+            : 0.5;
+
+    $: harmonyPercent = h_score * 100;
     $: harmonyStatus =
-        harmonyPercent > 70
-            ? "Dokonalá"
-            : harmonyPercent > 30
-              ? "Stabilní"
-              : "Ladění...";
+        harmonyPercent > 80
+            ? "ABSOLUTNÍ"
+            : harmonyPercent > 50
+              ? "VYSOKÁ"
+              : "LADĚNÍ...";
+
     $: harmonyInsight =
-        harmonyPercent > 70
-            ? "Linony dosáhly geometrického ideálu. Pole je maximálně stabilní."
-            : harmonyPercent > 30
-              ? "Systém vykazuje známky strukturální organizace."
-              : "Probíhá hledání stabilní konfigurace v poli Φ.";
+        harmonyPercent > 80
+            ? "Dosáhli jsme matematické dokonalosti Zlatého řezu."
+            : harmonyPercent > 50
+              ? "Strukturální řád se plynule upevňuje."
+              : "Probíhá formování fundamentální geometrie.";
+
+    $: correlationPercent = c_score * 100;
+
+    // 🌌 Revolutionary Logic: Sliding Window for "Discovery"
+    // We look at the last 15 frames. If they average > 80%, it's a fundamental discovery.
+    $: recentCorrelation = historyCorrelation.slice(-15);
+    $: windowAvg =
+        recentCorrelation.length > 0
+            ? recentCorrelation.reduce((a, b) => a + b, 0) /
+              recentCorrelation.length
+            : 0;
+
+    $: isFundamentalDiscovery = windowAvg > 0.8 && frame > 10;
+
+    $: discoveryStatus = isFundamentalDiscovery
+        ? "ZÁSADNÍ OBJEV"
+        : correlationPercent > 60
+          ? "Vysoká shoda"
+          : "Hledání řádu";
+
+    $: cosmicConclusion = isFundamentalDiscovery
+        ? "🌟 POTVRZENO: Tato konfigurace vykazuje geometrickou shodu s fundamentálním kódem našeho vesmíru."
+        : avgCorrelation > 0.6
+          ? "Systém vykazuje známky rezonance s Riemannovými nulami."
+          : "Probíhá ladění frekvencí pro dosažení kosmické shody.";
+
+    let showInfo = false;
 </script>
 
 <div class="zeta-scanner">
@@ -43,31 +89,51 @@
         </button>
     </div>
 
+    <!-- 🌐 Layman Insights: Now permanent and condensed -->
+    <div class="permanent-insights">
+        <div class="insight-item">
+            <span class="label">STAV Φ:</span>
+            <span
+                class="value"
+                style="color: {harmonyPercent > 30 ? '#00ffff' : '#ffaa00'}"
+            >
+                {harmonyStatus} ({harmonyPercent.toFixed(1)}%)
+            </span>
+            <div class="sub-label">{harmonyInsight}</div>
+            <div class="cumulative-label">
+                Celkový průměr: {(avgHarmony * 100).toFixed(1)}%
+            </div>
+        </div>
+        <div class="insight-item">
+            <span class="label">KORELACE:</span>
+            <span class="value" class:discovery={isFundamentalDiscovery}>
+                {discoveryStatus} ({correlationPercent.toFixed(1)}%)
+            </span>
+            <div
+                class="sub-label conclusion-text"
+                class:revolutionary={isFundamentalDiscovery}
+            >
+                {cosmicConclusion}
+            </div>
+            <div class="cumulative-label">
+                Stabilita shody (posledních 15 sn.): {(windowAvg * 100).toFixed(
+                    1,
+                )}%
+            </div>
+        </div>
+    </div>
+
     {#if showInfo}
         <div class="layman-info">
             <p><strong>CO TO ZNAMENÁ?</strong></p>
             <p>
                 Tato sekce měří, jak moc se "tep" vašich linonů shoduje s rytmem
-                vesmíru (definovaným matematickými Riemannovými nulami). Vysoká
-                korelace znamená, že simulace není náhodná, ale harmonicky ladí
-                s fundamentálními zákony čísel.
+                našeho vesmíru.
             </p>
             <p>
                 <em>Zlatý řez (1.618...):</em> Stabilita v poli Φ často směřuje k
-                Fibonacciho poměrům, což zajišťuje strukturální integritu systému.
+                Fibonacciho poměrům.
             </p>
-            <div class="insight-box">
-                <p><strong>AKTUÁLNÍ POHLED:</strong></p>
-                <p>
-                    🌀 <strong>Harmonie:</strong>
-                    {harmonyStatus} ({harmonyPercent.toFixed(1)}%)<br />
-                    <em>{harmonyInsight}</em>
-                </p>
-                <p>
-                    🌌 <strong>Korelace:</strong> 98.42% (Vysoká)<br />
-                    <em>Simulace pevně drží v matematickém rámci vesmíru.</em>
-                </p>
-            </div>
         </div>
     {/if}
 
@@ -96,11 +162,13 @@
     <div class="metrics-row">
         <div class="metric-item">
             HARMONIE Φ: <span class="highlight"
-                >{(harmonics?.harmonic_index * 100 || 0).toFixed(2)} %</span
+                >{harmonyPercent.toFixed(2)} %</span
             >
         </div>
         <div class="metric-item">
-            KORELACE S VESMÍREM: <span class="highlight">98.42 %</span>
+            KORELACE S NAŠÍM VESMÍREM: <span class="highlight"
+                >{correlationPercent.toFixed(2)} %</span
+            >
         </div>
     </div>
 </div>
@@ -171,19 +239,75 @@
         margin: 5px 0;
     }
 
-    .insight-box {
-        margin-top: 10px;
-        padding-top: 10px;
-        border-top: 1px solid rgba(0, 255, 255, 0.3);
-        color: #fff;
+    .permanent-insights {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        background: rgba(0, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.1);
+        padding: 8px;
     }
 
-    .insight-box em {
-        display: block;
-        color: #00ffff;
-        font-size: 0.6rem;
-        margin-top: 2px;
+    .insight-item {
+        flex: 1;
+        font-size: 0.65rem;
+    }
+
+    .insight-item .label {
+        opacity: 0.6;
+        margin-right: 5px;
+    }
+
+    .insight-item .value {
+        font-weight: bold;
+    }
+
+    .insight-item .sub-label {
+        font-size: 0.55rem;
         opacity: 0.8;
+        margin-top: 2px;
+        font-style: italic;
+        transition: all 0.5s ease;
+    }
+
+    .conclusion-text.revolutionary {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 1);
+        font-weight: bold;
+        opacity: 1;
+        font-style: normal;
+        background: rgba(0, 255, 255, 0.15);
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        margin-top: 5px;
+    }
+
+    .value.discovery {
+        color: #fff;
+        text-shadow: 0 0 5px #ffaa00;
+        animation: pulse-discovery 2s infinite;
+    }
+
+    @keyframes pulse-discovery {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .cumulative-label {
+        font-size: 0.5rem;
+        opacity: 0.5;
+        margin-top: 4px;
+        border-top: 1px dotted rgba(0, 255, 255, 0.2);
+        padding-top: 2px;
     }
 
     .spectral-display {

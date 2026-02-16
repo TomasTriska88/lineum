@@ -48,6 +48,18 @@ class TestLabData(unittest.TestCase):
             self.assertIn("frames", data)
             self.assertGreater(len(data["frames"]), 0)
 
+    def test_harmonics_dynamic(self):
+        path = os.path.join(self.base_path, "harmonics.json")
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                data = json.load(f)
+            self.assertIn("frame_harmonics", data)
+            self.assertIn("frame_correlation", data)
+            self.assertIsInstance(data["frame_harmonics"], list)
+            self.assertIsInstance(data["frame_correlation"], list)
+            self.assertGreater(len(data["frame_harmonics"]), 0)
+            self.assertEqual(len(data["frame_harmonics"]), len(data["frame_correlation"]))
+
 class TestExtractionLogic(unittest.TestCase):
     def test_golden_ratio_constant(self):
         phi = (1 + 5**0.5) / 2
