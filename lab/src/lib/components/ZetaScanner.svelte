@@ -20,9 +20,13 @@
 <div class="zeta-scanner">
     <div class="scanner-header">
         <div class="scanner-title">SKENER ZETA REZONANCE [§4.3]</div>
-        <button class="info-toggle" on:click={() => (showInfo = !showInfo)}
-            >i</button
+        <button
+            type="button"
+            class="info-toggle"
+            on:click|stopPropagation={() => (showInfo = !showInfo)}
         >
+            {showInfo ? "×" : "i"}
+        </button>
     </div>
 
     {#if showInfo}
@@ -102,15 +106,18 @@
         background: rgba(0, 255, 255, 0.2);
         border: 1px solid #00ffff;
         color: #00ffff;
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        font-size: 0.6rem;
+        font-size: 0.7rem;
         font-weight: bold;
+        transition: all 0.2s;
+        z-index: 100;
+        pointer-events: all;
     }
 
     .info-toggle:hover {

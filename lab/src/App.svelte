@@ -184,14 +184,15 @@
         left: 32px;
         bottom: 32px;
         pointer-events: none;
-        z-index: 10;
+        z-index: 100; /* Higher priority */
         max-width: 400px;
         display: flex;
         flex-direction: column;
     }
 
-    .overlay * {
-        pointer-events: all; /* Ensure slider etc. works */
+    .overlay > * {
+        pointer-events: all;
+        position: relative;
     }
 
     h1 {
