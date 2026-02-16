@@ -33,3 +33,8 @@ These rules govern agent behavior and documentation standards for the Lineum Cor
     1. **Central `todo.md`**: High-level milestones (Epics) and cross-component dependencies.
     2. **Local documentation**: Granular technical tasks, UI/UX bugs, and specific implementation details for that directory.
 - **Cross-linking**: Always ensure that relevant sections in the central `todo.md` link to the corresponding local documentation for deeper details.
+
+## 7. Architecture Synchronization
+- **Living Document**: The `portal/ARCHITECTURE.md` is a living document.
+- **Mandatory Update**: Whenever infrastructure (hosting, domains, automation) or core architectural patterns change, the agent MUST immediately update `portal/ARCHITECTURE.md` to reflect the new state.
+- **Bilingual Context**: While the interaction language may be Czech, the architecture documentation must be maintained in **English** for technical clarity.
