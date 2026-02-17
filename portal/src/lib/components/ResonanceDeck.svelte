@@ -435,8 +435,9 @@
                         ⏹️ {usingFallback ? "STOP (BACKUP)" : "STOP READING"}
                     </button>
                     {#if usingFallback}
-                        <span class="status-tag error" title={ttsError}
-                            >⚠️ LOCAL VOICE: {ttsError}</span
+                        <span
+                            class="status-tag error"
+                            title={`Local Voice Active: ${ttsError}`}>⚠️</span
                         >
                     {/if}
                 {:else if isTyping}
@@ -448,7 +449,8 @@
                 {/if}
             </div>
 
-            <div class="voice-picker" onclick={(e) => e.stopPropagation()}>
+            <!-- Voice Picker Hidden (Defaulted to Kore) -->
+            <div class="voice-picker" style="display: none;">
                 <select bind:value={selectedVoice} aria-label="Select Voice">
                     {#each voices as v}
                         <option value={v}>{v}</option>
