@@ -19,7 +19,7 @@
     let deckRoot: HTMLElement | undefined = $state();
 
     // Performance Optimization: Render Limit
-    const RENDER_LIMIT = 20;
+    const RENDER_LIMIT = 13;
     let showAllHistory = $state(false);
 
     let messagesToRender = $derived(
@@ -30,10 +30,64 @@
     let speakingId = $state<string | null>(null);
     let audioCache = new Map<string, string>(); // msg index -> blob url
 
+    // Voice Config
+    const voices = ["Puck", "Charon", "Kore", "Fenrir", "Aoede"];
+    let selectedVoice = $state("Aoede");
+
     onMount(() => {
         if (browser) {
             const saved = localStorage.getItem("resonance_history");
-            if (saved) messages = JSON.parse(saved);
+            if (saved) {
+                messages = JSON.parse(saved);
+                // Inject Test Message if not present (skip in tests)
+                if (import.meta.env.MODE !== "test") {
+                    const last = messages[messages.length - 1];
+                    const testTxt = `## 🔊 Audio System Test
+
+**English Section:**
+"Welcome to the Lineum research facility. The current status is: **Operational**."
+"We are detecting specific field fluctuations."
+
+**Czech Section (Česká sekce):**
+"Vítejte. Teď vyzkoušíme výslovnost speciálních znaků."
+"Rovnice: 3 * 4 = 12 (tři krát čtyři rovná se dvanáct)."
+"Hodnoty: 0.012 (nula celá nula dvanáct) a 1,5 (jedna celá pět)."
+"Symboly: α (alfa), Ω (omega), π (pí), Σ (suma)."
+"Složitější: 10 * 5 = 50. Hvězdička (*) jako symbol."`;
+
+                    if (!last || last.parts[0].text !== testTxt) {
+                        messages = [
+                            ...messages,
+                            { role: "model", parts: [{ text: testTxt }] },
+                        ];
+                    }
+                }
+            } else {
+                // Initial Test Message (Only if not in test mode)
+                if (import.meta.env.MODE !== "test") {
+                    messages = [
+                        {
+                            role: "model",
+                            parts: [
+                                {
+                                    text: `## 🔊 Audio System Test
+
+**English Section:**
+"Welcome to the Lineum research facility. The current status is: **Operational**."
+"We are detecting specific field fluctuations."
+
+**Czech Section (Česká sekce):**
+"Vítejte. Teď vyzkoušíme výslovnost speciálních znaků."
+"Rovnice: 3 * 4 = 12 (tři krát čtyři rovná se dvanáct)."
+"Hodnoty: 0.012 (nula celá nula dvanáct) a 1,5 (jedna celá pět)."
+"Symboly: α (alfa), Ω (omega), π (pí), Σ (suma)."
+"Složitější: 10 * 5 = 50. Hvězdička (*) jako symbol."`,
+                                },
+                            ],
+                        },
+                    ];
+                }
+            }
             scrollToBottom();
         }
     });
@@ -63,10 +117,14 @@
     function scrollToBottom() {
         if (chatContainer) {
             tick().then(() => {
-                chatContainer!.scrollTo({
-                    top: chatContainer!.scrollHeight,
-                    behavior: "smooth",
-                });
+                if (typeof chatContainer!.scrollTo === "function") {
+                    chatContainer!.scrollTo({
+                        top: chatContainer!.scrollHeight,
+                        behavior: "smooth",
+                    });
+                } else {
+                    chatContainer!.scrollTop = chatContainer!.scrollHeight;
+                }
             });
         }
     }
@@ -78,7 +136,26 @@
                 const msgs = chatContainer!.querySelectorAll(".msg.model");
                 const last = msgs[msgs.length - 1];
                 if (last) {
-                    last.scrollIntoView({ behavior: "smooth", block: "start" });
+                    const hasScroll = typeof last.scrollIntoView === "function";
+                    console.log(
+                        `[SCROLL] Model response found. Element: ${last.tagName}, hasScrollIntoView: ${hasScroll}`,
+                    );
+                    if (hasScroll) {
+                        try {
+                            last.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start",
+                            });
+                        } catch (e) {
+                            console.error("[SCROLL] scrollIntoView failed:", e);
+                        }
+                    } else {
+                        console.warn(
+                            "[SCROLL] scrollIntoView missing on element.",
+                        );
+                    }
+                } else {
+                    console.log("[SCROLL] No model message to scroll to.");
                 }
             });
         }
@@ -101,7 +178,12 @@
             text
                 // 1. Decimals: 0.012 -> 0,012 (Czech standard)
                 .replace(/(\d+)\.(\d+)/g, "$1,$2")
-                // 2. Greek & Special Symbols
+                // 2. Asterisk Handling
+                // "space * space" or "number * number" -> krát
+                .replace(/(\d|\w)\s*\*\s*(\d|\w)/g, "$1 krát $2")
+                // formatted bold/italic was already stripped in stripMarkdown, so remaining * are symbols
+                .replace(/\*/g, "hvězdička")
+                // 3. Greek & Special Symbols
                 .replace(/φ/g, "fí")
                 .replace(/ψ/g, "psí")
                 .replace(/Ω/g, "omega")
@@ -128,40 +210,21 @@
     }
 
     async function playTTS(rawText: string, index: number) {
-        const id = index.toString();
-        const text = stripMarkdown(rawText); // Clean visuals for audio
-
-        if (speakingId === id) {
-            stopTTS();
-            return;
-        }
-        stopTTS();
-        speakingId = id;
-
-        // 1. Check Cache
-        if (audioCache.has(id)) {
-            const url = audioCache.get(id)!;
-            currentAudio = new Audio(url);
-            currentAudio.onended = () => {
-                speakingId = null;
-            };
-            currentAudio.play();
-            return;
-        }
-
-        // 2. Try Cloud TTS (Hybrid)
         try {
-            const res = await fetch("/api/tts", {
-                method: "POST",
-                body: JSON.stringify({ text }),
-                headers: { "Content-Type": "application/json" },
-            });
+            const id = index.toString();
+            console.log(`[TTS] playTTS called for id ${id}`);
+            const text = stripMarkdown(rawText); // Clean visuals for audio
 
-            if (res.ok) {
-                const blob = await res.blob();
-                const url = URL.createObjectURL(blob);
-                audioCache.set(id, url);
+            if (speakingId === id) {
+                stopTTS();
+                return;
+            }
+            stopTTS();
+            speakingId = id;
 
+            // 1. Check Cache
+            if (audioCache.has(id)) {
+                const url = audioCache.get(id)!;
                 currentAudio = new Audio(url);
                 currentAudio.onended = () => {
                     speakingId = null;
@@ -169,19 +232,77 @@
                 currentAudio.play();
                 return;
             }
-        } catch (e) {
-            console.warn("Cloud TTS failed, switching to local fallback.", e);
-        }
 
-        // 3. Fallback to Local Web Speech API
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "cs-CZ"; // Default to Czech as per user context, or detect? keeping explicit for consistency or use 'en-US' if text is english.
-        // Simple heuristic: if text has typical czech chars? Or just let browser detect.
-        // Actually best to set lang if we know it.
-        u.onend = () => {
-            speakingId = null;
-        };
-        window.speechSynthesis.speak(u);
+            // 2. Try Cloud TTS (Hybrid)
+            try {
+                console.log(
+                    `[TTS] Requesting Cloud Audio. Voice: ${selectedVoice}, Text Length: ${text.length}`,
+                );
+                const res = await fetch("/api/tts", {
+                    method: "POST",
+                    body: JSON.stringify({ text, voice: selectedVoice }),
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                if (res.ok) {
+                    const blob = await res.blob();
+                    console.log(
+                        `[TTS] Received Blob. Size: ${blob.size}, Type: ${blob.type}`,
+                    );
+
+                    if (blob.size < 100) {
+                        console.warn(
+                            "[TTS] Blob too small, likely error text.",
+                        );
+                        // Proceed to fallback
+                    } else {
+                        const url = URL.createObjectURL(blob);
+                        audioCache.set(id, url);
+
+                        currentAudio = new Audio(url);
+                        currentAudio.onended = () => {
+                            speakingId = null;
+                        };
+                        currentAudio.onerror = (e) => {
+                            console.error("[TTS] Audio Playback Error:", e);
+                            speakingId = null;
+                        };
+                        const playPromise = currentAudio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch((error) => {
+                                console.error(
+                                    "[TTS] Playback Prevented/Failed:",
+                                    error,
+                                );
+                                speakingId = null;
+                            });
+                        }
+                        return;
+                    }
+                } else {
+                    const errText = await res.text();
+                    console.error(
+                        `[TTS] API Error: ${res.status} - ${errText}`,
+                    );
+                }
+            } catch (e) {
+                console.warn(
+                    "Cloud TTS failed, switching to local fallback.",
+                    e,
+                );
+            }
+
+            // 3. Fallback to Local Web Speech API
+            console.log("[TTS] Switching to Local Fallback (Web Speech API).");
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = "cs-CZ";
+            u.onend = () => {
+                speakingId = null;
+            };
+            window.speechSynthesis.speak(u);
+        } catch (err) {
+            console.error("[TTS] Critical error in playTTS:", err);
+        }
     }
 
     function copyToClipboard(text: string) {
@@ -296,6 +417,14 @@
                 {/if}
             </div>
 
+            <div class="voice-picker" onclick={(e) => e.stopPropagation()}>
+                <select bind:value={selectedVoice} aria-label="Select Voice">
+                    {#each voices as v}
+                        <option value={v}>{v}</option>
+                    {/each}
+                </select>
+            </div>
+
             <div class="controls-hint">
                 {isExpanded ? "CLOSE" : "EXPAND EXPLORER"}
             </div>
@@ -335,7 +464,7 @@
                             <div class="msg-content-wrapper">
                                 {#if msg.role === "model"}
                                     <div class="msg-header">
-                                        <div class="msg-actions">
+                                        <div class="msg-actions top-right">
                                             <button
                                                 class="icon-btn tts-btn"
                                                 class:speaking={speakingId ===
@@ -351,19 +480,27 @@
                                                 {#if speakingId === index.toString()}
                                                     ⏹️
                                                 {:else}
-                                                    🔊
+                                                    <svg
+                                                        width="16"
+                                                        height="16"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        class="icon-svg"
+                                                        ><path
+                                                            d="M11 5L6 9H2V15H6L11 19V5Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        /><path
+                                                            d="M15.54 8.46C16.4774 9.39764 17.0039 10.6692 17.0039 11.995C17.0039 13.3208 16.4774 14.5924 15.54 15.53"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        /></svg
+                                                    >
                                                 {/if}
-                                            </button>
-                                            <button
-                                                class="icon-btn copy-btn"
-                                                onclick={() =>
-                                                    copyToClipboard(
-                                                        msg.parts[0].text,
-                                                    )}
-                                                aria-label="Copy Markdown"
-                                                title="Copy as Markdown"
-                                            >
-                                                📋
                                             </button>
                                         </div>
                                     </div>
@@ -371,6 +508,56 @@
                                 <div class="msg-bubble markdown-body">
                                     {@html marked.parse(msg.parts[0].text)}
                                 </div>
+                                {#if msg.role === "model"}
+                                    <div class="msg-footer">
+                                        <button
+                                            class="icon-btn copy-btn"
+                                            onclick={(e) => {
+                                                const btn = e.currentTarget;
+                                                copyToClipboard(
+                                                    msg.parts[0].text,
+                                                );
+                                                btn.classList.add("copied");
+                                                setTimeout(
+                                                    () =>
+                                                        btn.classList.remove(
+                                                            "copied",
+                                                        ),
+                                                    2000,
+                                                );
+                                            }}
+                                            aria-label="Copy Markdown"
+                                            title="Copy as Markdown"
+                                        >
+                                            <svg
+                                                width="14"
+                                                height="14"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                class="icon-svg"
+                                                ><rect
+                                                    x="9"
+                                                    y="9"
+                                                    width="13"
+                                                    height="13"
+                                                    rx="2"
+                                                    ry="2"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                /><path
+                                                    d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                /></svg
+                                            >
+                                            <span class="copy-check">✓</span>
+                                        </button>
+                                    </div>
+                                {/if}
                             </div>
                         </div>
                     {/each}
@@ -662,96 +849,94 @@
     .msg-content-wrapper {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.1rem;
         align-items: flex-start;
         max-width: 100%;
+        position: relative;
     }
 
     .msg-header {
         display: flex;
-        justify-content: flex-start;
+        justify-content: flex-end; /* Top Right */
         width: 100%;
-        padding-left: 0.5rem;
-        margin-bottom: -0.25rem;
+        margin-bottom: -0.5rem;
+        z-index: 2;
+        pointer-events: none; /* Let clicks pass through empty space */
+    }
+
+    .msg-footer {
+        display: flex;
+        justify-content: flex-end; /* Bottom Right */
+        width: 100%;
+        margin-top: -0.5rem;
+        z-index: 2;
+        pointer-events: none;
     }
 
     .msg-actions {
-        display: flex;
-        gap: 0.5rem;
-        background: rgba(0, 0, 0, 0.3);
-        padding: 0.2rem 0.5rem;
-        border-radius: 8px 8px 0 0;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-bottom: none;
+        pointer-events: auto;
     }
 
     .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 0.85rem;
-        opacity: 0.6;
-        transition: all 0.2s;
-        padding: 0.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .icon-btn:hover,
-    .icon-btn.speaking {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-
-    /* --- Small Wave for Typing --- */
-    .resonance-wave.small {
-        height: 12px;
-        gap: 3px;
-    }
-    .resonance-wave.small .wave-line {
-        width: 2px;
-        background: rgba(255, 255, 255, 0.5);
-    }
-
-    /* --- Pagination --- */
-    .history-loader {
-        display: flex;
-        justify-content: center;
-        padding-bottom: 1rem;
-    }
-    .load-more-btn {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.2s;
-        min-height: 44px; /* Mobile touch target */
+        color: #ccc;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        pointer-events: auto;
     }
-    .load-more-btn:hover {
+    .icon-btn:hover {
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
+        transform: scale(1.05);
     }
 
-    .stop-btn-global {
-        background: rgba(255, 50, 50, 0.2);
-        border: 1px solid rgba(255, 50, 50, 0.4);
-        color: #ffcccc;
-        font-size: 0.65rem;
-        font-weight: 700;
-        padding: 0.25rem 0.5rem;
+    .tts-btn {
+        margin-right: 0.5rem; /* Offset from right edge */
+    }
+    .copy-btn {
+        margin-right: 0.25rem;
+    }
+
+    .copy-check {
+        display: none;
+        font-size: 0.8rem;
+        color: #4cd964;
+    }
+
+    /* Copy Feedback State */
+    :global(.copy-btn.copied svg) {
+        display: none;
+    }
+    :global(.copy-btn.copied .copy-check) {
+        display: block;
+    }
+
+    .voice-picker {
+        margin-left: auto;
+        margin-right: 1rem;
+    }
+    .voice-picker select {
+        background: rgba(255, 255, 255, 0.05);
+        color: #aaa;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px;
+        font-size: 0.7rem;
+        padding: 2px 4px;
         cursor: pointer;
-        animation: pulse 2s infinite;
-        min-height: 32px; /* A bit smaller for header but accessible */
+    }
+    .voice-picker select:focus {
+        outline: none;
+        border-color: #0070f3;
     }
 
-    /* Scroll Containment */
-    .chat-viewport {
-        overscroll-behavior: contain;
+    .controls-hint {
+        margin-left: 0; /* Reset since voice-picker pushes it */
     }
 </style>

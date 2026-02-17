@@ -16,9 +16,12 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
     // 2. Validate Input
     let text: string;
+    let voice: string = "Aoede";
+
     try {
         const body = await request.json();
         text = body.text;
+        if (body.voice) voice = body.voice;
     } catch {
         return json({ error: "Invalid JSON body" }, { status: 400 });
     }
@@ -39,7 +42,14 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         const payload = {
             contents: [{ role: "user", parts: [{ text }] }],
             generationConfig: {
-                responseModalities: ["AUDIO"]
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: {
+                            voiceName: voice
+                        }
+                    }
+                }
             }
         };
 
