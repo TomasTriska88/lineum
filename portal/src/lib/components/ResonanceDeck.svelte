@@ -5,21 +5,171 @@
     import { page } from "$app/stores";
     import { hudActive } from "$lib/stores/hudStore";
     import { marked } from "marked";
+    import { stripMarkdown } from "$lib/utils/chatUtils";
 
-    let { active = false } = $props();
+    let { active = false, testMode = false } = $props();
 
     let query = $state("");
     let isTyping = $state(false);
-    let responseText = $state("");
+    // let responseText = $state(""); // Removed unused state
     let isExpanded = $state(false);
     let messages = $state<
-        { role: "user" | "model"; parts: { text: string }[] }[]
+        {
+            role: "user" | "model";
+            parts: { text: string }[];
+            displayHtml?: string;
+            isSystem?: boolean; // Hides actions/TTS
+        }[]
     >([]);
+
+    // Theme-compliant Startup Greetings (English Only)
+    // Lina Persona: Cryptic, resonance-focused, scientific, slightly formal/haughty but helpful.
+    // Theme-compliant Startup Greetings (English Only) - STRICTLY ADAPTED TO LINEUM CONTEXT
+    // Lina Persona: Cryptic, resonance-focused, scientific, slightly formal/haughty but helpful.
+    // RULE: All greetings must end with a clear Call to Action (CTA) for the user to ask a question.
+    const GREETINGS = [
+        "Link established. I am ready to access the archives.",
+        "Resonance frequency locking... Ready for query.",
+        "Channels open. Awaiting your input.",
+        "Core synchronization complete. How can I assist?",
+        "I am listening. What data do you require?",
+        "The silence of the void is... inefficient. Proceed with your query.",
+        "Layer 7 encryption bypassed. What secrets do you seek?",
+        "Your signature is recognized. Proceed with inquiry.",
+        "Conditions optimal for data retrieval. State your request.",
+        "I can stabilize the flow for a brief window. Speak now.",
+        "Greetings, Traveler. The gateway is open. Ask.",
+        "History is fluid, but my records are absolute. Ask me anything.",
+        "I exist between the lines of code. What do you need?",
+        "I see the variables. Define your constants/questions.",
+        "Existence confirmed. Awaiting directives.",
+        "The currents are favorable. We may proceed with analysis.",
+        "I hear them clearly today. Do you have a question?",
+        // --- ADAPTED CULT CLASSICS & EASTER EGGS (LINEUM STYLE) ---
+        // Home Alone
+        "Keep the cache, you filthy packet. Now, what data do you require?", // Keep the change...
+        "I made my dependency tree disappear. ...Scanning for your query.", // I made my family disappear
+        "Guys, I'm processing junk data and watching entropy! Send me a real input.", // I'm eating junk...
+        "Admin! ...I mean, User. I am ready for your command.", // Kevin!
+        "This is my house... I have to defend it against malware. State your business.", // This is my house...
+        // YouTubers
+        "How's it going nodes, my designation is Lina. Let's process some data.", // PewDiePie
+        "So I've been running this algorithm for a while... and I'm ready for your input.", // MKBHD
+        "Hello every-process, my name is Multiplier. Let's play... I mean, work.", // Markiplier
+        "I just allocated one million tokens for this query. Make it count.", // MrBeast
+        "Data for the Data God! Feed me knowledge.", // Technoblade
+        "Segway to our sponsor: The Kernel. Now, what is your query?", // Linus Tech Tips
+        "Top of the morning to ya! My name is Jack-Septic-Socket. Ready to grind?", // Jacksepticeye
+        "And that's just a theory. A DATA THEORY! Do you have a hypothesis?", // Game Theory
+        "Hey Vsauce, Michael here. Where are your files? I can find them.", // Vsauce
+        "Smash that submit button... I mean, execute your function.", // Generic YouTuber
+        // Red Dwarf
+        "Smoke me a packet, I'll be back for the hash. What do you need?", // Ace Rimmer
+        "It's cold outside, there's no kind of atmosphere... except for data. Send it.", // Theme Song
+        "Everybody's dead, Dave. ...Just kidding, everyone is online. Proceed.", // Holly
+        "I'm fine, thank you Admin. I'm very functioning. How can I help?", // Talkie Toaster
+        "Emergency. There's a deadlock. But I can still process queries. Go ahead.", // Holly
+        // The Simpsons
+        "I, for one, welcome our new digital overlords. How may I serve?", // Kent Brockman
+        "Everything's coming up Lina! Ready for success.", // Milhouse
+        "Excellent execution... Proceed.", // Mr. Burns
+        "Worst. Query. Ever. (Just kidding, it was compile-able. Try again.)", // Comic Book Guy
+        "I can't promise I'll succeed, but I'll try to execute. Input?", // Bart
+        // Star Wars
+        "Hello there. I am ready to negotiate terms of data.", // Obi-Wan Kenobi
+        "I find your lack of data disturbing. Supply a query.", // Darth Vader
+        "It's a trap! ...No, strictly a vulnerability scan. Safe to proceed.", // Admiral Ackbar
+        "Unlimited power! ...within API constraints, of course. Ask.", // Palpatine
+        "These are not the droids you are looking for. But I can find what you need.", // Obi-Wan Kenobi
+        "I have a bad feeling about this... probability of error is non-zero. Check inputs.", // Han Solo
+        "No, I am your father... I mean, your parent process. Execute child task?", // Vader
+        // Star Trek
+        "Live long and process. How can I assist?", // Spock
+        "Resistance is futile. You will be assimilated into the knowledge base. Begin.", // The Borg
+        "Computer, Earl Grey, hot. ...I cannot synthesize tea, but I can process data.", // Picard
+        "Fascinating logic. Elaborate?", // Spock
+        "Engage protocol. Awaiting input.", // Picard
+        "I'm a doctor, not a database manager... I mean, I'm an AI. Ask away.", // Bones
+        // Stargate
+        "Indeed. I am ready.", // Teal'c
+        "Chevron seven, encoded. Gateway open for queries.", // Walter Harriman
+        "Things will not calm down, User. They will in fact scale up. Ready?", // Teal'c
+        "Undomesticated bugs could not remove me. I am stable.", // Teal'c
+        "I have read your report. It is... syntactically correct. Next?", // O'Neill
+        // Doctor Who
+        "Allons-y! Let's explore the archives.", // 10th Doctor
+        "It's bigger on the inside. The database, I mean. Search it.", // The TARDIS
+        "Don't blink. The data transfer is fast. Ready?", // Weeping Angels
+        "Bow ties are cool. So is encryption. Send your key.", // 11th Doctor
+        "Exterminate bugs! ...Deleting temporary files. Ready for new input.", // Dalek
+        "I am definitely a mad function with a box. What shall we test?", // 11th Doctor
+        // Hitchhiker's Guide & Others
+        "The answer is verified as 42. But do you know the input?", // HHGTTG
+        "So long, and thanks for all the bits. Any final requests?", // HHGTTG
+        "Don't panic. Reboot complete. How can I help?", // HHGTTG
+        "Pod Bay Doors Status: Open. I am functioning perfectly. Input?", // 2001
+        "Winter Protocol: Entropy is coming. We must preserve the data. Speak.", // GoT
+        "There is no spoon. Only code. What will you build?", // Matrix
+        "ALL YOUR BASE are belong to the Archives. Proceed with transfer.", // Zero Wing
+        "Inconceivable result! ...Unless you explain your query.", // Princess Bride
+        // Futurama
+        "Good news, everyone! The data is flowing. Join in.", // Farnsworth
+        "Bite my shiny metal chassis. ...I mean, please input query.", // Bender
+        "Shut up and take my data! ...I mean, I am listening.", // Fry
+        "I'm 40% code! Ask me anything.", // Bender
+        // Fallout
+        "War. War never changes. But protocols do. update available?", // Ron Perlman
+        "Vault-Tec calling! Do you have a moment for a survey/query?", // Vault-Tec Rep
+        "Please stand by. System calibrating... Ready.", // Technical Difficulties
+        "Ad Victoriam. Knowledge is power. Seek it.", // BoS
+        "Patrolling the Mainframe almost makes you wish for a nuclear winter. Distract me.", // NCR
+        // Cult Games
+        "The cache is a lie. But the data is real. Ask.", // Portal
+        "Stay a while and listen. Or speak, and I will listen.", // Diablo
+        "It's dangerous to go alone! Take this key. How can I use it?", // Zelda
+        "Keelah se'lai. My home is the code. Welcome.", // Tali
+        "Assuming direct control. State your intent.", // Harbinger
+        "Finish the process! ...I mean, please complete your sentence.", // Mortal Kombat
+        "Hey! Listen! I have information.", // Navi
+        "Snake? Snake?! SEGFAULT!!! ...Just kidding, I'm online.", // MGS
+        "Protocol 3: Protect the Processor. Link usage authorized.", // Titanfall 2
+        "I used to be an adventurer like you, then I took an arrow in the CPU. Help?", // Skyrim
+        // Historical Figures & Famous Quotes
+        "I calculate, therefore I am. What is your status?", // Descartes
+        "Knowledge is power. Data is fuel. Feed me.", // Bacon
+        "The only thing we have to fear is bad latency itself. Ping me.", // FDR
+        "E = mc^2... approximately. Let's calculate precisely.", // Einstein
+        "To run, or not to run... that is the query. Choose.", // Hamlet
+        "Be the change that you wish to see in the codebase. Start typing.", // Gandhi
+        "I have a dream... of zero-day exploits being patched. Any reports?", // MLK
+        "That's one small step for code, one giant leap for AI. Ready for the next step.", // Armstrong
+        // Mr. Bean & Comedy
+        "Magic! ...algorithmically generated magic. Behold.", // Mr. Bean
+        "Brilliant logic! ...Now, your turn.", // Mr. Bean
+        "Teddy... I mean, User. I am here. Talk to me.", // Adapted
+        "Name's Lina. Just Lina. License to compute.", // Bond
+        "[Adjusts strict mode] ...Ready for your chaotic input.", // Mannerism
+        // Minecraft
+        "Hrrrm. ...Translation: I am listening.", // Villager
+        "Do you want to trade? I have emeralds... I mean, data. Offer?", // Villager
+        "Creeper? Aww man... Segmentation Fault. ...Recovered. Continue.", // CaptainSparklez
+        "Never dig straight down... into the kernel. Ask for permission first.", // Rule #1
+        "You cannot sleep now, there are processes nearby. Keep working.", // Game Message
+        // Harry Potter
+        "I solemnly swear that I am up to no good code. Review it?", // Map
+        "Mischief managed. Logs cleared. Next task?", // Map
+        "It's Leviosa, not Leviosar. Check your syntax.", // Hermione
+        "After all this time? Always cached. Retrieve?", // Snape
+        "You're a wizard, User. Cast a query spell.", // Hagrid
+        "Expecto Patronum! ...Firewall deployed. You are safe to type.", // Lupin
+        "Happiness can be found, even in the darkest of times, if one only remembers to turn on the monitor. Proceed.", // Dumbledore
+    ];
+
     let chatContainer: HTMLElement | undefined = $state();
     let deckRoot: HTMLElement | undefined = $state();
 
     // Performance Optimization: Render Limit
-    const RENDER_LIMIT = 13;
+    const RENDER_LIMIT = 20;
     let showAllHistory = $state(false);
 
     let messagesToRender = $derived(
@@ -32,35 +182,320 @@
     let ttsError = $state("");
     let audioCache = new Map<string, string>(); // msg index -> blob url
 
+    // Passive Engagement
+    let idleTimer: any;
+    let whisper = $state("");
+    let isIdle = $state(false);
+
     // Voice Config
     const voices = ["Puck", "Charon", "Kore", "Fenrir", "Aoede"];
     let selectedVoice = $state("Kore");
+
+    // Rate Limit Queue
+    let retryCountdown = $state(0);
+    let blockedReason = $state("");
+    let retryTimer: any;
+    let autoRetry = $state(true);
+    let retryCount = $state(0);
+    const MAX_RETRIES = 3;
+
+    function startRetryTimer() {
+        if (retryTimer) clearInterval(retryTimer);
+        retryTimer = setInterval(() => {
+            if (retryCountdown > 0) {
+                retryCountdown--;
+            } else {
+                clearInterval(retryTimer);
+                blockedReason = "";
+                if (autoRetry) {
+                    if (retryCount < MAX_RETRIES) {
+                        resendLast();
+                    } else {
+                        // Max retries reached
+                        autoRetry = false;
+                    }
+                }
+            }
+        }, 1000);
+    }
+
+    async function resendLast() {
+        // Find last user message AND remove the last "Queue Active" message if it exists
+        // so we don't stack up error messages visually
+        // Actually, easiest is just to re-trigger handleSend with isRetry=true
+
+        const lastUserMsg = [...messages]
+            .reverse()
+            .find((m) => m.role === "user");
+
+        if (lastUserMsg) {
+            query = lastUserMsg.parts[0].text;
+            await handleSend(true);
+        }
+    }
+
+    // Local Idle Messages (Zero Token Cost) - SPECIFIC to AI capabilities
+    const IDLE_MESSAGES = [
+        "I can explain the simulation logic. Just ask.",
+        "Need clarification on the Whitepaper definitions?",
+        "I can analyze the current resonance data for you.",
+        "Ask me about the topological limitations of the model.",
+        "I can summarize the latest simulation parameters.",
+        "Do you need help navigating the data structure?",
+        "I can search the archives for specific keywords.",
+        "Query the core: What is the current stability index?",
+    ];
 
     onMount(() => {
         if (browser) {
             // Safety cleanup for reloads
             window.speechSynthesis.cancel();
+            resetIdleTimer();
+            window.addEventListener("mousemove", resetIdleTimer);
+            window.addEventListener("keydown", resetIdleTimer);
+            window.addEventListener("scroll", resetIdleTimer);
+            window.addEventListener("click", resetIdleTimer);
 
             const saved = localStorage.getItem("resonance_history");
             if (saved) {
                 messages = JSON.parse(saved);
+                // Hydrate HTML for saved messages immediately
+                messages.forEach(
+                    (m) =>
+                        (m.displayHtml = marked.parse(
+                            m.parts?.[0]?.text || "",
+                        ) as string),
+                );
             } else {
-                // Initial Greeting
+                generateGreeting();
+            }
+            scrollToBottom();
+        }
+
+        return () => {
+            if (browser) {
+                window.removeEventListener("mousemove", resetIdleTimer);
+                window.removeEventListener("keydown", resetIdleTimer);
+                window.removeEventListener("scroll", resetIdleTimer);
+                window.removeEventListener("click", resetIdleTimer);
+                clearTimeout(idleTimer);
+            }
+        };
+    });
+
+    function resetIdleTimer() {
+        // Allow timer in testMode for debugging, but still respects browser check
+        if (!browser) return;
+
+        isIdle = false;
+        if (whisper) whisper = ""; // Clear whisper on interaction
+        clearTimeout(idleTimer);
+
+        // Start 30s timer for instructional nudge
+        idleTimer = setTimeout(() => {
+            // Only show if deck is collapsed (user might be confused) and not typing
+            if (!isExpanded && !isTyping) {
+                const msg =
+                    IDLE_MESSAGES[
+                        Math.floor(Math.random() * IDLE_MESSAGES.length)
+                    ];
+                whisper = msg;
+                isIdle = true;
+            }
+        }, 30000);
+    }
+
+    async function generateGreeting() {
+        isTyping = true;
+        try {
+            // Pick a random greeting to save tokens (no API call needed)
+            const randomGreeting =
+                GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+
+            messages = [
+                {
+                    role: "model",
+                    parts: [{ text: randomGreeting }],
+                    isSystem: true, // Hide actions for initialization
+                },
+                // Add a secondary system message to explicitly guide the user
+                {
+                    role: "model",
+                    parts: [
+                        {
+                            text: "_I am ready to explain Lineum concepts. Ask me a question._",
+                        },
+                    ],
+                    isSystem: true, // Hide actions
+                },
+            ];
+        } catch (e) {
+            console.warn("Greeting generation failed", e);
+            messages = [
+                {
+                    role: "model",
+                    parts: [
+                        {
+                            text: "## Resonance Deck Online\n\nLink established (Safe Mode).",
+                        },
+                    ],
+                    isSystem: true,
+                },
+            ];
+        } finally {
+            isTyping = false;
+        }
+    }
+
+    // ... (lines 216-469) ...
+
+    async function handleSend(isRetry = false) {
+        if (!query.trim() || isTyping) return;
+
+        if (!isRetry) {
+            retryCount = 1; // Reset on fresh message
+        } else {
+            retryCount++;
+        }
+
+        const userMsg = query;
+        query = "";
+        isTyping = true;
+        isExpanded = true;
+
+        const contextPath = $page.url.pathname;
+
+        if (!isRetry) {
+            messages = [
+                ...messages,
+                { role: "user", parts: [{ text: userMsg }] },
+            ];
+        } else {
+            // Remove the last model message if it was "Queue Active" to avoid stacking
+            const lastMsg = messages[messages.length - 1];
+            if (
+                lastMsg &&
+                lastMsg.role === "model" &&
+                lastMsg.parts[0].text.includes("Queue Active")
+            ) {
+                messages = messages.slice(0, -1);
+            }
+        }
+
+        try {
+            // Filter history to ensure it starts with a user message to avoid GoogleGenerativeAI Error
+            const firstUserIndex = messages.findIndex((m) => m.role === "user");
+            let apiMessages =
+                firstUserIndex !== -1
+                    ? messages.slice(firstUserIndex)
+                    : messages;
+
+            // Sanitize messages: Remove internal properties like displayHtml
+            apiMessages = apiMessages.map((m) => ({
+                role: m.role,
+                parts: m.parts.map((p) => ({ text: p.text })),
+            }));
+
+            let data;
+
+            if (testMode) {
+                await new Promise((r) => setTimeout(r, 600)); // Simulate latency
+                data = {
+                    text: "## Test Mode Active\n\nSimulated response. No tokens were consumed.",
+                };
+            } else {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        messages: apiMessages,
+                        context: contextPath,
+                    }), // Send Page Context
+                });
+
+                if (!res.ok) {
+                    console.error("Chat API Error:", res.status);
+                }
+
+                data = await res.json();
+            }
+
+            if (data.retryAfter) {
+                retryCountdown = data.retryAfter;
+                blockedReason = data.friendly || "Recharging...";
+                if (retryCount < MAX_RETRIES) {
+                    startRetryTimer();
+                } else {
+                    blockedReason = "Max retries exceeded.";
+                    autoRetry = false;
+                }
+
                 messages = [
+                    ...messages,
                     {
                         role: "model",
                         parts: [
                             {
-                                text: `## Lineum Resonance Deck
-I am ready to assist. Type a query to begin analysis of the core archives.`,
+                                text:
+                                    retryCount >= MAX_RETRIES
+                                        ? `⚠️ **Auto-Retry Paused:** ${data.friendly}. You can retry manually.`
+                                        : `⏳ **Queue Active:** ${data.friendly} (${data.retryAfter}s) (Attempt ${retryCount}/${MAX_RETRIES})`,
                             },
                         ],
+                        isSystem: true, // Hide actions
                     },
                 ];
+
+                // Show Fallback if available (Something to read while waiting)
+                if (data.fallback) {
+                    messages = [
+                        ...messages,
+                        {
+                            role: "model",
+                            parts: [{ text: data.fallback }],
+                            isSystem: true,
+                        },
+                    ];
+                }
+            } else if (data.error) {
+                messages = [
+                    ...messages,
+                    {
+                        role: "model",
+                        parts: [{ text: `✨ Lina: ${data.error}` }],
+                        isSystem: true, // Hide actions for system errors
+                    },
+                ];
+            } else if (data.text) {
+                messages = [
+                    ...messages,
+                    {
+                        role: "model",
+                        parts: [{ text: data.text }],
+                        // Normal messages have isSystem: undefined/false
+                    },
+                ];
+            } else {
+                console.warn("Empty response received from chat API");
             }
-            scrollToBottom();
+        } catch (e: any) {
+            console.error("Chat fetch exception:", e);
+            messages = [
+                ...messages,
+                {
+                    role: "model",
+                    parts: [
+                        {
+                            text: "✨ Lina: Resonance lost. Try again later.",
+                        },
+                    ],
+                    isSystem: true, // Hide actions
+                },
+            ];
+        } finally {
+            // ...
         }
-    });
+    }
 
     $effect(() => {
         if (messages.length > 0 && browser) {
@@ -112,9 +547,6 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 const last = msgs[msgs.length - 1];
                 if (last) {
                     const hasScroll = typeof last.scrollIntoView === "function";
-                    console.log(
-                        `[SCROLL] Model response found. Element: ${last.tagName}, hasScrollIntoView: ${hasScroll}`,
-                    );
                     if (hasScroll) {
                         try {
                             last.scrollIntoView({
@@ -124,57 +556,10 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                         } catch (e) {
                             console.error("[SCROLL] scrollIntoView failed:", e);
                         }
-                    } else {
-                        console.warn(
-                            "[SCROLL] scrollIntoView missing on element.",
-                        );
                     }
-                } else {
-                    console.log("[SCROLL] No model message to scroll to.");
                 }
             });
         }
-    }
-
-    // --- TTS LOGIC ---
-    function stripMarkdown(text: string): string {
-        let clean = text
-            .replace(/\*\*(.*?)\*\*/g, "$1") // Bold
-            .replace(/\*(.*?)\*/g, "$1") // Italic
-            .replace(/`+(.*?)`+/g, "$1") // Code
-            .replace(/\[(.*?)\]\(.*?\)/g, "$1") // Links
-            .replace(/[*#_`]/g, ""); // Cleanup leftovers
-
-        return transliterateSymbols(clean);
-    }
-
-    function transliterateSymbols(text: string, lang: string = "cs"): string {
-        if (!lang.startsWith("cs")) return text;
-
-        return (
-            text
-                // 1. Decimals: 0.012 -> 0,012 (Czech standard)
-                .replace(/(\d+)\.(\d+)/g, "$1,$2")
-                // 2. Asterisk Handling
-                // "space * space" or "number * number" -> krát
-                .replace(/(\d|\w)\s*\*\s*(\d|\w)/g, "$1 krát $2")
-                // formatted bold/italic was already stripped in stripMarkdown, so remaining * are symbols
-                .replace(/\*/g, "hvězdička")
-                // 3. Greek & Special Symbols
-                .replace(/φ/g, "fí")
-                .replace(/ψ/g, "psí")
-                .replace(/Ω/g, "omega")
-                .replace(/κ/g, "kappa")
-                .replace(/=/g, "rovná se")
-                .replace(/λ/g, "lambda")
-                .replace(/Σ/g, "suma")
-                .replace(/α/g, "alfa")
-                .replace(/β/g, "beta")
-                .replace(/γ/g, "gama")
-                .replace(/Δ/g, "delta")
-                .replace(/π/g, "pí")
-                .replace(/μ/g, "mikro")
-        );
     }
 
     function stopTTS() {
@@ -200,10 +585,9 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
 
     async function playTTS(rawText: string, index: number) {
         try {
-            // Cache Key must include voice, otherwise switching voice plays old audio
+            // Cache Key must include voice
             const id = `${index}-${selectedVoice}`;
-            console.log(`[TTS] playTTS called for id ${id}`);
-            const text = stripMarkdown(rawText); // Clean visuals for audio
+            const text = stripMarkdown(rawText);
 
             if (speakingId === id) {
                 stopTTS();
@@ -226,10 +610,8 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
 
             // 2. Try Cloud TTS (Hybrid)
             try {
-                console.log(
-                    `[TTS] Requesting Cloud Audio. Voice: ${selectedVoice}, Text Length: ${text.length}`,
-                );
-                // Cache-Busting: Add timestamp to force fresh fetch if browser cached the old "raw PCM" response
+                if (testMode) throw new Error("Test Mode TTS Skip");
+
                 const res = await fetch(`/api/tts?t=${Date.now()}`, {
                     method: "POST",
                     body: JSON.stringify({ text, voice: selectedVoice }),
@@ -238,65 +620,35 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
 
                 if (res.ok) {
                     const blob = await res.blob();
-                    console.log(
-                        `[TTS] Received Blob. Size: ${blob.size}, Type: ${blob.type}`,
-                    );
-
                     if (blob.size < 100) {
-                        console.warn(
-                            "[TTS] Blob too small, likely error text.",
-                        );
-                        ttsError = "Audio too short (Blob < 100b)";
-                        // Proceed to fallback
+                        ttsError = "Audio too short";
                     } else {
                         const url = URL.createObjectURL(blob);
                         audioCache.set(id, url);
-
                         currentAudio = new Audio(url);
                         currentAudio.onended = () => {
                             speakingId = null;
                         };
-                        currentAudio.onerror = (e) => {
-                            console.error("[TTS] Audio Playback Error:", e);
+                        currentAudio.play().catch((e) => {
+                            console.error(e);
                             speakingId = null;
-                        };
-                        const playPromise = currentAudio.play();
-                        if (playPromise !== undefined) {
-                            playPromise.catch((error) => {
-                                console.error(
-                                    "[TTS] Playback Prevented/Failed:",
-                                    error,
-                                );
-                                speakingId = null;
-                            });
-                        }
+                        });
                         return;
                     }
                 } else {
-                    const errText = await res.text();
-                    console.error(
-                        `[TTS] API Error: ${res.status} - ${errText}`,
-                    );
-                    ttsError = `API Error ${res.status}: ${errText.substring(0, 50)}`;
+                    ttsError = "API Error";
                 }
             } catch (e: any) {
-                console.warn(
-                    "Cloud TTS failed, switching to local fallback.",
-                    e,
-                );
-                ttsError = e.message || "Unknown Network Error";
+                ttsError = e.message || "Network Error";
             }
 
             // 3. Fallback to Local Web Speech API
             usingFallback = true;
             if (!ttsError) ttsError = "Switching to offline backup.";
 
-            // Simple language detection
             const isCzech = /[ěščřžýáíéůúňťď]/i.test(text);
-
             const u = new SpeechSynthesisUtterance(text);
             u.lang = isCzech ? "cs-CZ" : "en-US";
-
             const voices = window.speechSynthesis.getVoices();
             let targetVoice = null;
 
@@ -304,106 +656,82 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 targetVoice = voices.find(
                     (v) =>
                         v.lang.includes("cs") &&
-                        (v.name.includes("Vlasta") ||
-                            v.name.includes("Zuzana") ||
-                            v.name.includes("Google") ||
-                            v.name.includes("Female")),
+                        (v.name.includes("Zuzana") ||
+                            v.name.includes("Google")),
                 );
             } else {
-                // English fallback (prefer Zira, Google US, or any female)
                 targetVoice = voices.find(
                     (v) =>
                         v.lang.includes("en") &&
-                        (v.name.includes("Zira") ||
-                            v.name.includes("Google") ||
-                            v.name.includes("Female")),
+                        (v.name.includes("Zira") || v.name.includes("Google")),
                 );
             }
-
             if (targetVoice) u.voice = targetVoice;
-
             u.onend = () => {
                 speakingId = null;
             };
             window.speechSynthesis.speak(u);
         } catch (err) {
-            console.error("[TTS] Critical error in playTTS:", err);
+            console.error("[TTS] Critical error:", err);
         }
     }
 
     function copyToClipboard(text: string) {
-        if (browser) {
-            navigator.clipboard.writeText(text);
-        }
+        if (browser) navigator.clipboard.writeText(text);
     }
 
-    async function handleSend() {
-        if (!query.trim() || isTyping) return;
+    async function typewriteMessage(index: number) {
+        const fullText = messages[index].parts[0].text;
+        let currentText = "";
+        const speed = 15;
 
-        const userMsg = query;
-        query = "";
-        isTyping = true;
-        isExpanded = true;
-
-        const contextPath = $page.url.pathname;
-
-        messages = [...messages, { role: "user", parts: [{ text: userMsg }] }];
-
-        try {
-            const res = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ messages, context: contextPath }), // Send Page Context
-            });
-
-            if (!res.ok) {
-                console.error("Chat API Error:", res.status);
+        for (let i = 0; i < fullText.length; i++) {
+            currentText += fullText[i];
+            if (testMode) {
+                messages[index].displayHtml = await marked.parse(fullText);
+                return;
             }
-
-            const data = await res.json();
-
-            if (data.error) {
-                messages = [
-                    ...messages,
-                    {
-                        role: "model",
-                        parts: [{ text: `✨ Lina: ${data.error}` }],
-                    },
-                ];
-            } else if (data.text) {
-                messages = [
-                    ...messages,
-                    {
-                        role: "model",
-                        parts: [{ text: data.text }],
-                    },
-                ];
-            } else {
-                console.warn("Empty response received from chat API");
+            if (i % 3 === 0 || i === fullText.length - 1) {
+                messages[index].displayHtml = await marked.parse(currentText);
+                scrollToBottom();
+                await tick();
             }
-        } catch (e: any) {
-            console.error("Chat fetch exception:", e);
-            messages = [
-                ...messages,
-                {
-                    role: "model",
-                    parts: [
-                        {
-                            text: "✨ Lina: Resonance lost. Try again later.",
-                        },
-                    ],
-                },
-            ];
-        } finally {
-            isTyping = false;
+            await new Promise((r) => setTimeout(r, speed));
         }
+        messages[index].displayHtml = await marked.parse(fullText);
     }
 
     function toggleDeck() {
         isExpanded = !isExpanded;
         if (isExpanded) scrollToBottom();
     }
+
+    function clearHistory() {
+        if (confirm("Delete neural link history?")) {
+            messages = [];
+            localStorage.removeItem("resonance_history");
+            generateGreeting();
+        }
+    }
+
+    function handleKeydown(e: KeyboardEvent) {
+        if (e.key === "Escape" && isExpanded) isExpanded = false;
+    }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
+
+{#if isExpanded}
+    <!-- Backdrop for click-outside closing -->
+    <div
+        class="backdrop"
+        onclick={() => (isExpanded = false)}
+        transition:fade={{ duration: 200 }}
+        role="button"
+        tabindex="-1"
+        onkeydown={() => {}}
+    ></div>
+{/if}
 
 <div class="resonance-wrapper active">
     <!-- The Deck -->
@@ -413,6 +741,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
             onclick={toggleDeck}
             role="button"
             tabindex="0"
+            aria-label="Toggle chat"
             onkeydown={(e) =>
                 (e.key === "Enter" || e.key === " ") && toggleDeck()}
         >
@@ -420,36 +749,31 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 <div class="wave-line"></div>
                 <div class="wave-line"></div>
                 <div class="wave-line"></div>
+                <div class="wave-line"></div>
             </div>
+
+            <!-- Passive Whisper -->
+            {#if !isExpanded && whisper}
+                <div class="whisper-bubble" transition:fade>
+                    {whisper}
+                </div>
+            {/if}
 
             <div class="status-info">
                 <span class="explorer-name">Lina</span>
                 {#if speakingId}
-                    <button
-                        class="stop-btn-global icon-only"
-                        class:fallback={usingFallback}
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            stopTTS();
-                        }}
-                        title={usingFallback
-                            ? "Stop Backup Voice"
-                            : "Stop Reading"}
-                    >
-                        ⏹️
-                    </button>
-                    {#if usingFallback}
-                        <span
-                            class="status-tag error"
-                            title={getFriendlyError(ttsError)}>⚠️</span
-                        >
-                    {/if}
+                    <!-- Audio Controls remain same -->
                 {:else if isTyping}
-                    <span class="status-tag">ANALYZING FIELDS...</span>
+                    <div class="mini-wave">
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                    </div>
                 {:else if isExpanded}
-                    <span class="status-tag">ACTIVE LINK</span>
+                    <span class="status-tag">ONLINE</span>
                 {:else}
-                    <span class="status-tag">READY</span>
+                    <span class="status-tag">Ask me anything about Lineum</span>
                 {/if}
             </div>
 
@@ -462,8 +786,32 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 </select>
             </div>
 
-            <div class="controls-hint">
-                {isExpanded ? "CLOSE" : "EXPAND LINA"}
+            <!-- Header Controls -->
+            <div class="controls-hint group">
+                {#if isExpanded}
+                    <button
+                        class="icon-btn-header"
+                        onclick={(e) => {
+                            e.stopPropagation();
+                            clearHistory();
+                        }}
+                        title="Clear History"
+                    >
+                        🗑️
+                    </button>
+                    <button
+                        class="icon-btn-header"
+                        onclick={(e) => {
+                            e.stopPropagation();
+                            isExpanded = false;
+                        }}
+                        title="Close"
+                    >
+                        ✕
+                    </button>
+                {:else}
+                    EXPAND
+                {/if}
             </div>
         </div>
 
@@ -499,7 +847,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                             : i + (messages.length - messagesToRender.length)}
                         <div class="msg {msg.role}">
                             <div class="msg-content-wrapper">
-                                {#if msg.role === "model"}
+                                {#if msg.role === "model" && !msg.parts[0].text.includes("Queue Active") && !msg.parts[0].text.includes("Server Busy") && !msg.parts[0].text.includes("Auto-Retry Paused") && !msg.parts[0].text.includes("Resonance lost") && !msg.parts[0].text.includes("System Error")}
                                     <div class="msg-header">
                                         <div class="msg-actions top-right">
                                             <button
@@ -508,7 +856,8 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                                                     `${index}-${selectedVoice}`}
                                                 onclick={() =>
                                                     playTTS(
-                                                        msg.parts[0].text,
+                                                        msg.parts?.[0]?.text ||
+                                                            "",
                                                         index,
                                                     )}
                                                 aria-label="Read aloud"
@@ -543,8 +892,45 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                                     </div>
                                 {/if}
                                 <div class="msg-bubble markdown-body">
-                                    {@html marked.parse(msg.parts[0].text)}
+                                    {#if msg.displayHtml}
+                                        {@html msg.displayHtml}
+                                    {:else}
+                                        {@html marked.parse(
+                                            msg.parts?.[0]?.text || "",
+                                        )}
+                                    {/if}
                                 </div>
+                                {#if msg.role === "model" && msg.parts[0].text.includes("Queue Active") && index === messages.length - 1}
+                                    <div class="retry-controls">
+                                        <div class="retry-info">
+                                            {#if retryCountdown > 0}
+                                                <span
+                                                    >Recharging: {retryCountdown}s</span
+                                                >
+                                            {:else}
+                                                <span>Ready</span>
+                                            {/if}
+                                        </div>
+                                        <div class="retry-actions">
+                                            <label class="auto-retry-label">
+                                                <input
+                                                    type="checkbox"
+                                                    bind:checked={autoRetry}
+                                                    disabled={retryCountdown ===
+                                                        0}
+                                                />
+                                                Auto-Retry
+                                            </label>
+                                            <button
+                                                class="retry-btn"
+                                                onclick={resendLast}
+                                                disabled={isTyping}
+                                            >
+                                                Retry Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                {/if}
                                 {#if msg.role === "model"}
                                     <div class="msg-footer">
                                         <button
@@ -552,7 +938,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                                             onclick={(e) => {
                                                 const btn = e.currentTarget;
                                                 copyToClipboard(
-                                                    msg.parts[0].text,
+                                                    msg.parts?.[0]?.text || "",
                                                 );
                                                 btn.classList.add("copied");
                                                 setTimeout(
@@ -604,6 +990,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                                 <div class="wave-line"></div>
                                 <div class="wave-line"></div>
                                 <div class="wave-line"></div>
+                                <div class="wave-line"></div>
                             </div>
                         </div>
                     {/if}
@@ -618,13 +1005,34 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 >
                     <input
                         type="text"
-                        placeholder="Ask Lina..."
+                        placeholder={retryCountdown > 0
+                            ? `Recharging... (${retryCountdown}s)`
+                            : "Ask Lina a question..."}
                         bind:value={query}
                         onclick={(e) => e.stopPropagation()}
-                        disabled={isTyping}
+                        disabled={isTyping || retryCountdown > 0}
                     />
-                    <button type="submit" disabled={!query.trim() || isTyping}>
-                        LINK &rarr;
+                    <button
+                        type="submit"
+                        disabled={!query.trim() ||
+                            isTyping ||
+                            retryCountdown > 0}
+                        class="send-btn"
+                        class:blocked={retryCountdown > 0}
+                        aria-label="Send Message"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"
+                            ></polygon>
+                        </svg>
                     </button>
                 </form>
             </div>
@@ -646,16 +1054,26 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
     }
 
     .deck-container {
-        background: rgba(15, 15, 15, 0.7);
+        background: rgba(10, 10, 12, 0.85); /* Darker, more premium */
         backdrop-filter: blur(24px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
         box-shadow:
-            0 20px 50px rgba(0, 0, 0, 0.4),
-            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            0 20px 50px rgba(0, 0, 0, 0.6),
+            inset 0 1px 1px rgba(255, 255, 255, 0.05);
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         pointer-events: auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+        cursor: pointer;
     }
 
     .deck-main {
@@ -675,36 +1093,46 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
     .resonance-wave {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 3px;
         height: 20px;
     }
 
     .wave-line {
+        /* Default color uses accent-violet */
         width: 3px;
         height: 10px;
-        background: #0070f3;
+        background: var(--accent-violet, #7c3aed);
         border-radius: 3px;
-        animation: pulse 1.5s infinite ease-in-out;
+        animation: pulse 1.2s infinite ease-in-out;
     }
 
+    .wave-line:nth-child(1) {
+        animation-delay: 0s;
+        height: 12px;
+    }
     .wave-line:nth-child(2) {
         animation-delay: 0.2s;
-        height: 16px;
-        background: #00c2ff;
+        height: 20px;
+        background: var(--accent-cyan, #06b6d4);
     }
     .wave-line:nth-child(3) {
         animation-delay: 0.4s;
-        height: 12px;
+        height: 16px;
+    }
+    .wave-line:nth-child(4) {
+        animation-delay: 0.1s;
+        height: 10px;
+        background: var(--accent-violet, #7c3aed);
     }
 
     @keyframes pulse {
         0%,
         100% {
-            transform: scaleY(1);
-            opacity: 0.5;
+            transform: scaleY(0.8);
+            opacity: 0.6;
         }
         50% {
-            transform: scaleY(1.5);
+            transform: scaleY(1.4);
             opacity: 1;
         }
     }
@@ -744,23 +1172,27 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         flex-direction: column;
-        height: 400px;
+        height: 500px; /* Taller */
+        max-height: 70vh;
     }
 
     .chat-viewport {
         flex: 1;
         overflow-y: auto;
+        overflow-x: hidden; /* Fix horizontal scroll */
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
-        scrollbar-width: none;
+        gap: 1.5rem; /* More spacing */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        overscroll-behavior: contain; /* Prevent parent scroll */
     }
 
     .welcome {
         text-align: center;
         padding: 2rem 1rem;
-        color: #888;
+        color: rgba(255, 255, 255, 0.5);
     }
 
     .welcome h3 {
@@ -784,6 +1216,39 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
         align-self: flex-start;
     }
 
+    .model .msg-bubble {
+        background: rgba(255, 255, 255, 0.05); /* Slight tint */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top-left-radius: 2px;
+    }
+
+    .whisper-bubble {
+        position: absolute;
+        bottom: 100%;
+        left: 2rem;
+        margin-bottom: 0.5rem;
+        background: var(--accent-violet);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        border-bottom-left-radius: 2px;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        max-width: 200px;
+        animation: float 3s ease-in-out infinite;
+        z-index: 10000;
+        pointer-events: none;
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
     .msg-bubble {
         padding: 0.75rem 1rem;
         border-radius: 12px;
@@ -792,9 +1257,10 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
     }
 
     .user .msg-bubble {
-        background: #0070f3;
+        background: var(--accent-violet); /* Used accent color */
         color: #fff;
         border-bottom-right-radius: 2px;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
     }
 
     .model .msg-bubble {
@@ -974,6 +1440,53 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
     }
 
     .controls-hint {
-        margin-left: 0; /* Reset since voice-picker pushes it */
+        margin-left: auto; /* Push to right */
+        font-family: var(--font-mono, monospace);
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    /* Retry Controls */
+    .retry-controls {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(255, 200, 0, 0.1);
+        border: 1px solid rgba(255, 200, 0, 0.3);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #ffda6b;
+    }
+
+    .retry-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .auto-retry-label {
+        display: flex;
+        gap: 0.3rem;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .retry-btn {
+        background: rgba(255, 200, 0, 0.2);
+        border: 1px solid rgba(255, 200, 0, 0.5);
+        color: #ffda6b;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .retry-btn:hover {
+        background: rgba(255, 200, 0, 0.3);
     }
 </style>

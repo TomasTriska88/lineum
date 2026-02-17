@@ -6,7 +6,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Improved ROOT detection: Walk up from __dirname to find the monorepo root
-// Improved ROOT detection: Walk up from __dirname to find the monorepo root
 function findRoot(startDir) {
     let current = startDir;
     console.log(`[SYNC] findRoot starting from: ${startDir}`);

@@ -5,10 +5,10 @@ import type { RequestHandler } from './$types';
 
 const GEMINI_API_KEY = (env as any).GEMINI_API_KEY;
 
-export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+export const POST: RequestHandler = async ({ request, getClientAddress, locals }) => {
     // 1. Rate Limiting (Stricter for TTS)
-    const ip = getClientAddress();
-    const limit = rateLimiter.check('tts', ip);
+    const id = locals.sessionId || getClientAddress();
+    const limit = rateLimiter.check('tts', id);
 
     if (!limit.allowed) {
         return json({ error: limit.reason }, { status: 429 });
@@ -37,7 +37,8 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
     // 3. Call Gemini TTS (REST API)
     // We use direct REST because the SDK support for Audio Modality is experimental/undocumented
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
+    // Using Pro because Flash TTS has strict 10 RPD limit. Pro has 1.5K RPD.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
         const payload = {
