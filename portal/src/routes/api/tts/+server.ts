@@ -26,8 +26,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         return json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    if (!text || typeof text !== 'string' || text.length > 500) {
-        return json({ error: "Text is required and must be under 500 chars." }, { status: 400 });
+    // Gemini TTS supports up to ~4096 chars usually, allowing 2000 is safe
+    if (!text || typeof text !== 'string' || text.length > 2000) {
+        return json({ error: "Text is required and must be under 2000 chars." }, { status: 400 });
     }
 
     if (!GEMINI_API_KEY) {
@@ -85,7 +86,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
             // FIX: Wraps raw PCM (L16) in a WAV container so browsers can play it
             if (rawMimeType.includes('audio/L16')) {
                 console.log("Wrapping raw PCM in WAV header...");
-                audioBuffer = addWavHeader(audioBuffer, 24000, 1, 16); // 24kHz, Mono, 16-bit
+                audioBuffer = addWavHeader(audioBuffer as any, 24000, 1, 16); // 24kHz, Mono, 16-bit
                 finalMimeType = 'audio/wav';
             }
 
