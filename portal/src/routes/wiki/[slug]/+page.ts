@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
     try {
-        const whitepapers = import.meta.glob('../../../lib/data/whitepapers/*.md', {
+        const whitepapers = import.meta.glob('$whitepapers/*.md', {
             query: '?raw',
             import: 'default',
             eager: true

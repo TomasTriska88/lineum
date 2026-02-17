@@ -1,6 +1,6 @@
 export async function load() {
     // We use ?raw to bypass mdsvex compilation which fails on some whitepapers
-    const whitepapers = import.meta.glob('../../lib/data/whitepapers/*.md', {
+    const whitepapers = import.meta.glob('$whitepapers/*.md', {
         query: '?raw',
         import: 'default',
         eager: true

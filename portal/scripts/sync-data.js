@@ -73,6 +73,14 @@ function sync() {
     console.log('[SYNC] Synchronization complete.');
 }
 
+// Final validation: Fail the build if essential data is missing
+const wpCount = fs.readdirSync(path.join(path.resolve(__dirname, '../'), 'src/lib/data/whitepapers')).length;
+if (wpCount === 0) {
+    console.error('[SYNC] CRITICAL ERROR: Found 0 whitepapers. Build aborted.');
+    process.exit(1);
+}
+}
+
 try {
     sync();
 } catch (err) {
