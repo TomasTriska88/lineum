@@ -5,7 +5,20 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const ROOT = path.resolve(__dirname, '../../');
+// Improved ROOT detection: Walk up from __dirname to find the monorepo root
+function findRoot(startDir) {
+    let current = startDir;
+    while (current !== path.parse(current).root) {
+        if (fs.existsSync(path.join(current, 'whitepapers'))) {
+            return current;
+        }
+        current = path.dirname(current);
+    }
+    // Fallback to the previous logic if not found, but log it
+    return path.resolve(__dirname, '../../');
+}
+
+const ROOT = findRoot(__dirname);
 const DATA_TARGET = path.resolve(__dirname, '../src/lib/data');
 
 const directoriesToSync = [
