@@ -9,14 +9,19 @@ const ROOT = path.resolve(__dirname, '../../');
 const DATA_TARGET = path.resolve(__dirname, '../src/lib/data');
 
 const directoriesToSync = [
-    { source: 'whitepapers', target: 'whitepapers' },
-    { source: 'source', target: 'source' }
+    { source: 'whitepapers', target: 'src/lib/data/whitepapers' },
+    { source: 'source', target: 'static/data/source' }
 ];
 
 function copyRecursiveSync(src, dest) {
+    console.log(`[SYNC] Checking source: ${src}`);
     const exists = fs.existsSync(src);
-    const stats = exists && fs.statSync(src);
-    const isDirectory = exists && stats.isDirectory();
+    if (!exists) {
+        console.warn(`[SYNC] Source DOES NOT exist: ${src}`);
+        return;
+    }
+    const stats = fs.statSync(src);
+    const isDirectory = stats.isDirectory();
     if (isDirectory) {
         if (!fs.existsSync(dest)) {
             fs.mkdirSync(dest, { recursive: true });
@@ -24,7 +29,7 @@ function copyRecursiveSync(src, dest) {
         fs.readdirSync(src).forEach((childItemName) => {
             copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
         });
-    } else if (exists) {
+    } else {
         // Use copyFileSync for reliability
         fs.copyFileSync(src, dest);
     }
@@ -32,14 +37,12 @@ function copyRecursiveSync(src, dest) {
 
 function sync() {
     console.log('[SYNC] Starting build-time data synchronization...');
-
-    if (!fs.existsSync(DATA_TARGET)) {
-        fs.mkdirSync(DATA_TARGET, { recursive: true });
-    }
+    console.log(`[SYNC] CWD: ${process.cwd()}`);
+    console.log(`[SYNC] ROOT determined as: ${ROOT}`);
 
     for (const { source, target } of directoriesToSync) {
         const sourcePath = path.join(ROOT, source);
-        const targetPath = path.join(DATA_TARGET, target);
+        const targetPath = path.join(path.resolve(__dirname, '../'), target);
 
         if (!fs.existsSync(sourcePath)) {
             console.warn(`[SYNC] Warning: Source directory not found: ${sourcePath}`);
@@ -58,6 +61,13 @@ function sync() {
         }
 
         copyRecursiveSync(sourcePath, targetPath);
+
+        // Log results
+        const filesFound = fs.existsSync(targetPath) ? fs.readdirSync(targetPath) : [];
+        console.log(`[SYNC] Success: Synced ${filesFound.length} items to ${targetPath}`);
+        if (filesFound.length > 0) {
+            console.log(`[SYNC] Items: ${filesFound.join(', ')}`);
+        }
     }
 
     console.log('[SYNC] Synchronization complete.');

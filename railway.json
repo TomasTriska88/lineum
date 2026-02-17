@@ -6,7 +6,7 @@
         "rootDirectory": "./"
       },
       "build": {
-        "buildCommand": "echo '--- BUILDING PORTAL ---' && ls -la && (mkdir -p portal/src/lib/data/whitepapers portal/src/lib/data/source || true) && (cp -rv whitepapers/. portal/src/lib/data/whitepapers/ || echo 'No whitepapers found') && (cp -rv source/. portal/src/lib/data/source/ || echo 'No source elements found') && cd portal && npm install && npm run build",
+        "buildCommand": "echo '--- BUILDING PORTAL ---' && ls -la && cd portal && npm install && npm run build && echo '--- POST-BUILD CHECK ---' && ls -la src/lib/data/whitepapers || echo 'No whitepapers in build directory'",
         "watchPatterns": [
           "portal/**",
           "whitepapers/**",

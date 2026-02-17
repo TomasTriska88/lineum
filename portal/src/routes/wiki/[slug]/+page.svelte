@@ -3,10 +3,10 @@
     export let data;
     const { content, title, slug } = data;
 
-    // Rewrite image paths from ../source/ to /source/
+    // Rewrite image paths from local markdown references to static serve paths
     $: processedContent = content
-        .replace(/src="\.\.\/source\//g, 'src="/source/')
-        .replace(/\(!\[(.*?)\]\)\(\.\.\/source\//g, "![$1](/source/");
+        .replace(/!\[(.*?)\]\(\.\.\/source\/(.*?)\)/g, "![$1](/data/source/$2)")
+        .replace(/src="\.\.\/source\/(.*?)"/g, 'src="/data/source/$1"');
 </script>
 
 <svelte:head>

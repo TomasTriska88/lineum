@@ -3,7 +3,7 @@
     "private": true,
     "description": "Monorepo root for Lineum Core, Portal, and Lab",
     "scripts": {
-        "build": "echo '--- MONOREPO SYNC & BUILD ---' && (mkdir -p portal/src/lib/data/whitepapers portal/src/lib/data/source || true) && (cp -rv whitepapers/. portal/src/lib/data/whitepapers/ || echo 'No whitepapers') && (cp -rv source/. portal/src/lib/data/source/ || echo 'No source') && cd portal && npm install && npm run build",
+        "build": "echo '--- MONOREPO SYNC & BUILD ---' && (mkdir -p portal/src/lib/data/whitepapers portal/static/data/source || true) && (cp -rv whitepapers/. portal/src/lib/data/whitepapers/ || echo 'No whitepapers') && (cp -rv source/. portal/static/data/source/ || echo 'No source') && cd portal && npm install && npm run build",
         "start": "cd portal && node build",
         "test": "cd portal && npm test && cd ../lab && npm test"
     },
