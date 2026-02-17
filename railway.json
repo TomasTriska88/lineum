@@ -19,6 +19,24 @@
         "restartPolicyType": "ON_FAILURE"
       }
     },
+    "portal": {
+      "source": {
+        "rootDirectory": "./"
+      },
+      "build": {
+        "buildCommand": "echo '--- BUILDING PORTAL ---' && ls -la && cd portal && npm install && npm run build && echo '--- POST-BUILD CHECK ---' && ls -la src/lib/data/whitepapers || echo 'No whitepapers in build directory'",
+        "watchPatterns": [
+          "portal/**",
+          "whitepapers/**",
+          "source/**"
+        ]
+      },
+      "deploy": {
+        "startCommand": "cd portal && node build",
+        "healthCheckPath": "/wiki/lineum-core",
+        "restartPolicyType": "ON_FAILURE"
+      }
+    },
     "Simulacrum": {
       "source": {
         "rootDirectory": "lab"

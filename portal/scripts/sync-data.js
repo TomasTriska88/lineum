@@ -39,9 +39,11 @@ function findRoot(startDir) {
         console.warn('\n' + '='.repeat(60));
         console.warn('[SYNC] DETECTED RESTRICTED BUILD CONTEXT');
         console.warn('[SYNC] The script cannot find whitepapers/ directory.');
-        console.warn('[SYNC] ACTION REQUIRED: In Railway Dashboard, go to:');
-        console.warn('[SYNC] Portal Service -> Settings -> General -> Root Directory');
-        console.warn('[SYNC] Change it from "portal" to "./"');
+        console.warn('[SYNC] POSSIBLE CAUSE: Service Name Mismatch.');
+        console.warn('[SYNC] Railway only applies `railway.json` config if the Service Name matches exactly.');
+        console.warn('[SYNC] ACTION REQUIRED:');
+        console.warn('[SYNC] 1. Rename your service to "Portal" (or "portal") in Railway Dashboard.');
+        console.warn('[SYNC] 2. OR Manually set Root Directory to "./" in Settings -> General.');
         console.warn('='.repeat(60) + '\n');
     }
 
