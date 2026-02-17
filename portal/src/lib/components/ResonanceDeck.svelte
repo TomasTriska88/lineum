@@ -38,6 +38,9 @@
 
     onMount(() => {
         if (browser) {
+            // Safety cleanup for reloads
+            window.speechSynthesis.cancel();
+
             const saved = localStorage.getItem("resonance_history");
             if (saved) {
                 messages = JSON.parse(saved);
@@ -458,19 +461,22 @@
                 <span class="explorer-name">Lineum Explorer</span>
                 {#if speakingId}
                     <button
-                        class="stop-btn-global"
+                        class="stop-btn-global icon-only"
                         class:fallback={usingFallback}
                         onclick={(e) => {
                             e.stopPropagation();
                             stopTTS();
                         }}
+                        title={usingFallback
+                            ? "Stop Backup Voice"
+                            : "Stop Reading"}
                     >
-                        ⏹️ {usingFallback ? "STOP (BACKUP)" : "STOP READING"}
+                        ⏹️
                     </button>
                     {#if usingFallback}
                         <span
                             class="status-tag error"
-                            title={`Local Voice Active: ${ttsError}`}>⚠️</span
+                            title={getFriendlyError(ttsError)}>⚠️</span
                         >
                     {/if}
                 {:else if isTyping}
