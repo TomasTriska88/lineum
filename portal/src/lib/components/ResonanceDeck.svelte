@@ -28,6 +28,7 @@
 
     let currentAudio: HTMLAudioElement | null = null;
     let speakingId = $state<string | null>(null);
+    let usingFallback = $state(false);
     let audioCache = new Map<string, string>(); // msg index -> blob url
 
     // Voice Config
@@ -222,6 +223,7 @@
             }
             stopTTS();
             speakingId = id;
+            usingFallback = false;
 
             // 1. Check Cache
             if (audioCache.has(id)) {
@@ -239,7 +241,8 @@
                 console.log(
                     `[TTS] Requesting Cloud Audio. Voice: ${selectedVoice}, Text Length: ${text.length}`,
                 );
-                const res = await fetch("/api/tts", {
+                // Cache-Busting: Add timestamp to force fresh fetch if browser cached the old "raw PCM" response
+                const res = await fetch(`/api/tts?t=${Date.now()}`, {
                     method: "POST",
                     body: JSON.stringify({ text, voice: selectedVoice }),
                     headers: { "Content-Type": "application/json" },
@@ -294,6 +297,7 @@
             }
 
             // 3. Fallback to Local Web Speech API
+            usingFallback = true;
             console.log("[TTS] Switching to Local Fallback (Web Speech API).");
             const u = new SpeechSynthesisUtterance(text);
             u.lang = "cs-CZ";
@@ -402,13 +406,17 @@
                 {#if speakingId}
                     <button
                         class="stop-btn-global"
+                        class:fallback={usingFallback}
                         onclick={(e) => {
                             e.stopPropagation();
                             stopTTS();
                         }}
                     >
-                        ⏹️ STOP READING
+                        ⏹️ {usingFallback ? "STOP (BACKUP)" : "STOP READING"}
                     </button>
+                    {#if usingFallback}
+                        <span class="status-tag error">⚠️ LOCAL VOICE</span>
+                    {/if}
                 {:else if isTyping}
                     <span class="status-tag">ANALYZING FIELDS...</span>
                 {:else if isExpanded}
