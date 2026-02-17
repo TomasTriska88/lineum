@@ -367,7 +367,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                     ...messages,
                     {
                         role: "model",
-                        parts: [{ text: `✨ Explorer: ${data.error}` }],
+                        parts: [{ text: `✨ Lina: ${data.error}` }],
                     },
                 ];
             } else if (data.text) {
@@ -389,7 +389,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                     role: "model",
                     parts: [
                         {
-                            text: "✨ Explorer: Resonance lost. Try again later.",
+                            text: "✨ Lina: Resonance lost. Try again later.",
                         },
                     ],
                 },
@@ -423,7 +423,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
             </div>
 
             <div class="status-info">
-                <span class="explorer-name">Lineum Explorer</span>
+                <span class="explorer-name">Lina</span>
                 {#if speakingId}
                     <button
                         class="stop-btn-global icon-only"
@@ -463,7 +463,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
             </div>
 
             <div class="controls-hint">
-                {isExpanded ? "CLOSE" : "EXPAND EXPLORER"}
+                {isExpanded ? "CLOSE" : "EXPAND LINA"}
             </div>
         </div>
 
@@ -618,7 +618,7 @@ I am ready to assist. Type a query to begin analysis of the core archives.`,
                 >
                     <input
                         type="text"
-                        placeholder="Ask the Explorer..."
+                        placeholder="Ask Lina..."
                         bind:value={query}
                         onclick={(e) => e.stopPropagation()}
                         disabled={isTyping}

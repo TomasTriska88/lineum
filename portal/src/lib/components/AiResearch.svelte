@@ -63,7 +63,7 @@
                         role: "model" as const,
                         parts: [
                             {
-                                text: `✨ Explorer: I had a small hiccup! ${data.error}`,
+                                text: `✨ Lina: I had a small hiccup! ${data.error}`,
                             },
                         ],
                     },
@@ -81,7 +81,7 @@
                     role: "model" as const,
                     parts: [
                         {
-                            text: "✨ Explorer: I've lost the resonance with the server. Please try again in a moment!",
+                            text: "✨ Lina: I've lost the resonance with the server. Please try again in a moment!",
                         },
                     ],
                 },
@@ -117,9 +117,8 @@
             <div class="empty-state" in:fade>
                 <div class="bot-icon">✨</div>
                 <p>
-                    Greetings, researcher! I'm the Lineum Explorer. I've indexed
-                    over 30 project files to help you dive deep into our
-                    simulations.
+                    Greetings, researcher! I'm Lina. I've indexed the project
+                    archives to help you dive deep into our simulations.
                 </p>
                 <div class="suggestions">
                     <button
@@ -181,7 +180,7 @@
             {#if isTyping}
                 Thinking...
             {:else}
-                Ask Explorer
+                Ask Lina
             {/if}
         </button>
     </form>
@@ -233,6 +232,7 @@
         margin: 0;
         background: linear-gradient(135deg, #fff 0%, #aaa 100%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         letter-spacing: -0.02em;
     }

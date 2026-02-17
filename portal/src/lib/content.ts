@@ -14,53 +14,53 @@ export const content = {
     hero: {
         symbol: 'Λ',
         title: 'Science of fields that breathe.',
-        subtitle: 'Exploring the emergence of stable excitations (Linons) in discrete fields. No global constants. No predefined metric geometry. Just pure local causality.',
+        subtitle: 'Stable excitations—linons—can self-assemble in discrete fields. No global constants. No predefined metric geometry. Just local causality. If you want, I can show you where this enters the equation.',
         cta_wiki: 'Lineum Core v1.0.18',
         cta_audit: 'Audit Evidence'
     },
     sections: {
         layman: {
-            label: 'For laymen',
+            label: 'Intuition',
             title: 'What is Lineum?',
-            p1: 'Imagine the universe not as a vacuum, but as a fine digital grid. Lineum is a model that shows how stable waves can "self-assemble" in this environment, behaving like particles.',
-            p2: 'It is not just a simulation; it is a search for the fundamental rules from which matter emerges.',
+            p1: 'Lineum explores stable excitations in a discrete field. Some of them self-assemble and persist—behaving in ways that resemble particles.',
+            p2: 'This isn\'t just a simulation; it is a search for the fundamental rules from which structure emerges.',
             visual_label: 'Visual metaphor'
         },
         scientist: {
-            label: 'For scientists',
+            label: 'Formalism',
             title: 'Deep Science & Auditable Reality',
             whitepaper: {
                 title: 'Whitepaper (v1.0.18)',
-                desc: 'Complete derivation of the equation, numerical scheme, and interpretation of results.',
-                link: 'Open Wiki →'
+                desc: 'Here you will find the complete derivation of the equation, numerical scheme, and interpretation of results.',
+                link: 'Read Documentation →'
             },
             zenodo: {
                 title: 'Zenodo (DOI)',
-                desc: 'Official scientific archive with guaranteed data traceability.',
+                desc: 'Our official scientific archive with guaranteed data traceability.',
                 link: '10.5281/zenodo...'
             },
             simulacrum: {
                 title: 'Simulacrum',
-                desc: 'Interactive laboratory and audit data browser. Track phase shifts in real time.',
+                desc: 'My interactive laboratory and audit data browser. You can track phase shifts in real time.',
                 link: 'Enter Laboratory →'
             }
         }
     },
     legend: {
-        trigger_label: 'Physics Reference',
-        title: 'Physics Reference',
+        trigger_label: 'Field Guide',
+        title: 'Field Guide',
         subtitle: 'Emergent phenomena in Lineum',
         items: [
             {
                 id: 'psi',
                 label: 'Emergent Life (ψ-Phase)',
-                description: 'The primary entities of the field. These <b>Point Singularities</b> wander through the vacuum, shifting colors based on their internal phase state (Cyan: Stable, Magenta: Transition, Yellow: Peak).',
+                description: 'The primary act of the field. These <b>Point Singularities</b> wander through the vacuum, shifting colors based on their internal phase state (Cyan: Stable, Magenta: Transition, Yellow: Peak).',
                 color: palette.psi
             },
             {
                 id: 'kappa',
                 label: 'Safe Zones (κ-Field)',
-                description: 'Regions of high vacuum stability. These appear as a <b>blue-to-magenta spectral mist</b> where Linons are less likely to experience rapid phase shifts.',
+                description: 'Regions of high vacuum stability. I visualize these as a <b>blue-to-magenta spectral mist</b> where Linons are less likely to experience rapid phase shifts.',
                 color: palette.kappa
             },
             {
@@ -88,6 +88,7 @@ export const content = {
                 color: palette.coupling
             }
         ],
+        invitation: 'These aren\'t just pretty colors. I can explain the precise math behind every pixel.',
         faq: [
             {
                 q: 'Where can "Structural Closure" be seen?',

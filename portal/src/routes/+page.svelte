@@ -49,17 +49,17 @@
                 {
                     id: "hero-dynamic",
                     selector: ".hero-content h1",
-                    text: "✨ Explorer: This simulation represents our 'Version 1' resonance. It's the most stable field we've achieved so far.",
+                    text: "✨ Lina: This simulation represents our 'Version 1' resonance. It's the most stable field we've achieved so far.",
                 },
                 {
                     id: "layman-vibe",
                     selector: "#layman h2",
-                    text: "✨ Explorer: Don't worry about the math! Think of Lineum like a musical instrument. We're just learning how to play the strings of reality.",
+                    text: "✨ Lina: Don't worry about the math! Think of Lineum like a musical instrument. We're just learning how to play the strings of reality.",
                 },
                 {
                     id: "scientist-data",
                     selector: "#scientist h2",
-                    text: "✨ Explorer: For my fellow researchers—every data point here is cross-validated against the [VALIDATED] contract suite.",
+                    text: "✨ Lina: For my fellow researchers—every data point here is cross-validated against the [VALIDATED] contract suite.",
                 },
             ]}
         />
