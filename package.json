@@ -1,0 +1,8 @@
+{
+    "name": "lineum-core-monorepo",
+    "private": true,
+    "description": "Monorepo root for Lineum Core, Portal, and Lab",
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}
