@@ -29,6 +29,7 @@
     let currentAudio: HTMLAudioElement | null = null;
     let speakingId = $state<string | null>(null);
     let usingFallback = $state(false);
+    let ttsError = $state("");
     let audioCache = new Map<string, string>(); // msg index -> blob url
 
     // Voice Config
@@ -289,11 +290,12 @@
                         `[TTS] API Error: ${res.status} - ${errText}`,
                     );
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.warn(
                     "Cloud TTS failed, switching to local fallback.",
                     e,
                 );
+                ttsError = e.message || "Unknown error";
             }
 
             // 3. Fallback to Local Web Speech API
@@ -415,7 +417,9 @@
                         ⏹️ {usingFallback ? "STOP (BACKUP)" : "STOP READING"}
                     </button>
                     {#if usingFallback}
-                        <span class="status-tag error">⚠️ LOCAL VOICE</span>
+                        <span class="status-tag error" title={ttsError}
+                            >⚠️ LOCAL VOICE: {ttsError}</span
+                        >
                     {/if}
                 {:else if isTyping}
                     <span class="status-tag">ANALYZING FIELDS...</span>
