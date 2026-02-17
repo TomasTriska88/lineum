@@ -34,7 +34,7 @@
 
     // Voice Config
     const voices = ["Puck", "Charon", "Kore", "Fenrir", "Aoede"];
-    let selectedVoice = $state("Aoede");
+    let selectedVoice = $state("Kore");
 
     onMount(() => {
         if (browser) {
@@ -175,7 +175,9 @@
         return transliterateSymbols(clean);
     }
 
-    function transliterateSymbols(text: string): string {
+    function transliterateSymbols(text: string, lang: string = "cs"): string {
+        if (!lang.startsWith("cs")) return text;
+
         return (
             text
                 // 1. Decimals: 0.012 -> 0,012 (Czech standard)
@@ -302,10 +304,23 @@
 
             // 3. Fallback to Local Web Speech API
             usingFallback = true;
-            if (!ttsError) ttsError = "Unknown Fallback Reason";
-            console.log("[TTS] Switching to Local Fallback (Web Speech API).");
+            if (!ttsError) ttsError = "Switching to offline backup.";
+            // console.log("[TTS] Fallback active.");
+
             const u = new SpeechSynthesisUtterance(text);
             u.lang = "cs-CZ";
+
+            // Try to find a female Czech voice
+            const voices = window.speechSynthesis.getVoices();
+            const czechFemale = voices.find(
+                (v) =>
+                    v.lang.includes("cs") &&
+                    (v.name.includes("Vlasta") ||
+                        v.name.includes("Zuzana") ||
+                        v.name.includes("Google") ||
+                        v.name.includes("Female")),
+            );
+            if (czechFemale) u.voice = czechFemale;
             u.onend = () => {
                 speakingId = null;
             };
