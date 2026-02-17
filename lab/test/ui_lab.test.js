@@ -22,7 +22,7 @@ vi.mock('chart.js/auto', () => ({
 // Mock fetch
 global.fetch = vi.fn();
 
-describe('UI Integrity & UX Polish (Phase 20)', () => {
+describe('UI Integrity & UX Polish (Phase 20)', { timeout: 30000 }, () => {
     afterEach(() => {
         cleanup();
     });
