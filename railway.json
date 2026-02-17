@@ -3,7 +3,19 @@
   "services": {
     "portal": {
       "source": {
-        "rootDirectory": "portal"
+        "rootDirectory": "./"
+      },
+      "build": {
+        "buildCommand": "npm --prefix portal install && npm --prefix portal run build",
+        "watchPatterns": [
+          "portal/**",
+          "whitepapers/**",
+          "source/**"
+        ]
+      },
+      "deploy": {
+        "startCommand": "npm --prefix portal start",
+        "healthCheckPath": "/wiki/lineum-core"
       }
     },
     "lab": {
