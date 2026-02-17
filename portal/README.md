@@ -1,5 +1,11 @@
 # sv
 
+> [!IMPORTANT]
+> **Git Protocol:**  
+> 1. All development **MUST** happen on the `dev` branch.  
+> 2. The `main` branch is reserved for **production releases only**.  
+> 3. Never commit directly to `main`. Merge `dev` -> `main` only when ready to deploy.
+
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
 ## Creating a project
