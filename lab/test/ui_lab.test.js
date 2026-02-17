@@ -1,18 +1,6 @@
 // @vitest-environment node
+import './setup-globals.js';
 import { describe, it, expect, beforeEach, vi, afterEach, beforeAll } from 'vitest';
-
-// Global mocks for Node environment
-global.localStorage = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    clear: vi.fn(),
-    removeItem: vi.fn()
-};
-
-global.navigator = {
-    language: 'en-US'
-};
-
 import { render, fireEvent, screen, waitFor, cleanup } from '@testing-library/svelte';
 import '@testing-library/jest-dom';
 import App from '../src/App.svelte';
