@@ -11,6 +11,7 @@ The project is a monorepo containing three core services that form the Lineum ec
     ZT --> CF["Lineum.io (Proxy)"]
     CF --> Portal["Portal (SvelteKit)"]
     CF --> Lab["Simulakrum (Lab)"]
+    Portal --> AI_Agent["AI Agent (Gemini 1.5 Flash)"]
     Portal --> API["Python API Engine"]
     Portal --> CMS["Directus CMS"]
     API --> CMS
@@ -50,7 +51,13 @@ The project is a monorepo containing three core services that form the Lineum ec
 - **Hosting:** Dockerized on Railway.app.
 - **Role:** Centralized data management and content.
 
-### 5. Infrastructure & Networking
+### 5. AI Agent: Gemini Integration
+- **Model:** Gemini 1.5 Flash (via Google AI Studio).
+- **Context:** Automated build-time indexing of `/portal`, `/whitepapers`, `/hypotheses`, and core `/lineum.py`.
+- **Logic:** Integrated into SvelteKit API routes with per-user and global rate limiting.
+- **Role:** Interactive research assistant and portal guide.
+
+### 6. Infrastructure & Networking
 - **Platform:** [Railway.app](https://railway.app) (Monorepo deployment via `railway.json`).
 - **Security:** [Cloudflare Zero Trust](https://one.dash.cloudflare.com/) (Access).
   - **Authorization:** Restricted to specific emails via **One-Time PIN (OTP)**.
@@ -73,8 +80,11 @@ Infrastructure is defined as code in [railway.json](file:///c:/Users/Tomáš/Doc
 ## 🔒 Security Policy
 The alpha phase is strictly protected. Access requires an email address whitelisted in the Cloudflare Access dashboard. Unauthorized traffic is blocked at the edge before reaching Railway servers.
 
+## 🎨 Design & Experience
+All future portal development must adhere to the [Design & Experience Guide](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/DESIGN_GUIDE.md). This ensures visual consistency (glassmorphism), maintenance of the "Lineum Explorer" AI persona, and layperson-first communication standards.
+
 ## 📖 Living Document Policy
 This document is a **Living Document**. To ensure the AI assistant (Antigravity) and the User are always aligned, this file MUST be updated manually or automatically whenever infrastructure components change. **Antigravity is authorized to update this file proactively as changes are executed.**
 
 ---
-*Last update: February 16, 2026*
+*Last update: February 17, 2026*

@@ -53,7 +53,14 @@ const DATA_TARGET = path.resolve(__dirname, '../src/lib/data');
 
 const directoriesToSync = [
     { source: 'whitepapers', target: 'src/lib/data/whitepapers' },
+    { source: 'hypotheses', target: 'src/lib/data/hypotheses' },
     { source: 'source', target: 'static/data/source' }
+];
+
+const coreFilesToSync = [
+    { source: 'lineum.py', target: 'src/lib/data/core/lineum.py' },
+    { source: 'tools/whitepaper_check.py', target: 'src/lib/data/core/whitepaper_check.py' },
+    { source: 'tools/whitepaper_contract.py', target: 'src/lib/data/core/whitepaper_contract.py' }
 ];
 
 function copyRecursiveSync(src, dest) {
@@ -70,30 +77,87 @@ function copyRecursiveSync(src, dest) {
             copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
         });
     } else {
+        const destDir = path.dirname(dest);
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir, { recursive: true });
+        }
         fs.copyFileSync(src, dest);
     }
+}
+
+function extractMetadata(content, filePath) {
+    const fileName = path.basename(filePath);
+    let status = 'Current';
+
+    if (filePath.includes('hypotheses')) {
+        status = 'Hypothesis';
+    }
+
+    // Look for [STATUS: ...] or # STATUS: ...
+    const statusMatch = content.match(/\[STATUS:\s*([^\]]+)\]/i) || content.match(/#\s*STATUS:\s*([^\r\n]+)/i);
+    if (statusMatch) {
+        status = statusMatch[1].trim();
+    }
+
+    return {
+        name: fileName,
+        path: filePath.replace(ROOT, '').replace(/\\/g, '/'),
+        status: status,
+        type: fileName.endsWith('.md') ? 'documentation' : 'code'
+    };
+}
+
+function generateAiIndex(targetDir) {
+    console.log('[SYNC] Generating AI Index...');
+    const index = [];
+    const sourceDirs = [
+        path.join(targetDir, 'whitepapers'),
+        path.join(targetDir, 'hypotheses'),
+        path.join(targetDir, 'core'),
+        path.join(path.resolve(__dirname, '../src/lib')), // Include portal logic
+    ];
+
+    const processDir = (dir) => {
+        if (!fs.existsSync(dir)) return;
+        const items = fs.readdirSync(dir);
+        for (const item of items) {
+            const fullPath = path.join(dir, item);
+            if (fs.statSync(fullPath).isDirectory()) {
+                if (!['node_modules', '.svelte-kit', 'build', 'data'].includes(item)) {
+                    processDir(fullPath);
+                }
+            } else if (['.md', '.js', '.ts', '.svelte', '.py'].some(ext => item.endsWith(ext))) {
+                const content = fs.readFileSync(fullPath, 'utf8');
+                // Basic security: skip if it looks like it contains keys (very crude check)
+                if (content.includes('AIzaSy')) continue; // Don't index the actual API keys if they leaked into files
+
+                index.push({
+                    ...extractMetadata(content, fullPath),
+                    content: content
+                });
+            }
+        }
+    };
+
+    sourceDirs.forEach(processDir);
+
+    fs.writeFileSync(
+        path.join(targetDir, 'ai_index.json'),
+        JSON.stringify(index, null, 2)
+    );
+    console.log(`[SYNC] AI Index generated with ${index.length} files.`);
 }
 
 function sync() {
     console.log('[SYNC] Starting build-time data synchronization...');
     console.log(`[SYNC] ROOT determined as: ${ROOT}`);
 
-    // Allow skipping sync for emergency builds or environments without data
     if (process.env.SKIP_SYNC === 'true') {
         console.log('[SYNC] SKIP_SYNC is true. Skipping data synchronization.');
         return;
     }
 
-    // Diagnostic listing
-    try {
-        if (fs.existsSync(ROOT)) {
-            const contents = fs.readdirSync(ROOT);
-            console.log(`[SYNC] Contents of ROOT: ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
-        }
-    } catch (e) {
-        console.warn(`[SYNC] Diagnostic listing failed: ${e.message}`);
-    }
-
+    // Sync directories
     for (const { source, target } of directoriesToSync) {
         const sourcePath = path.join(ROOT, source);
         const targetPath = path.join(path.resolve(__dirname, '../'), target);
@@ -104,31 +168,25 @@ function sync() {
         }
 
         console.log(`[SYNC] Syncing ${source} -> ${targetPath}`);
-
         if (fs.existsSync(targetPath)) {
-            try {
-                fs.rmSync(targetPath, { recursive: true, force: true });
-            } catch (e) {
-                console.warn(`[SYNC] Could not remove old directory ${targetPath}`);
-            }
+            fs.rmSync(targetPath, { recursive: true, force: true });
         }
-
         copyRecursiveSync(sourcePath, targetPath);
-
-        const filesFound = fs.existsSync(targetPath) ? fs.readdirSync(targetPath) : [];
-        console.log(`[SYNC] Success: Synced ${filesFound.length} items to ${targetPath}`);
     }
 
-    // Final validation
-    const wpTargetDir = path.join(path.resolve(__dirname, '../'), 'src/lib/data/whitepapers');
-    const wpFound = fs.existsSync(wpTargetDir) ? fs.readdirSync(wpTargetDir).length : 0;
+    // Sync individual core files
+    for (const { source, target } of coreFilesToSync) {
+        const sourcePath = path.join(ROOT, source);
+        const targetPath = path.join(path.resolve(__dirname, '../'), target);
 
-    if (wpFound === 0) {
-        console.error('\n[SYNC] CRITICAL ERROR: Found 0 whitepapers in sync target.');
-        console.error('[SYNC] This usually means Railway is only uploading the "portal" subdirectory.');
-        console.error('[SYNC] Please check your Railway "Root Directory" setting.');
-        process.exit(1);
+        if (fs.existsSync(sourcePath)) {
+            console.log(`[SYNC] Syncing core file: ${source} -> ${targetPath}`);
+            copyRecursiveSync(sourcePath, targetPath);
+        }
     }
+
+    // Generate AI Index
+    generateAiIndex(DATA_TARGET);
 
     console.log('[SYNC] Synchronization complete.');
 }

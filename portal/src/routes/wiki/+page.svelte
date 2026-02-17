@@ -1,5 +1,6 @@
 <script lang="ts">
     import { content } from "$lib/content";
+    import MarginShards from "$lib/components/MarginShards.svelte";
     export let data;
     const { papers } = data;
 
@@ -30,6 +31,30 @@
         </aside>
 
         <article class="paper">
+            <MarginShards
+                insights={[
+                    {
+                        id: "vortex",
+                        selector: "#glossary dt:nth-of-type(1)",
+                        text: "✨ Explorer: Think of Linons like bubbles in water—always moving but keeping their shape. They are the 'atoms' of our simulation.",
+                    },
+                    {
+                        id: "psi",
+                        selector: "#glossary dt:nth-of-type(2)",
+                        text: "✨ Explorer: Psi is the main 'actor' here. It tells us where the action is happening at any given moment.",
+                    },
+                    {
+                        id: "kappa",
+                        selector: "#glossary dt:nth-of-type(4)",
+                        text: "✨ Explorer: Kappa is our tuning map. It's like the terrain that determines how fast a river flows in different places.",
+                    },
+                    {
+                        id: "faq-physics",
+                        selector: "#faq details:nth-of-type(1)",
+                        text: "✨ Explorer: While it looks like physics, Lineum is more like a digital art piece governed by math. We use physics names because they fit the 'vibe'!",
+                    },
+                ]}
+            />
             <section id="whitepapers" class="card">
                 <span class="label">DOC // EXPLORE</span>
                 <h1>Research & Documentation</h1>

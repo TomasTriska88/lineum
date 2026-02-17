@@ -1,5 +1,7 @@
 <script>
     import "../app.css";
+    import ResonanceDeck from "$lib/components/ResonanceDeck.svelte";
+    import { hudActive } from "$lib/stores/hudStore";
 </script>
 
 <nav>
@@ -19,9 +21,11 @@
 
 <div class="grid-bg"></div>
 
-<main>
+<main class:hud-pushed={$hudActive}>
     <slot />
 </main>
+
+<ResonanceDeck active={$hudActive} />
 
 <style>
     nav {
@@ -76,5 +80,21 @@
         position: relative;
         z-index: 1;
         padding-top: 80px;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    main.hud-pushed {
+        transform: translateY(-20px);
+    }
+
+    main {
+        position: relative;
+        z-index: 1;
+        padding-top: 80px;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    main.hud-pushed {
+        transform: translateY(-20px);
     }
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
     import FieldShader from "$lib/components/FieldShader.svelte";
     import Legend from "$lib/components/Legend.svelte";
+    import MarginShards from "$lib/components/MarginShards.svelte";
     import { content } from "$lib/content";
 </script>
 
@@ -42,17 +43,36 @@
 </section>
 
 <section id="layman" class="info-section">
-    <div class="container grid-2">
-        <div class="text-block">
+    <div class="container">
+        <MarginShards
+            insights={[
+                {
+                    id: "hero-dynamic",
+                    selector: ".hero-content h1",
+                    text: "✨ Explorer: This simulation represents our 'Version 1' resonance. It's the most stable field we've achieved so far.",
+                },
+                {
+                    id: "layman-vibe",
+                    selector: "#layman h2",
+                    text: "✨ Explorer: Don't worry about the math! Think of Lineum like a musical instrument. We're just learning how to play the strings of reality.",
+                },
+                {
+                    id: "scientist-data",
+                    selector: "#scientist h2",
+                    text: "✨ Explorer: For my fellow researchers—every data point here is cross-validated against the [VALIDATED] contract suite.",
+                },
+            ]}
+        />
+
+        <div
+            class="text-block"
+            style="text-align: center; margin-bottom: 4rem;"
+        >
             <span class="label">{content.sections.layman.label}</span>
             <h2>{content.sections.layman.title}</h2>
-            <p>{content.sections.layman.p1}</p>
-            <p>{content.sections.layman.p2}</p>
-        </div>
-        <div class="visual-placeholder">
-            <div class="placeholder-box">
-                {content.sections.layman.visual_label}
-            </div>
+            <p style="margin: 0 auto 2rem; max-width: 800px;">
+                {content.sections.layman.p1}
+            </p>
         </div>
     </div>
 </section>
@@ -219,23 +239,6 @@
         margin-bottom: 2rem;
     }
 
-    .grid-2 {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 4rem;
-        align-items: center;
-    }
-
-    .placeholder-box {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px dashed rgba(255, 255, 255, 0.2);
-        height: 300px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #555;
-    }
-
     .scientific-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -287,9 +290,6 @@
     @media (max-width: 768px) {
         .logo-text {
             font-size: 3rem;
-        }
-        .grid-2 {
-            grid-template-columns: 1fr;
         }
         .scientific-grid {
             grid-template-columns: 1fr;
