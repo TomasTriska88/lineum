@@ -27,18 +27,6 @@ describe('UI Integrity & UX Polish (Phase 20)', { timeout: 30000 }, () => {
         cleanup();
     });
 
-    beforeAll(() => {
-        vi.setConfig({ testTimeout: 30000 });
-    });
-
-    beforeAll(() => {
-        vi.setConfig({ testTimeout: 30000 });
-    });
-
-    beforeAll(() => {
-        vi.setConfig({ testTimeout: 30000 });
-    });
-
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
