@@ -108,6 +108,11 @@
                 scrollToBottom();
             }
         }
+
+        // Cleanup on destroy
+        return () => {
+            stopTTS();
+        };
     });
 
     $effect(() => {
@@ -213,6 +218,18 @@
         speakingId = null;
     }
 
+    function getFriendlyError(err: string): string {
+        if (err.includes("429") || err.includes("Quota"))
+            return "Server Busy (Try again later)";
+        if (err.includes("500") || err.includes("Internal"))
+            return "System Error";
+        if (err.includes("Network") || err.includes("fetch"))
+            return "Connection Lost";
+        if (err.includes("too short") || err.includes("length"))
+            return "Message Too Long";
+        return "Offline Mode Active";
+    }
+
     async function playTTS(rawText: string, index: number) {
         try {
             // Cache Key must include voice, otherwise switching voice plays old audio
@@ -305,22 +322,38 @@
             // 3. Fallback to Local Web Speech API
             usingFallback = true;
             if (!ttsError) ttsError = "Switching to offline backup.";
-            // console.log("[TTS] Fallback active.");
+
+            // Simple language detection
+            const isCzech = /[ěščřžýáíéůúňťď]/i.test(text);
 
             const u = new SpeechSynthesisUtterance(text);
-            u.lang = "cs-CZ";
+            u.lang = isCzech ? "cs-CZ" : "en-US";
 
-            // Try to find a female Czech voice
             const voices = window.speechSynthesis.getVoices();
-            const czechFemale = voices.find(
-                (v) =>
-                    v.lang.includes("cs") &&
-                    (v.name.includes("Vlasta") ||
-                        v.name.includes("Zuzana") ||
-                        v.name.includes("Google") ||
-                        v.name.includes("Female")),
-            );
-            if (czechFemale) u.voice = czechFemale;
+            let targetVoice = null;
+
+            if (isCzech) {
+                targetVoice = voices.find(
+                    (v) =>
+                        v.lang.includes("cs") &&
+                        (v.name.includes("Vlasta") ||
+                            v.name.includes("Zuzana") ||
+                            v.name.includes("Google") ||
+                            v.name.includes("Female")),
+                );
+            } else {
+                // English fallback (prefer Zira, Google US, or any female)
+                targetVoice = voices.find(
+                    (v) =>
+                        v.lang.includes("en") &&
+                        (v.name.includes("Zira") ||
+                            v.name.includes("Google") ||
+                            v.name.includes("Female")),
+                );
+            }
+
+            if (targetVoice) u.voice = targetVoice;
+
             u.onend = () => {
                 speakingId = null;
             };
