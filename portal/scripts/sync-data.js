@@ -56,13 +56,32 @@ const DATA_TARGET = path.resolve(__dirname, '../src/lib/data');
 const directoriesToSync = [
     { source: 'whitepapers', target: 'src/lib/data/whitepapers' },
     { source: 'hypotheses', target: 'src/lib/data/hypotheses' },
-    { source: 'source', target: 'static/data/source' }
+    { source: 'whitepaper-old', target: 'src/lib/data/whitepapers-legacy' }, // Added Legacy
+    { source: 'source', target: 'static/data/source' },
+    { source: '.agent/workflows', target: 'src/lib/data/workflows' }, // Added Operational Knowledge
+    { source: 'portal/src/routes', target: 'src/lib/data/portal-structure' } // Added Site Structure
 ];
 
 const coreFilesToSync = [
     { source: 'lineum.py', target: 'src/lib/data/core/lineum.py' },
     { source: 'tools/whitepaper_check.py', target: 'src/lib/data/core/whitepaper_check.py' },
-    { source: 'tools/whitepaper_contract.py', target: 'src/lib/data/core/whitepaper_contract.py' }
+    { source: 'tools/whitepaper_contract.py', target: 'src/lib/data/core/whitepaper_contract.py' },
+    // Persona & Design (Active Prompt Source)
+    { source: 'portal/LINA_PERSONA.md', target: 'src/lib/data/core/LINA_PERSONA.md' },
+    { source: 'portal/DESIGN_GUIDE.md', target: 'src/lib/data/core/DESIGN_GUIDE.md' }
+];
+
+const projectFilesToSync = [
+    { source: 'README.md', target: 'src/lib/data/project/README.md' },
+    { source: 'LICENSE', target: 'src/lib/data/project/LICENSE' },
+    { source: '.agent/rules.md', target: 'src/lib/data/project/rules.md' },
+    { source: 'todo.md', target: 'src/lib/data/project/todo.md' },
+    { source: 'lab/README.md', target: 'src/lib/data/project/lab_readme.md' },
+    { source: 'CITATION.cff', target: 'src/lib/data/project/CITATION.cff' },
+    { source: '.zenodo.json', target: 'src/lib/data/project/zenodo.json' },
+    { source: 'railway.json', target: 'src/lib/data/project/railway_config.json' },
+    { source: 'requirements.txt', target: 'src/lib/data/project/requirements.txt' },
+    { source: 'portal/package.json', target: 'src/lib/data/project/portal_package.json' }
 ];
 
 function copyRecursiveSync(src, dest) {
@@ -93,6 +112,14 @@ function extractMetadata(content, filePath) {
 
     if (filePath.includes('hypotheses')) {
         status = 'Hypothesis';
+    } else if (filePath.includes('whitepapers-legacy')) {
+        status = 'LEGACY / UNRELIABLE'; // Explicit warning
+    } else if (filePath.includes('project')) {
+        status = 'Project Context';
+    } else if (filePath.includes('workflows')) {
+        status = 'Operational Knowledge';
+    } else if (filePath.includes('portal-structure')) {
+        status = 'Site Structure';
     }
 
     // Look for [STATUS: ...] or # STATUS: ...
@@ -114,8 +141,12 @@ function generateAiIndex(targetDir) {
     const index = [];
     const sourceDirs = [
         path.join(targetDir, 'whitepapers'),
+        path.join(targetDir, 'whitepapers-legacy'),
         path.join(targetDir, 'hypotheses'),
         path.join(targetDir, 'core'),
+        path.join(targetDir, 'project'),
+        path.join(targetDir, 'workflows'),
+        path.join(targetDir, 'portal-structure'), // Added portal structure
         path.join(path.resolve(__dirname, '../src/lib')), // Include portal logic
     ];
 
@@ -128,10 +159,13 @@ function generateAiIndex(targetDir) {
                 if (!['node_modules', '.svelte-kit', 'build', 'data'].includes(item)) {
                     processDir(fullPath);
                 }
-            } else if (['.md', '.js', '.ts', '.svelte', '.py'].some(ext => item.endsWith(ext))) {
+            } else if (['.md', '.js', '.ts', '.svelte', '.py', '.json'].some(ext => item.endsWith(ext))) {
+                // Skip ai_index.json itself to avoid recursion/bloat
+                if (item === 'ai_index.json') continue;
+
                 const content = fs.readFileSync(fullPath, 'utf8');
                 // Basic security: skip if it looks like it contains keys (very crude check)
-                if (content.includes('AIzaSy')) continue; // Don't index the actual API keys if they leaked into files
+                if (content.includes('AIzaSy')) continue;
 
                 index.push({
                     ...extractMetadata(content, fullPath),
@@ -159,7 +193,7 @@ function sync() {
         return;
     }
 
-    // Sync directories
+    // 1. Sync directories
     for (const { source, target } of directoriesToSync) {
         const sourcePath = path.join(ROOT, source);
         const targetPath = path.join(path.resolve(__dirname, '../'), target);
@@ -176,15 +210,38 @@ function sync() {
         copyRecursiveSync(sourcePath, targetPath);
     }
 
-    // Sync individual core files
-    for (const { source, target } of coreFilesToSync) {
+    // 2. Sync individual files (Core & Project)
+    const allFilesToSync = [...coreFilesToSync, ...projectFilesToSync];
+    for (const { source, target } of allFilesToSync) {
         const sourcePath = path.join(ROOT, source);
         const targetPath = path.join(path.resolve(__dirname, '../'), target);
 
         if (fs.existsSync(sourcePath)) {
-            console.log(`[SYNC] Syncing core file: ${source} -> ${targetPath}`);
+            console.log(`[SYNC] Syncing file: ${source} -> ${targetPath}`);
             copyRecursiveSync(sourcePath, targetPath);
+        } else {
+            console.warn(`[SYNC] Warning: Source file not found: ${sourcePath}`);
         }
+    }
+
+    // 3. Smart Audit Sync
+    try {
+        const latestRunPath = path.join(ROOT, 'output_wp/latest_run.txt');
+        if (fs.existsSync(latestRunPath)) {
+            const latestRunRel = fs.readFileSync(latestRunPath, 'utf8').trim();
+            const auditReportPath = path.join(ROOT, 'output_wp', latestRunRel, 'audit_report.json'); // Assuming this structure
+
+            // Note: If audit_report.json doesn't exist, we might want to check for something else or just skip
+            if (fs.existsSync(auditReportPath)) {
+                const targetPath = path.join(DATA_TARGET, 'project/audit_latest.json');
+                console.log(`[SYNC] Syncing latest audit report: ${auditReportPath} -> ${targetPath}`);
+                copyRecursiveSync(auditReportPath, targetPath);
+            } else {
+                console.warn(`[SYNC] Latest audit run found (${latestRunRel}), but 'audit_report.json' is missing.`);
+            }
+        }
+    } catch (e) {
+        console.warn('[SYNC] Failed to sync audit report:', e.message);
     }
 
     // Generate AI Index
