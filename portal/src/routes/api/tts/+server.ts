@@ -71,20 +71,29 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
         const data = await response.json();
 
+
         // Extract Audio
         if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
             const inlineData = data.candidates[0].content.parts[0].inlineData;
             const base64Audio = inlineData.data;
-            const mimeType = inlineData.mimeType || 'audio/wav';
+            const rawMimeType = inlineData.mimeType || 'audio/wav';
 
             // Convert base64 to binary buffer
-            const audioBuffer = Buffer.from(base64Audio, 'base64');
+            let audioBuffer = Buffer.from(base64Audio, 'base64');
+            let finalMimeType = rawMimeType;
+
+            // FIX: Wraps raw PCM (L16) in a WAV container so browsers can play it
+            if (rawMimeType.includes('audio/L16')) {
+                console.log("Wrapping raw PCM in WAV header...");
+                audioBuffer = addWavHeader(audioBuffer, 24000, 1, 16); // 24kHz, Mono, 16-bit
+                finalMimeType = 'audio/wav';
+            }
 
             return new Response(audioBuffer, {
                 headers: {
-                    'Content-Type': mimeType,
+                    'Content-Type': finalMimeType,
                     'Content-Length': audioBuffer.length.toString(),
-                    'Cache-Control': 'public, max-age=31536000, immutable' // Aggressive caching!
+                    'Cache-Control': 'public, max-age=31536000, immutable'
                 }
             });
         } else {
@@ -97,3 +106,37 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
         return json({ error: "Internal Server Error" }, { status: 500 });
     }
 };
+
+/**
+ * Adds a RIFF WAV header to raw PCM data.
+ */
+function addWavHeader(samples: Buffer, sampleRate: number, numChannels: number, bitsPerSample: number): Buffer {
+    const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+    const blockAlign = (numChannels * bitsPerSample) / 8;
+    const dataSize = samples.length;
+    const buffer = Buffer.alloc(44 + dataSize);
+
+    // RIFF chunk
+    buffer.write('RIFF', 0);
+    buffer.writeUInt32LE(36 + dataSize, 4);
+    buffer.write('WAVE', 8);
+
+    // fmt chunk
+    buffer.write('fmt ', 12);
+    buffer.writeUInt32LE(16, 16); // Subchunk1Size (16 for PCM)
+    buffer.writeUInt16LE(1, 20); // AudioFormat (1 for PCM)
+    buffer.writeUInt16LE(numChannels, 22);
+    buffer.writeUInt32LE(sampleRate, 24);
+    buffer.writeUInt32LE(byteRate, 28);
+    buffer.writeUInt16LE(blockAlign, 32);
+    buffer.writeUInt16LE(bitsPerSample, 34);
+
+    // data chunk
+    buffer.write('data', 36);
+    buffer.writeUInt32LE(dataSize, 40);
+
+    // Write samples
+    samples.copy(buffer, 44);
+
+    return buffer;
+}
