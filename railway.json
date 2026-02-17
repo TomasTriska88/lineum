@@ -6,7 +6,7 @@
         "rootDirectory": "./"
       },
       "build": {
-        "buildCommand": "npm --prefix portal install && npm --prefix portal run build",
+        "buildCommand": "mkdir -p portal/src/lib/data/whitepapers && mkdir -p portal/src/lib/data/source && cp -r whitepapers/* portal/src/lib/data/whitepapers/ && cp -r source/* portal/src/lib/data/source/ && cd portal && npm install && npm run build",
         "watchPatterns": [
           "portal/**",
           "whitepapers/**",
@@ -14,8 +14,9 @@
         ]
       },
       "deploy": {
-        "startCommand": "npm --prefix portal start",
-        "healthCheckPath": "/wiki/lineum-core"
+        "startCommand": "cd portal && node build",
+        "healthCheckPath": "/wiki/lineum-core",
+        "restartPolicyType": "ON_FAILURE"
       }
     },
     "lab": {
