@@ -12,7 +12,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			'$whitepapers': '../whitepapers'
+			'$whitepapers': 'src/lib/data/whitepapers'
 		}
 	}
 };
