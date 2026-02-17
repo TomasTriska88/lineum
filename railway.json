@@ -6,7 +6,7 @@
         "rootDirectory": "./"
       },
       "build": {
-        "buildCommand": "echo '--- DIAGNOSTIC START ---' && ls -la && ls -la portal && mkdir -p portal/src/lib/data/whitepapers && mkdir -p portal/src/lib/data/source && cp -rv whitepapers/* portal/src/lib/data/whitepapers/ && cp -rv source/* portal/src/lib/data/source/ && echo '--- SYNC VERIFICATION ---' && ls -R portal/src/lib/data && cd portal && npm install && npm run build",
+        "buildCommand": "echo '--- DIAGNOSTIC START ---' && ls -la && (mkdir -p portal/src/lib/data/whitepapers portal/src/lib/data/source || true) && (cp -rv whitepapers/. portal/src/lib/data/whitepapers/ || echo 'No whitepapers found') && (cp -rv source/. portal/src/lib/data/source/ || echo 'No source elements found') && echo '--- SYNC VERIFICATION ---' && (ls -R portal/src/lib/data || true) && cd portal && npm install && npm run build",
         "watchPatterns": [
           "portal/**",
           "whitepapers/**",
