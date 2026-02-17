@@ -44,54 +44,19 @@
             const saved = localStorage.getItem("resonance_history");
             if (saved) {
                 messages = JSON.parse(saved);
-                // Inject Test Message if not present (skip in tests)
-                if (import.meta.env.MODE !== "test") {
-                    const last = messages[messages.length - 1];
-                    const testTxt = `## 🔊 Audio System Test
-
-**English Section:**
-"Welcome to the Lineum research facility. The current status is: **Operational**."
-"We are detecting specific field fluctuations."
-
-**Czech Section (Česká sekce):**
-"Vítejte. Teď vyzkoušíme výslovnost speciálních znaků."
-"Rovnice: 3 * 4 = 12 (tři krát čtyři rovná se dvanáct)."
-"Hodnoty: 0.012 (nula celá nula dvanáct) a 1,5 (jedna celá pět)."
-"Symboly: α (alfa), Ω (omega), π (pí), Σ (suma)."
-"Složitější: 10 * 5 = 50. Hvězdička (*) jako symbol."`;
-
-                    if (!last || last.parts[0].text !== testTxt) {
-                        messages = [
-                            ...messages,
-                            { role: "model", parts: [{ text: testTxt }] },
-                        ];
-                    }
-                }
             } else {
-                // Initial Test Message (Only if not in test mode)
-                if (import.meta.env.MODE !== "test") {
-                    messages = [
-                        {
-                            role: "model",
-                            parts: [
-                                {
-                                    text: `## 🔊 Audio System Test
-
-**English Section:**
-"Welcome to the Lineum research facility. The current status is: **Operational**."
-"We are detecting specific field fluctuations."
-
-**Czech Section (Česká sekce):**
-"Vítejte. Teď vyzkoušíme výslovnost speciálních znaků."
-"Rovnice: 3 * 4 = 12 (tři krát čtyři rovná se dvanáct)."
-"Hodnoty: 0.012 (nula celá nula dvanáct) a 1,5 (jedna celá pět)."
-"Symboly: α (alfa), Ω (omega), π (pí), Σ (suma)."
-"Složitější: 10 * 5 = 50. Hvězdička (*) jako symbol."`,
-                                },
-                            ],
-                        },
-                    ];
-                }
+                // Initial Greeting
+                messages = [
+                    {
+                        role: "model",
+                        parts: [
+                            {
+                                text: `## Lineum Resonance Deck
+I am ready to assist. Type a query to begin analysis of the core archives.`,
+                            },
+                        ],
+                    },
+                ];
             }
             scrollToBottom();
         }
