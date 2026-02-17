@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GEMINI_API_KEY } from "$env/static/private";
+import { env } from "$env/dynamic/private";
+const { GEMINI_API_KEY } = env;
 import aiIndex from "$lib/data/ai_index.json";
 
 // Resilient API key access
