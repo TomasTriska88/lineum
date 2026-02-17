@@ -70,15 +70,14 @@ function sync() {
         }
     }
 
-    console.log('[SYNC] Synchronization complete.');
-}
+    // Final validation: Fail the build if essential data is missing
+    const wpTargetDir = path.join(path.resolve(__dirname, '../'), 'src/lib/data/whitepapers');
+    if (!fs.existsSync(wpTargetDir) || fs.readdirSync(wpTargetDir).length === 0) {
+        console.error('[SYNC] CRITICAL ERROR: Found 0 whitepapers in sync target. Build aborted.');
+        process.exit(1);
+    }
 
-// Final validation: Fail the build if essential data is missing
-const wpCount = fs.readdirSync(path.join(path.resolve(__dirname, '../'), 'src/lib/data/whitepapers')).length;
-if (wpCount === 0) {
-    console.error('[SYNC] CRITICAL ERROR: Found 0 whitepapers. Build aborted.');
-    process.exit(1);
-}
+    console.log('[SYNC] Synchronization complete.');
 }
 
 try {
