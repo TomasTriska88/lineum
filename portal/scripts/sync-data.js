@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Improved ROOT detection: Walk up from __dirname to find the monorepo root
+// Improved ROOT detection: Walk up from __dirname to find the monorepo root
 function findRoot(startDir) {
     let current = startDir;
     console.log(`[SYNC] findRoot starting from: ${startDir}`);
@@ -29,9 +30,21 @@ function findRoot(startDir) {
         current = parent;
     }
 
-    // Fallback: try to be smart about portal/scripts location
+    // Fallback logic
     const fallback = path.resolve(__dirname, '../../');
     console.log(`[SYNC] findRoot falling back to: ${fallback}`);
+
+    // If we're on Railway and whitepapers is missing, it's a configuration issue
+    if (process.env.RAILWAY_ENVIRONMENT || fs.existsSync('/app')) {
+        console.warn('\n' + '='.repeat(60));
+        console.warn('[SYNC] DETECTED RESTRICTED BUILD CONTEXT');
+        console.warn('[SYNC] The script cannot find whitepapers/ directory.');
+        console.warn('[SYNC] ACTION REQUIRED: In Railway Dashboard, go to:');
+        console.warn('[SYNC] Portal Service -> Settings -> General -> Root Directory');
+        console.warn('[SYNC] Change it from "portal" to "./"');
+        console.warn('='.repeat(60) + '\n');
+    }
+
     return fallback;
 }
 
@@ -44,10 +57,7 @@ const directoriesToSync = [
 ];
 
 function copyRecursiveSync(src, dest) {
-    console.log(`[SYNC] Checking source: ${src}`);
-    const exists = fs.existsSync(src);
-    if (!exists) {
-        console.warn(`[SYNC] Source DOES NOT exist: ${src}`);
+    if (!fs.existsSync(src)) {
         return;
     }
     const stats = fs.statSync(src);
@@ -60,23 +70,26 @@ function copyRecursiveSync(src, dest) {
             copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
         });
     } else {
-        // Use copyFileSync for reliability
         fs.copyFileSync(src, dest);
     }
 }
 
 function sync() {
     console.log('[SYNC] Starting build-time data synchronization...');
-    console.log(`[SYNC] CWD: ${process.cwd()}`);
-    console.log(`[SYNC] __dirname: ${__dirname}`);
     console.log(`[SYNC] ROOT determined as: ${ROOT}`);
+
+    // Allow skipping sync for emergency builds or environments without data
+    if (process.env.SKIP_SYNC === 'true') {
+        console.log('[SYNC] SKIP_SYNC is true. Skipping data synchronization.');
+        return;
+    }
 
     // Diagnostic listing
     try {
-        if (fs.existsSync('/app')) {
-            console.log(`[SYNC] Contents of /app: ${fs.readdirSync('/app').join(', ')}`);
+        if (fs.existsSync(ROOT)) {
+            const contents = fs.readdirSync(ROOT);
+            console.log(`[SYNC] Contents of ROOT: ${contents.slice(0, 10).join(', ')}${contents.length > 10 ? '...' : ''}`);
         }
-        console.log(`[SYNC] Contents of ROOT: ${fs.readdirSync(ROOT).join(', ')}`);
     } catch (e) {
         console.warn(`[SYNC] Diagnostic listing failed: ${e.message}`);
     }
@@ -92,29 +105,28 @@ function sync() {
 
         console.log(`[SYNC] Syncing ${source} -> ${targetPath}`);
 
-        // Remove old to ensure clean sync
         if (fs.existsSync(targetPath)) {
             try {
                 fs.rmSync(targetPath, { recursive: true, force: true });
             } catch (e) {
-                console.warn(`[SYNC] Could not remove old directory ${targetPath}, attempting merge.`);
+                console.warn(`[SYNC] Could not remove old directory ${targetPath}`);
             }
         }
 
         copyRecursiveSync(sourcePath, targetPath);
 
-        // Log results
         const filesFound = fs.existsSync(targetPath) ? fs.readdirSync(targetPath) : [];
         console.log(`[SYNC] Success: Synced ${filesFound.length} items to ${targetPath}`);
-        if (filesFound.length > 0) {
-            console.log(`[SYNC] Items: ${filesFound.join(', ')}`);
-        }
     }
 
-    // Final validation: Fail the build if essential data is missing
+    // Final validation
     const wpTargetDir = path.join(path.resolve(__dirname, '../'), 'src/lib/data/whitepapers');
-    if (!fs.existsSync(wpTargetDir) || fs.readdirSync(wpTargetDir).length === 0) {
-        console.error('[SYNC] CRITICAL ERROR: Found 0 whitepapers in sync target. Build aborted.');
+    const wpFound = fs.existsSync(wpTargetDir) ? fs.readdirSync(wpTargetDir).length : 0;
+
+    if (wpFound === 0) {
+        console.error('\n[SYNC] CRITICAL ERROR: Found 0 whitepapers in sync target.');
+        console.error('[SYNC] This usually means Railway is only uploading the "portal" subdirectory.');
+        console.error('[SYNC] Please check your Railway "Root Directory" setting.');
         process.exit(1);
     }
 

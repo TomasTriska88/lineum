@@ -44,5 +44,5 @@ alias_*.txt
 test_output*.txt
 contract_*.txt
 
-# Portal build-time synced data
-portal/src/lib/data/
+# Portal build-time synced data (unignored for Railway standalone deployment)
+# portal/src/lib/data/
