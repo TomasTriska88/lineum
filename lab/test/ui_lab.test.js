@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { render, fireEvent, screen, waitFor, cleanup } from '@testing-library/svelte';
 import '@testing-library/jest-dom';
