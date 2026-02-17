@@ -1,4 +1,4 @@
-// @vitest-environment node
+// @vitest-environment jsdom
 import './setup-globals.js';
 import { describe, it, expect, beforeEach, vi, afterEach, beforeAll } from 'vitest';
 import { render, fireEvent, screen, waitFor, cleanup } from '@testing-library/svelte';
