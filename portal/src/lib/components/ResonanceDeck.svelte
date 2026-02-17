@@ -211,7 +211,8 @@
 
     async function playTTS(rawText: string, index: number) {
         try {
-            const id = index.toString();
+            // Cache Key must include voice, otherwise switching voice plays old audio
+            const id = `${index}-${selectedVoice}`;
             console.log(`[TTS] playTTS called for id ${id}`);
             const text = stripMarkdown(rawText); // Clean visuals for audio
 
@@ -468,7 +469,7 @@
                                             <button
                                                 class="icon-btn tts-btn"
                                                 class:speaking={speakingId ===
-                                                    index.toString()}
+                                                    `${index}-${selectedVoice}`}
                                                 onclick={() =>
                                                     playTTS(
                                                         msg.parts[0].text,
@@ -477,7 +478,7 @@
                                                 aria-label="Read aloud"
                                                 title="Read Text"
                                             >
-                                                {#if speakingId === index.toString()}
+                                                {#if speakingId === `${index}-${selectedVoice}`}
                                                     ⏹️
                                                 {:else}
                                                     <svg
