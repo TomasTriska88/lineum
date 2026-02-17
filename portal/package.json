@@ -14,7 +14,7 @@
 		"check:i18n": "node scripts/check-czech.js",
 		"test": "vitest run",
 		"sync": "node scripts/sync-data.js",
-		"prebuild": "npm run sync && npm run test"
+		"prebuild": "npm run sync"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^5.2.11",

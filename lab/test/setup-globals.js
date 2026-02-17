@@ -22,3 +22,9 @@ if (typeof global.navigator === 'undefined') {
 if (typeof global.window === 'undefined') {
     global.window = global;
 }
+
+// Global and window fetch mock initialization
+global.fetch = vi.fn();
+if (typeof window !== 'undefined') {
+    window.fetch = global.fetch;
+}

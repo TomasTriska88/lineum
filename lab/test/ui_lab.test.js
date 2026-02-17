@@ -19,12 +19,20 @@ vi.mock('chart.js/auto', () => ({
     register: vi.fn(),
 }));
 
-// Robust Global Fetch Mock
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
-if (typeof window !== 'undefined') {
-    window.fetch = mockFetch;
-}
+// Mock Three.js/TopographyEngine
+vi.mock('../src/lib/engines/TopographyEngine', () => ({
+    TopographyEngine: vi.fn().mockImplementation(() => ({
+        dispose: vi.fn(),
+        animate: vi.fn(),
+        onFrameUpdate: vi.fn()
+    }))
+}));
+
+// Mock window.scrollTo (missing in jsdom)
+global.scrollTo = vi.fn();
+
+// Use global fetch initialized in setup-globals.js
+const mockFetch = global.fetch;
 
 describe('UI Integrity & UX Polish (Phase 20)', { timeout: 30000 }, () => {
     afterEach(() => {
@@ -64,6 +72,10 @@ describe('UI Integrity & UX Polish (Phase 20)', { timeout: 30000 }, () => {
             if (sUrl.includes('metadata')) return getJson({ frame_count: 100, birth_frame: 391, pearson_r: 0.95 });
             if (sUrl.includes('resonance')) return getJson({ fourier_spectrum: [] });
             if (sUrl.includes('harmonics')) return getJson({ golden_ratio: 1.618 });
+            if (sUrl.includes('stretching_data')) return getJson({
+                times: [0, 1, 2],
+                variances: [1.0, 1.2, 1.5]
+            });
 
             return getJson({});
         });

@@ -54,6 +54,8 @@
             if (manifest.length > 0) {
                 // Default to the first (latest) run in manifest
                 await loadRun(manifest[0].run_id);
+            } else {
+                loading = false;
             }
         } catch (e) {
             console.error("Initialization failed:", e);
