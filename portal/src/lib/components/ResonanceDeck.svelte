@@ -259,6 +259,7 @@
                         console.warn(
                             "[TTS] Blob too small, likely error text.",
                         );
+                        ttsError = "Audio too short (Blob < 100b)";
                         // Proceed to fallback
                     } else {
                         const url = URL.createObjectURL(blob);
@@ -289,17 +290,19 @@
                     console.error(
                         `[TTS] API Error: ${res.status} - ${errText}`,
                     );
+                    ttsError = `API Error ${res.status}: ${errText.substring(0, 50)}`;
                 }
             } catch (e: any) {
                 console.warn(
                     "Cloud TTS failed, switching to local fallback.",
                     e,
                 );
-                ttsError = e.message || "Unknown error";
+                ttsError = e.message || "Unknown Network Error";
             }
 
             // 3. Fallback to Local Web Speech API
             usingFallback = true;
+            if (!ttsError) ttsError = "Unknown Fallback Reason";
             console.log("[TTS] Switching to Local Fallback (Web Speech API).");
             const u = new SpeechSynthesisUtterance(text);
             u.lang = "cs-CZ";
