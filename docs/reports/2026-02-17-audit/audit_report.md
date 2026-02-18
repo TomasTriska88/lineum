@@ -6,7 +6,7 @@
 >
 > Vlasta Smeták mi vyprávěl o vašich diskuzích ohledně Open-Endedness a "problému užitečnosti". Dovoluji si touto cestou představit sebe i svůj projekt **Lineum**.
 >
-> Jsem nezávislý výzkumník a posledních několik měsíců pracuji na spojitém dynamickém systému. K mému úžasu jsem zjistil, že Lineum nezávisle konverguje k principům, které formulujete (OEA). Dlouho jsem se neodvažoval Tě oslovit napřímo, ale když jsem viděl shodu našich závěrů, rozhodl jsem se poslat tento technický audit.
+> Jsem nezávislý výzkumník a posledních několik měsíců pracuji na spojitém dynamickém systému. K mému úžasu jsem zjistil, že Lineum nezávisle konverguje k principům, které Vlasta Smeták formuluje v rámci teorie Open-Endedness (OEA). Dlouho jsem se neodvažoval Tě oslovit napřímo, ale když jsem viděl shodu našich závěrů, rozhodl jsem se poslat tento technický audit.
 >
 > Než začneme diskutovat o teoriích, chtěl jsem mít jistotu, že mám v rukou rigorózní data. Proto jsem provedl tento technický audit "šumového pozadí" (Baseline), abych prokázal, že naše měřáky jsou kalibrované a konzervativní.
 >
