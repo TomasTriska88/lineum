@@ -165,7 +165,19 @@ Pro hlubší pochopení teoretického pozadí a detailní odvození Eq-4 odkazuj
 *   **[Lineum Core Whitepaper (v1.0.6)](../../../portal/src/lib/data/whitepapers/lineum-core.md):** Kompletní fyzikální model, analýza Emergence a Etický Kodex.
 *   **[GitHub Repository (lineum-core)](https://github.com/TomasTriska88/lineum-private):** Zdrojový kód, CI/CD pipeline a audit tools.
 
-> *Poznámka: Projekt (včetně Whitepaperu, Portálu a Laboratoře) je aktuálně ve fázi interního testování, proto je repozitář nastaven jako soukromý. V případě zájmu Vám velmi rád udělím přístup.*
+### 6.1 Status Projektu & Ekosystém (Roadmap)
+
+Projekt Lineum není jen tento PDF report. Budujeme komplexní ekosystém pro výzkum a popularizaci:
+
+1.  **Zenodo (DOI):** Prvotní verze (Proof of Concept) je již indexována pro zachování prvenství. Současná verze (v1.0.6) je však radikálním technickým posunem (nekonečné běhy, optimalizace JIT, determinismus), a proto ji zatím držíme v privátním režimu ("Stealth Mode") pro finální ladění.
+2.  **Lineum.io (Portal):** Připravujeme veřejný web, který nabídne:
+    *   **Interaktivní Whitepaper:** Živé dokumenty s možností verze "Vědec" vs "Laik".
+    *   **Lineum AI Agent:** LLM chatbot trénovaný na celém kontextu repozitáře, schopný diskutovat o fyzice modelu v reálném čase.
+3.  **Laboratoř (Simulacrum):**
+    *   Webová vizualizace běžící přímo v prohlížeči (WebGL).
+    *   **3D Projekce:** Umožňujeme vidět 2D pole topologicky (jako 3D krajinu potenciálů), což odhaluje struktury neviditelné v prostém 2D řezu.
+
+> *Nabídka: Pokud Vás zajímá kód nebo přístup do Laboratoře před oficiálním spuštěním, velmi rád Vám zřídím přístup.*
 
 ---
 
