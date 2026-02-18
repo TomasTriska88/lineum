@@ -1,4 +1,4 @@
-# Lineum: Single-Run Audit Report (v1.0.6-rigorous)
+# Lineum: Single-Run Audit Report (v1.0.18-core)
 
 > **Lineum: Proactive Audit & Introduction**
 >
@@ -16,7 +16,7 @@
 # Lineum: Spojitá limita Open-Endedness (Návrh pro diskuzi)
 
 **Status:** Baseline Established (Noise Regime)
-**Verze:** v1.0.6-rigorous
+**Verze:** v1.0.18-core
 **Datum:** 17. 2. 2026
 
 ---
@@ -162,17 +162,17 @@ Pracujeme s `kappa = 0.5`. Domníváme se, že toto není fundamentální konsta
 
 Pro hlubší pochopení teoretického pozadí a detailní odvození Eq-4 odkazujeme na plnou dokumentaci:
 
-*   **[Lineum Core Whitepaper (v1.0.6)](../../../portal/src/lib/data/whitepapers/lineum-core.md):** Kompletní fyzikální model, analýza Emergence a Etický Kodex.
+*   **[Lineum Core Whitepaper (v1.0.18-core)](../../../portal/src/lib/data/whitepapers/lineum-core.md):** Kompletní fyzikální model, analýza Emergence a Etický Kodex.
 *   **[GitHub Repository (lineum-core)](https://github.com/TomasTriska88/lineum-private):** Zdrojový kód, CI/CD pipeline a audit tools.
 
 ### 6.1 Status Projektu & Ekosystém (Roadmap)
 
 Projekt Lineum není jen tento PDF report. Budujeme komplexní ekosystém pro výzkum a popularizaci:
 
-1.  **Zenodo (DOI):** Prvotní verze (Proof of Concept) je již indexována pro zachování prvenství. Současná verze (v1.0.6) je však radikálním technickým posunem (nekonečné běhy, optimalizace JIT, determinismus), a proto ji zatím držíme v privátním režimu ("Stealth Mode") pro finální ladění.
+1.  **Zenodo (DOI):** Prvotní verze (Proof of Concept) je již indexována pro zachování prvenství. Současná verze (v1.0.18-core) je však radikálním technickým posunem (nekonečné běhy, optimalizace JIT, determinismus), a proto ji zatím držíme v privátním režimu ("Stealth Mode") pro finální ladění.
 2.  **Lineum.io (Portal):** Připravujeme veřejný web, který nabídne:
-    *   **Interaktivní Whitepaper:** Živé dokumenty s možností verze "Vědec" vs "Laik".
-    *   **Lineum AI Agent:** LLM chatbot trénovaný na celém kontextu repozitáře, schopný diskutovat o fyzice modelu v reálném čase.
+    *   **Interaktivní Dokumentace:** Živé verze Whitepaperů (Core v1.0.18, Auditní reporty, Experimenty, Rozšíření).
+    *   **Lineum AI Agent:** LLM chatbot s kompletním kontextem repozitáře, který návštěvníkům vysvětlí projekt jejich tempem – ať už vědecky, nebo laicky.
 3.  **Laboratoř (Simulacrum):**
     *   Webová vizualizace běžící přímo v prohlížeči (WebGL).
     *   **3D Projekce:** Umožňujeme vidět 2D pole topologicky (jako 3D krajinu potenciálů), což odhaluje struktury neviditelné v prostém 2D řezu.
