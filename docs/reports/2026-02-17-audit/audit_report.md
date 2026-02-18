@@ -2,15 +2,15 @@
 
 > **Lineum: Proactive Audit & Introduction**
 >
-> Ahoj Tomáši,
+> Vážený pane Mikolove,
 >
 > Vlasta Smeták mi vyprávěl o vašich diskuzích ohledně Open-Endedness a "problému užitečnosti". Dovoluji si touto cestou představit sebe i svůj projekt **Lineum**.
 >
-> Jsem nezávislý výzkumník a posledních několik měsíců pracuji na spojitém dynamickém systému. K mému úžasu jsem zjistil, že Lineum nezávisle konverguje k principům, které Vlasta Smeták formuluje v rámci teorie Open-Endedness (OEA). Na základě této shody Ti posílám tento technický audit.
+> Jsem nezávislý výzkumník a posledních několik měsíců pracuji na spojitém dynamickém systému. K mému úžasu jsem zjistil, že Lineum nezávisle konverguje k principům, které Vlasta Smeták formuluje v rámci teorie Open-Endedness (OEA). Na základě této shody Vám posílám tento technický audit.
 >
 > Než začneme diskutovat o teoriích, chtěl jsem mít jistotu, že mám v rukou rigorózní data. Proto jsem provedl tento technický audit "šumového pozadí" (Baseline), abych prokázal, že naše měřáky jsou kalibrované a konzervativní.
 >
-> Považuj tento dokument za uctivé představení projektu a pozvánku k diskuzi.
+> Považujte tento dokument za uctivé představení projektu a pozvánku k diskuzi.
 >
 > *Tomáš Tříska*
 # Lineum: Spojitá limita Open-Endedness (Návrh pro diskuzi)
@@ -40,13 +40,18 @@ V kontextu Open-Endedness je klíčovou výzvou definice "užitečnosti" bez ext
 *   V termodynamickém systému je jediným "úkolem" přežít tepelnou smrt. Schopnost udržet komplexní strukturu (lokálně snížit entropii) proti tlaku šumu je objektivním měřítkem úspěchu.
 *   **Matematická Konvergence:** Lineum "neřeší" matematické problémy. Spontánně však obsazuje nízkoenergetické stavy (rezonance), které těmto konstantám strukturálně odpovídají.
 
-### C. Klíčové Hypotézy a Pojmy (Slovník)
+### C. Řízená Evoluce (Steering Mechanism)
+Vlasta zmiňoval Vaši vizi systému, který "roste do nekonečna, ale je směrován interakcí s vnějším světem":
+*   **Infinite Potential:** Eq-4 je vlnová rovnice, která nebalancuje na hraně chaosu náhodně, ale deterministicky.
+*   **External Steering (Kappa Map):** Parametr vazby $\kappa(x)$ není konstanta, ale **skalární pole**. Uživatel (nebo vnější svět) může kreslením do "mapy Kappa" měnit lokální fyzikální zákony (permeabilitu prostoru) a tím **směrovat evoluci** do kýžených oblastí, aniž by definoval cíl. To je náš mechanismus pro "Guided Open-Endedness".
+
+### D. Klíčové Hypotézy a Pojmy (Slovník)
 Abychom předešli nedorozumění, definujeme specifické pojmy použité v tomto reportu:
 *   **Mode 24 (The Scaling Hypothesis):** Teoretická předpověď, že v saturovaném stavu mřížka spontánně "dýchá" (renormalizuje se) s faktorem $s=24$, což souvisí s lokální hustotou Leechovy mřížky (viz Appendix A).
 *   **Zeta-Zeros (Resonance):** Stabilní stavy pole $\phi$, které vykazují korelaci s nulovými body Riemannovy funkce. V našem modelu nejde o magii, ale o minimalizaci napětí v topologii.
 *   **Icarus Threshold (CFL Limit):** Kritická hranice rychlosti informace ($v=0.5c$), při jejímž překročení diskrétní mřížka přestává stíhat kauzalitu a systém se hroutí. Náš "šumový běh" se této hranici bezpečně vyhýbá.
 
-### D. Metafory pro OEA (Common Ground)
+### E. Metafory pro OEA (Common Ground)
 Pro snazší pochopení používáme tyto analogie:
 *   **"Eye of the Needle" (Uchem jehly):** Lineum musí projít úzkým hrdlem stability (CFL podmínka), aby se dostalo do stavu organizace.
 *   **"Perfect Krystal" (Leech Lattice):** Představujeme si Mode 24 jako stav, kdy se chaos (kapalina) náhle uspořádá do nejdokonalejší možné mřížky (krystalizace v 24D).
