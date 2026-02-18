@@ -165,6 +165,8 @@ Pro hlubší pochopení teoretického pozadí a detailní odvození Eq-4 odkazuj
 *   **[Lineum Core Whitepaper (v1.0.6)](../../../portal/src/lib/data/whitepapers/lineum-core.md):** Kompletní fyzikální model, analýza Emergence a Etický Kodex.
 *   **[GitHub Repository (lineum-core)](https://github.com/TomasTriska88/lineum-private):** Zdrojový kód, CI/CD pipeline a audit tools.
 
+> *Poznámka: Projekt (včetně Whitepaperu, Portálu a Laboratoře) je aktuálně ve fázi interního testování, proto je repozitář nastaven jako soukromý. V případě zájmu Vám velmi rád udělím přístup.*
+
 ---
 
 
