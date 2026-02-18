@@ -90,6 +90,19 @@ def analyze_run(run_dir=DEFAULT_RUN_DIR):
                 f0 = freqs[idx_max]
                 print(f"METRIC_F0: {f0:.6f}")
                 
+                # DERIVED: Linon Mass Ratio (Concrete Step)
+                # Constants (SI)
+                H_CONST = 6.62607015e-34
+                C_CONST = 2.99792458e8
+                ME_CONST = 9.1093837e-31
+                
+                # E = h*f, m = E/c^2
+                energy_j = H_CONST * f0
+                mass_kg = energy_j / (C_CONST**2)
+                mass_ratio = mass_kg / ME_CONST
+                
+                print(f"DERIVED_MASS_RATIO: {mass_ratio:.4f} (Linon/Electron)")
+                
                 target_f = 24 * f0
                 if target_f < 0.5:
                     idx_24 = np.argmin(np.abs(freqs - target_f))
