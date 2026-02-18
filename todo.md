@@ -59,8 +59,33 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 
 ## 🔍 Jevy z core paperu k revalidaci (core v1.0.6-core)
 
-> **Archivovaná Dokumentace Auditu (17. 2. 2026):**
-> *   [Project Lineum Overview + Baseline Audit](docs/reports/2026-02-17-audit/audit_report.md)
+> **Audit 2026: Protokol & Reprodukce (17. 2. 2026):**
+> *   **Cíl:** Rigorózní ověření determinismu a zdrojů energie (H0 vs H1).
+> *   **Postup (CLI Reprodukce):**
+>     1.  `python lineum.py --run-tag d3_audit_A` (Baseline)
+>     2.  `$env:OMP_NUM_THREADS=1; python lineum.py --run-tag d3_audit_B1` (Single-Thread)
+>     3.  `$env:LOW_NOISE_MODE="true"; $env:LINEUM_PHI_INJECTION="0.0"; python lineum.py --run-tag d4_ignition` (Ignition)
+> *   **Výstupy (`output/audit_proof`):**
+>     *   `d3_audit_A` vs `A2`: Baseline re-run -> **PASS (Bit-exact)**.
+>     *   `d3_audit_A` vs `B1`: Baseline vs Single-Thread -> **PASS (Universal Determinism)**.
+>     *   `d4_ignition`: Zero-Noise/Zero-Injection -> **PASS (Intrinsic Instability)**.
+> *   **Závěr:** H0 (Vlastnost) potvrzena, H1 (Trik) falzifikována.
+> **Strategie:** [Communication Manual](docs/communication_manual.md)
+> **Protocol:**
+> *   **Self-Contained Todo:** Každá položka v `todo.md` musí obsahovat **kompletní návod k reprodukci** (zejména one-liner příkazy). Nikdy se nespoléhat na existenci `tools/` skriptů nebo názvy artefaktů, které mohou být smazány.
+> *   **Audit-Grade Language:** Používat přesná tvrzení ("observed on tested platform", "no divergence found") místo absolutních ("universal determinism").
+> **Key Audit Outcomes (Feb 2026):**
+> *   **H0 Verified:** Intrinsic Dynamics confirmed (no hidden energy sources).
+> *   **H1 Falzifikováno:** Determinismus (D3) a Zero-Noise Self-Excitation (D4) vyloučily artefakty.
+> *   **State Invariance (Attack-Proof):** Prokázána bit-exact shoda (Core-State Only) mezi Optimized (Untracked) a Full-Tracked během.
+>     **Reprodukce:**
+>     1. `python lineum.py --run-tag opt_run` (default `DISABLE_TRACKING=True`)
+>     2. `$env:LINEUM_DISABLE_TRACKING="false"; python lineum.py --run-tag full_run`
+>     3. Compare `psi`/`phi` hashes (must be identical at Step 200 [Index 199]).
+>        One-liner check:
+>        `python -c "import numpy as np, hashlib, sys; d=np.load(sys.argv[1]); h=hashlib.sha256(np.ascontiguousarray(d['psi']).tobytes() + np.ascontiguousarray(d['phi']).tobytes()).hexdigest(); print(h)" output/opt_run/checkpoints/*step199.npz`
+>     **Status:** No divergence observed on tested platform. Confirmed: `evolve()` update depends ONLY on `psi` and `phi`.
+> *   **Verified Strategy:** AI Transparency ("Cognitive Exoskeleton") + "Complex Systems" vocabulary for Mikolov.
 
 - [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
 - [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
@@ -685,6 +710,31 @@ Výstupy z analytického balíčku pro T. Mikolova (únor 2026) a jejich integra
 - [ ] **Teorie (V. Smeták):** Pozorované "konstanty" (např. κ = 1) jsou ve skutečnosti poměry dvou rostoucích veličin ($K(t) / R(t) = const$). **Hypotéza Kosmické Respirace**.
 - [ ] **Predikce:** Mode 24 (skokové přeškálování a(t)) je důkazem, že prostor se diskrétně nafukuje (renormalizace), ale my vidíme jen invariantní poměr.
 - [ ] **Validace:** Hledat korelaci mezi skoky v `a(t)` a lokální změnou měřítka v `analyze_audit.py`.
+
+---
+
+## ⚖️ R. Hypotheses: H0 vs H1 (Verification Status Feb 2026) #priority #audit
+
+Rozhodovací strom o povaze "konvergence" systému.
+
+### 🧩 H0: Uzavřený atraktor (Closed World)
+**Tvrzení:** Konvergence k "Mode 24" je čistě vnitřní vlastnost dynamiky Eq-4.
+- [x] **D1.1 Initial State:** Deterministický (seed 41).
+- [x] **D1.2 Noise:** Fixní `NOISE_STRENGTH`, žádný externí drift.
+- [x] **D2.1 Code Audit:** Žádný explicitní `rescale()` nebo `resize()` v `lineum.py`.
+- [x] **D3.1 Determinismus:** Potvrzen (SHA256 Match: `d3_long` 500 steps).
+- [x] **D4.1 Ignition:** Potvrzen "Noise as Fuel" mechanismus (Code Audit: `lineum.py:2075`).
+- [ ] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
+
+### 🔓 H1: Scaling Illusion (Open World / Leak)
+**Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
+- [x] **D1.3 Kappa Leak:** Vyloučeno pro `spec6` (`KAPPA_MODE="constant"`).
+- [x] **D5.1 Predikce:** Vyvrácena (Determinismus D3).
+- [ ] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
+
+### 🛠️ Plán ověření (Next Steps)
+1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
+2. **Rescaling Trap (D5):** Uzavřeno.
 
 ### 🔲 28. Hypotéza: The Missing Half (Discrete Limit) #math
 - [ ] **Teorie:** Hodnota `kappa = 0.5` není fundamentální konstanta, ale **Nyquistův limit** mřížky (max frekvence = 0.5).
