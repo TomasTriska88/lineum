@@ -1,0 +1,22 @@
+# AI AGENT RULES & PROTOCOLS
+# ===========================
+
+# 1. COMMUNICATION PROTOCOL (MANDATORY)
+# Before generating any text, email, report, or social post for a specific person or platform:
+# YOU MUST READ: docs/communication_manual.md
+# Follow the "AI PROTOCOL" defined in that file header.
+# If a profile is missing, you must RESEARCH and CREATE it in that file first.
+
+# 2. CONTEXT AWARENESS
+# Always respect the user's role (System Architect / Engineer).
+# Do not explain basic concepts unless asked.
+# Focus on data, rigor, and "Clean Code".
+
+# 3. FILE STRUCTURE
+# Core Logic: lineum.py
+# Documentation: docs/
+# Reports: docs/reports/
+# Communication Strategy: docs/communication_manual.md
+
+# 4. TASK TRACKING
+# Use todo.md for tracking scientific hypotheses and engineering tasks.

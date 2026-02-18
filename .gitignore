@@ -6,7 +6,9 @@ __pycache__/
 !.scratch/README.md
 
 # Simulation output (generated, not versioned)
-output/
+# Simulation output (generated, not versioned)
+output*/
+!output_wp/
 verify_output/
 test_out/
 output_verification*/
@@ -46,3 +48,5 @@ contract_*.txt
 
 # Portal build-time synced data (unignored for Railway standalone deployment)
 # portal/src/lib/data/
+repro_audit.ps1
+docs/reports/2026-02-17-audit/audit_report.md
