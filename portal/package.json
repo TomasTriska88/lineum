@@ -13,8 +13,10 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"check:i18n": "node scripts/check-czech.js",
 		"test": "vitest run",
+		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
-		"prebuild": "npm run sync"
+		"prebuild": "npm run sync",
+		"safe-merge": "node scripts/safe-merge.cjs"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.58.2",
@@ -24,6 +26,7 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/svelte": "^5.3.1",
 		"@types/node": "^25.2.3",
+		"cross-env": "^10.1.0",
 		"jsdom": "^28.1.0",
 		"mdsvex": "^0.12.6",
 		"svelte": "^5.49.2",
