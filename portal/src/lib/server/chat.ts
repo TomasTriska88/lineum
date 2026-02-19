@@ -219,10 +219,9 @@ export async function chat(messages: { role: 'user' | 'model', parts: { text: st
             dynamicPrompt += `\n[CURRENT USER CONTEXT]: The user is currently viewing the page: "${context}". Tailor your response to this location.`;
         }
 
-        // 3. MODEL: Use Reliable Smart Model (Gemini 2.0 Flash)
-        // Pro Exp returned 404, so we stick to the stable, fast, and very smart Flash 2.0.
+        // 3. MODEL: Use Reliable Smart Model (Gemini 2.5 Flash)
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash",
+            model: MODEL_NAME,
             systemInstruction: dynamicPrompt,
         });
 
