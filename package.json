@@ -1,7 +1,7 @@
 {
-    "name": "lineum-core-monorepo",
+    "name": "lineum-monorepo",
     "private": true,
-    "description": "Monorepo root for Lineum Core, Portal, and Lab",
+    "description": "Monorepo root for Lineum",
     "scripts": {
         "portal:sync": "cd portal && npm run sync",
         "build": "npm run portal:sync && cd portal && npm install && npm run build",

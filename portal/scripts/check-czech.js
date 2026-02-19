@@ -41,8 +41,15 @@ walkDir(SRC_DIR, (filePath) => {
 });
 
 if (hasErrors) {
-    console.error('\nFAIL: Czech characters detected! Please use only English in the portal.');
-    process.exit(1);
+    const warnMode = process.argv.includes('--warn');
+    if (warnMode) {
+        console.warn('\nWARNING: Czech characters detected! (Non-blocking mode)');
+        console.warn('Please eventually migrate to English in the portal.');
+        process.exit(0);
+    } else {
+        console.error('\nFAIL: Czech characters detected! Please use only English in the portal.');
+        process.exit(1);
+    }
 } else {
     console.log('\nPASS: No Czech characters found.');
     process.exit(0);

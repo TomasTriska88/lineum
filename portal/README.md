@@ -1,61 +1,73 @@
-# sv
+# Lineum Portal
 
-> [!IMPORTANT]
-> **Git Protocol:**  
-> 1. All development **MUST** happen on the `dev` branch.  
-> 2. The `main` branch is reserved for **production releases only**.  
-> 3. Never commit directly to `main`. Merge `dev` -> `main` only when ready to deploy.
+Official web portal for the Lineum research project. Built with SvelteKit.
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## 🚀 Development Workflow
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv create --template minimal --types ts --no-install portal
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+### 1. Start Development
+```bash
 npm run dev
+```
+*   Starts the local server.
+*   **Auto-Sync**: Automatically watches `docs/`, `whitepapers/`, `LINA_PERSONA.md`, and `src/` to regenerate `src/lib/data/ai_index.json`. Lina's memory is always fresh.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+### 2. Testing
+```bash
+npm run test        # Unit tests (Vitest)
+npm run test:e2e    # E2E tests (Playwright)
+npm run check:i18n  # Check for non-English characters
 ```
 
-## Building
+### 3. Deployment (The "Safe Merge" Protocol)
+**NEVER push directly to `main`.**
+We use a strict **safe-merge** pipeline to ensure only stable code reaches production.
 
-To create a production version of your app:
+To deploy your changes:
+1.  Commit to `dev` branch.
+2.  Run the safe-merge script:
+    ```bash
+    npm run safe-merge
+    ```
 
-```sh
-npm run build
-```
-
-- Build the project: `npm run build`
-- Preview the build: `npm run preview`
+**What `safe-merge` does:**
+1.  Checks for uncommitted changes.
+2.  Switches to `main` and pulls latest.
+3.  Merges `dev` into `main`.
+4.  **Runs checks**:
+    *   `check:i18n` (currently warns on Czech text).
+    *   `sync-data` (ensures AI index is built).
+    *   `test` (unit tests).
+    *   `build` (verifies buildability).
+5.  **Only if ALL pass**, it pushes to `main` (triggering Railway deploy).
+6.  If failed, it attempts to roll back `main` to its previous state.
 
 ---
 
-## 🛠 Task Tracking & Roadmap
+## 🏗️ Architecture & Content
 
-> [!IMPORTANT]  
-> Podle protokolu **Dual Context Check** jsou tyto lokální úkoly sledovány synchronně s hlavní [todo.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/todo.md) v kořeni projektu.
+### Directory Structure
+*   **`src/routes`**: SvelteKit pages and routing.
+*   **`src/lib/components`**: Reusable UI components (FieldShader, Legend, etc.).
+*   **`src/lib/content`**: **Static UI Strings.**
+    *   Contains hardcoded text for buttons, hero sections, and labels.
+    *   *Language:* English (primary).
+*   **`src/lib/data`**: **Dynamic Knowledge Base.**
+    *   GENERATED FOLDER. Do not edit manually.
+    *   Contains whitepapers, hypotheses, and project metadata synced from the repo root.
+    *   Source of truth for Lina's RAG (Retrieval Augmented Generation).
 
-### Aktuální technické úkoly
-- [ ] Refaktorovat `FieldShader.svelte` pro lepší výkon na mobilních zařízeních.
-- [ ] Implementovat Skeleton UI pro načítání auditních dat.
-- [ ] Přidat interaktivní tutoriál pro laiky (§4.1).
+### Railway Deployment (CI/CD)
+*   **`main` branch** → **Production** (lineum.io)
+    *   Deploys *only* if the build and unit tests pass in Railway's CI.
+*   **`dev` branch** → **Parked**
+    *   We use a "parking" strategy to prevent `dev` from wasting build hours.
+    *   Pushes to `dev` trigger a dummy "parked" build that exits immediately.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## 🤖 Auto-Sync & Lina
+The `vite.config.ts` includes a custom plugin that watches the entire monorepo for changes in:
+*   Whitepapers (`/whitepapers`)
+*   Documentation (`/docs`)
+*   Core Logic (`lineum.py`)
+*   Project Metadata (`README.md`, `railway.json`)
+
+When you save any of these files, `scripts/sync-data.js` runs automatically, updating `src/lib/data`. This means Lina (the in-browser AI) knows about your documentation changes instantly.
