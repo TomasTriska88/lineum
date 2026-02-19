@@ -13,14 +13,17 @@ export async function load() {
         'other': { label: 'Other', order: 4 }
     };
 
-    const papers = Object.entries(whitepapers).map(([path, content]: [string, any]) => {
+    const papers = Object.entries(whitepapers).map(([path, content]) => {
+        const textContent = (content as string) || '';
+        // Using 'any' cast above or just treating as string because query=?raw returns string default export
+
         const slug = path.split('/').pop()?.replace('.md', '') || '';
 
         // Robust metadata parsing
         const findMeta = (keys: string[]) => {
             for (const key of keys) {
                 const regex = new RegExp(`\\*\\*${key}:\\*\\*\\s*([^\\r\\n]*)`, 'i');
-                const match = content.match(regex);
+                const match = textContent.match(regex);
                 if (match) return match[1].trim();
             }
             return null;

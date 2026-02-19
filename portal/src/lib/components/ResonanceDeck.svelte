@@ -13,7 +13,18 @@
     let { active = false, testMode = false } = $props();
 
     let query = $state("");
-    let isTyping = $state(false);
+    let isTyping = $state(false); // Model is generating
+    let userTyping = $state(false); // User is typing input
+    let typingTimeout: any;
+
+    function handleInput() {
+        userTyping = true;
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            userTyping = false;
+        }, 500);
+    }
+
     let lastUsage = $state<{ totalTokenCount: number; costInfo?: any } | null>(
         null,
     );
@@ -33,7 +44,14 @@
 
     onMount(() => {
         const loop = () => {
-            time += 0.015; // Speed
+            // Base speed 0.015
+            // User Typing -> Speed up significantly (0.05)
+            // Model Generating -> Slow, heavy pulse (0.02)
+            let speed = 0.015;
+            if (userTyping) speed = 0.06;
+            if (isTyping) speed = 0.02;
+
+            time += speed;
             animationFrame = requestAnimationFrame(loop);
         };
         animationFrame = requestAnimationFrame(loop);
@@ -98,14 +116,43 @@
                 for (let x = 0; x <= width; x += 1) {
                     // Step 1 for dense grid in 32px
                     const t = time * field.speed;
+
+                    // Dynamic Modifiers
+                    let freqMod = 1.0;
+                    let ampMod = 1.0;
+                    let noiseJitter = 0;
+
+                    if (userTyping) {
+                        freqMod = 1.5; // Higher frequency (nervous/alert)
+                        noiseJitter = Math.sin(x * 10 + time * 20) * 0.5; // High freq jitter
+                        ampMod = 0.8; // Slightly tighter
+                    }
+
+                    if (isTyping) {
+                        ampMod = 1.5; // Deep "thinking" breaths
+                        freqMod = 0.8; // Slower, heavier layout
+                    }
+
+                    if (speakingId) {
+                        // Simulated Audio Visualization (Voice Activity)
+                        // Fast, rhythmic modulation
+                        const voiceWave = Math.sin(time * 30 + x * 0.5);
+                        ampMod = 1.2 + voiceWave * 0.6 + Math.random() * 0.1;
+                        freqMod = 1.2;
+                    }
+
                     const angle1 =
-                        (x / width) * Math.PI * 2 * field.freq + t + r * 0.3;
+                        (x / width) * Math.PI * 2 * field.freq * freqMod +
+                        t +
+                        r * 0.3;
                     const angle2 =
-                        (x / width) * Math.PI * 5 * field.freq - t * 0.5;
-                    const noise = Math.sin(angle1) + Math.sin(angle2) * 0.4;
+                        (x / width) * Math.PI * 5 * field.freq * freqMod -
+                        t * 0.5;
+                    const noise =
+                        Math.sin(angle1) + Math.sin(angle2) * 0.4 + noiseJitter;
                     const y =
                         rowBaseY +
-                        noise * field.amp * (0.8 + depthFactor * 0.4);
+                        noise * field.amp * ampMod * (0.8 + depthFactor * 0.4);
                     rowPoints.push({ x, y });
                 }
                 gridPoints.push(rowPoints);
@@ -1496,6 +1543,7 @@
                             ? `Recharging... (${retryCountdown}s)`
                             : "Ask Lina a question..."}
                         bind:value={query}
+                        oninput={handleInput}
                         onclick={(e) => e.stopPropagation()}
                         disabled={isTyping || retryCountdown > 0}
                     />

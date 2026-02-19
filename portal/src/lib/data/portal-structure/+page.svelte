@@ -111,6 +111,7 @@
         <p>{content.footer.copy}</p>
         <div class="footer-links">
             <a href="/support">{content.footer.support}</a>
+            <a href="/privacy">{content.footer.privacy}</a>
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
                 target="_blank">{content.footer.github}</a

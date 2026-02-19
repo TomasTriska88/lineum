@@ -76,5 +76,25 @@ beforeAll(() => {
                 dispatchEvent: vi.fn(),
             })),
         });
+
+        // Mock Web Animations API
+        const animateMock = vi.fn().mockReturnValue({
+            finished: Promise.resolve(),
+            cancel: vi.fn(),
+            play: vi.fn(),
+            pause: vi.fn(),
+            reverse: vi.fn(),
+            onfinish: null
+        });
+
+        Element.prototype.animate = animateMock;
+
+        Object.defineProperty(HTMLElement.prototype, 'animate', {
+            value: animateMock
+        });
+
+        Object.defineProperty(SVGElement.prototype, 'animate', {
+            value: animateMock
+        });
     }
 });

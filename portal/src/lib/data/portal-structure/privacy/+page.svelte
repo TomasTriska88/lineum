@@ -1,4 +1,5 @@
 <script>
+    import { content } from "$lib/content";
     import "../../app.css";
 </script>
 
@@ -76,7 +77,9 @@
         <h2>5. Contact Us</h2>
         <p>
             If you have any questions about this Privacy Policy, please contact
-            us at <a href="mailto:support@lineum.io">support@lineum.io</a>.
+            us at <a href="mailto:{content.contactEmail}"
+                >{content.contactEmail}</a
+            >.
         </p>
     </section>
 
@@ -89,7 +92,7 @@
     .privacy-container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 4rem 2rem;
+        padding: 4rem 2rem 8rem 2rem;
         color: #e0e0e0;
         font-family: "Inter", sans-serif;
     }
