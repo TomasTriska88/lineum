@@ -1,4 +1,4 @@
-# Lineum Core
+# Lineum
 
 > **Emergence of stable localized excitations in discrete fields without physical constants.**
 
