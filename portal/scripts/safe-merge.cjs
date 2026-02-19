@@ -1,6 +1,7 @@
-
 const { execSync } = require('child_process');
 const readline = require('readline');
+const fs = require('fs');
+const path = require('path');
 
 // ANSI colors for output
 const colors = {
@@ -63,6 +64,17 @@ async function askConfirmation() {
 async function main() {
     log("Starting Safe Merge Workflow...");
 
+    // Clean .test-output
+    const testOutputDir = path.join(__dirname, '../.test-output');
+    if (fs.existsSync(testOutputDir)) {
+        log("Cleaning .test-output...", colors.cyan);
+        try {
+            fs.rmSync(testOutputDir, { recursive: true, force: true });
+        } catch (e) {
+            log("Warning: Failed to clean .test-output (might be open). Continuing.", colors.yellow);
+        }
+    }
+
     // 1. Check for clean working directory
     checkClean();
 
@@ -88,7 +100,8 @@ async function main() {
         run('npm run test:e2e', 'E2E Tests');
     } catch (e) {
         log("Tests Failed! rolling back...", colors.red);
-        execSync('git reset --hard HEAD~1');
+        // Robust rollback: Reset to origin/main (since we pulled it) then checkout dev
+        execSync('git reset --hard origin/main');
         execSync('git checkout dev');
         error("Tests failed. Merge aborted and changes rolled back.");
     }
