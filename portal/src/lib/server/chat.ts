@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { env } from "$env/dynamic/private";
 const { GEMINI_API_KEY } = env;
 import aiIndex from "$lib/data/ai_index.json";
+import { getOrUpdateCache } from "./gemini_cache";
 
 // Resilient API key access
 // Persona Imports (Live updates via Vite)
@@ -10,6 +11,16 @@ import designGuide from '../../../DESIGN_GUIDE.md?raw';
 
 // Token Hygiene: Remove comments and excessive whitespace
 const strip = (text: string) => text.replace(/<!--[\s\S]*?-->/g, '').replace(/\n{3,}/g, '\n\n').trim();
+
+// Pre-compute full context for caching (Single source of truth)
+const FULL_CONTEXT_FOR_CACHE = aiIndex.map(f => `
+FILE: ${f.path}
+TYPE: ${f.type}
+STATUS: ${f.status}
+CONTENT:
+${f.content}
+--------------------------------------------------
+`).join('\n');
 
 // Caching (10 min TTL)
 const responseCache = new Map<string, { text: string, timestamp: number }>();
@@ -119,11 +130,22 @@ ${strip(designGuide)}
 
 **PROJECT CONTEXT (Context Window):**
 Lineum Core is a discrete simulation of field interactions. The current version is defined by the indexed documentation.
+
+**CORE DEFINITIONS (ALWAYS AVAILABLE):**
+- **Lineum:** A simulation engine modeling discrete field interactions using the Equation of State.
+- **Vortex:** A self-sustaining pattern in the field ($V$).
+- **Equation:** $F(x, t+1) = \alpha \cdot \nabla^2 F(x, t) + \beta \cdot N(x, t)$ (Canonical Form).
+- **Resonance:** The stability of field interactions over time.
+
 You have access to the following indexed project knowledge:
 // Only send metadata to standard context. Full content is too large (4M+ tokens).
 // RAG or Context Caching should be used for content retrieval.
 ${JSON.stringify(aiIndex.map(f => ({ name: f.name, path: f.path, status: f.status, type: f.type })), null, 2)}
 `;
+
+// Imports for RAG and Safety
+import { usageGuard } from "./usage_guard";
+import { contextSelector } from "./context_selector";
 
 export async function chat(messages: { role: 'user' | 'model', parts: { text: string }[] }[], context?: string) {
     if (!GEMINI_API_KEY) {
@@ -131,43 +153,85 @@ export async function chat(messages: { role: 'user' | 'model', parts: { text: st
         throw new Error("I'm waiting for my scientific core to be initialized (API Key missing). Please contact support.");
     }
 
+    // 1. SAFETY: Check Daily Budget
+    const limitCheck = usageGuard.checkLimit();
+    if (!limitCheck.allowed) {
+        // PERSONA VS DEV MODE
+        const isDev = process.env.NODE_ENV === 'development';
+
+        if (isDev) {
+            throw new Error(`[DEV] Daily safety limit reached. (Remaining: $${limitCheck.remainingBudget.toFixed(2)})`);
+        } else {
+            // Friendly "Lina" message for Production users
+            throw new Error("I have been thinking deeply all day and my safety circuits indicate I need to recharge. Please allow me to rest until tomorrow.");
+        }
+    }
+
     try {
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+        const lastMessage = messages[messages.length - 1].parts[0].text;
+
+        // 2. RAG: Select Smart Context (Save 95% tokens)
+        console.log(`[Chat] Selecting context for: "${lastMessage.substring(0, 50)}..."`);
+        const smartContext = contextSelector.select(lastMessage);
 
         let dynamicPrompt = SYSTEM_PROMPT;
+
+        // Inject only RELEVANT context (RAG)
+        dynamicPrompt += `\n\n=== RELEVANT PROJECT KNOWLEDGE (RAG) ===\n${smartContext}\n=========================================\n`;
+
         if (context) {
             dynamicPrompt += `\n[CURRENT USER CONTEXT]: The user is currently viewing the page: "${context}". Tailor your response to this location.`;
         }
 
+        // 3. MODEL: Use Reliable Smart Model (Gemini 2.0 Flash)
+        // Pro Exp returned 404, so we stick to the stable, fast, and very smart Flash 2.0.
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash-001",
-            systemInstruction: dynamicPrompt
+            model: "gemini-2.0-flash",
+            systemInstruction: dynamicPrompt,
         });
 
-        const lastMessage = messages[messages.length - 1].parts[0].text;
-
-        // 1. Check Cache
+        // 4. Check Cache (Local exact match)
         const cacheKey = `${context || 'root'}:${lastMessage.trim()}`;
         if (responseCache.has(cacheKey)) {
             const cached = responseCache.get(cacheKey)!;
             if (Date.now() - cached.timestamp < CACHE_TTL) {
                 console.log("[CACHE HIT]", cacheKey);
-                return { text: cached.text };
+                return { text: cached.text, usage: { totalTokenCount: 0, cost: 0 } };
             }
             responseCache.delete(cacheKey);
         }
 
-        const history = messages.slice(0, -1);
+        // History Truncation
+        const safeMessages = messages.slice(-31);
+        const history = safeMessages.slice(0, -1);
 
         const chatSession = model.startChat({ history });
         const result = await chatSession.sendMessage(lastMessage);
         const response = await result.response;
         const text = response.text();
+        const usage = response.usageMetadata;
 
-        // 2. Save to Cache
+        if (usage) {
+            console.log("[Gemini Usage]", usage);
+            // 5. RECORD USAGE (Billing Protection)
+            usageGuard.recordUsage(usage.promptTokenCount, usage.candidatesTokenCount);
+        }
+
+        // Save to Cache
         responseCache.set(cacheKey, { text, timestamp: Date.now() });
 
-        return { text };
+        // Augment return with cost info
+        const stats = usageGuard.getStats();
+        return {
+            text,
+            usage,
+            costInfo: {
+                totalSpent: stats.estimatedCost,
+                dailyLimit: stats.budgetLimit,
+                percentage: stats.percentage
+            }
+        };
 
     } catch (error: any) {
         console.error("AI Agent Core Error:", error);
@@ -197,7 +261,8 @@ export async function chat(messages: { role: 'user' | 'model', parts: { text: st
                 error: "Core is recharging.",
                 retryAfter,
                 friendly: "My connection to the core is saturating. I need a moment to recharge.",
-                fallback: fallback // Attach fallback if available
+                fallback: fallback, // Attach fallback if available
+                usage: { totalTokenCount: 0 }
             };
         }
 

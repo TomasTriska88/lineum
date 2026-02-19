@@ -18,13 +18,13 @@ const DEFAULT_CONFIG: LimitConfig = {
 // Distinct configurations for different actions
 export const LIMITS: Record<string, LimitConfig> = {
     chat: {
-        globalLimit: 15, // Free Tier Gemini Flash limit
-        userLimit: 5,    // Fair use per user
+        globalLimit: 100, // Safe buffer (API limit is 360 RPM)
+        userLimit: 20,    // Allow heavy user testing
         windowMs: 60 * 1000
     },
     tts: {
-        globalLimit: 10, // Stricter limit for audio generation to save bandwidth/quota
-        userLimit: 3,    // Prevent spamming generate-speech
+        globalLimit: 100,
+        userLimit: 50,
         windowMs: 60 * 1000
     }
 };

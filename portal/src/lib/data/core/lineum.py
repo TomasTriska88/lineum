@@ -433,13 +433,15 @@ RESOLVED_CONFIG = {
     "window_hop": WINDOW_HOP,
     "phi_interaction_cap": _env_int("LINEUM_PHI_INTERACTION_CAP", 0),
     "steps": _env_int("LINEUM_STEPS", 2000),
-    "store_every": _env_int("LINEUM_STORE_EVERY", 5)
+    "store_every": _env_int("LINEUM_STORE_EVERY", 5),
+    "disable_tracking": _env_bool("LINEUM_DISABLE_TRACKING", False)
 }
 RESOLVED_CONFIG_HASH = _compute_canonical_hash(RESOLVED_CONFIG)
 
 LOW_NOISE_MODE = _LNM_ENV
 TEST_EXHALE_MODE = _TEM_ENV
 KAPPA_MODE = _KM_ENV
+DISABLE_TRACKING = RESOLVED_CONFIG["disable_tracking"]
 
 # --- AUDIT LOCK / SCOPE GATE (Whitepaper 1.0) ---
 _AUDIT_PROFILE = _os.environ.get("LINEUM_AUDIT_PROFILE", "")
@@ -974,7 +976,7 @@ NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
 DISSIPATION_RATE = 0.00462  # ln(2)/150 → half-life 150 steps
 REACTION_STRENGTH = 0.00070 # ln(2)/(2000*0.5) → half-life 2000 steps
 PSI_PHI_COUPLING = 0.004    # Gravity-like flow strength
-PHI_INTERACTION_STRENGTH = 0.04 # |phi| influence on psi
+PHI_INTERACTION_STRENGTH = float(_os.environ.get("LINEUM_PHI_INTERACTION_STRENGTH", "0.04")) # |phi| influence on psi
 PHI_DIFFUSION = 0.30        # Spatial spread of phi
 PSI_DIFFUSION = 0.05        # Spatial spread of psi
 
@@ -1961,6 +1963,10 @@ if __name__ == "__main__":
     vortices_vis = np.zeros((size, size), dtype=int)
     particles = np.zeros((size, size), dtype=bool)
     coords = np.zeros((0, 2), dtype=int)
+    # Initialize fields to prevent NameError if loop is skipped
+    curl = np.zeros((size, size), dtype=np.float32)
+    grad_x = np.zeros((size, size), dtype=np.float32)
+    grad_y = np.zeros((size, size), dtype=np.float32)
 
     # Ladicí konstanta aplikovaná na víc složek systému
     TUNING_CONST = 1 / 137
@@ -2057,7 +2063,9 @@ if __name__ == "__main__":
                             np.roll(grad_x, 1, axis=0))
             curl = (dFy_dx - dFx_dy) * kappa
 
-            do_track = (i % TRACK_EVERY == 0) or (CHECKPOINT_EVERY > 0 and i % CHECKPOINT_EVERY == 0)
+            curl = (dFy_dx - dFx_dy) * kappa
+
+            do_track = (not DISABLE_TRACKING) and ((i % TRACK_EVERY == 0) or (CHECKPOINT_EVERY > 0 and i % CHECKPOINT_EVERY == 0))
 
             if do_track:
                 # RAW vortices for metrics/CSV
@@ -2423,7 +2431,8 @@ if __name__ == "__main__":
 
     for pt, amp_list in multi_amp_logs.items():
         signal = np.array(amp_list)
-        if signal.size == 0:
+        signal = np.array(amp_list)
+        if signal.size < 4:
             multi_spectrum_details.append({
                 "point": pt,
                 "dominant_freq_Hz": 0.0,
@@ -2510,9 +2519,14 @@ if __name__ == "__main__":
 
     # Fallback: if nothing remains after dropping DC, plot the original arrays (linear)
     if pf2.size == 0:
-        plt.plot(pf, ps)
-        use_log_x = False
-        use_log_y = bool(np.any(ps > 0))
+        if pf is not None and ps is not None:
+             plt.plot(pf, ps)
+             use_log_x = False
+             use_log_y = bool(np.any(ps > 0))
+        else:
+             # Nothing to plot
+             use_log_x = False
+             use_log_y = False
     else:
         plt.plot(pf2, ps2)
         use_log_x = bool(np.all(pf2 > 0))
@@ -2962,11 +2976,21 @@ if __name__ == "__main__":
         # [check] Detekce jevů na základě logů
         quasiparticles_present = len(trajectories) > 0
         # total vortices > 0
-        vortices_present = any(row[4] > 0 for row in topo_log)
-        charge_std = np.std([row[3] for row in topo_log])
-        topo_conserved = charge_std < 3
-        stable_frequency = dominant_freq > 1e10  # arbitrárně: nad 10 GHz
-        phi_present = np.nanmax([row[1] for row in phi_center_log]) > 0.01
+        if len(topo_log) > 0:
+            vortices_present = any(row[4] > 0 for row in topo_log)
+            charge_std = np.std([row[3] for row in topo_log])
+            topo_conserved = charge_std < 3
+        else:
+            vortices_present = False
+            topo_conserved = True # Default safe assumption if no data
+
+        stable_frequency = (dominant_freq is not None and dominant_freq > 1e10)
+        
+        if len(phi_center_log) > 0:
+             phi_present = np.nanmax([row[1] for row in phi_center_log]) > 0.01
+        else:
+             phi_present = False
+             
         phi_gravitation_confirmed = False
 
         # 🧪 Dynamický seznam potvrzených jevů

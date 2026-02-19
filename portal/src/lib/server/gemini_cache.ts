@@ -1,11 +1,12 @@
 
 import { GoogleAICacheManager, GoogleAIFileManager } from '@google/generative-ai/server';
 import { GEMINI_API_KEY } from '$env/static/private';
+import { createHash } from 'crypto';
 
 // Cache configuration
-const CACHE_DISPLAY_NAME = 'lineum-core-whitepapers-v1';
+const CACHE_BASE_NAME = 'lineum-core-v1';
 const CACHE_TTL_SECONDS = 3600; // 1 hour (Free tier limit usually)
-const MODEL_NAME = 'models/gemini-1.5-flash-001'; // Or 2.0 if available for caching
+const MODEL_NAME = 'models/gemini-1.5-flash-002'; // Stable 1.5 works with caching on Free Tier
 
 // Singleton instance
 let cacheManager: GoogleAICacheManager | null = null;
@@ -25,20 +26,23 @@ const localRefCache: Record<string, { name: string, expires: number }> = {};
 
 /**
  * Gets a valid cache name (resource ID) for the given content.
- * If a valid cache exists, returns it.
- * If not, creates a new one.
+ * Automatically invalidates if content changes (via hash in displayName).
  */
 export async function getOrUpdateCache(content: string, mimeType = 'text/plain'): Promise<string> {
     const mgr = getCacheManager();
 
+    // Generate hash of content to detect changes
+    const hash = createHash('sha256').update(content).digest('hex').substring(0, 8);
+    const currentDisplayName = `${CACHE_BASE_NAME}-${hash}`;
+
     // 1. Check local ref first (fast path)
     const now = Date.now();
-    if (localRefCache[CACHE_DISPLAY_NAME]) {
-        if (localRefCache[CACHE_DISPLAY_NAME].expires > now + 300000) { // 5 mins safety buffer
-            return localRefCache[CACHE_DISPLAY_NAME].name;
+    if (localRefCache[currentDisplayName]) {
+        if (localRefCache[currentDisplayName].expires > now + 300000) { // 5 mins safety buffer
+            return localRefCache[currentDisplayName].name;
         } else {
             // Expired or close to expiry, clear local ref
-            delete localRefCache[CACHE_DISPLAY_NAME];
+            delete localRefCache[currentDisplayName];
         }
     }
 
@@ -49,29 +53,33 @@ export async function getOrUpdateCache(content: string, mimeType = 'text/plain')
 
         let existingCache = null;
 
-        // Find the most recent valid cache with our display name
         if (listResult.cachedContents) {
             for (const c of listResult.cachedContents) {
-                if (c.displayName === CACHE_DISPLAY_NAME) {
-                    // Check expiry
+                if (c.displayName === currentDisplayName) {
+                    // Start strict: Matches content hash AND not expired
                     if (c.name && c.expireTime) {
                         const expiryTime = new Date(c.expireTime).getTime();
                         if (expiryTime > now + 300000) {
                             existingCache = c;
                             break;
                         } else {
-                            // Cleanup expired/old caches with same name
-                            console.log(`[GeminiCache] Deleting expired cache: ${c.name}`);
+                            // Expired exact match
+                            console.log(`[GeminiCache] Deleting expired: ${c.name}`);
                             try { await mgr.delete(c.name); } catch (e) { }
                         }
                     }
+                } else if (c.displayName && c.displayName.startsWith(CACHE_BASE_NAME)) {
+                    // Old version of our cache (different hash) -> Cleanup
+                    // We only clean up if we are sure it's ours and old
+                    console.log(`[GeminiCache] Cleanup old version: ${c.displayName}`);
+                    try { await mgr.delete(c.name); } catch (e) { }
                 }
             }
         }
 
         if (existingCache && existingCache.name && existingCache.expireTime) {
-            console.log(`[GeminiCache] Found active cache: ${existingCache.name}`);
-            localRefCache[CACHE_DISPLAY_NAME] = {
+            console.log(`[GeminiCache] Found active cache: ${existingCache.name} (${currentDisplayName})`);
+            localRefCache[currentDisplayName] = {
                 name: existingCache.name,
                 expires: new Date(existingCache.expireTime).getTime()
             };
@@ -79,10 +87,10 @@ export async function getOrUpdateCache(content: string, mimeType = 'text/plain')
         }
 
         // 3. Create new cache
-        console.log(`[GeminiCache] Creating new cache '${CACHE_DISPLAY_NAME}'...`);
+        console.log(`[GeminiCache] Creating new cache '${currentDisplayName}'...`);
         const newCache = await mgr.create({
             model: MODEL_NAME,
-            displayName: CACHE_DISPLAY_NAME,
+            displayName: currentDisplayName,
             ttlSeconds: CACHE_TTL_SECONDS,
             contents: [
                 {
@@ -97,7 +105,7 @@ export async function getOrUpdateCache(content: string, mimeType = 'text/plain')
         }
 
         console.log(`[GeminiCache] Created: ${newCache.name}`);
-        localRefCache[CACHE_DISPLAY_NAME] = {
+        localRefCache[currentDisplayName] = {
             name: newCache.name,
             expires: new Date(newCache.expireTime).getTime()
         };
@@ -107,5 +115,11 @@ export async function getOrUpdateCache(content: string, mimeType = 'text/plain')
     } catch (error) {
         console.error("[GeminiCache] Error managing cache:", error);
         throw error;
+    }
+}
+
+export function resetLocalRefCache() {
+    for (const key in localRefCache) {
+        delete localRefCache[key];
     }
 }

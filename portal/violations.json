@@ -1,0 +1,4 @@
+[
+  "File privacy_guard.test.ts uses unapproved key 'key': localStorage.getItem('key'",
+  "File privacy_guard.test.ts uses unapproved key 'key': localStorage.setItem(\"key\""
+]

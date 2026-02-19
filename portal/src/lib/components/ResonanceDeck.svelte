@@ -1,16 +1,21 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
-    import { fade, fly, slide } from "svelte/transition";
+    import { fade, fly, slide, scale } from "svelte/transition";
     import { browser } from "$app/environment";
     import { page } from "$app/stores";
     import { hudActive } from "$lib/stores/hudStore";
     import { marked } from "marked";
     import { stripMarkdown } from "$lib/utils/chatUtils";
+    import { detectLanguage, selectVoice } from "$lib/utils/tts_utils";
+    import { isCookieBannerVisible } from "$lib/stores/uiStore";
 
     let { active = false, testMode = false } = $props();
 
     let query = $state("");
     let isTyping = $state(false);
+    let lastUsage = $state<{ totalTokenCount: number; costInfo?: any } | null>(
+        null,
+    );
     // let responseText = $state(""); // Removed unused state
     let isExpanded = $state(false);
     let messages = $state<
@@ -190,14 +195,21 @@
     // Voice Config
     const voices = ["Puck", "Charon", "Kore", "Fenrir", "Aoede"];
     let selectedVoice = $state("Kore");
+    let showConfirmDialog = $state(false);
 
     // Rate Limit Queue
     let retryCountdown = $state(0);
     let blockedReason = $state("");
     let retryTimer: any;
+
+    let loadingMessageId = $state<string | null>(null); // For loading spinner
+    let playbackRate = $state(1.0);
     let autoRetry = $state(true);
     let retryCount = $state(0);
     const MAX_RETRIES = 3;
+
+    // TTS Settings
+    let useNativeTTS = $state(true); // Default to FREE browser TTS to save tokens
 
     function startRetryTimer() {
         if (retryTimer) clearInterval(retryTimer);
@@ -270,6 +282,21 @@
                 generateGreeting();
             }
             scrollToBottom();
+
+            // Fetch current usage stats
+            fetch("/api/chat")
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data && typeof data.estimatedCost === "number") {
+                        lastUsage = {
+                            totalTokenCount: 0, // Not relevant for global stats
+                            costInfo: data,
+                        };
+                    }
+                })
+                .catch((err) =>
+                    console.error("Failed to fetch initial usage:", err),
+                );
         }
 
         return () => {
@@ -326,7 +353,7 @@
                             text: "_I am ready to explain Lineum concepts. Ask me a question._",
                         },
                     ],
-                    isSystem: true, // Hide actions
+                    isSystem: true, // Hide TTS/Copy for greeting
                 },
             ];
         } catch (e) {
@@ -418,6 +445,9 @@
                 }
 
                 data = await res.json();
+                if (data.usage) {
+                    lastUsage = { ...data.usage, costInfo: data.costInfo };
+                }
             }
 
             if (data.retryAfter) {
@@ -493,13 +523,21 @@
                 },
             ];
         } finally {
-            // ...
+            isTyping = false;
+            await tick();
+            scrollToBottom();
         }
     }
 
     $effect(() => {
         if (messages.length > 0 && browser) {
-            localStorage.setItem("resonance_history", JSON.stringify(messages));
+            // Only save if user has consented to cookies
+            if (localStorage.getItem("cookie_consent") === "accepted") {
+                localStorage.setItem(
+                    "resonance_history",
+                    JSON.stringify(messages),
+                );
+            }
 
             // Smart Scroll:
             // If User sent message -> Scroll to Bottom
@@ -565,10 +603,12 @@
     function stopTTS() {
         if (currentAudio) {
             currentAudio.pause();
+            currentAudio.onended = null; // Unbind potential listener
             currentAudio = null;
         }
         window.speechSynthesis.cancel();
         speakingId = null;
+        loadingMessageId = null; // Reset loading state
     }
 
     function getFriendlyError(err: string): string {
@@ -584,27 +624,41 @@
     }
 
     async function playTTS(rawText: string, index: number) {
+        console.log("[TTS] playTTS called", index, rawText.substring(0, 20));
         try {
             // Cache Key must include voice
             const id = `${index}-${selectedVoice}`;
-            const text = stripMarkdown(rawText);
+            ttsError = `Start: ${id}`; // Debug Entry
+
+            let text = stripMarkdown(rawText);
+            if (!text.trim()) text = "No text content.";
 
             if (speakingId === id) {
+                console.log("[TTS] Stopping current playback", id);
+                ttsError = "Stopping...";
                 stopTTS();
-                return;
+                return; // Toggle off
             }
-            stopTTS();
-            speakingId = id;
+
+            stopTTS(); // Stop any previous
+            loadingMessageId = id; // Set loading state
             usingFallback = false;
 
             // 1. Check Cache
             if (audioCache.has(id)) {
+                console.log("[TTS] Playing from Cache:", id);
                 const url = audioCache.get(id)!;
                 currentAudio = new Audio(url);
                 currentAudio.onended = () => {
+                    console.log("[TTS] Cache Audio Ended");
                     speakingId = null;
+                    loadingMessageId = null;
                 };
-                currentAudio.play();
+                currentAudio
+                    .play()
+                    .catch((e) => console.error("Audio Cache Play Error:", e));
+                speakingId = id; // Set active state
+                loadingMessageId = null;
                 return;
             }
 
@@ -612,9 +666,18 @@
             try {
                 if (testMode) throw new Error("Test Mode TTS Skip");
 
+                if (testMode) throw new Error("Test Mode TTS Skip");
+
+                // 0. Native TTS Override (Cost Saving)
+                if (useNativeTTS) {
+                    console.log("[TTS] Using Native Browser TTS");
+                    throw new Error("Native TTS Requested");
+                }
+
+                ttsError = "Fetching..."; // Debug
                 const res = await fetch(`/api/tts?t=${Date.now()}`, {
                     method: "POST",
-                    body: JSON.stringify({ text, voice: selectedVoice }),
+                    body: JSON.stringify({ text }), // Voice is hardcoded on server
                     headers: { "Content-Type": "application/json" },
                 });
 
@@ -627,50 +690,104 @@
                         audioCache.set(id, url);
                         currentAudio = new Audio(url);
                         currentAudio.onended = () => {
+                            console.log("[TTS] Cloud Audio Ended");
                             speakingId = null;
                         };
-                        currentAudio.play().catch((e) => {
-                            console.error(e);
-                            speakingId = null;
-                        });
+
+                        ttsError = "Playing..."; // Debug
+                        await currentAudio.play();
+
+                        speakingId = id; // FIX: Update UI state
+                        loadingMessageId = null;
+                        ttsError = ""; // Clear debug if successful
                         return;
                     }
                 } else {
-                    ttsError = "API Error";
+                    ttsError = "API Error: " + res.status;
                 }
             } catch (e: any) {
-                ttsError = e.message || "Network Error";
+                // Catch fetch OR play error
+                console.error(e);
+                ttsError = e.message || "Network/Play Error";
+                speakingId = null;
             }
 
             // 3. Fallback to Local Web Speech API
-            usingFallback = true;
-            if (!ttsError) ttsError = "Switching to offline backup.";
+            try {
+                usingFallback = true;
 
-            const isCzech = /[ěščřžýáíéůúňťď]/i.test(text);
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = isCzech ? "cs-CZ" : "en-US";
-            const voices = window.speechSynthesis.getVoices();
-            let targetVoice = null;
+                // Safety check for SSR or weird browsers
+                if (typeof window === "undefined" || !window.speechSynthesis) {
+                    throw new Error("Speech API not supported");
+                }
 
-            if (isCzech) {
-                targetVoice = voices.find(
-                    (v) =>
-                        v.lang.includes("cs") &&
-                        (v.name.includes("Zuzana") ||
-                            v.name.includes("Google")),
-                );
-            } else {
-                targetVoice = voices.find(
-                    (v) =>
-                        v.lang.includes("en") &&
-                        (v.name.includes("Zira") || v.name.includes("Google")),
-                );
-            }
-            if (targetVoice) u.voice = targetVoice;
-            u.onend = () => {
+                if (ttsError !== "Native TTS Requested") {
+                    // Only show error if it wasn't a deliberate skip
+                    if (!ttsError) ttsError = "Fallback Init...";
+                } else {
+                    ttsError = ""; // Clear the specific flag message
+                }
+
+                console.log("[TTS] Fallback Init. Language match...", text);
+
+                const lang = detectLanguage(text);
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = lang;
+
+                // getVoices can sometimes return empty array initially
+                const voices = window.speechSynthesis.getVoices();
+                const targetVoice = selectVoice(voices, lang);
+
+                if (targetVoice) u.voice = targetVoice;
+
+                // Lina Personality Tweaks (Slightly brighter voice)
+                u.rate = 1.05;
+                u.pitch = 1.05;
+
+                u.onstart = () => {
+                    // console.log("[TTS] Native Start for", id);
+                    if (speakingId !== id) speakingId = id;
+                };
+
+                u.onend = () => {
+                    console.log("[TTS] Native End for", id);
+                    if (speakingId === id) {
+                        speakingId = null;
+                        loadingMessageId = null;
+                        ttsError = "Ended naturally (Debug)";
+                    }
+                };
+                u.onerror = (e) => {
+                    console.error("Speech Synthesis Error for", id, e);
+                    if (speakingId === id) {
+                        speakingId = null;
+                        loadingMessageId = null;
+                        ttsError = "Native Error: " + e.error;
+                    }
+                };
+
+                console.log("[TTS] Queuing speak() with timeout", u);
+
+                // Hack: Delay speak() slightly to let cancel() finish
+                setTimeout(() => {
+                    try {
+                        window.speechSynthesis.speak(u);
+                        speakingId = id;
+                        console.log("[TTS] Set speakingId to", id);
+                        loadingMessageId = null;
+                        if (ttsError === "Fallback Init...") ttsError = "";
+                        if (ttsError === "Fallback Init...") ttsError = "";
+                    } catch (e: any) {
+                        console.error("[TTS] Speak Error:", e);
+                        ttsError = "Speak Call Fail: " + e.message;
+                        speakingId = null;
+                    }
+                }, 50);
+            } catch (fallbackErr: any) {
+                console.error("[TTS] Fallback Crash:", fallbackErr);
+                ttsError = "Fallback Crash: " + fallbackErr.message;
                 speakingId = null;
-            };
-            window.speechSynthesis.speak(u);
+            }
         } catch (err) {
             console.error("[TTS] Critical error:", err);
         }
@@ -733,7 +850,7 @@
     ></div>
 {/if}
 
-<div class="resonance-wrapper active">
+<div class="resonance-wrapper active" class:shifted={$isCookieBannerVisible}>
     <!-- The Deck -->
     <div class="deck-container" class:expanded={isExpanded}>
         <div
@@ -788,26 +905,71 @@
 
             <!-- Header Controls -->
             <div class="controls-hint group">
+                <!-- Token Counter (Moved here for flow) -->
+                <div
+                    class="token-badge"
+                    data-tooltip="Daily Safety Budget Used"
+                >
+                    <span class="shield-icon">🛡️</span>
+                    <span class="token-val">
+                        {lastUsage?.costInfo?.percentage !== undefined
+                            ? Math.ceil(lastUsage.costInfo.percentage)
+                            : 0}%
+                    </span>
+                </div>
+
                 {#if isExpanded}
                     <button
-                        class="icon-btn-header"
+                        class="icon-btn header-action"
                         onclick={(e) => {
                             e.stopPropagation();
-                            clearHistory();
+                            showConfirmDialog = true; // Trigger Modal
                         }}
-                        title="Clear History"
+                        aria-label="Clear History"
+                        data-tooltip="Clear History"
                     >
-                        🗑️
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M3 6h18" /><path
+                                d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                            /><path
+                                d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                            /></svg
+                        >
                     </button>
                     <button
-                        class="icon-btn-header"
+                        class="icon-btn header-action close-btn"
                         onclick={(e) => {
                             e.stopPropagation();
                             isExpanded = false;
                         }}
                         title="Close"
                     >
-                        ✕
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><line x1="18" y1="6" x2="6" y2="18"></line><line
+                                x1="6"
+                                y1="6"
+                                x2="18"
+                                y2="18"
+                            ></line></svg
+                        >
                     </button>
                 {:else}
                     EXPAND
@@ -816,6 +978,40 @@
         </div>
 
         {#if isExpanded}
+            <!-- Custom Confirm Modal -->
+            {#if showConfirmDialog}
+                <div
+                    class="confirm-modal-overlay"
+                    transition:fade={{ duration: 150 }}
+                >
+                    <div
+                        class="confirm-modal"
+                        transition:scale={{ duration: 200, start: 0.9 }}
+                    >
+                        <h4>Clear Neural History?</h4>
+                        <p>This will erase all current context and memory.</p>
+                        <div class="confirm-actions">
+                            <button
+                                class="confirm-btn cancel"
+                                onclick={() => (showConfirmDialog = false)}
+                                >Cancel</button
+                            >
+                            <button
+                                class="confirm-btn danger"
+                                onclick={() => {
+                                    messages = [];
+                                    localStorage.removeItem(
+                                        "resonance_history",
+                                    );
+                                    generateGreeting();
+                                    showConfirmDialog = false;
+                                }}>Confirm Delete</button
+                            >
+                        </div>
+                    </div>
+                </div>
+            {/if}
+
             <div class="deck-expansion" transition:slide={{ duration: 400 }}>
                 <div class="chat-viewport" bind:this={chatContainer}>
                     {#if messages.length === 0}
@@ -847,7 +1043,7 @@
                             : i + (messages.length - messagesToRender.length)}
                         <div class="msg {msg.role}">
                             <div class="msg-content-wrapper">
-                                {#if msg.role === "model" && !msg.parts[0].text.includes("Queue Active") && !msg.parts[0].text.includes("Server Busy") && !msg.parts[0].text.includes("Auto-Retry Paused") && !msg.parts[0].text.includes("Resonance lost") && !msg.parts[0].text.includes("System Error")}
+                                {#if msg.role === "model" && !msg.parts[0].text.includes("Queue Active") && !msg.parts[0].text.includes("Server Busy") && !msg.parts[0].text.includes("Auto-Retry Paused") && !msg.parts[0].text.includes("Resonance lost") && !msg.parts[0].text.includes("System Error") && !msg.isSystem}
                                     <div class="msg-header">
                                         <div class="msg-actions top-right">
                                             <button
@@ -888,6 +1084,16 @@
                                                     >
                                                 {/if}
                                             </button>
+                                            <!-- DEBUG INFO -->
+                                            <span
+                                                style="font-size: 8px; color: red;"
+                                            >
+                                                {ttsError ||
+                                                    (speakingId ===
+                                                    `${index}-${selectedVoice}`
+                                                        ? "Playing..."
+                                                        : "")}
+                                            </span>
                                         </div>
                                     </div>
                                 {/if}
@@ -931,7 +1137,7 @@
                                         </div>
                                     </div>
                                 {/if}
-                                {#if msg.role === "model"}
+                                {#if msg.role === "model" && !msg.isSystem}
                                     <div class="msg-footer">
                                         <button
                                             class="icon-btn copy-btn"
@@ -1037,10 +1243,38 @@
                 </form>
             </div>
         {/if}
+        <!-- Floating Stop Button -->
+        {#if speakingId}
+            <div class="floating-controls" transition:fade={{ duration: 200 }}>
+                <button class="stop-audio-btn" onclick={stopTTS}>
+                    <div class="equalizer-icon active">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    <span>Stop Audio</span>
+                </button>
+            </div>
+        {/if}
     </div>
 </div>
 
 <style>
+    .tech-metrics {
+        position: absolute;
+        top: 0.8rem; /* Moved to top */
+        right: 4rem; /* Left of the toggle button */
+        font-family: monospace;
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.3);
+        pointer-events: auto;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     .resonance-wrapper {
         position: fixed;
         bottom: 2rem;
@@ -1050,7 +1284,13 @@
         width: 100%;
         max-width: 600px;
         padding: 0 1rem;
+        padding: 0 1rem;
         pointer-events: auto;
+        transition: bottom 0.3s ease-in-out;
+    }
+
+    .resonance-wrapper.shifted {
+        bottom: 8rem; /* Lift up when banner is visible */
     }
 
     .deck-container {
@@ -1151,20 +1391,19 @@
     }
 
     .status-tag {
-        font-size: 0.6rem;
+        font-size: 0.7rem; /* Larger */
         font-family: monospace;
-        color: #0070f3;
-        opacity: 0.8;
+        color: var(--accent-cyan); /* Brighter */
+        opacity: 0.9;
+        text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); /* Glow */
+        margin-top: 2px;
     }
 
     .controls-hint {
         margin-left: auto;
-        font-family: var(--font-mono, monospace);
-        font-size: 0.65rem;
-        letter-spacing: 0.1em;
-        color: rgba(255, 255, 255, 0.4);
-        font-weight: 700;
-        text-transform: uppercase;
+        display: flex; /* Flex for buttons */
+        gap: 0.5rem; /* Space between buttons */
+        align-items: center;
     }
 
     /* Expanded View */
@@ -1268,6 +1507,11 @@
         color: #ddd;
         border-bottom-left-radius: 2px;
         border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Reduce gap between consecutive Lina messages */
+    .msg.model + .msg.model {
+        margin-top: -1rem; /* Visual grouping */
     }
 
     .input-area {
@@ -1394,6 +1638,58 @@
         transition: all 0.2s;
         pointer-events: auto;
     }
+
+    /* TTS Toggle in Footer */
+    :global(.tts-toggle) {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        opacity: 0.7;
+        font-size: 0.7rem;
+        transition: opacity 0.2s;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        padding-left: 0.8rem;
+        user-select: none;
+    }
+    :global(.tts-toggle:hover) {
+        opacity: 1;
+        color: var(--accent-cyan);
+    }
+    :global(.tts-toggle input) {
+        cursor: pointer;
+        accent-color: var(--accent-cyan);
+    }
+    .icon-btn.loading {
+        cursor: wait;
+        opacity: 0.7;
+    }
+    .icon-btn.loading svg {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    .icon-btn.loading {
+        cursor: wait;
+        opacity: 0.7;
+    }
+    .icon-btn.loading svg {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
     .icon-btn:hover {
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
@@ -1419,24 +1715,6 @@
     }
     :global(.copy-btn.copied .copy-check) {
         display: block;
-    }
-
-    .voice-picker {
-        margin-left: auto;
-        margin-right: 1rem;
-    }
-    .voice-picker select {
-        background: rgba(255, 255, 255, 0.05);
-        color: #aaa;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        font-size: 0.7rem;
-        padding: 2px 4px;
-        cursor: pointer;
-    }
-    .voice-picker select:focus {
-        outline: none;
-        border-color: #0070f3;
     }
 
     .controls-hint {
@@ -1488,5 +1766,124 @@
 
     .retry-btn:hover {
         background: rgba(255, 200, 0, 0.3);
+    }
+    /* Floating Audio Controls */
+    .floating-controls {
+        position: absolute;
+        bottom: 5rem; /* Above input area */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        pointer-events: auto;
+    }
+
+    .stop-audio-btn {
+        background: rgba(255, 50, 50, 0.2);
+        border: 1px solid rgba(255, 50, 50, 0.4);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        color: #ffcccc;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .stop-audio-btn:hover {
+        background: rgba(255, 50, 50, 0.3);
+        transform: scale(1.05);
+    }
+
+    .equalizer-icon {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+        height: 12px;
+    }
+    .equalizer-icon .bar {
+        width: 3px;
+        background: currentColor;
+        border-radius: 1px;
+        animation: eq-bounce 0.5s infinite ease-in-out;
+    }
+    .equalizer-icon .bar:nth-child(2) {
+        animation-delay: 0.1s;
+        height: 12px;
+    }
+    .equalizer-icon .bar:nth-child(1) {
+        animation-delay: 0.2s;
+        height: 8px;
+    }
+    .equalizer-icon .bar:nth-child(3) {
+        animation-delay: 0s;
+        height: 10px;
+    }
+
+    @keyframes eq-bounce {
+        0%,
+        100% {
+            height: 4px;
+        }
+        50% {
+            height: 12px;
+        }
+    }
+
+    /* Header Actions Polish */
+    :global(.icon-btn.header-action) {
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        background: transparent;
+        border: none;
+        opacity: 0.6;
+    }
+    :global(.icon-btn.header-action:hover) {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.1);
+        transform: scale(1.1);
+    }
+    :global(.icon-btn.header-action.close-btn:hover) {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+    }
+
+    /* Tooltip Styles */
+    [data-tooltip] {
+        position: relative;
+        cursor: help;
+    }
+    [data-tooltip]:hover::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 6px 10px;
+        background: rgba(0, 0, 0, 0.9);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        z-index: 2000;
+        pointer-events: none;
+        margin-bottom: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    [data-tooltip]:hover::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: rgba(0, 0, 0, 0.9);
+        margin-bottom: -2px;
+        z-index: 2000;
+        pointer-events: none;
     }
 </style>

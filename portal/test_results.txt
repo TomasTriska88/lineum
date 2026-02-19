@@ -1,0 +1,1407 @@
+
+> portal@0.0.1 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/Tomáš/Documents/GitHub/lineum-core/portal[39m
+
+ [32m✓[39m src/lib/data/portal-structure/wiki/wiki.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/wiki.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould block user exceeding userLimit
+[22m[39m[LIMITER] User limit reached for test by user1. Current: 1, Max: 1
+
+ [31m❯[39m src/test/chat.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 7[2mms[22m[39m
+[31m     [31m×[31m should respect user rate limits (5 RPM)[39m[32m 5[2mms[22m[39m
+[31m     [31m×[31m should respect global rate limits (15 RPM)[39m[32m 1[2mms[22m[39m
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould block global exceeding globalLimit
+[22m[39m[LIMITER] Global limit reached for test. Current: 2, Max: 2
+
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould reset after window
+[22m[39m[LIMITER] User limit reached for test by user1. Current: 1, Max: 1
+
+ [31m❯[39m src/test/chatUtils.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 13[2mms[22m[39m
+       [32m✓[39m should remove bold and italic[32m 1[2mms[22m[39m
+[31m       [31m×[31m should remove code blocks[39m[32m 8[2mms[22m[39m
+       [32m✓[39m should remove links[32m 0[2mms[22m[39m
+       [32m✓[39m should cleanup leftovers[32m 0[2mms[22m[39m
+       [32m✓[39m should transliterate symbols[32m 0[2mms[22m[39m
+       [32m✓[39m should handle decimals[32m 0[2mms[22m[39m
+       [32m✓[39m should handle multiplication[32m 0[2mms[22m[39m
+       [32m✓[39m should handle greek letters[32m 0[2mms[22m[39m
+       [32m✓[39m should ignore non-czech lang[32m 0[2mms[22m[39m
+ [32m✓[39m src/tests/limiter.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstderr[2m | src/tests/tts_server_config.test.ts[2m > [22m[2mTTS Server Configuration[2m > [22m[2mshould request explicit audio configuration (LINEAR16, 24kHz)
+[22m[39mUnexpected Gemini TTS Response Structure: {"candidates":[]}
+
+ [32m✓[39m src/tests/tts_server_config.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 18[2mms[22m[39m
+ [31m❯[39m src/routes/api/tts/tts.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 13[2mms[22m[39m
+[31m     [31m×[31m should return 400 if text is missing[39m[32m 8[2mms[22m[39m
+[31m     [31m×[31m should return audio buffer on success[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should return 429 if rate limited by internal limiter[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should handle API errors gracefully[39m[32m 1[2mms[22m[39m
+ [31m❯[39m src/lib/data/portal-structure/api/tts/tts.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+[31m     [31m×[31m should return 400 if text is missing[39m[32m 8[2mms[22m[39m
+[31m     [31m×[31m should return audio buffer on success[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should return 429 if rate limited by internal limiter[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should handle API errors gracefully[39m[32m 1[2mms[22m[39m
+[90mstdout[2m | src/tests/global_usage_guard.test.ts
+[22m[39m[ContextSelector] Indexing 0 files...
+[ContextSelector] Created 0 chunks from whitepapers.
+
+[90mstdout[2m | src/tests/chat.test.ts
+[22m[39m[ContextSelector] Indexing 0 files...
+[ContextSelector] Created 0 chunks from whitepapers.
+
+[90mstdout[2m | src/test/error_handling.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+[90mstderr[2m | src/tests/chat.test.ts[2m > [22m[2mChat Module (Safe RAG)[2m > [22m[2mshould initialize Gemini 2.0 Flash
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor
+    at new GoogleGenerativeAI [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/chat.test.ts:54:15
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstdout[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould throw an error if the API call fails
+[22m[39m[Chat] Selecting context for: "Hello..."
+[ContextSelector] Selected 0 chunks (Expanded Context) for query "Hello"
+
+[90mstderr[2m | src/tests/usage_guard_integration.test.ts[2m > [22m[2mUsageGuard Integration[2m > [22m[2mshould record usage after successful chat
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+    getGenerativeModel: mockGetGenerativeModel
+  }) is not a constructor
+    at new Mock [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/usage_guard_integration.test.ts:79:15
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/tests/chat.test.ts[2m > [22m[2mChat Module (Safe RAG)[2m > [22m[2mshould inject RAG context into system prompt
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor
+    at new GoogleGenerativeAI [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/chat.test.ts:64:15
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/tests/chat.test.ts[2m > [22m[2mChat Module (Safe RAG)[2m > [22m[2mshould record usage costs
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor
+    at new GoogleGenerativeAI [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/chat.test.ts:74:15
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+ [31m❯[39m src/tests/usage_guard_integration.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+[31m     [31m×[31m should block chat when daily limit is exceeded[39m[32m 6[2mms[22m[39m
+[31m     [31m×[31m should record usage after successful chat[39m[32m 7[2mms[22m[39m
+[90mstderr[2m | src/tests/chat.test.ts[2m > [22m[2mChat Module (Safe RAG)[2m > [22m[2mshould return cost info to client
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor
+    at new GoogleGenerativeAI [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/chat.test.ts:81:30
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould throw an error if the API call fails
+[22m[39mAI Agent Core Error: Error: Simulated API Failure
+    at Object.startChat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:9:60)
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:209:35)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:26:22
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstdout[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould provide a friendly fallback message on generic error
+[22m[39m[Chat] Selecting context for: "Test..."
+[ContextSelector] Selected 20 chunks (Expanded Context) for query "Test"
+
+[90mstderr[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould provide a friendly fallback message on generic error
+[22m[39mAI Agent Core Error: Error: Simulated API Failure
+    at Object.startChat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:9:60)
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:209:35)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:32:19
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/tests/global_usage_guard.test.ts[2m > [22m[2mGlobal Token Limit Guard Integration[2m > [22m[2mshould block CHAT requests when limit is reached
+[22m[39mDetailed API Chat Error: Error: I have been thinking deeply all day and my safety circuits indicate I need to recharge. Please allow me to rest until tomorrow.
+    at chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:166:19)
+    at Module.POST (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/routes/api/chat/+server.ts:45:30)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/global_usage_guard.test.ts:59:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:20
+
+ [32m✓[39m src/test/error_handling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [31m❯[39m src/tests/chat.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+[31m     [31m×[31m should initialize Gemini 2.0 Flash[39m[32m 8[2mms[22m[39m
+[31m     [31m×[31m should inject RAG context into system prompt[39m[32m 2[2mms[22m[39m
+[31m     [31m×[31m should record usage costs[39m[32m 2[2mms[22m[39m
+[31m     [31m×[31m should return cost info to client[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should block if usage limit exceeded[39m[32m 8[2mms[22m[39m
+ [32m✓[39m src/tests/global_usage_guard.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m src/routes/source/asset.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/source/asset.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/wiki/[slug]/loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/[slug]/loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/wiki-dynamic.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/wiki/wiki-dynamic.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [31m❯[39m src/tests/tts_ui.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 10[2mms[22m[39m
+[31m     [31m×[31m should hide copy button for system messages[39m[32m 6[2mms[22m[39m
+[31m     [31m×[31m should show usage indicator when data is available[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should trigger TTS when button is clicked[39m[32m 1[2mms[22m[39m
+ [31m❯[39m src/test/minimal.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 50[2mms[22m[39m
+[31m     [31m×[31m should show the expand button[39m[32m 49[2mms[22m[39m
+ [31m❯[39m src/test/hud_interaction.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 59[2mms[22m[39m
+[31m     [31m×[31m should render ResonanceDeck and allow expansion[39m[32m 57[2mms[22m[39m
+ [32m✓[39m src/tests/tts_utils.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Flash (default)
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Flash (default)
+[22m[39m[UsageGuard] Recorded (flash): 1000000 in / 0 out. Cost: +$0.100000. Total: $0.1000
+[UsageGuard] Recorded (flash): 0 in / 1000000 out. Cost: +$0.400000. Total: $0.5000
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Pro
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Pro
+[22m[39m[UsageGuard] Recorded (pro): 1000000 in / 0 out. Cost: +$3.500000. Total: $3.5000
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould default to Flash if no model specified
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould default to Flash if no model specified
+[22m[39m[UsageGuard] Recorded (flash): 1000000 in / 0 out. Cost: +$0.100000. Total: $0.1000
+
+ [32m✓[39m src/tests/usage_guard_pricing.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | src/test/chat_system_prompt.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+ [32m✓[39m src/test/chat_system_prompt.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+[90mstdout[2m | src/tests/api_chat_usage.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+ [32m✓[39m src/tests/api_chat_usage.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [31m❯[39m src/tests/e2e/chat_tts.spec.ts [2m([22m[2m0 test[22m[2m)[22m
+ [31m❯[39m src/test/chat_flow.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m2 failed[39m[2m | [22m[33m6 skipped[39m[2m)[22m[33m 1608[2mms[22m[39m
+[31m     [31m×[31m should send a message with context and display Markdown response[39m[33m 1499[2mms[22m[39m
+     [2m[90m↓[39m[22m should trigger TTS when speaker button is clicked
+     [32m✓[39m should paginate history (Render Limit)[32m 48[2mms[22m[39m
+     [2m[90m↓[39m[22m should show global stop button when speaking and stop on click
+     [2m[90m↓[39m[22m should strip markdown from TTS text
+     [2m[90m↓[39m[22m should transliterate symbols for TTS
+     [2m[90m↓[39m[22m should format decimal numbers for Czech TTS
+     [2m[90m↓[39m[22m should transliterate kappa for TTS
+     [32m✓[39m should show copy button and copy markdown[32m 31[2mms[22m[39m
+[31m     [31m×[31m should clear history when trash button is clicked[39m[32m 27[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/tests/e2e/chat_tts.spec.ts[2m [ src/tests/e2e/chat_tts.spec.ts ][22m
+[31m[1mError[22m: Playwright Test did not expect test.describe() to be called here.
+Most common reasons include:
+- You are calling test.describe() in a configuration file.
+- You are calling test.describe() in a file that is imported by the configuration file.
+- You have two different versions of @playwright/test. This usually happens
+  when one of the dependencies in your package.json depends on @playwright/test.[39m
+[90m [2m❯[22m TestTypeImpl._currentSuite node_modules/playwright/lib/common/testType.js:[2m75:13[22m[39m
+[90m [2m❯[22m TestTypeImpl._describe node_modules/playwright/lib/common/testType.js:[2m115:24[22m[39m
+[90m [2m❯[22m Function.describe node_modules/playwright/lib/transform/transform.js:[2m282:12[22m[39m
+[36m [2m❯[22m src/tests/e2e/chat_tts.spec.ts:[2m4:6[22m[39m
+    [90m  2| [39m[35mimport[39m { test[33m,[39m expect } [35mfrom[39m [32m'@playwright/test'[39m[33m;[39m
+    [90m  3| [39m
+    [90m  4| [39mtest[33m.[39m[34mdescribe[39m([32m'Chat & TTS Flow'[39m[33m,[39m () [33m=>[39m {
+    [90m   | [39m     [31m^[39m
+    [90m  5| [39m    test[33m.[39m[34mbeforeEach[39m([35masync[39m ({ page }) [33m=>[39m {
+    [90m  6| [39m        [90m// 1. Strict Network Blocking (Safety First)[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/26]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 25 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/chat.test.ts[2m > [22mAI Agent Logic & Security[2m > [22mshould respect user rate limits (5 RPM)
+[31m[1mTypeError[22m: (0 , __vite_ssr_import_1__.checkRateLimit) is not a function[39m
+[36m [2m❯[22m src/test/chat.test.ts:[2m8:20[22m[39m
+    [90m  6| [39m        [35mconst[39m ip [33m=[39m [32m'1.2.3.4'[39m[33m;[39m
+    [90m  7| [39m        [35mfor[39m ([35mlet[39m i [33m=[39m [34m0[39m[33m;[39m i [33m<[39m [34m5[39m[33m;[39m i[33m++[39m) {
+    [90m  8| [39m            [34mexpect[39m([34mcheckRateLimit[39m(ip)[33m.[39mallowed)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m  9| [39m        }
+    [90m 10| [39m        [35mconst[39m result [33m=[39m [34mcheckRateLimit[39m(ip)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/chat.test.ts[2m > [22mAI Agent Logic & Security[2m > [22mshould respect global rate limits (15 RPM)
+[31m[1mTypeError[22m: (0 , __vite_ssr_import_1__.checkRateLimit) is not a function[39m
+[36m [2m❯[22m src/test/chat.test.ts:[2m19:13[22m[39m
+    [90m 17| [39m        [90m// Global limit is 15. We already used 5 in previous test.[39m
+    [90m 18| [39m        [35mfor[39m ([35mlet[39m i [33m=[39m [34m0[39m[33m;[39m i [33m<[39m [34m10[39m[33m;[39m i[33m++[39m) {
+    [90m 19| [39m            [34mcheckRateLimit[39m([32m`[39m[36m${[39mipPrefix[36m}[39m[32m[39m[36m${[39mi[36m}[39m[32m`[39m)[33m;[39m
+    [90m   | [39m            [31m^[39m
+    [90m 20| [39m        }
+    [90m 21| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/chatUtils.test.ts[2m > [22mChat Utils[2m > [22mstripMarkdown[2m > [22mshould remove code blocks
+[31m[1mAssertionError[22m: expected 'Code var x rovná se 1' to be 'Code var x = 1' // Object.is equality[39m
+
+Expected: [32m"Code var x [7m=[27m 1"[39m
+Received: [31m"Code var x [7mrovná se[27m 1"[39m
+
+[36m [2m❯[22m src/test/chatUtils.test.ts:[2m12:55[22m[39m
+    [90m 10| [39m
+    [90m 11| [39m        [34mit[39m([32m'should remove code blocks'[39m[33m,[39m () [33m=>[39m {
+    [90m 12| [39m            expect(stripMarkdown('Code `var x = 1`')).toBe('Code var x…
+    [90m   | [39m                                                      [31m^[39m
+    [90m 13| [39m        })[33m;[39m
+    [90m 14| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/chat_flow.test.ts[2m > [22mChat Flow Integration[2m > [22mshould send a message with context and display Markdown response
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the placeholder text of: Ask Lina...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"backdrop svelte-3z2utp"[39m
+      [33mrole[39m=[32m"button"[39m
+      [33mtabindex[39m=[32m"-1"[39m
+    [36m/>[39m
+    [0m [0m
+    [36m<div[39m
+      [33mclass[39m=[32m"resonance-wrapper active svelte-3z2utp"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"deck-container svelte-3z2utp expanded"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Toggle chat"[39m
+          [33mclass[39m=[32m"deck-main svelte-3z2utp"[39m
+          [33mrole[39m=[32m"button"[39m
+          [33mtabindex[39m=[32m"0"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"resonance-wave svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [0m [0m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-info svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"explorer-name svelte-3z2utp"[39m
+            [36m>[39m
+              [0mLina[0m
+            [36m</span>[39m
+            [0m [0m
+            [36m<span[39m
+              [33mclass[39m=[32m"status-tag svelte-3z2utp"[39m
+            [36m>[39m
+              [0mONLINE[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"voice-picker svelte-3z2utp"[39m
+            [33mstyle[39m=[32m"display: none;"[39m
+          [36m>[39m
+            [36m<select[39m
+              [33maria-label[39m=[32m"Select Voice"[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Puck"[39m
+              [36m>[39m
+                [0mPuck[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Charon"[39m
+              [36m>[39m
+                [0mCharon[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Kore"[39m
+              [36m>[39m
+                [0mKore[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Fenrir"[39m
+              [36m>[39m
+                [0mFenrir[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Aoede"[39m
+              [36m>[39m
+                [0mAoede[0m
+              [36m</option>[39m
+              [0m[0m
+            [36m</select>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"controls-hint group svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"token-badge svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Daily Safety Budget Used"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"shield-icon svelte-3z2utp"[39m
+              [36m>[39m
+                [0m🛡️[0m
+              [36m</span>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"token-val svelte-3z2utp"[39m
+              [36m>[39m
+                [0m0%[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Clear History"[39m
+              [33mclass[39m=[32m"icon-btn header-action svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Clear History"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M3 6h18"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [0m [0m
+            [36m<button[39m
+              [33mclass[39m=[32m"icon-btn header-action close-btn svelte-3z2utp"[39m
+              [33mtitle[39m=[32m"Close"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"18"[39m
+                  [33mx2[39m=[32m"6"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"6"[39m
+                  [33mx2[39m=[32m"18"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"deck-expansion svelte-3z2utp"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-viewport svelte-3z2utp"[39m
+          [36m>[39m
+            [0m [0m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"msg model svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"msg-content-wrapper svelte-3z2utp"[39m
+              [36m>[39m
+                [0m [0m
+                [36m<div[39m
+                  [33mclass[39m=[32m"msg-bubble markdown-body svelte-3z2utp"[39m
+                [36m>[39m
+                  [0mAdmin! ...I mean, User. I am ready for your command.[0m
+                  [0m[0m
+                [36m</div>[39m
+                [0m [0m
+                [0m [0m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"msg model svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"msg-content-wrapper svelte-3z2utp"[39m
+              [36m>[39m
+                [0m [0m
+                [36m<div[39m
+                  [33mclass[39m=[32m"msg-bubble markdown-body svelte-3z2utp"[39m
+                [36m>[39m
+                  [0m_I am ready to explain Lineum concepts. Ask me a question._[0m
+                  [0m[0m
+                [36m</div>[39m
+                [0m [0m
+                [0m [0m
+              [36m</div>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+          [0m [0m
+          [36m<form[39m
+            [33mclass[39m=[32m"input-area svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+              [33mplaceholder[39m=[32m"Ask Lina a question..."[39m
+              [33mtype[39m=[32m"text"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send Message"[39m
+              [33mclass[39m=[32m"send-btn svelte-3z2utp"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"22"[39m
+                  [33mx2[39m=[32m"11"[39m
+                  [33my1[39m=[32m"2"[39m
+                  [33my2[39m=[32m"13"[39m
+                [36m/>[39m
+                [36m<polygon[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mpoints[39m=[32m"22 2 15 22 11 13 2 9 22 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</form>[39m
+        [36m</div>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"backdrop svelte-3z2utp"[39m
+      [33mrole[39m=[32m"button"[39m
+      [33mtabindex[39m=[32m"-1"[39m
+    [36m/>[39m
+    [0m [0m
+    [36m<div[39m
+      [33mclass[39m=[32m"resonance-wrapper active svelte-3z2utp"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"deck-container svelte-3z2utp expanded"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Toggle chat"[39m
+          [33mclass[39m=[32m"deck-main svelte-3z2utp"[39m
+          [33mrole[39m=[32m"button"[39m
+          [33mtabindex[39m=[32m"0"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"resonance-wave svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [0m [0m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-info svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"explorer-name svelte-3z2utp"[39m
+            [36m>[39m
+              [0mLina[0m
+            [36m</span>[39m
+            [0m [0m
+            [36m<span[39m
+              [33mclass[39m=[32m"status-tag svelte-3z2utp"[39m
+            [36m>[39m
+              [0mONLINE[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"voice-picker svelte-3z2utp"[39m
+            [33mstyle[39m=[32m"display: none;"[39m
+          [36m>[39m
+            [36m<select[39m
+              [33maria-label[39m=[32m"Select Voice"[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Puck"[39m
+              [36m>[39m
+                [0mPuck[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Charon"[39m
+              [36m>[39m
+                [0mCharon[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Kore"[39m
+              [36m>[39m
+                [0mKore[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Fenrir"[39m
+              [36m>[39m
+                [0mFenrir[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Aoede"[39m
+              [36m>[39m
+                [0mAoede[0m
+              [36m</option>[39m
+              [0m[0m
+            [36m</select>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"controls-hint group svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"token-badge svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Daily Safety Budget Used"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"shield-icon svelte-3z2utp"[39m
+              [36m>[39m
+                [0m🛡️[0m
+              [36m</span>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"token-val svelte-3z2utp"[39m
+              [36m>[39m
+                [0m0%[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Clear History"[39m
+              [33mclass[39m=[32m"icon-btn header-action svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Clear History"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M3 6h18"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [0m [0m
+            [36m<button[39m
+              [33mclass[39m=[32m"icon-btn header-action close-btn svelte-3z2utp"[39m
+              [33mtitle[39m=[32m"Close"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"18"[39m
+                  [33mx2[39m=[32m"6"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"6"[39m
+                  [33mx2[39m=[32m"18"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"deck-expansion svelte-3z2utp"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-viewport svelte-3z2utp"[39m
+          [36m>[39m
+            [0m [0m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"msg model svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"msg-content-wrapper svelte-3z2utp"[39m
+              [36m>[39m
+                [0m [0m
+                [36m<div[39m
+                  [33mclass[39m=[32m"msg-bubble markdown-body svelte-3z2utp"[39m
+                [36m>[39m
+                  [0mAdmin! ...I mean, User. I am ready for your command.[0m
+                  [0m[0m
+                [36m</div>[39m
+                [0m [0m
+                [0m [0m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"msg model svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"msg-content-wrapper svelte-3z2utp"[39m
+              [36m>[39m
+                [0m [0m
+                [36m<div[39m
+                  [33mclass[39m=[32m"msg-bubble markdown-body svelte-3z2utp"[39m
+                [36m>[39m
+                  [0m_I am ready to explain Lineum concepts. Ask me a question._[0m
+                  [0m[0m
+                [36m</div>[39m
+                [0m [0m
+                [0m [0m
+              [36m</div>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+          [0m [0m
+          [36m<form[39m
+            [33mclass[39m=[32m"input-area svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+              [33mplaceholder[39m=[32m"Ask Lina a question..."[39m
+              [33mtype[39m=[32m"text"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send Message"[39m
+              [33mclass[39m=[32m"send-btn svelte-3z2utp"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"22"[39m
+                  [33mx2[39m=[32m"11"[39m
+                  [33my1[39m=[32m"2"[39m
+                  [33my2[39m=[32m"13"[39m
+                [36m/>[39m
+                [36m<polygon[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mpoints[39m=[32m"22 2 15 22 11 13 2 9 22 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</form>[39m
+        [36m</div>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2m❯[22m waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:[2m163:27[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m86:33[22m[39m
+[36m [2m❯[22m src/test/chat_flow.test.ts:[2m143:36[22m[39m
+    [90m141| [39m
+    [90m142| [39m        [90m// Send[39m
+    [90m143| [39m        const input = await screen.findByPlaceholderText('Ask Lina...'…
+    [90m   | [39m                                   [31m^[39m
+    [90m144| [39m        [35mconst[39m sendBtn [33m=[39m screen[33m.[39m[34mgetByLabelText[39m([32m'Send Message'[39m)[33m;[39m
+    [90m145| [39m        await fireEvent.input(input, { target: { value: 'Test Query' }…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/chat_flow.test.ts[2m > [22mChat Flow Integration[2m > [22mshould clear history when trash button is clicked
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an element with the title: Clear History.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"backdrop svelte-3z2utp"[39m
+      [33mrole[39m=[32m"button"[39m
+      [33mtabindex[39m=[32m"-1"[39m
+    [36m/>[39m
+    [0m [0m
+    [36m<div[39m
+      [33mclass[39m=[32m"resonance-wrapper active svelte-3z2utp"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"deck-container svelte-3z2utp expanded"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"Toggle chat"[39m
+          [33mclass[39m=[32m"deck-main svelte-3z2utp"[39m
+          [33mrole[39m=[32m"button"[39m
+          [33mtabindex[39m=[32m"0"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"resonance-wave svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"wave-line svelte-3z2utp"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [0m [0m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-info svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"explorer-name svelte-3z2utp"[39m
+            [36m>[39m
+              [0mLina[0m
+            [36m</span>[39m
+            [0m [0m
+            [36m<span[39m
+              [33mclass[39m=[32m"status-tag svelte-3z2utp"[39m
+            [36m>[39m
+              [0mONLINE[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"voice-picker svelte-3z2utp"[39m
+            [33mstyle[39m=[32m"display: none;"[39m
+          [36m>[39m
+            [36m<select[39m
+              [33maria-label[39m=[32m"Select Voice"[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Puck"[39m
+              [36m>[39m
+                [0mPuck[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Charon"[39m
+              [36m>[39m
+                [0mCharon[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Kore"[39m
+              [36m>[39m
+                [0mKore[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Fenrir"[39m
+              [36m>[39m
+                [0mFenrir[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mvalue[39m=[32m"Aoede"[39m
+              [36m>[39m
+                [0mAoede[0m
+              [36m</option>[39m
+              [0m[0m
+            [36m</select>[39m
+          [36m</div>[39m
+          [0m [0m
+          [36m<div[39m
+            [33mclass[39m=[32m"controls-hint group svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"token-badge svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Daily Safety Budget Used"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"shield-icon svelte-3z2utp"[39m
+              [36m>[39m
+                [0m🛡️[0m
+              [36m</span>[39m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"token-val svelte-3z2utp"[39m
+              [36m>[39m
+                [0m0%[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Clear History"[39m
+              [33mclass[39m=[32m"icon-btn header-action svelte-3z2utp"[39m
+              [33mdata-tooltip[39m=[32m"Clear History"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M3 6h18"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33md[39m=[32m"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+            [0m [0m
+            [36m<button[39m
+              [33mclass[39m=[32m"icon-btn header-action close-btn svelte-3z2utp"[39m
+              [33mtitle[39m=[32m"Close"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"18"[39m
+                  [33mx2[39m=[32m"6"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"6"[39m
+                  [33mx2[39m=[32m"18"[39m
+                  [33my1[39m=[32m"6"[39m
+                  [33my2[39m=[32m"18"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+        [36m<div[39m
+          [33mclass[39m=[32m"deck-expansion svelte-3z2utp"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"chat-viewport svelte-3z2utp"[39m
+          [36m>[39m
+            [0m [0m
+            [0m [0m
+            [36m<div[39m
+              [33mclass[39m=[32m"msg user svelte-3z2utp"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"msg-content-wrapper svelte-3z2utp"[39m
+              [36m>[39m
+                [0m [0m
+                [36m<div[39m
+                  [33mclass[39m=[32m"msg-bubble markdown-body svelte-3z2utp"[39m
+                [36m>[39m
+                  [0mOld Msg[0m
+                  [0m[0m
+                [36m</div>[39m
+                [0m [0m
+                [0m [0m
+              [36m</div>[39m
+            [36m</div>[39m
+            [0m [0m
+          [36m</div>[39m
+          [0m [0m
+          [36m<form[39m
+            [33mclass[39m=[32m"input-area svelte-3z2utp"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"svelte-3z2utp"[39m
+              [33mplaceholder[39m=[32m"Ask Lina a question..."[39m
+              [33mtype[39m=[32m"text"[39m
+            [36m/>[39m
+            [0m [0m
+            [36m<button[39m
+              [33maria-label[39m=[32m"Send Message"[39m
+              [33mclass[39m=[32m"send-btn svelte-3z2utp"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"svelte-3z2utp"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+              [36m>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mx1[39m=[32m"22"[39m
+                  [33mx2[39m=[32m"11"[39m
+                  [33my1[39m=[32m"2"[39m
+                  [33my2[39m=[32m"13"[39m
+                [36m/>[39m
+                [36m<polygon[39m
+                  [33mclass[39m=[32m"svelte-3z2utp"[39m
+                  [33mpoints[39m=[32m"22 2 15 22 11 13 2 9 22 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</button>[39m
+          [36m</form>[39m
+        [36m</div>[39m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [0m[0m
+    [0m[0m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/test/chat_flow.test.ts:[2m397:33[22m[39m
+    [90m395| [39m
+    [90m396| [39m        [90m// Click Trash[39m
+    [90m397| [39m        [35mconst[39m trashBtn [33m=[39m screen[33m.[39m[34mgetByTitle[39m([32m'Clear History'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m398| [39m        [35mawait[39m fireEvent[33m.[39m[34mclick[39m(trashBtn)[33m;[39m
+    [90m399| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/hud_interaction.test.ts[2m > [22mHUD Store and Interaction[2m > [22mshould render ResonanceDeck and allow expansion
+[41m[1m FAIL [22m[49m src/test/minimal.test.ts[2m > [22mResonanceDeck Basic Rendering[2m > [22mshould show the expand button
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'cancel')
+
+	in $effect
+	in ResonanceDeck.svelte
+	in undefined
+[39m
+[36m [2m❯[22m src/lib/components/ResonanceDeck.svelte:[2m263:36[22m[39m
+    [90m261| [39m        if (browser) {
+    [90m262| [39m            // Safety cleanup for reloads
+    [90m263| [39m            window.speechSynthesis.cancel();
+    [90m   | [39m                                   [31m^[39m
+    [90m264| [39m            resetIdleTimer();
+    [90m265| [39m            window.addEventListener("mousemove", resetIdleTimer);
+[90m [2m❯[22m $effect node_modules/svelte/src/index-client.js:[2m100:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m > [22mChat Module (Safe RAG)[2m > [22mshould initialize Gemini 2.0 Flash
+[31m[1mError[22m: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/chat.test.ts:[2m54:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m > [22mChat Module (Safe RAG)[2m > [22mshould inject RAG context into system prompt
+[31m[1mError[22m: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/chat.test.ts:[2m64:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m > [22mChat Module (Safe RAG)[2m > [22mshould record usage costs
+[31m[1mError[22m: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/chat.test.ts:[2m74:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m > [22mChat Module (Safe RAG)[2m > [22mshould return cost info to client
+[31m[1mError[22m: () => ({
+      getGenerativeModel: __vite_ssr_import_0__.vi.fn().mockReturnValue(mockModel)
+    }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/chat.test.ts:[2m81:30[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m > [22mChat Module (Safe RAG)[2m > [22mshould block if usage limit exceeded
+[31m[1mAssertionError[22m: expected [Function] to throw error including 'Daily safety limit reached' but got 'I have been thinking deeply all day a…'[39m
+
+Expected: [32m"[7mDaily safety limit[27m re[7ma[27mch[7med[27m"[39m
+Received: [31m"[7mI have been thinking deeply all day and my safety circuits indicate I need to[27m rech[7marge. Please allow me to rest until tomorrow.[27m"[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould hide copy button for system messages
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould show usage indicator when data is available
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould trigger TTS when button is clicked
+[31m[1mError[22m: vi.spyOn() can only spy on a function. Received undefined.[39m
+[36m [2m❯[22m src/tests/tts_ui.test.ts:[2m30:12[22m[39m
+    [90m 28| [39m        // Mock matchMedia (handled by setup.ts, but we might want spi…
+    [90m 29| [39m        [90m// Mock SpeechSynthesis (handled by setup.ts)[39m
+    [90m 30| [39m        vi[33m.[39m[34mspyOn[39m(window[33m,[39m [32m'matchMedia'[39m)[33m.[39m[34mmockImplementation[39m(query [33m=>[39m ({
+    [90m   | [39m           [31m^[39m
+    [90m 31| [39m            matches[33m:[39m [35mfalse[39m[33m,[39m
+    [90m 32| [39m            media[33m:[39m query[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/usage_guard_integration.test.ts[2m > [22mUsageGuard Integration[2m > [22mshould block chat when daily limit is exceeded
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /Daily safety limit reached/ but got 'I have been thinking deeply all day a…'[39m
+
+[32m- Expected:[39m 
+/Daily safety limit reached/
+
+[31m+ Received:[39m 
+"I have been thinking deeply all day and my safety circuits indicate I need to recharge. Please allow me to rest until tomorrow."
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/usage_guard_integration.test.ts[2m > [22mUsageGuard Integration[2m > [22mshould record usage after successful chat
+[31m[1mError[22m: () => ({
+    getGenerativeModel: mockGetGenerativeModel
+  }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/usage_guard_integration.test.ts:[2m79:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/routes/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return 400 if text is missing
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/routes/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/routes/api/tts/tts.test.ts:[2m28:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/routes/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return audio buffer on success
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/routes/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/routes/api/tts/tts.test.ts:[2m56:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/routes/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return 429 if rate limited by internal limiter
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/routes/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/routes/api/tts/tts.test.ts:[2m72:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/routes/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould handle API errors gracefully
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/routes/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/routes/api/tts/tts.test.ts:[2m89:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return 400 if text is missing
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/lib/data/portal-structure/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/lib/data/portal-structure/api/tts/tts.test.ts:[2m28:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return audio buffer on success
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/lib/data/portal-structure/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/lib/data/portal-structure/api/tts/tts.test.ts:[2m56:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould return 429 if rate limited by internal limiter
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/lib/data/portal-structure/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/lib/data/portal-structure/api/tts/tts.test.ts:[2m72:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/26]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22mTTS Endpoint[2m > [22mshould handle API errors gracefully
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'sessionId')[39m
+[36m [2m❯[22m Module.POST src/lib/data/portal-structure/api/tts/+server.ts:[2m11:23[22m[39m
+    [90m  9| [39mexport const POST: RequestHandler = async ({ request, getClientAddress…
+    [90m 10| [39m    [90m// 1. Rate Limiting (Stricter for TTS)[39m
+    [90m 11| [39m    [35mconst[39m id [33m=[39m locals[33m.[39msessionId [33m||[39m [34mgetClientAddress[39m()[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m 12| [39m    [35mconst[39m limit [33m=[39m rateLimiter[33m.[39m[34mcheck[39m([32m'tts'[39m[33m,[39m id)[33m;[39m
+    [90m 13| [39m
+[90m [2m❯[22m src/lib/data/portal-structure/api/tts/tts.test.ts:[2m89:32[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/26]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m11 failed[39m[22m[2m | [22m[1m[32m16 passed[39m[22m[90m (27)[39m
+[2m      Tests [22m [1m[31m25 failed[39m[22m[2m | [22m[1m[32m60 passed[39m[22m[2m | [22m[33m6 skipped[39m[90m (91)[39m
+[2m   Start at [22m 04:14:12
+[2m   Duration [22m 8.19s[2m (transform 9.89s, setup 0ms, import 14.84s, tests 1.97s, environment 62.88s)[22m
+

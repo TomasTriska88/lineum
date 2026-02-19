@@ -1,0 +1,291 @@
+
+> portal@0.0.1 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/Tomáš/Documents/GitHub/lineum-core/portal[39m
+
+ [32m✓[39m src/lib/data/portal-structure/wiki/wiki.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/wiki.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/wiki/wiki-dynamic.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/wiki-dynamic.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/routes/wiki/[slug]/loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/wiki/[slug]/loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/lib/data/portal-structure/source/asset.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/routes/source/asset.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstderr[2m | src/test/chat.test.ts[2m > [22m[2mAI Agent Logic & Security[2m > [22m[2mshould respect user rate limits (5 RPM)
+[22m[39m[LIMITER] User limit reached for test by 1.2.3.4. Current: 5, Max: 5
+
+[90mstderr[2m | src/test/chat.test.ts[2m > [22m[2mAI Agent Logic & Security[2m > [22m[2mshould respect global rate limits (15 RPM)
+[22m[39m[LIMITER] Global limit reached for test. Current: 15, Max: 15
+
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould block user exceeding userLimit
+[22m[39m[LIMITER] User limit reached for test by user1. Current: 1, Max: 1
+
+ [32m✓[39m src/test/chat.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould block global exceeding globalLimit
+[22m[39m[LIMITER] Global limit reached for test. Current: 2, Max: 2
+
+[90mstderr[2m | src/tests/limiter.test.ts[2m > [22m[2mRateLimiter[2m > [22m[2mshould reset after window
+[22m[39m[LIMITER] User limit reached for test by user1. Current: 1, Max: 1
+
+ [32m✓[39m src/tests/limiter.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [31m❯[39m src/tests/chat.test.ts [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22m[2mTTS Endpoint[2m > [22m[2mshould return audio buffer on success
+[22m[39m[UsageGuard] Recorded (pro): 2 in / 10 out. Cost: +$0.000112. Total: $0.0923
+[TTS] Received Audio MIME: audio/wav, Length: 16
+
+[90mstderr[2m | src/lib/data/portal-structure/api/tts/tts.test.ts[2m > [22m[2mTTS Endpoint[2m > [22m[2mshould handle API errors gracefully
+[22m[39mGemini TTS Error: Google Error
+
+ [32m✓[39m src/lib/data/portal-structure/api/tts/tts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+[90mstderr[2m | src/tests/tts_server_config.test.ts[2m > [22m[2mTTS Server Configuration[2m > [22m[2mshould request explicit audio configuration (LINEAR16, 24kHz)
+[22m[39mUnexpected Gemini TTS Response Structure: {"candidates":[]}
+
+[90mstdout[2m | src/routes/api/tts/tts.test.ts[2m > [22m[2mTTS Endpoint[2m > [22m[2mshould return audio buffer on success
+[22m[39m[UsageGuard] Recorded (pro): 2 in / 10 out. Cost: +$0.000112. Total: $0.0925
+[TTS] Received Audio MIME: audio/wav, Length: 16
+
+ [32m✓[39m src/tests/tts_server_config.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstderr[2m | src/routes/api/tts/tts.test.ts[2m > [22m[2mTTS Endpoint[2m > [22m[2mshould handle API errors gracefully
+[22m[39mGemini TTS Error: Google Error
+
+ [32m✓[39m src/routes/api/tts/tts.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+[90mstdout[2m | src/tests/global_usage_guard.test.ts
+[22m[39m[ContextSelector] Indexing 0 files...
+[ContextSelector] Created 0 chunks from whitepapers.
+
+[90mstdout[2m | src/tests/api_chat_usage.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+[90mstdout[2m | src/test/error_handling.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+[90mstdout[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould throw an error if the API call fails
+[22m[39m[Chat] Selecting context for: "Hello..."
+[ContextSelector] Selected 0 chunks (Expanded Context) for query "Hello"
+
+[90mstderr[2m | src/tests/usage_guard_integration.test.ts[2m > [22m[2mUsageGuard Integration[2m > [22m[2mshould record usage after successful chat
+[22m[39m[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see https://vitest.dev/api/vi#vi-spyon for examples.
+AI Agent Core Error: TypeError: () => ({
+    getGenerativeModel: mockGetGenerativeModel
+  }) is not a constructor
+    at new Mock [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/spy[24m/dist/index.js:262:27[90m)[39m
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:171:23)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/usage_guard_integration.test.ts:79:15
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+ [31m❯[39m src/tests/usage_guard_integration.test.ts [2m([22m[2m2 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 18[2mms[22m[39m
+[31m     [31m×[31m should block chat when daily limit is exceeded[39m[32m 10[2mms[22m[39m
+[31m     [31m×[31m should record usage after successful chat[39m[32m 6[2mms[22m[39m
+ [32m✓[39m src/tests/api_chat_usage.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstderr[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould throw an error if the API call fails
+[22m[39mAI Agent Core Error: Error: Simulated API Failure
+    at Object.startChat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:9:60)
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:209:35)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:26:22
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+[90mstderr[2m | src/tests/global_usage_guard.test.ts[2m > [22m[2mGlobal Token Limit Guard Integration[2m > [22m[2mshould block CHAT requests when limit is reached
+[22m[39mDetailed API Chat Error: Error: I have been thinking deeply all day and my safety circuits indicate I need to recharge. Please allow me to rest until tomorrow.
+    at chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:166:19)
+    at Module.POST (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/routes/api/chat/+server.ts:45:30)
+[90m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/tests/global_usage_guard.test.ts:59:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:20
+
+[90mstdout[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould provide a friendly fallback message on generic error
+[22m[39m[Chat] Selecting context for: "Test..."
+[ContextSelector] Selected 20 chunks (Expanded Context) for query "Test"
+
+[90mstderr[2m | src/test/error_handling.test.ts[2m > [22m[2mAI Agent Error Handling (500)[2m > [22m[2mshould provide a friendly fallback message on generic error
+[22m[39mAI Agent Core Error: Error: Simulated API Failure
+    at Object.startChat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:9:60)
+    at Module.chat (C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/lib/server/chat.ts:209:35)
+    at C:/Users/Tomáš/Documents/GitHub/lineum-core/portal/src/test/error_handling.test.ts:32:19
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:145:11
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:26
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1243:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1209:10[90m)[39m
+    at [90mfile:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:1653:37
+    at Traces.$ [90m(file:///C:/Users/Tom%C3%A1%C5%A1/Documents/GitHub/lineum-core/portal/[39mnode_modules/[4mvitest[24m/dist/chunks/traces.CCmnQaNT.js:142:27[90m)[39m
+
+ [32m✓[39m src/test/error_handling.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/tests/global_usage_guard.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/tests/tts_utils.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Flash (default)
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+ [32m✓[39m src/test/chatUtils.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Flash (default)
+[22m[39m[UsageGuard] Recorded (flash): 1000000 in / 0 out. Cost: +$0.100000. Total: $0.1000
+[UsageGuard] Recorded (flash): 0 in / 1000000 out. Cost: +$0.400000. Total: $0.5000
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Pro
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould calculate cost correctly for Pro
+[22m[39m[UsageGuard] Recorded (pro): 1000000 in / 0 out. Cost: +$3.500000. Total: $3.5000
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould default to Flash if no model specified
+[22m[39m[UsageGuard] New day detected. Resetting counters.
+
+[90mstdout[2m | src/tests/usage_guard_pricing.test.ts[2m > [22m[2mUsageGuard Multi-Model Pricing[2m > [22m[2mshould default to Flash if no model specified
+[22m[39m[UsageGuard] Recorded (flash): 1000000 in / 0 out. Cost: +$0.100000. Total: $0.1000
+
+ [32m✓[39m src/tests/usage_guard_pricing.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+[90mstdout[2m | src/test/chat_system_prompt.test.ts
+[22m[39m[ContextSelector] Indexing 89 files...
+[ContextSelector] Created 250 chunks from whitepapers.
+
+ [32m✓[39m src/test/chat_system_prompt.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [31m❯[39m src/tests/tts_ui.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 6[2mms[22m[39m
+[31m     [31m×[31m should hide copy button for system messages[39m[32m 4[2mms[22m[39m
+[31m     [31m×[31m should show usage indicator when data is available[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m should trigger TTS when button is clicked[39m[32m 0[2mms[22m[39m
+ [32m✓[39m src/test/minimal.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 147[2mms[22m[39m
+ [31m❯[39m src/test/hud_interaction.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 198[2mms[22m[39m
+[31m     [31m×[31m should render ResonanceDeck and allow expansion[39m[32m 197[2mms[22m[39m
+ [31m❯[39m src/test/chat_flow.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m2 failed[39m[2m | [22m[33m6 skipped[39m[2m)[22m[33m 354[2mms[22m[39m
+[31m     [31m×[31m should send a message with context and display Markdown response[39m[32m 199[2mms[22m[39m
+     [2m[90m↓[39m[22m should trigger TTS when speaker button is clicked
+     [32m✓[39m should paginate history (Render Limit)[32m 65[2mms[22m[39m
+     [2m[90m↓[39m[22m should show global stop button when speaking and stop on click
+     [2m[90m↓[39m[22m should strip markdown from TTS text
+     [2m[90m↓[39m[22m should transliterate symbols for TTS
+     [2m[90m↓[39m[22m should format decimal numbers for Czech TTS
+     [2m[90m↓[39m[22m should transliterate kappa for TTS
+     [32m✓[39m should show copy button and copy markdown[32m 43[2mms[22m[39m
+[31m     [31m×[31m should clear history when trash button is clicked[39m[32m 46[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/tests/chat.test.ts[2m [ src/tests/chat.test.ts ][22m
+[31m[1mError[22m: [vitest] There was an error when mocking a module. If you are using "vi.mock" factory, make sure there are no top level variables inside, since this call is hoisted to top of the file. Read more: https://vitest.dev/api/vi.html#vi-mock[39m
+[36m [2m❯[22m src/lib/server/chat.ts:[2m1:1[22m[39m
+    [90m  1| [39m[35mimport[39m { [33mGoogleGenerativeAI[39m } [35mfrom[39m [32m"@google/generative-ai"[39m[33m;[39m
+    [90m   | [39m[31m^[39m
+    [90m  2| [39m[35mimport[39m { env } [35mfrom[39m [32m"$env/dynamic/private"[39m[33m;[39m
+    [90m  3| [39m[35mconst[39m { [33mGEMINI_API_KEY[39m } [33m=[39m env[33m;[39m
+
+[31m[1mCaused by: ReferenceError[22m: Cannot access 'MockGoogleGenerativeAI' before initialization[39m
+[36m [2m❯[22m src/tests/chat.test.ts:[2m22:29[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 8 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/chat_flow.test.ts[2m > [22mChat Flow Integration[2m > [22mshould send a message with context and display Markdown response
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ '/api/chat', ObjectContaining{…} ][90m
+
+Received: 
+
+[1m  1st vi.fn() call:
+
+[22m[2m  [[22m
+[2m    "/api/chat",[22m
+[32m-   ObjectContaining {[90m
+[32m-     "body": StringMatching /"text":"Test Query"/,[90m
+[32m-     "method": "POST",[90m
+[32m-   },[90m
+[2m  ][22m
+[31m[90m
+
+Number of calls: [1m1[22m
+[31m[39m
+[36m [2m❯[22m src/test/chat_flow.test.ts:[2m149:30[22m[39m
+    [90m147| [39m
+    [90m148| [39m        [90m// Verify Fetch Call included Context[39m
+    [90m149| [39m        expect(global.fetch).toHaveBeenCalledWith('/api/chat', expect.…
+    [90m   | [39m                             [31m^[39m
+    [90m150| [39m            method[33m:[39m [32m'POST'[39m[33m,[39m
+    [90m151| [39m            body[33m:[39m expect[33m.[39m[34mstringMatching[39m([36m/"text":"Test Query"/[39m)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/chat_flow.test.ts[2m > [22mChat Flow Integration[2m > [22mshould clear history when trash button is clicked
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called at least once[39m
+[36m [2m❯[22m src/test/chat_flow.test.ts:[2m402:32[22m[39m
+    [90m400| [39m
+    [90m401| [39m        [90m// Verify confirm called[39m
+    [90m402| [39m        [34mexpect[39m(global[33m.[39mconfirm)[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                               [31m^[39m
+    [90m403| [39m
+    [90m404| [39m        [90m// Verify message gone (history cleared)[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/hud_interaction.test.ts[2m > [22mHUD Store and Interaction[2m > [22mshould render ResonanceDeck and allow expansion
+[31m[1mTypeError[22m: element.animate is not a function
+
+	in <unknown>
+	in ResonanceDeck.svelte
+	in undefined
+[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould hide copy button for system messages
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould show usage indicator when data is available
+[41m[1m FAIL [22m[49m src/tests/tts_ui.test.ts[2m > [22mResonanceDeck UI[2m > [22mshould trigger TTS when button is clicked
+[31m[1mError[22m: vi.spyOn() can only spy on a function. Received undefined.[39m
+[36m [2m❯[22m src/tests/tts_ui.test.ts:[2m30:12[22m[39m
+    [90m 28| [39m        // Mock matchMedia (handled by setup.ts, but we might want spi…
+    [90m 29| [39m        [90m// Mock SpeechSynthesis (handled by setup.ts)[39m
+    [90m 30| [39m        vi[33m.[39m[34mspyOn[39m(window[33m,[39m [32m'matchMedia'[39m)[33m.[39m[34mmockImplementation[39m(query [33m=>[39m ({
+    [90m   | [39m           [31m^[39m
+    [90m 31| [39m            matches[33m:[39m [35mfalse[39m[33m,[39m
+    [90m 32| [39m            media[33m:[39m query[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/usage_guard_integration.test.ts[2m > [22mUsageGuard Integration[2m > [22mshould block chat when daily limit is exceeded
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /Daily safety limit reached/ but got 'I have been thinking deeply all day a…'[39m
+
+[32m- Expected:[39m 
+/Daily safety limit reached/
+
+[31m+ Received:[39m 
+"I have been thinking deeply all day and my safety circuits indicate I need to recharge. Please allow me to rest until tomorrow."
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/usage_guard_integration.test.ts[2m > [22mUsageGuard Integration[2m > [22mshould record usage after successful chat
+[31m[1mError[22m: () => ({
+    getGenerativeModel: mockGetGenerativeModel
+  }) is not a constructor[39m
+[36m [2m❯[22m Module.chat src/lib/server/chat.ts:[2m269:15[22m[39m
+    [90m267| [39m        }
+    [90m268| [39m
+    [90m269| [39m        throw new Error(error.message || "I had a small glitch in my s…
+    [90m   | [39m              [31m^[39m
+    [90m270| [39m    }
+    [90m271| [39m}
+[90m [2m❯[22m src/tests/usage_guard_integration.test.ts:[2m79:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m21 passed[39m[22m[90m (26)[39m
+[2m      Tests [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m72 passed[39m[22m[2m | [22m[33m6 skipped[39m[90m (86)[39m
+[2m   Start at [22m 04:31:55
+[2m   Duration [22m 7.53s[2m (transform 10.08s, setup 0ms, import 15.11s, tests 928ms, environment 63.89s)[22m
+

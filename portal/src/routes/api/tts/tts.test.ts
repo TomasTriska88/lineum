@@ -25,7 +25,7 @@ describe('TTS Endpoint', () => {
             json: async () => ({})
         } as Request;
 
-        const response = await POST({ request, getClientAddress: () => '127.0.0.1' } as any);
+        const response = await POST({ request, getClientAddress: () => '127.0.0.1', locals: { sessionId: 'test' } } as any);
         expect(response.status).toBe(400);
     });
 
@@ -53,7 +53,7 @@ describe('TTS Endpoint', () => {
             json: async () => ({ text: 'Hello' })
         } as Request;
 
-        const response = await POST({ request, getClientAddress: () => '127.0.0.1' } as any);
+        const response = await POST({ request, getClientAddress: () => '127.0.0.1', locals: { sessionId: 'test' } } as any);
 
         expect(response.status).toBe(200);
         expect(response.headers.get('Content-Type')).toBe('audio/wav');
@@ -69,7 +69,7 @@ describe('TTS Endpoint', () => {
             json: async () => ({ text: 'Hello' })
         } as Request;
 
-        const response = await POST({ request, getClientAddress: () => '127.0.0.1' } as any);
+        const response = await POST({ request, getClientAddress: () => '127.0.0.1', locals: { sessionId: 'test' } } as any);
         expect(response.status).toBe(429);
         const body = await response.json();
         expect(body.error).toBe('Test Limit');
@@ -86,7 +86,7 @@ describe('TTS Endpoint', () => {
             json: async () => ({ text: 'Hello' })
         } as Request;
 
-        const response = await POST({ request, getClientAddress: () => '127.0.0.1' } as any);
+        const response = await POST({ request, getClientAddress: () => '127.0.0.1', locals: { sessionId: 'test' } } as any);
         expect(response.status).toBe(500);
     });
 });

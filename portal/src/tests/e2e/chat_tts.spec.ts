@@ -1,0 +1,164 @@
+
+import { test, expect } from '@playwright/test';
+
+test.describe('Chat & TTS Flow', () => {
+    test.beforeEach(async ({ page }) => {
+        // 1. Strict Network Blocking (Safety First)
+        await page.route('**/*', async (route) => {
+            const url = route.request().url();
+            console.log(`Inspecting URL: ${url}`);
+            // Allow localhost (vite server) and data URIs (inline assets)
+            if (url.includes('localhost') || url.startsWith('data:')) {
+                // await route.continue(); // allow quietly
+                await route.continue();
+                return;
+            }
+            // Allow specific API mocks (handled below)
+            if (url.includes('/api/chat') || url.includes('/api/tts')) {
+                await route.continue();
+                return;
+            }
+            // Allow Fonts (Google Fonts) - these are safe
+            if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
+                console.log(`Allowed external font: ${url}`);
+                await route.continue();
+                return;
+            }
+            // Block everything else
+            console.error(`Blocked external request to: ${url}`);
+            await route.abort();
+        });
+
+        // 2. Mock Chat API
+        await page.route('**/api/chat', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    text: 'Hello! I am a simulated response.'
+                })
+            });
+        });
+
+        // 3. Mock TTS API
+        await page.route('**/api/tts', async (route) => {
+            // Return a dummy audio blob
+            const dummyAudio = Buffer.from('dummy-audio-content');
+            await route.fulfill({
+                status: 200,
+                contentType: 'audio/mpeg',
+                body: dummyAudio
+            });
+        });
+
+        // 4. Mock Speech Synthesis (Browser API)
+        // Playwright opens a real browser, so window.speechSynthesis exists.
+        // But we might want to ensure it has voices to trigger the UI.
+        // 4. Mock Speech Synthesis (Browser API)
+        await page.addInitScript(() => {
+            // Complete Mock of Speech Synthesis because headless browsers are quirky
+            // and we want to verify the 'text' passed to speak()
+
+            // @ts-ignore
+            window.SpeechSynthesisUtterance = class {
+                constructor(text) {
+                    this.text = text;
+                    this.lang = 'en-US';
+                    this.voice = null;
+                    this.rate = 1;
+                    this.pitch = 1;
+                    this.volume = 1;
+                    this.onstart = null;
+                    this.onend = null;
+                    this.onerror = null;
+                }
+            };
+
+            const mockVoice = {
+                name: 'Google US English',
+                lang: 'en-US',
+                default: true,
+                localService: true,
+                voiceURI: 'Google US English'
+            };
+
+            // @ts-ignore
+            Object.defineProperty(window, 'speechSynthesis', {
+                value: {
+                    pending: false,
+                    speaking: false,
+                    paused: false,
+                    onvoiceschanged: null,
+                    // @ts-ignore
+                    getVoices: () => [mockVoice],
+                    // @ts-ignore
+                    speak: (utterance) => {
+                        console.log('MOCK_SPEAK:' + utterance.text);
+                        // Simulate async speaking
+                        // @ts-ignore
+                        if (utterance.onstart) setTimeout(() => utterance.onstart(), 10);
+                        setTimeout(() => {
+                            // @ts-ignore
+                            if (utterance.onend) utterance.onend();
+                        }, 100);
+                    },
+                    cancel: () => { },
+                    pause: () => { },
+                    resume: () => { },
+                    addEventListener: () => { },
+                    removeEventListener: () => { },
+                    dispatchEvent: () => true
+                },
+                writable: true,
+                configurable: true
+            });
+
+            // Trigger events
+            setTimeout(() => window.dispatchEvent(new Event('voiceschanged')), 50);
+        });
+    });
+
+    test('should open chat, send message, and trigger TTS', async ({ page }) => {
+        // Monitor browser console
+        page.on('console', msg => console.log(`BROWSER LOG: ${msg.text()}`));
+        page.on('pageerror', err => console.log(`BROWSER ERROR: ${err.message}`));
+
+        await page.goto('/', { timeout: 60000 });
+
+        // 1. Open Chat (if closed)
+        const toggleBtn = page.getByRole('button', { name: /toggle chat/i });
+        // Wait for hydration/rendering to complete
+        try {
+            await toggleBtn.waitFor({ state: 'visible', timeout: 15000 });
+            await toggleBtn.click();
+        } catch (e) {
+            console.log('Toggle chat button not found or click failed. Checking if already open...');
+        }
+
+        // 2. Type Message
+        // 2. Type Message
+        const input = page.getByPlaceholder(/Ask Lina/i);
+        await input.waitFor({ state: 'visible', timeout: 15000 });
+        await input.fill('Hello AI');
+        await input.press('Enter');
+
+        // 3. Wait for Response
+        await expect(page.getByText('Hello! I am a simulated response.')).toBeVisible({ timeout: 10000 });
+
+        // 4. Verify TTS Button
+        // The TTS button should appear because we mocked voices.
+        // It has aria-label="Read Aloud"
+        const ttsBtn = page.getByLabel('Read Aloud');
+        await expect(ttsBtn).toBeVisible();
+
+        // 5. Click TTS and Verify Request
+        // We use a Promise to wait for the speak call (captured via console log from our mock)
+        // Note: The app defaults to Native TTS, so it calls window.speechSynthesis.speak()
+        const ttsSpeakPromise = page.waitForEvent('console', msg => msg.text().includes('MOCK_SPEAK'));
+
+        await ttsBtn.click();
+
+        const msg = await ttsSpeakPromise;
+        expect(msg.text()).toContain('Hello! I am a simulated response.');
+    });
+});

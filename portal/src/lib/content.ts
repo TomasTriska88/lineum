@@ -11,6 +11,7 @@ export const palette = {
 };
 
 export const content = {
+    contactEmail: 'tomas.triska.iver@gmail.com',
     hero: {
         symbol: 'Λ',
         title: 'Science of fields that breathe.',

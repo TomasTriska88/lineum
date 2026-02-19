@@ -2,6 +2,7 @@
 import { json } from '@sveltejs/kit';
 import { chat, getOfflineFallback } from '$lib/server/chat';
 import { rateLimiter } from '$lib/server/limiter';
+import { usageGuard } from '$lib/server/usage_guard';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, getClientAddress, locals }) => {
@@ -34,7 +35,8 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
         return json({
             error: limit.reason,
             retryAfter: 60,
-            friendly: "I'm processing too many requests. Please wait a moment."
+            friendly: "I'm processing too many requests. Please wait a moment.",
+            usage: { totalTokenCount: 0 }
         }, { status: 429 });
     }
 
@@ -50,8 +52,23 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
         return json(result);
     } catch (err: any) {
         console.error("Detailed API Chat Error:", err);
+
+        // Check for usage guard error messages
+        const errMsg = err.message || "";
+        if (errMsg.includes("Daily safety limit reached") || errMsg.includes("safety circuits indicate I need to recharge")) {
+            return json({
+                error: errMsg
+            }, { status: 429 });
+        }
+
         return json({
-            error: err.message || "An unexpected error occurred."
+            error: errMsg || "An unexpected error occurred."
         }, { status: 500 });
     }
+};
+
+export const GET: RequestHandler = async () => {
+    // Simple endpoint to get current usage stats for UI initialization
+    const stats = usageGuard.getStats();
+    return json(stats);
 };

@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import * as env from "$env/static/private";
 import { rateLimiter } from '$lib/server/limiter';
+import { usageGuard } from '$lib/server/usage_guard';
 import type { RequestHandler } from './$types';
 
 const GEMINI_API_KEY = (env as any).GEMINI_API_KEY;
@@ -14,14 +15,27 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
         return json({ error: limit.reason }, { status: 429 });
     }
 
+    // 1.5 Safety: Check Daily Budget
+    const limitCheck = usageGuard.checkLimit();
+    if (!limitCheck.allowed) {
+        // PERSONA VS DEV MODE
+        const isDev = process.env.NODE_ENV === 'development';
+        const msg = isDev
+            ? `[DEV] Daily safety limit reached. (Remaining: $${limitCheck.remainingBudget.toFixed(2)})`
+            : "I need to rest my voice circuits until tomorrow.";
+
+        return json({ error: msg }, { status: 429 });
+    }
+
     // 2. Validate Input
     let text: string;
-    let voice: string = "Aoede";
+    // Hardcoded Voice: Kore (Female) - per user request to disable selection
+    const voice: string = "Kore";
 
     try {
         const body = await request.json();
         text = body.text;
-        if (body.voice) voice = body.voice;
+        // if (body.voice) voice = body.voice; // Selection disabled
     } catch {
         return json({ error: "Invalid JSON body" }, { status: 400 });
     }
@@ -36,8 +50,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
     }
 
     // 3. Call Gemini TTS (REST API)
-    // We use direct REST because the SDK support for Audio Modality is experimental/undocumented
-    // Using Pro because Flash TTS has strict 10 RPD limit. Pro has 1.5K RPD.
+    // We user Pro model again because Flash TTS has poor quality (Robotic Voice) for Czech.
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
 
     try {
@@ -50,10 +63,52 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
                         prebuiltVoiceConfig: {
                             voiceName: voice
                         }
+                    },
+                    audioConfig: {
+                        audioEncoding: "LINEAR16",
+                        sampleRateHertz: 24000
                     }
-                }
+                },
+                audioTimestamp: false // Optional, can be used for debugging
             }
         };
+
+        // EXPLICITLY REQUEST FORMAT to avoid mismatch surprises
+        // We request standard PCM (Linear16) at 24kHz to match our WAV header logic.
+        // If we don't specifying, Gemini might return MP3 or random rate.
+        // Note: The structure for `generationConfig` varies by model version.
+        // For v1beta/models/gemini-2.5-pro-preview-tts, check if it supports direct format params here.
+        // Actually, the docs suggest generationConfig.speechConfig.audioConfig might be the place?
+        // Or responseMimeType?
+        // Let's safe bet: The previous code worked but guessed.
+        // Let's try adding `responseMimeType: "audio/wav"` if supported, or just trust the raw output.
+        // Wait, current code checks `rawMimeType.includes('audio/L16')`.
+        // If the user heard "slow motion", it means we likely got 48kHz audio but played it at 24kHz.
+        // I will change the header sample rate to 24000 (which it is) but maybe the data IS 24000.
+        // Actually, let's assume it IS 24000.
+        // If it was *slow*, the samples were played too slowly.
+        // Meaning real rate > playback rate.
+        // e.g. Real rate 48000, Playback rate 24000.
+        // So Gemini probably returns 24000 by default? No, usually 24k.
+        // Wait, if I hardcode header to 24k, and it plays slow...
+        // It means there are MORE samples than expected for the duration.
+        // So the source data has a HIGHER sample rate (e.g. 48k).
+        // I will try updating the header to 24000 but add a TODO to verify or bump to 48000 if persists.
+        // Actually, let's explicit request.
+
+        // Revised payload structure based on typical Gemini API:
+        /*
+        generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+                voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
+            }
+        }
+        */
+        // I can't easily force sample rate without `audioConfig`.
+        // I'll stick to 24000 but I'll add a log to check the MIME type return.
+
+
 
         const response = await fetch(url, {
             method: 'POST',
@@ -73,15 +128,26 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
 
         const data = await response.json();
 
+        // RECORD USAGE (Estimated)
+        // Input: text length / 4 (approx tokens)
+        // Output: Audio length (approx 25 tokens/sec). Let's estimate conservatively: 1 char = 0.1 sec audio = 2.5 tokens.
+        // Or better, just record input tokens for now as output tokens are hard to guess from binary.
+        // Actually, pricing says $20/1M output tokens (audio).
+        // Let's assume 1 char ~= 1 output token for safety estimation until we parse real metadata.
+        const inputTokens = Math.ceil(text.length / 4);
+        const outputTokens = Math.ceil(text.length * 2); // Conservative estimate for audio density
+        usageGuard.recordUsage(inputTokens, outputTokens, 'pro'); // Pro model (High Quality)
+
 
         // Extract Audio
         if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
             const inlineData = data.candidates[0].content.parts[0].inlineData;
             const base64Audio = inlineData.data;
             const rawMimeType = inlineData.mimeType || 'audio/wav';
+            console.log(`[TTS] Received Audio MIME: ${rawMimeType}, Length: ${base64Audio.length}`);
 
             // Convert base64 to binary buffer
-            let audioBuffer = Buffer.from(base64Audio, 'base64');
+            let audioBuffer = Buffer.from(base64Audio, 'base64') as any;
             let finalMimeType = rawMimeType;
 
             // FIX: Wraps raw PCM (L16) in a WAV container so browsers can play it

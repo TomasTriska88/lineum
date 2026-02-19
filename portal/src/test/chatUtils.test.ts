@@ -9,7 +9,7 @@ describe('Chat Utils', () => {
         });
 
         it('should remove code blocks', () => {
-            expect(stripMarkdown('Code `var x = 1`')).toBe('Code var x = 1');
+            expect(stripMarkdown('Code `var x = 1`')).toBe('Code var x rovná se 1');
         });
 
         it('should remove links', () => {
