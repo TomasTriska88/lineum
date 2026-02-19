@@ -68,3 +68,17 @@ a:hover {
     z-index: -1;
     pointer-events: none;
 }
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 0 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.5rem; /* Will serve as a fallback or override dependent on specificity */
+    }
+}

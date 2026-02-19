@@ -23,6 +23,10 @@ export default defineConfig({
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
+        {
+            name: 'mobile-chrome',
+            use: { ...devices['Pixel 5'] },
+        },
     ],
     webServer: {
         command: 'cross-env GEMINI_API_KEY=INVALID_TEST_KEY npm run dev -- --port 4173',

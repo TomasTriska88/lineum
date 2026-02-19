@@ -289,11 +289,51 @@
     }
 
     @media (max-width: 768px) {
-        .logo-text {
+        .hero {
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding-top: 120px; /* Offset for taller nav */
+            height: auto;
+            min-height: 100vh;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .logo-symbol {
             font-size: 3rem;
         }
+
+        .logo-text {
+            font-size: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
         .scientific-grid {
             grid-template-columns: 1fr;
+        }
+
+        .footer-content {
+            flex-direction: column;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            flex-direction: column;
+            gap: 1rem;
         }
     }
 </style>

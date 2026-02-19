@@ -199,6 +199,7 @@
         margin-top: 12px;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
         transform-origin: top right;
+        max-width: calc(100vw - 2rem); /* Safety for small screens */
 
         /* Scrollbar styling */
         scrollbar-width: thin;

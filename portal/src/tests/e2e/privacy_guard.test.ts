@@ -15,6 +15,7 @@ const STORAGE_WHITELIST: Record<string, string[]> = {
     'setup.ts': [],
     '+page.svelte': ['lineum_whitepaper_warning_acknowledged'],
     'privacy_guard.test.ts': ['cookie_consent', 'resonance_history', 'lineum_research_history', 'key'], // The guard itself reads these for regex matching context or verification
+    'mobile.spec.ts': ['cookie_consent'],
 };
 
 // Regex to find storage usage

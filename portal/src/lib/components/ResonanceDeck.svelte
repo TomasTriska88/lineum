@@ -2002,9 +2002,28 @@
 
     @media (max-width: 768px) {
         .resonance-wrapper {
-            bottom: 1rem;
-            max-width: 100%;
+            bottom: 0;
+            padding: 0 !important;
+            max-width: 100% !important;
         }
+
+        /* Ensure shifted state works on mobile */
+        .resonance-wrapper.shifted {
+            bottom: 8rem; /* Keep checking if this is enough */
+        }
+
+        .deck-container {
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+        }
+
+        .deck-expansion {
+            /* On mobile, take up more space, but leave room for header */
+            height: 80vh;
+            max-height: 80vh;
+        }
+
+        /* Adjust for when keyboard is open if possible, though strict vh is safest start */
     }
 
     /* --- Markdown Styles --- */

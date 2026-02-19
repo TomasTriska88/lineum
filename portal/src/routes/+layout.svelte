@@ -99,4 +99,25 @@
     main.hud-pushed {
         transform: translateY(-20px);
     }
+
+    @media (max-width: 768px) {
+        nav {
+            padding: 1rem 0;
+        }
+
+        .nav-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            gap: 1rem;
+            flex-wrap: wrap; /* Allow wrapping if needed */
+            justify-content: center;
+        }
+
+        main {
+            padding-top: 140px; /* More space for stacked nav */
+        }
+    }
 </style>

@@ -200,4 +200,16 @@
         box-shadow: 0 0 25px rgba(124, 58, 237, 0.5);
         transform: translateY(-1px);
     }
+
+    @media (max-width: 480px) {
+        .dialog-actions {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
 </style>

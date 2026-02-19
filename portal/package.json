@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "npm run sync && vite dev",
 		"build": "node scripts/railway-build.cjs",
 		"preview": "vite preview",
 		"start": "node build",
