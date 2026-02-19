@@ -1,5 +1,7 @@
 # Lineum Portal
 
+> **Deployment Status**: Manual Trigger (2026-02-19)
+
 Official web portal for the Lineum research project. Built with SvelteKit.
 
 ## 🚀 Development Workflow
