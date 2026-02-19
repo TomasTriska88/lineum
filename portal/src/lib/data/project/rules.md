@@ -41,3 +41,8 @@ These rules govern agent behavior and documentation standards for the Lineum Cor
 ## 8. Development Hygiene
 - **README First**: Before pushing any changes to the `dev` branch, the agent must ensure the root `README.md` (or the relevant component's README) is updated to reflect the latest changes. This is a critical step in our workflow.
 - **Commit Discipline**: Changes to documentation should ideally be in the same commit as the code changes they describe.
+
+## 9. Deployment Workflow
+- **Branch Strategy**: Use `git checkout main` -> `git merge dev` -> `git push origin main` for all production deployments.
+- **Never Push Directly**: Direct pushes to `main` without merging from `dev` are strictly forbidden to ensure a consistent audit trail and robust CI triggers.
+- **Force Trigger**: If a deployment fails to trigger automatically, verify remote state and consider an empty commit bump only as a last resort.

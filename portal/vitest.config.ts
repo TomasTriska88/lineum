@@ -7,6 +7,11 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{js,ts}'],
         exclude: ['src/tests/e2e/**'],
         environment: 'jsdom',
+        environmentOptions: {
+            jsdom: {
+                url: 'http://localhost/',
+            }
+        },
         globals: true,
         setupFiles: ['./src/tests/setup.ts']
     },
