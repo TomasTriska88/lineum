@@ -755,7 +755,125 @@ Rozhodovací strom o povaze "konvergence" systému.
 - [ ] **Predikce:** Energie by rostla exponenciálně (rezonanční katastrofa) a simulace by "shorela" (NaN values) během několika kroků.
 - [ ] **Metafora:** Ikarův pád. Chtěli jsme letět příliš blízko Slunci (Rychlosti Světla), ale naše křídla (diskrétní mřížka) se roztavila.
 
+### 🔲 31. [TEST] Evidence Solidification: „Atrakce = micro-growth (dominance switch), ne tok/teleportace“ + Ghost Gravity + Expanze + geometrie M2 (π) #hypothesis #repro
+- **Hypotéza (H_mech):**
+  1) Rychlé „přiblížení“ kvazičástice k centru pasti není prostorový transport ani teleportace, ale **změna dominance maxima** způsobená lokálním multiplikativním ziskem v místě vysokého φ: `Δψ ∝ (+g · φ · ψ)`.  
+  2) Advekční/drift člen `∝ (-d · ∇φ)` je v tomto scénáři **sekundární** a sám o sobě nevysvětlí „snappy“ přesun maxima/COM.  
+  3) „Temná hmota“ v interním smyslu Linea odpovídá **Ghost Gravity**: pole φ přetrvává po zániku zdroje ψ a stále přitahuje sondu.  
+  4) „Temná energie“ v interním smyslu Linea odpovídá **expanzní disperzi** dominované šumem (a/nebo nekonzervativností interakce, pokud `M2` roste).  
+  5) Pozorované `M2(t=0) ≈ 31.4159` není fyzikální konstanta, ale **geometrie startovní Gauss** (≈ (WIDTH/2)·π pro zvolený WIDTH).
+- **Operační definice metrik (musí být stejné pro všechny replikace):**
+  - `w(x,y) = |ψ(x,y)|` (váhy pro COM; pokud chcete používat |ψ|², explicitně to změňte všude konzistentně).
+  - `COM(ψ) = ( Σ x·w / Σ w , Σ y·w / Σ w )`
+  - `dist = || COM(ψ) - center ||₂`, kde `center = (N/2, N/2)` (pro 128×128 tedy [64,64]).
+  - `peak_phi = max(φ)`
+  - `M2 = Σ |ψ|²`
+  - `R² = Σ p·r²` kde `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
+  - `H = -Σ p·log(p)` (Shannon; p z |ψ|²)
+- **Co bylo zkoumáno (scénáře):**
+  - (S1) **Seed-sweep gravitace**: porovnání „bez šumu“ vs „se šumem“ (stejné ostatní podmínky), měřit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroků).
+  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a ověřit, že `Δ` zůstává (mechanismus není drift).
+  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, že `|ψ(center)|` roste z nenulové „chvostu“ a že maximum „skočí“ přes dominance switch; ověřit růstový faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
+  - (S4) **Ghost Gravity (Clean Ghost)**: vytvořit φ-remnant bez aktivního zdroje, pak spustit sondu, která si **nebuduje vlastní φ**, a ověřit rozdíl `distEnd` pro GHOST ON vs OFF.
+  - (S5) **Expanze**: pro různé šumy (0 / default / 2×default) měřit růst `R²` a `H` (typicky 1000 kroků).
+  - (S6) **Geometrie M2 (π-check)**: pro několik WIDTH ověřit `M2(t=0) ≈ (WIDTH/2)·π` (v rámci diskrétní chyby).
+- **Reprodukce (self-contained; bez tools/ skriptů):**
+  - **0) Clean env (PowerShell):**
+    - `Get-ChildItem Env: | Where-Object { $_.Name -like "LINEUM_*" } | ForEach-Object { Remove-Item ("Env:" + $_.Name) -ErrorAction SilentlyContinue }`
+  - **1) Spusť S1 (seed sweep) – 2 varianty pro každý seed:**
+    - Varianta A (no-noise): nastav šum na 0 (env/konfig podle aktuálního lineum.py) a spusť scénář gravitace na 500 kroků.
+    - Varianta C (default noise): default šum a spusť totéž.
+    - Seeds: `{41,42,43,44,45}`
+    - Každý běh ulož s unikátním `--run-tag` (např. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
+  - **2) Spusť S2 (drift ON/OFF):**
+    - ON = default.
+    - OFF = vypni drift/advekci (pokud není přepínač, dočasně nastav drift koeficient na 0 v lineum.py; uveď v TODO přesný výraz/řádek, který byl měněn).
+    - Run tagy: `ev_s2_drift_on`, `ev_s2_drift_off`.
+  - **3) Spusť S3 (micro-growth) v pasti:**
+    - Scénář „trap/past“ na min. 200 kroků. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejbližší existující).
+    - Pokud chybí přepínač pro izolaci členů:
+      - „Interaction-only“: drift koef = 0, interakce g = 0.04.
+      - „Drift-only“: interakce g = 0, drift koef = default.
+  - **4) Spusť S4 (Clean Ghost):**
+    - Nejprve vytvoř φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
+    - Poté zdroj vypni/odstraň a nech φ relaxovat T_decay.
+    - Poté spusť „sondu“ (ψ) s φ evolucí sondy OFF (aby si sonda netvořila vlastní φ) a změř `dist` start→end.
+    - Dva běhy: `ev_s4_ghost_on` (φ remnant přítomen) a `ev_s4_ghost_off` (φ nulové / remnant vypnut).
+  - **5) Spusť S5 (expanze):**
+    - Běhy: `noise=0`, `noise=default`, `noise=2×default` (ostatní stejné), 1000 kroků.
+    - Run tagy: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
+  - **6) Analýza checkpointů (inline python; žádné externí skripty):**
+    - Použij tento one-shot skript (spouští se proti konkrétnímu `output/<run-tag>/checkpoints/` a vybraným krokům).  
+      Příklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahraď argumenty):
+      ```python
+      import sys, glob, os, math
+      import numpy as np
+
+      run_tag = sys.argv[1]
+      steps = [int(s) for s in sys.argv[2:]]  # e.g. 0 40 60 100
+      ck_dir = os.path.join("output", run_tag, "checkpoints")
+
+      def load_step(step):
+          # expects filenames containing "step{step}" (adjust pattern if needed, but keep it here in TODO)
+          pats = [f"*step{step}.npz", f"*step{step:03d}.npz", f"*step{step:04d}.npz"]
+          for p in pats:
+              m = glob.glob(os.path.join(ck_dir, p))
+              if m:
+                  return np.load(m[0])
+          raise FileNotFoundError(f"no checkpoint for step={step} in {ck_dir}")
+
+      def metrics(psi, phi):
+          psi = np.asarray(psi)
+          phi = np.asarray(phi)
+          n, m = psi.shape
+          cx, cy = n//2, m//2
+
+          w = np.abs(psi)                     # COM weights as defined
+          ws = w.sum()
+          xs, ys = np.meshgrid(np.arange(n), np.arange(m), indexing="ij")
+          comx = float((xs*w).sum() / ws)
+          comy = float((ys*w).sum() / ws)
+          dist = math.hypot(comx-cx, comy-cy)
+
+          abs2 = (np.abs(psi)**2)
+          M2 = float(abs2.sum())
+          p = abs2 / (M2 if M2 != 0 else 1.0)
+          r2 = (xs-comx)**2 + (ys-comy)**2
+          R2 = float((p*r2).sum())
+          p_nonzero = p[p > 0]
+          H = float(-(p_nonzero*np.log(p_nonzero)).sum())
+
+          peak_phi = float(phi.max())
+          maxpos = np.unravel_index(np.argmax(np.abs(psi)), psi.shape)
+          psi_center = float(np.abs(psi[cx, cy]))
+          return dict(dist=dist, COM=(comx,comy), peak_phi=peak_phi, M2=M2, R2=R2, H=H,
+                      maxpos=maxpos, psi_center=psi_center)
+
+      prev_center = None
+      for s in steps:
+          d = load_step(s)
+          psi = d["psi"]
+          phi = d["phi"]
+          met = metrics(psi, phi)
+          g = None
+          if prev_center is not None and prev_center > 0:
+              g = met["psi_center"]/prev_center
+          prev_center = met["psi_center"]
+          print(f"step={s:>4} dist={met['dist']:.4f} COM=({met['COM'][0]:.2f},{met['COM'][1]:.2f}) "
+                f"maxpos={met['maxpos']} |psi_center|={met['psi_center']:.6e} "
+                f"g_center={g if g is not None else 'NA'} peak_phi={met['peak_phi']:.4f} "
+                f"M2={met['M2']:.6e} R2={met['R2']:.2f} H={met['H']:.4f}")
+      ```
+- **Očekávané výsledky (tolerance; pokud se liší, zapiš odchylku a důvod):**
+  - S1: `Δ = dist0 - distEnd` ~ konstantní napříč seedy (řádově ~5–6 px v daném nastavení) a rozdíl A vs C malý (šum nemění směr efektu).
+  - S2: Drift OFF stále dává prakticky stejný `Δ` jako ON (dominance micro-growth).
+  - S3: `|ψ(center)|` roste z nenulové hodnoty; maximum „přeskočí“ do pasti během desítek kroků; `g_meas` je blízko `g_pred ≈ 1 + 0.04·φ(center)` v režimu, kde je interakce aktivní.
+  - S4: `distEnd(ghost_on) < distEnd(ghost_off)` (ghost přitahuje sondu i bez zdroje ψ).
+  - S5: pro noise>0 roste `R²` a `H` výrazněji než pro noise=0 (expanze dominuje).
+  - S6: `M2(t=0) ≈ (WIDTH/2)·π` (např. WIDTH=20 → 10π ≈ 31.4159); tím se vylučuje interpretace “π jako fundamentální konstanta modelu” — je to pouze geometrie inicializace.
+
 ---
+
 
 ## 🌐 R. Portál a Infrastruktura (Milníky do budoucna)
 
