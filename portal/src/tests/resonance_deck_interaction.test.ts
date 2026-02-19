@@ -4,11 +4,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import ResonanceDeck from '../lib/components/ResonanceDeck.svelte';
 
 // Mock stores
-vi.mock('$lib/stores/hudStore', () => ({
-    hudActive: { subscribe: (run: any) => { run(false); return () => { }; } },
-    addMessage: vi.fn(),
-    hudMessages: { subscribe: (run: any) => { run([]); return () => { }; } }
-}));
+vi.mock('$lib/stores/hudStore', async () => {
+    const actual = await vi.importActual('svelte/store');
+    return {
+        // @ts-ignore
+        ...actual,
+        hudActive: { subscribe: (run: any) => { run(true); return () => { }; } }, // Active by default for these tests
+        isChatOpen: actual.writable(false),
+        addMessage: vi.fn(),
+        hudMessages: { subscribe: (run: any) => { run([]); return () => { }; } }
+    };
+});
 
 vi.mock('$lib/stores/uiStore', () => ({
     isCookieBannerVisible: { subscribe: (run: any) => { run(false); return () => { }; } }
@@ -28,14 +34,19 @@ vi.mock('$lib/utils/chatUtils', () => ({
 
 describe('ResonanceDeck Interaction', () => {
     // timers removed for debugging transitions
-    // beforeEach(() => {
-    //     vi.useFakeTimers();
-    // });
+    beforeEach(() => {
+        // vi.useFakeTimers();
+        vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ text: "Mock response" })
+        })));
+    });
 
-    // afterEach(() => {
-    //     vi.runOnlyPendingTimers();
-    //     vi.useRealTimers();
-    // });
+    afterEach(() => {
+        // vi.runOnlyPendingTimers();
+        // vi.useRealTimers();
+        vi.unstubAllGlobals();
+    });
 
 
 

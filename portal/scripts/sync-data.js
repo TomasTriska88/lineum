@@ -249,9 +249,16 @@ function sync() {
     console.log('[SYNC] Synchronization complete.');
 }
 
-try {
-    sync();
-} catch (err) {
-    console.error('[SYNC] Critical error during synchronization:', err);
-    process.exit(1);
+// Export for testing
+export { sync, findRoot };
+
+// Run if called directly
+import { pathToFileURL } from 'url';
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+    try {
+        sync();
+    } catch (err) {
+        console.error('[SYNC] Critical error during synchronization:', err);
+        process.exit(1);
+    }
 }

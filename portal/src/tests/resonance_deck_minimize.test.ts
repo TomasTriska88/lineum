@@ -81,20 +81,18 @@ describe('ResonanceDeck Minimize Logic', () => {
     });
 
     it('should start in default collapsed state (not minimized)', () => {
-        render(ResonanceDeck);
+        render(ResonanceDeck, { props: { active: true } });
         // Should show the "Minimize" button
         const minimizeBtn = screen.getByLabelText('Minimize');
         expect(minimizeBtn).toBeTruthy();
 
-        // Should NOT show the "Orb" content (we can check for absence of orb-specific class or content)
-        // The orb has a div with class "orb-icon". We can query by selector if possible or check absence.
-        // Or check that the main deck container does NOT have class 'minimized'
+        // Should NOT show the "Orb" content
         const deckContainer = screen.getByRole('button', { name: /toggle chat/i }).closest('.deck-container');
         expect(deckContainer?.className).not.toContain('minimized');
     });
 
     it('should switch to minimized mode when minimize button is clicked', async () => {
-        render(ResonanceDeck);
+        render(ResonanceDeck, { props: { active: true } });
 
         const minimizeBtn = screen.getByLabelText('Minimize');
         await fireEvent.click(minimizeBtn);
@@ -111,7 +109,7 @@ describe('ResonanceDeck Minimize Logic', () => {
     });
 
     it('should restore to default state when minimized orb is clicked', async () => {
-        render(ResonanceDeck);
+        render(ResonanceDeck, { props: { active: true } });
 
         // Minimize first
         const minimizeBtn = screen.getByLabelText('Minimize');
@@ -134,7 +132,7 @@ describe('ResonanceDeck Minimize Logic', () => {
     });
 
     it('should render wireframe mesh (multiple paths) in the resonance wave', () => {
-        const { container } = render(ResonanceDeck);
+        const { container } = render(ResonanceDeck, { props: { active: true } });
         // Look for the main wave container
         const waveContainer = container.querySelector('.resonance-wave.field-lines');
         expect(waveContainer).toBeTruthy();

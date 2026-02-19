@@ -7,20 +7,10 @@
     let papers = $derived(data.papers as any[]);
 
     // Warning Modal Logic
-    let showWarning = $state(false);
-
-    onMount(() => {
-        const ack = sessionStorage.getItem(
-            "lineum_whitepaper_warning_acknowledged",
-        );
-        if (!ack) showWarning = true;
-    });
+    // Warning Modal Logic - Always Show (User Request)
+    let showWarning = $state(true);
 
     function handleAck() {
-        sessionStorage.setItem(
-            "lineum_whitepaper_warning_acknowledged",
-            "true",
-        );
         showWarning = false;
     }
 

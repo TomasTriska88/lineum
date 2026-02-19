@@ -597,7 +597,7 @@
         // Start 30s timer for instructional nudge
         idleTimer = setTimeout(() => {
             // Only show if deck is collapsed (user might be confused) and not typing
-            if (!isExpanded && !isTyping) {
+            if (!$isChatOpen && !isTyping) {
                 const msg =
                     IDLE_MESSAGES[
                         Math.floor(Math.random() * IDLE_MESSAGES.length)
@@ -1125,6 +1125,8 @@
         onkeydown={() => {}}
     ></div>
 {/if}
+
+<!-- DEBUG RENDER REMOVED -->
 
 <div
     class="resonance-wrapper active"
