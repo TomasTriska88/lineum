@@ -4,6 +4,7 @@ import aiIndex from '$lib/data/ai_index.json';
 interface ContextChunk {
     source: string;
     content: string;
+    status: string;
     score: number;
 }
 
@@ -25,17 +26,26 @@ export class ContextSelector {
         // For whitepapers, we verify specific files.
 
         for (const file of aiIndex) {
-            // Filter only core whitepapers for now to keep quality high
-            if (!file.path.includes('whitepapers')) continue;
+            // Filter: Whitepapers (Core + Legacy) AND todo.md (Planning)
+            // We include Legacy files for historical context/trivia, but they will be tagged as verifiable false.
+            if (!file.path.includes('whitepapers') && file.name !== 'todo.md') continue;
 
             const sections = file.content.split(/\n#{1,3}\s/); // Split by headers H1-H3
 
             for (const section of sections) {
                 if (section.length < 50) continue; // Skip tiny sections
 
+                // SECURITY: Strip misleading epistemic tags from Legacy/Planning content
+                // If a legacy file says [VALIDATED], it is "stolen valor". We remove it so Lina doesn't get confused.
+                let cleanContent = section.trim();
+                if (file.status.includes('LEGACY') || file.status.includes('Planning')) {
+                    cleanContent = cleanContent.replace(/\[(VALIDATED|OBS|OBSERVED|HYPOTHESIS|DISPLAY)\]/g, '(legacy-claim)');
+                }
+
                 this.chunks.push({
-                    source: file.name,
-                    content: section.trim(),
+                    source: file.path, // Use full relative path for citation (e.g. whitepaper-old/03-equation.md)
+                    content: cleanContent,
+                    status: file.status,
                     score: 0
                 });
             }
@@ -85,6 +95,7 @@ export class ContextSelector {
         return topChunks.map(c => `
 ---
 Source: ${c.source}
+Status: ${c.status} ${c.status.includes('LEGACY') ? '(WARNING: HISTORICAL/OBSOLETE DATA - DO NOT CITE AS FACT)' : '(CURRENT)'}
 Content:
 ${c.content}
 ---
