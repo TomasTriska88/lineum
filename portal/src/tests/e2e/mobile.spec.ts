@@ -40,18 +40,26 @@ test.describe('Mobile Responsiveness', () => {
     test('Navigation Layout', async ({ page }) => {
         const navContent = page.locator('.nav-content');
 
-        // Check if flex direction is column
+        // Check if flex direction is row (Logo + Toggle)
         const flexDirection = await navContent.evaluate((el) => {
             return window.getComputedStyle(el).flexDirection;
         });
-        expect(flexDirection).toBe('column');
+        expect(flexDirection).toBe('row');
 
-        // Check links wrapping
+        // Check Toggle Button Visibility
+        const toggle = page.locator('.mobile-toggle');
+        await expect(toggle).toBeVisible();
+
+        // Check Links are hidden initially
         const navLinks = page.locator('.nav-links');
-        const flexWrap = await navLinks.evaluate((el) => {
-            return window.getComputedStyle(el).flexWrap;
-        });
-        expect(flexWrap).toBe('wrap');
+        await expect(navLinks).toBeHidden();
+
+        // Click Toggle
+        await toggle.click();
+
+        // Check Links are visible
+        await expect(navLinks).toBeVisible();
+        await expect(navLinks).toHaveCSS('flex-direction', 'column');
     });
 
     test('Chat Interface (ResonanceDeck)', async ({ page }) => {

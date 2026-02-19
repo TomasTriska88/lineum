@@ -90,9 +90,26 @@
 
     @media (max-width: 768px) {
         .cookie-banner {
-            flex-direction: column;
-            text-align: center;
+            flex-direction: row; /* Keep row */
+            align-items: center;
+            padding: 0.75rem 1rem;
             gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .content p {
+            font-size: 0.75rem;
+            line-height: 1.2;
+            text-align: left;
+        }
+
+        .actions {
+            flex-shrink: 0;
+        }
+
+        button {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
         }
     }
 </style>
