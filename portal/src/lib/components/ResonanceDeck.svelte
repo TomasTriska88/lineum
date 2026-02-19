@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
     import { fade, fly, slide, scale } from "svelte/transition";
+    import Dialog from "$lib/components/ui/Dialog.svelte";
     import { browser } from "$app/environment";
     import { page } from "$app/stores";
     import { hudActive } from "$lib/stores/hudStore";
@@ -24,6 +25,224 @@
         if (e) e.stopPropagation();
         isMinimized = !isMinimized;
         if (isMinimized) isExpanded = false; // Ensure it collapses when minimized
+    }
+
+    /* --- Dynamic Wave Generation --- */
+    let time = $state(0);
+    let animationFrame: number;
+
+    onMount(() => {
+        const loop = () => {
+            time += 0.015; // Speed
+            animationFrame = requestAnimationFrame(loop);
+        };
+        animationFrame = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(animationFrame);
+    });
+
+    function generateStackedTerrain(): {
+        d: string;
+        color: string;
+        opacity: number;
+        strokeWidth: number;
+        zIndex: number;
+    }[] {
+        const paths = [];
+        const width = 32;
+        // height = 32 implicit in logic
+
+        // Configuration for the 3 Lineum Fields (Stacked Vertically in 32px height)
+        const fields = [
+            {
+                name: "Matter",
+                baseY: 28, // Bottom
+                color: "#8b5cf6",
+                rows: 4,
+                amp: 1.5,
+                freq: 0.8,
+                speed: 1.0,
+                zIndex: 0,
+            },
+            {
+                name: "Gravity",
+                baseY: 18, // Middle
+                color: "#06b6d4",
+                rows: 4,
+                amp: 2.0,
+                freq: 1.2,
+                speed: 1.5,
+                zIndex: 10,
+            },
+            {
+                name: "Visibility",
+                baseY: 6, // Top
+                color: "#ffffff",
+                rows: 4,
+                amp: 1.2,
+                freq: 2.0,
+                speed: 2.0,
+                zIndex: 20,
+            },
+        ];
+
+        for (const field of fields) {
+            // 1. Compute Grid Points
+            const gridPoints: { x: number; y: number }[][] = [];
+
+            for (let r = 0; r < field.rows; r++) {
+                const rowPoints = [];
+                const depthFactor = r / (field.rows - 1);
+                // Spacing: Compact for 32px height
+                const rowBaseY = field.baseY + r * 2;
+
+                for (let x = 0; x <= width; x += 1) {
+                    // Step 1 for dense grid in 32px
+                    const t = time * field.speed;
+                    const angle1 =
+                        (x / width) * Math.PI * 2 * field.freq + t + r * 0.3;
+                    const angle2 =
+                        (x / width) * Math.PI * 5 * field.freq - t * 0.5;
+                    const noise = Math.sin(angle1) + Math.sin(angle2) * 0.4;
+                    const y =
+                        rowBaseY +
+                        noise * field.amp * (0.8 + depthFactor * 0.4);
+                    rowPoints.push({ x, y });
+                }
+                gridPoints.push(rowPoints);
+            }
+
+            // 2. Generate Horizontal Lines (Rows)
+            gridPoints.forEach((row, r) => {
+                const d = `M ${row.map((p) => `${p.x},${p.y}`).join(" L ")}`;
+                const depthFactor = r / (field.rows - 1);
+
+                paths.push({
+                    d,
+                    color: field.color,
+                    opacity: 0.6 + depthFactor * 0.4,
+                    strokeWidth: 0.4 + depthFactor * 0.2,
+                    zIndex: field.zIndex + r,
+                });
+            });
+
+            // 3. Generate Transverse Triangulation (Verticals + Diagonals)
+            // This creates a "Truss" or "Low Poly" triangle mesh look
+            const colStep = 4;
+            const numCols = gridPoints[0].length;
+
+            // Generate triangulation for each row strip (between row r and r+1)
+            for (let r = 0; r < field.rows - 1; r++) {
+                let d = "";
+                for (let c = 0; c < numCols; c += colStep) {
+                    const pCurrent = gridPoints[r][c];
+                    const pBelow = gridPoints[r + 1][c];
+
+                    // 1. Vertical Strut ( | )
+                    d += `M ${pCurrent.x},${pCurrent.y} L ${pBelow.x},${pBelow.y} `;
+
+                    // 2. Diagonal Strut ( \ ) to next column, if it exists
+                    if (c + colStep < numCols) {
+                        const pBesideBelow = gridPoints[r + 1][c + colStep];
+                        d += `M ${pCurrent.x},${pCurrent.y} L ${pBesideBelow.x},${pBesideBelow.y} `;
+                    }
+                }
+
+                paths.push({
+                    d,
+                    color: field.color,
+                    opacity: 0.3, // Subtle triangulation
+                    strokeWidth: 0.4,
+                    zIndex: field.zIndex + r + 0.5,
+                });
+            }
+        }
+
+        return paths.sort((a, b) => a.zIndex - b.zIndex);
+    }
+
+    let surfacePaths = $derived(generateStackedTerrain());
+
+    function generateSurfacePaths(): {
+        d: string;
+        color: string;
+        opacity: number;
+    }[] {
+        const paths = [];
+        const width = 100;
+        const height = 48;
+        const rows = 12; // Number of "grid lines"
+        const horizonY = 10; // "Vanishing point" area
+        const frontY = 48;
+
+        for (let i = 0; i < rows; i++) {
+            const normalizedDepth = i / (rows - 1); // 0 (back) to 1 (front)
+
+            // Perspective spacing: lines get closer at the back
+            // Linear interpolation for now, exp for more 3D
+            const baseY = horizonY + (frontY - horizonY) * normalizedDepth;
+
+            // Amplitude grows with closeness
+            const amplitude = 2 + normalizedDepth * 8;
+
+            const points = [];
+
+            // Draw line
+            for (let x = 0; x <= width; x += 1) {
+                // "Terrain" noise simulation
+                const t = time * 1.5;
+                const phase = i * 0.5; // Offset per row
+
+                // Composite wave for "terrain" look
+                const angle1 = (x / width) * Math.PI * 2 + t + phase;
+                const angle2 = (x / width) * Math.PI * 5 - t * 0.5 + phase;
+
+                const noise = Math.sin(angle1) + Math.sin(angle2) * 0.5;
+
+                const y = baseY + noise * amplitude * 0.5; // Scale height variation
+                points.push(`${x},${y}`);
+            }
+
+            // Colors: Lineum Palette
+            // Back (0): Dark/Fade -> Front (1): Violet/Cyan
+            let color = "var(--accent-violet)";
+            if (normalizedDepth > 0.6) color = "var(--accent-cyan)";
+            if (normalizedDepth > 0.8) color = "#ffffff";
+
+            paths.push({
+                d: `M ${points.join(" L ")}`,
+                color: color,
+                opacity: 0.2 + normalizedDepth * 0.8, // Fade out at back
+            });
+        }
+        return paths.reverse(); // Draw back first
+    }
+
+    function generateWavePath(
+        phase: number,
+        amplitude: number,
+        frequency: number,
+    ): string {
+        const points = [];
+        const width = 100;
+        const height = 40; // Internal SVG height
+        const centerY = height / 2;
+
+        // Start point
+        points.push(`0,${height}`);
+
+        for (let x = 0; x <= width; x += 2) {
+            const angle = (x / width) * Math.PI * 2 * frequency + time + phase;
+            // Slight perspective tilt: amplitude decreases slightly with distance (optional, but requested "top down")
+            // actually just keeping it simple for now as requested "not too much"
+            const y = centerY + Math.sin(angle) * amplitude;
+            points.push(`${x},${y}`);
+        }
+
+        // Close path
+        points.push(`${width},${height}`);
+        points.push(`0,${height}`);
+
+        return `M ${points.join(" L ")} Z`;
     }
 
     let messages = $state<
@@ -882,18 +1101,35 @@
             {#if isMinimized}
                 <!-- Orb Content -->
                 <div class="orb-icon" transition:scale={{ duration: 200 }}>
-                    <div class="resonance-wave small">
-                        <div class="wave-line"></div>
-                        <div class="wave-line"></div>
-                        <div class="wave-line"></div>
+                    <div class="resonance-wave orb-mode field-lines">
+                        <svg viewBox="0 0 32 32" preserveAspectRatio="none">
+                            {#each surfacePaths as line}
+                                <path
+                                    d={line.d}
+                                    stroke={line.color}
+                                    stroke-opacity={line.opacity}
+                                    fill="none"
+                                    stroke-width={line.strokeWidth || 0.8}
+                                    vector-effect="non-scaling-stroke"
+                                />
+                            {/each}
+                        </svg>
                     </div>
                 </div>
             {:else}
-                <div class="resonance-wave">
-                    <div class="wave-line"></div>
-                    <div class="wave-line"></div>
-                    <div class="wave-line"></div>
-                    <div class="wave-line"></div>
+                <div class="resonance-wave field-lines">
+                    <svg viewBox="0 0 32 32" preserveAspectRatio="none">
+                        {#each surfacePaths as line}
+                            <path
+                                d={line.d}
+                                stroke={line.color}
+                                stroke-opacity={line.opacity}
+                                fill="none"
+                                stroke-width={line.strokeWidth || 0.8}
+                                vector-effect="non-scaling-stroke"
+                            />
+                        {/each}
+                    </svg>
                 </div>
 
                 <!-- Passive Whisper -->
@@ -908,17 +1144,28 @@
                     {#if speakingId}
                         <!-- Audio Controls remain same -->
                     {:else if isTyping}
-                        <div class="mini-wave">
-                            <div class="wave-line"></div>
-                            <div class="wave-line"></div>
-                            <div class="wave-line"></div>
-                            <div class="wave-line"></div>
+                        <div
+                            class="resonance-wave field-lines"
+                            style="width: 60px;"
+                        >
+                            <svg viewBox="0 0 32 32" preserveAspectRatio="none">
+                                {#each surfacePaths.slice(0, 6) as line}
+                                    <path
+                                        d={line.d}
+                                        stroke={line.color}
+                                        stroke-opacity={line.opacity}
+                                        fill="none"
+                                        stroke-width="0.8"
+                                        vector-effect="non-scaling-stroke"
+                                    />
+                                {/each}
+                            </svg>
                         </div>
                     {:else if isExpanded}
-                        <span class="status-tag">ONLINE</span>
+                        <span class="status-tag">LINK ESTABLISHED</span>
                     {:else}
                         <span class="status-tag"
-                            >Ask me anything about Lineum</span
+                            >Click to ask me anything about Lineum</span
                         >
                     {/if}
                 </div>
@@ -963,10 +1210,8 @@
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
+                                viewBox="0 0 32 32"
+                                preserveAspectRatio="none"
                                 stroke="currentColor"
                                 stroke-width="2"
                                 stroke-linecap="round"
@@ -1002,45 +1247,50 @@
                             >
                         </button>
                     {:else}
-                        EXPAND
+                        <!-- Visible ONLY when Collapsed: The Minimize Action -->
+                        <button
+                            class="icon-btn header-action minimize-btn"
+                            onclick={toggleMinimize}
+                            title="Minimize to Orb"
+                            aria-label="Minimize"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ><line x1="5" y1="12" x2="19" y2="12"
+                                ></line></svg
+                            >
+                        </button>
                     {/if}
                 </div>
             {/if}
         </div>
 
         {#if isExpanded}
-            <!-- Custom Confirm Modal -->
+            <!-- Dialog Confirm Modal -->
             {#if showConfirmDialog}
-                <div
-                    class="confirm-modal-overlay"
-                    transition:fade={{ duration: 150 }}
+                <Dialog
+                    title="Clear Neural History?"
+                    variant="danger"
+                    confirmLabel="Confirm Delete"
+                    cancelLabel="Cancel"
+                    on:cancel={() => (showConfirmDialog = false)}
+                    on:confirm={() => {
+                        messages = [];
+                        localStorage.removeItem("resonance_history");
+                        generateGreeting();
+                        showConfirmDialog = false;
+                    }}
                 >
-                    <div
-                        class="confirm-modal"
-                        transition:scale={{ duration: 200, start: 0.9 }}
-                    >
-                        <h4>Clear Neural History?</h4>
-                        <p>This will erase all current context and memory.</p>
-                        <div class="confirm-actions">
-                            <button
-                                class="confirm-btn cancel"
-                                onclick={() => (showConfirmDialog = false)}
-                                >Cancel</button
-                            >
-                            <button
-                                class="confirm-btn danger"
-                                onclick={() => {
-                                    messages = [];
-                                    localStorage.removeItem(
-                                        "resonance_history",
-                                    );
-                                    generateGreeting();
-                                    showConfirmDialog = false;
-                                }}>Confirm Delete</button
-                            >
-                        </div>
-                    </div>
-                </div>
+                    <p>This will erase all current context and memory.</p>
+                </Dialog>
             {/if}
 
             <div class="deck-expansion" transition:slide={{ duration: 400 }}>
@@ -1391,74 +1641,158 @@
         text-align: left;
     }
 
-    /* Wave Animation */
+    /* --- Lineum Horizontal Fields Animation --- */
     .resonance-wave {
         display: flex;
         align-items: center;
-        gap: 3px;
-        height: 20px;
+        height: 48px;
+        width: 48px;
+        position: relative;
+        /* mask-image removed to ensure visibility of full field effect */
     }
 
-    .wave-line {
-        /* Default color uses accent-violet */
-        width: 3px;
-        height: 10px;
-        background: var(--accent-violet, #7c3aed);
-        border-radius: 3px;
-        animation: pulse 1.2s infinite ease-in-out;
+    .resonance-wave.orb-mode {
+        width: 40px;
+        height: 40px;
+        mask-image: none;
+        border-radius: 50%;
     }
 
-    .wave-line:nth-child(1) {
-        animation-delay: 0s;
-        height: 12px;
-    }
-    .wave-line:nth-child(2) {
-        animation-delay: 0.2s;
-        height: 20px;
-        background: var(--accent-cyan, #06b6d4);
-    }
-    .wave-line:nth-child(3) {
-        animation-delay: 0.4s;
-        height: 16px;
-    }
-    .wave-line:nth-child(4) {
-        animation-delay: 0.1s;
-        height: 10px;
-        background: var(--accent-violet, #7c3aed);
+    .resonance-wave.field-lines {
+        /* Force square aspect ratio */
+        width: 32px;
+        height: 32px;
+        min-height: 32px; /* Prevent collapse */
+        margin-right: 1rem;
+        flex-shrink: 0;
+        position: relative;
+        display: block; /* Ensure it takes space */
     }
 
-    @keyframes pulse {
-        0%,
+    .field-lines svg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .field-path {
+        fill: none;
+        stroke-width: 2;
+        vector-effect: non-scaling-stroke;
+    }
+
+    .field-layer-1 {
+        stroke: var(--accent-violet);
+        opacity: 0.6;
+        animation: undulate 3s ease-in-out infinite alternate;
+    }
+    .field-layer-2 {
+        stroke: var(--accent-cyan);
+        opacity: 0.6;
+        animation: undulate 4s ease-in-out infinite alternate-reverse;
+    }
+    .field-layer-3 {
+        stroke: #fff;
+        opacity: 0.3;
+        animation: undulate 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes fieldScroll {
+        0% {
+            transform: translateX(0);
+        }
         100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    @keyframes undulate {
+        0% {
             transform: scaleY(0.8);
-            opacity: 0.6;
         }
-        50% {
-            transform: scaleY(1.4);
-            opacity: 1;
+        100% {
+            transform: scaleY(1.2);
         }
+    }
+
+    /* Orb Specifics - Cleaned up */
+    .deck-container.minimized .resonance-wave {
+        /* Enforce 32x32 even in minimized mode */
+        width: 32px;
+        height: 32px;
+        margin: 0;
     }
 
     .status-info {
         display: flex;
         flex-direction: column;
+        justify-content: center;
     }
 
     .explorer-name {
-        font-size: 0.75rem;
+        font-size: 0.65rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #fff;
+        letter-spacing: 0.15em;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 2px;
     }
 
     .status-tag {
-        font-size: 0.7rem; /* Larger */
+        font-size: 0.85rem;
         font-family: monospace;
-        color: var(--accent-cyan); /* Brighter */
-        opacity: 0.9;
-        text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); /* Glow */
-        margin-top: 2px;
+        color: var(--accent-cyan);
+        text-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .click-hint {
+        font-size: 0.7rem;
+        opacity: 0.6;
+        font-weight: 400;
+        margin-left: 0.5rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .status-tag::after {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+        animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+        0%,
+        100% {
+            opacity: 0.2;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    /* Minimize Button Polish */
+    :global(.icon-btn.minimize-btn) {
+        opacity: 0.6;
+        border: 1px solid transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    :global(.icon-btn.minimize-btn:hover) {
+        opacity: 1;
+        color: var(--accent-cyan);
+        background: rgba(6, 182, 212, 0.05);
+        border-color: rgba(6, 182, 212, 0.2);
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+        transform: translateY(1px);
     }
 
     .controls-hint {
@@ -1859,6 +2193,25 @@
         transform: scale(1.05);
     }
 
+    .orb-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
+        overflow: hidden; /* Mask the square SVG */
+    }
+
+    /* Adjust the wave container inside the orb */
+    .resonance-wave.orb-mode {
+        width: 100%;
+        height: 100%;
+        transform: scale(1.5); /* slight zoom to fill circle */
+    }
     .equalizer-icon {
         display: flex;
         gap: 2px;
@@ -1914,32 +2267,14 @@
     }
 
     /* Tooltip Styles */
-    .minimize-action-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 0.25rem 0.75rem;
-        border-radius: 6px;
-        color: rgba(255, 255, 255, 0.6);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-family: monospace;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
+    :global(.icon-btn.minimize-btn) {
+        opacity: 0.8;
     }
-
-    .minimize-action-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.3);
-        transform: translateY(1px);
-    }
-
-    .minimize-action-btn .btn-label {
-        font-size: 0.7rem;
+    :global(.icon-btn.minimize-btn:hover) {
+        opacity: 1;
+        color: var(--accent-cyan);
+        background: rgba(6, 182, 212, 0.1);
+        transform: scale(1.1);
     }
 
     [data-tooltip] {
