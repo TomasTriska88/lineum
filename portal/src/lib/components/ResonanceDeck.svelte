@@ -949,26 +949,7 @@
                         </span>
                     </div>
 
-                    <!-- Minimize Button -->
-                    <button
-                        class="icon-btn header-action"
-                        onclick={toggleMinimize}
-                        aria-label="Minimize"
-                        title="Minimize to Orb"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            ><line x1="5" y1="12" x2="19" y2="12"></line></svg
-                        >
-                    </button>
+                    <!-- Minimize Button Removed: Replaced by DOCK button in collapsed state -->
 
                     {#if isExpanded}
                         <button
@@ -1933,10 +1914,39 @@
     }
 
     /* Tooltip Styles */
+    .minimize-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    .minimize-action-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(1px);
+    }
+
+    .minimize-action-btn .btn-label {
+        font-size: 0.7rem;
+    }
+
     [data-tooltip] {
         position: relative;
         cursor: help;
     }
+
     [data-tooltip]:hover::before {
         content: attr(data-tooltip);
         position: absolute;

@@ -724,15 +724,18 @@ Rozhodovací strom o povaze "konvergence" systému.
 - [x] **D2.1 Code Audit:** Žádný explicitní `rescale()` nebo `resize()` v `lineum.py`.
 - [x] **D3.1 Determinismus:** Potvrzen (SHA256 Match: `d3_long` 500 steps).
 - [x] **D4.1 Ignition:** Potvrzen "Noise as Fuel" mechanismus (Code Audit: `lineum.py:2075`).
-- [ ] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
+- [x] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
 **Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
 - [x] **D1.3 Kappa Leak:** Vyloučeno pro `spec6` (`KAPPA_MODE="constant"`).
 - [x] **D5.1 Predikce:** Vyvrácena (Determinismus D3).
-- [ ] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
+- [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
-### 🛠️ Plán ověření (Next Steps)
+### ✅ Audit Complete
+- [x] **Final Report:** `audit_report.md` (Czech, Unimpeachable).
+- [x] **Deliverable:** `lineum_audit_package.zip` (Ready for Email).
+- [x] **Repo State:** Clean & Sync (v1.0.18-core).
 1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
 2. **Rescaling Trap (D5):** Uzavřeno.
 
