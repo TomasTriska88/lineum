@@ -40,6 +40,8 @@ function checkClean() {
     try {
         const status = execSync('git status --porcelain', { encoding: 'utf-8' });
         if (status.length > 0) {
+            log("Dirty files:", colors.red);
+            console.log(status);
             error("Working directory is not clean. Please commit or stash changes before merging.");
         }
     } catch (e) {
@@ -79,8 +81,17 @@ async function main() {
     checkClean();
 
     // 2. Checkout main and pull latest
-    run('git checkout main', 'Switch to main branch');
+    // Use force checkout to discard local changes in tracked files immediately
+    run('git checkout -f main', 'Switch to main branch (forced)');
     run('git pull origin main', 'Pull latest main');
+
+    // GUARD: Reset any ghost changes from auto-sync triggers (e.g. VS Code or running dev server)
+    try {
+        log("Forcing git reset --hard HEAD to clean generated files...", colors.yellow);
+        execSync('git reset --hard HEAD', { stdio: 'inherit' });
+    } catch (e) {
+        log("Warning: Reset failed.", colors.red);
+    }
 
     // 3. Merge dev
     try {
