@@ -135,5 +135,14 @@ export const content = {
         ],
         cta_label: 'Contribute via Revolut',
         cta_url: 'https://revolut.me/tomastriska'
+    },
+    whitepaper_warning: {
+        title: 'Documentation Under Revision',
+        paragraphs: [
+            'Please note that <b>whitepapers (including the core whitepaper) are under active revision</b>.',
+            'Data in these documents may not be fully verified and content may not yet be entirely consistent with the latest audit results in Simulacrum.',
+            'We are working on consolidating all definitions. Thank you for your understanding.'
+        ],
+        ack_label: 'I Understand, Continue'
     }
 };
