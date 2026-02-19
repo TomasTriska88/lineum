@@ -112,7 +112,8 @@ export const content = {
     footer: {
         copy: '© 2026 Lineum Project • lineum.io',
         support: 'Support the project (Revolut)',
-        github: 'GitHub'
+        github: 'GitHub',
+        privacy: 'Privacy Policy'
     },
     support: {
         title: 'Support the Lineum Project',

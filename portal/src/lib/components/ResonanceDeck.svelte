@@ -18,6 +18,14 @@
     );
     // let responseText = $state(""); // Removed unused state
     let isExpanded = $state(false);
+    let isMinimized = $state(false); // New state for minimized Orb mode
+
+    function toggleMinimize(e?: Event) {
+        if (e) e.stopPropagation();
+        isMinimized = !isMinimized;
+        if (isMinimized) isExpanded = false; // Ensure it collapses when minimized
+    }
+
     let messages = $state<
         {
             role: "user" | "model";
@@ -850,49 +858,71 @@
     ></div>
 {/if}
 
-<div class="resonance-wrapper active" class:shifted={$isCookieBannerVisible}>
+<div
+    class="resonance-wrapper active"
+    class:shifted={$isCookieBannerVisible}
+    class:minimized={isMinimized}
+>
     <!-- The Deck -->
-    <div class="deck-container" class:expanded={isExpanded}>
+    <div
+        class="deck-container"
+        class:expanded={isExpanded}
+        class:minimized={isMinimized}
+    >
         <div
             class="deck-main"
-            onclick={toggleDeck}
+            onclick={isMinimized ? toggleMinimize : toggleDeck}
             role="button"
             tabindex="0"
-            aria-label="Toggle chat"
+            aria-label={isMinimized ? "Restore Chat" : "Toggle chat"}
             onkeydown={(e) =>
-                (e.key === "Enter" || e.key === " ") && toggleDeck()}
+                (e.key === "Enter" || e.key === " ") &&
+                (isMinimized ? toggleMinimize() : toggleDeck())}
         >
-            <div class="resonance-wave">
-                <div class="wave-line"></div>
-                <div class="wave-line"></div>
-                <div class="wave-line"></div>
-                <div class="wave-line"></div>
-            </div>
-
-            <!-- Passive Whisper -->
-            {#if !isExpanded && whisper}
-                <div class="whisper-bubble" transition:fade>
-                    {whisper}
-                </div>
-            {/if}
-
-            <div class="status-info">
-                <span class="explorer-name">Lina</span>
-                {#if speakingId}
-                    <!-- Audio Controls remain same -->
-                {:else if isTyping}
-                    <div class="mini-wave">
-                        <div class="wave-line"></div>
+            {#if isMinimized}
+                <!-- Orb Content -->
+                <div class="orb-icon" transition:scale={{ duration: 200 }}>
+                    <div class="resonance-wave small">
                         <div class="wave-line"></div>
                         <div class="wave-line"></div>
                         <div class="wave-line"></div>
                     </div>
-                {:else if isExpanded}
-                    <span class="status-tag">ONLINE</span>
-                {:else}
-                    <span class="status-tag">Ask me anything about Lineum</span>
+                </div>
+            {:else}
+                <div class="resonance-wave">
+                    <div class="wave-line"></div>
+                    <div class="wave-line"></div>
+                    <div class="wave-line"></div>
+                    <div class="wave-line"></div>
+                </div>
+
+                <!-- Passive Whisper -->
+                {#if !isExpanded && whisper}
+                    <div class="whisper-bubble" transition:fade>
+                        {whisper}
+                    </div>
                 {/if}
-            </div>
+
+                <div class="status-info">
+                    <span class="explorer-name">Lina</span>
+                    {#if speakingId}
+                        <!-- Audio Controls remain same -->
+                    {:else if isTyping}
+                        <div class="mini-wave">
+                            <div class="wave-line"></div>
+                            <div class="wave-line"></div>
+                            <div class="wave-line"></div>
+                            <div class="wave-line"></div>
+                        </div>
+                    {:else if isExpanded}
+                        <span class="status-tag">ONLINE</span>
+                    {:else}
+                        <span class="status-tag"
+                            >Ask me anything about Lineum</span
+                        >
+                    {/if}
+                </div>
+            {/if}
 
             <!-- Voice Picker Hidden (Defaulted to Kore) -->
             <div class="voice-picker" style="display: none;">
@@ -904,29 +934,27 @@
             </div>
 
             <!-- Header Controls -->
-            <div class="controls-hint group">
-                <!-- Token Counter (Moved here for flow) -->
-                <div
-                    class="token-badge"
-                    data-tooltip="Daily Safety Budget Used"
-                >
-                    <span class="shield-icon">🛡️</span>
-                    <span class="token-val">
-                        {lastUsage?.costInfo?.percentage !== undefined
-                            ? Math.ceil(lastUsage.costInfo.percentage)
-                            : 0}%
-                    </span>
-                </div>
+            {#if !isMinimized}
+                <div class="controls-hint group">
+                    <!-- Token Counter (Moved here for flow) -->
+                    <div
+                        class="token-badge"
+                        data-tooltip="Daily Safety Budget Used"
+                    >
+                        <span class="shield-icon">🛡️</span>
+                        <span class="token-val">
+                            {lastUsage?.costInfo?.percentage !== undefined
+                                ? Math.ceil(lastUsage.costInfo.percentage)
+                                : 0}%
+                        </span>
+                    </div>
 
-                {#if isExpanded}
+                    <!-- Minimize Button -->
                     <button
                         class="icon-btn header-action"
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            showConfirmDialog = true; // Trigger Modal
-                        }}
-                        aria-label="Clear History"
-                        data-tooltip="Clear History"
+                        onclick={toggleMinimize}
+                        aria-label="Minimize"
+                        title="Minimize to Orb"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -938,43 +966,65 @@
                             stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            ><path d="M3 6h18" /><path
-                                d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
-                            /><path
-                                d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
-                            /></svg
+                            ><line x1="5" y1="12" x2="19" y2="12"></line></svg
                         >
                     </button>
-                    <button
-                        class="icon-btn header-action close-btn"
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            isExpanded = false;
-                        }}
-                        title="Close"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            ><line x1="18" y1="6" x2="6" y2="18"></line><line
-                                x1="6"
-                                y1="6"
-                                x2="18"
-                                y2="18"
-                            ></line></svg
+
+                    {#if isExpanded}
+                        <button
+                            class="icon-btn header-action"
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                showConfirmDialog = true; // Trigger Modal
+                            }}
+                            aria-label="Clear History"
+                            data-tooltip="Clear History"
                         >
-                    </button>
-                {:else}
-                    EXPAND
-                {/if}
-            </div>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ><path d="M3 6h18" /><path
+                                    d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                                /><path
+                                    d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                                /></svg
+                            >
+                        </button>
+                        <button
+                            class="icon-btn header-action close-btn"
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                isExpanded = false;
+                            }}
+                            title="Close"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                ><line x1="18" y1="6" x2="6" y2="18"
+                                ></line><line x1="6" y1="6" x2="18" y2="18"
+                                ></line></svg
+                            >
+                        </button>
+                    {:else}
+                        EXPAND
+                    {/if}
+                </div>
+            {/if}
         </div>
 
         {#if isExpanded}
@@ -1286,11 +1336,22 @@
         padding: 0 1rem;
         padding: 0 1rem;
         pointer-events: auto;
-        transition: bottom 0.3s ease-in-out;
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth transition for all props */
     }
 
     .resonance-wrapper.shifted {
         bottom: 8rem; /* Lift up when banner is visible */
+    }
+
+    /* Minimized State (Orb) Position */
+    .resonance-wrapper.minimized {
+        left: auto;
+        right: 2rem;
+        bottom: 2rem;
+        width: auto;
+        transform: none;
+        max-width: none;
+        padding: 0;
     }
 
     .deck-container {
@@ -1306,6 +1367,26 @@
         pointer-events: auto;
         position: relative;
         z-index: 2;
+    }
+
+    /* Orb Styles */
+    .deck-container.minimized {
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        cursor: pointer;
+        background: rgba(10, 10, 12, 0.95);
+        border-color: var(--accent-violet);
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
+    }
+
+    .deck-container.minimized:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 40px rgba(124, 58, 237, 0.5);
     }
 
     .backdrop {
