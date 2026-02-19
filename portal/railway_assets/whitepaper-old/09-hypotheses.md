@@ -1,0 +1,42 @@
+# 9. Hypotézy a stav ověření
+
+Tato kapitola slouží jako přehled hypotéz formulovaných během vývoje systému Lineum. Každá hypotéza má vlastní soubor, kde je uvedena její formulace, výchozí motivace, výstupy a metodika ověření. Plné znění každé hypotézy, její výklad a výstupy najdete v samostatné složce `hypotheses/`.
+
+---
+
+<!-- prettier-ignore-start -->
+| Hypotéza                               | Stav         | Autor / původ                         | Odkaz                                                       |
+| -------------------------------------- | ------------ | ------------------------------------- | ----------------------------------------------------------- |
+| Výtrysk z nasycené φ-pasti (jets)      | 🔄 testováno, zatím 0 % potvrzeno | T. Tříska (2025) | [hypotheses/jet.md](../hypotheses/jet.md) |
+| Tříska's Structural Closure Hypothesis | ✅ confirmed | T. Tříska (2025)                      | [hypotheses/closure.md](../hypotheses/closure.md)           |
+| Emergent Particle Spin Aura              | 🔄 testováno, potvrzeno ve 100 % případů | výstup: spinová aura kvazičástic | [hypotheses/spin_aura.md](../hypotheses/spin_aura.md)
+| Homogeneous Quasiparticle Emergence      | 🔄 testováno | výstup: rovnoměrný výskyt kvazičástic | [hypotheses/particle_emergence.md](../hypotheses/particle_emergence.md)
+| Spectral Stability of Lineum             | 🔄 testováno, potvrzeno ve 100 % běhů | výstup: dominantní frekvence systému | [hypotheses/spectral_stability.md](../hypotheses/spectral_stability.md)
+| Atomové víry                           | 🔄 testováno | T. Tříska (2025) | [hypotheses/vortex_atoms.md](../hypotheses/vortex_atoms.md) |
+| Spinová paměť φ-pastí                  | 🔄 testováno, potvrzeno přibližně v 70 % případů | T. Tříska (2025) | [hypotheses/spin_memory.md](../hypotheses/spin_memory.md)   |
+| Strukturální otisk návratových částic  | 🔄 testováno, 1 případ pozorován | T. Tříska (2025) | [hypotheses/return_phi.md](../hypotheses/return_phi.md)     |
+| Tříska’s Lineum Echo Hypothesis | 🔄 testováno | T. Tříska (2025) | [hypotheses/return_echo.md](../hypotheses/return_echo.md) |
+| Tříska–Marečková-Smeták Evolution–Mutation Hypothesis | 🔄 testováno | T. Tříska (2025) | [06-interpretation.md](06-interpretation.md) |
+| Tříska’s Resonant Seed Hypothesis | ✅ confirmed | T. Tříska (2025) | [hypotheses/resonant_seed.md](../hypotheses/resonant_seed.md) |
+| Tříska’s Dimensional Transparency Hypothesis | ✅ confirmed | T. Tříska (2025) | [hypotheses/dimensional_transparency.md](../hypotheses/dimensional_transparency.md) |
+| Tříska’s Tensor Spin Hypothesis | ❌ not confirmed | T. Tříska (2025) | [hypotheses/tensor_spin.md](../hypotheses/tensor_spin.md) |
+| Tříska’s Silent Collapse Hypothesis    | ✅ confirmed | T. Tříska (2025) | [hypotheses/silent_collapse.md](../hypotheses/silent_collapse.md) |
+| Tříska’s Silent Gravity Hypothesis     | ✅ confirmed | T. Tříska (2025)                      | [hypotheses/silent_gravity.md](../hypotheses/silent_gravity.md) |
+| Tříska’s Spectral Observer Hypothesis  | ✅ confirmed | T. Tříska (2025) | [hypotheses/spectral_observer.md](../hypotheses/spectral_observer.md) |
+| Tříska’s Law Transition Hypothesis     | 🔄 testováno | T. Tříska (2025) | [hypotheses/law_transition.md](../hypotheses/law_transition.md) |
+| Tříska’s Harmonic Depth Hypothesis     | 🔄 testováno, více FFT konfigurací ukazuje hierarchii harmonických vrstev | T. Tříska (2025) | [hypotheses/harmonic_depth.md](../hypotheses/harmonic_depth.md) |
+| Tříska’s Harmonic Spectrum Hypothesis  | 🔄 testováno, potvrzeny vícenásobné harmonické špičky (např. 9.990e+20 Hz) | T. Tříska (2025) | [hypotheses/harmonic_spectrum.md](../hypotheses/harmonic_spectrum.md) |
+| Tříska’s Spectral Balance Hypothesis | 🔄 testováno, pozorována numerická nestabilita destruktivního spektra | T. Tříska (2025) | [hypotheses/spectral_balance.md](../hypotheses/spectral_balance.md) |
+| Tříska’s Spectral Mirror Hypothesis | 🔄 testováno – fáze párové spektrální analýzy | T. Tříska (2025) | [hypotheses/spectral_mirror.md](../hypotheses/spectral_mirror.md) |
+| Tříska’s Autodestructive Spectrum Hypothesis | 🔄 testováno, výstup rušičky způsobuje numerické zhroucení a spektrální singularity | T. Tříska (2025) | [hypotheses/autodestructive_spectrum.md](../hypotheses/autodestructive_spectrum.md) |
+| Tříska’s Transverson Resonance Hypothesis | 🔄 testováno, potvrzeny klíčové vzory a vizuální shody | T. Tříska (2025) | [hypotheses/transverson_resonance.md](../hypotheses/transverson_resonance.md) |
+| Tříska-Smeták Zeta–RNB Resonance Hypothesis | ✅ silná korelace | T. Tříska (2025)                  | [hypotheses/zeta_resonance.md](../hypotheses/zeta_resonance.md)                 |
+| Tříska’s Vortex Particle Coupling Hypothesis | 🔄 testováno, potvrzeny první topologické konfigurace (např. proton) | T. Tříska (2025) | [hypotheses/vortex_particle_coupling.md](../hypotheses/vortex_particle_coupling.md) |
+<!-- prettier-ignore-end -->
+
+> 🧠 **Poznámka:**  
+> Některé hypotézy (např. Zeta Resonance, Harmonic Spectrum, Spectral Observer…) spadají do vznikající kategorie _strukturálních číselných rezonancí_ – zkoumají vztah mezi dynamikou systému Lineum a numerickými strukturami jako jsou Riemannovy zeta nuly, Fibonacciho poměry nebo spektrální invarianty.
+
+---
+
+Tento seznam bude průběžně doplňován. Každá hypotéza má svůj vlastní `.md` soubor, který obsahuje její přesné znění, výchozí motivaci, stav a odkazy na relevantní výstupy a vizualizace.

@@ -19,6 +19,13 @@ function findRoot(startDir) {
         }
     }
 
+    // Check for Railway Staged Assets
+    const stagedPath = path.join(startDir, '../railway_assets'); // Assuming startDir is scripts/
+    if (fs.existsSync(stagedPath)) {
+        console.log(`[SYNC] Detected Railway Staged Assets at: ${stagedPath}`);
+        return stagedPath;
+    }
+
     while (true) {
         const checkPath = path.join(current, 'whitepapers');
         if (fs.existsSync(checkPath)) {
@@ -37,12 +44,20 @@ function findRoot(startDir) {
     if (process.env.RAILWAY_ENVIRONMENT || fs.existsSync('/app')) {
         console.warn('\n' + '='.repeat(60));
         console.warn('[SYNC] DETECTED RESTRICTED BUILD CONTEXT');
+
+        // Final check for staged assets in current dir if structure is flat
+        // On railway, root might be ./ and assets might be in ./railway_assets
+        if (fs.existsSync(path.join(process.cwd(), 'railway_assets'))) {
+            console.log('[SYNC] Found railway_assets in CWD. Using that.');
+            return path.join(process.cwd(), 'railway_assets');
+        }
+
         console.warn('[SYNC] The script cannot find whitepapers/ directory.');
-        console.warn('[SYNC] POSSIBLE CAUSE: Service Name Mismatch.');
-        console.warn('[SYNC] Railway only applies `railway.json` config if the Service Name matches exactly.');
+        console.warn('[SYNC] POSSIBLE CAUSE: Service Name Mismatch or Assets not staged.');
         console.warn('[SYNC] ACTION REQUIRED:');
         console.warn('[SYNC] 1. Rename your service to "Portal" (or "portal") in Railway Dashboard.');
         console.warn('[SYNC] 2. OR Manually set Root Directory to "./" in Settings -> General.');
+        console.warn('[SYNC] 3. OR Ensure "npm run stage" was run and committed.');
         console.warn('='.repeat(60) + '\n');
     }
 

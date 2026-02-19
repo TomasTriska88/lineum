@@ -1,6 +1,6 @@
 
 import { GoogleAICacheManager, GoogleAIFileManager } from '@google/generative-ai/server';
-import { GEMINI_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { createHash } from 'crypto';
 
 // Cache configuration
@@ -14,8 +14,8 @@ let fileManager: GoogleAIFileManager | null = null;
 
 function getCacheManager() {
     if (!cacheManager) {
-        if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not found");
-        cacheManager = new GoogleAICacheManager(GEMINI_API_KEY);
+        if (!env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not found in environment");
+        cacheManager = new GoogleAICacheManager(env.GEMINI_API_KEY);
     }
     return cacheManager;
 }
@@ -72,7 +72,9 @@ export async function getOrUpdateCache(content: string, mimeType = 'text/plain')
                     // Old version of our cache (different hash) -> Cleanup
                     // We only clean up if we are sure it's ours and old
                     console.log(`[GeminiCache] Cleanup old version: ${c.displayName}`);
-                    try { await mgr.delete(c.name); } catch (e) { }
+                    if (c.name) {
+                        try { await mgr.delete(c.name); } catch (e) { }
+                    }
                 }
             }
         }

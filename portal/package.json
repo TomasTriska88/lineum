@@ -15,6 +15,7 @@
 		"test": "vitest run",
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
+		"stage": "node scripts/stage-railway.js",
 		"prebuild": "npm run sync",
 		"safe-merge": "node scripts/safe-merge.cjs"
 	},
