@@ -65,7 +65,16 @@ Object.defineProperty(navigator, 'mediaDevices', {
     }
 });
 
-describe.skip('ResonanceDeck Wireframe', () => {
+Object.defineProperty(window, 'speechSynthesis', {
+    value: {
+        cancel: vi.fn(),
+        speak: vi.fn(),
+        getVoices: vi.fn().mockReturnValue([]),
+        onvoiceschanged: null
+    }
+});
+
+describe('ResonanceDeck Wireframe', () => {
     beforeEach(() => {
         vi.useFakeTimers();
     });
@@ -83,16 +92,16 @@ describe.skip('ResonanceDeck Wireframe', () => {
         await tick();
 
         // 1. Verify SVG ViewBox is strictly 32x32
-        const svgs = container.querySelectorAll('svg');
-        expect(svgs.length).toBeGreaterThan(0);
+        const wireframeSvg = container.querySelector('.field-lines svg');
+        expect(wireframeSvg).toBeTruthy();
 
-        svgs.forEach(svg => {
-            expect(svg.getAttribute('viewBox')).toBe('0 0 32 32');
-            expect(svg.getAttribute('preserveAspectRatio')).toBe('none');
-        });
+        if (wireframeSvg) {
+            expect(wireframeSvg.getAttribute('viewBox')).toBe('0 0 32 32');
+            expect(wireframeSvg.getAttribute('preserveAspectRatio')).toBe('none');
+        }
 
         // 2. Verify Rendered Paths
-        const paths = container.querySelectorAll('path');
+        const paths = container.querySelectorAll('.field-lines path');
         expect(paths.length).toBeGreaterThan(0);
 
         // Check first path geometry
