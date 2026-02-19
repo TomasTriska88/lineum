@@ -11,7 +11,9 @@ const STORAGE_WHITELIST: Record<string, string[]> = {
     'AiResearch.svelte': ['lineum_research_history'],
     'privacy.test.ts': ['cookie_consent'],
     'chat_flow.test.ts': ['resonance_history'], // Simulates chat history
+    'wiki_warning.spec.ts': ['lineum_whitepaper_warning_acknowledged'],
     'setup.ts': [],
+    '+page.svelte': ['lineum_whitepaper_warning_acknowledged'],
     'privacy_guard.test.ts': ['cookie_consent', 'resonance_history', 'lineum_research_history', 'key'], // The guard itself reads these for regex matching context or verification
 };
 

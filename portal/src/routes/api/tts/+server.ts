@@ -12,12 +12,14 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
     const limit = rateLimiter.check('tts', id);
 
     if (!limit.allowed) {
+        console.log('DEBUG: Rate Limit Hit', limit);
         return json({ error: limit.reason }, { status: 429 });
     }
 
     // 1.5 Safety: Check Daily Budget
     const limitCheck = usageGuard.checkLimit();
     if (!limitCheck.allowed) {
+        console.log('DEBUG: Usage Limit Hit', limitCheck);
         // PERSONA VS DEV MODE
         const isDev = process.env.NODE_ENV === 'development';
         const msg = isDev
@@ -46,6 +48,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
     }
 
     if (!GEMINI_API_KEY) {
+        console.log('DEBUG: Missing API Key');
         return json({ error: "Server configuration error (Missing Key)." }, { status: 500 });
     }
 

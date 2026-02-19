@@ -24,11 +24,19 @@ const autoSyncPlugin = () => ({
 			path.resolve(__dirname, '../docs'),
 			path.resolve(__dirname, '../hypotheses'),
 			path.resolve(__dirname, '../whitepapers'),
-			path.resolve(__dirname, '../whitepapers-legacy')
+			path.resolve(__dirname, '../whitepapers-legacy'),
+			path.resolve(__dirname, 'LINA_PERSONA.md'),
+			path.resolve(__dirname, 'DESIGN_GUIDE.md')
 		]);
 
 		watcher.on('change', (file: string) => {
-			if (file.includes('whitepapers') || file.includes('docs') || file.includes('hypotheses')) {
+			if (
+				file.includes('whitepapers') ||
+				file.includes('docs') ||
+				file.includes('hypotheses') ||
+				file.includes('LINA_PERSONA.md') ||
+				file.includes('DESIGN_GUIDE.md')
+			) {
 				executeSync();
 			}
 		});

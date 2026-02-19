@@ -18,7 +18,7 @@
         variant="danger"
         confirmLabel={content.whitepaper_warning.ack_label}
         showCancel={false}
-        on:confirm={onAck}
+        onconfirm={onAck}
     >
         {#each content.whitepaper_warning.paragraphs as p}
             <p>{@html p}</p>

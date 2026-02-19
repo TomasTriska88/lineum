@@ -26,6 +26,7 @@ global.fetch = fetchMock;
 describe('TTS Server Configuration', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        global.fetch = fetchMock; // Override setup.ts guard
         fetchMock.mockResolvedValue({
             ok: true,
             json: async () => ({ candidates: [] }) // Dummy response

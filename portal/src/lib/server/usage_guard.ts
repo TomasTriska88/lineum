@@ -77,6 +77,12 @@ export class UsageGuard {
     }
 
     public recordUsage(inputTokens: number, outputTokens: number, model: 'flash' | 'pro' = 'flash') {
+        // SAFETY: Do not record usage in test environment or if key is poisoned
+        if ((process.env.NODE_ENV === 'test' && !process.env.FORCE_USAGE_RECORDING) || process.env.GEMINI_API_KEY === 'INVALID_TEST_KEY') {
+            console.log(`[UsageGuard] TEST MODE: Ignoring usage record (${inputTokens}/${outputTokens})`);
+            return;
+        }
+
         this.stats.tokensInput += inputTokens;
         this.stats.tokensOutput += outputTokens;
 

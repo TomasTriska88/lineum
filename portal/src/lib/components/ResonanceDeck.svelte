@@ -25,6 +25,8 @@
         }, 500);
     }
 
+    let speakingId = $state<string | null>(null);
+
     let lastUsage = $state<{ totalTokenCount: number; costInfo?: any } | null>(
         null,
     );
@@ -456,7 +458,7 @@
     );
 
     let currentAudio: HTMLAudioElement | null = null;
-    let speakingId = $state<string | null>(null);
+    // speakingId moved to top
     let usingFallback = $state(false);
     let ttsError = $state("");
     let audioCache = new Map<string, string>(); // msg index -> blob url
@@ -1328,8 +1330,8 @@
                     variant="danger"
                     confirmLabel="Confirm Delete"
                     cancelLabel="Cancel"
-                    on:cancel={() => (showConfirmDialog = false)}
-                    on:confirm={() => {
+                    oncancel={() => (showConfirmDialog = false)}
+                    onconfirm={() => {
                         messages = [];
                         localStorage.removeItem("resonance_history");
                         generateGreeting();

@@ -1,22 +1,31 @@
 <script lang="ts">
     import { fade, fly } from "svelte/transition";
     import { portal } from "$lib/actions/portal";
-    import { createEventDispatcher } from "svelte";
 
-    export let title: string;
-    export let variant: "info" | "danger" = "info";
-    export let confirmLabel = "Confirm";
-    export let cancelLabel = "Cancel";
-    export let showCancel = true;
-
-    const dispatch = createEventDispatcher();
+    let {
+        title,
+        variant = "info",
+        confirmLabel = "Confirm",
+        cancelLabel = "Cancel",
+        showCancel = true,
+        onconfirm,
+        oncancel,
+    } = $props<{
+        title: string;
+        variant?: "info" | "danger";
+        confirmLabel?: string;
+        cancelLabel?: string;
+        showCancel?: boolean;
+        onconfirm?: () => void;
+        oncancel?: () => void;
+    }>();
 
     function handleConfirm() {
-        dispatch("confirm");
+        onconfirm?.();
     }
 
     function handleCancel() {
-        dispatch("cancel");
+        oncancel?.();
     }
 </script>
 
@@ -40,11 +49,11 @@
 
         <div class="dialog-actions">
             {#if showCancel}
-                <button class="btn btn-cancel" on:click={handleCancel}
+                <button class="btn btn-cancel" onclick={handleCancel}
                     >{cancelLabel}</button
                 >
             {/if}
-            <button class="btn btn-confirm" on:click={handleConfirm}
+            <button class="btn btn-confirm" onclick={handleConfirm}
                 >{confirmLabel}</button
             >
         </div>

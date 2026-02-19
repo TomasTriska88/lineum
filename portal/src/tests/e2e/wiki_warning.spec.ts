@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './base';
 
 test.describe('Wiki Warning Modal', () => {
     test.beforeEach(async ({ page }) => {
@@ -30,8 +30,16 @@ test.describe('Wiki Warning Modal', () => {
         await page.goto('/wiki');
         await page.getByRole('button', { name: 'I Understand, Continue' }).click();
 
-        // 2. Reload
-        await page.reload();
+        // CHECK STORAGE
+        const ackBefore = await page.evaluate(() => sessionStorage.getItem('lineum_whitepaper_warning_acknowledged'));
+        expect(ackBefore).toBe('true');
+
+        // 2. Reload (Simulate via goto to ensure clean state)
+        await page.goto('/wiki');
+
+        // CHECK STORAGE
+        const ackAfter = await page.evaluate(() => sessionStorage.getItem('lineum_whitepaper_warning_acknowledged'));
+        expect(ackAfter).toBe('true');
 
         // 3. Should not see modal
         await expect(page.locator('.dialog-window')).not.toBeVisible();

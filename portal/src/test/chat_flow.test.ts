@@ -119,8 +119,10 @@ describe('Chat Flow Integration', () => {
     it('should send a message with context and display Markdown response', async () => {
         const mockResponse = { text: "Here is a **bold** claim." };
         // MOCK FETCH for this test
-        (global.fetch as any).mockImplementation((url: string) => {
-            if (url.includes('/api/chat')) {
+        // MOCK FETCH for this test
+        window.fetch = vi.fn().mockImplementation((url: string | URL | Request, config?: RequestInit) => {
+            const urlStr = url.toString();
+            if (urlStr.includes('/api/chat')) {
                 return Promise.resolve({
                     ok: true,
                     json: async () => {
@@ -129,9 +131,9 @@ describe('Chat Flow Integration', () => {
                         await new Promise(r => setTimeout(r, 50));
                         return mockResponse;
                     }
-                });
+                } as Response);
             }
-            return Promise.resolve({ ok: true, json: async () => ({}) });
+            return Promise.resolve({ ok: true, json: async () => ({}) } as Response);
         });
 
         render(ResonanceDeck, { active: true, testMode: false });

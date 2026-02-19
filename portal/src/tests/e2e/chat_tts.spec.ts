@@ -1,33 +1,11 @@
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from './base';
 
 test.describe('Chat & TTS Flow', () => {
     test.beforeEach(async ({ page }) => {
-        // 1. Strict Network Blocking (Safety First)
-        await page.route('**/*', async (route) => {
-            const url = route.request().url();
-            console.log(`Inspecting URL: ${url}`);
-            // Allow localhost (vite server) and data URIs (inline assets)
-            if (url.includes('localhost') || url.startsWith('data:')) {
-                // await route.continue(); // allow quietly
-                await route.continue();
-                return;
-            }
-            // Allow specific API mocks (handled below)
-            if (url.includes('/api/chat') || url.includes('/api/tts')) {
-                await route.continue();
-                return;
-            }
-            // Allow Fonts (Google Fonts) - these are safe
-            if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
-                console.log(`Allowed external font: ${url}`);
-                await route.continue();
-                return;
-            }
-            // Block everything else
-            console.error(`Blocked external request to: ${url}`);
-            await route.abort();
-        });
+        // Network blocking is handled by base.ts
+
+        // 2. Mock Chat API
 
         // 2. Mock Chat API
         await page.route('**/api/chat', async (route) => {

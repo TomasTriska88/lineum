@@ -1,16 +1,38 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { content } from "$lib/content";
     import MarginShards from "$lib/components/MarginShards.svelte";
-    export let data;
-    const { papers } = data;
+    import WhitepaperWarningModal from "$lib/components/WhitepaperWarningModal.svelte";
+    let { data }: { data: any } = $props();
+    let papers = $derived(data.papers as any[]);
+
+    // Warning Modal Logic
+    let showWarning = $state(false);
+
+    onMount(() => {
+        const ack = sessionStorage.getItem(
+            "lineum_whitepaper_warning_acknowledged",
+        );
+        if (!ack) showWarning = true;
+    });
+
+    function handleAck() {
+        sessionStorage.setItem(
+            "lineum_whitepaper_warning_acknowledged",
+            "true",
+        );
+        showWarning = false;
+    }
 
     // Group papers by category
     const categories = ["Core", "Extension", "Experiment", "Other"];
-    $: groupedPapers = categories.reduce((acc, cat) => {
-        const list = papers.filter((p) => p.category === cat);
-        if (list.length > 0) acc.push({ label: cat, list });
-        return acc;
-    }, [] as any[]);
+    let groupedPapers = $derived(
+        categories.reduce((acc: any[], cat: string) => {
+            const list = papers.filter((p: any) => p.category === cat);
+            if (list.length > 0) acc.push({ label: cat, list });
+            return acc;
+        }, [] as any[]),
+    );
 </script>
 
 <svelte:head>
@@ -18,6 +40,9 @@
 </svelte:head>
 
 <div class="wiki-container">
+    {#if showWarning}
+        <WhitepaperWarningModal onAck={handleAck} />
+    {/if}
     <div class="container wrapper">
         <aside class="toc">
             <div class="toc-sticky">

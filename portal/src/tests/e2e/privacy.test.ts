@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './base';
 
 test.describe('GDPR & Privacy Compliance', () => {
 
@@ -49,7 +49,9 @@ test.describe('GDPR & Privacy Compliance', () => {
         await page.goto('/');
         await page.waitForTimeout(1500);
 
-        await page.getByRole('link', { name: 'Privacy Policy' }).click();
+        const link = page.locator('.cookie-banner a[href="/privacy"]');
+        await expect(link).toBeVisible();
+        await link.click();
         await expect(page).toHaveURL(/.*\/privacy/);
     });
 

@@ -12,8 +12,9 @@ export default defineConfig({
     use: {
         baseURL: 'http://localhost:4173',
         trace: 'on-first-retry',
-        // CRITICAL: Block all external requests by default
-        // We will whitelist localhost in tests or specific network contexts
+        extraHTTPHeaders: {
+            'x-test-mode': 'true' // Signal to server we are in test mode
+        }
     },
     projects: [
         {
@@ -22,9 +23,13 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'npm run preview -- --port 4173',
+        command: 'cross-env GEMINI_API_KEY=INVALID_TEST_KEY npm run dev -- --port 4173',
         url: 'http://localhost:4173',
         reuseExistingServer: !process.env.CI,
-        timeout: 120000, // Give extensive time for server boot
+        timeout: 120000,
+        env: {
+            GEMINI_API_KEY: 'INVALID_TEST_KEY',
+            NODE_ENV: 'test'
+        }
     },
 });

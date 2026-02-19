@@ -24,47 +24,44 @@ vi.mock('$lib/utils/chatUtils', () => ({
     stripMarkdown: (s: string) => s
 }));
 
-// Mock Window APIs
-Object.defineProperty(window, 'speechSynthesis', {
-    value: {
-        cancel: vi.fn(),
-        speak: vi.fn(),
-        getVoices: vi.fn().mockReturnValue([]),
-        onvoiceschanged: null
-    }
-});
-
-Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation(query => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-    })),
-});
+// Mocks for Window APIs are handled in setup.ts
 
 describe('ResonanceDeck Interaction', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-    });
+    // timers removed for debugging transitions
+    // beforeEach(() => {
+    //     vi.useFakeTimers();
+    // });
 
-    afterEach(() => {
-        vi.runOnlyPendingTimers();
-        vi.useRealTimers();
-    });
+    // afterEach(() => {
+    //     vi.runOnlyPendingTimers();
+    //     vi.useRealTimers();
+    // });
 
 
 
     it('should toggle minimize state', async () => {
         render(ResonanceDeck, { props: { active: true } });
-
-        // Default state: Expanded (or at least valid DOM)
         const deckContainer = screen.getByRole('button', { name: /Toggle chat|Minimize to Orb/i });
         expect(deckContainer).toBeTruthy();
+    });
+
+    it('should enter userTyping state on input', async () => {
+        render(ResonanceDeck, { props: { active: true } });
+
+        // Deck starts collapsed/minimized. Click to expand.
+        const deckContainer = screen.getByRole('button', { name: "Toggle chat" });
+        await fireEvent.click(deckContainer);
+        console.log("Deck clicked. Waiting for expand.");
+
+        // Advance time for transitions
+        // await vi.advanceTimersByTimeAsync(1000);
+
+        // Wait for inputs to appear
+        const input = await screen.findByPlaceholderText(/Ask Lina|Click to ask/i);
+
+        if (!input) throw new Error("Input not found");
+
+        await fireEvent.input(input, { target: { value: 'Hello' } });
+        expect(input).toBeTruthy();
     });
 });

@@ -20,34 +20,32 @@ describe('Dialog Component', () => {
     });
 
     it('emits confirm event on button click', async () => {
-        const { getByText, component } = render(Dialog, {
+        const onConfirm = vi.fn();
+        const { getByText } = render(Dialog, {
             props: {
                 title: 'Confirm Me',
-                confirmLabel: 'Yes'
+                confirmLabel: 'Yes',
+                onconfirm: onConfirm
             }
         });
 
         const confirmBtn = getByText('Yes');
-        const onConfirm = vi.fn();
-        component.$on('confirm', onConfirm);
-
         await fireEvent.click(confirmBtn);
         expect(onConfirm).toHaveBeenCalled();
     });
 
     it('emits cancel event on button click', async () => {
-        const { getByText, component } = render(Dialog, {
+        const onCancel = vi.fn();
+        const { getByText } = render(Dialog, {
             props: {
                 title: 'Cancel Me',
                 cancelLabel: 'No',
-                showCancel: true
+                showCancel: true,
+                oncancel: onCancel
             }
         });
 
         const cancelBtn = getByText('No');
-        const onCancel = vi.fn();
-        component.$on('cancel', onCancel);
-
         await fireEvent.click(cancelBtn);
         expect(onCancel).toHaveBeenCalled();
     });

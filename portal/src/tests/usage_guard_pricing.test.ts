@@ -25,6 +25,7 @@ describe('UsageGuard Multi-Model Pricing', () => {
         vi.resetAllMocks();
         // Mock fs to simulate no existing DB
         vi.mocked(fs.existsSync).mockReturnValue(false);
+        process.env.FORCE_USAGE_RECORDING = 'true';
         guard = new UsageGuard();
     });
 
