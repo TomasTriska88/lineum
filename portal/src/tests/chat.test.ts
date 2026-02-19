@@ -57,12 +57,12 @@ describe('Chat Module (Safe RAG)', () => {
         mockGetGenerativeModel.mockReturnValue(mockModel);
     });
 
-    it('should initialize Gemini 2.0 Flash', async () => {
+    it('should initialize Gemini 2.5 Flash', async () => {
         await chat([{ role: 'user', parts: [{ text: 'Hello' }] }] as any, 'test-context');
 
         expect(GoogleGenerativeAI).toHaveBeenCalledWith('mock-key');
         expect(mockGetGenerativeModel).toHaveBeenCalledWith(expect.objectContaining({
-            model: 'gemini-2.0-flash'
+            model: 'gemini-2.5-flash'
         }));
     });
 

@@ -143,9 +143,44 @@ You have access to the following indexed project knowledge:
 ${JSON.stringify(aiIndex.map(f => ({ name: f.name, path: f.path, status: f.status, type: f.type })), null, 2)}
 `;
 
-// Imports for RAG and Safety
+import { execSync } from 'child_process';
 import { usageGuard } from "./usage_guard";
 import { contextSelector } from "./context_selector";
+
+// Helper: Get Git Context
+function getGitContext(): string {
+    try {
+        return execSync('git log -n 5 --pretty=format:"%h - %s (%cr)"').toString().trim();
+    } catch (e) {
+        return "Git history unavailable";
+    }
+}
+
+const GIT_HISTORY = getGitContext();
+const LATEST_VERSION = GIT_HISTORY.split('\n')[0] || "Unknown";
+
+// Helper: Get Active Experiments
+const EXPERIMENTS = aiIndex
+    .filter(i => i.name.includes("extension") || i.name.includes("exp"))
+    .map(i => i.name)
+    .join(", ");
+
+// 3. MODEL: Use Reliable Smart Model
+const MODEL_NAME = "gemini-2.5-flash";
+
+let dynamicPrompt = SYSTEM_PROMPT;
+
+// DYNAMIC METADATA INJECTION
+const budgetStats = usageGuard.getStats();
+dynamicPrompt += `\n\n[SYSTEM METADATA]:
+- Model Architecture: ${MODEL_NAME}
+- Project Version: ${LATEST_VERSION}
+- Daily Budget: $${budgetStats.budgetLimit} (Used: ${budgetStats.percentage.toFixed(1)}%)
+- Active Experiments: ${EXPERIMENTS || "None"}
+- Recent Changes:
+${GIT_HISTORY}
+\n`;
+
 
 export async function chat(messages: { role: 'user' | 'model', parts: { text: string }[] }[], context?: string) {
     if (!GEMINI_API_KEY) {
