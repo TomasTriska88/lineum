@@ -21,8 +21,13 @@ function error(message) {
 }
 
 function run(command, description) {
+    const isDryRun = process.argv.includes('--dry-run');
     try {
         log(`Running: ${description}...`, colors.cyan);
+        if (isDryRun && command.startsWith('git push')) {
+            log(`[DRY-RUN] Would execute: ${command}`, colors.yellow);
+            return;
+        }
         execSync(command, { stdio: 'inherit' });
         log(`✓ ${description} complete.`, colors.green);
     } catch (e) {
@@ -90,7 +95,13 @@ async function main() {
 
     // 6. Confirmation and Push
     log("All tests passed! Data is synced.", colors.green);
-    const confirmed = await askConfirmation();
+
+    let confirmed = false;
+    if (process.argv.includes('--yes') || process.argv.includes('-y')) {
+        confirmed = true;
+    } else {
+        confirmed = await askConfirmation();
+    }
 
     if (confirmed) {
         run('git push origin main', 'Push to Main');
