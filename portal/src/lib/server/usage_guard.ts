@@ -5,11 +5,11 @@ import path from 'path';
 
 const DB_FILE = 'usage_db.json';
 
-// Pricing for Gemini 2.0 (Estimated conservative blended rate)
+// Pricing for Gemini 2.5 Flash (Same as 2.0 Flash)
 // Input: $0.10 / 1M
 // Output: $0.40 / 1M
-// RAG Input is small (~10k), Output is ~500.
-// Avg cost per request ~ $0.0015.
+// Cost Estimate for "Maximum Context" (Lina Persona + RAG ~15k tokens):
+// ~15k * ($0.10/1M) = ~$0.0015 per request.
 
 const COST_FLASH_INPUT = 0.10; // $0.10 / 1M
 const COST_FLASH_OUTPUT = 0.40; // $0.40 / 1M

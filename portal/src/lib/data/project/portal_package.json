@@ -15,7 +15,8 @@
 		"test": "vitest run",
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
-		"prebuild": "npm run sync"
+		"prebuild": "npm run sync",
+		"safe-merge": "node scripts/safe-merge.cjs"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.58.2",

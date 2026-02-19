@@ -16,6 +16,7 @@ async function listModels() {
 
     try {
         const candidates = [
+            "gemini-2.5-flash",     // Target Model
             "gemini-3.0-pro-exp",
             "gemini-3.0-pro",
             "gemini-2.0-pro-exp",
