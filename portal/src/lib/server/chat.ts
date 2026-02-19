@@ -147,8 +147,10 @@ import { execSync } from 'child_process';
 import { usageGuard } from "./usage_guard";
 import { contextSelector } from "./context_selector";
 
-// Helper: Get Git Context
+// Helper: Get Git Context (Cached)
+let cachedGitHistory = "";
 function getGitContext(): string {
+    if (cachedGitHistory) return cachedGitHistory;
     try {
         return execSync('git log -n 5 --pretty=format:"%h - %s (%cr)"').toString().trim();
     } catch (e) {
@@ -156,10 +158,7 @@ function getGitContext(): string {
     }
 }
 
-const GIT_HISTORY = getGitContext();
-const LATEST_VERSION = GIT_HISTORY.split('\n')[0] || "Unknown";
-
-// Helper: Get Active Experiments
+// Helper: Get Active Experiments (Cached)
 const EXPERIMENTS = aiIndex
     .filter(i => i.name.includes("extension") || i.name.includes("exp"))
     .map(i => i.name)
@@ -167,20 +166,6 @@ const EXPERIMENTS = aiIndex
 
 // 3. MODEL: Use Reliable Smart Model
 const MODEL_NAME = "gemini-2.5-flash";
-
-let dynamicPrompt = SYSTEM_PROMPT;
-
-// DYNAMIC METADATA INJECTION
-const budgetStats = usageGuard.getStats();
-dynamicPrompt += `\n\n[SYSTEM METADATA]:
-- Model Architecture: ${MODEL_NAME}
-- Project Version: ${LATEST_VERSION}
-- Daily Budget: $${budgetStats.budgetLimit} (Used: ${budgetStats.percentage.toFixed(1)}%)
-- Active Experiments: ${EXPERIMENTS || "None"}
-- Recent Changes:
-${GIT_HISTORY}
-\n`;
-
 
 export async function chat(messages: { role: 'user' | 'model', parts: { text: string }[] }[], context?: string) {
     if (!GEMINI_API_KEY) {
@@ -210,7 +195,20 @@ export async function chat(messages: { role: 'user' | 'model', parts: { text: st
         console.log(`[Chat] Selecting context for: "${lastMessage.substring(0, 50)}..."`);
         const smartContext = contextSelector.select(lastMessage);
 
+        // DYNAMIC METADATA INJECTION (Per Request)
+        const budgetStats = usageGuard.getStats();
+        const gitHistory = getGitContext();
+        const latestVersion = gitHistory.split('\n')[0] || "Unknown";
+
         let dynamicPrompt = SYSTEM_PROMPT;
+        dynamicPrompt += `\n\n[SYSTEM METADATA]:
+- Model Architecture: ${MODEL_NAME}
+- Project Version: ${latestVersion}
+- Daily Budget: $${budgetStats.budgetLimit} (Used: ${budgetStats.percentage.toFixed(1)}%)
+- Active Experiments: ${EXPERIMENTS || "None"}
+- Recent Changes:
+${gitHistory}
+\n`;
 
         // Inject only RELEVANT context (RAG)
         dynamicPrompt += `\n\n=== RELEVANT PROJECT KNOWLEDGE (RAG) ===\n${smartContext}\n=========================================\n`;
@@ -219,7 +217,7 @@ export async function chat(messages: { role: 'user' | 'model', parts: { text: st
             dynamicPrompt += `\n[CURRENT USER CONTEXT]: The user is currently viewing the page: "${context}". Tailor your response to this location.`;
         }
 
-        // 3. MODEL: Use Reliable Smart Model (Gemini 2.5 Flash)
+        // 3. MODEL: Use Reliable Smart Model
         const model = genAI.getGenerativeModel({
             model: MODEL_NAME,
             systemInstruction: dynamicPrompt,

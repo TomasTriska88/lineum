@@ -25,6 +25,14 @@ vi.mock('$lib/data/ai_index.json', () => ({ default: [] })); // Mock index
 vi.mock('$env/dynamic/private', () => ({
     env: { GEMINI_API_KEY: 'mock-key' }
 }));
+vi.mock('child_process', () => {
+    return {
+        execSync: vi.fn().mockReturnValue('a1b2c3d - Mock Commit (2 hours ago)'),
+        default: {
+            execSync: vi.fn().mockReturnValue('a1b2c3d - Mock Commit (2 hours ago)')
+        }
+    };
+});
 
 describe('Chat Module (Safe RAG)', () => {
     beforeEach(() => {
@@ -64,6 +72,29 @@ describe('Chat Module (Safe RAG)', () => {
         expect(mockGetGenerativeModel).toHaveBeenCalledWith(expect.objectContaining({
             model: 'gemini-2.5-flash'
         }));
+    });
+
+    it('should inject dynamic system metadata (Git, Budget)', async () => {
+        // Setup mocks for this specific test
+        vi.spyOn(usageGuard, 'getStats').mockReturnValue({
+            date: '2026-02-19',
+            tokensInput: 1000,
+            tokensOutput: 1000,
+            estimatedCost: 0.05,
+            budgetLimit: 1.0,
+            percentage: 5.0
+        });
+
+        await chat([{ role: 'user', parts: [{ text: 'Status?' }] }] as any);
+
+        // Verify systemInstruction contains injected values
+        const callArgs = mockGetGenerativeModel.mock.calls[0][0];
+        const systemPrompt = callArgs.systemInstruction;
+
+        expect(systemPrompt).toContain('Model Architecture: gemini-2.5-flash');
+        expect(systemPrompt).toContain('Daily Budget: $1 (Used: 5.0%)');
+        expect(systemPrompt).toContain('Recent Changes:');
+        expect(systemPrompt).toContain('a1b2c3d - Mock Commit');
     });
 
     it('should inject RAG context into system prompt', async () => {
