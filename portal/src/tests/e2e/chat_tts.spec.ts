@@ -118,6 +118,7 @@ test.describe('Chat & TTS Flow', () => {
         const input = page.getByPlaceholder(/Ask Lina/i);
         await input.waitFor({ state: 'visible', timeout: 15000 });
         await input.fill('Hello AI');
+        await page.waitForTimeout(500); // Wait for state to settle
         await input.press('Enter');
 
         // 3. Wait for Response

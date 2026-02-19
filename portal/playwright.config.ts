@@ -8,7 +8,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: 1, // Enforce serial execution for reliability
-    reporter: [['list'], ['html', { outputFolder: '.test-output/report' }]],
+    reporter: [['list'], ['html', { outputFolder: '.test-output/report', open: 'never' }]],
     outputDir: '.test-output/artifacts',
     use: {
         headless: true,
