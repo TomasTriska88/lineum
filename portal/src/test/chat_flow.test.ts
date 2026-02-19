@@ -126,7 +126,9 @@ describe('Chat Flow Integration', () => {
         // MOCK FETCH for this test
         // MOCK FETCH for this test
         window.fetch = vi.fn().mockImplementation((url: string | URL | Request, config?: RequestInit) => {
+            // Fix for relative URLs in JSDOM/Node fetch
             const urlStr = url.toString();
+            // Handle both relative and absolute URLs
             if (urlStr.includes('/api/chat')) {
                 return Promise.resolve({
                     ok: true,
