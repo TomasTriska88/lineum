@@ -119,29 +119,39 @@ describe('Chat Flow Integration', () => {
         Element.prototype.scrollIntoView = vi.fn();
         HTMLElement.prototype.scrollIntoView = vi.fn();
         window.HTMLElement.prototype.scrollIntoView = vi.fn();
-    });
 
-    it('should send a message with context and display Markdown response', async () => {
-        const mockResponse = { text: "Here is a **bold** claim." };
-        // MOCK FETCH for this test
-        // MOCK FETCH for this test
+        // GLOBAL FETCH MOCK for all tests in this suite
         window.fetch = vi.fn().mockImplementation((url: string | URL | Request, config?: RequestInit) => {
-            // Fix for relative URLs in JSDOM/Node fetch
             const urlStr = url.toString();
-            // Handle both relative and absolute URLs
+            // Handle relative URLs for ResonanceDeck onMount
             if (urlStr.includes('/api/chat')) {
+                // If it's the POST request with "Test Query", return the mock response expected by the test
+                if (config?.method === 'POST' && config?.body && config.body.toString().includes('Test Query')) {
+                    return Promise.resolve({
+                        ok: true,
+                        json: async () => {
+                            await new Promise(r => setTimeout(r, 50));
+                            return { text: "Here is a **bold** claim." };
+                        }
+                    } as Response);
+                }
+                // Default initial data fetch
                 return Promise.resolve({
                     ok: true,
-                    json: async () => {
-                        // Wait slightly longer than the typewriter effect speed (15ms * chars)
-                        // but here we just return the data, the component handles the delay.
-                        await new Promise(r => setTimeout(r, 50));
-                        return mockResponse;
-                    }
+                    json: async () => ({
+                        totalSpent: 0.5,
+                        dailyLimit: 1.0,
+                        percentage: 50
+                    })
                 } as Response);
             }
             return Promise.resolve({ ok: true, json: async () => ({}) } as Response);
         });
+    });
+
+    it('should send a message with context and display Markdown response', async () => {
+        // window.fetch is now mocked in beforeEach globally
+        const mockResponse = { text: "Here is a **bold** claim." };
 
         render(ResonanceDeck, { active: true, testMode: false });
 

@@ -301,3 +301,4 @@ ${gitHistory}
         throw new Error(error.message || "I had a small glitch in my simulation logic. Could you try asking that again?");
     }
 }
+

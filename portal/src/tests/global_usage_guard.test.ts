@@ -44,7 +44,7 @@ describe('Global Token Limit Guard Integration', () => {
 
     it('should block CHAT requests when limit is reached', async () => {
         // Force limit reached
-        vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0, usage: 100, limit: 100 });
+        vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0 });
 
         const request = new Request('http://localhost/api/chat', {
             method: 'POST',
@@ -55,7 +55,7 @@ describe('Global Token Limit Guard Integration', () => {
         const getClientAddress = () => '127.0.0.1';
 
         // Bypass Rate Limiter
-        vi.spyOn(rateLimiter, 'check').mockReturnValue({ allowed: true, remaining: 10 });
+        vi.spyOn(rateLimiter, 'check').mockReturnValue({ allowed: true });
 
         const response = await chatPOST({ request, locals, getClientAddress } as any);
 
@@ -76,7 +76,7 @@ describe('Global Token Limit Guard Integration', () => {
 
     it('should block TTS requests when limit is reached', async () => {
         // Force limit reached
-        vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0, usage: 100, limit: 100 });
+        vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0 });
 
         const request = new Request('http://localhost/api/tts', {
             method: 'POST',
@@ -87,7 +87,7 @@ describe('Global Token Limit Guard Integration', () => {
         const getClientAddress = () => '127.0.0.1';
 
         // Bypass Rate Limiter
-        vi.spyOn(rateLimiter, 'check').mockReturnValue({ allowed: true, remaining: 10 });
+        vi.spyOn(rateLimiter, 'check').mockReturnValue({ allowed: true });
 
         const response = await ttsPOST({ request, locals, getClientAddress } as any);
 
