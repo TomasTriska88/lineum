@@ -101,6 +101,16 @@ async function main() {
         error("Merge failed. Please resolve conflicts manually and try again.");
     }
 
+    // 4. i18n Check (Warn only for now)
+    console.log('\nChecking for Czech characters (Warning Mode)...');
+    try {
+        execSync('node scripts/check-czech.js --warn', { stdio: 'inherit' });
+    } catch (e) {
+        console.log('i18n check warning (ignoring exit code in warn mode).');
+    }
+
+    console.log('\n==================================================');
+
     // 4. SYNC DATA (This is critical for Lina's context)
     run('npm run sync', 'Synchronize Data & Context');
 

@@ -42,14 +42,13 @@
         "rootDirectory": "lab"
       },
       "build": {
-        "buildCommand": "pip install -r requirements.txt",
+        "buildCommand": "cd lab && npm install && npm run build",
         "watchPatterns": [
-          "lab/**",
-          "lineum.py"
+          "lab/**"
         ]
       },
       "deploy": {
-        "startCommand": "python app.py"
+        "startCommand": "cd lab && npm run preview -- --host --port $PORT"
       }
     }
   }
