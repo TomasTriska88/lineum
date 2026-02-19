@@ -38,3 +38,6 @@ These rules govern agent behavior and documentation standards for the Lineum Cor
 - **Living Document**: The `portal/ARCHITECTURE.md` is a living document.
 - **Mandatory Update**: Whenever infrastructure (hosting, domains, automation) or core architectural patterns change, the agent MUST immediately update `portal/ARCHITECTURE.md` to reflect the new state.
 - **Bilingual Context**: While the interaction language may be Czech, the architecture documentation must be maintained in **English** for technical clarity.
+## 8. Development Hygiene
+- **README First**: Before pushing any changes to the `dev` branch, the agent must ensure the root `README.md` (or the relevant component's README) is updated to reflect the latest changes. This is a critical step in our workflow.
+- **Commit Discipline**: Changes to documentation should ideally be in the same commit as the code changes they describe.

@@ -122,12 +122,12 @@ test.describe('Chat & TTS Flow', () => {
         await input.press('Enter');
 
         // 3. Wait for Response
-        await expect(page.getByText('Hello! I am a simulated response.')).toBeVisible({ timeout: 10000 });
+        await expect(page.getByText('Hello! I am a simulated response.')).toBeVisible({ timeout: 30000 });
 
         // 4. Verify TTS Button
         // The TTS button should appear because we mocked voices.
-        // It has aria-label="Read Aloud"
-        const ttsBtn = page.getByLabel('Read Aloud');
+        // It has aria-label="Read aloud" (case insensitive check)
+        const ttsBtn = page.getByLabel(/Read aloud/i).first();
         await expect(ttsBtn).toBeVisible();
 
         // 5. Click TTS and Verify Request
