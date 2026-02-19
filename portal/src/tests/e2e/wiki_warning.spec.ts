@@ -16,33 +16,39 @@ test.describe('Wiki Warning Modal', () => {
         await expect(modal).toBeVisible();
 
         // Check content
-        await expect(page.getByText('Documentation Under Revision')).toBeVisible();
+        await expect(page.getByText('Live Research / Documentation Gap')).toBeVisible();
 
-        // Click confirm
-        await page.getByRole('button', { name: 'I Understand, Continue' }).click();
+        // 2. Test "Ask Lina" Action
+        const linaBtn = page.getByRole('button', { name: '✨ Ask Lina Instead' });
+        await expect(linaBtn).toBeVisible();
+
+        await linaBtn.click();
 
         // Modal should run away
         await expect(modal).not.toBeVisible();
+
+        // Deck should be expanded
+        const deck = page.locator('.deck-container');
+        await expect(deck).toHaveClass(/expanded/);
     });
 
-    test('should persist acknowledgement', async ({ page }) => {
+    test('should allow standard acknowledgement', async ({ page }) => {
+        await page.goto('/wiki');
+        await page.getByRole('button', { name: 'I Understand, Continue' }).click();
+        await expect(page.locator('.dialog-window')).not.toBeVisible();
+    });
+
+    test('should reappear on reload (always show)', async ({ page }) => {
         // 1. Visit and Ack
         await page.goto('/wiki');
         await page.getByRole('button', { name: 'I Understand, Continue' }).click();
-
-        // CHECK STORAGE
-        const ackBefore = await page.evaluate(() => sessionStorage.getItem('lineum_whitepaper_warning_acknowledged'));
-        expect(ackBefore).toBe('true');
+        await expect(page.locator('.dialog-window')).not.toBeVisible();
 
         // 2. Reload (Simulate via goto to ensure clean state)
         await page.goto('/wiki');
 
-        // CHECK STORAGE
-        const ackAfter = await page.evaluate(() => sessionStorage.getItem('lineum_whitepaper_warning_acknowledged'));
-        expect(ackAfter).toBe('true');
-
-        // 3. Should not see modal
-        await expect(page.locator('.dialog-window')).not.toBeVisible();
+        // 3. Should see modal again
+        await expect(page.locator('.dialog-window')).toBeVisible();
     });
 
     test('should block interaction with content (backdrop)', async ({ page }) => {

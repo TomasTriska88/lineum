@@ -137,11 +137,11 @@ export const content = {
         cta_url: 'https://revolut.me/tomastriska'
     },
     whitepaper_warning: {
-        title: 'Documentation Under Revision',
+        title: 'Live Research / Documentation Gap',
         paragraphs: [
-            'Please note that <b>whitepapers (including the core whitepaper) are under active revision</b>.',
-            'Data in these documents may not be fully verified and content may not yet be entirely consistent with the latest audit results in Simulacrum.',
-            'We are working on consolidating all definitions. Thank you for your understanding.'
+            'Please note that <b>Lineum is an evolving research project</b>. The static whitepapers here may lag behind the latest audit data and ongoing experiments.',
+            'For the most up-to-date understanding, we highly recommend <b>asking Lina</b> (the AI Assistant). She has access to the latest live context, audit results, and reformulated hypotheses that might not yet be fully reflected in these texts.',
+            'Use these documents as a foundational reference, but trust Lina for the current state of the art.'
         ],
         ack_label: 'I Understand, Continue'
     }

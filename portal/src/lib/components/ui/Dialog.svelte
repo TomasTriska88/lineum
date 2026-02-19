@@ -48,14 +48,16 @@
         </div>
 
         <div class="dialog-actions">
-            {#if showCancel}
-                <button class="btn btn-cancel" onclick={handleCancel}
-                    >{cancelLabel}</button
+            <slot name="actions">
+                {#if showCancel}
+                    <button class="btn btn-cancel" onclick={handleCancel}
+                        >{cancelLabel}</button
+                    >
+                {/if}
+                <button class="btn btn-confirm" onclick={handleConfirm}
+                    >{confirmLabel}</button
                 >
-            {/if}
-            <button class="btn btn-confirm" onclick={handleConfirm}
-                >{confirmLabel}</button
-            >
+            </slot>
         </div>
     </div>
 </div>

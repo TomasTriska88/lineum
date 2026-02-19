@@ -5,10 +5,11 @@
     import { browser } from "$app/environment";
     import { page } from "$app/stores";
     import { hudActive } from "$lib/stores/hudStore";
-    import { marked } from "marked";
+    import { marked } from "$lib/utils/markdown";
     import { stripMarkdown } from "$lib/utils/chatUtils";
     import { detectLanguage, selectVoice } from "$lib/utils/tts_utils";
     import { isCookieBannerVisible } from "$lib/stores/uiStore";
+    import { isChatOpen } from "$lib/stores/hudStore";
 
     let { active = false, testMode = false } = $props();
 
@@ -31,13 +32,12 @@
         null,
     );
     // let responseText = $state(""); // Removed unused state
-    let isExpanded = $state(false);
     let isMinimized = $state(false); // New state for minimized Orb mode
 
     function toggleMinimize(e?: Event) {
         if (e) e.stopPropagation();
         isMinimized = !isMinimized;
-        if (isMinimized) isExpanded = false; // Ensure it collapses when minimized
+        if (isMinimized) $isChatOpen = false; // Ensure it collapses when minimized
     }
 
     /* --- Dynamic Wave Generation --- */
@@ -664,7 +664,7 @@
         const userMsg = query;
         query = "";
         isTyping = true;
-        isExpanded = true;
+        $isChatOpen = true;
 
         const contextPath = $page.url.pathname;
 
@@ -1095,8 +1095,8 @@
     }
 
     function toggleDeck() {
-        isExpanded = !isExpanded;
-        if (isExpanded) scrollToBottom();
+        $isChatOpen = !$isChatOpen;
+        if ($isChatOpen) scrollToBottom();
     }
 
     function clearHistory() {
@@ -1108,17 +1108,17 @@
     }
 
     function handleKeydown(e: KeyboardEvent) {
-        if (e.key === "Escape" && isExpanded) isExpanded = false;
+        if (e.key === "Escape" && $isChatOpen) $isChatOpen = false;
     }
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
-{#if isExpanded}
+{#if $isChatOpen}
     <!-- Backdrop for click-outside closing -->
     <div
         class="backdrop"
-        onclick={() => (isExpanded = false)}
+        onclick={() => ($isChatOpen = false)}
         transition:fade={{ duration: 200 }}
         role="button"
         tabindex="-1"
@@ -1134,7 +1134,7 @@
     <!-- The Deck -->
     <div
         class="deck-container"
-        class:expanded={isExpanded}
+        class:expanded={$isChatOpen}
         class:minimized={isMinimized}
     >
         <div
@@ -1182,7 +1182,7 @@
                 </div>
 
                 <!-- Passive Whisper -->
-                {#if !isExpanded && whisper}
+                {#if !$isChatOpen && whisper}
                     <div class="whisper-bubble" transition:fade>
                         {whisper}
                     </div>
@@ -1210,7 +1210,7 @@
                                 {/each}
                             </svg>
                         </div>
-                    {:else if isExpanded}
+                    {:else if $isChatOpen}
                         <span class="status-tag">LINK ESTABLISHED</span>
                     {:else}
                         <span class="status-tag"
@@ -1247,7 +1247,7 @@
 
                     <!-- Minimize Button Removed: Replaced by DOCK button in collapsed state -->
 
-                    {#if isExpanded}
+                    {#if $isChatOpen}
                         <button
                             class="icon-btn header-action"
                             onclick={(e) => {
@@ -1276,7 +1276,7 @@
                             class="icon-btn header-action close-btn"
                             onclick={(e) => {
                                 e.stopPropagation();
-                                isExpanded = false;
+                                $isChatOpen = false;
                             }}
                             title="Close"
                         >
@@ -1322,7 +1322,7 @@
             {/if}
         </div>
 
-        {#if isExpanded}
+        {#if $isChatOpen}
             <!-- Dialog Confirm Modal -->
             {#if showConfirmDialog}
                 <Dialog
