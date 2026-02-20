@@ -26,7 +26,7 @@ The heart of the project. A Python-based engine that runs the discrete field upd
     # Run a simulation
     python lineum.py
     ```
-*   **Audit**: See `whitepapers/` for full scientific methodology and reproduction steps.
+*   **Audit**: See `whitepapers/` for full scientific methodology or [Verification Checklist](docs/verification_checklist.md) for independent reproduction.
 
 ---
 
