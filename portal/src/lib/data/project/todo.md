@@ -251,7 +251,6 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 - **Entry Format:** Date + Conclusion (audit-grade) + Repro one-liner + Artifact paths/patterns + (optional commit/run-tag).
 
 #### ✅ F0. Hotovo / finální poznatky (Feb 2026)
-
 - **Reproduction Pipeline (Spec6):**
   - *Conclusion:* Repro pipeline existuje a generuje kanonický běh/artefakty z čistého klonu.
   - *Command:* `python scripts/repro_spec6_false_s41.py`
@@ -282,6 +281,7 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 - [x] Implement export reference snapshots (step_200, step_1000, final) -> **Covered by algorithm above.**
 
 - [x] Zvážit zveřejnění malé sady **referenčních binárek** -> **Vyřešeno sekcí F1.**
+- [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
 

@@ -48,28 +48,22 @@ python scripts/verify_repro_run.py --latest
 1. The script finds `run_summary.csv` from the latest run.
 2. The file contains key physics metrics (`noise_strength`, `drift_strength`).
 3. Expected output directories are present (`checkpoints`, and optionally `plots`/`frames` for full runs).
-4. The script outputs: `VERIFICATION: PASS`.
+4. **Reference Verification:** The script auto-verifies canonical snapshots against `docs/reference_manifest_spec6_false_s41.json`.
+5. The script outputs: `VERIFIKACE: PASS`.
 
 ## Troubleshooting
 
 - **Encoding Error (Windows):** If you encounter encoding errors, ensure you are running via the provided scripts, which enforce `PYTHONUTF8=1`.
 - **Missing Libraries:** Check `pip freeze` against `requirements.txt`.
 
-## 4. Reference Artifacts Verification
+## 4. Reference Artifacts Verification (Audit-Grade)
 
-Checklist pro ověření dostupnosti a hashů referenčních snapshotů. Tyto soubory slouží pro cross-implementation verifikaci.
+- **Source of Truth:** `docs/reference_manifest_spec6_false_s41.json`
+- **Location:** `output/repro/runs/spec6_false_s41_*/reference/`
+- **Files:** `step_200.npz`, `step_1000.npz`, `final.npz`.
+- **Validation Logic:**
+    - **Step 1:** Check if files exist.
+    - **Step 2:** Compute strict hash: `sha256( dtype|shape| + raw_bytes_little_endian_c_order )`.
+    - **Step 3:** Compare against manifest.
+- **Command:** `python scripts/verify_repro_run.py --latest` (Fail if mismatch).
 
-- [ ] **Existence složky:** `output/repro/runs/spec6_false_s41_*/reference/`
-- [ ] **Existence snapshotů:**
-    - [ ] `step_200.npz` (Early Stability / Thermalization check)
-    - [ ] `step_1000.npz` (Long-term Stability check)
-    - [ ] `final.npz` (End-of-run State)
-- [ ] **Metadata Consistency:**
-    - [ ] Každý NPZ obsahuje klíč `_meta` (JSON string).
-    - [ ] `step` v metadatech odpovídá názvu souboru.
-    - [ ] `grid` je `[512, 512]` (pro Spec6).
-    - [ ] `seed` je `41`.
-- [ ] **Hashes (Bit-Exactness):**
-    - [ ] Existuje soubor `reference_hashes.json`.
-    - [ ] SHA256 hashe spočítané z `psi` a `phi` bufferů (C-order, little-endian) přesně odpovídají uloženým hashům.
-    - [ ] Výstup skriptu `verify_repro_run.py` obsahuje `REFERENCE_HASHES: PASS`.

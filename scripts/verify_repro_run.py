@@ -4,6 +4,9 @@ import argparse
 import pathlib
 import csv
 import glob
+import json
+import hashlib
+import numpy as np
 
 def main():
     parser = argparse.ArgumentParser(description="Verifikace kanonického běhu Lineum (spec6_false_s41).")
@@ -105,129 +108,125 @@ def main():
     else:
         print("[WARN] Žádné vizualizační výstupy (plots ani frames) nenalezeny. (OK pro --quick, ale zkontrolujte).")
 
-    # --- VERIFIKACE REFERENCE SNAPSHOTŮ (Nový audit krok) ---
+    # --- VERIFIKACE REFERENCE SNAPSHOTŮ (Manifest-Based) ---
     print("-" * 40)
-    print("REFERENCE SNAPSHOTS CHECK")
+    print("REFERENCE SNAPSHOTS CHECK (Manifest-Based)")
     
+    script_dir = pathlib.Path(__file__).parent.resolve()
+    root_dir = script_dir.parent
+    manifest_path = root_dir / "docs" / "reference_manifest_spec6_false_s41.json"
+    
+    if not manifest_path.exists():
+        print(f"[FAIL] Kanonický manifest nenalezen: {manifest_path}")
+        print("REFERENCE_SNAPSHOTS: FAIL")
+        print("REFERENCE_HASHES:    FAIL")
+        print("VERIFIKACE:          FAIL")
+        sys.exit(1)
+        
+    print(f"[INFO] Načítám manifest: {manifest_path.name}")
+    try:
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+    except Exception as e:
+        print(f"[FAIL] Chyba při čtení manifestu: {e}")
+        sys.exit(1)
+
     ref_dir = target_run_dir / "reference"
-    expected_snapshots = ["step_200.npz", "step_1000.npz", "final.npz"]
-    
-    # Check 1: Existence souborů
-    missing_snapshots = []
     if not ref_dir.exists():
         print(f"[FAIL] Adresář 'reference' chybí v {target_run_dir}.")
-        snapshots_ok = False
-    else:
-        for snap in expected_snapshots:
-            if not (ref_dir / snap).exists():
-                missing_snapshots.append(snap)
+        # Fail immediately
+        print("-" * 40)
+        print("REFERENCE_SNAPSHOTS: FAIL")
+        print("REFERENCE_HASHES:    FAIL")
+        print("VERIFIKACE:          FAIL")
+        print("-" * 40)
+        sys.exit(1)
         
-        if missing_snapshots:
-            print(f"[FAIL] Chybí referenční snapshoty: {missing_snapshots}")
-            snapshots_ok = False
-        else:
-            print(f"[OK] Nalezeny všechny 3 kritické snapshoty: {expected_snapshots}")
-            snapshots_ok = True
+    expected_snapshots = manifest.get("snapshots", {})
+    if not expected_snapshots:
+        print("[FAIL] Manifest neobsahuje žádné snapshoty.")
+        sys.exit(1)
 
-    # Check 2: Metadata consistency (pokud soubory existují)
-    meta_ok = True
-    if snapshots_ok:
-        import numpy as np
-        import json
-        for snap in expected_snapshots:
-            try:
-                with np.load(ref_dir / snap) as data:
-                    if "_meta" not in data:
-                        print(f"[FAIL] {snap} neobsahuje '_meta'.")
-                        meta_ok = False
-                        break
-                    
-                    meta = json.loads(str(data["_meta"]))
-                    
-                    # Kontrola, zda step v metadatech odpovídá názvu (pro step_X.npz)
-                    if snap.startswith("step_"):
-                        expected_step = int(snap.split("_")[1].split(".")[0])
-                        if int(meta.get("step", -1)) != expected_step:
-                            print(f"[FAIL] {snap}: step v metadata ({meta.get('step')}) neodpovídá názvu.")
-                            meta_ok = False
-                    
-                    # Kontrola základních klíčů
-                    required_meta = ["seed", "run_id", "grid"]
-                    if not all(k in meta for k in required_meta):
-                         print(f"[FAIL] {snap}: chybí povinná metadata {required_meta}")
-                         meta_ok = False
-
-            except Exception as e:
-                print(f"[FAIL] Chyba při čtení {snap}: {e}")
-                meta_ok = False
-        
-        if meta_ok:
-            print("[OK] Metadata snapshotů jsou konzistentní.")
-
-    # Check 3: Hashes (pokud existuje reference_hashes.json)
-    hashes_ok = True # Defaultně PASS, pokud soubor neexistuje (dle zadání)
-    hashes_json_path = ref_dir / "reference_hashes.json"
+    snapshots_ok = True
+    hashes_ok = True
     
-    if hashes_json_path.exists() and snapshots_ok:
-        print("[INFO] Ověřuji bit-exact shodu hashů (reference_hashes.json)...")
+    # Imports already at top level
+    
+    def compute_strict_hash_verify(data_array):
+        # Musí být identické s repro skriptem
+        if data_array.dtype.byteorder == '>':
+            data_array = data_array.byteswap().newbyteorder('<')
+        if not data_array.flags['C_CONTIGUOUS']:
+            data_array = np.ascontiguousarray(data_array)
+        header = f"{data_array.dtype}|{data_array.shape}|"
+        sha = hashlib.sha256()
+        sha.update(header.encode('utf-8'))
+        sha.update(data_array.tobytes())
+        return sha.hexdigest()
+
+    for key, info in expected_snapshots.items():
+        fname = f"{key}.npz" if key == "final" else f"{key}.npz" # key je step_200, step_1000, final
+        # Pozn: v manifestu jsou klíče "step_200", "step_1000", "final".
+        # Soubory se jmenují stejně + .npz (kromě final, tam je to final.npz)
+        # Upravíme logiku filenames v manifest generatoru jsme použili "step_200.npz" jako fname?
+        # Ne, v manifest generatoru: snapshots = {"step_200": "step_200.npz", ...}
+        # Ale klíče v jsonu jsou "step_200", "step_1000", "final".
+        # Musime odvodit filename.
+        
+        filename = f"{key}.npz" # default assumption
+        # Ale moment, v repro skriptu: filename = "final.npz" if step == "final" else f"step_{step}.npz"
+        # key "step_200" -> "step_200.npz". key "final" -> "final.npz". OK.
+        
+        fpath = ref_dir / filename
+        
+        if not fpath.exists():
+            print(f"[FAIL] Chybí snapshot: {filename}")
+            snapshots_ok = False
+            hashes_ok = False # Nemůžeme ověřit hash
+            continue
+            
+        # Load and verify hash
         try:
-            with open(hashes_json_path, "r") as f:
-                saved_hashes = json.load(f)
-            
-            import hashlib
-            
-            # Helper pro kanonický hash (musí být identický s repro skriptem)
-            def compute_canonical_hash_verify(data_array):
-                if data_array.dtype.byteorder == '>':
-                    data_array = data_array.byteswap().newbyteorder('<')
-                if not data_array.flags['C_CONTIGUOUS']:
-                    data_array = np.ascontiguousarray(data_array)
-                return hashlib.sha256(data_array.tobytes()).hexdigest()
-
-            for snap in expected_snapshots:
-                if snap not in saved_hashes:
-                    print(f"[WARN] {snap} není v reference_hashes.json, přeskakuji.")
-                    continue
+            with np.load(fpath) as data:
+                psi = data['psi']
+                phi = data['phi']
                 
-                expected = saved_hashes[snap]
+                # Metadata check (basic)
+                if "_meta" not in data:
+                     print(f"[FAIL] {filename} chybí _meta.")
+                     snapshots_ok = False
                 
-                with np.load(ref_dir / snap) as data:
-                    psi_h = compute_canonical_hash_verify(data["psi"])
-                    phi_h = compute_canonical_hash_verify(data["phi"])
+                # Hash Validation
+                psi_h = compute_strict_hash_verify(psi)
+                phi_h = compute_strict_hash_verify(phi)
+                
+                if psi_h != info["psi_hash"]:
+                    print(f"[FAIL] {filename} PSI hash mismatch!")
+                    print(f"       Expected: {info['psi_hash']}")
+                    print(f"       Got:      {psi_h}")
+                    hashes_ok = False
+                
+                if phi_h != info["phi_hash"]:
+                    print(f"[FAIL] {filename} PHI hash mismatch!")
+                    hashes_ok = False
+                
+                if psi_h == info["psi_hash"] and phi_h == info["phi_hash"]:
+                    print(f"[OK] {filename} verified (Strict Hash Match).")
                     
-                    if psi_h != expected["psi_sha256"]:
-                        print(f"[FAIL] Hash mismatch pro {snap} (psi)!")
-                        print(f"       Expected: {expected['psi_sha256']}")
-                        print(f"       Got:      {psi_h}")
-                        hashes_ok = False
-                    
-                    if phi_h != expected["phi_sha256"]:
-                        print(f"[FAIL] Hash mismatch pro {snap} (phi)!")
-                        hashes_ok = False
-            
-            if hashes_ok:
-                print("[OK] Všechny hashe odpovídají (Bit-Exact Verified).")
-
         except Exception as e:
-            print(f"[FAIL] Chyba při verifikaci hashů: {e}")
+            print(f"[FAIL] Error verifying {filename}: {e}")
+            snapshots_ok = False
             hashes_ok = False
-    elif not hashes_json_path.exists() and snapshots_ok:
-        print("[INFO] reference_hashes.json nenalezen -> SKIP hash check (PASS).")
 
     print("-" * 40)
-    
-    # Finální report
-    print(f"REFERENCE_SNAPSHOTS: {'PASS' if (snapshots_ok and meta_ok) else 'FAIL'}")
+    print(f"REFERENCE_SNAPSHOTS: {'PASS' if snapshots_ok else 'FAIL'}")
     print(f"REFERENCE_HASHES:    {'PASS' if hashes_ok else 'FAIL'}")
     
-    final_status = "PASS" if (snapshots_ok and meta_ok and hashes_ok) else "FAIL"
+    final_status = "PASS" if (snapshots_ok and hashes_ok) else "FAIL"
     print(f"VERIFIKACE:          {final_status}")
     print("-" * 40)
     
-    if final_status == "FAIL":
-        sys.exit(1)
-    
-    sys.exit(0)
+    sys.exit(0 if final_status == "PASS" else 1)
 
 if __name__ == "__main__":
     main()
