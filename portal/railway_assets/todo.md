@@ -251,6 +251,7 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 - [ ] Doplnit do repozitáře minimální **„one-button“ pipeline** (skript / make target), která z čistého klonu vygeneruje kanonický běh (`spec6_false_s41`) a plný set HTML/CSV/PNG/GIF artefaktů.
 - [ ] Připravit **verification checklist** pro třetí strany: „pokud spustíš A, B, C, měl bys vidět X, Y, Z v rozumných tolerancích“ – bez nutnosti číst interní kód.
+- [x] Přidat Pytest regresní testy pro runtime env „knobs“ (parsování a precedence): `LINEUM_NOISE_STRENGTH`, `LINEUM_DRIFT_STRENGTH`, `LINEUM_DISABLE_DRIFT` + invalid inputs -> `exit 1`; izolované běhy přes `tmp_path` a `LINEUM_BASE_OUTPUT_DIR`; Windows UTF-8 safe (`PYTHONUTF8=1`). (tests/test_lineum_knobs.py; lineum.py beze změny)
 - [ ] Zvážit zveřejnění malé sady **referenčních binárek / snapshotů** (např. uložené stavy ψ, φ v několika časech) pro křížovou kontrolu s alternativní implementací.
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
