@@ -54,3 +54,22 @@ python scripts/verify_repro_run.py --latest
 
 - **Encoding Error (Windows):** If you encounter encoding errors, ensure you are running via the provided scripts, which enforce `PYTHONUTF8=1`.
 - **Missing Libraries:** Check `pip freeze` against `requirements.txt`.
+
+## 4. Reference Artifacts Verification
+
+Checklist pro ověření dostupnosti a hashů referenčních snapshotů. Tyto soubory slouží pro cross-implementation verifikaci.
+
+- [ ] **Existence složky:** `output/repro/runs/spec6_false_s41_*/reference/`
+- [ ] **Existence snapshotů:**
+    - [ ] `step_200.npz` (Early Stability / Thermalization check)
+    - [ ] `step_1000.npz` (Long-term Stability check)
+    - [ ] `final.npz` (End-of-run State)
+- [ ] **Metadata Consistency:**
+    - [ ] Každý NPZ obsahuje klíč `_meta` (JSON string).
+    - [ ] `step` v metadatech odpovídá názvu souboru.
+    - [ ] `grid` je `[512, 512]` (pro Spec6).
+    - [ ] `seed` je `41`.
+- [ ] **Hashes (Bit-Exactness):**
+    - [ ] Existuje soubor `reference_hashes.json`.
+    - [ ] SHA256 hashe spočítané z `psi` a `phi` bufferů (C-order, little-endian) přesně odpovídají uloženým hashům.
+    - [ ] Výstup skriptu `verify_repro_run.py` obsahuje `REFERENCE_HASHES: PASS`.

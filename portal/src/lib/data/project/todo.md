@@ -244,7 +244,44 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 F. Reprodukovatelnost a nezávislá verifikace #repro
 
-- [ ] Zvážit zveřejnění malé sady **referenčních binárek / snapshotů** (např. uložené stavy ψ, φ v několika časech) pro křížovou kontrolu s alternativní implementací.
+#### 🧭 TODO Strategy (editable)
+- **TODO = Backlog + Results Archive.**
+- **Open Items:** `[ ]` are active tasks.
+- **Completed (`[x]`):** **MOVE to "✅ DONE/FINDINGS log"** (below). **Do NOT delete without trace.**
+- **Entry Format:** Date + Conclusion (audit-grade) + Repro one-liner + Artifact paths/patterns + (optional commit/run-tag).
+
+#### ✅ F0. Hotovo / finální poznatky (Feb 2026)
+
+- **Reproduction Pipeline (Spec6):**
+  - *Conclusion:* Repro pipeline existuje a generuje kanonický běh/artefakty z čistého klonu.
+  - *Command:* `python scripts/repro_spec6_false_s41.py`
+  - *Artifacts:* `output/repro/runs/spec6_false_s41_*/{run_summary.csv, checkpoints/*.npz, *.png, *_metrics_summary.csv}`
+  - *Commit:* 3c55995
+- **Third-Party Verification Checklist:**
+  - *Conclusion:* Checklist pro nezávislé auditování existuje.
+  - *Docs:* `docs/verification_checklist.md`
+  - *Command:* `python scripts/verify_repro_run.py --latest`
+  - *PASS definice:* Skript najde `run_summary.csv`, ověří existenci metrik a artefaktů a vypíše `VERIFICATION: PASS`.
+  - *Commit:* 5dd4a6c
+- **Regression Test Knobs:**
+  - *Conclusion:* Precedence/parsování env knobs ověřeno v testech.
+  - *Command:* `pytest -q tests/test_lineum_knobs.py`
+  - *Status:* 6 passed.
+  - *Commit:* cdc0abe
+
+#### 🔶 F1. Reference Artifacts (Implemented)
+
+- **Reference Snapshots:**
+  - *Conclusion:* Deterministický export snapshotů (step 200, 1000, final) implementován v repro pipeline.
+  - *Format:* `.npz` s kanonickými hashy (psi+phi buffer, C-order, little-endian).
+  - *Command:* `python scripts/repro_spec6_false_s41.py` (generuje `reference/` složku).
+  - *Validation:* `python scripts/verify_repro_run.py --latest` -> ověří existenci a SHASUM shodu.
+  - *PASS definice:* `REFERENCE_SNAPSHOTS: PASS` a `REFERENCE_HASHES: PASS`.
+  - *Artifacts:* `output/repro/runs/spec6_false_s41_*/reference/{step_200.npz, step_1000.npz, final.npz}`
+
+- [x] Implement export reference snapshots (step_200, step_1000, final) -> **Covered by algorithm above.**
+
+- [x] Zvážit zveřejnění malé sady **referenčních binárek** -> **Vyřešeno sekcí F1.**
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
 
