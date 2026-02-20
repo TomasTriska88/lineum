@@ -90,12 +90,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
 - [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
 - [ ] Revalidovat definici a měření **„spinové aury“** jako časově/ensemble průměrovaného pole `curl(∇arg ψ)` kolem linonů (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) a zkontrolovat, že dokumentace jasně uvádí, že jde o interní mapu cirkulace fáze v okolí linonu, nikoli o tvrzení o spinu částice ve smyslu Standardního modelu.
-- [x] **Dominantní frekvence**: Audit `spec6` stanovil drift (`f₀ ≈ 0.0039` /step) jako charakteristiku termálního šumu. Absence stabilní rezonance (Mode 24 ratio < 1e-7) potvrzuje podkritický režim. [TEST: Noise Regime]
-- [x] **φ-paměť / Structural Closure**: Half-life center-trace revidován na **360 kroků** (z původních 1009) v běhu `spec6` (Unstable/Fragile). Return Echo v tomto režimu není statisticky významné.
-      – porovnat statistické rozdělení φ v okolí kvazičástic (`φ_near`) oproti náhodně zvoleným bodům (`φ_field`),
-      – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole,
-      – kvantifikovat zjištění z července 2025 („Lineum – artefakty, kappa, deja vu“), že zeta-body / body uzavření mají tendenci se **opakovaně seskupovat na stejných místech napříč běhy** (včetně různých konfiguračních presetů), a měřit tento efekt přes occupancy mapy, RMS posun center a half-life těchto kapes,
-      – explicitně ukázat rozdíl mezi clean větví `spec6_true no_artefacts` (pravidelnější a stabilnější φ-zeta grid) a větví `with_artefacts` (rušivé interference, rozmazání distribuce) a v textu jasně deklarovat, že **všechny závěry o φ-paměti stojí na clean větvi** po opravě vizualizačního cache-bugu.
+
 - [ ] (Tříska–Marečková [HYPOTHESIS]) Ověřit, zda pole **φ** v rámci Eq-4 skutečně plní roli **strukturální paměti** systému, nebo zda je nutné zavést rozšířený paměťový mechanismus (zpožděná odezva, hysteréze nebo samostatné paměťové pole μ):
       – Kvantitativně změřit, jak rychle φ ztrácí informaci o předchozí přítomnosti linonů v režimu **Silent collapse**: definovat metriky „paměťové stopy“ typu
       • doba, po kterou lze z aktuálního φ jednoznačně rozhodnout, že v daném regionu v minulosti existovala kvazičástice (např. mutual information mezi historií |ψ|² a φ),
@@ -249,9 +244,8 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 F. Reprodukovatelnost a nezávislá verifikace #repro
 
-- [ ] Doplnit do repozitáře minimální **„one-button“ pipeline** (skript / make target), která z čistého klonu vygeneruje kanonický běh (`spec6_false_s41`) a plný set HTML/CSV/PNG/GIF artefaktů.
-- [ ] Připravit **verification checklist** pro třetí strany: „pokud spustíš A, B, C, měl bys vidět X, Y, Z v rozumných tolerancích“ – bez nutnosti číst interní kód.
-- [x] Přidat Pytest regresní testy pro runtime env „knobs“ (parsování a precedence): `LINEUM_NOISE_STRENGTH`, `LINEUM_DRIFT_STRENGTH`, `LINEUM_DISABLE_DRIFT` + invalid inputs -> `exit 1`; izolované běhy přes `tmp_path` a `LINEUM_BASE_OUTPUT_DIR`; Windows UTF-8 safe (`PYTHONUTF8=1`). (tests/test_lineum_knobs.py; lineum.py beze změny)
+
+
 - [ ] Zvážit zveřejnění malé sady **referenčních binárek / snapshotů** (např. uložené stavy ψ, φ v několika časech) pro křížovou kontrolu s alternativní implementací.
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
@@ -492,10 +486,7 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
 
-- [x] **Zeta-RNB Resonance (Korelace 0.9842):** V běhu `spec7_true` byla potvrzena Pearsonova korelace **0.9842** mezi rezonančními návratovými body (RNB) a nulami Riemannovy zeta funkce podél kritické linie. 
-  - [ ] **TODO:** Ověřit mechanismus "Phase Locking" – zda systém Lineum nativně ladí na prvočíselné rezonance jako body minimálního napětí.
-- [x] **Transverson Morphodynamics (Geometrie srdce):** Identifikovány stabilní páry vírů ($\circlearrowleft$ a $\circlearrowright$) tvořící "srdcovou" topologii.
-  - [ ] **TODO:** Sledovat "Zeta-Zero" kolize – absolutní destruktivní interferenci při setkání transversonu a antitransversonu.
+
 - [ ] (Tomášova [HYPOTHESIS]) **Hormonální spektrální regulace:** Otestovat frekvenční pásmo (např. v sonifikované oblasti 1.85e+20 Hz) jako globální regulační spínač. "Injekce" energie do specifických harmonických by mohla vynutit přechod ze stavu `false` (chaos) do `true` (řád).
 - [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
 - Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
@@ -720,23 +711,15 @@ Rozhodovací strom o povaze "konvergence" systému.
 
 ### 🧩 H0: Uzavřený atraktor (Closed World)
 **Tvrzení:** Konvergence k "Mode 24" je čistě vnitřní vlastnost dynamiky Eq-4.
-- [x] **D1.1 Initial State:** Deterministický (seed 41).
-- [x] **D1.2 Noise:** Fixní `NOISE_STRENGTH`, žádný externí drift.
-- [x] **D2.1 Code Audit:** Žádný explicitní `rescale()` nebo `resize()` v `lineum.py`.
-- [x] **D3.1 Determinismus:** Potvrzen (SHA256 Match: `d3_long` 500 steps).
-- [x] **D4.1 Ignition:** Potvrzen "Noise as Fuel" mechanismus (Code Audit: `lineum.py:2075`).
+
 - [x] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
 **Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
-- [x] **D1.3 Kappa Leak:** Vyloučeno pro `spec6` (`KAPPA_MODE="constant"`).
-- [x] **D5.1 Predikce:** Vyvrácena (Determinismus D3).
+
 - [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
-### ✅ Audit Complete
-- [x] **Final Report:** `audit_report.md` (Czech, Unimpeachable).
-- [x] **Deliverable:** `lineum_audit_package.zip` (Ready for Email).
-- [x] **Repo State:** Clean & Sync (v1.0.18-core).
+
 1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
 2. **Rescaling Trap (D5):** Uzavřeno.
 
