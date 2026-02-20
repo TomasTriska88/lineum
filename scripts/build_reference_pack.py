@@ -129,23 +129,27 @@ def main():
             json.dump(manifest_data, f, indent=2)
         files_for_pack.append((manifest_dst, "manifest.json"))
         
-        # 5. SHA256SUMS.txt and Manifest File List
-        sums_dst = tmp_path / "SHA256SUMS.txt"
-        files_for_pack.sort(key=lambda x: x[1]) # Sort alphabetically to ensure stable output
+        # We want to embed files list in manifest EXCEPT the manifest itself and SHA256SUMS.txt
         manifest_files_list = {}
+        for src, arcname in files_for_pack:
+            if arcname not in ["manifest.json", "SHA256SUMS.txt"]:
+                manifest_files_list[arcname] = hash_file(src)
+                
+        manifest_data["files"] = manifest_files_list
+        
+        # Write final manifest
+        with open(manifest_dst, "w") as f:
+            json.dump(manifest_data, f, indent=2)
+            
+        # Now hash everything including final manifest to create SHA256SUMS.txt
+        sums_dst = tmp_path / "SHA256SUMS.txt"
+        files_for_pack.sort(key=lambda x: x[1])
         with open(sums_dst, "w", newline='\n') as f:
             for src, arcname in files_for_pack:
                  hash_val = hash_file(src)
                  f.write(f"{hash_val}  {arcname}\n")
-                 manifest_files_list[arcname] = hash_val
                  
         files_for_pack.append((sums_dst, "SHA256SUMS.txt"))
-        
-        manifest_data["files"] = manifest_files_list
-        
-        # update manifest file again to include the file list
-        with open(manifest_dst, "w") as f:
-            json.dump(manifest_data, f, indent=2)
         
         # 6. README.md
         readme_dst = tmp_path / "README.md"

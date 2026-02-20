@@ -166,6 +166,14 @@ def main():
         return sha.hexdigest()
 
     for key, info in expected_snapshots.items():
+        if "step" not in info:
+            print(f"[FAIL] Manifest snapshot '{key}' is corrupt (missing required explicit 'step' integer field).")
+            print("-" * 40)
+            print("REFERENCE_SNAPSHOTS: FAIL")
+            print("REFERENCE_HASHES:    FAIL")
+            print("VERIFIKACE:          FAIL")
+            sys.exit(1)
+
         fname = f"{key}.npz" if key == "final" else f"{key}.npz" # key je step_200, step_1000, final
         # Pozn: v manifestu jsou klíče "step_200", "step_1000", "final".
         # Soubory se jmenují stejně + .npz (kromě final, tam je to final.npz)

@@ -123,5 +123,14 @@ def main():
     print(f"Summary File:  {latest_summary}")
     print("-" * 40)
 
+    if not args.quick:
+        print("[INFO] Exporting strict reference snapshots according to manifest...")
+        export_cmd = [sys.executable, str(script_dir / "export_reference_from_checkpoints.py"), str(latest_run_dir), str(root_dir / "docs" / "reference_manifest_spec6_false_s41.json")]
+        try:
+            subprocess.run(export_cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            print("[FAIL] Reference export failed! Cannot produce canonical output.")
+            sys.exit(e.returncode)
+
 if __name__ == "__main__":
     main()
