@@ -575,6 +575,12 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
   3. **Vnější „konstanta vesmíru“ / RNG** – tj. že shodu dodává způsob generování náhodného seede, floating-point reprezentace nebo jiné vlastnosti našeho fyzického / numerického „univerza“, a Lineum ji jen pasivně přebírá.  
      U každé varianty navrhnout konkrétní test (změna RNG, změna embed mapy, změna škálování), který ji může podpořit nebo v rámci modelu vyvrátit.
 - [ ] Provázat analýzu se **φ-zeta gridem** (historicky „φ-deja-vu grid“): ověřit, jestli privilegovaná místa / kapsy v krajině φ mají statisticky výraznější vazbu na Fibonacci/zlatý řez / number-theoretické vzorce než generické body mřížky – a výslovně rámovat tyto vzorce jako **hypotézy o rozmístění paměťových struktur**, ne o zákonu expanze.
+- [ ] (Tříska-Marečková [HYPOTHESIS]) **Hypotéza Stromové Optimalizace – Zlatý řez jako produkt hydrodynamické cévní sítě:**
+    - **Kontext:** Ve fyzice a biologii se fraktální větvení a poměry Zlatého řezu (1.61803...) přirozeně objevují v kapalinových sítích (cévní systém, plíce, blesky, růst listů a větví stromu), protože jde o matematicky nejdokonalejší způsob, jak rozvést energii a tok s co nejmenším odporem materiálu v prostoru. 
+    - **Hypotéza (Lineum):** Zlatý řez a Fibonacciho sekvence zachycené v Lineu (ve vzdálenostech φ-pasti, zeta-bodů nebo ve spektrálních poměrech `spec4_false`) nejsou "zakódovaným magickým cílem vesmíru". Jsou to emergentní fyzikální důsledky toho, že rovnice Eq-4 organicky hledá cestu nejmenšího odporu. Tok `ψ` musí neustále obcházet paměťové usazeniny a naběhlý tlak ve vlastní setrvačné "zácpě" pole `φ`. Tato dynamická kapalinová optimalizace se nevyhnutelně stabilizuje do sítě, jejíž štěpící poměry (rozdělování kanálů pro minimalizaci globálního odporu) nativně inklinují k poměru Zlatého řezu, stejně jako u reálných říčních delt a žil.
+    - **Verifikace a předběžné výpočty:**
+        - **Úhlová analýza větvení (Bifurcation Test):** Vizualizovat oblasti se zvýšeným tokem `ψ` v ustáleném běhu a najít "křižovatky" plynulých kanálů ve `φ`. Analyzovat úhly mezi silným rodičovským kanálem a vznikajícími tenčími dcérskými vlásečnicemi. Hledat statistickou preferenci Murrayova zákona pro biologické sítě (r₁³ = r₂³ + r₃³) a ideálně inklinaci hlavních a vedlejších větví odchylovat se v radiánech blízkých logaritmické spirále / 137.5 stupňům.
+        - **Výpočet fraktální dimenze:** Uříznout heatmapu `φ` prahovou hodnotou (např. top 25 % maxima) a spočítat Box-counting dimenzi (fraktální Hausdorffovu dimenzi) struktury "cév/pasti". Pokud se blíží hodnotám biologických transportních sítí (např. D ≈ 1.6 - 1.7 ve 2D), je to silný argument pro emergentní "Network optimization" příčinu Zlatého řezu.
 
 ---
 
@@ -902,6 +908,105 @@ Rozhodovací strom o povaze "konvergence" systému.
 
 ---
 
+---
+
+## 🎶 S. Nové hypotézy (Únor 2026) #hypothesis
+
+Tato sekce obsahuje nové kandidátní hypotézy inspirované externími podněty a metaforami, které mohou být testovány v parametrickém prostoru Linea.
+
+### 🔲 32. Hypotéza: Axionová elektrodynamika a kosmologická magnetická pole #hypothesis
+- **Kontext:** Podle [Brandenberger et al.](https://www.osel.cz/14533-ultralehka-temna-hmota-by-mohla-vytvaret-kosmologicka-magneticka-pole.html) může ultralehká temná hmota (axiony) interakcí s elektromagnetismem generovat a zesilovat kosmologická magnetická pole a v raném vesmíru podporovat vznik supermasivních černých děr.
+- **Hypotéza (Lineum):** Pole `φ` (jako analogie pseudoskalárního pole axionů / temné hmoty) vykazuje v Lineu "axionelektrodynamickou" vazbu s emergentními vektorovými formacemi (např. polem spinové aury `curl(∇arg(ψ))`).
+- **Verifikace:** Otestovat, zda makroskopické oscilace `φ` dokážou spontánně zesilovat uspořádaná vírová/magnetická-like pole na velkých škálách. Zjistit, zda tato vazba urychluje lokální růst a agregaci hmoty do prvotních supermasivních φ-pastí (Lineum analogie k záhadně brzkému formování supermasivních černých děr).
+
+### 🔲 33. Tříska-Marečková Hypotéza: Strukturální caching a časové skoky (Efekt online rádia) #hypothesis
+- **Kontext:** Zážitek z online rádia – po zastavení a prodlevě se po opětovném spuštění přehrává kousek dříve uložený v cache, a teprve poté následuje skok ("sync") do aktuálního živého vysílání (do poloviny nově hrající písničky).
+- **Hypotéza (Lineum):** Pole `φ` funguje v určitých regionech jako opožděná strukturální "cache". Pokud linon opustí oblast či dočasně zanikne, zůstává po něm silný setrvačný gradient (remnant `φ`). Pokud do téže oblasti později vstoupí nová excitace, nejprve je její pohyb silně determinován starou "přehrávací frontou" (minulou stopou v cache). Až dojde k nasycení nebo vyčerpání této lokální paměti, dojde k prudkému "přeskoku" nebo "uskočení" a navázání kvazičástice na aktuální globální dynamiku (živé vysílání).
+- **Verifikace:** Identifikovat a izolovaně vizualizovat trajektorie objektů "projíždějících starým vlivem". Změřit charakter pohybu a rychlost (včetně SBR a setrvačnosti) během "jízdy z cache" a následnou prudkost změny trajektorie po přeskoku k novému atraktoru.
+- **Empirický korelát:** Zamyslet se, zda "opuštění cache" nemá analogii v reálném světě u nečekaných lokálních anomálií, skoků ve fázích kvantových systémů nebo u opožděných gravitačních vlivů (např. chování temné hmoty, které ne zcela odpovídá "živému" rozložení baryonické hmoty).
+
+### 🔲 34. Hypotéza: Lineum jako emergentní solver pro Network Design (Dopravní sítě) #hypothesis #applied
+- **Kontext:** Biologické systémy (mravenci zanechávající feromony v ACO, hlenka *Physarum polycephalum* optimalizující železniční síť) využívají emergentní chování lokálních agentů nebo spojitého růstu k řešení NP-těžkých úloh návrhu sítě. Standardní grafové algoritmy umí výborně hledat nejkratší cestu na hotové síti, ale návrh robustní topologie na zelené louce je pro ně výpočetně extrémně náročný.
+- **Hypotéza (Lineum):** Pole `φ` může přirozeně fungovat jako paměť provozu (feromon/zácpa) a `ψ` (linony/tok) jako transportovaný materiál. Interakce mezi nimi v prostředí `κ` (propustnost terénu) by měla automaticky divergovat do optimálních transportních kaňonů, které vyvažují rychlost a robustnost (vedlejší záchranné cesty), podobně jako hlenka. Model zácpy je nativně obsažen v relaxačním čase `φ`.
+- **Verifikace:** 
+    - Porovnat dynamiku formování "dálnic" v Lineu se simulacemi mravenčích kolonií (ACO) a růstem hlenky na standardních benchmarcích (např. spojení náhodně rozložených uzlů do sítě s minimální délkou, ale zachovanou redundancí).
+    - Pokud se emergentní topologie ukáže jako konkurenceschopná nebo efektivnější, napsat reálnou softwarovou aplikaci (např. webové API), která přijme mapu terénu (`κ`) a body zájmu, provede Lineum simulaci a vrátí navrženou topologii sítě.
+
+### 🔲 35. Hypotéza: Hardwarová akcelerace a neuromorfní "Lineum Čip" #impl #hardware
+- **Kontext:** Běh Linea (Eq-4) jako spojité vlnové simulace na běžných CPU/GPU pro řešení optimalizačních úloh je sice možný, ale na standardní von Neumannově architektuře je iterování obrovských matic pro každý "pixel" výpočetně drahé v porovnání se specializovanými softwarovými solvery na grafech. Nicméně matematická podstata Linea (vlny, interference, setrvačnost, lokální integrály) je extrémně vhodná pro fyzikální paralelní výpočty.
+- **Hypotéza (Lineum):** Fyzikální realizace Linea v jednoúčelovém hardwaru eliminuje overhead diskrétní numerické diskretizace a instrukčních sad. Převodem Eq-4 do obvodů (FPGA, sítě, ASIC) lze dosáhnout propustnosti odpovídající řádům fyzikálního času šíření v reálném materiálu.
+- **Verifikace (Bastlířský přístup):**
+    - Navrhnout a otestovat proof-of-concept implementaci Lineum kernelu na dostupném hardwaru současné architektury – primárně jako **FPGA** (Field-Programmable Gate Array) design.
+    - Otestovat rychlost "tvrdě zadrátované" aktualizace polí `ψ` a `φ` (např. paralelní bitwise / fixed-point operace nad buňkami paměti) oproti výkonné softwarové CUDA implementaci. Zjistit, při jakém rozlišení mřížky začíná domácí "Lineum čip" drtit klasické GPU v propustnosti kroků za sekundu a zároveň zlevňuje simulovanou iteraci oproti grafovým AI algoritmům z rodiny deep learningu.
+
+---
+
+## 🏗️ T. Kandidáti na první reálné aplikace (API & SaaS Software) #applied
+
+Tato sekce shromažďuje konkrétní komerční a nástrojové využití, kde by Lineum (i ve své současné softwarové GPU/CPU podobě) mohlo inovovat trh navzdory existenci zavedených diskrétních/grafových algoritmů.
+
+### 🔲 36. Generative Urban Design & Spojité plánování koridorů (MVP Kandidát č. 1)
+- **Use-case:** Softwarový nástroj (API s webovým rozhraním) pro urbanisty, developery nebo architekty. Uživatel nahraje mapu převýšení a překážek (propustnost) do pole prostředí `κ`. Nakliká body, odkud kam má proudit objem dopravy. Lineum přes spojitou hydrodynamiku (vlnění `ψ` s pamětí `φ`) nechá organicky "vyhloubit" ideální průběh nových silnic nebo stezek.
+- **Konkurenční výhoda:** Běžné AI a GIS nástroje (např. Spacemaker) hledají cesty jen modifikací fixních silnic. Lineum najde fraktálně přirozené kaňony, zachová diverzifikované drobné objízdné vlásečnice (redundanci) a přirozeně respektuje kapalinovou povahu zátěže (odpor terénu) bez nutnosti programovat a trénovat složité hluboké neuronové sítě. Zásadně by to zlevnilo fázi ideové studie a návrhu koridorů na "zelené louce".
+- **Implementační MVP plán (2–4 týdny):**
+    - **Týden 1 (Backend & Obal):** Zabalit jádro `lineum.py` do asynchronního web API (např. FastAPI). Přidat schopnost na vstupu číst černobílé obrázky (topografii) přímo do pole prostředí `κ`. Upravit spouštěč vlny `ψ` pro přesné body zájmu (A -> B tok dopravy) místo plošného šumu.
+    - **Týden 2 (Svelte Frontend):** Vytvořit čisté webové interaktivní plátno (Canvas) pro uživatele s drag&drop nahrát mapu a "klikat tečky". Nasadit integraci Stripe pro odbavení plateb.
+    - **Týden 3–4 (Tuning & Exporty):** Vyladění samotných koeficientů rovnice pro "línou a dlouhou" tekutinu (široké paměťové kanály `φ` vhodné pro dálnice). Vytvořit skript pro vyhlazení a převod nasbírané heat-mapy do CAD / SVG vektorů.
+- **Strategie monetizace (SaaS Byznys model):**
+    - **The Teaser:** Každému umožnit zdarma nahrát mapu a spočítat trasu. Uživateli na obrazovce vykreslovat prvních padesát kroků krásnou organickou animaci ("hledání kaňonů"), pak zastavit a zobrazit celkový výsledek jen v rozmazaném rozlišení nebo s vodoznaky. Zákazník vidí vizuální magii, ale samotný inženýrský podklad nemá, dokud nezaplatí.
+    - **Pay-wall přes Vektory:** Platební brána podmiňuje odemčení možnosti Export do vektorů, High-Res CAD SVG vrstev (to, co urbanista reálně potřebuje).
+    - **Pay-per-Project / Předplatné:** Kredity pro studenty / nezávislé freelancery (cca 10 $ za výpočet složité mapy a vektor) nebo měsíční SaaS tarify (tj. 99 $ / měsíc pro profesionální architektonická studia).
+
+### 🔲 37. Krizový management a modelování evakuací s efektem paniky (Zácpa jako fyzikální limit)
+- **Use-case:** Nástroj pro krizové štáby a pořadatele velkých festivalů. Simulace úniku davu lidí (nebo přesunu kolon vozidel při povodních) ze stadionů či městských částí. 
+- **Konkurenční výhoda:** Dnešní evakuační simulace používají tzv. mikrosimulace, kde se musí propočítávat pozice a rozhodování desítek tisíc jednotlivých agentů (velmi drahé a pomalé na výpočet). Lineum používá **lokální tlak a přetížení kapacity buněk** jako přirozenou vlastnost pole `φ`. Jakmile se naplní zúžený východ (přetlak φ), další vlna lidí/aut (`ψ`) se sama plynule přelije a hloubí záchranné cesty jinde. Realisticky modeluje efekt hromadící se "zácpy" či paniky jako ztvrdnutí pole, a to extrémně vizuálně a výpočetně levně přes obyčejnou matematiku tenzorů.
+
+### 🔲 38. Real-time Mutace a Evoluční Adaptace prostředí (Interactive Kappa) #hypothesis #applied
+- **Kontext:** Dosavadní výpočty cesty počítaly se statickou mapou překážek (propustností pole `κ`). Reálný svět se ale během přesunu může fundamentálně a nárazově změnit (spadlý most, pohybující se hurikán, mutace viru u pacienta). 
+- **Hypotéza (Lineum):** Dynamická změna matice `κ` uvnitř běžícího výpočtu Linea (Eq-4) plně a nativně nasimuluje chování evoluce a přírodního výběru. Vlny toku `ψ` nepředpokládají fixní budoucnost. Jakmile se objeví nová zeď/překážka uprostřed ustáleného toku ("náhlá mutace" nebo vnější zásah uživatele štětcem/videem), vlna se roztříští a část její energie odrazem automaticky objeví nové záchranné cestičky. Tlak, který původně běžel hlavním kanálem, je donucen adaptovat existující podřadné větve (redundanci) na novou hlavní dálnici.
+- **Parametrické Předvolby (Presety) pro plošné využití:** 
+    Aplikace nabídne uživatelům vizualizace podle různých fyzikálních / provozních scénářů pouhou změnou parametrů Lineum rovnice (vizkozita, šum, paměť `φ`):
+    1.  **Režim "Pomalý Med / Silné Dálnice" (Urbanismus):** Dlouhý half-life `φ`. Stopy nezanikají. Systém preferuje slučování desítek malých cest do jedné centrální magistrály s obrovskou setrvačností.
+    2.  **Režim "Křehké Vlásečnice" (Cévní oběh / Zavlažování):** Vysoký šum a krátká paměť `φ`. Tok z jednoho bodu se rozštípí na miliony drobných cestiček pod úhlem 137.5°, snaží se pokrýt (vyživit) co největší plochu 2D prostoru.
+    3.  **Režim "Panický Dav" (Evakuace):** Krátká setrvačnost lokálního tlaku. Při sebemenším zaplnění kapacity začne propustnost "tvrdnout" a tok chaoticky uniká do úplně všech volných okolních stran, ignorujíc optimalitu.
+    4.  **Režim "Blesk / Průraz" (Dielektrikum / Elektřina):** Brutální tlakový gradient. Řečiště `ψ` ignoruje malé překážky a snaží se hrubou silou propálit tu nejrovnější linku přes lokální minima v `κ`.
+- **Konkrétní příklady využití v reálném čase a průmyslu:**
+    - **Urbanismus a Civilní inženýrství:** Modelování nejlevnějších vodních kanálů, silnic a kanalizačních stok v novém horském terénu. Simulace dopravního kolapsu po uzavírce mostu ve špičce.
+    - **Telekomunikace a Generativní návrh antén (Fraktální design):** Současné LTE/5G/Wi-Fi antény v mobilních telefonech používají fraktální tvary pro dosažení širokopásmovosti a snížení rozměrů. Rozlití Linea s obrovským paměťovým odporem `φ` z jednoho bodu do neutrálního okolí přirozeně vyhloubí nesmírně komplexní přírodní fraktální vzory. Jejich oříznutím prahovou hodnotou lze generovat a 3D tisknout tvarově originální měděné antény, které nemají geometricky umělou "zubatou" strukturu, ale dokonale plynulou rezonanční křivku, a umí tak přijímat najednou více vlnových délek.
+    - **Mikroelektronika a Návrh Procesorů (Semiconductor Routing):** Spojování miliard tranzistorů uvnitř křemíkových procesorů pomocí "A* algoritmu" nebo pravoúhlých mikrovláken narušuje s rostoucí frekvencí signál (pravoúhlý roh drátu funguje nechtěně jako anténa a ruší ostatní cesty indukčně). "Lineum solver" by na úrovni mikrometrických matric vygeneroval organické zakřivené propojky, naprosto přírodní síť z bodu A do B, tak jako to dělají větve, bez ostrých rohů a s přirozenou distribuční efektivitou.
+    - **Lékařství (Cévní By-passy):** Lékař nahraje CT řez ucpaných cév pacienta (ztvrdlé pixely v `κ`). Klikne na oblast srdce, zvolí preset "Vlásečnice". Lineum navrhne nejpřirozenější cestu pro chirurgický by-pass zdravou tkání s minimálním tlakovým odporem krve.
+    - **Zemědělství (Návrh závlahy):** Nahrání topografické mapy vyschla pole. Cíl roztáhnout kapénkovou závlahu s co nejmenším počtem uzlů a co největším plošným pokrytím.
+    - **Elektrotechnika (Návrh tištěných spojů - PCB):** Nalezení nejelegantnějších cest pro vodivé dráhy na desce tištěných spojů (Router), které nesmí křížit existující čipy, zaberou minimum mědi a sníží indukční přeslechy organickým vlněním místo ostrých 90° úhlů.
+    - **Lesnictví a Ekologie (Zvěř a Predátoři):** Simulace migračních koridorů vysoké zvěře, do které se myší nakreslí pohybující se zóny těžby dřeva nebo výskyt vlků (dynamická změna `κ`). Sledování, jak migrační cesty v pralese "mutují" a přesouvají se.
+- **Verifikace a MVP test:**
+    - Vytvořit "Live Canvas", kam lze během běhu simulace fyzicky myší dokreslovat `κ` překážky nebo pouštět video se změnami propustnosti. Analyzovat "rekonvalescensní dobu" (Adaptation Time) – kolik frejmů simulaci trvá resyntetizovat strukturu po mutaci prostředí do nového optimálního 137.5° stromu.
+
+### 🔲 39. Finanční predikce a odhad příjmů SaaS API (Projektce v CZK) #business
+- **Kontext:** B2B SaaS (Software as a Service) pro architekty, inženýry a designéry s freemium modelem (nástřel zdarma, export placený). Predikce počítá s organickým startem od nuly (0 povědomí na začátku) a postupným růstem přes komunitní marketing (LinkedIn, fóra, Reddit pro urbanisty).
+- **Fáze 1: Záběh (Měsíc 1–3) – Cíl: "Proof of Concept"**
+    - Povědomí je nulové. Probíhá tzv. "Cold Outreach" na architektonická studia a sdílení vizuálně fascinujících GIFů z Linea na sockách (r/urbanplanning, Twitter).
+    - **Příjmy:** 0 Kč – 5 000 Kč / měsíc. (Pouze první "early adopters" kupující Pay-per-Project kredity za 10 $ / 230 Kč na zkoušku plného high-res exportu do CAD).
+- **Fáze 2: Trakce (Měsíc 6) – Cíl: První pravidelní předplatitelé**
+    - Marketing se chytá díky virálnímu efektu "podívejte se jak to samo roste". Nástroj začínají používat první menší studia na pravidelné bázi (SaaS model 99 $ / 2 300 Kč měsíčně).
+    - **Předpoklad:** 5 malých studií (SaaS) + 100 občasných uživatelů (Kredity).
+    - **Příjmy (MRR - Monthly Recurring Revenue):** 11 500 Kč (SaaS) + 23 000 Kč (Kredity) = cca **35 000 Kč / měsíc**.
+- **Fáze 3: Expanze a SEO (Rok 1) – Cíl: Stabilní business**
+    - Vybudovaná SEO autorita (články "Generative Urban Design with Physics"). Aplikace má jméno v mezinárodní komunitě. Firmy si nástroj předplácí dlouhodobě na koncepční fáze tendrů.
+    - **Předpoklad:** 50 platících studií (SaaS) + 300 projektových uživatelů. První testovací 1 Enterprise klient (např. developerská korporace za 499 $ / 11 500 Kč měsíčně).
+    - **Příjmy:** 115 000 Kč (SaaS) + 69 000 Kč (Kredity) + 11 500 Kč (Enterprise) = cca **195 000 Kč / měsíc**.
+- **Fáze 4: Průmyslový standard (Rok 2–3) – Cíl: B2B API Integrace**
+    - Kromě samotného webu začínáme prodávat "Lineum Engine API" třetím stranám (výrobci softwaru pro zdravotnictví, GIS, evakuační simulátory), kteří naše vlnové řešení na pozadí tahají do svých komerčních programů.
+    - **Předpoklad:** 150+ SaaS studií po celém světě, 10+ velkých API Enterprise kontraktů.
+    - **Příjmy:** 345 000 Kč (SaaS) + 115 000 Kč (Enterprise) = cca **500 000 Kč až 1 000 000 Kč / měsíc**.
+- **Zhodnocení:** Marže u SaaS enginů tohoto typu je obrovská (náklady jsou pouze na GPU cloud servery počítající tensorové matice a poplatky za platební bránu Stripe). Při 200 aktivních klientech mohou čisté zisky přesahovat 80 %.
+
+### 🔲 40. Meta-Hypotéza: Vesmír jako emergentní solver (Computational Universe) #philosophy #theory
+- **Kontext:** Zkusíme-li simulovat v rovnici Eq-4 dopravní sítě měst tak, že simulaci "necháme žít" a spolehneme se na její přirozené nalezení cesty nejmenšího odporu přes paměť zácpy a Fibonnaciho větvení, vytváří to přirozenou analogii vůči struktuře našeho reálného Vesmíru.
+- **Hypotéza (Lineum):** Náš fyzikální vesmír pravděpodobně funguje na tomtéž "vyhledávacím" principu. Hypotéza navazuje na myšlenky Setha Lloyda (Vesmír jako kvantový počítač) a tvrdí, že hmota, hvězdy a galaxie nejsou cílem samotným, ale pouze nejefektivnější emergentní kanály a uzly, kterými Vesmír maximalizuje tok (nebo rozptyl entropie ze zdroje / Velkého třesku) přes prostor (propustnost `κ`). Jsme simulací vlastních fyzikálních parametrů; my i Fibonacciho spirály v přírodě jsme dokladem toho, že Vesmír nepřetržitě a optimálně "počítá řešení" na neustále se měnící vstupní hodnoty odporu prostředí. 
+- **Ověření do budoucna (Výpočty):**
+    - Nastavit experiment, kde necháme běžet hydrodynamický design nad extrémně složitou sítí `κ`, až se objeví struktury nápadně podobné uspořádání galaktické pavučiny (Cosmic Web) a filamentů temné hmoty. Otestovat, zda propustnost informací (z pohledu teorie grafů) v "lineum galaktické pavučině" tvoří matematicky nejdokonalejší small-world síť.
+
+---
 
 ## 🌐 R. Portál a Infrastruktura (Milníky do budoucna)
 
