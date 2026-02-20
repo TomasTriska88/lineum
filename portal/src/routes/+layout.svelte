@@ -170,7 +170,10 @@
         }
 
         .nav-links a {
-            font-size: 1.5rem; /* Larger touch targets */
+            font-size: 1.2rem; /* Balanced size */
+            padding: 0.5rem 0; /* Maintain touch target height */
+            width: 100%; /* Full width for easier clicking */
+            text-align: center;
         }
 
         .mobile-toggle {

@@ -1,0 +1,65 @@
+name: Release Reference Pack
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-release-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy numpy-stl matplotlib
+
+      - name: Run audit pipeline (Generate canonical run)
+        run: |
+          # Generate the canonical spec6_false_s41 run
+          python scripts/repro_spec6_false_s41.py
+
+      - name: Verify and Build Pack
+        run: |
+          # Verify run against manifest and generate the pack
+          python scripts/verify_repro_run.py --latest --pack
+
+      - name: Prepare Release Assets
+        id: prepare_assets
+        run: |
+          ZIP_FILE=$(ls output/repro/packs/*.zip | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Error: Reference pack not generated."
+            exit 1
+          fi
+          echo "Found generated pack: $ZIP_FILE"
+          
+          # If triggered by a tag, create a user-friendly alias
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG_NAME=${GITHUB_REF#refs/tags/}
+            ALIAS_ZIP="output/repro/packs/lineum_reference_pack_${TAG_NAME}.zip"
+            cp "$ZIP_FILE" "$ALIAS_ZIP"
+            echo "Created alias: $ALIAS_ZIP"
+            echo "alias_zip=$ALIAS_ZIP" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "audit_zip=$ZIP_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.prepare_assets.outputs.audit_zip }}
+            ${{ steps.prepare_assets.outputs.alias_zip }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

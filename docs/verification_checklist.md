@@ -67,3 +67,27 @@ python scripts/verify_repro_run.py --latest
     - **Step 3:** Compare against manifest.
 - **Command:** `python scripts/verify_repro_run.py --latest` (Fail if mismatch).
 
+## 5. Reference Pack (for third parties)
+
+For independent offline verification without pushing giant source outputs into the repository, a distributable ZIP pack can be generated.
+
+### Building the Pack
+
+After running the reproduction, generate a deterministic pack:
+
+```bash
+python scripts/build_reference_pack.py --latest
+```
+
+This will create an audit-grade ZIP archive in `output/repro/packs/`.
+
+### Verifying the Pack
+
+Anyone with the reference pack can independently verify its integrity without the source repository:
+
+```bash
+python scripts/verify_reference_pack.py --pack <path_to_zip>
+```
+
+The script will unpack the data in memory, check the `SHA256SUMS.txt`, validate the array schemas in the `.npz` files, and print a clear `VERIFICATION: PASS` statement.
+

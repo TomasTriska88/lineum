@@ -442,6 +442,8 @@ LOW_NOISE_MODE = _LNM_ENV
 TEST_EXHALE_MODE = _TEM_ENV
 KAPPA_MODE = _KM_ENV
 DISABLE_TRACKING = RESOLVED_CONFIG["disable_tracking"]
+# Hash KAPPA_MODE for manifest integrity
+KAPPA_HASH = _compute_canonical_hash(KAPPA_MODE)
 
 # --- AUDIT LOCK / SCOPE GATE (Whitepaper 1.0) ---
 _AUDIT_PROFILE = _os.environ.get("LINEUM_AUDIT_PROFILE", "")
@@ -967,10 +969,53 @@ steps = int(steps_override) if steps_override is not None else (
 steps_env = _env_int("LINEUM_STEPS", -1)
 if steps_env and steps_env > 0:
     steps = int(steps_env)
-
 # Canonical noise level
 BASE_NOISE_STRENGTH = 0.005
-NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
+
+# ---------------------------------------------------------
+# NOISE KNOB
+# Precedence: LINEUM_NOISE_STRENGTH > LOW_NOISE_MODE logic > BASE_NOISE_STRENGTH
+# ---------------------------------------------------------
+_env_noise = _os.environ.get("LINEUM_NOISE_STRENGTH", None)
+
+if _env_noise is not None:
+    try:
+        NOISE_STRENGTH = float(_env_noise)
+    except ValueError:
+        print(f"CRITICAL ERROR: Invalid float for LINEUM_NOISE_STRENGTH: '{_env_noise}'")
+        sys.exit(1)
+else:
+    # Fallback to standard config logic
+    NOISE_STRENGTH = 0.0 if LOW_NOISE_MODE else BASE_NOISE_STRENGTH
+
+
+# Canonical drift (advection) strength
+BASE_DRIFT_STRENGTH = -0.004
+
+# ---------------------------------------------------------
+# DRIFT KNOB
+# Precedence: LINEUM_DRIFT_STRENGTH > LINEUM_DISABLE_DRIFT > BASE_DRIFT_STRENGTH
+# ---------------------------------------------------------
+_env_drift = _os.environ.get("LINEUM_DRIFT_STRENGTH", None)
+_env_disable_drift_str = _os.environ.get("LINEUM_DISABLE_DRIFT", None)
+
+# Helper for robust bool parsing (local, don't rely on _env_bool global if not needed)
+def _parse_bool_local(s):
+    if s is None: return False
+    return str(s).strip().lower() in ("1", "true", "yes", "on")
+
+_disable_drift = _parse_bool_local(_env_disable_drift_str)
+
+if _env_drift is not None:
+    try:
+        DRIFT_STRENGTH = float(_env_drift)
+    except ValueError:
+        print(f"CRITICAL ERROR: Invalid float for LINEUM_DRIFT_STRENGTH: '{_env_drift}'")
+        sys.exit(1)
+elif _disable_drift:
+    DRIFT_STRENGTH = 0.0
+else:
+    DRIFT_STRENGTH = BASE_DRIFT_STRENGTH
 
 # --- Tesla-Edison Synchronicity (Portal Hook) ---
 DISSIPATION_RATE = 0.00462  # ln(2)/150 → half-life 150 steps
@@ -1542,7 +1587,8 @@ def evolve(psi, delta, phi, kappa):
 
     # 💫 Gradient φ jako „tíhový tok“
     grad_phi_x, grad_phi_y = np.gradient(phi)
-    phi_flow_term = -0.004 * (grad_phi_x + 1j * grad_phi_y)
+    # Původně hardcoded -0.004, nyní DRIFT_STRENGTH (nastavitelné)
+    phi_flow_term = DRIFT_STRENGTH * (grad_phi_x + 1j * grad_phi_y)
     psi += phi_flow_term
 
     psi += linon_complex + fluctuation + interaction_term
@@ -2272,6 +2318,64 @@ if __name__ == "__main__":
                      sbr_ci[1]) if sbr_ci and sbr_ci[1] == sbr_ci[1] else None,
                      ""],
              ])
+
+    # --- C) Quick Run Summary (M2, Peak Phi, Particles, SBR) ---
+    # Calculated for immediate post-run checks.
+    
+    # 1. M2 (Total Energy) - Canonical integral of |ψ|²
+    m2_integral = float(np.sum(np.abs(psi)**2))
+    
+    # 2. Peak Phi - Canonical is signed max (phi is real)
+    # Also tracking ABS max for clarity
+    try:
+        peak_phi = float(np.max(phi))
+        peak_phi_abs = float(np.max(np.abs(phi)))
+    except Exception:
+        peak_phi = float("nan")
+        peak_phi_abs = float("nan")
+
+    # 3. Particle Stats (from rolling log)
+    p_count = 0
+    com_dist = float("nan")
+    # Safety check: ensure particle_log has data and valid structure (idx 3 requires len>=4)
+    if particle_log and len(particle_log) > 0:
+        last_p = particle_log[-1] # (step, cy, cx, count)
+        if len(last_p) >= 4:
+            p_count = int(last_p[3])
+            if p_count > 0 and not np.isnan(last_p[1]):
+                cy, cx = last_p[1], last_p[2]
+                # Center is size//2
+                com_dist = float(np.sqrt((cy - size/2.0)**2 + (cx - size/2.0)**2))
+
+    # 4. SBR (Safe access - do not assume variable exists)
+    try:
+        final_sbr = float(sbr_mean) if (sbr_mean == sbr_mean) else float("nan")
+    except NameError:
+        final_sbr = float("nan")
+
+    # Write summary directly to avoid RUN_TAG prefix if desired, or use save_csv standard.
+    # User requested "run_summary.csv" explicitly in output_dir. 
+    # save_csv prepends RUN_TAG. To satisfy "run_summary.csv" exactly:
+    summary_path = _os.path.join(output_dir, "run_summary.csv")
+    try:
+        import csv
+        with open(summary_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["metric", "value"])
+            writer.writerows([
+                 ["noise_strength", NOISE_STRENGTH],
+                 ["drift_strength", DRIFT_STRENGTH],
+                 ["M2_total", m2_integral],
+                 ["peak_phi", peak_phi],
+                 ["peak_phi_abs", peak_phi_abs],
+                 ["final_particle_count", p_count],
+                 ["final_com_dist", com_dist],
+                 ["SBR", final_sbr]
+            ])
+        if "notify_file_creation" in globals():
+            notify_file_creation(summary_path)
+    except Exception as e:
+        print(f"[!] Failed to write run_summary.csv: {e}")
 
     # Remove DC component
     amplitudes -= np.mean(amplitudes)

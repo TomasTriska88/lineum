@@ -278,9 +278,16 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
   - *Command:* `python scripts/verify_repro_run.py --latest` (failne při neshodě).
   - *Artifacts:* `output/repro/runs/spec6_false_s41_*/reference/*.npz`
 
+- **Publishable Reference Pack:**
+  - *Conclusion:* Distribuovatelný ZIP balíček (pack) pro nezávislou verifikaci referenčního běhu třetími stranami. Obsahuje snapshoty, metriky a stabilní manifest+sha256 otisky. Umožňuje plné auditní ověření bez nutnosti spouštět celý běh na svém HW. 
+  - *Command (Build):* `python scripts/build_reference_pack.py --latest`
+  - *Command (Verify):* `python scripts/verify_reference_pack.py --pack <path_to_zip>`
+  - *Artifacts:* `output/repro/packs/*.zip` (Tyto soubory se záměrně necommitují repozitáře).
+
 - [x] Implement export reference snapshots + strict hashing -> **Done.**
 - [x] Create canonical manifest (`docs/reference_manifest_...json`) -> **Done.**
 - [x] Enforce manifest-based verification in scripts -> **Done.**
+- [x] Reference Pack builder + pack validator -> **Done.**
 
 - [x] Zvážit zveřejnění malé sady **referenčních binárek** -> **Vyřešeno sekcí F1.**
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.

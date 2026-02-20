@@ -65,6 +65,13 @@ To deploy your changes:
     *   We use a "parking" strategy to prevent `dev` from wasting build hours.
     *   Pushes to `dev` trigger a dummy "parked" build that exits immediately.
 
+### Reference Pack (Audit Archive)
+Reference pack je publikován jako Release asset k verzi `v*` v hlavním depozitáři [GitHub Releases](https://github.com/TomasTriska88/lineum-private/releases). Zveřejnění je oddělené od nasazování portálu.
+*   **Verify**: 
+    ```bash
+    python scripts/verify_reference_pack.py --pack <zip_file>
+    ```
+
 ## 🤖 Auto-Sync & Lina
 The `vite.config.ts` includes a custom plugin that watches the entire monorepo for changes in:
 *   Whitepapers (`/whitepapers`)

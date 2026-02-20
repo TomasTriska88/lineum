@@ -9,6 +9,7 @@ __pycache__/
 # Simulation output (generated, not versioned)
 output*/
 !output_wp/
+output/repro/packs/
 verify_output/
 test_out/
 output_verification*/

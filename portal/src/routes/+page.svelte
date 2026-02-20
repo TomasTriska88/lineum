@@ -102,6 +102,13 @@
                     >{content.sections.scientist.simulacrum.link}</a
                 >
             </div>
+            <div class="card">
+                <h3>{content.sections.scientist.referencePack.title}</h3>
+                <p>{content.sections.scientist.referencePack.desc}</p>
+                <a href="https://github.com/TomasTriska88/lineum-private/releases" target="_blank"
+                    >{content.sections.scientist.referencePack.link}</a
+                >
+            </div>
         </div>
     </div>
 </section>

@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--base-dir", type=str, default="output/repro", help="Základní výstupní adresář (default: output/repro)")
     parser.add_argument("--tag", type=str, default="spec6_false_s41", help="Tag běhu (default: spec6_false_s41)")
     parser.add_argument("--latest", action="store_true", default=True, help="Ověřit nejnovější běh (default: True)")
+    parser.add_argument("--pack", action="store_true", help="Po úspěšné verifikaci běhu následně dogeneruje a ověří publishable referenční pack.")
     
     args = parser.parse_args()
 
@@ -226,6 +227,40 @@ def main():
     print(f"VERIFIKACE:          {final_status}")
     print("-" * 40)
     
+    if final_status == "PASS" and hasattr(args, 'pack') and args.pack:
+        import subprocess
+        print(f"\n[INFO] --pack flag zjištěn. Generuji a verifikuji referenční balíček...")
+        
+        build_cmd = [sys.executable, str(script_dir / "build_reference_pack.py"), "--run_dir", str(target_run_dir)]
+        print(f"[EXEC] {' '.join(build_cmd)}")
+        try:
+            build_res = subprocess.run(build_cmd, check=True)
+            print("[OK] Pack úspěšně vytvořen.")
+        except subprocess.CalledProcessError as e:
+            print(f"[FAIL] Chyba při vytváření packu: {e}")
+            sys.exit(1)
+            
+        print("-" * 40)
+        # Zkonstruujeme cestu k packu - default je v output/repro/packs
+        pack_dir = base_path / "packs"
+        pack_candidates = sorted(pack_dir.glob("*.zip"))
+        if not pack_candidates:
+             print(f"[FAIL] Nový pack nenalezen v {pack_dir}")
+             sys.exit(1)
+             
+        # Vezmeme ten nejnovější (nově vygenerovaný)
+        pack_candidates.sort(key=lambda p: p.stat().st_mtime)
+        latest_pack = pack_candidates[-1]
+        
+        verify_cmd = [sys.executable, str(script_dir / "verify_reference_pack.py"), "--pack", str(latest_pack)]
+        print(f"[EXEC] {' '.join(verify_cmd)}")
+        try:
+            subprocess.run(verify_cmd, check=True)
+            print(f"[OK] Pack validován úspěšně: {latest_pack.name}")
+        except subprocess.CalledProcessError as e:
+            print(f"[FAIL] Validace packu selhala: {e}")
+            sys.exit(1)
+            
     sys.exit(0 if final_status == "PASS" else 1)
 
 if __name__ == "__main__":

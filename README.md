@@ -28,6 +28,14 @@ The heart of the project. A Python-based engine that runs the discrete field upd
     ```
 *   **Audit**: See `whitepapers/` for full scientific methodology or [Verification Checklist](docs/verification_checklist.md) for independent reproduction.
 
+### 📦 Reference Pack
+For independent offline verification without reproducing the entire run, download the pre-built reference pack from the [GitHub Releases](https://github.com/TomasTriska88/lineum-private/releases) page (attached as an asset to `v*` tags).
+
+To verify the downloaded pack:
+```bash
+python scripts/verify_reference_pack.py --pack <path_to_downloaded_zip>
+```
+
 ---
 
 ## 🌐 Portal (Web Interface)

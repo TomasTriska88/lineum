@@ -44,6 +44,11 @@ export const content = {
                 title: 'Simulacrum',
                 desc: 'My interactive laboratory and audit data browser. You can track phase shifts in real time.',
                 link: 'Enter Laboratory →'
+            },
+            referencePack: {
+                title: 'Reference Pack',
+                desc: 'Reference pack je publikován jako Release asset k verzi v*. Verify: python scripts/verify_reference_pack.py --pack <zip>',
+                link: 'Download Releases →'
             }
         }
     },

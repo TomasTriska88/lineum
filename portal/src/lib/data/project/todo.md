@@ -270,15 +270,24 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 #### 🔶 F1. Reference Artifacts (Implemented)
 
-- **Reference Snapshots:**
-  - *Conclusion:* Deterministický export snapshotů (step 200, 1000, final) implementován v repro pipeline.
-  - *Format:* `.npz` s kanonickými hashy (psi+phi buffer, C-order, little-endian).
-  - *Command:* `python scripts/repro_spec6_false_s41.py` (generuje `reference/` složku).
-  - *Validation:* `python scripts/verify_repro_run.py --latest` -> ověří existenci a SHASUM shodu.
-  - *PASS definice:* `REFERENCE_SNAPSHOTS: PASS` a `REFERENCE_HASHES: PASS`.
-  - *Artifacts:* `output/repro/runs/spec6_false_s41_*/reference/{step_200.npz, step_1000.npz, final.npz}`
+- **Reference Snapshots (Manifest-Based):**
+  - *Conclusion:* Deterministický export (step 200, 1000, final) + striktní verifikace proti manifestu.
+  - *Format:* `.npz` data (psi, phi).
+  - *Hash Rule:* `sha256( "dtype|shape|" + raw_bytes_little_endian_c_order )`.
+  - *Manifest:* `docs/reference_manifest_spec6_false_s41.json` (Source of Truth).
+  - *Command:* `python scripts/verify_repro_run.py --latest` (failne při neshodě).
+  - *Artifacts:* `output/repro/runs/spec6_false_s41_*/reference/*.npz`
 
-- [x] Implement export reference snapshots (step_200, step_1000, final) -> **Covered by algorithm above.**
+- **Publishable Reference Pack:**
+  - *Conclusion:* Distribuovatelný ZIP balíček (pack) pro nezávislou verifikaci referenčního běhu třetími stranami. Obsahuje snapshoty, metriky a stabilní manifest+sha256 otisky. Umožňuje plné auditní ověření bez nutnosti spouštět celý běh na svém HW. 
+  - *Command (Build):* `python scripts/build_reference_pack.py --latest`
+  - *Command (Verify):* `python scripts/verify_reference_pack.py --pack <path_to_zip>`
+  - *Artifacts:* `output/repro/packs/*.zip` (Tyto soubory se záměrně necommitují repozitáře).
+
+- [x] Implement export reference snapshots + strict hashing -> **Done.**
+- [x] Create canonical manifest (`docs/reference_manifest_...json`) -> **Done.**
+- [x] Enforce manifest-based verification in scripts -> **Done.**
+- [x] Reference Pack builder + pack validator -> **Done.**
 
 - [x] Zvážit zveřejnění malé sady **referenčních binárek** -> **Vyřešeno sekcí F1.**
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
