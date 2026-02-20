@@ -7,23 +7,18 @@ This document describes the technical architecture of the Lineum Portal, its com
 The project is a monorepo containing three core services that form the Lineum ecosystem.
 
 ```mermaid
-    User((User)) --> ZT["Cloudflare Access (OTP Security)"]
-    ZT --> CF["Lineum.io (Proxy)"]
-    CF --> Portal["Portal (SvelteKit)"]
-    CF --> Lab["Simulakrum (Lab)"]
-    Portal --> AI_Agent["AI Agent (Gemini 1.5 Flash)"]
-    Portal --> API["Python API Engine"]
-    Portal --> CMS["Directus CMS"]
-    API --> CMS
-    API --> DB["(DB / Data Storage)"]
-    API --> Workers["Background Generators"]
+    User((User)) --> CF["Cloudflare (DNS & Proxy)"]
+    CF --> Railway["Railway.app (Origin)"]
     
-    subgraph "Infrastructure (Railway.app)"
-        Portal
-        Lab
-        API
-        CMS
-        Workers
+    subgraph "Railway Infrastructure"
+        Railway --> Portal["Portal (SvelteKit)"]
+        Railway --> Lab["Simulacrum (Lab)"]
+        Railway --> API["Python API Engine"]
+        Railway --> CMS["Directus CMS"]
+        Portal --> AI_Agent["AI Agent (Gemini 1.5 Flash)"]
+        Portal --> API
+        API --> CMS
+        API --> Workers["Background Generators"]
     end
 ```
 
@@ -59,9 +54,9 @@ The project is a monorepo containing three core services that form the Lineum ec
 
 ### 6. Infrastructure & Networking
 - **Platform:** [Railway.app](https://railway.app) (Monorepo deployment via `railway.json`).
-- **Security:** [Cloudflare Zero Trust](https://one.dash.cloudflare.com/) (Access).
-  - **Authorization:** Restricted to specific emails via **One-Time PIN (OTP)**.
-  - **Coverage:** Universal protection for both `lineum.io` and `*.lineum.io` subdomains.
+- **DNS & Proxy:** Cloudflare.
+  - **SSL/TLS:** **Full** mode recommended. (Use "DNS Only" temporarily to let Railway issue certificates).
+  - **Proxy:** Proxied (Orange cloud) records for `lineum.io`.
 
 ## 🌿 Git Workflow & Deployment
 
