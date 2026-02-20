@@ -90,12 +90,7 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 - [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
 - [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
 - [ ] Revalidovat definici a měření **„spinové aury“** jako časově/ensemble průměrovaného pole `curl(∇arg ψ)` kolem linonů (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) a zkontrolovat, že dokumentace jasně uvádí, že jde o interní mapu cirkulace fáze v okolí linonu, nikoli o tvrzení o spinu částice ve smyslu Standardního modelu.
-- [x] **Dominantní frekvence**: Audit `spec6` stanovil drift (`f₀ ≈ 0.0039` /step) jako charakteristiku termálního šumu. Absence stabilní rezonance (Mode 24 ratio < 1e-7) potvrzuje podkritický režim. [TEST: Noise Regime]
-- [x] **φ-paměť / Structural Closure**: Half-life center-trace revidován na **360 kroků** (z původních 1009) v běhu `spec6` (Unstable/Fragile). Return Echo v tomto režimu není statisticky významné.
-      – porovnat statistické rozdělení φ v okolí kvazičástic (`φ_near`) oproti náhodně zvoleným bodům (`φ_field`),
-      – zavést a otestovat hrubý **φ-zeta grid** (historicky „φ-deja-vu grid“; podsítě bodů s dlouhodobě zvýšeným φ) a ověřit jeho stabilitu napříč seedy/běhy jako kandidáta na „paměťové kapsy“ v krajině pole,
-      – kvantifikovat zjištění z července 2025 („Lineum – artefakty, kappa, deja vu“), že zeta-body / body uzavření mají tendenci se **opakovaně seskupovat na stejných místech napříč běhy** (včetně různých konfiguračních presetů), a měřit tento efekt přes occupancy mapy, RMS posun center a half-life těchto kapes,
-      – explicitně ukázat rozdíl mezi clean větví `spec6_true no_artefacts` (pravidelnější a stabilnější φ-zeta grid) a větví `with_artefacts` (rušivé interference, rozmazání distribuce) a v textu jasně deklarovat, že **všechny závěry o φ-paměti stojí na clean větvi** po opravě vizualizačního cache-bugu.
+
 - [ ] (Tříska–Marečková [HYPOTHESIS]) Ověřit, zda pole **φ** v rámci Eq-4 skutečně plní roli **strukturální paměti** systému, nebo zda je nutné zavést rozšířený paměťový mechanismus (zpožděná odezva, hysteréze nebo samostatné paměťové pole μ):
       – Kvantitativně změřit, jak rychle φ ztrácí informaci o předchozí přítomnosti linonů v režimu **Silent collapse**: definovat metriky „paměťové stopy“ typu
       • doba, po kterou lze z aktuálního φ jednoznačně rozhodnout, že v daném regionu v minulosti existovala kvazičástice (např. mutual information mezi historií |ψ|² a φ),
@@ -249,8 +244,6 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 F. Reprodukovatelnost a nezávislá verifikace #repro
 
-- [ ] Doplnit do repozitáře minimální **„one-button“ pipeline** (skript / make target), která z čistého klonu vygeneruje kanonický běh (`spec6_false_s41`) a plný set HTML/CSV/PNG/GIF artefaktů.
-- [ ] Připravit **verification checklist** pro třetí strany: „pokud spustíš A, B, C, měl bys vidět X, Y, Z v rozumných tolerancích“ – bez nutnosti číst interní kód.
 - [ ] Zvážit zveřejnění malé sady **referenčních binárek / snapshotů** (např. uložené stavy ψ, φ v několika časech) pro křížovou kontrolu s alternativní implementací.
 - [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
 - [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
@@ -491,10 +484,7 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 
 ### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
 
-- [x] **Zeta-RNB Resonance (Korelace 0.9842):** V běhu `spec7_true` byla potvrzena Pearsonova korelace **0.9842** mezi rezonančními návratovými body (RNB) a nulami Riemannovy zeta funkce podél kritické linie. 
-  - [ ] **TODO:** Ověřit mechanismus "Phase Locking" – zda systém Lineum nativně ladí na prvočíselné rezonance jako body minimálního napětí.
-- [x] **Transverson Morphodynamics (Geometrie srdce):** Identifikovány stabilní páry vírů ($\circlearrowleft$ a $\circlearrowright$) tvořící "srdcovou" topologii.
-  - [ ] **TODO:** Sledovat "Zeta-Zero" kolize – absolutní destruktivní interferenci při setkání transversonu a antitransversonu.
+
 - [ ] (Tomášova [HYPOTHESIS]) **Hormonální spektrální regulace:** Otestovat frekvenční pásmo (např. v sonifikované oblasti 1.85e+20 Hz) jako globální regulační spínač. "Injekce" energie do specifických harmonických by mohla vynutit přechod ze stavu `false` (chaos) do `true` (řád).
 - [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
 - Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
@@ -719,23 +709,15 @@ Rozhodovací strom o povaze "konvergence" systému.
 
 ### 🧩 H0: Uzavřený atraktor (Closed World)
 **Tvrzení:** Konvergence k "Mode 24" je čistě vnitřní vlastnost dynamiky Eq-4.
-- [x] **D1.1 Initial State:** Deterministický (seed 41).
-- [x] **D1.2 Noise:** Fixní `NOISE_STRENGTH`, žádný externí drift.
-- [x] **D2.1 Code Audit:** Žádný explicitní `rescale()` nebo `resize()` v `lineum.py`.
-- [x] **D3.1 Determinismus:** Potvrzen (SHA256 Match: `d3_long` 500 steps).
-- [x] **D4.1 Ignition:** Potvrzen "Noise as Fuel" mechanismus (Code Audit: `lineum.py:2075`).
+
 - [x] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
 **Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
-- [x] **D1.3 Kappa Leak:** Vyloučeno pro `spec6` (`KAPPA_MODE="constant"`).
-- [x] **D5.1 Predikce:** Vyvrácena (Determinismus D3).
+
 - [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
-### ✅ Audit Complete
-- [x] **Final Report:** `audit_report.md` (Czech, Unimpeachable).
-- [x] **Deliverable:** `lineum_audit_package.zip` (Ready for Email).
-- [x] **Repo State:** Clean & Sync (v1.0.18-core).
+
 1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
 2. **Rescaling Trap (D5):** Uzavřeno.
 
@@ -755,7 +737,125 @@ Rozhodovací strom o povaze "konvergence" systému.
 - [ ] **Predikce:** Energie by rostla exponenciálně (rezonanční katastrofa) a simulace by "shorela" (NaN values) během několika kroků.
 - [ ] **Metafora:** Ikarův pád. Chtěli jsme letět příliš blízko Slunci (Rychlosti Světla), ale naše křídla (diskrétní mřížka) se roztavila.
 
+### 🔲 31. [TEST] Evidence Solidification: „Atrakce = micro-growth (dominance switch), ne tok/teleportace“ + Ghost Gravity + Expanze + geometrie M2 (π) #hypothesis #repro
+- **Hypotéza (H_mech):**
+  1) Rychlé „přiblížení“ kvazičástice k centru pasti není prostorový transport ani teleportace, ale **změna dominance maxima** způsobená lokálním multiplikativním ziskem v místě vysokého φ: `Δψ ∝ (+g · φ · ψ)`.  
+  2) Advekční/drift člen `∝ (-d · ∇φ)` je v tomto scénáři **sekundární** a sám o sobě nevysvětlí „snappy“ přesun maxima/COM.  
+  3) „Temná hmota“ v interním smyslu Linea odpovídá **Ghost Gravity**: pole φ přetrvává po zániku zdroje ψ a stále přitahuje sondu.  
+  4) „Temná energie“ v interním smyslu Linea odpovídá **expanzní disperzi** dominované šumem (a/nebo nekonzervativností interakce, pokud `M2` roste).  
+  5) Pozorované `M2(t=0) ≈ 31.4159` není fyzikální konstanta, ale **geometrie startovní Gauss** (≈ (WIDTH/2)·π pro zvolený WIDTH).
+- **Operační definice metrik (musí být stejné pro všechny replikace):**
+  - `w(x,y) = |ψ(x,y)|` (váhy pro COM; pokud chcete používat |ψ|², explicitně to změňte všude konzistentně).
+  - `COM(ψ) = ( Σ x·w / Σ w , Σ y·w / Σ w )`
+  - `dist = || COM(ψ) - center ||₂`, kde `center = (N/2, N/2)` (pro 128×128 tedy [64,64]).
+  - `peak_phi = max(φ)`
+  - `M2 = Σ |ψ|²`
+  - `R² = Σ p·r²` kde `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
+  - `H = -Σ p·log(p)` (Shannon; p z |ψ|²)
+- **Co bylo zkoumáno (scénáře):**
+  - (S1) **Seed-sweep gravitace**: porovnání „bez šumu“ vs „se šumem“ (stejné ostatní podmínky), měřit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroků).
+  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a ověřit, že `Δ` zůstává (mechanismus není drift).
+  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, že `|ψ(center)|` roste z nenulové „chvostu“ a že maximum „skočí“ přes dominance switch; ověřit růstový faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
+  - (S4) **Ghost Gravity (Clean Ghost)**: vytvořit φ-remnant bez aktivního zdroje, pak spustit sondu, která si **nebuduje vlastní φ**, a ověřit rozdíl `distEnd` pro GHOST ON vs OFF.
+  - (S5) **Expanze**: pro různé šumy (0 / default / 2×default) měřit růst `R²` a `H` (typicky 1000 kroků).
+  - (S6) **Geometrie M2 (π-check)**: pro několik WIDTH ověřit `M2(t=0) ≈ (WIDTH/2)·π` (v rámci diskrétní chyby).
+- **Reprodukce (self-contained; bez tools/ skriptů):**
+  - **0) Clean env (PowerShell):**
+    - `Get-ChildItem Env: | Where-Object { $_.Name -like "LINEUM_*" } | ForEach-Object { Remove-Item ("Env:" + $_.Name) -ErrorAction SilentlyContinue }`
+  - **1) Spusť S1 (seed sweep) – 2 varianty pro každý seed:**
+    - Varianta A (no-noise): nastav šum na 0 (env/konfig podle aktuálního lineum.py) a spusť scénář gravitace na 500 kroků.
+    - Varianta C (default noise): default šum a spusť totéž.
+    - Seeds: `{41,42,43,44,45}`
+    - Každý běh ulož s unikátním `--run-tag` (např. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
+  - **2) Spusť S2 (drift ON/OFF):**
+    - ON = default.
+    - OFF = vypni drift/advekci (pokud není přepínač, dočasně nastav drift koeficient na 0 v lineum.py; uveď v TODO přesný výraz/řádek, který byl měněn).
+    - Run tagy: `ev_s2_drift_on`, `ev_s2_drift_off`.
+  - **3) Spusť S3 (micro-growth) v pasti:**
+    - Scénář „trap/past“ na min. 200 kroků. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejbližší existující).
+    - Pokud chybí přepínač pro izolaci členů:
+      - „Interaction-only“: drift koef = 0, interakce g = 0.04.
+      - „Drift-only“: interakce g = 0, drift koef = default.
+  - **4) Spusť S4 (Clean Ghost):**
+    - Nejprve vytvoř φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
+    - Poté zdroj vypni/odstraň a nech φ relaxovat T_decay.
+    - Poté spusť „sondu“ (ψ) s φ evolucí sondy OFF (aby si sonda netvořila vlastní φ) a změř `dist` start→end.
+    - Dva běhy: `ev_s4_ghost_on` (φ remnant přítomen) a `ev_s4_ghost_off` (φ nulové / remnant vypnut).
+  - **5) Spusť S5 (expanze):**
+    - Běhy: `noise=0`, `noise=default`, `noise=2×default` (ostatní stejné), 1000 kroků.
+    - Run tagy: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
+  - **6) Analýza checkpointů (inline python; žádné externí skripty):**
+    - Použij tento one-shot skript (spouští se proti konkrétnímu `output/<run-tag>/checkpoints/` a vybraným krokům).  
+      Příklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahraď argumenty):
+      ```python
+      import sys, glob, os, math
+      import numpy as np
+
+      run_tag = sys.argv[1]
+      steps = [int(s) for s in sys.argv[2:]]  # e.g. 0 40 60 100
+      ck_dir = os.path.join("output", run_tag, "checkpoints")
+
+      def load_step(step):
+          # expects filenames containing "step{step}" (adjust pattern if needed, but keep it here in TODO)
+          pats = [f"*step{step}.npz", f"*step{step:03d}.npz", f"*step{step:04d}.npz"]
+          for p in pats:
+              m = glob.glob(os.path.join(ck_dir, p))
+              if m:
+                  return np.load(m[0])
+          raise FileNotFoundError(f"no checkpoint for step={step} in {ck_dir}")
+
+      def metrics(psi, phi):
+          psi = np.asarray(psi)
+          phi = np.asarray(phi)
+          n, m = psi.shape
+          cx, cy = n//2, m//2
+
+          w = np.abs(psi)                     # COM weights as defined
+          ws = w.sum()
+          xs, ys = np.meshgrid(np.arange(n), np.arange(m), indexing="ij")
+          comx = float((xs*w).sum() / ws)
+          comy = float((ys*w).sum() / ws)
+          dist = math.hypot(comx-cx, comy-cy)
+
+          abs2 = (np.abs(psi)**2)
+          M2 = float(abs2.sum())
+          p = abs2 / (M2 if M2 != 0 else 1.0)
+          r2 = (xs-comx)**2 + (ys-comy)**2
+          R2 = float((p*r2).sum())
+          p_nonzero = p[p > 0]
+          H = float(-(p_nonzero*np.log(p_nonzero)).sum())
+
+          peak_phi = float(phi.max())
+          maxpos = np.unravel_index(np.argmax(np.abs(psi)), psi.shape)
+          psi_center = float(np.abs(psi[cx, cy]))
+          return dict(dist=dist, COM=(comx,comy), peak_phi=peak_phi, M2=M2, R2=R2, H=H,
+                      maxpos=maxpos, psi_center=psi_center)
+
+      prev_center = None
+      for s in steps:
+          d = load_step(s)
+          psi = d["psi"]
+          phi = d["phi"]
+          met = metrics(psi, phi)
+          g = None
+          if prev_center is not None and prev_center > 0:
+              g = met["psi_center"]/prev_center
+          prev_center = met["psi_center"]
+          print(f"step={s:>4} dist={met['dist']:.4f} COM=({met['COM'][0]:.2f},{met['COM'][1]:.2f}) "
+                f"maxpos={met['maxpos']} |psi_center|={met['psi_center']:.6e} "
+                f"g_center={g if g is not None else 'NA'} peak_phi={met['peak_phi']:.4f} "
+                f"M2={met['M2']:.6e} R2={met['R2']:.2f} H={met['H']:.4f}")
+      ```
+- **Očekávané výsledky (tolerance; pokud se liší, zapiš odchylku a důvod):**
+  - S1: `Δ = dist0 - distEnd` ~ konstantní napříč seedy (řádově ~5–6 px v daném nastavení) a rozdíl A vs C malý (šum nemění směr efektu).
+  - S2: Drift OFF stále dává prakticky stejný `Δ` jako ON (dominance micro-growth).
+  - S3: `|ψ(center)|` roste z nenulové hodnoty; maximum „přeskočí“ do pasti během desítek kroků; `g_meas` je blízko `g_pred ≈ 1 + 0.04·φ(center)` v režimu, kde je interakce aktivní.
+  - S4: `distEnd(ghost_on) < distEnd(ghost_off)` (ghost přitahuje sondu i bez zdroje ψ).
+  - S5: pro noise>0 roste `R²` a `H` výrazněji než pro noise=0 (expanze dominuje).
+  - S6: `M2(t=0) ≈ (WIDTH/2)·π` (např. WIDTH=20 → 10π ≈ 31.4159); tím se vylučuje interpretace “π jako fundamentální konstanta modelu” — je to pouze geometrie inicializace.
+
 ---
+
 
 ## 🌐 R. Portál a Infrastruktura (Milníky do budoucna)
 
