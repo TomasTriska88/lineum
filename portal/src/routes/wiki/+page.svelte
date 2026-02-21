@@ -7,11 +7,19 @@
     let papers = $derived(data.papers as any[]);
 
     // Warning Modal Logic
-    // Warning Modal Logic - Always Show (User Request)
-    let showWarning = $state(true);
+    // Warning Modal Logic - Show only once per visit
+    let showWarning = $state(false);
+
+    onMount(() => {
+        const hasAcked = sessionStorage.getItem("lineum_whitepaper_acked");
+        if (!hasAcked) {
+            showWarning = true;
+        }
+    });
 
     function handleAck() {
         showWarning = false;
+        sessionStorage.setItem("lineum_whitepaper_acked", "true");
     }
 
     // Group papers by category

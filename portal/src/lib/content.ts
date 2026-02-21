@@ -12,110 +12,100 @@ export const palette = {
 
 export const content = {
     contactEmail: 'tomas.triska.iver@gmail.com',
+    operator: {
+        name: 'Tomáš Tříska',
+        address: 'Mírová 40, 356 04 Habartov, Czech Republic',
+        phone: '+420 721 026 189',
+        ico: '87577101'
+    },
     hero: {
         symbol: 'Λ',
         title: 'Science of fields that breathe.',
-        subtitle: 'Stable excitations—linons—can self-assemble in discrete fields. No global constants. No predefined metric geometry. Just local causality. If you want, I can show you where this enters the equation.',
-        cta_wiki: 'Lineum Core v1.0.18',
-        cta_audit: 'Audit Evidence'
+        subtitle: 'Lineum is an exploration of continuous spatial computation. We study how simple deterministic physics can give rise to emergent, intelligent-looking behavior.',
+        cta_wiki: 'Explore the Wiki',
+        cta_audit: 'Audit the Evidence'
     },
     sections: {
         layman: {
-            label: 'Intuition',
-            title: 'What is Lineum?',
-            p1: 'Lineum explores stable excitations in a discrete field. Some of them self-assemble and persist—behaving in ways that resemble particles.',
-            p2: 'This isn\'t just a simulation; it is a search for the fundamental rules from which structure emerges.',
-            visual_label: 'Visual metaphor'
+            label: 'The Philosophy',
+            title: 'Intelligence from simplicity',
+            p1: 'Instead of programming explicit rules or training massive neural networks, Lineum asks a different question: What if computation could emerge naturally from the physics of a continuous space?',
+            p2: 'By designing a specific mathematical environment (Eq-4), we observe the spontaneous formation of stable, particle-like structures that naturally seek optimal paths through their surroundings.',
+            visual_label: 'Core Interaction'
         },
         scientist: {
-            label: 'Formalism',
-            title: 'Deep Science & Auditable Reality',
+            label: 'For Researchers',
+            title: 'Rigorous Verification',
             whitepaper: {
-                title: 'Whitepaper (v1.0.18)',
-                desc: 'Here you will find the complete derivation of the equation, numerical scheme, and interpretation of results.',
-                link: 'Read Documentation →'
+                title: 'The Core Paper',
+                desc: 'Read the foundational document defining Eq-4, structural parameters, and the emergent quasiparticle dynamics.',
+                link: 'Read the Whitepaper →'
             },
             zenodo: {
-                title: 'Zenodo (DOI)',
-                desc: 'Our official scientific archive with guaranteed data traceability.',
-                link: '10.5281/zenodo...'
+                title: 'Open Data Archive',
+                desc: 'Access our canonical runs, snapshot metadata, and mathematical proofs in the Zenodo repository.',
+                link: 'Go to Zenodo →'
             },
             simulacrum: {
-                title: 'Simulacrum',
-                desc: 'My interactive laboratory and audit data browser. You can track phase shifts in real time.',
-                link: 'Enter Laboratory →'
+                title: 'Interactive Simulacrum',
+                desc: 'A live WebGL environment to test parameter stability and observe field interactions directly in your browser.',
+                link: 'Launch Simulacrum →'
             },
             referencePack: {
-                title: 'Reference Pack',
-                desc: 'Reference pack is published as a Release asset to version v*. Verify: python scripts/verify_reference_pack.py --pack <zip>',
-                link: 'Download Releases →'
+                title: 'Reference implementation',
+                desc: 'Download the source code and reproduction scripts to independently verify our claims on your own hardware.',
+                link: 'View on GitHub →'
             }
         }
     },
     legend: {
-        trigger_label: 'Field Guide',
-        title: 'Field Guide',
-        subtitle: 'Emergent phenomena in Lineum',
+        trigger_label: 'Field Mechanics',
+        title: 'Simulation Telemetry',
+        subtitle: 'Live structural observables',
         items: [
             {
                 id: 'psi',
-                label: 'Emergent Life (ψ-Phase)',
-                description: 'The primary act of the field. These <b>Point Singularities</b> wander through the vacuum, shifting colors based on their internal phase state (Cyan: Stable, Magenta: Transition, Yellow: Peak).',
+                label: 'ψ Phase (Quasiparticles)',
+                description: 'The primary entities of the grid. These self-organizing lumps of energy behave like particles, navigating the space according to clear deterministic rules.',
                 color: palette.psi
             },
             {
                 id: 'kappa',
-                label: 'Safe Zones (κ-Field)',
-                description: 'Regions of high vacuum stability. I visualize these as a <b>blue-to-magenta spectral mist</b> where Linons are less likely to experience rapid phase shifts.',
+                label: 'κ Environment (Substrate)',
+                description: 'The static terrain. These are the fixed boundaries and high-friction zones that shape the movement of particles across the grid.',
                 color: palette.kappa
             },
             {
                 id: 'phi',
-                label: 'Ghost Trails (φ-Memory)',
-                description: 'The <span style="color: #818cf8">compact spectral wake</span> trailing *behind* moving particles. It acts as a subtle companion, showing the **Memory (φ)** of recent movement without disrupting the primary field.',
+                label: 'φ Memory (Tension)',
+                description: 'The structural memory. As particles move, they leave a temporary physical "footprint" that repels others from following the exact same path.',
                 color: palette.phi
             },
             {
                 id: 'warp',
-                label: 'Space Warp (Curvature)',
-                description: 'Dynamic **contour lines** (resembling "rubber bands") and magenta halos surrounding clusters. These are ripples in the κ-field created as mass-like particles bend space around them.',
+                label: 'Topological Warp (Guidance)',
+                description: 'The dynamic curvature of the field. This indicates the steepest descent toward optimal destinations, guiding particles like a gravitational pull.',
                 color: palette.warp
-            },
-            {
-                id: 'tension',
-                label: 'Tension Vectors',
-                description: 'Digital pointers showing the direction of field attraction. These represent **Geodetic Tension**—the force of field geometry pulling on each Linon.',
-                color: '#ff00ff'
-            },
-            {
-                id: 'coupling',
-                label: 'Interaction Filaments (Coupling)',
-                description: 'Transient links between particles. These represent **quantum entanglement** or phase-coupling, where the movement of one Linon instantaneously affects the other through the field.',
-                color: palette.coupling
             }
         ],
-        invitation: 'These aren\'t just pretty colors. I can explain the precise math behind every pixel.',
+        invitation: 'Lineum is fully deterministic. What looks like "decisions" is just a descent down a self-generated gradient.',
         faq: [
             {
-                q: 'Where can "Structural Closure" be seen?',
-                a: 'Closure is manifested by those <b>sharp color boundaries</b> and rings around Linons. They are mathematical boundaries where the lineum-field returns to itself (auto-referential loop), giving particles their stability.'
+                q: 'Is this an AI neural network?',
+                a: 'No. Lineum uses continuous wave equations (Eq-4), not discrete weights or training data. The "intelligence" emerges naturally from the physics of the field interacting with obstacles.'
             },
             {
-                q: 'Why do Linons orbit the same way?',
-                a: 'It is not about gravity, but <b>phase locking</b> to the vacuum geometry. Linons do not orbit "something", but follow fixed topographic waves in the field, which are given by the fundamental Lineum equation.'
+                q: 'What is a "linon"?',
+                a: 'A linon is a localized clump of wave energy that holds its shape as it moves. Think of them like digital droplets navigating a microscopic landscape to find their target.'
             },
             {
-                q: 'Why do Linons never collide?',
-                a: 'Linons are not solid bodies, but wave interferences. When they approach each other, their phase gradients create an <b>impassable topological barrier</b> that repels them before contact occurs.'
-            },
-            {
-                q: 'Why do Linons not attract each other?',
-                a: 'In this field, there is no charge or mass in the classic sense. Their interaction is purely <b>informational and geometric</b> — they respond to the curvature of the field (Warp), not to each other.'
+                q: 'Why does this matter?',
+                a: 'By understanding how nature solves spatial problems through fluid dynamics, we can build fundamentally new approaches to routing, logistics, and simulation.'
             }
         ]
     },
     footer: {
-        copy: '© 2026 Lineum Project • lineum.io',
+        copy: '© 2026 Lineum Project. Released for scientific and research purposes.',
         support: 'Support the project (Revolut)',
         github: 'GitHub',
         privacy: 'Privacy Policy'
@@ -145,8 +135,9 @@ export const content = {
         title: 'Live Research / Documentation Gap',
         paragraphs: [
             'Please note that <b>Lineum is an evolving research project</b>. The static whitepapers here may lag behind the latest audit data and ongoing experiments.',
-            'For the most up-to-date understanding, we highly recommend <b>asking Lina</b> (the AI Assistant). She has access to the latest live context, audit results, and reformulated hypotheses that might not yet be fully reflected in these texts.',
-            'Use these documents as a foundational reference, but trust Lina for the current state of the art.'
+            'For the most up-to-date understanding, we highly recommend <a href="/api-solutions" style="color: var(--accent-color); text-decoration: underline;">viewing our Swarm Routing Showcase</a>. It serves as the live proof of our claims, allowing you to observe the continuous field dynamics and emergent particles with your own eyes.',
+            'Alternatively, you can <b>ask Lina</b> (the AI Assistant). She has access to the latest live context, audit results, and reformulated hypotheses that might not yet be fully reflected in these texts.',
+            'Use these documents as a foundational reference, but trust the live data and Lina for the current state of the art.'
         ],
         ack_label: 'I Understand, Continue'
     }

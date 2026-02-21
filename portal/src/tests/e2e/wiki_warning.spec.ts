@@ -38,17 +38,36 @@ test.describe('Wiki Warning Modal', () => {
         await expect(page.locator('.dialog-window')).not.toBeVisible();
     });
 
-    test('should reappear on reload (always show)', async ({ page }) => {
+    test('should NOT reappear on reload (show only once per session/browser)', async ({ page }) => {
         // 1. Visit and Ack
         await page.goto('/wiki');
         await page.getByRole('button', { name: 'I Understand, Continue' }).click();
         await expect(page.locator('.dialog-window')).not.toBeVisible();
 
-        // 2. Reload (Simulate via goto to ensure clean state)
-        await page.goto('/wiki');
+        // 2. Reload
+        await page.reload();
 
-        // 3. Should see modal again
-        await expect(page.locator('.dialog-window')).toBeVisible();
+        // 3. Should NOT see modal again
+        await expect(page.locator('.dialog-window')).not.toBeVisible();
+    });
+
+    test('should reappear in a new browser session (simulating next day visit)', async ({ browser }) => {
+        // 1. Session A: Visit and Ack
+        const contextA = await browser.newContext();
+        const pageA = await contextA.newPage();
+        await pageA.goto('/wiki');
+        await pageA.getByRole('button', { name: 'I Understand, Continue' }).click();
+        await expect(pageA.locator('.dialog-window')).not.toBeVisible();
+        await contextA.close();
+
+        // 2. Session B: New session (e.g., next day)
+        const contextB = await browser.newContext();
+        const pageB = await contextB.newPage();
+        await pageB.goto('/wiki');
+
+        // 3. Should see modal again because sessionStorage is isolated per context
+        await expect(pageB.locator('.dialog-window')).toBeVisible();
+        await contextB.close();
     });
 
     test('should block interaction with content (backdrop)', async ({ page }) => {

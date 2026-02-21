@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
     --bg-color: #020205;
@@ -83,6 +83,7 @@ a:hover {
     }
 
     h1 {
-        font-size: 2.5rem; /* Will serve as a fallback or override dependent on specificity */
+        font-size: 2.5rem;
+        /* Will serve as a fallback or override dependent on specificity */
     }
 }

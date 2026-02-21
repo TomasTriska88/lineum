@@ -8,6 +8,7 @@ import numpy as np
 import heapq
 import sys
 import os
+import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lineum_core.math import evolve
@@ -147,9 +148,19 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     core_math.REACTION_STRENGTH = cfg["reaction"]
     core_math.PHI_DIFFUSION = cfg["phi_diff"]
     
+    start_time = time.time()
+    MAX_COMPUTE_TIME = 15.0 # Max 15 sekund výpočtu per connection
+    
     try:
         # Plynulý On-Demand Render Loop
         for step in range(req.max_steps):
+            if time.time() - start_time > MAX_COMPUTE_TIME:
+                print(f"Task {task_id} exceeded {MAX_COMPUTE_TIME}s limit.")
+                try:
+                    await websocket.send_json({"error": "Compute timeout exceeded"})
+                except: pass
+                break
+                
             # Injekce Zdrojů (Agentů)
             for agent in req.agents:
                 sy, sx = agent.start.y, agent.start.x
@@ -206,3 +217,35 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
             await websocket.send_json({"error": str(e)})
         except:
             pass
+
+@app.get("/api/snippet")
+async def get_api_snippet(language: str = "python", preset: str = "urban_design", fleet_size: int = 500):
+    """
+    Returns dynamic API code snippets based on the current UI state.
+    """
+    if language.lower() == "python":
+        snippet = f"""# 1. Initialize Lineum Continuous Solver
+import lineum as ln
+
+# 2. Upload environmental tensor
+solver = ln.SwarmEnvironment("{preset}.npz", precision=16)
+
+# 3. Stream {fleet_size} parallel fleet agents
+routes = solver.compute_flow(
+    origins=fleet_positions,
+    targets=delivery_nodes,
+    temperature=0.02
+)"""
+    elif language.lower() == "curl":
+        snippet = f"""curl -X POST https://api.lineum.io/v1/compute/swarm \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{{
+    "environment": "{preset}.npz",
+    "fleet_size": {fleet_size},
+    "temperature": 0.02
+  }}'"""
+    else:
+        snippet = "// Language not supported."
+
+    return {"language": language, "code": snippet}

@@ -46,3 +46,18 @@ These rules govern agent behavior and documentation standards for the Lineum Cor
 - **Branch Strategy**: Use `git checkout main` -> `git merge dev` -> `git push origin main` for all production deployments.
 - **Never Push Directly**: Direct pushes to `main` without merging from `dev` are strictly forbidden to ensure a consistent audit trail and robust CI triggers.
 - **Force Trigger**: If a deployment fails to trigger automatically, verify remote state and consider an empty commit bump only as a last resort.
+
+## 10. English-Only Code & Project Tracking
+- **Code & Comments:** ALL source code comments, variable names, and docstrings must be written exclusively in **English**.
+- **Test Suites:** ALL tests (assertions, messages, descriptions) must be written exclusively in **English**. Never use Czech in tests.
+- **Task Tracking:** Project tracking files (such as `todo.md`) must be written exclusively in **English**. Do not use Czech for task tracking.
+- **Exception:** The only exception is if Czech is explicitly required for a localized user-facing UI element. Technical artifacts MUST be English.
+
+## 11. Global Configuration
+- **Email Addresses:** If an email address needs to be displayed or used anywhere in the project, it MUST be imported from the central configuration file (`src/lib/content.ts` or equivalent). Do not hardcode email addresses in components or other files.
+
+## 12. Content & Copywriting Audiences
+The portal seamlessly integrates three distinct worlds, and the copy must reflect the target audience for each:
+1. **Homepage / Main Portal:** Targeted at **laymen**. The text must be simple, clear, and self-explanatory. Focus on the core concepts (like "fields that breathe") without overwhelming jargon or heavy B2B marketing.
+2. **API / Routing Services (Pro):** Targeted at **clients/business**. This is where premium B2B marketing language is used to attract customers and explain the value proposition (ROI, milliseconds, logistics).
+3. **Whitepapers / Science / Wiki:** Targeted at the **scientific community**. The language must be rigorous, cautious, precise, and scientifically accurate.

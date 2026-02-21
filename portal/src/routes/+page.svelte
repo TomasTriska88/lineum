@@ -2,6 +2,7 @@
     import FieldShader from "$lib/components/FieldShader.svelte";
     import Legend from "$lib/components/Legend.svelte";
     import MarginShards from "$lib/components/MarginShards.svelte";
+    import LogoCloud from "$lib/components/LogoCloud.svelte";
     import { content } from "$lib/content";
 </script>
 
@@ -41,6 +42,10 @@
         </div>
     </div>
 </section>
+
+<div class="container">
+    <LogoCloud />
+</div>
 
 <section id="layman" class="info-section">
     <div class="container">
@@ -105,7 +110,9 @@
             <div class="card">
                 <h3>{content.sections.scientist.referencePack.title}</h3>
                 <p>{content.sections.scientist.referencePack.desc}</p>
-                <a href="https://github.com/TomasTriska88/lineum-private/releases" target="_blank"
+                <a
+                    href="https://github.com/TomasTriska88/lineum-private/releases"
+                    target="_blank"
                     >{content.sections.scientist.referencePack.link}</a
                 >
             </div>
@@ -115,7 +122,19 @@
 
 <footer class="container">
     <div class="footer-content">
-        <p>{content.footer.copy}</p>
+        <div class="footer-info">
+            <p>{content.footer.copy}</p>
+            <div class="operator-info">
+                <p>
+                    Operator: {content.operator.name}, {content.operator
+                        .address}
+                </p>
+                <p>
+                    IČO: {content.operator.ico} | Tel: {content.operator.phone} |
+                    Email: {content.contactEmail}
+                </p>
+            </div>
+        </div>
         <div class="footer-links">
             <a href="/support">{content.footer.support}</a>
             <a href="/privacy">{content.footer.privacy}</a>

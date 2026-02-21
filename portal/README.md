@@ -58,6 +58,13 @@ To deploy your changes:
     *   Contains whitepapers, hypotheses, and project metadata synced from the repo root.
     *   Source of truth for Lina's RAG (Retrieval Augmented Generation).
 
+### 🎨 Core UX Philosophy: Progressive Disclosure
+Across the entire portal (and especially in commercial API showcases), we strictly adhere to the **"Simple Surface, Deep Tech"** rule:
+1.  **Top Layer (The Hook):** UI must be immediately understandable to a non-technical C-level executive (clear ROI, visual WOW effect, simple language).
+2.  **Middle Layer (The Proof):** Interactive elements (scrubbing, live verification) to build trust without overwhelming the user.
+3.  **Deep Layer (The Tech):** Optional, deep-dive panels (API snippets, whitepaper links, hardware metrics) available for CTOs and developers who want to inspect the engine.
+*Never force the backend complexity onto the frontend user unless they explicitly click to see it.*
+
 ### Railway Deployment (CI/CD)
 *   **`main` branch** → **Production** (lineum.io)
     *   Deploys *only* if the build and unit tests pass in Railway's CI.

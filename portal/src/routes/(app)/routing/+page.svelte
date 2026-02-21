@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
+    import LogoCloud from "$lib/components/LogoCloud.svelte";
 
     // Místo Concurrenty opět voláme spouštění jen po jednom (čistší dev zkušenost)
     let canvas: HTMLCanvasElement = null as any;
@@ -609,668 +610,500 @@
             }
         };
     });
+
+    // --- ROI Calculator Logic ---
+    let fleetSize = 500;
+    let dailyOps = 100; // in thousands
+
+    $: estimatedSavings = fleetSize * (dailyOps * 1000) * 365 * 0.0006; // $0.0006 saving per computation
+
+    function formatCurrency(value: number) {
+        if (value >= 1e6) {
+            return "$" + (value / 1e6).toFixed(1) + "M";
+        } else if (value >= 1e3) {
+            return "$" + (value / 1e3).toFixed(0) + "k";
+        }
+        return "$" + value.toFixed(0);
+    }
+
+    // --- Dynamic Snippet Fetcher ---
+    let snippetLanguage = "python";
+    let apiSnippet = "// Loading...";
+    let snippetTimeout: any;
+
+    async function fetchSnippet() {
+        try {
+            const res = await fetch(`http://localhost:8000/api/snippet?language=${snippetLanguage}&preset=${activePreset}&fleet_size=${fleetSize}`);
+            if (res.ok) {
+                const data = await res.json();
+                apiSnippet = data.code;
+            }
+        } catch (e) {
+            apiSnippet = "// Failed to connect to Lineum API";
+        }
+    }
+
+    // Debounced reactivity pro posuvníky
+    $: {
+        let _test1 = activePreset;
+        let _test2 = fleetSize;
+        let _test3 = snippetLanguage;
+        clearTimeout(snippetTimeout);
+        snippetTimeout = setTimeout(() => {
+            fetchSnippet();
+        }, 300);
+    }
+    
+    // --- Ticking Cost & Progress Logic ---
+    $: aStarCost = isSimulating ? (currentStep / 1000) * 42.50 : (currentStep > 0 ? 42.50 : 0.00);
+    $: progressWidth = isSimulating ? (currentStep / 1000) * 100 : (currentStep > 0 ? 100 : 0);
 </script>
 
 <svelte:head>
-    <title>Lineum Physical Swarm Routing | Urban Traffic</title>
+    <title>Lineum API Solutions | Swarm Routing Showcase</title>
 </svelte:head>
 
-<div class="holo-deck">
-    <!-- 1. ABSOLUTÍ POZADÍ: WebGL Canvas Simulation -->
-    <div class="canvas-container">
-        <canvas bind:this={canvas} class="webgl-canvas"></canvas>
-        <div class="vignette"></div>
-    </div>
-
-    <!-- 2. UI VRSTVA: Top NavBar "Holo-HUD" -->
-    <header class="hud-header">
-        <!-- Levý Blok: Titulek a Status -->
-        <div class="hud-left">
-            <a href="/" class="nav-back"><span>←</span> Back to Dashboard</a>
-            <h1 class="hud-title">
-                Lineum <span class="text-gradient">Swarm</span> Routing
-            </h1>
-
-            <div class="status-bars">
-                {#if isSimulating}
-                    <div class="status-badge active-badge">
-                        <span class="pulse-dot"></span>
-                        TENSOR CORE:
-                        <span class="hz-text">{currentStep} / 1000 hz</span>
-                    </div>
-                {:else}
-                    <div class="status-badge idle-badge">
-                        <span class="idle-dot"></span>
-                        SYSTEM: IDLE
-                    </div>
-                {/if}
-
-                <div class="status-badge hw-badge">GLSL HARDWARE ACCEL</div>
-            </div>
-        </div>
-
-        <!-- Pravý Blok: Hlavní Akce -->
-        <div class="hud-right">
-            {#if isSimulating}
-                <button class="btn-abort" on:click={stopSimulation}>
-                    ABORT SIMULATION
-                </button>
-            {:else}
-                <button class="btn-initiate" on:click={startSimulation}>
-                    <div class="btn-glow"></div>
-                    <span>▲ INITIATE SHOWCASE</span>
-                </button>
-            {/if}
-        </div>
-    </header>
-
-    <!-- 3. UI VRSTVA: Spodní a Boční Ovládací Panely (Holo-Deck) -->
-    <div class="hud-panels">
-        <!-- Levý Panel: Parametry Prostředí -->
-        <div class="panel-left">
-            <div class="glass-panel">
-                <div class="panel-glow-top"></div>
-
-                <h3 class="panel-title">
-                    Business Use-Cases
-                    <span class="badge-locked">Active</span>
-                </h3>
-
-                <div class="slider-group">
-                    <div class="slider-info">
-                        <span>Application Domain</span>
-                        <span class="cyan-mono">SYS-MODE</span>
-                    </div>
-                    <select
-                        class="holo-select"
-                        on:change={handlePresetChange}
-                        value={activePreset}
+<div
+    class="min-h-screen bg-slate-950 text-slate-50 font-sans flex flex-col pt-16"
+>
+    <!-- Main Content -->
+    <main
+        class="flex-1 p-6 md:p-8 max-w-[1600px] mx-auto w-full flex flex-col gap-10"
+    >
+        <!-- Hero Section -->
+        <div
+            class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6"
+        >
+            <div class="max-w-4xl">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span
+                        class="px-3 py-1 bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider"
+                        >Lineum API Solutions</span
                     >
-                        {#each Object.entries(PRESETS) as [key, pData]}
-                            <option value={key}>{pData.name}</option>
-                        {/each}
-                    </select>
+                    <span
+                        class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-2"
+                        ><span
+                            class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"
+                        ></span> Systems Operational</span
+                    >
                 </div>
-
-                <div class="slider-group" style="margin-top: 2rem;">
-                    <div class="slider-info">
-                        <span>Algorithm Description</span>
-                    </div>
-                    <div
-                        style="font-size: 0.65rem; color: #94a3b8; font-family: monospace; line-height: 1.4;"
-                    >
-                        {PRESETS[activePreset].desc}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vysvětlující panel technologie -->
-            <div class="glass-panel-sub">
-                <p>
-                    Lineum's emergent solver eliminates the need for complex
-                    deep-learning layers. By computing localized continuum field
-                    propagation via <strong class="text-white"
-                        >native PyTorch tensor operations</strong
-                    >, it achieves real-time path discovery in impossibly dense
-                    NP-hard datasets.
-                    <strong class="magenta-text"
-                        >Experience physical AI in action.</strong
-                    >
+                <h1
+                    class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-[1.1]"
+                >
+                    The world's fastest <br class="hidden sm:block" />
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400"
+                        >continuous routing</span
+                    > solver.
+                </h1>
+                <p class="text-slate-400 text-lg max-w-2xl">
+                    Integrate physical swarm intelligence into your B2B stack.
+                    Outperform traditional discrete graph searches by orders of
+                    magnitude.
                 </p>
             </div>
+
+            <!-- Hardware Fairness Badge -->
+            <div
+                class="text-xs font-mono text-slate-400 border border-slate-800 bg-slate-900/50 p-4 rounded-xl flex items-start gap-3 max-w-sm shrink-0"
+            >
+                <svg
+                    class="w-5 h-5 text-slate-500 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                    ></path></svg
+                >
+                <div>
+                    <strong class="text-slate-300 block mb-1"
+                        >Hardware Fairness Guarantee</strong
+                    >
+                    Algorithms run synchronously on identically provisioned hardware
+                    resources (1 vCPU, 512MB RAM) for scientific objectivity.
+                </div>
+            </div>
         </div>
 
-        <!-- Pravý Panel: Agenti a Trasy -->
-        <div class="panel-right">
-            <div class="glass-panel stretch-panel">
-                <h3 class="panel-title">
-                    Active Fleets
-                    <span class="badge-active"
-                        >{scenarioAgents.length} Active</span
+        <!-- Core Simulator Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Left Sidebar: Controls & Scenarios -->
+            <div
+                class="col-span-1 border border-slate-800 bg-slate-900/40 backdrop-blur-sm rounded-2xl p-6 flex flex-col gap-8 shadow-xl"
+            >
+                <div>
+                    <h3
+                        class="text-xs uppercase tracking-widest font-bold text-slate-500 mb-4"
                     >
-                </h3>
-
-                <div class="agent-list">
-                    {#each scenarioAgents as agent}
-                        <!-- Karta Agenta -->
-                        <div class="agent-card">
-                            <!-- Avatar/Barva -->
-                            <div
-                                class="agent-avatar"
-                                style="border-color: {agent.color}; box-shadow: 0 0 10px {agent.color};"
+                        Business Use-Cases
+                    </h3>
+                    <div class="flex flex-col gap-2">
+                        {#each Object.entries(PRESETS) as [key, pData]}
+                            <button
+                                class="text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 {activePreset ===
+                                key
+                                    ? 'bg-sky-500/10 border-sky-500/50 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
+                                    : 'bg-transparent border-transparent text-slate-400 hover:bg-slate-800 hover:text-slate-200'}"
+                                on:click={() =>
+                                    handlePresetChange({
+                                        target: { value: key },
+                                    })}
                             >
+                                <div class="font-bold mb-1">{pData.name}</div>
                                 <div
-                                    class="avatar-dot"
-                                    style="background: {agent.color};"
-                                ></div>
-                            </div>
-                            <!-- Info -->
-                            <div class="agent-info">
-                                <div
-                                    class="agent-name"
-                                    style="color: {agent.color};"
+                                    class="text-xs opacity-70 {activePreset ===
+                                    key
+                                        ? 'text-sky-300'
+                                        : 'text-slate-500'} leading-relaxed hidden lg:block"
                                 >
-                                    {agent.name}
+                                    {pData.desc}
                                 </div>
-                                <div class="agent-dist">
-                                    Metrics: {agent.eta}
+                            </button>
+                        {/each}
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-6 border-t border-slate-800/80">
+                    <div
+                        class="text-xs text-slate-500 mb-3 flex justify-between items-center"
+                    >
+                        <span>Simulation Status:</span>
+                        <span
+                            class="font-mono {isSimulating
+                                ? 'text-emerald-400'
+                                : 'text-slate-300'}"
+                            >{isSimulating
+                                ? `LIVE: ${currentStep} hz`
+                                : "READY"}</span
+                        >
+                    </div>
+
+                    {#if isSimulating}
+                        <button
+                            class="w-full py-3.5 bg-red-500/10 border border-red-500/30 text-red-500 rounded-xl font-bold text-sm tracking-wide shadow-lg hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 group"
+                            on:click={stopSimulation}
+                        >
+                            ■ ABORT VERIFICATION
+                        </button>
+                    {:else}
+                        <button
+                            class="w-full py-3.5 bg-white text-slate-950 rounded-xl font-bold text-sm tracking-wide shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-2 group"
+                            on:click={startSimulation}
+                        >
+                            <span
+                                class="w-2.5 h-2.5 bg-emerald-500 rounded-full group-hover:animate-ping"
+                            ></span>
+                            RUN LIVE VERIFICATION
+                        </button>
+                        <p
+                            class="text-[10px] text-center text-slate-500 mt-3 font-mono"
+                        >
+                            Consume 1 API Credit to bypass pre-rendered
+                            animation
+                        </p>
+                    {/if}
+                </div>
+            </div>
+
+            <!-- Center/Right: Split Benchmarking Screens -->
+            <div class="col-span-1 lg:col-span-3 flex flex-col gap-6">
+                <!-- Grid for Canvas Panels -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[500px]">
+                    <!-- Lineum Panel -->
+                    <div
+                        class="border border-sky-500/40 rounded-2xl overflow-hidden relative bg-slate-950 shadow-[0_0_40px_rgba(56,189,248,0.15)] group flex flex-col"
+                    >
+                        <div
+                            class="absolute top-4 left-4 right-4 z-10 flex justify-between items-start pointer-events-none"
+                        >
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-sky-500/50 rounded-lg text-xs font-mono text-sky-400 font-bold backdrop-blur-md shadow-lg hidden sm:block"
+                            >
+                                LINEUM CONTINUOUS FIELD
+                            </div>
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-sky-500/50 rounded-lg text-xs font-mono text-sky-400 font-bold backdrop-blur-md shadow-lg sm:hidden"
+                            >
+                                LINEUM
+                            </div>
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-slate-700 rounded-lg text-sm font-mono text-white backdrop-blur-md shadow-lg flex flex-col items-end"
+                            >
+                                <span
+                                    class="text-slate-400 text-[10px] uppercase tracking-wider"
+                                    >Time to Calculate</span
+                                >
+                                <span class="text-sky-400 font-bold">4 ms</span>
+                            </div>
+                        </div>
+
+                        <!-- Lineum Canvas takes remaining space -->
+                        <div
+                            class="relative flex-1 bg-black overflow-hidden flex items-center justify-center"
+                        >
+                            <canvas
+                                bind:this={canvas}
+                                class="w-full h-full object-cover mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity max-w-full"
+                            ></canvas>
+                            <!-- Vignette Effect covering only canvas -->
+                            <div
+                                class="absolute inset-0 pointer-events-none"
+                                style="background: radial-gradient(circle at center, transparent 30%, #000 120%); opacity: 0.8;"
+                            ></div>
+                        </div>
+
+                        <!-- Active Fleets Footer inside Lineum Panel -->
+                        <div
+                            class="bg-slate-900/80 backdrop-blur-md border-t border-sky-500/30 p-4 shrink-0"
+                        >
+                            <div
+                                class="flex items-center gap-4 overflow-x-auto no-scrollbar"
+                            >
+                                {#each scenarioAgents as agent}
+                                    <div
+                                        class="flex items-center gap-3 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700/50 whitespace-nowrap"
+                                    >
+                                        <div class="relative flex h-3 w-3">
+                                            <span
+                                                class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                                                style="background-color: {agent.color};"
+                                            ></span>
+                                            <span
+                                                class="relative inline-flex rounded-full h-3 w-3"
+                                                style="background-color: {agent.color};"
+                                            ></span>
+                                        </div>
+                                        <div>
+                                            <div
+                                                class="text-[10px] text-slate-400 font-mono tracking-wider uppercase"
+                                            >
+                                                {agent.name}
+                                            </div>
+                                            <div
+                                                class="text-xs font-bold text-white"
+                                            >
+                                                {agent.eta}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {/each}
+                                {#if isSimulating}
+                                    <div
+                                        class="ml-auto text-[10px] font-mono text-sky-400 animate-pulse whitespace-nowrap hidden sm:block"
+                                    >
+                                        STREAMING DATA...
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Competitor Panel (A*) -->
+                    <div
+                        class="border border-slate-800/80 rounded-2xl overflow-hidden relative bg-slate-900/50 flex flex-col group opacity-90 transition-opacity hover:opacity-100"
+                    >
+                        <div
+                            class="absolute top-4 left-4 right-4 z-10 flex justify-between items-start pointer-events-none"
+                        >
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-slate-700 rounded-lg text-xs font-mono text-slate-400 font-bold backdrop-blur-md shadow-lg hidden sm:block"
+                            >
+                                A* DISCRETE GRAPH SEARCH
+                            </div>
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-slate-700 rounded-lg text-xs font-mono text-slate-400 font-bold backdrop-blur-md shadow-lg sm:hidden"
+                            >
+                                A* SEARCH
+                            </div>
+                            <div
+                                class="px-3 py-1.5 bg-slate-900/80 border border-red-500/30 rounded-lg text-sm font-mono text-white backdrop-blur-md shadow-lg flex flex-col items-end"
+                            >
+                                <span
+                                    class="text-slate-400 text-[10px] uppercase tracking-wider"
+                                    >Time to Calculate</span
+                                >
+                                <span class="text-red-400 font-bold"
+                                    >1450 ms</span
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Placeholder vizualizace A* -->
+                        <div
+                            class="flex-1 w-full h-full flex flex-col items-center justify-center font-mono text-slate-500 text-sm relative overflow-hidden bg-slate-950 px-6 text-center"
+                        >
+                            <!-- Fake grid pro "A* feel" -->
+                            <div
+                                class="absolute inset-0 z-0 opacity-10"
+                                style="background-image: linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px); background-size: 20px 20px;"
+                            ></div>
+
+                            <div class="z-10 text-center">
+                                <svg
+                                    class="w-12 h-12 mx-auto mb-4 text-slate-600 animate-spin-slow"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.5"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                    />
+                                </svg>
+                                <div>[ GRAPH EXPANSION UNAVAILABLE ]</div>
+                                <div
+                                    class="text-[10px] mt-2 text-slate-600 max-w-xs mx-auto"
+                                >
+                                    Discrete algorithms cannot solve dense
+                                    matrices in real-time.
                                 </div>
                             </div>
                         </div>
-                    {/each}
 
-                    <!-- Plus Button -->
-                    <button class="btn-add-unit">+ ADD FLEET</button>
+                        <div
+                            class="bg-slate-900/50 border-t border-slate-800 p-4 h-[65px] flex items-center justify-center shrink-0"
+                        >
+                            <span
+                                class="text-[10px] sm:text-xs text-slate-500 font-mono"
+                                >AWAITING HEURISTIC RESOLUTION...</span
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scraping/Scrubbing Timeline & Ticking Cost -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 bg-slate-900/60 border border-slate-800 p-4 md:p-5 rounded-2xl shadow-lg mt-auto">
+                    <button class="p-3 bg-slate-800 hover:bg-slate-700 rounded-full text-slate-300 transition-colors shrink-0" aria-label="Play timeline" on:click={startSimulation}>
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    </button>
+                    <div class="w-full flex-1 h-3 bg-slate-950 border border-slate-800 rounded-full relative overflow-hidden">
+                        <div class="absolute top-0 left-0 bottom-0 bg-slate-800 transition-all duration-100" style="width: {progressWidth}%"></div>
+                        <!-- Lineum completion marker -->
+                        <div class="absolute top-0 bottom-0 w-1.5 bg-sky-500 left-[2.5%] shadow-[0_0_10px_rgba(56,189,248,1)]" title="Lineum Complete (4ms)"></div>
+                    </div>
+                    
+                    <div class="flex flex-col items-start sm:items-end min-w-[200px] bg-red-500/5 border border-red-500/20 px-4 py-2 rounded-xl shrink-0">
+                        <span class="text-[10px] text-red-500/70 uppercase tracking-widest font-bold">Estimated Ticking Cost</span>
+                        <div class="flex items-baseline gap-2">
+                             <span class="text-red-400 font-mono font-bold text-xl sm:text-2xl">-${aStarCost.toFixed(2)}</span>
+                             <span class="text-slate-500 text-[10px] sm:text-xs font-mono">/ hour</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI & Integration Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 w-full max-w-7xl">
+            
+            <!-- ROI Calculator -->
+            <div class="border border-emerald-500/30 bg-emerald-950/20 backdrop-blur-sm rounded-2xl p-6 lg:p-8 flex flex-col justify-between shadow-[0_0_30px_rgba(16,185,129,0.05)]">
+                <div>
+                   <h3 class="text-xl font-bold text-white mb-2">Business Impact Calculator</h3>
+                   <p class="text-slate-400 text-sm mb-8">Estimate your annual savings based on compute reduction and increased operational elasticity.</p>
+                   
+                   <div class="flex flex-col gap-6">
+                      <div class="flex flex-col gap-3">
+                         <div class="flex justify-between items-end">
+                            <label for="fleetSizeInput" class="text-xs font-bold text-slate-300 uppercase tracking-wider">Fleet Size / Concurrent Agents</label>
+                            <span class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">{fleetSize}</span>
+                         </div>
+                         <input id="fleetSizeInput" type="range" bind:value={fleetSize} class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" min="10" max="5000" step="10">
+                      </div>
+                      
+                      <div class="flex flex-col gap-3">
+                         <div class="flex justify-between items-end">
+                            <label for="dailyOpsInput" class="text-xs font-bold text-slate-300 uppercase tracking-wider">Daily Route Recalculations</label>
+                            <span class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">{dailyOps}k</span>
+                         </div>
+                         <input id="dailyOpsInput" type="range" bind:value={dailyOps} class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" min="1" max="1000" step="5">
+                      </div>
+                   </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-emerald-900/50 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                   <div>
+                       <div class="text-[10px] text-emerald-500/70 uppercase tracking-widest font-bold mb-1">Estimated Annual Savings</div>
+                       <div class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
+                          {formatCurrency(estimatedSavings)}
+                       </div>
+                   </div>
+                   <button class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-colors shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] whitespace-nowrap">
+                       Talk to Sales
+                   </button>
                 </div>
             </div>
 
-            <!-- Data Flow Log -->
-            {#if isSimulating}
-                <div class="log-panel">
-                    <div class="log-line cyan-dim">> Buffer sync completed</div>
-                    <div class="log-line magenta-dim">
-                        > Calculating dynamic bottlenecks...
+            <!-- API Code Snippet & Paywall -->
+            <div class="border border-slate-800 bg-slate-900/40 backdrop-blur-sm rounded-2xl flex flex-col overflow-hidden">
+                <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                       <span class="w-3 h-3 rounded-full bg-red-400/20 border border-red-500/50"></span>
+                       <span class="w-3 h-3 rounded-full bg-amber-400/20 border border-amber-500/50"></span>
+                       <span class="w-3 h-3 rounded-full bg-emerald-400/20 border border-emerald-500/50"></span>
                     </div>
-                    <div class="log-line green-bright">
-                        > Packet {currentStep} received [OK]
+                    <div class="text-xs font-mono text-slate-500">POST /api/v1/compute/swarm</div>
+                    <div class="flex gap-2">
+                       <button class="text-xs font-bold {snippetLanguage === 'curl' ? 'text-sky-400 bg-sky-500/10 border border-sky-500/30' : 'text-slate-400 bg-slate-800 hover:text-white border-transparent'} px-3 py-1 rounded transition-colors" on:click={() => snippetLanguage = 'curl'}>cURL</button>
+                       <button class="text-xs font-bold {snippetLanguage === 'python' ? 'text-sky-400 bg-sky-500/10 border border-sky-500/30' : 'text-slate-400 bg-slate-800 hover:text-white border-transparent'} px-3 py-1 rounded transition-colors" on:click={() => snippetLanguage = 'python'}>Python</button>
                     </div>
                 </div>
-            {/if}
+                <!-- Code Snippet Body -->
+                <div class="p-6 relative flex-1 text-sm font-mono text-slate-300 overflow-hidden leading-relaxed">
+                   <pre class="whitespace-pre-wrap font-mono text-sm"><code>{apiSnippet}</code></pre>
+
+                   <!-- Paywall Overlay -->
+                   <div class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-slate-900 via-slate-900/90 to-transparent flex flex-col items-center justify-end pb-8 px-6 text-center z-10">
+                       <div class="flex items-center justify-center w-12 h-12 bg-slate-800 rounded-full mb-3 shadow-lg border border-slate-700">
+                           <svg class="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                       </div>
+                       <h4 class="font-bold text-white mb-1">Production Access Locked</h4>
+                       <p class="text-xs text-slate-400 max-w-xs mx-auto mb-4">Export raw datasets, upload custom floorplans, and access real-time WebSockets with an Enterprise plan.</p>
+                       <button class="px-5 py-2.5 bg-white text-slate-950 font-bold text-sm rounded-lg hover:bg-slate-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                          Upgrade to Lineum Enterprise
+                       </button>
+                   </div>
+                </div>
+            </div>
+            
         </div>
-    </div>
+        
+        <div class="mt-8 border-t border-slate-800/80 pt-12">
+            <LogoCloud />
+        </div>
+        
+    </main>
 </div>
 
 <style>
-    /* Absolute reset for the Holo-Deck */
-    .holo-deck {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: #020205;
-        color: #f1f5f9;
-        font-family: var(--font-sans, system-ui, sans-serif);
-        overflow: hidden;
-        z-index: 9999; /* Overlay over standard portal layout */
-    }
-
-    /* WebGL Background */
-    .canvas-container {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-    }
-    .webgl-canvas {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-    .vignette {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(
-            circle at center,
-            transparent 20%,
-            #000 120%
-        );
-        opacity: 0.8;
-    }
-
-    /* HUD Header */
-    .hud-header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 20;
-        padding: 5rem 2.5rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        pointer-events: none;
-    }
-
-    .hud-left {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        pointer-events: auto;
-    }
-
-    .nav-back {
-        font-size: 0.65rem;
-        font-family: var(--font-mono, monospace);
-        color: #94a3b8;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        transition: color 0.2s;
-        text-decoration: none;
-        width: max-content;
-    }
-    .nav-back span {
-        color: #38bdf8;
-    }
-    .nav-back:hover {
-        color: #38bdf8;
-    }
-
-    .hud-title {
-        font-size: 2.25rem;
-        font-weight: 700;
-        letter-spacing: -0.05em;
-        margin: 0;
-        line-height: 1;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    }
-    .text-gradient {
-        background: linear-gradient(to right, #e879f9, #38bdf8);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* Status Badges */
-    .status-bars {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 0.25rem;
-    }
-    .status-badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 4px;
-        font-size: 0.65rem;
-        font-family: var(--font-mono, monospace);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(12px);
-    }
-    .active-badge {
-        border: 1px solid rgba(232, 121, 249, 0.3);
-        color: #e879f9;
-        box-shadow: 0 0 10px rgba(232, 121, 249, 0.2);
-    }
-    .pulse-dot {
-        width: 6px;
-        height: 6px;
-        background: #e879f9;
-        border-radius: 50%;
-        box-shadow: 0 0 8px #e879f9;
-        animation: pulse 2s infinite;
-    }
-    .hz-text {
-        color: white;
-        font-weight: bold;
-    }
-    .idle-badge {
-        border: 1px solid rgba(51, 65, 85, 0.5);
-        color: #94a3b8;
-    }
-    .idle-dot {
-        width: 6px;
-        height: 6px;
-        background: #64748b;
-        border-radius: 50%;
-    }
-    .hw-badge {
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        color: #38bdf8;
-    }
-
-    /* Buttons */
-    .hud-right {
-        pointer-events: auto;
-    }
-
-    .btn-initiate,
-    .btn-abort {
-        padding: 0.75rem 2rem;
-        font-size: 0.875rem;
-        font-weight: bold;
-        border-radius: 0.75rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        backdrop-filter: blur(16px);
-    }
-
-    .btn-initiate {
-        background: rgba(4, 4, 10, 0.8);
-        color: white;
-        border: 1px solid rgba(192, 132, 252, 0.5);
-        box-shadow: 0 0 25px rgba(192, 132, 252, 0.3);
-    }
-    .btn-initiate:hover {
-        background: #000;
-        border-color: #e879f9;
-        box-shadow: 0 0 35px rgba(192, 132, 252, 0.6);
-    }
-    .btn-initiate:active {
-        transform: scale(0.95);
-    }
-
-    .btn-glow {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            to right,
-            rgba(88, 28, 135, 0.5),
-            rgba(2, 132, 199, 0.5),
-            rgba(88, 28, 135, 0.5)
-        );
-        opacity: 0;
-        transition: opacity 0.5s;
-    }
-    .btn-initiate:hover .btn-glow {
-        opacity: 1;
-    }
-    .btn-initiate span {
-        position: relative;
-        z-index: 1;
-        letter-spacing: 0.05em;
-    }
-
-    .btn-abort {
-        background: rgba(69, 10, 10, 0.6);
-        color: #fecaca;
-        border: 1px solid rgba(239, 68, 68, 0.5);
-        box-shadow: 0 0 20px rgba(153, 27, 27, 0.4);
-    }
-    .btn-abort:hover {
-        background: rgba(127, 29, 29, 0.8);
-        color: white;
-    }
-    .btn-abort:active {
-        transform: scale(0.95);
-    }
-
-    /* HUD Panels Bottom */
-    .hud-panels {
-        position: absolute;
-        inset: 0;
-        z-index: 10;
-        pointer-events: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding: 2.5rem;
-    }
-
-    .panel-left {
-        width: 320px;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        pointer-events: auto;
-    }
-    .panel-right {
-        width: 280px;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        pointer-events: auto;
-    }
-
-    .glass-panel {
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        position: relative;
-        overflow: hidden;
-        transition: border-color 0.3s;
-    }
-    .glass-panel:hover {
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .stretch-panel {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .panel-glow-top {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(
-            to right,
-            transparent,
-            rgba(192, 132, 252, 0.5),
-            transparent
-        );
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-    .glass-panel:hover .panel-glow-top {
-        opacity: 1;
-    }
-
-    .panel-title {
-        font-size: 0.75rem;
-        font-family: var(--font-mono, monospace);
-        color: #94a3b8;
-        margin: 0 0 1.25rem 0;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .badge-locked,
-    .badge-active {
-        font-size: 0.6rem;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: var(--font-mono, monospace);
-    }
-    .badge-locked {
-        background: rgba(56, 189, 248, 0.1);
-        color: #38bdf8;
-    }
-    .badge-active {
-        background: rgba(52, 211, 153, 0.1);
-        color: #34d399;
-    }
-
-    /* Sliders */
-    .slider-group {
-        margin-bottom: 1.25rem;
-    }
-    .slider-group:last-child {
-        margin-bottom: 0;
-    }
-    .slider-info {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-        color: #cbd5e1;
-        margin-bottom: 0.5rem;
-    }
-    .cyan-mono {
-        font-family: var(--font-mono, monospace);
-        color: #38bdf8;
-    }
-
-    .holo-select {
-        width: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        color: #f1f5f9;
-        font-family: var(--font-mono, monospace);
-        font-size: 0.75rem;
-        padding: 0.5rem;
-        border-radius: 6px;
-        outline: none;
-        cursor: pointer;
-        transition: border-color 0.2s;
-    }
-    .holo-select:hover {
-        border-color: rgba(56, 189, 248, 0.8);
-    }
-
-    .glass-panel-sub {
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1rem;
-        padding: 1.25rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    .glass-panel-sub p {
-        font-size: 0.75rem;
-        color: #94a3b8;
-        line-height: 1.6;
-        font-weight: 300;
+    :global(body) {
+        /* Ensure normal scroll behavior and background for the new B2B layout */
+        background-color: #020617; /* tailwind text-slate-950 */
         margin: 0;
     }
-    .text-white {
-        color: white;
-        font-weight: 600;
+    .animate-spin-slow {
+        animation: spin 3s linear infinite;
     }
-    .magenta-text {
-        color: #c084fc !important;
-    }
-
-    /* Agents */
-    .agent-list {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .agent-card {
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .agent-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .agent-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #04040a;
-        border: 1px solid #38bdf8;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 0 10px #38bdf8;
-    }
-    .avatar-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #38bdf8;
-        animation: pulse 2s infinite;
-    }
-    .agent-info {
-        flex: 1;
-    }
-    .agent-name {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 2px;
-        transition: color 0.2s;
-    }
-    .agent-card:hover .agent-name {
-        color: #38bdf8;
-    }
-    .agent-dist {
-        font-size: 0.65rem;
-        color: #94a3b8;
-        font-family: var(--font-mono, monospace);
-    }
-
-    .btn-add-unit {
-        width: 100%;
-        padding: 0.6rem;
-        border-radius: 0.75rem;
-        border: 1px dashed #334155;
-        background: transparent;
-        color: #64748b;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .btn-add-unit:hover {
-        border-color: #64748b;
-        color: #cbd5e1;
-    }
-
-    /* Logs */
-    .log-panel {
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(40px);
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
-        height: 128px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
-    .log-line {
-        font-size: 0.65rem;
-        font-family: var(--font-mono, monospace);
-        margin-bottom: 4px;
-    }
-    .cyan-dim {
-        color: #38bdf8;
-        opacity: 0.7;
-    }
-    .magenta-dim {
-        color: #e879f9;
-        opacity: 0.8;
-    }
-    .green-bright {
-        color: #34d399;
-        font-weight: bold;
-    }
-
-    @keyframes pulse {
-        0% {
-            opacity: 1;
-            transform: scale(1);
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
         }
-        50% {
-            opacity: 0.5;
-            transform: scale(0.9);
+        to {
+            transform: rotate(360deg);
         }
-        100% {
-            opacity: 1;
-            transform: scale(1);
-        }
+    }
+    /* Hide scrollbar for agent list */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
     }
 </style>
