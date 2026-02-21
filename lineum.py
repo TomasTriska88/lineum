@@ -18,6 +18,9 @@ import glob
 import hashlib
 import subprocess
 
+from lineum_core import math as core_math
+from lineum_core.math import evolve, PSI_AMP_CAP, PHI_CAP, GRAD_CAP
+
 # --- Fingerprinting ---
 def _compute_code_fingerprint(files, normalized_newlines=True):
     """
@@ -1440,8 +1443,7 @@ def export_rolling_metrics(step_idx: int, payload: dict) -> None:
     _atomic_write_json(path, out)
 
 
-def sigmoid(x, k=5):
-    return 1 / (1 + np.exp(-k * (x - 0.0)))
+
 
 
 def generate_kappa(step, total_steps=None):
@@ -1473,153 +1475,6 @@ def initialize_fields():
 def initialize_interaction_field():
     # φ is a scalar background field (real). Keep it float for stability and interpretability.
     return np.zeros((size, size), dtype=np.float64)
-
-
-def diffuse_complex(field, rate=0.05):
-    return rate * (
-        np.roll(field, 1, axis=0) +
-        np.roll(field, -1, axis=0) +
-        np.roll(field, 1, axis=1) +
-        np.roll(field, -1, axis=1) -
-        4 * field
-    )
-
-
-def diffuse_real(field: np.ndarray, rate=0.05) -> np.ndarray:
-    field = np.asarray(field, dtype=np.float64)
-    return rate * (
-        np.roll(field, 1, axis=0) +
-        np.roll(field, -1, axis=0) +
-        np.roll(field, 1, axis=1) +
-        np.roll(field, -1, axis=1) -
-        4.0 * field
-    )
-
-
-def _finite_clip(a, lo=None, hi=None, nan=0.0, posinf=None, neginf=None, dtype=None):
-    """
-    Make array finite and optionally clip.
-    - replaces NaN/Inf with finite values first (so squaring won't overflow)
-    - then applies clip
-    """
-    x = np.asarray(a)
-    if dtype is not None:
-        x = x.astype(dtype, copy=False)
-    if posinf is None:
-        posinf = hi if hi is not None else 0.0
-    if neginf is None:
-        neginf = lo if lo is not None else 0.0
-    x = np.nan_to_num(x, nan=nan, posinf=posinf, neginf=neginf)
-    if lo is not None or hi is not None:
-        x = np.clip(x, lo if lo is not None else -np.inf,
-                    hi if hi is not None else np.inf)
-    return x
-
-
-def _cap_complex_magnitude(z: np.ndarray, cap: float) -> np.ndarray:
-    """
-    Hard-cap |z| to 'cap' while preserving phase. Prevents numeric blow-ups.
-    """
-    z = np.asarray(z, dtype=np.complex128)
-    mag = np.abs(z).astype(np.float64, copy=False)
-    # avoid division by 0
-    scale = np.ones_like(mag, dtype=np.float64)
-    mask = mag > cap
-    if np.any(mask):
-        scale[mask] = cap / (mag[mask] + 1e-30)
-        z = z * scale
-    return z
-
-
-def _finite_complex(z: np.ndarray, nan: float = 0.0) -> np.ndarray:
-    """
-    Make complex array finite without using np.clip (which is invalid for complex).
-    Replaces NaN/Inf in real/imag parts independently.
-    """
-    z = np.asarray(z, dtype=np.complex128)
-    re = np.nan_to_num(z.real, nan=nan, posinf=0.0, neginf=0.0)
-    im = np.nan_to_num(z.imag, nan=nan, posinf=0.0, neginf=0.0)
-    return re + 1j * im
-
-
-# Safety caps (keep conservative; just preventing numeric blow-ups)
-PSI_AMP_CAP = 1e6          # cap |psi| before squaring / interactions
-GRAD_CAP = 1e6          # cap gradient components before squaring
-PHI_CAP = 1e6          # hard cap for |phi| to keep interaction finite
-
-
-def evolve(psi, delta, phi, kappa):
-    # ψ is complex; φ is real scalar.
-    psi = _finite_complex(psi, nan=0.0)
-    phi = _finite_clip(phi, lo=0.0, hi=PHI_CAP, nan=0.0,
-                       posinf=PHI_CAP, neginf=0.0, dtype=np.float64)
-
-    # amplitude (cap BEFORE any squaring)
-    amp = np.abs(psi).astype(np.float64, copy=False)
-    amp = _finite_clip(amp, lo=0.0, hi=PSI_AMP_CAP, nan=0.0,
-                       posinf=PSI_AMP_CAP, neginf=0.0)
-
-    # gradient of (amp + delta)
-    grad_x, grad_y = np.gradient((amp + delta).astype(np.float64, copy=False))
-    # cap gradients BEFORE squaring (this is where your overflow happens)
-    grad_x = _finite_clip(grad_x, lo=-GRAD_CAP, hi=GRAD_CAP,
-                          nan=0.0, posinf=GRAD_CAP, neginf=-GRAD_CAP)
-    grad_y = _finite_clip(grad_y, lo=-GRAD_CAP, hi=GRAD_CAP,
-                          nan=0.0, posinf=GRAD_CAP, neginf=-GRAD_CAP)
-    grad_mag = np.sqrt(np.clip(grad_x*grad_x + grad_y*grad_y, 0.0, 1e12))
-    probability = sigmoid(amp + grad_mag)
-    random_field = np.random.rand(size, size)
-    linons = (random_field < probability).astype(float)
-    linon_base = 0.01 if TEST_EXHALE_MODE else 0.03
-    linon_scaling = 0.01 if TEST_EXHALE_MODE else 0.02
-    linon_effect = (linon_base + linon_scaling * amp.clip(min=0)) * linons
-
-    linon_complex = linon_effect * np.exp(1j * np.angle(psi))
-
-    fluctuation = np.random.normal(
-        0.0, NOISE_STRENGTH, (size, size)) * np.exp(1j * np.angle(psi))
-
-    # 💡 Adding interaction (φ is real scalar; keep bounded)
-    # NOTE: previously hardcoded to 10.0; now configurable via LINEUM_PHI_INTERACTION_CAP
-    phi_int = _finite_clip(phi, lo=0.0, hi=float(PHI_INTERACTION_CAP), nan=0.0,
-                           posinf=float(PHI_INTERACTION_CAP), neginf=0.0, dtype=np.float64)
-    interaction_term = 0.04 * phi_int * psi
-
-    # 💫 Gradient φ jako „tíhový tok“
-    grad_phi_x, grad_phi_y = np.gradient(phi)
-    # Původně hardcoded -0.004, nyní DRIFT_STRENGTH (nastavitelné)
-    phi_flow_term = DRIFT_STRENGTH * (grad_phi_x + 1j * grad_phi_y)
-    psi += phi_flow_term
-
-    psi += linon_complex + fluctuation + interaction_term
-
-    psi -= DISSIPATION_RATE * psi
-    psi += diffuse_complex(psi, rate=PSI_DIFFUSION)
-
-    # 🌀 Canonical φ-evolution: slow memory + single calibrated diffusion
-    # ≈ ln(2) / (2000 * ⟨κ⟩) with ⟨κ⟩≈0.5 → half-life ≈ 2000 steps
-    reaction_strength = 0.00070
-
-    # IMPORTANT: never do (abs(psi)**2) directly; it can overflow before clip.
-    amp2 = _finite_clip(np.abs(psi).astype(np.float64, copy=False),
-                        lo=0.0, hi=PSI_AMP_CAP, nan=0.0, posinf=PSI_AMP_CAP, neginf=0.0)
-    local_input = np.clip(amp2 * amp2, 0.0, 1e4)
-
-    # single-step relaxation toward local_input:
-    phi += kappa * REACTION_STRENGTH * (local_input - phi)
-
-    # diffusion on real φ: use real Laplacian diffusion
-    phi += kappa * PHI_DIFFUSION * diffuse_real(phi, rate=0.05)
-
-    # post-step safety
-    psi = _finite_complex(psi, nan=0.0)
-    phi = _finite_clip(phi, lo=0.0, hi=PHI_CAP, nan=0.0,
-                       posinf=PHI_CAP, neginf=0.0, dtype=np.float64)
-
-    # CRITICAL: hard-cap |psi| so FFT power never overflows in extreme regimes
-    psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
-
-    return psi, phi
 
 
 def export_portal_params():
@@ -2083,6 +1938,16 @@ if __name__ == "__main__":
                 
             # Track kappa spatial mean for temporal metrics
             kappa_spatial_means.append(float(np.mean(kappa)))
+
+            # Sync dynamic configuration into lineum_core.math before evolving
+            core_math.TEST_EXHALE_MODE = TEST_EXHALE_MODE
+            core_math.NOISE_STRENGTH = NOISE_STRENGTH
+            core_math.PHI_INTERACTION_CAP = float(PHI_INTERACTION_CAP)
+            core_math.DRIFT_STRENGTH = float(DRIFT_STRENGTH)
+            core_math.DISSIPATION_RATE = float(DISSIPATION_RATE)
+            core_math.PSI_DIFFUSION = float(PSI_DIFFUSION)
+            core_math.REACTION_STRENGTH = float(REACTION_STRENGTH)
+            core_math.PHI_DIFFUSION = float(PHI_DIFFUSION)
 
             psi, phi = evolve(psi, delta, phi, kappa)
             amp = np.abs(psi)
