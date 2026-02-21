@@ -47,7 +47,7 @@ export const content = {
             },
             referencePack: {
                 title: 'Reference Pack',
-                desc: 'Reference pack je publikován jako Release asset k verzi v*. Verify: python scripts/verify_reference_pack.py --pack <zip>',
+                desc: 'Reference pack is published as a Release asset to version v*. Verify: python scripts/verify_reference_pack.py --pack <zip>',
                 link: 'Download Releases →'
             }
         }

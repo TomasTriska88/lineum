@@ -14,6 +14,7 @@
             <a href="https://simulacrum.lineum.io" target="simulacrum"
                 >Simulacrum</a
             >
+            <a href="/routing">Routing Lab</a>
             <a href="/#scientist">For Scientists</a>
             <a href="/support" class="nav-cta">Support</a>
         </div>

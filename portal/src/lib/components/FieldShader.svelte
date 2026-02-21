@@ -14,7 +14,7 @@
     `;
 
     const fs = `
-        precision highp float;
+        precision mediump float;
         uniform float u_time;
         uniform vec2 u_resolution;
 
@@ -28,7 +28,7 @@
         #define PSI_DIFFUSION 0.05
         #define VACUUM_FLUCTUATION 0.005
 
-        #define COUNT 6
+        #define COUNT 4
         #define PI 3.14159265359
 
         // --- Golden Mean Hyper-Fidelity Palette ---
@@ -113,14 +113,14 @@
                 closure_ripples += sin(d_psi * 42.0 - t * 11.0) * (0.016 / (d_psi + 0.12)); 
                 
 
-                // --- 👻 Ghost Trails (7-stage Subtle Wake) ---
-                for(int j = 1; j <= 7; j++) {
-                    float step_back = float(j) * 0.038; 
+                // --- 👻 Ghost Trails (4-stage Subtle Wake) ---
+                for(int j = 1; j <= 4; j++) {
+                    float step_back = float(j) * 0.045; 
                     vec2 h_phi = vec2(0.6 * sin((t-step_back) * 0.11 + offset), 0.4 * cos((t-step_back) * 0.16 + offset * 1.3));
                     vec2 h_psi = h_phi + vec2(0.2 * sin((t-step_back) * 3.2 + offset), 0.2 * cos((t-step_back) * 3.2 + offset));
                     
                     float d_trail = length(uv - h_psi);
-                    float fade = 1.0 - (float(j) / 8.0);
+                    float fade = 1.0 - (float(j) / 5.0);
                     // Even sharper decay and lower intensity for "companion" feel
                     ghosts += fade * exp(-d_trail * 180.0) * 0.25; 
                 }
@@ -261,9 +261,17 @@
         function render(time: number) {
             if (!gl || !program) return;
 
-            // Resize handle
-            const displayWidth = canvas.clientWidth;
-            const displayHeight = canvas.clientHeight;
+            // Resize handle (Downsampling for GPU Performance)
+            // U velkých monitorů stáhneme fyzické rozlišení canvasu pro masivní úsporu výkonu
+            const scale = Math.min(1.0, 1280 / canvas.clientWidth);
+            const displayWidth = Math.max(
+                1,
+                Math.floor(canvas.clientWidth * scale),
+            );
+            const displayHeight = Math.max(
+                1,
+                Math.floor(canvas.clientHeight * scale),
+            );
             if (
                 canvas.width !== displayWidth ||
                 canvas.height !== displayHeight
@@ -293,6 +301,16 @@
 
         return () => {
             cancelAnimationFrame(animationFrameId);
+            if (gl) {
+                if (program) gl.deleteProgram(program);
+                if (vertexShader) gl.deleteShader(vertexShader);
+                if (fragmentShader) gl.deleteShader(fragmentShader);
+                if (positionBuffer) gl.deleteBuffer(positionBuffer);
+
+                // Pokusíme se uvolnit kontext
+                const ext = gl.getExtension("WEBGL_lose_context");
+                if (ext) ext.loseContext();
+            }
         };
     });
 </script>
