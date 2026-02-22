@@ -10,8 +10,8 @@ The 1000-seed topological limit scan proves that Eq-4 actively manufactures a hi
 
 | Lineum Element | Net Charge (Isotope) | Layperson Description (Simulated Reality) | Scientific Eq-4 Definition (Simulation) | Real-World Physics Equivalent |
 | :--- | :--- | :--- | :--- | :--- |
-| **Fundamental Quarks** | **$\pm 1$** | The absolute simplest building blocks. Indivisible whirlpools of space. | Single $+1$ or $-1$ topological phase singularity (vortex). | **Quarks / Leptons** (Indivisible fundamental fundamental particles). |
-| **Linon (The Core Object)**| **N/A** | A stable, moving bundle of bound Quarks. The "proton" of Lineum. | Any self-sustaining, macroscopic multi-vortex topological Soliton. | **Hadrons (Protons/Neutrons)**. |
+| **The Naked Singularity** | **$\pm 1$** | The invisible mathematical "hole" at the center of the storm. | A single $+1$ or $-1$ topological phase singularity (vortex core). | **"Naked" Quarks** (Theoretical stripped singularities). |
+| **Linon (The Core Particle)**| **$\pm 1$** | The fundamental building block of matter. The singularity wrapped in its rotating energy shell and gravity well. | A mathematically "dressed" topological Soliton. | **Fundamental Particles (Electrons/Quarks)**. |
 | **Element 731** | **$-2$** | The absolute lightest stable cosmic structure possible. | The minimum surviving Linon count bounded by $\nabla^2\varphi$ pressure. | **Hydrogen** (Lightest element). |
 | **Element 828** | **$0$** | A perfectly neutral, highly stable intermediate structure. | A macro-equilibrium state achieving perfect $+1/-1$ cosmological balance. | **Noble Gases (e.g., Helium, Neon)** (Neutral, non-reactive). |
 | **Element 840** | **$-2$** | The most abundant and common substance in the Lineum universe. | The statistical peak mode (highest frequency) of the 1000 Cosmic Big Bangs. | **Carbon / Oxygen** (Highly abundant building blocks). |
