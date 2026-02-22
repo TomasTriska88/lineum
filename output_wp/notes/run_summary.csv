@@ -1,0 +1,9 @@
+metric,value
+noise_strength,0.005
+drift_strength,-0.004
+M2_total,1.6384e+16
+peak_phi,4492.1027523408275
+peak_phi_abs,4492.1027523408275
+final_particle_count,3801
+final_com_dist,0.41594583534457
+SBR,nan

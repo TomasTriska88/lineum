@@ -1,0 +1,43 @@
+import os
+import json
+import pytest
+from pathlib import Path
+from tools.whitepaper_contract import compute_sha256
+
+def test_audit_run_locks(project_root):
+    runs_dir = Path(project_root) / "output_wp" / "runs"
+    if not runs_dir.exists():
+        pytest.skip("No runs directory found.")
+        
+    locked_runs = list(runs_dir.glob("**/_LOCK.json"))
+    if not locked_runs:
+        pytest.skip("No locked runs found.")
+        
+    for lock_path in locked_runs:
+        run_dir = lock_path.parent
+        lock_data = json.loads(lock_path.read_text(encoding="utf-8"))
+        registry = lock_data.get("files", {})
+        
+        # Verify file count
+        all_files = []
+        for root, _, files in os.walk(run_dir):
+            for file in files:
+                all_files.append(Path(root) / file)
+                
+        # Exclude the lock file itself if it wasn't hashed? The script hashes EVERYTHING currently present. Wait, lock_run hashes everything THEN creates _LOCK.json.
+        # Oh, the lock script created _LOCK.json AFTER hashing, so _LOCK.json is NOT in the registry!
+        all_files = [f for f in all_files if f.name != "_LOCK.json"]
+        
+        assert len(all_files) == lock_data.get("file_count"), f"Tampering detected in {run_dir}: File count mismatch."
+        
+        # Verify specific hashes
+        for fpath in all_files:
+            rel_path = fpath.relative_to(run_dir).as_posix()
+            assert rel_path in registry, f"Tampering detected in {run_dir}: Extra file {rel_path} found."
+            actual_sha = compute_sha256(str(fpath))
+            expected_sha = registry[rel_path]["sha256"]
+            assert actual_sha == expected_sha, f"Tampering detected in {run_dir}: Hash mismatch for {rel_path}."
+        
+        # Any file in registry missing?
+        for rel_path in registry:
+            assert (run_dir / rel_path).exists(), f"Tampering detected in {run_dir}: Missing tracked file {rel_path}."

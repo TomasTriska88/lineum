@@ -89,6 +89,23 @@ The highest "cross-cutting" priority across all sections is to show that observe
 
 - [ ] Re-verify **Guided motion along +∇|φ|** (environmental guidance) in canonical set (`spec6_false_s41` + seeds 17/23/73) so that metrics from `*_trajectories.csv` and φ-maps (see core §5.1) match current definition and tolerances in the whitepaper.
 - [ ] Re-verify the **Silent collapse** regime (local drop of |ψ|² without large global disturbance), including quantification of dependence on dissipation and locality according to current formulation in core §5.3.
+- [ ] [TEST] Investigate the apparent bifurcation in the long-term asymptotic behavior of **`spec6_true` topologies** (Eq-4 + spec6 κ-map). Empirical observation points to two distinct attractors differentiated only by the initial seed:
+    - **"Living Universe" Attractor (The Robust Macro-Attractor):** A recent seed scan (e.g., `s3...s37` including 5, 7, 11, 13, 17, 23, 29, 31) shows that despite vastly different microscopic initial conditions (seeds), the system reliably converges to an identical stable macroscopic state. 
+      - `avg_radius` converges strictly to `≈ 48.97`
+      - `|φ_center|` converges to the same order of magnitude `O(10³) ~ 5×10³`
+      - The dominant spectral frequency ($f_0$) stabilizes in a very narrow band `~ 2.2–2.5×10^18 Hz`
+      - **Interpretation:** Eq-4 features a massive macro-attractor for this parametric scenario. The seed only dictates microscopic fluctuations (exact linon positions), but the overarching macrostructure of the universe is robust and pre-determined by the physics, not the noise.
+    - **"Dead Universe" Attractor:** Conversely, multi-seed testing (e.g., `s42`) shows that the system can eventually degenerate completely (avg_radius → 0, zero remaining topological defects, φ_center collapses), representing a trivial empty state.
+    - **Action (Seed Statistics - Living vs. Dead Universes):**
+      - Configure a systematic seed-scan for `spec6_true` (e.g., seeds `3, 5, 7, 11, 13, 17, 19, 23, 29, 31`).
+      - For each run, explicitly log `metrics_summary`, `radius_log`, `topo_log`, and `phi_center_log`.
+      - **Classification:** Sort each seed's outcome into either the "Living" attractor (non-zero saturating radius, persistent topology, bounded stable center) or the "Dead/Collapsing" attractor.
+      - **Equivalence Check (Hypothesis H_seed_attractors_1):** For a fixed `spec6` configuration, there exists a specific class of "living" attractors characterized by:
+        1. A saturating average radius of `~48.974807` (e.g., reached at step `~66` for `s11`, and `~71` for `s17`).
+        2. Persistent 7 topological defects precisely structured as `topo_pos = 3`, `topo_neg = 4`, yielding a net topological charge of `Q = -1`.
+        3. A central tension `|φ_center|` path that practically overlaps in later phases (relative diff $10^{-3}$ to $10^{-4}$).
+      - **Outcome:** Use these statistics to test `H_seed_attractors_1`: verify on a larger sample if *all* living seeds fall squarely into this exact $(7, Q=-1, \text{R} \approx 49)$ topological class, and quantify the probabilistic ratio (e.g. $P_{L1}$) of falling into this "Living" vs the "Dead" singular branch.
+      - **Interpretive Metaphor (Self-Healing / Chemical Elements):** If `H_seed_attractors_1` holds rigidly, this $(7, Q=-1)$ configuration is analogous to a fundamentally stable "chemical element" or "crystal" of the Lineum universe. Despite the initial chaos (seed), the system iteratively "self-heals" its structure over the first ~70 steps to reach this exact, mathematically optimal equilibrium capable of sustaining continuous internal energy without tearing itself apart.
 - [ ] Revalidate definition and measurement of **"spin aura"** as time/ensemble averaged field `curl(∇arg ψ)` around linons (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) and check that documentation clearly states this is an internal map of phase circulation around a linon, not a claim about particle spin in the Standard Model sense.
 
 - [ ] (Triska–Mareckova [HYPOTHESIS]) Verify if the **φ** field within Eq-4 truly fulfills the role of **structural memory** of the system, or if it is necessary to introduce an extended memory mechanism (delayed response, hysteresis or an independent memory field μ):
@@ -291,8 +308,12 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 - [x] Consider releasing a small set of **reference binaries** -> **Resolved by section F1.**
 - [ ] Verify selected key phenomena (Guided motion, Structural Closure, spin aura...) in at least one **independent implementation** (different language / different numerical scheme) with minimal shared code.
-- [ ] Verify selected key phenomena (Guided motion, Structural Closure, spin aura...) in at least one **independent implementation** (different language / different numerical scheme) with minimal shared code.
 - [ ] Introduce explicit **versioning of visualization scripts and artifacts**: for every `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png`, store a manifest with the code commit hash, visualization tool version, and information on whether it was run before or after the cache-bug fix; this enables ex post identification and potential exclusion of old artifacts from interpretation.
+- [ ] Implement a **RAM-Safe Core Audit Baseline script** (e.g., `scripts/run_audit_ram_safe.ps1`) based on canonical settings:
+      - Forces environment cleanup before start (`Remove-Item "Env:LINEUM_*"`)
+      - Sets canonical references: `RUN_ID=6`, `RUN_MODE=false`, `SEED=41`, `PARAM_TAG=dt05_w256_steps2500`
+      - Minimizes output payload to prevent OOM/disk-thrashing: `STORE_EVERY=50`, disables all `.gif`, `.png`, and `frames` exports.
+      - Ensure this script is documented as the recommended starting point for deep, multi-thousand step analyses without crashing generic hardware.
 
 ### 🔲 G. Implementation details and stability against "engineering" choices #impl
 
@@ -944,6 +965,20 @@ This section contains new candidate hypotheses inspired by external prompts and 
     - Design and test a proof-of-concept implementation of the Lineum kernel on accessible current architecture hardware – primarily as an **FPGA** (Field-Programmable Gate Array) design.
     - Test the speed of the "hard-wired" field update `ψ` and `φ` (e.g., parallel bitwise / fixed-point operations over memory cells) against a high-performance software CUDA implementation. Find out at what grid resolution the homebrew "Lineum chip" starts crushing classical GPUs in throughput of steps per second while validating simulated iteration cost against deep learning graph AI algorithms.
 
+### 🔲 35.b Hypothesis: Dark Matter Non-Defiance of Gravity (Sciencemag.cz) #hypothesis #cosmology
+- **Context:** A recent physics note (e.g., from Sciencemag.cz) emphasizes that "Dark matter does not defy gravity." It behaves purely gravitationally, pulling on normal matter without interacting electromagnetically or colliding.
+- **Hypothesis (Lineum):** This perfectly aligns with Lineum's internal definition of "Ghost Gravity" (see Section 31. S4). In Lineum, Dark Matter is defined as the residual `φ` field (structural memory/curvature) left behind by moved or dissipated `ψ` matter. Because `φ` *is* the gradient that guides movement, any new `ψ` matter entering the area will strictly obey this "ghost" gravitational pull. It does not defy gravity; it *is* the gravitational memory. Moreover, since there is no active `ψ` oscillator there, it doesn't "collide" or "radiate" waves like normal matter, explaining its dark nature.
+- **Verification:** Simulate a "Ghost Gravity" pit (pure `φ` remnant with no `ψ` source) and fire a standard linon probe past it. Measure the trajectory deflection to confirm it strictly follows the `+∇|φ|` gradient (pure gravitational lensing analogy) without any the repulsive interference that would occur if it hit another active `ψ` source.
+
+### 🔲 35.c Hypothesis: Map of Topological Universes (Discrete Vacua) #hypothesis #topology
+- **Context:** Seed analysis reveals the existence of a discrete spectrum of stable topological configurations (e.g., universes settling into exactly 4, 6, 7, 8, or 10 stable vortices/nodes). Most universes stabilize with a net topological charge of `Q = 0`, but notable exceptions exist (e.g., seed 17 stabilizes at `Q = -1`).
+- **Hypothesis:** These discrete vortex counts represent distinct topological "phases" or ground states of the universe, analogous to different compactified dimensions in string theory or ranks of gauge groups in particle physics.
+- **Verification (The Topological Map):**
+  - Verify if the exact number of stable nodes correlates with the effective dimensionality or degrees of freedom of the emergent universe.
+  - Test if the net topological charge `Q` behaves as a strict invariant of the Euler characteristic for the given $\kappa$-manifold and boundary conditions.
+  - Analyze if universes with different baseline topologies (e.g., $Q=0$ vs $Q=-1$) generate different "species" of transient quasiparticles.
+  - **Action:** Design and execute a systematic, large-scale seed sweep to catalog these states, ultimately creating a comprehensive "Map of Topological Universes."
+
 ---
 
 ## 🏗️ T. Candidates for First Real Applications (API & SaaS Software) #applied
@@ -1218,6 +1253,15 @@ This section defines the requirements and architecture for the new main Lineum S
     - Synchronize "Lineum Core" as the engine package name vs "Lineum" as the brand name across all files (`README.md`, `LICENSE`, etc.).
 - [ ] **L.2 License Overhaul (MIT -> AGPLv3)**
     - Execute the planned shift of the core mathematical engine from MIT to AGPLv3 to establish the true open-core boundary and prevent closed-source corporate wrapping.
+- [ ] **L.2.b Enterprise On-Premise Licensing Strategy**
+    - **Policy:** While the primary commercial model is SaaS/API, it is imperative to allow custom on-premise implementations for large clients (e.g., developers, government).
+    - **The Bridge (Dual Licensing):** The core engine is AGPLv3. AGPL is highly "viral" – if a corporation natively embeds Lineum into their backend and offers it as a service over a network, the AGPL *forces* them to open-source their entire proprietary backend stack. 
+    - **The Upsell:** Since no enterprise will ever agree to open-source their secret algorithms, this serves as a massive commercial forcing function. To bypass the AGPL virus and keep their code closed, they are forced to purchase an **Enterprise Commercial License** from us directly. This unlocks massive on-premise revenue streams apart from standard API usage.
+    - **Pricing Strategy:** We need to establish a tiered pricing model for the Enterprise Commercial License based on node count, compute scale, and SLA support requirements, ensuring it remains highly profitable compared to sheer API billing.
+- [ ] **L.2.c Multi-Language Native Ports & Float Divergence**
+    - **The Need:** To serve enterprise on-premise clients, providing only Python is insufficient. We must eventually provide highly optimized native libraries (e.g., `C++`, `Rust`) and web-edge versions (`JS/WASM`) of the Engine.
+    - **The Risk (Numerical Instability Hypothesis):** As established in `[TEST] Section F` and `Section G`, we hypothesize that Lineum's exact mathematical convergence (vortex count, $\phi$-tension loops) is highly dependent on floating-point precision and operation ordering. 
+    - **Validation Gate:** Before selling a native C++ or JS enterprise port, it MUST pass the exact same rigid `whitepaper_contract_suite.json` matrix as the Python core. If the cross-language port drifts topologically due to architecture compilation (e.g., fast-math flags vs strict IEEE 754), it cannot be certified as valid canonical Lineum.
 - [ ] **L.3 SaaS Boundary & Monorepo Separation**
     - Address the architectural mixing of Proprietary SaaS API code (`routing_backend/main.py`) and the AGPL Engine (`lineum_core`). Establish a formal API boundary or repository split to avoid license contamination.
 - [ ] **L.4 Acceptable Use & Ethical ToS**
@@ -1251,6 +1295,11 @@ This section contains tasks related to the web presentation and technical backgr
 ## 🚀 Commercial Roadmap: Future Domain Applications
 The portal's `api-solutions` section currently showcases Routing dynamics (traffic, evacuation, hardware traces). Based on the underlying physics engine capabilities (Lineum as a universal PDE solver), we need to expand the B2B showcases to demonstrate the full potential of continuous field dynamics.
 
+- [ ] **Topographic City-Connection Routing (MVP Candidate No. 2):** Develop a definitive B2B demo connecting cities across a 2D topographic map. This is currently the highest priority demonstration to showcase superiority over Dijkstra/A*.
+    - **Scenario:** A 4000x4000px heightmap (e.g., $4\times4$ km, 1px = 1m). Cities ($X \times Y$) are placed in the lowest elevation valleys (approx. 200m apart).
+    - **Goal:** Connect neighboring cities with the absolute minimum total road/material length.
+    - **Constraints:** Routes must entirely avoid the highest peaks (represented as high $\kappa$ friction), and paths must strictly route *around* cities without overlapping their cores. 
+    - **Topology:** The number of connections per city adapts organically to mathematically optimal routes ($max(X, Y)$ branches). Demonstrates Eq-4's massive advantage over standard Dijkstra/A* for Euclidean multi-point routing on high-res continuous terrain.
 - [ ] **Aerodynamics & Fluid Dynamics:** Create a demo showcase illustrating airflow optimization inside jet engines or fluid dynamics in pipelines.
 - [ ] **Reactor Physics:** Add a visualization for radiation propagation or thermal dissipation in complex enclosed environments.
 - [ ] **Structural Mechanics:** Implement an API example showing stress distribution, structural integrity, and material failure under pressure.
