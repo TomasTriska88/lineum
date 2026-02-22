@@ -26,13 +26,13 @@
         </div>
     {:else}
         <div
-            class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 max-w-2xl text-center shadow-lg"
+            class="flex flex-col items-center justify-center max-w-2xl text-center mx-auto mt-4 px-4"
         >
             <div
-                class="w-12 h-12 bg-sky-500/10 border border-sky-500/30 rounded-full flex flex-col items-center justify-center mx-auto mb-4"
+                class="w-14 h-14 bg-sky-500/10 border border-sky-500/30 rounded-full flex flex-col items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(56,189,248,0.15)]"
             >
                 <svg
-                    class="w-6 h-6 text-sky-400"
+                    class="w-7 h-7 text-sky-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -45,16 +45,21 @@
                     />
                 </svg>
             </div>
-            <p class="text-lg text-slate-300 font-semibold mb-2">
-                Buďte první, předběhněte svou konkurenci.
-            </p>
-            <p class="text-sm text-slate-400 mb-6">
-                Staňte se naším prvním partnerem a získejte všechny naše
-                produkty doživotně jen za cenu nákladů.
+            <h4
+                class="text-2xl md:text-3xl text-slate-100 font-bold tracking-tight mb-4"
+            >
+                Be the first to step into the future.
+            </h4>
+            <p
+                class="text-base md:text-lg text-slate-400 font-light mb-8 max-w-xl mx-auto"
+            >
+                Become our pioneer partner and secure lifetime access to all our
+                enterprise products at cost.
             </p>
             <a
-                href="mailto:partners@lineum.io"
-                class="inline-flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm rounded-lg transition-colors shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+                href="mailto:hello@lineum.io"
+                class="inline-flex items-center gap-2 px-8 py-3.5 bg-sky-500 hover:bg-sky-400 font-bold text-sm md:text-base rounded-full transition-all hover:scale-105 shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+                style="color: #020617 !important; text-decoration: none;"
             >
                 Become an Early Adopter
             </a>

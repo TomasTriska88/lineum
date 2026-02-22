@@ -37,6 +37,31 @@ test.describe('Mobile Responsiveness', () => {
         expect(parseInt(fontSize)).toBeLessThanOrEqual(56); // definitely smaller than desktop ~3.5rem (56px)
     });
 
+    test('CTA Group Layout', async ({ page }) => {
+        const ctaGroup = page.locator('.cta-group');
+        await expect(ctaGroup).toBeVisible();
+
+        // Check if flex direction is column (stacked)
+        const flexDirection = await ctaGroup.evaluate((el) => {
+            return window.getComputedStyle(el).flexDirection;
+        });
+        expect(flexDirection).toBe('column');
+
+        // Check buttons take mostly full width of container
+        const buttons = ctaGroup.locator('.btn');
+        const count = await buttons.count();
+        expect(count).toBeGreaterThan(0);
+
+        for (let i = 0; i < count; i++) {
+            const btn = buttons.nth(i);
+            const btnBox = await btn.boundingBox();
+            const groupBox = await ctaGroup.boundingBox();
+            if (btnBox && groupBox) {
+                expect(btnBox.width).toBeCloseTo(groupBox.width, -1);
+            }
+        }
+    });
+
     test('Navigation Layout', async ({ page }) => {
         const navContent = page.locator('.nav-content');
 

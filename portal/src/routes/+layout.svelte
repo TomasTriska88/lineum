@@ -39,6 +39,9 @@
             <a href="https://simulacrum.lineum.io" target="simulacrum"
                 >Simulacrum</a
             >
+            <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
+                >API Solutions</a
+            >
             <a href="/#scientist">For Scientists</a>
             <a href="/support" class="nav-cta">Support</a>
         </div>
@@ -117,7 +120,7 @@
     main {
         position: relative;
         z-index: 1;
-        padding-top: 80px;
+        padding-top: var(--nav-height, 80px);
         transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
@@ -181,7 +184,10 @@
         }
 
         main {
-            padding-top: 80px; /* Standard padding is enough now */
+            padding-top: var(
+                --nav-height,
+                80px
+            ); /* Standard padding is enough now */
         }
     }
 

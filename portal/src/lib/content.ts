@@ -20,7 +20,8 @@ export const content = {
     },
     hero: {
         symbol: 'Λ',
-        title: 'Science of fields that breathe.',
+        title_prefix: 'Science of fields that ',
+        title_highlight: 'breathe.',
         subtitle: 'Lineum is an exploration of continuous spatial computation. We study how simple deterministic physics can give rise to emergent, intelligent-looking behavior.',
         cta_wiki: 'Explore the Wiki',
         cta_audit: 'Audit the Evidence'

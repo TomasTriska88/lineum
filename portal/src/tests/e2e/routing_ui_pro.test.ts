@@ -71,7 +71,7 @@ test.describe('Routing Pulse Lab - Advanced Holo UI & WebGL Lifecycle', () => {
 
         // And back to routing to initialize another WebGL Context
         // If cleanup is missing, a "Too many contexts" warning will definitely appear.
-        await page.goto('/routing');
+        await page.goto('/api-solutions');
         await expect(page.locator('canvas.w-full.h-full.object-cover')).toBeVisible();
 
         // Evaluate if any WebGL limit errors were caught in the console.

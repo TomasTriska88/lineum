@@ -30,12 +30,23 @@
                 faq={content.legend.faq}
             />
         </div>
-        <h1>{content.hero.title}</h1>
+        <h1>
+            {content.hero.title_prefix}
+            <span class="text-gradient-multi animate-breathe">
+                {content.hero.title_highlight}
+            </span>
+        </h1>
         <p>
             {content.hero.subtitle}
         </p>
         <div class="cta-group">
             <a href="/wiki" class="btn btn-primary">{content.hero.cta_wiki}</a>
+            <a
+                href="/api-solutions"
+                class="btn btn-outline"
+                style="border-color: #38bdf8; color: #38bdf8;"
+                >API Solutions (Live Demo)</a
+            >
             <a href="#evidence" class="btn btn-outline"
                 >{content.hero.cta_audit}</a
             >
@@ -147,6 +158,9 @@
 </footer>
 
 <style>
+    :global(:root) {
+        --nav-height: 0px;
+    }
     .hero {
         height: 100vh;
         display: flex;
@@ -204,7 +218,6 @@
         font-weight: 700;
         line-height: 1.1;
         margin-bottom: 1.5rem;
-        color: white;
     }
 
     p {
@@ -345,6 +358,17 @@
 
         h1 {
             font-size: 2.5rem;
+        }
+
+        .cta-group {
+            flex-direction: column;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .cta-group .btn {
+            width: 100%;
+            text-align: center;
         }
 
         .scientific-grid {

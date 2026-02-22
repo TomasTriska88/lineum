@@ -94,12 +94,37 @@ def extract_path(phi_field: np.ndarray, kappa: np.ndarray, start_x: int, start_y
                     heapq.heappush(pq, (f_score, nx, ny))
     return [], []
 
+from fastapi import Request
+
+# Simple In-Memory Rate Limiter (prod deployments might use Redis)
+ip_request_counts: Dict[str, list] = {}
+MAX_CONCURRENT_TASKS = int(os.environ.get("LINEUM_API_MAX_CONCURRENT_TASKS", 100))
+RATE_LIMIT_REQUESTS = int(os.environ.get("LINEUM_API_RATE_LIMIT_MAX_REQUESTS", 5)) # Maximální počet simulací za okno 
+RATE_LIMIT_WINDOW = int(os.environ.get("LINEUM_API_RATE_LIMIT_WINDOW_SECONDS", 60)) # Okno v sekundách
+
 @app.post("/api/route/task")
-async def create_routing_task(req: RouteRequest):
+async def create_routing_task(req: RouteRequest, request: Request):
     """
     Krok 1: Klient odešle rozsáhlou mapu a souřadnice. Server nezahajuje smyčku výpočtu.
     Pouze to uloží do RAM paměti a vrátí vstupenku (ID), kterou klient zadá do WebSocketu.
     """
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    
+    # Prune old IPs from rate limiter
+    if client_ip not in ip_request_counts:
+        ip_request_counts[client_ip] = []
+    
+    ip_request_counts[client_ip] = [t for t in ip_request_counts[client_ip] if now - t < RATE_LIMIT_WINDOW]
+    
+    if len(ip_request_counts[client_ip]) >= RATE_LIMIT_REQUESTS:
+        raise HTTPException(status_code=429, detail="Too Many Requests. Maximum 5 simulations per minute.")
+        
+    ip_request_counts[client_ip].append(now)
+
+    if len(active_tasks) >= MAX_CONCURRENT_TASKS:
+        raise HTTPException(status_code=503, detail="Server is at full capacity. Please try again later.")
+        
     if len(req.kappa_flat) != req.size * req.size:
         raise HTTPException(status_code=400, detail="Délka kappa_flat neodpovídá size*size")
         

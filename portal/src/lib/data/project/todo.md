@@ -1,84 +1,84 @@
-# 🧪 Lineum – Seznam úkolů pro další ověření
+# 🧪 Lineum – Task List for Further Verification
 
-Tento soubor obsahuje přehled výzkumných bodů, které vyžadují další testování, vizualizaci nebo kvantitativní ověření. Každý bod by měl být buď (znovu) ověřen simulací, nebo jednoznačně formulován jako hypotéza. Stav tohoto TODO je zarovnán na core paper **lineum-core v1.0.6-core** (Eq-4, κ statická, 2D, periodické BCs, RUN_TAG `spec6_false_s41`).
-Nejde o zdroj pravdy pro stav modelu – závazné definice a tvrzení jsou vždy v aktuální verzi whitepaperu / core paperu.  
-Sekce níže jsou rozdělené tak, aby nejdřív řešily **základní principy a kritické body** a teprve potom mapování na „reálnou fyziku“.
-
----
-
-### Scope a non-goals (vysoká úroveň)
-
-- Lineum je **diskrétní dynamický model pole ψ s emergentními kvazičásticemi („linony“)** studovaný numericky v rámci daného Eq-4 a parametrického prostoru.
-- Lineum **není** plnohodnotná QFT, GR ani kompletní náhrada Standardního modelu; všechny fyzikální analogie jsou zatím interpretace navrstvené nad numerickým modelem.
-- Tvrzení typu „#disproved“ se vždy vztahují **jen k chování uvnitř modelu Lineum (Eq-4 + daný parametrický prostor)**, ne k obecné fyzikální teorii.
-- Žádná konkrétní simulační konfigurace (např. preset `(6, "false")` s `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`) **není** deklarovaná jako „náš vesmír“; lze ji používat jen jako interní **„fyzikálně vypadající“ referenční scénář** v rámci modelu a jako výchozí baseline pro vizualizace a outreach, ne jako tvrzení o skutečné kosmologii.
-
-### Legenda úrovní tvrzení (podle whitepaperu)
-
-- **[CORE]** – label používaný v core paperu pro jevy, které v dané verzi splnily definovaná kritéria stability a robustnosti.  
-  Tento TODO soubor status jevů **neurčuje**, jen na tyto labely odkazuje.
-- **[TEST]** – label pro jevy, u nichž má whitepaper definované testy a metriky; výsledek testů rozhoduje o případném přesunu do [CORE] nebo k #disproved-in-model **ve whitepaperu**, ne v tomto souboru.
-- **[HYPOTHESIS]** – label pro koncepty, které zatím nesplnily podmínky pro [CORE] a jsou vedené jako otevřené hypotézy v příslušné verzi whitepaperu.
-- **[DISPROVED-IN-MODEL]** – label pro jevy, které jsou v aktuální verzi whitepaperu označené jako vyvrácené v rámci Eq-4 a daného parametrického prostoru; případné „záchrany“ vyžadují novou větev modelu.
+This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.0.6-core** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
+This is not the source of truth for the model state - binding definitions and claims are always in the current version of the whitepaper / core paper.
+The sections below are divided to first address **basic principles and critical points** and only then mapping to "real physics".
 
 ---
 
-### Terminologie jevů v modelu
+### Scope and non-goals (high level)
 
-- Pojmy jako „spinová aura“, „neutral topology“ apod. jsou v tomto repozitáři **interní názvy pro konkrétně definované numerické objekty v modelu** (pole, integrály, indexy…).
-- U každého takového termínu musí být v core paperu i kódu uvedená **operační definice**; název sám o sobě **není tvrzení o nové fyzikální veličině** mimo model ani o vlastnostech částic Standardního modelu.
-- Tento TODO soubor **nezavádí nové fyzikální termíny**; pouze připomíná místa, kde je potřeba terminologii a její definice v whitepaperu / kódu dočistit nebo revidovat.
-- **Terminologická uzávěrka – zeta-body (#naming, #renaming, #not-for-whitepaper).** Kanonický název jevu je **„zeta-body“** (česky vysvětlitelně jako **„body uzavření“**). Původní označení **„DejaVu body“** je od verze zarovnané na _lineum-core v1.0.6-core_ vedeno **výhradně jako historický / legacy alias** a smí se v textech objevit jen ve větách typu _„historicky označované jako …“_. Ve všech nových definicích, tvrzeních, tabulkách a grafech – **včetně whitepaperu a core paperu** – se používá pouze název **zeta-body** (případně české „body uzavření“ v závorkách), aby nemohlo dojít k tomu, že bude starý název převzat do whitepaperu jako zdánlivě rovnocenný.  
-  Tento bod je **čistě naming/renaming TODO**: při generování / přepisování whitepaperu se **nepřenáší doslova jako vědecké tvrzení**, ale slouží pouze jako interní pravidlo pro pojmenování a kontrolu, že se v textu nikde neobjeví starý název jako aktivní pojem.
+- Lineum is a **discrete dynamic field model ψ with emergent quasiparticles ("linons")** studied numerically within the given Eq-4 and parametric space.
+- Lineum **is not** a fully-fledged QFT, GR, or a complete replacement for the Standard Model; all physical analogies are currently interpretations layered on top of the numerical model.
+- Claims of the "#disproved" type always apply **only to behavior within the Lineum model (Eq-4 + given parametric space)**, not to general physical theory.
+- No specific simulation configuration (e.g. preset `(6, "false")` with `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`) **is** declared as "our universe"; it can only be used as an internal **"physical-looking" reference scenario** within the model and as a default baseline for visualizations and outreach, not as a claim about real cosmology.
 
----
+### Claim Level Legend (according to whitepaper)
 
-## 🔑 Meta-priorita – věrohodnost modelu
-
-Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat, že pozorované excitace v Lineu nejsou numerické artefakty, ale robustní objekty modelu – a teprve na tom stavět fyzikální interpretaci a dlouhodobé „outlooky“.
-
-- **Nejvyšší priorita – numerika vs. reálný jev**  
-  – oddělit chyby algoritmu od skutečných struktur v modelu...
-  – **Ověřený SBR (Signal-to-Background Ratio):** V běhu `spec6_false_s41` dosahuje SBR hodnoty **1.15** (Noise Dominated).  
-  Tento běh slouží jako **Thermal Baseline** (test šumu), pro potvrzení linonu jako dominantního objektu je nutné dosáhnout SBR > 10.0 v nových bězích.
-  Tyto body jsou rozpracované hlavně v sekcích **B, D, E, F, H, I**.
-
-- **Střední priorita – vědecká interpretace**  
-  – připravit jasné numerické předpovědi, které lze vyvrátit či potvrdit (např. chování při kolizi dvou linonů);  
-  – pokusit se linon zařadit v rámci známých typů excitací (solitony, breathery, excitace skalárního pole…);  
-  – otevřeně popsat status Lorentz-(ne)kovariance jako efektivního modelu, ne plné relativistické teorie.  
-  Prakticky se promítá do sekcí **J, K, L** a souvisejících částí whitepaperu / FAQ.
-
-- **Nižší priorita – dlouhodobé výhledy**  
-  – nástřely možných fyzikálních realizací (optické mřížky, BEC, nelineární vlnová dynamika);  
-  – lepší ukotvení škálování a jednotek z hlediska komunikace;  
-  – prezentace výsledků pomocí srozumitelných grafů a krátkého „storytellingu“ („pole kmitá → pamatuje → stabilizuje“).  
-  Tyto body pomáhají čitelnosti a outreach, ale stojí až na pevnějším numerickém základu.
+- **[CORE]** – label used in the core paper for phenomena that met the defined criteria of stability and robustness in the given version.
+  This TODO file **does not determine** the status of phenomena, it merely refers to these labels.
+- **[TEST]** – label for phenomena where the whitepaper has defined tests and metrics; the result of the tests determines potential promotion to [CORE] or to #disproved-in-model **in the whitepaper**, not in this file.
+- **[HYPOTHESIS]** – label for concepts that have not yet met the conditions for [CORE] and are maintained as open hypotheses in the corresponding version of the whitepaper.
+- **[DISPROVED-IN-MODEL]** – label for phenomena marked in the current whitepaper version as disproved within Eq-4 and the given parametric space; possible "rescues" require a new branch of the model.
 
 ---
 
-## 🔍 Jevy z core paperu k revalidaci (core v1.0.6-core)
+### Terminology of model phenomena
 
-> **Audit 2026: Protokol & Reprodukce (17. 2. 2026):**
-> *   **Cíl:** Rigorózní ověření determinismu a zdrojů energie (H0 vs H1).
-> *   **Postup (CLI Reprodukce):**
+- Terms like "spin aura", "neutral topology", etc. are **internal names for specifically defined numerical objects in the model** within this repository (fields, integrals, indices...).
+- Every such term must have its **operational definition** stated in the core paper and code; the name itself **is not a claim about a new physical quantity** outside the model nor about the properties of Standard Model particles.
+- This TODO file **does not introduce new physical terms**; it only reminds where terminology and definitions need to be cleaned up or revised in the whitepaper / code.
+- **Terminology closure – zeta-points (#naming, #renaming, #not-for-whitepaper).** The canonical name for the phenomenon is **"zeta-points"** (explainable as **"points of closure"**). The original designation **"DejaVu points"** is maintained from the version aligned with _lineum-core v1.0.6-core_  **exclusively as a historical / legacy alias** and may only appear in texts in sentences like _"historically referred to as..."_. In all new definitions, claims, tables, and graphs – **including the whitepaper and core paper** – only the name **zeta-points** (with "points of closure" occasionally in parentheses) is used to prevent the old name from being adopted into the whitepaper as ostensibly equivalent.
+  This point is a **purely naming/renaming TODO**: when generating / rewriting the whitepaper, it is **not literalized as a scientific claim**, but serves only as an internal rule for naming and checking that the old name never appears as an active concept anywhere in the text.
+
+---
+
+## 🔑 Meta-priority – Model Credibility
+
+The highest "cross-cutting" priority across all sections is to show that observed excitations in Lineum are not numerical artifacts, but robust model objects – and only then build physical interpretation and long-term "outlooks" upon them.
+
+- **Highest priority – numerics vs. real phenomenon**
+  – separate algorithm errors from genuine structures in the model...
+  – **Verified SBR (Signal-to-Background Ratio):** In run `spec6_false_s41`, the SBR reaches a value of **1.15** (Noise Dominated).
+  This run serves as the **Thermal Baseline** (noise test); to confirm the linon as the dominant object, an SBR > 10.0 is required in new runs.
+  These points are detailed mainly in sections **B, D, E, F, H, I**.
+
+- **Medium priority – scientific interpretation**
+  – prepare strict numerical predictions that can be disproved or confirmed (e.g. behavior during collision of two linons);
+  – attempt to classify the linon within known types of excitations (solitons, breathers, scalar field excitations...);
+  – openly describe the status of Lorentz-(non)covariance as an effective model, not a full relativistic theory.
+  Practically translates into sections **J, K, L** and related parts of the whitepaper / FAQ.
+
+- **Lower priority – long-term outlooks**
+  – sketches of possible physical realizations (optical lattices, BEC, nonlinear wave dynamics);
+  – better anchoring of scaling and units from communication perspective;
+  – presentation of results using comprehensible graphs and short "storytelling" ("field oscillates → remembers → stabilizes").
+  These points aid readability and outreach but depend on a firmer numerical foundation.
+
+---
+
+## 🔍 Phenomena from core paper to revalidate (core v1.0.6-core)
+
+> **Audit 2026: Protocol & Reproduction (Feb 17, 2026):**
+> *   **Goal:** Rigorous verification of determinism and energy sources (H0 vs H1).
+> *   **Procedure (CLI Reproduction):**
 >     1.  `python lineum.py --run-tag d3_audit_A` (Baseline)
 >     2.  `$env:OMP_NUM_THREADS=1; python lineum.py --run-tag d3_audit_B1` (Single-Thread)
 >     3.  `$env:LOW_NOISE_MODE="true"; $env:LINEUM_PHI_INJECTION="0.0"; python lineum.py --run-tag d4_ignition` (Ignition)
-> *   **Výstupy (`output/audit_proof`):**
+> *   **Outputs (`output/audit_proof`):**
 >     *   `d3_audit_A` vs `A2`: Baseline re-run -> **PASS (Bit-exact)**.
 >     *   `d3_audit_A` vs `B1`: Baseline vs Single-Thread -> **PASS (Universal Determinism)**.
 >     *   `d4_ignition`: Zero-Noise/Zero-Injection -> **PASS (Intrinsic Instability)**.
-> *   **Závěr:** H0 (Vlastnost) potvrzena, H1 (Trik) falzifikována.
-> **Strategie:** [Communication Manual](docs/communication_manual.md)
+> *   **Conclusion:** H0 (Property) confirmed, H1 (Trick) falsified.
+> **Strategy:** [Communication Manual](docs/communication_manual.md)
 > **Protocol:**
-> *   **Self-Contained Todo:** Každá položka v `todo.md` musí obsahovat **kompletní návod k reprodukci** (zejména one-liner příkazy). Nikdy se nespoléhat na existenci `tools/` skriptů nebo názvy artefaktů, které mohou být smazány.
-> *   **Audit-Grade Language:** Používat přesná tvrzení ("observed on tested platform", "no divergence found") místo absolutních ("universal determinism").
+> *   **Self-Contained Todo:** Every item in `todo.md` must contain a **complete reproduction guide** (especially one-liner commands). Never rely on existence of `tools/` scripts or artifact names that could be deleted.
+> *   **Audit-Grade Language:** Use precise claims ("observed on tested platform", "no divergence found") instead of absolute ones ("universal determinism").
 > **Key Audit Outcomes (Feb 2026):**
 > *   **H0 Verified:** Intrinsic Dynamics confirmed (no hidden energy sources).
-> *   **H1 Falzifikováno:** Determinismus (D3) a Zero-Noise Self-Excitation (D4) vyloučily artefakty.
-> *   **State Invariance (Attack-Proof):** Prokázána bit-exact shoda (Core-State Only) mezi Optimized (Untracked) a Full-Tracked během.
->     **Reprodukce:**
+> *   **H1 Falsified:** Determinism (D3) and Zero-Noise Self-Excitation (D4) ruled out artifacts.
+> *   **State Invariance (Attack-Proof):** Proven bit-exact match (Core-State Only) between Optimized (Untracked) and Full-Tracked run.
+>     **Reproduction:**
 >     1. `python lineum.py --run-tag opt_run` (default `DISABLE_TRACKING=True`)
 >     2. `$env:LINEUM_DISABLE_TRACKING="false"; python lineum.py --run-tag full_run`
 >     3. Compare `psi`/`phi` hashes (must be identical at Step 200 [Index 199]).
@@ -87,162 +87,162 @@ Nejvyšší „příčná“ priorita napříč jednotlivými sekcemi je ukázat
 >     **Status:** No divergence observed on tested platform. Confirmed: `evolve()` update depends ONLY on `psi` and `phi`.
 > *   **Verified Strategy:** AI Transparency ("Cognitive Exoskeleton") + "Complex Systems" vocabulary for Mikolov.
 
-- [ ] Znovu ověřit **Guided motion podél +∇|φ|** (environmental guidance) v kanonické sadě (`spec6_false_s41` + seeds 17/23/73) tak, aby metriky z `*_trajectories.csv` a φ-map (viz core §5.1) odpovídaly aktuální definici a tolerancím v whitepaperu.
-- [ ] Znovu prověřit režim **Silent collapse** (lokální pokles |ψ|² bez velkého globálního rušení) včetně kvantifikace závislosti na disipaci a lokalitě podle aktuální formulace v core §5.3.
-- [ ] Revalidovat definici a měření **„spinové aury“** jako časově/ensemble průměrovaného pole `curl(∇arg ψ)` kolem linonů (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) a zkontrolovat, že dokumentace jasně uvádí, že jde o interní mapu cirkulace fáze v okolí linonu, nikoli o tvrzení o spinu částice ve smyslu Standardního modelu.
+- [ ] Re-verify **Guided motion along +∇|φ|** (environmental guidance) in canonical set (`spec6_false_s41` + seeds 17/23/73) so that metrics from `*_trajectories.csv` and φ-maps (see core §5.1) match current definition and tolerances in the whitepaper.
+- [ ] Re-verify the **Silent collapse** regime (local drop of |ψ|² without large global disturbance), including quantification of dependence on dissipation and locality according to current formulation in core §5.3.
+- [ ] Revalidate definition and measurement of **"spin aura"** as time/ensemble averaged field `curl(∇arg ψ)` around linons (`*_spin_aura_map.png`, `*_spin_aura_profile.csv`; core §5.2) and check that documentation clearly states this is an internal map of phase circulation around a linon, not a claim about particle spin in the Standard Model sense.
 
-- [ ] (Tříska–Marečková [HYPOTHESIS]) Ověřit, zda pole **φ** v rámci Eq-4 skutečně plní roli **strukturální paměti** systému, nebo zda je nutné zavést rozšířený paměťový mechanismus (zpožděná odezva, hysteréze nebo samostatné paměťové pole μ):
-      – Kvantitativně změřit, jak rychle φ ztrácí informaci o předchozí přítomnosti linonů v režimu **Silent collapse**: definovat metriky „paměťové stopy“ typu
-      • doba, po kterou lze z aktuálního φ jednoznačně rozhodnout, že v daném regionu v minulosti existovala kvazičástice (např. mutual information mezi historií |ψ|² a φ),
-      • half-life informační stopy v φ oproti pozadí v ensemble bězích (seed-average).
-      – Explicitně demonstrovat a kvantifikovat scénáře **„tichého zániku beze stopy“**: zavést pracovní threshold „beze stopy“ (např. lokální φ ≤ (1+ε)·φ_background po ≥ T krocích od zániku) a spočítat četnost těchto případů napříč běhy a parametry.
-      – Navrhnout a implementovat alespoň dva kandidátní mechanismy **strukturální konzervace**:
-      • zpožděnou evoluci φ, kde je reakce funkcí časově průměrovaného |ψ|² z posledních N kroků,
-      • separátní pomalé paměťové pole μ, které akumuluje výskyt kvazičástic (např. integrál |ψ|² nad prahem) a jen pomalu se rozpadá,
-      • případně maximizační pravidlo typu `φ ← max(φ, |ψ|²)` doplněné o pomalý rozpadající se člen;
-      a všechny varianty porovnat se stávající baseline podle stejné sady paměťových metrik (half-life, mutual information, četnost „beze stopy“ zániků).
-      – Formálně zapsat **Tříska–Marečková Hypothesis of Long-Term Structural Memory** do whitepaperu jako minimální podmínku pro to, aby Lineum mohlo být interpretováno jako **konzervativní paměťový model**: buď
-      (a) φ (případně rozšířené o μ) konzervuje informaci o výskytu struktur i po jejich zániku v netriviální míře, nebo
-      (b) je v dokumentaci explicitně deklarováno, že Lineum reprezentuje **model s možností absolutního zániku informace**, tj. že „tichý zánik beze stopy“ je vlastnost modelu, ne numerický artefakt.
-- [ ] Ujasnit a znovu otestovat status jevu **Dimensional Transparency** (průchod struktur skrz κ) s ohledem na to, že byl dosud pozorován jen v bězích s časově proměnným κ (v1.1.x-exp):  
-       – navrhnout a spustit testy pro danou exp větev,  
-       – v dokumentaci explicitně držet tento jev jako extension-track hypotézu, dokud nebude promotion pipeline splněná.
+- [ ] (Triska–Mareckova [HYPOTHESIS]) Verify if the **φ** field within Eq-4 truly fulfills the role of **structural memory** of the system, or if it is necessary to introduce an extended memory mechanism (delayed response, hysteresis or an independent memory field μ):
+      – Quantitatively measure how quickly φ loses information about previous presence of linons in the **Silent collapse** regime: define "memory trace" metrics such as
+      • the time over which current φ unambiguously decides that a quasiparticle historically existed in a given region (e.g., mutual information between |ψ|² history and φ),
+      • the half-life of the informational trace in φ versus background in ensemble runs (seed-average).
+      – Explicitly demonstrate and quantify scenarios of **"silent collapse without a trace"**: introduce a working threshold for "without a trace" (e.g. local φ ≤ (1+ε)·φ_background after ≥ T steps since collapse) and calculate the frequency of these instances across runs and parameters.
+      – Propose and implement at least two candidate mechanisms of **structural conservation**:
+      • delayed evolution of φ, where the reaction is a function of time-averaged |ψ|² from the last N steps,
+      • separate slow memory field μ that accumulates occurrence of quasiparticles (e.g. integral |ψ|² over threshold) and decays very slowly,
+      • possibly maximization rule like `φ ← max(φ, |ψ|²)` supplemented with a slow decaying term;
+      and compare all variants with current baseline according to the same set of memory metrics (half-life, mutual information, frequency of "traceless" collapses).
+      – Formally encode the **Triska–Mareckova Hypothesis of Long-Term Structural Memory** into the whitepaper as a minimal condition for Lineum to be interpreted as a **conservative memory model**: either
+      (a) φ (possibly extended by μ) conserves information about occurrence of structures even after their collapse to a non-trivial degree, or
+      (b) it is explicitly declared in the documentation that Lineum represents a **model capable of absolute information destruction**, i.e. that "traceless silent collapse" is a property of the model, not a numerical artifact.
+- [ ] Clarify and re-test status of **Dimensional Transparency** phenomenon (structures passing through κ) considering it has only been observed in tests with time-variable κ (v1.1.x-exp):
+       – propose and execute tests for the given exp branch,
+       – explicitly maintain this phenomenon as an extension-track hypothesis in the documentation until passed through the promotion pipeline.
 
 ---
 
-## 🧱 Priorita 0 – základní principy a kritické body
+## 🧱 Priority 0 – Basic principles and critical points
 
-### 🔲 A. Základní invariance a „první principy“ #structure
+### 🔲 A. Basic invariances and "first principles" #structure
 
-- [ ] Formálně sepsat, co je považováno za **fundamentální objekt** modelu: ψ, φ, κ, aktualizační rovnice (Eq-4), topologie mřížky, periodicita – a co je čistě **měřicí aparatura** (FFT, detekce linonů, definice SBR…).
-- [ ] V rámci definice fundamentálních objektů **explicitně definovat kvazičástici / linon** jako lokální maximum |ψ| s dobře definovanou trajektorií v čase (včetně prahů a trackovacího algoritmu) a zapsat, že její pohyb je modelován jako **emergentní reakce na krajinu φ**, nikoli jako ručně vložený „testovací bod“.
-- [ ] Identifikovat a odvodit (pokud existují) **diskrétní zákony zachování** nebo kvazi-zachování:  
-       – norma / „hmota“ (∑|ψ|²),  
-       – celkový topologický náboj (net winding),  
-       – případná energie / Lyapunovova funkce kandidáta.  
-       Zapsat je jako kontinuitní rovnice na mřížce (discrete continuity).
-- [ ] Sepsat a ověřit **symetrie modelu**: globální fázová symetrie (U(1)), translační invariance na mřížce, rotační symetrie omezená na mřížku; u každé říct, zda je exaktní, porušená numericky, nebo záměrně zlomená.
-- [ ] Definovat (nebo explicitně odmítnout) **energie-like funkcionál** kompatibilní s použitými operátory (∇, ∇², damping δ) a zkontrolovat jeho chování v kanonickém běhu (monotónnost vs fluktuace, boundedness).
-- [ ] Zapsat **topologickou bilanci vírů** (+1, −1):  
-       – ověřit dlouhodobou blízkost globální neutrality (net winding ≈ 0) přes ensemble běhů,  
-       – identifikovat a statisticky popsat **lokální vírová hnízda a dipóly** (páry vírů +1/−1 v malé vzdálenosti) jako kandidáty na kompozitní excitace vyššího řádu, včetně vazby na lokální hrbolky |ψ| a typické tvary proudnic (např. „srdce“ vs. „děloha“).
-- [ ] Na základě `phi_grid_summary.csv` a `kappa_map.png` formálně definovat pracovní objekt **„buňka“** jako lokální zahuštěnou oblast (patch zvýšeného φ a/nebo specifického vírového vzoru) a:
-      – ověřit, že takto definované buňky se **reprodukovatelně objevují** napříč seedy i parametry (zejména v clean bězích `spec6_true no_artefacts`),
-      – zkoumat jejich roli jako **lokálních informačních a paměťových jednotek** (přítomnost zeta-body, φ-remnantů, Return Echo trajektorií uvnitř buňky),
-      – kvantifikovat vliv buněk na lokální κ/topologii a držet hypotézu „buňky jako základní výpočetní jednotky emergentní inteligence“ výslovně jako [HYPOTHESIS] s vlastním mini-checklistem v rámci Structural Closure / φ-zeta gridu.
-      [ ] (HYPOTHESIS) Prověřit možnost definovat „mikro-jednotky výpočetní tkáně“
-      jako stabilní skupiny φ-buněk a trajektorií linonů, které se opakovaně
-      objevují ve stejném topologickém uspořádání. Zjistit, zda jejich výskyt
-      koreluje se strukturální pamětí nebo pattern persistence.
+- [ ] Formally document what is considered the **fundamental object** of the model: ψ, φ, κ, update equations (Eq-4), grid topology, periodicity – and what is purely **measurement apparatus** (FFT, linon detection, SBR definition...).
+- [ ] Within the definition of fundamental objects, **explicitly define a quasiparticle / linon** as a local maximum of |ψ| with a well-defined trajectory over time (including thresholds and tracking algorithm) and state that its movement is modeled as an **emergent reaction to the φ landscape**, not as an artificially inserted "test point".
+- [ ] Identify and derive (if they exist) **discrete conservation laws** or quasi-conservation laws:
+       – norm / "mass" (∑|ψ|²),
+       – total topological charge (net winding),
+       – potential energy / Lyapunov candidate function.
+       Write them out as continuity equations on the grid (discrete continuity).
+- [ ] Document and verify **model symmetries**: global phase symmetry (U(1)), translational invariance on the grid, rotational symmetry restricted to the grid; for each say whether it is exact, broken numerically, or deliberately broken.
+- [ ] Define (or explicitly reject) an **energy-like functional** compatible with the used operators (∇, ∇², damping δ) and check its behavior in a canonical run (monotonicity vs. fluctuations, boundedness).
+- [ ] Write down the **topological balance of vortices** (+1, −1):
+       – verify long-term proximity to global neutrality (net winding ≈ 0) across an ensemble of runs,
+       – identify and statistically describe **local vortex nests and dipoles** (+1/−1 vortex pairs at a short distance) as candidates for composite higher-order excitations, including their binding to local |ψ| bumps and typical forms of streamlines (e.g. "heart" vs. "womb" shapes).
+- [ ] Based on `phi_grid_summary.csv` and `kappa_map.png`, formally define the working object **"cell"** as a local densified region (a patch of increased φ and/or a specific vortex pattern) and:
+      – verify that such defined cells **reproducibly appear** across seeds and parameters (especially in clean `spec6_true no_artefacts` runs),
+      – investigate their role as **local information and memory units** (presence of zeta-points, φ-remnants, Return Echo trajectories inside the cell),
+      – quantify the cell's influence on local κ/topology and explicitly maintain the hypothesis of "cells as basic computational units of emergent intelligence" as a [HYPOTHESIS] with its own mini-checklist within the Structural Closure / φ-zeta grid.
+      [ ] (HYPOTHESIS) Investigate the possibility of defining "micro-units of computational tissue"
+      as stable groups of φ-cells and linon trajectories that repeatedly
+      appear in the same topological arrangement. Determine if their occurrence
+      correlates with structural memory or pattern persistence.
 
-### 🔲 B. Numerická robustnost a artefakty #numerics
+### 🔲 B. Numerical robustness and artifacts #numerics
 
-- [ ] Explicitně zapsat použitou **diskretizaci** (schéma pro ∇, ∇², časový krok) a odvodit/stanovit její **stabilitní podmínku** (CFL-like omezení pro Δt vs Δx).
-- [ ] Provést sadu **konvergenčních testů**: zjemňování mřížky (Δx↓), zmenšování časového kroku (Δt↓) a porovnání klíčových metrik (f₀, tvar linonu, SBR, φ half-life, spinová aura), aby bylo vidět, že výsledky konvergují a excitace nejsou závislé na hrubém kroku ani konkrétním rozlišení.
-- [ ] Otestovat, zda linony přežijí při změně schématu (např. alternativní Laplace, různá integrační schémata – explicitní/implicitní/vyšší řády, různé pořadí aktualizace) – tj. že nejde o artefakt konkrétního numerického triku.
-- [ ] Detekovat typické **mřížkové artefakty**: checkerboard módy, anisotropie (preferované směry 0°, 90°, 45°). Kvantifikovat přes spektrum a korelační funkce.
-- [ ] Zkontrolovat vliv **okrajových podmínek**: porovnání periodic BCs vs. tlumené/absorbing okraje pro menší domény a ověření, že linonní excitace přežívají napříč použitými BCs (tj. nejsou jen důsledkem periodicity).
-- [ ] Opravit a zdokumentovat zjištěný **cache-bug ve vizualizační pipeline** (červenec 2025: vlákno „Lineum – artefakty, kappa, deja vu“) – zajistit tvrdý reset jádra / vypnutí cache mezi běhy `phi_grid_*`/`dejavu_*`, znovu přegenerovat postižené mapy a v dokumentaci jasně uvést, které starší výstupy byly tímto bugem potenciálně kontaminované.
-- [ ] Explicitně označit běhy `with_artefacts_*` jako **numericky znehodnocené / diagnostické** (slouží jen jako negativní kontrola) a všechny fyzikální závěry stavět na clean větvi `no_artefacts_*`; do README/FAQ přidat krátkou poznámku, že rozdíly mezi těmito větvemi ilustrují vliv artefaktů na φ-zeta grid, distribuci zeta-body a Riemann/Fibonacci analýzy.
-      [ ] Ověřit, zda identifikované „tkáňové struktury“ (stabilní φ-buňky + trajektorie)
-      přežívají změny grid resolution, float precision a střídání pořadí aktualizací.
-      Pokud ano, klasifikovat je jako numericky robustní (NR-structures).
+- [ ] Explicitly write down the used **discretization** (scheme for ∇, ∇², time step) and derive/determine its **stability condition** (CFL-like restriction for Δt vs. Δx).
+- [ ] Perform a set of **convergence tests**: grid refinement (Δx↓), time step reduction (Δt↓) and comparison of key metrics (f₀, linon shape, SBR, φ half-life, spin aura) to show that the results converge and excitations are not dependent on coarse steps or a specific resolution.
+- [ ] Test whether linons survive when changing the scheme (e.g., alternative Laplace, different integration schemes - explicit/implicit/higher orders, different update order) - i.e., proving this isn't an artifact of a specific numerical trick.
+- [ ] Detect typical **grid artifacts**: checkerboard modes, anisotropies (preferred directions 0°, 90°, 45°). Quantify via spectrum and correlation functions.
+- [ ] Check the influence of **boundary conditions**: compare periodic BCs against dampened/absorbing edges for smaller domains and verify that linon-like excitations survive across the used BCs (i.e., they are not just a consequence of periodicity).
+- [ ] Fix and document the identified **cache-bug in the visualization pipeline** (July 2025: thread "Lineum – artifacts, kappa, deja vu") – ensure a hard reset of the kernel / cache disabling between `phi_grid_*`/`dejavu_*` runs, regenerate affected maps and clearly state in the documentation which older outputs were potentially contaminated by this bug.
+- [ ] Explicitly mark `with_artefacts_*` runs as **numerically degraded / diagnostic** (serving only as a negative control) and base all physical conclusions on the clean `no_artefacts_*` branch; add a short note to README/FAQ that the differences between these branches illustrate the effect of artifacts on the φ-zeta grid, distribution of zeta-points, and Riemann/Fibonacci analyses.
+      [ ] Verify whether the identified "tissue structures" (stable φ-cells + trajectories)
+      survive changes in grid resolution, float precision, and alternating the order of updates.
+      If so, classify them as numerically robust (NR-structures).
 
-### 🔲 C. Dimenze, jednotky a SI ukotvení #units
+### 🔲 C. Dimensions, units, and SI anchoring #units
 
-- [ ] Sestavit tabulku všech **symbolů a jednotek** (ψ, φ, κ, t, x, α, β, δ, σξ, f₀, E, λ, m/mₑ) a provést explicitní **dimenzionální analýzu** Eq-4 + použitých metrik (včetně normalizace mřížky).
-- [ ] Jasně oddělit **simulační jednotky** (grid step, time step) od **SI ukotvení** přes f₀ a konverzi (E = h f₀, λ = c / f₀, m = h f₀ / c²). Uvést, které vztahy jsou pouze „display-only“ a které vstupují do dynamiky.
-- [ ] Zapsat, jak se model chová při **rescalingu** (převzorkování) časové / prostorové škály: které kombinace parametrů jsou invariantní a které vedeš jen jako vizualizační volbu – včetně explicitního rozlišení mezi  
-       a) **pevně zvoleným měřítkem** (konstantní mapování pixel → metr, krok → sekunda) a  
-       b) **stavově závislým měřítkem** (mapování, které může být funkcí stavu pole).
-- [ ] Stručně vysvětlit status konstant **h, c, mₑ**: že se objevují jen v post-processingu (unit conversion), nikoli jako tvrdé vstupy do Eq-4.
+- [ ] Compile a table of all **symbols and units** (ψ, φ, κ, t, x, α, β, δ, σξ, f₀, E, λ, m/mₑ) and perform a strict **dimensional analysis** of Eq-4 + used metrics (including grid normalization).
+- [ ] Clearly separate **simulation units** (grid step, time step) from **SI anchoring** via f₀ and conversion (E = h f₀, λ = c / f₀, m = h f₀ / c²). State which relationships are purely "display-only" and which directly enter the dynamics.
+- [ ] Note how the model behaves during **rescaling** (resampling) of the time / spatial scale: which combinations of parameters are invariant and which are kept merely as visualization choices – explicitly distinguishing between
+       a) **fixed scale** (constant pixel → meter, step → second mapping) and
+       b) **state-dependent scale** (mapping that can be a function of the field's state).
+- [ ] Briefly explain the status of the constants **h, c, mₑ**: they appear only in post-processing (unit conversion), not as hard inputs into Eq-4.
 
-#### C2. Emergentní zoom a stavově závislé měřítko #units #hypothesis
+#### C2. Emergent zoom and state-dependent scale #units #hypothesis
 
--[ ] (HYPOTHESIS) Otestovat, zda lze definovat „informační hustotu“ systému
-jako funkci počtu aktivních φ-kapes, zeta-body a návštěvnosti linonů.
-Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí φ.
+-[ ] (HYPOTHESIS) Test whether an "informational density" of the system can be defined
+as a function of the number of active φ-pockets, zeta-points, and linon traffic.
+Verify whether this density predicts changes in a(t) or local φ tension.
 
-- [ ] Formálně zavést pojem **efektivního měřítka / „zoom faktoru“** `a(t)` pro mapování  
-       simulačních jednotek → SI (pixel → metr, time step → sekunda) tak, aby bylo jasně zapsáno, že `a(t)`  
-       **není nová dynamická proměnná v Eq-4**, ale pravidlo interpretace nad hotovým řešením (post-processing).
-- [ ] Definovat kandidátní **stavové skaláry** typu `I(t)` (např. entropie rozložení |ψ|, počet kvazičástic `N_q(t)`,  
-       průměrné φ², kombinace těchto veličin), které mohou parametrizovat „množství struktury / informace“ v systému.
-- [ ] Navrhnout jednoduché rodiny pravidel `a(t) = f(I(t))` (např. monotónní rostoucí funkce při růstu informační  
-       hustoty) a sepsat, jaké kvalitativní chování od nich chceme:  
-       – plynulost,  
-       – možnost efektivní expanze (a(t) roste) bez oscilací typu numerický šum,  
-       – případné zrychlování / zpomalování růstu jako analogie různých kosmologických fází.
-- [ ] Porovnat **dva světy**:  
-       1. baseline s **konstantním měřítkem** (současné čtení – žádná expanze),  
-       2. svět s **emergentním `a(t)`** odvozeným ze stavu pole,  
-       aniž by se změnil jediný term v Eq-4. Kvantifikovat, jak se liší interpretace „globální expanze“ v čase.
-- [ ] Explicitně zdokumentovat, že emergentní `a(t)` je alternativa k „přidání nového temno-členu do rovnice“:  
-       – žádný nový symbol v dynamice,  
-       – čistě **chytrější mapování** mřížky na fyzikální jednotky řízené obsahem (informací) uvnitř.  
-       V textu výslovně kontrastovat tento přístup s epicyklovým „+Λ(t) jen proto, aby to vycházelo“.
-- [ ] Ověřit, zda některé přirozené volby `I(t)` a `f(I)` dávají `a(t)` s vlastnostmi podobnými kosmologické expanzi  
-       (monotónní růst, možné zrychlení) **bez jakéhokoli ladění volných parametrů na konkrétní „pozorování“** – tj.  
-       držet tuto hypotézu ve stavu „emergentní efekt z Eq-4 + interpretace“, ne jako laditelný fit na data.
-- [ ] Výslovně odlišit roli `a(t)` (scale faktoru) od případných „zlatých“ struktur v krajině φ:  
-       – `a(t)` modelovat klasickými tvary (mocninné / exponenciální zákony) bez vloženého zlatého řezu,  
-       – **Fibonacci / zlatý řez** držet jako hypotézy o organizaci paměťových kaps v φ (rozložení privilegovaných zón, hierarchie měřítek; viz blok 12), ne jako zákon expanze samotné.
-- [ ] (Tomášova hypotéza) Zapsat scénář, v němž je maximální rychlost šíření lokálních excitací v modelu
-      (interní „rychlost světla“ c_eff odvozená např. z grupové rychlosti dominantních módů) vždy menší
-      nebo rovna efektivní „rychlosti přípravy prostoru“ dané růstem `a(t)`. Přeložit to do jazyka Eq-4
-      a post-processingu tak, aby bylo jasné, že:  
-       – „příprava nového prostoru“ je čistě interpretace změny měřítka, ne nový dynamický term;  
-       – c_eff je vlastnost excitací na daném pozadí, ne vložený parametr;  
-       – v žádné interpretaci nesmí dojít k tomu, že excitace „utíkají z nepřipraveného prostoru“ – analog
-      podmínky, že horizont / mezní rychlost je konzistentní s expanzí.
-- [ ] (Kátina [HYPOTHESIS]) Prozkoumat scénář **vícevrstvého Linea** („několik vrstev Linea pod sebou“), kde
-      existuje index vrstvy `n` a pole mají tvar ψ⁽ⁿ⁾, φ⁽ⁿ⁾, κ⁽ⁿ⁾:  
-       – navrhnout 1–2 jednoduché typy couplingů mezi vrstvami (např. `κ^{(2)} = κ^{(2)}_0 + f(φ^{(1)})`
-      nebo pomalý přenos `φ^{(1)} → φ^{(2)}` přes zpožděnou odezvu),  
-       – otestovat, zda lze dolní vrstvu vnímat jako „hrubší“ / „hmotnější“ patro a horní jako jemnější efektivní
-      vrstvu, která vidí jen agregované vlastnosti spodní (např. přes průměrované φ / statistiku linonů),  
-       – rozhodnout, zda vícevrtvové scénáře budeme držet jako čistě **interpretační nadstavbu** k jednomu Eq-4
-      (efektivní „patra reality“ v post-processingu), nebo jako samostatnou **extension větev** s explicitním
-      indexem `n` v rovnicích; v dokumentaci to jasně oddělit od core v1.0.6-core.
-- [ ] (Tomášova [HYPOTHESIS]) **3D Ghosting / Chapadlový model:** Linon (2D bod) interpretovat jako průřez 3D vlákna (chapadla) protínajícího 2D plátek Linea.
-  - [ ] **Déjà Vu / Mandela Effect:** Pokud 3D vlákno změní tvar v hloubce (nad vrstvami), jeho průřezy (linony) ve všech vrstvách se posunou synchronně. To vysvětluje globální "přepis historie" (Mandela Effect) jako následek netriviální 3D rotace struktury.
+- [ ] Formally introduce the concept of **effective scale / "zoom factor"** `a(t)` for mapping
+       simulation units → SI (pixel → meter, time step → second) so it is clearly stated that `a(t)`
+       **is not a new dynamic variable in Eq-4**, but a rule of interpretation applied to the solved state (post-processing).
+- [ ] Define candidate **state scalars** like `I(t)` (e.g. entropy of the |ψ| distribution, number of quasiparticles `N_q(t)`,
+       average φ², combination of these quantities) that can parameterize the "amount of structure / information" in the system.
+- [ ] Propose simple families of rules `a(t) = f(I(t))` (e.g. monotonically increasing function relative to information
+       density growth) and specify the qualitative behavior expected:
+       – smoothness,
+       – capability for effective expansion (a(t) increases) without noise-like oscillations,
+       – possible acceleration / deceleration of growth analogous to different cosmological phases.
+- [ ] Compare **two worlds**:
+       1. baseline with **constant scale** (current reading – no expansion),
+       2. a world with **emergent `a(t)`** derived from the field state,
+       without changing a single term in Eq-4. Quantify how the interpretation of "global expansion" over time differs.
+- [ ] Explicitly document that the emergent `a(t)` is an alternative to "adding a new dark-term to the equation":
+       – no new symbol in the dynamics,
+       – purely a **smarter mapping** of the grid to physical units driven by the content (information) inside.
+       In the text, explicitly contrast this approach with the epicyclic "+Λ(t) just to make the math work".
+- [ ] Verify if certain natural choices of `I(t)` and `f(I)` yield an `a(t)` with features similar to cosmological expansion
+       (monotonic growth, possible acceleration) **without tuning free parameters to fit specific "observations"** – i.e.,
+       maintain this hypothesis in the state of an "emergent effect from Eq-4 + interpretation", not as a tunable data fit.
+- [ ] Explicitly differentiate the role of `a(t)` (scale factor) from possible "golden" structures in the φ landscape:
+       – model `a(t)` with classical shapes (power / exponential laws) without an embedded golden ratio,
+       – treat the **Fibonacci / Golden Ratio** as hypotheses about the organization of memory pockets in φ (distribution of privileged zones, hierarchy of scales; see block 12), not as the law of expansion itself.
+- [ ] (Tomas's Hypothesis) Write out a scenario where the maximum propagation speed of local excitations in the model
+      (internal "speed of light" c_eff derived, for example, from the group velocity of dominant modes) is always less
+      than or equal to the effective "space preparation speed" dictated by the growth of `a(t)`. Translate this into the language of Eq-4
+      and post-processing so that it is unequivocally clear that:
+       – "preparing new space" is purely an interpretation of scaling, not a new dynamic term;
+       – c_eff is an inherent property of excitations on the given background, not an inserted parameter;
+       – under no interpretation should excitations "escape from unprepared space" – analogous to the
+      condition that the horizon / limit speed is consistent with expansion.
+- [ ] (Katina's [HYPOTHESIS]) Explore the scenario of a **multilayer Lineum** ("several layers of Lineum stacked together"), where
+      a layer index `n` exists and fields take the shape ψ⁽ⁿ⁾, φ⁽ⁿ⁾, κ⁽ⁿ⁾:
+       – propose 1–2 simple types of couplings between layers (e.g., `κ^{(2)} = κ^{(2)}_0 + f(φ^{(1)})`
+      or slow transfer `φ^{(1)} → φ^{(2)}` via delayed response),
+       – test whether the lower layer can be perceived as a "coarser" / "more massive" floor and the upper as a more refined effective
+      layer that only sees aggregated properties of the one beneath (e.g. through averaged φ / linon statistics),
+       – decide whether multi-layer scenarios will be kept strictly as an **interpretational overlay** onto a single Eq-4
+      (effective "floors of reality" in post-processing), or as an isolated **extension branch** with an explicit
+      index `n` in the equations; in documentation, explicitly separate this from core v1.0.6-core.
+- [ ] (Tomas's [HYPOTHESIS]) **3D Ghosting / Tentacle Model:** Linon (a 2D point) interpreted as the cross-section of a 3D fiber (tentacle) intersecting the 2D Lineum slice.
+  - [ ] **Déjà Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
 
 
-### 🔲 D. Statistická síla, chyby a nejistoty #stats
+### 🔲 D. Statistical power, errors and uncertainties #stats
 
-- [ ] U všech klíčových metrik (f₀, E, λ, m/mₑ, half-life φ-remnantů, SBR, počty linonů, spinová aura) uvést **chyby / intervaly spolehlivosti** (bootstrap / ensemble přes seedy a běhy).
-- [ ] Vyhnout se implicitnímu „p-hackingu“: předem sepsat, které metriky se publikují, a jak se rozhoduje o „signifikantním efektu“ u nových jevů (Return Echo, Dimensional Transparency…).
-- [ ] Ověřit, že kvalifikace „seed-invariantní“ má kvantitativní definici (rozptyl mezi seedy vs. vnitřní šum v rámci jednoho běhu).
-- [ ] (Smeták-Tříska [HYPOTHESIS]) Najít v dynamice Linea kandidátní „čistě náhodný“ jev typu **Bernoulli(0.5)** (analog hodu mincí) a:
-      – formálně definovat, co je jedna **„událost“** a jak z evoluce pole získat binární sekvenci (0/1),
-      – z téhle sekvence spočítat základní testy shody s fair coin (relativní četnosti, běhové testy, autocorrelation, χ² / KS),
-      – porovnat výsledek s baseline pseudo-RNG a s null modelem (např. phase-scrambled data),
-      – rozhodnout, zda jev komunikovat v core/FAQ jako interní Bernoulli proces, emergentní chaos nebo jen heuristický „hod mincí“ bez tvrzení o dokonale ideální náhodě.
-- [ ] Systematicky otestovat, do jaké míry pseudo-náhodná inicializace (např. `np.random.rand` v šumu / začátečním stavu ψ) ovlivňuje vznik a statistiku emergentních struktur (linony, φ-pasti, zeta-body) oproti čistě deterministickým startům.
-      – Zavést tři režimy inicializace:
-      (a) zcela deterministický start (např. homogenní fáze, jednoduchá sinusoida nebo ručně definovaný „seed“ linonů),
-      (b) pseudo-náhodná inicializace se stejným seedem (opakované běhy, kontrola stability vůči numerickému šumu),
-      (c) pseudo-náhodná inicializace s různými seedy a/nebo se pseudo-RNG seedovaným reálnou entropií (čas, systémový šum).
-      – Pro všechny tři režimy měřit stejnou sadu metrik (počty a životnost linonů, SBR/f₀, strukturu φ-paměti, statistiku zeta-body, occupancy mapy, vortex counts) a porovnat:
-      • zda jsou výstupy pouze „přeskalované kopie“ vstupního šumu,
-      • nebo zda existují robustní globální struktury a statistiky, které se prosadí nezávisle na volbě seede (v rámci tolerancí z bloku D).
-      – Vyhodnotit, jestli je Lineum lépe popsat jako
-      • **„sympatickou kopii“** hostitelského vesmíru (výsledky zásadně závislé na externí náhodě),
-      • nebo jako systém s **vnitřní emergentní asymetrií**, který různou inicializaci převádí na strukturálně podobné attractory.
-      – Do whitepaperu/FAQ přidat krátký odstavec, který explicitně odpoví na otázku _„co když náhoda neexistuje?“_ v kontextu Linea:
-      • zapsat, že model v každém případě generuje **deterministický běh pro daný Eq-4 + počáteční podmínky**,
-      • a že „náhodnost“ je v současném scope pouze praktický nástroj pro sampling prostoru počátečních stavů, ne ontologické tvrzení o existenci fundamentální náhody.
+- [ ] Provide **errors / confidence intervals** (bootstrap / ensemble across seeds and runs) for all key metrics (f₀, E, λ, m/mₑ, half-life of φ-remnants, SBR, linon counts, spin aura).
+- [ ] Avoid implicit "p-hacking": document in advance which metrics will be published and how a "significant effect" is determined for new phenomena (Return Echo, Dimensional Transparency...).
+- [ ] Verify that the "seed-invariant" qualification has a quantitative definition (variance between seeds vs. internal noise within a single run).
+- [ ] (Smetak-Triska [HYPOTHESIS]) Find a candidate "purely random" event of the **Bernoulli(0.5)** type (coin toss analog) in Lineum dynamics and:
+      – formally define what constitutes one **"event"** and how to obtain a binary sequence (0/1) from field evolution,
+      – calculate basic fair coin compliance tests (relative frequencies, runs tests, autocorrelation, χ² / KS) from this sequence,
+      – compare the result with the pseudo-RNG baseline and a null model (e.g. phase-scrambled data),
+      – decide whether the phenomenon should be communicated in core/FAQ as an internal Bernoulli process, emergent chaos, or just a heuristic "coin toss" without claiming perfectly ideal randomness.
+- [ ] Systematically test the extent to which pseudo-random initialization (e.g. `np.random.rand` in noise / initial state of ψ) influences the formation and statistics of emergent structures (linons, φ-traps, zeta-points) compared to purely deterministic starts.
+      – Introduce three initialization regimes:
+      (a) completely deterministic start (e.g. homogeneous phase, simple sinusoid, or manually defined linon "seed"),
+      (b) pseudo-random initialization with the same seed (repeated runs, checking stability against numerical noise),
+      (c) pseudo-random initialization with different seeds and/or with the pseudo-RNG seeded by real entropy (time, system noise).
+      – Measure the same set of metrics (linon counts and lifespans, SBR/f₀, φ-memory structure, zeta-point statistics, occupancy maps, vortex counts) for all three regimes and compare:
+      • whether the outputs are merely "rescaled copies" of the input noise,
+      • or whether robust global structures and statistics emerge independently of the chosen seed (within the tolerances from block D).
+      – Evaluate if Lineum is better described as a
+      • **"sympathetic copy"** of the host universe (results fundamentally dependent on external randomness),
+      • or as a system with **internal emergent asymmetry**, translating different initializations into structurally similar attractors.
+      – Add a short paragraph to the whitepaper/FAQ explicitly answering the question _"what if randomness doesn't exist?"_ in the context of Lineum:
+      • note that the model always generates a **deterministic run for a given Eq-4 + initial conditions**,
+      • and that "randomness" in the current scope is just a practical tool for sampling the space of initial states, not an ontological claim about the existence of fundamental randomness.
 
-### 🔲 E. Null modely a baseline srovnání #nulltests
+### 🔲 E. Null models and baseline comparison #nulltests
 
-- [ ] Definovat 1–2 **nulové modely** se stejným post-processingem (FFT, detekce linonů), např.:  
-       – čistý šum s daným power spectrum,  
-       – standardní discretized NLS / Ginzburg–Landau bez speciální φ-struktury.  
-       Ověřit, že metriky „linonu“ (tvar, životnost, f₀, spinová aura, Structural Closure) nejsou typické i pro tyto baseline.
-- [ ] Připravit **phase-scrambled** varianty dat (stejné spektrum, náhodné fáze) a ukázat, že tím zaniká struktura, kterou model přisuzuje linonům.
-- [ ] Vytvořit stručnou tabulku „**co by mělo vyjít nulové**“ (např. spinová aura kolem náhodných fluktuací) a ověřit to na syntetických datech.
+- [ ] Define 1–2 **null models** with the same post-processing (FFT, linon detection), e.g.:
+       – pure noise with a given power spectrum,
+       – standard discretized NLS / Ginzburg–Landau without special φ-structure.
+       Verify that the "linon" metrics (shape, lifespan, f₀, spin aura, Structural Closure) are not typical for these baselines as well.
+- [ ] Prepare **phase-scrambled** data variants (same spectrum, random phases) and show that the structure attributed to linons by the model disappears.
+- [ ] Create a brief table "**what should turn out null**" (e.g. spin aura around random fluctuations) and verify it on synthetic data.
 
-### 🔲 F. Reprodukovatelnost a nezávislá verifikace #repro
+### 🔲 F. Reproducibility and independent verification #repro
 
 #### 🧭 TODO Strategy (editable)
 - **TODO = Backlog + Results Archive.**
@@ -250,20 +250,20 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 - **Completed (`[x]`):** **MOVE to "✅ DONE/FINDINGS log"** (below). **Do NOT delete without trace.**
 - **Entry Format:** Date + Conclusion (audit-grade) + Repro one-liner + Artifact paths/patterns + (optional commit/run-tag).
 
-#### ✅ F0. Hotovo / finální poznatky (Feb 2026)
+#### ✅ F0. Done / Final findings (Feb 2026)
 - **Reproduction Pipeline (Spec6):**
-  - *Conclusion:* Repro pipeline existuje a generuje kanonický běh/artefakty z čistého klonu.
+  - *Conclusion:* Repro pipeline exists and generates canonical run/artifacts from a clean clone.
   - *Command:* `python scripts/repro_spec6_false_s41.py`
   - *Artifacts:* `output/repro/runs/spec6_false_s41_*/{run_summary.csv, checkpoints/*.npz, *.png, *_metrics_summary.csv}`
   - *Commit:* 3c55995
 - **Third-Party Verification Checklist:**
-  - *Conclusion:* Checklist pro nezávislé auditování existuje.
+  - *Conclusion:* Checklist for independent auditing exists.
   - *Docs:* `docs/verification_checklist.md`
   - *Command:* `python scripts/verify_repro_run.py --latest`
-  - *PASS definice:* Skript najde `run_summary.csv`, ověří existenci metrik a artefaktů a vypíše `VERIFICATION: PASS`.
+  - *PASS definition:* The script finds `run_summary.csv`, verifies existence of metrics and artifacts, and outputs `VERIFICATION: PASS`.
   - *Commit:* 5dd4a6c
 - **Regression Test Knobs:**
-  - *Conclusion:* Precedence/parsování env knobs ověřeno v testech.
+  - *Conclusion:* Precedence/parsing of env knobs verified in tests.
   - *Command:* `pytest -q tests/test_lineum_knobs.py`
   - *Status:* 6 passed.
   - *Commit:* cdc0abe
@@ -271,394 +271,393 @@ Prověřit, zda tato hustota předpovídá změny v a(t) nebo lokální napětí
 #### 🔶 F1. Reference Artifacts (Implemented)
 
 - **Reference Snapshots (Manifest-Based):**
-  - *Conclusion:* Deterministický export (step 200, 1000, final) + striktní verifikace proti manifestu.
+  - *Conclusion:* Deterministic export (step 200, 1000, final) + strict verification against manifest.
   - *Format:* `.npz` data (psi, phi).
   - *Hash Rule:* `sha256( "dtype|shape|" + raw_bytes_little_endian_c_order )`.
   - *Manifest:* `docs/reference_manifest_spec6_false_s41.json` (Source of Truth).
-  - *Command:* `python scripts/verify_repro_run.py --latest` (failne při neshodě).
+  - *Command:* `python scripts/verify_repro_run.py --latest` (fails on mismatch).
   - *Artifacts:* `output/repro/runs/spec6_false_s41_*/reference/*.npz`
 
 - **Publishable Reference Pack:**
-  - *Conclusion:* Distribuovatelný ZIP balíček (pack) pro nezávislou verifikaci referenčního běhu třetími stranami. Obsahuje snapshoty, metriky a stabilní manifest+sha256 otisky. Umožňuje plné auditní ověření bez nutnosti spouštět celý běh na svém HW. 
+  - *Conclusion:* Distributable ZIP package (pack) for independent verification of the reference run by third parties. Contains snapshots, metrics, and stable manifest+sha256 fingerprints. Enables full audit verification without running the whole simulation on own HW.
   - *Command (Build):* `python scripts/build_reference_pack.py --latest`
   - *Command (Verify):* `python scripts/verify_reference_pack.py --pack <path_to_zip>`
-  - *Artifacts:* `output/repro/packs/*.zip` (Tyto soubory se záměrně necommitují repozitáře).
+  - *Artifacts:* `output/repro/packs/*.zip` (These files are intentionally not committed to the repository).
 
 - [x] Implement export reference snapshots + strict hashing -> **Done.**
 - [x] Create canonical manifest (`docs/reference_manifest_...json`) -> **Done.**
 - [x] Enforce manifest-based verification in scripts -> **Done.**
 - [x] Reference Pack builder + pack validator -> **Done.**
 
-- [x] Zvážit zveřejnění malé sady **referenčních binárek** -> **Vyřešeno sekcí F1.**
-- [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
-- [ ] Ověřit vybrané klíčové jevy (Guided motion, Structural Closure, spinová aura…) v alespoň jedné **nezávislé implementaci** (jiný jazyk / jiné numerické schéma) s minimem sdíleného kódu.
-- [ ] Zavést explicitní **verzování vizualizačních skriptů a artefaktů**: ke každému `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png` ukládat manifest s commit hashem kódu, verzí vizualizačního nástroje a informací, zda byl běh proveden před či po opravě cache-bugu; umožnit tak ex post identifikovat a případně vyřadit staré artefakty z interpretace.
+- [x] Consider releasing a small set of **reference binaries** -> **Resolved by section F1.**
+- [ ] Verify selected key phenomena (Guided motion, Structural Closure, spin aura...) in at least one **independent implementation** (different language / different numerical scheme) with minimal shared code.
+- [ ] Verify selected key phenomena (Guided motion, Structural Closure, spin aura...) in at least one **independent implementation** (different language / different numerical scheme) with minimal shared code.
+- [ ] Introduce explicit **versioning of visualization scripts and artifacts**: for every `dejavu_final*.csv` / `phi_grid_*` / `kappa_map.png`, store a manifest with the code commit hash, visualization tool version, and information on whether it was run before or after the cache-bug fix; this enables ex post identification and potential exclusion of old artifacts from interpretation.
 
-### 🔲 G. Implementační detaily a stabilita vůči „engineering“ volbám #impl
+### 🔲 G. Implementation details and stability against "engineering" choices #impl
 
-- [ ] Otestovat vliv **plovoucí řádové přesnosti**: porovnání běhu ve float32 vs float64 (případně float80/long double, pokud je dostupné) na klíčové metriky (f₀, tvar linonu, φ half-life, spinová aura).
-- [ ] Dokumentovat použitý **RNG a seeding** (knihovna, algoritmus, způsob seedingu) a ověřit, že při stejném seedu je evoluce deterministická napříč OS / hardwarem v rámci očekávaných tolerancí.
-- [ ] Popsat **řazení operací** (update order): zda je update ψ a φ synchronní / sekvenční, jestli existují race-like efekty při paralelizaci (např. na GPU) a jak se proti nim bráníš.
-- [ ] Připravit krátkou sekci „**Implementation notes**“ v repu, kde bude zdůrazněno, které části jsou **kritické pro fyzikální chování** a které jsou jen engineering (I/O, vizualizace, logging).
-- [ ] Krátce okomentovat v dokumentaci, že **rychlost generování Linea v kroku/s na reálném hardwaru** je čistě implementační metrika (výkon CPU/GPU, optimalizace kódu) a **není fyzikální veličina modelu**; případně logovat typické hodnoty pouze pro účely benchmarkingu a reprodukovatelnosti, ne jako argument pro nebo proti konkrétní fyzikální interpretaci.
+- [ ] Test the impact of **floating-point precision**: compare runs in float32 vs. float64 (or float80/long double, if available) on key metrics (f₀, linon shape, φ half-life, spin aura).
+- [ ] Document the utilized **RNG and seeding** (library, algorithm, seeding method) and verify that with the same seed, the evolution is deterministic across OS / hardware within expected tolerances.
+- [ ] Describe the **operation ordering** (update order): whether the ψ and φ updates are synchronous / sequential, if race-like effects exist during parallelization (e.g. on GPU) and how they are prevented.
+- [ ] Prepare a short "**Implementation notes**" section in the repo emphasizing which parts are **critical for physical behavior** and which are just engineering (I/O, visualization, logging).
+- [ ] Briefly comment in the documentation that **the speed of generating Lineum in steps/s on real hardware** is purely an implementation metric (CPU/GPU performance, code optimization) and **is not a physical quantity of the model**; optionally log typical values solely for benchmarking and reproducibility, not as an argument for or against a specific physical interpretation.
 
-### 🔲 H. Role κ a parametrický prostor #structure
+### 🔲 H. The role of κ and parametric space #structure
 
-- [ ] Jasně sepsat **interpretaci κ** v core: statická prostorová mapa / „prostředí“, ne dynamické pole, žádná GR ani potenciál ve smyslu SM/QFT.
-- [ ] Zkonstruovat hrubou **„phase map“ parametrů** (α, β, δ, κ, σξ): oblasti  
-       – bez linonů (triviální / hladké),  
-       – chaotické / nestabilní,  
-       – se stabilními linony (core sweet spot).  
-       Minimálně 2D řezy (např. α–β, α–δ) se záznamem, kde ještě drží metriky z §4.3.1.
-- [ ] Specificky otestovat **nesymetrické κ-mapy** (např. rohový gradient z minima do maxima) vůči symetrickým konfiguracím (konstantní κ, 1D gradient v ose x/y, šachovnicové / náhodné fleky) a kvantifikovat vliv na:  
-       – statistiku vzniku a životnost linonů,  
-       – rychlost a pravděpodobnost anihilace párových excitací,  
-       – míru „chaotického víření“ oproti triviálnímu šumu.  
-       Výsledky shrnout v core/FAQ tak, aby bylo jasné, že „fyzikálně vypadající“ presety pracují s úmyslně nesymetrickým prostředím, nikoli s perfektně homogenní κ.
-- [ ] (Tříska–Smeták [HYPOTHESIS], #numerology-suspect) Systematicky otestovat existenci úzkého „sweet spot“ intervalu κ kolem referenční hodnoty κ₀ (aktuálně vychází ~23 v používané normalizaci) v rámci Eq-4:  
-       – Definovat metriky pro kvalitu „fyzikálně vypadajícího“ režimu (stabilita linonů, SBR, čistota φ-paměti / Structural Closure, počet a stabilita zeta-body, míra topologické neutrality) a tyto metriky měřit v 1D/2D sweepu κ (např. κ ∈ [5, 40]) při fixních ostatních parametrech pro několik kanonických presetů (včetně `spec6_false_s41`).  
-       – Použít ensemble přes více seedů (např. {17, 23, 41, 73}) a pro každý κ vyhodnotit průměr a rozptyl metrik tak, aby případné optimum kolem κ₀ nebylo založené na jednotlivých bězích, ale na robustní statistice; definovat „23-region“ obecně jako interval κ₀ ± Δ s významně lepšími metrikami než okolí.  
-       – Otestovat robustnost intervalu κ₀ ± Δ vůči změně škálování (Δx, Δt, normalizace ψ/φ) a jednoduchým změnám numerického schématu (alternativní Laplace, jiné integrační schéma); explicitně sledovat, zda jde o **region v param-space** (který se při rescalingu jen číselně posune), nebo jen o náhodný artefakt konkrétní parametrizace.  
-       – Přidat jednoduché null modely („kontrolní phase map“) s jinou volbou parametrů / bez φ-paměti a ověřit, zda se u nich podobně výrazný „sweet spot“ v κ objevuje typicky, nebo je přítomen pouze v plném Lineu; podle toho rozhodnout, zda má „23-region“ status strukturálního efektu Eq-4, nebo spíše numerologického artefaktu.  
-       – V dokumentaci vést tuto hypotézu výslovně jako **interní strukturální claim o existenci zvýhodněného κ-intervalu**, nikoli jako „magickou konstantu 23 vesmíru“; pokud sweepy / null testy nepotvrdí robustní interval, hypotézu označit jako #disproved-in-model a další odkazy na κ≈23 vést pouze jako historickou poznámku (legacy curiosity), ne jako aktivní součást interpretace.
-- [ ] Otestovat, zda se pro určité intervaly κ spontánně formují „mapové vrstvy“
-      tvořené stabilními φ-buňkami připomínajícími topologii jednoduché neuronové
-      sítě. Identifikovat meze, kde se vrstvy rozpadají nebo saturují.
+- [ ] Clearly write down the **interpretation of κ** in core: a static spatial map / "environment", not a dynamic field, no GR or potential in the SM/QFT sense.
+- [ ] Construct a rough **"phase map" of parameters** (α, β, δ, κ, σξ): identifying areas
+       – without linons (trivial / smooth),
+       – chaotic / unstable,
+       – with stable linons (core sweet spot).
+       At least 2D slices (e.g. α–β, α–δ) recording where the metrics from §4.3.1 still hold.
+- [ ] Specifically test **asymmetrical κ-maps** (e.g. a corner gradient from minimum to maximum) against symmetrical configurations (constant κ, 1D gradient in x/y axis, checkerboard / random spots) and quantify the effect on:
+       – the statistics of linon emergence and lifespan,
+       – the speed and probability of paired excitation annihilation,
+       – the rate of "chaotic swirling" compared to trivial noise.
+       Summarize the results in core/FAQ making it clear that "physical-looking" presets intentionally work with an asymmetrical environment, not a perfectly homogeneous κ.
+- [ ] (Triska–Smetak [HYPOTHESIS], #numerology-suspect) Systematically test the existence of a narrow "sweet spot" interval of κ around the reference value κ₀ (currently around ~23 in the used normalization) within Eq-4:
+       – Define metrics for the quality of the "physical-looking" regime (linon stability, SBR, φ-memory purity / Structural Closure, count and stability of zeta-points, degree of topological neutrality) and measure these metrics in a 1D/2D sweep of κ (e.g. κ ∈ [5, 40]) at fixed other parameters for several canonical presets (including `spec6_false_s41`).
+       – Use an ensemble across multiple seeds (e.g. {17, 23, 41, 73}) and evaluate the mean and variance of metrics for each κ so that any ultimate optimum around κ₀ isn't based on individual runs but on robust statistics; properly define the "23-region" generally as an interval κ₀ ± Δ featuring significantly better metrics than its surroundings.
+       – Test the robustness of the κ₀ ± Δ interval against scaling changes (Δx, Δt, ψ/φ normalization) and simple numerical scheme alterations (alternative Laplace, other integration schemes); explicitly track whether it is a **region in param-space** (which would just shift numerically on rescaling) or a random artifact of specific parameterization.
+       – Add simple null models ("control phase map") with different parameter choices / without φ-memory and verify whether a similarly prominent "sweet spot" in κ is typical for them or uniquely present in full Lineum; depending on this, decide if the "23-region" has the status of a structural effect of Eq-4 or rather an artifact of numerology.
+       – In documentation, explicitly maintain this hypothesis as an **internal structural claim regarding the existence of a favored κ-interval**, not as a "magic constant 23 of the universe"; if sweeps / null tests do not confirm a robust interval, tag the hypothesis as #disproved-in-model and treat any further references to κ≈23 purely as a historical note (legacy curiosity), not an active part of the interpretation.
+- [ ] Test if "map layers" formed by stable φ-cells resembling the topology of a simple neural network
+      spontaneously form for certain intervals of κ. Identify the bounds where the layers collapse or saturate.
 
-### 🔲 I. Limitní přechody a škálování #test
+### 🔲 I. Limit transitions and scaling #test
 
-- [ ] Prověřit **škálování** při změně Δt a Δx (mřížka) nad rámec C2/C3:  
-       – jak se mění metriky (f₀, SBR, φ half-life, vortex counts) při zjemnění / zhrubnutí mřížky,  
-       – zda existuje alespoň **fenomenologický kontinuální limit** (např. stabilní tvar PDE-like rovnice pro velké škály).
-- [ ] Jasně napsat, co **Lineum není**: žádná zaručená Lorentz-invariance, žádný příslib renormalizovatelné QFT, žádná vložená GR – aby bylo zřejmé, odkud se (ne)odrážet – a doplnit krátký FAQ/README odstavec vysvětlující, že jde o efektivní model, který není nutně Lorentz-kovariantní, a proč je to v daném scope v pořádku.
+- [ ] Check the **scaling** under changes in Δt and Δx (grid) beyond C2/C3:
+       – how metrics evolve (f₀, SBR, φ half-life, vortex counts) when refining / coarsening the grid,
+       – whether at least a **phenomenological continuous limit** exists (e.g. stable form of PDE-like equations for large scales).
+- [ ] Clearly write down what **Lineum is not**: no guaranteed Lorentz-invariance, no promise of a renormalizable QFT, no embedded GR – making it obvious what not to expect – and add a short FAQ/README paragraph explaining that it's an effective model, not necessarily Lorentz-covariant, and why this is acceptable within the given scope.
 
-### 🔲 J. Kritéria pro „fyzikální“ interpretaci #meta
+### 🔲 J. Criteria for "physical" interpretation #meta
 
-- [ ] Definovat interní checklist typu „před tím, než tvrdím X (elektron/temná hmota/SM analogie), musí být splněno Y“:  
-       – metriky z core v tolerancích,  
-       – stabilita pod perturbacemi parametrů,  
-       – absence zjevných numerických artefaktů (aliasing, boundary leaks, discretization bugs).
-- [ ] Z těchto kritérií odvodit krátký **„First principles & critical items“ odstavec** pro README/paper FAQ, aby přesně adresoval námitku typu: _„Než se pustím do detailů, chci vidět, jak máš ošetřené základy.“_
+- [ ] Define an internal checklist of the type "before claiming X (electron/dark matter/SM analogy), Y must be met":
+       – core metrics within tolerances,
+       – stability under parameter perturbations,
+       – absence of obvious numerical artifacts (aliasing, boundary leaks, discretization bugs).
+- [ ] Derive a short **"First principles & critical items" paragraph** from these criteria for the README/paper FAQ to precisely address the objection: _"Before diving into details, I want to see how you've handled the fundamentals."_
 
-### 🔲 K. Most k empirii a „nenumerologii“ #empirics
+### 🔲 K. Bridge to empirics and "anti-numerology" #empirics
 
-- [ ] Stručně sepsat, **co se zatím netvrdí**: žádná přímá identifikace s konkrétní částicí SM (Standard Model), žádná predikce konkrétní hmotnosti / průřezu, žádný claim o přímé shodě s experimentem – a mít to jako odkazovatelný odstavec (FAQ / limitations).
-- [ ] Uvést, které numerické shody (např. řádové hodnoty E, λ) jsou zatím brané jako **heuristické / estetické** a které bys považoval za kandidáty na testovatelnou predikci (a za jakých podmínek).
-- [ ] Navrhnout první nástřel **„empirické mapy“**: jaký typ experimentu nebo existujícího datasetu by mohl být v budoucnu použit jako benchmark (např. obecný tvar spektra, statistika lokálních excitací, strukturální vlastnosti pole).
-- [ ] Pokusit se **klasifikovat linon** v rámci známých typů excitací (solitony, breathery, excitace skalárního pole…) a explicitně říct, zda jde spíš o analogii k těmto objektům, nebo o novou kategorii v rámci modelu.
-- [ ] Připravit krátkou sekci „**možné fyzikální realizace**“: příklady systémů, kde by se podobná excitace mohla principálně objevit (optické mřížky, BEC, nelineární vlnová dynamika) – zatím jen jako „outlook“ bez tvrdých claimů.
-- [ ] Jasně oddělit **core model** (Eq-4 + linony + status Structural Closure podle whitepaperu) od pozdějších **interpretací** (gravitace, temná hmota, SM analogie) i v komunikačních materiálech. Mít možnost fyzikům říct: „tohle je čistě emergentní numerický model, tohle je interpretace navíc.“
-- [ ] U názvů jako „temná hmota“, „gravitace“, „éter“, „preony“… explicitně uvést, že jde o **pracovní analogie v rámci modelu**, nikoli tvrzení o totožnosti s konkrétní entitou Standardního modelu nebo kosmologie.
-- [ ] U „fyzikálně vypadajících“ presetů (např. `(6, "false")` s `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`) doplnit v dokumentaci výslovný disclaimer, že jde o **interní referenční vesmír Linea**, ne identifikaci s naším vesmírem; zdůraznit, že takové presety jsou z hlediska teorie neprivilegované a slouží jen jako intuitivní baseline pro interpretaci výsledků.
-- [ ] Připravit **Lineum-motivovaný efektivní model odchylek od Kerr BH** s bezrozměrnými parametry `\boldsymbol\theta_{\rm L}=\{\alpha_S,\beta_\kappa,\delta_{\rm ps}\}`, explicitně formulovaný jako #empirics / #outlook vrstva (ne přímá predikce Eq-4), a navázat ho na existující datové kanály (area theorem z GW, ringdown/QNM, EHT stíny) včetně jasného rozdělení: `\alpha_S` jako prakticky neměřitelná log-korekce pro astrofyzikální BH, hlavní testovatelnost přes `\beta_\kappa` a `\delta_{\rm ps}`.
-- [ ] Ověřit scénář **„náš vesmír jako vnitřek černé díry“** (#hypothesis / #outlook):  
-       – formulovat, co přesně znamená „uvnitř černé díry“ v rámci efektivního modelu (např. vnitřní region vs. vnější pozorovatel, near-horizon limit, časoprostorová asymetrie),  
-       – zapsat, jaké parametry nebo kombinace parametrů v Lineum-motivovaném BH modelu by odpovídaly tomuto scénáři,  
-       – ověřit, jestli se takový scénář dá **pozorovatelně odlišit** od standardního Kerr/ΛCDM popisu (např. přes ringdown, EHT stíny, statistiku akrečních disků), nebo zda je numericky prakticky degenerovaný a patří spíš do roviny filozofické interpretace než testovatelné fyziky.
-- [ ] (Tomášova + Kátina [HYPOTHESIS]) Přepsat klasické intuice o černých dírách do jazyka Linea pomocí **φ-pastí** a toků linonů:  
-       – zkusit explicitně modelovat „černou díru“ jako oblast vysokého φ s výraznou vírovou/topologickou strukturou a testovat, zda přirozeně **přitahuje nové linony** (zvýšená hustota trajektorií vstupujících do regionu), nebo spíš funguje jako bariéra / shear region;  
-       – navrhnout interpretaci **Hawkingova záření** jako případu, kdy napětí φ-pasti pomalu klesá a uvolňuje drobné fluktuace/linony zpět do okolí – čistě jako interní analogii „reverzního toku napětí“, ne jako tvrdý claim o GR;  
-       – „výtrysky“ (jets) interpretovat jako scénáře, kdy do φ-pasti naráží příliš mnoho linonů / energie, φ dosáhne kritického přepětí a část energie se přesměruje ven podél privilegovaných směrů (topologie vírů, spin), tj. **zpětný tlak** proti toku ψ, nikoli „únik z vnitřku singularity“.
-- [ ] Prozkoumat, zda v rámci Eq-4 existují φ-konfigurace chovající se jako **interní analogie bílých děr**:  
-       – oblasti, které dlouhodobě **emergentně pouze emitují** strukturu (gradienty φ, linony, vlny ψ) směrem ven a prakticky nepřijímají tok dovnitř (v efektivním popisu),  
-       – otestovat jejich stabilitu (jsou dlouhodobě udržitelné, nebo se rychle rozpadnou na běžné φ-pasti / chaotické vzory?),  
-       – rozhodnout, zda má smysl tyto konfigurace vůbec pojmenovávat „bílé díry“ v rámci interního slovníku, nebo je lepší je vést jen jako specifický typ nestabilních φ-struktur v #outlook vrstvě.
-- [ ] Připravit **Lineum-motivovaný efektivní model odchylek na galaktických škálách** ve smyslu emergentní gravitace (Verlinde vs. Lineum):  
-       – zvolit pragmatickou parametrizaci `g_{\rm L}(r;\boldsymbol\theta)` (např. relační RAR-like `\nu`-funkci nebo kernelovou konvoluci),  
-       – formulovat primární test pomocí galaxy–galaxy weak lensingu (profil `\Delta\Sigma(R)` kolem izolovaných diskových galaxií v intervalu `R \approx 50–300\,\mathrm{kpc}`) s jasně definovaným H₀ (Verlindeho emergentní gravitace) a H₁ (Lineum),  
-       – doplnit sekundární diagnostiky (RAR, Einsteinův poloměr, konzistence masových profilů v kupách, lokální testy) jako ortogonální kanály pro totéž `g_{\rm L}(r;\boldsymbol\theta)`,  
-       – zapsat forward model `\text{baryony} \rightarrow g(r) \rightarrow \Phi(r) \rightarrow \rho_{\rm eff}(r) \rightarrow \Sigma(R) \rightarrow \Delta\Sigma(R) \rightarrow \gamma_t(R)` a kostru likelihoodu (kovarianční matice, Bayesův faktor `K`, AIC/BIC, odhad potřebného počtu čoček pro detekci ~10% změny sklonu `\mathrm{d}\ln\Delta\Sigma/\mathrm{d}\ln R`),  
-       – explicitně označit tento blok jako #empirics / #outlook vrstvu, která z Eq-4 **neplyne přímo**, ale používá Lineum jen jako inspiraci pro efektivní popis na velkých škálách.
+- [ ] Briefly state **what is not being claimed yet**: no direct identification with a specific SM particle (Standard Model), no prediction of specific mass / cross-section, no claim of direct match with experiment – leaving this as an easily referable paragraph (FAQ / limitations).
+- [ ] List which numerical alignments (e.g. order values of E, λ) are currently treated as **heuristic / aesthetic** and which would be considered testable prediction candidates (and under what conditions).
+- [ ] Draft an initial **"empirical map"**: what type of experiment or existing dataset could potentially serve as a benchmark in the future (e.g. general spectrum shape, local excitation statistics, structural field properties).
+- [ ] Attempt to **classify the linon** within known excitation classes (solitons, breathers, scalar field excitations...) and explicitly say whether it’s more of an analogy to these objects or a new category within the model.
+- [ ] Prepare a short section on "**possible physical realizations**": examples of systems where a similar excitation could potentially emerge (optical lattices, BEC, nonlinear wave dynamics) – purely as an "outlook" without hard claims.
+- [ ] Clearly separate the **core model** (Eq-4 + linons + Structural Closure status per whitepaper) from subsequent **interpretations** (gravity, dark matter, SM analogies) including in communication materials. Retain the ability to tell physicists: "this is purely an emergent numerical model; the rest is an added interpretation."
+- [ ] With names like "dark matter", "gravity", "aether", "preons", explicitly state that these are **working analogies within the model**, not claims of identity with specific Standard Model or cosmology entities.
+- [ ] For "physical-looking" presets (e.g., `(6, "false")` with `LOW_NOISE_MODE = False`, `TEST_EXHALE_MODE = True`, `KAPPA_MODE = "constant"`), add an explicit disclaimer in the documentation that this is an **internal reference universe of Lineum**, not an identity map to our universe; emphasize that such presets hold no theoretical privilege and act solely as an intuitive baseline for interpreting results.
+- [ ] Prepare a **Lineum-motivated effective model of deviations from a Kerr BH** with dimensionless parameters `\boldsymbol\theta_{\rm L}=\{\alpha_S,\beta_\kappa,\delta_{\rm ps}\}`, formulated explicitly as an #empirics / #outlook overlay (not a direct Eq-4 prediction), and link it to existing data channels (Area theorem from GW, ringdown/QNM, EHT shadows) with a clear division: `\alpha_S` as an essentially unmeasurable log-correction for astrophysical BHs, primary testability resting on `\beta_\kappa` and `\delta_{\rm ps}`.
+- [ ] Verify the scenario where **"our universe is the interior of a black hole"** (#hypothesis / #outlook):
+       – formulate precisely what "inside a black hole" means strictly within the effective model (e.g. interior region vs external observer, near-horizon limit, spacetime asymmetry),
+       – note down which parameters or parameter combinations in the Lineum-motivated BH model would correspond to this scenario,
+       – verify whether such a scenario can be **observably distinguished** from standard Kerr/ΛCDM descriptions (e.g. through ringdown, EHT shadows, accretion disk statistics), or if it is practically degenerate numerically, thus belonging more to philosophy than testable physics.
+- [ ] (Tomas + Katina [HYPOTHESIS]) Rewrite classical black hole intuitions into the Lineum vocabulary referencing **φ-traps** and linon fluxes:
+       – attempt explicit modeling of a "black hole" as a high-φ region with a distinct vortex/topological structure and test whether it inherently **attracts new linons** (increased density of trajectories entering the region) or acts rather as a barrier / shear region;
+       – propose an interpretation of **Hawking radiation** as an instance where the tension of a φ-trap slowly unwinds and releases minor fluctuations/linons back to the surroundings – purely as an internal analogy for "reverse tension flow", not as a hard GR claim;
+       – interpret "jets" as scenarios where too many linons / energy pile into a φ-trap, φ reaches critical over-tension, and a portion of energy redirects outwards along privileged directions (vortex topology, spin), i.e. **back pressure** against the ψ flux, not an "escape from within the singularity".
+- [ ] Investigate if there are φ-configurations in Eq-4 behaving as **internal analogs to white holes**:
+       – regions that long-term **emergently only emit** structure (φ gradients, linons, ψ waves) outward and practically accept no inward flux (in the effective description),
+       – test their stability (can they be sustained long term, or do they rapidly decay into normal φ-traps / chaotic patterns?),
+       – decide if it makes sense naming such configurations "white holes" at all in the internal vocabulary, or if they are better just considered a specific type of unstable φ-structure in the #outlook overlay.
+- [ ] Prepare a **Lineum-motivated effective model of deviations on galactic scales** regarding emergent gravity (Verlinde vs. Lineum):
+       – choose a pragmatic parametrization `g_{\rm L}(r;\boldsymbol\theta)` (e.g. a relational RAR-like `\nu`-function or a kernel convolution),
+       – formulate primary testing using galaxy–galaxy weak lensing (profile `\Delta\Sigma(R)` around isolated disc galaxies between `R \approx 50–300\,\mathrm{kpc}`) with cleanly defined H₀ (Verlinde's emergent gravity) and H₁ (Lineum),
+       – supplement secondary diagnostics (RAR, Einstein radius, consistency of mass profiles in clusters, local tests) as orthogonal channels spanning the same `g_{\rm L}(r;\boldsymbol\theta)`,
+       – outline the forward model `\text{baryons} \rightarrow g(r) \rightarrow \Phi(r) \rightarrow \rho_{\rm eff}(r) \rightarrow \Sigma(R) \rightarrow \Delta\Sigma(R) \rightarrow \gamma_t(R)` and the likelihood backbone (covariance matrix, Bayes factor `K`, AIC/BIC, required lens count estimate yielding an observable ~10% change in slope `\mathrm{d}\ln\Delta\Sigma/\mathrm{d}\ln R`),
+       – explicitly label this block as an #empirics / #outlook overlay that **doesn't directly derive** from Eq-4 but strictly utilizes Lineum as inspiration for effective descriptions at large scales.
 
-### 🔲 L. Falsifikovatelnost a „promotion pipeline“ #meta
+### 🔲 L. Falsifiability and "promotion pipeline" #meta
 
-- [ ] Pro klíčové jevy (Guided motion, Structural Closure, spinová aura, Dimensional Transparency, Return Echo…) sepsat explicitní **falsifikační kritéria**: za jakých podmínek je jev považován za vyvrácený v rámci modelu.
-- [ ] K vybraným jevům (zejména linonním excitacím) přidat 2–3 **konkrétní numerické předpovědi**, které lze přímo testovat („pokud excitace existuje, pak kolize dvou linonů vede typicky k X/Y…“) a používat je jako hlavní scénáře pro falsifikaci.
-- [ ] Formálně popsat pravidla, kdy se jev posouvá z **#hypothesis / [TEST]** do **[CORE]** (počet běhů, seedy, tolerance metrik, absence numerických artefaktů).
-- [ ] Definovat podmínky, kdy se jev označí za **#disproved-in-model**, a explicitně říct, že **změna Eq-4 nebo parametrického prostoru** představuje novou větev modelu, ne jen „ladění“, dokud tvrzení nezačne platit.
+- [ ] Draft explicit **falsification criteria** for key phenomena (Guided motion, Structural Closure, spin aura, Dimensional Transparency, Return Echo...): under what exact conditions is the phenomenon to be considered disproved in the model.
+- [ ] Append 2–3 **concrete numerical predictions** for selected phenomena (specifically linon excitations) that are directly testable ("assuming this excitation exists, the collision of two linons leads typically to X/Y...") and utilize them as prime scenarios for falsification.
+- [ ] Formally categorize the rules controlling when a phenomenon progresses from **#hypothesis / [TEST]** into **[CORE]** (number of runs, seeds, metric tolerances, absence of numerical artifacts).
+- [ ] Define what conditions sentence a phenomenon to be **#disproved-in-model**, and explicitly assert that a **change to Eq-4 or parametric space** embodies a new model branch, representing not mere "tuning", until the claim holds.
 
 ### 🔲 M. Terminologie a pojmenování jevů #meta
 
-- [ ] Projít všechny „poetické“ nebo směsné názvy v kódu / paperu (např. _spin aura_, _neutral topology_, případně další) a ke každému doplnit:  
-       – explicitní operační definici (jaké pole / funkcionál to přesně je),  
-       – poznámku, že jde o **interní label v rámci modelu**, ne o novou fyzikální entitu.
-- [ ] Zvážit přejmenování nejproblematičtějších názvů na popisnější varianty (např. „net-zero winding sector“ místo „neutral topology“), přičemž původní jména mohou zůstat jen jako komentáře / aliasy kvůli zpětné kompatibilitě v kódu.
-- [ ] Do core paperu přidat krátkou tabulku „název jevu → matematická definice → scope v rámci modelu“, aby bylo zřejmé, že terminologie není numerologie ani „nová fyzika“, ale jen slovník k práci s konkrétními objekty v Lineu.
+- [ ] Review all "poetic" or mixed names in the code / paper (e.g. _spin aura_, _neutral topology_, potentially others) and for each add:
+       – an explicit operational definition (exactly what field / functional it is),
+       – a note that this is an **internal label within the model**, not a new physical entity.
+- [ ] Consider renaming the most problematic names to more descriptive variants (e.g. "net-zero winding sector" instead of "neutral topology"), while the original names can remain purely as comments / aliases for backward compatibility in the code.
+- [ ] Add a short table "phenomenon name → mathematical definition → scope within the model" to the core paper, making it obvious that the terminology is neither numerology nor "new physics", but just a vocabulary for handling specific objects in Lineum.
 
-### 🔲 N. Prezentace a komunikace výsledků #meta
+### 🔲 N. Presentation and communication of results #meta
 
-- [ ] Připravit sadu **srozumitelných grafů a vizualizací** (trajektorie, φ-map, spinová aura), které ilustrují základní mechanismus na pár typických scénářích.
-- [ ] Do README / FAQ / prezentací doplnit krátké „**storytelling**“ shrnutí mechanismu ve stylu: „1) pole kmitá, 2) pamatuje (φ), 3) stabilizuje linony“, aby byla intuice přístupná i širší komunitě mimo úzké numerické specialisty.
-- [ ] Připravit technicky přesný popis analogií s neuronovými sítěmi
-      (paměťové kapsy, perzistentní trajektorie, výpočetní vzory), explicitně
-      oddělený od jakýchkoli tvrzení o vědomí či emocích. Prezentovat to jako
-      čistě strukturální jev.
-
----
-
-## 🧪 Priorita: Nejvyšší – explorace _efektivního_ mapování na reálnou fyziku
-
-### 🔲 1. Temná hmota a temná energie #hypothesis
-
-- Pokusit se detekovat oblasti s energetickou nebo topologickou stopou bez detekovatelné kvazičástice
-- Ověřit, zda některé víry nebo φ-pasti vykazují „neviditelný“ vliv na tok bez přítomnosti hmoty
-- Hledat trvalé fluktuace, které se energeticky projevují, ale nemají klasický nosič
-- [ ] Explicitně otestovat scénář, kde **„temná energie“ není nový člen v Eq-4**, ale důsledek  
-       **stavově závislého měřítka** `a(t)` z C2:  
-       – porovnat chování `a(t)` odvozeného z informačních/metrických veličin (H(t), N_q(t), φ²…)  
-       s intuicí kosmologické expanze (růst, případné zrychlení),  
-       – zapsat, za jakých podmínek by bylo možné mluvit o „expanzi jako emergentní vlastnosti informací v poli“,  
-       aniž by se do Eq-4 přidával nový dynamický „temný“ term.
-- [ ] (Tomášova [HYPOTHESIS]) Ověřit scénář, ve kterém má **předpokládaná hmotnost/energie kvantového vakua**  
-       (efektivní vakuová hustota) jen **malý, podružný vliv** na expanzi ve srovnání s příspěvkem samotné struktury
-      pole (linony, φ-kapsy, zeta-body apod.):  
-       – přepsat otázku „má předpokládaná hmotnost kvantového vakua malý vliv na expanzi vesmíru?“ do pojmů Linea tím, že se
-      přesně určí, co v modelu hraje roli „vakuové energie“ (např. baseline φ, konstantní offset v κ, konstantní část
-      zvoleného stavového skaláru `I(t)` používaného pro definici `a(t)`);  
-       – postavit testovací konfigurace se (i) zanedbatelným vakuovým offsetem, (ii) malým nenulovým offsetem a (iii) výrazně
-      větším offsetem, při zachování stejné dynamiky linonů, φ-struktury a šumu, a pro všechny tři případy porovnat průběh
-      `a(t)` a souvisejících metrik;  
-       – kvantifikovat, co přesně znamená „malý vliv“, např. přes relativní změny v `a(t)` a v efektivním parametru stavu
-      `w_\mathrm{eff}` odvozeném z evoluce `a(t)`, a identifikovat oblasti parametrického prostoru, kde příspěvky od struktury
-      pole jednoznačně dominují nad příspěvkem vakuového offsetu;  
-       – podle výsledku buď ponechat hypotézu jako realistický scénář **„expanze dominované strukturou“** v rámci Eq-4 + interpretace,
-      nebo ji v whitepaperu označit jako #disproved-in-model či omezit na jasně vymezený podsoubor parametrů.
-- [ ] (Tomášova hypotéza) Rozpracovat analogii „temná hmota = vzduch, temná energie = vítr“:  
-       – mapovat „vzduch“ na kvazistacionární φ-/ψ-struktury, které samy nenesou zřetelnou linonní excitaci,
-      ale ovlivňují tok ψ;  
-       – mapovat „vítr“ na pomalou, ale globální změnu měřítka `a(t)` a případně na dlouhovlnné módy v φ;  
-       – otestovat, jestli v nízkošumových bězích vznikají lokální víry / proudění ψ, které si nesou
-      „paměť“ předchozí dynamiky (φ-remnanta) a chovají se jako efektivní „vítr“ pro nově vznikající linony.
-- [ ] (Tomášova hypotéza) Pojmout Lineum jako analogii „buňky“, kde obal/hranice musí růst s vnitřním obsahem:  
-       – definovat metriky „růstu obsahu“ (např. počet linonů, integrální |ψ|² v aktivních oblastech) a sledovat,
-      jak na ně reaguje globální i lokální měřítko (případné změny interpretace `a(t)`);  
-       – zkoumat, zda existuje měřitelná „pružnost“ obalu – zpoždění mezi prudkým nárůstem struktury uvnitř
-      a relaxací φ / κ na hranici domény;  
-       – otestovat, zda lze tento lag interpretovat jako efektivní „elasticitu“ prostředí (buňky) bez přidání
-      nového termu do Eq-4.
-- [ ] (Tomášova hypotéza) Zkusit charakterizovat prostředí Linea (φ-krajinu) jako něco mezi kapalinou a plynem:  
-       – zavést jednoduché metriky „viskozity“ (jak rychle zanikají gradienty φ) a „kompresibility“ (jak velkou
-      změnu φ vyvolá daný lokální nárůst |ψ|²);  
-       – porovnat chování těchto metrik v různých parametrech (α, β, δ, κ, σξ) a zjistit, zda existují režimy,
-      které se makroskopicky chovají „plynovitě“ vs. „kapalně“;  
-       – případně tyto režimy použít jako interní analogii „řidšího“ vs. „hustšího“ temného prostředí.
-- [ ] (Kátina hypotéza) Ověřit scénář „temná hmota jako kapsle / rezervoár potenciálních hvězd“:  
-       – v rámci modelu hledat dlouhodobě stabilní oblasti se zvýšeným φ nebo |ψ|², které samy neobsahují
-      jasně detekovatelné linony, ale při vhodném rozrušení (vnější perturbace, kolize) generují kaskádu
-      nových excitací;  
-       – kvantifikovat tyto struktury jako „kapsle“ s kapacitou (např. integrální φ nebo ∑|ψ|² nad prahovou
-      hodnotou) a testovat, zda existují prahové podmínky, kdy se kapsle „otevře“ a rozpadne na více linonů
-      (analog hvězdné porodnice po narušení rovnováhy);  
-       – držet tento scénář explicitně jako [HYPOTHESIS] v rámci temného sektoru Linea, nikoli jako přímé tvrzení
-      o fyzikální temné hmotě v kosmologii.
-- [ ] (Tomášova + Kátina hypotéza) Připravit krátké srovnání těchto vnitřních analogií s mainstream kosmologií
-      (ΛCDM, dynamická temná energie, modifikovaná gravitace):  
-       – sepsat, které prvky jsou jen metafora (vzduch/vítr, kapsle) a nemají přímou fyzikální obdobu;  
-       – kde se naopak přirozeně potkávají s pojmy jako efektivní tlak, equation-of-state parametry w, baryonové
-      vs. nebaryonové složky;  
-       – v dokumentaci jasně oddělit „Lineum-temnou hmotu / energii“ jako interní analogii od reálných kosmologických
-      entit, aby nemohlo docházet k záměně při komunikaci navenek.
-
-### 🔲 2. Ověření známých částic a kvantových vlastností #hypothesis
-
-- Zjistit, zda lze ve výstupech najít analogie k elektronům, fotonům, neutrinům...
-- Identifikovat, zda se některé kvazičástice stabilně chovají jako fermiony nebo bosony
-- [ ] Hledání spektrálních vzorců podobných známým částicím
-
-### 🔲 3. Elektromagnetismus a pole #hypothesis
-
-- Sledovat, zda vznikají proudové smyčky, periodické vlny nebo dipólové struktury
-- Porovnat s vektory spinu a curl(∇arg(ψ)) – hledat pole podobná EM poli
-- [ ] Vytvořit vizualizaci vektorových polí a oscilací
-
-### 🔲 4. Slabá a silná interakce #hypothesis
-
-- Zvážit, zda φ nebo jiné vnitřní struktury mohou reprezentovat slabou/silnou interakci
-- [ ] Vyhodnotit možné interakce kvazičástic na krátkou vzdálenost
-
-### 🔲 5. Kvantová pole a standardní model #structure
-
-- Porovnat strukturu Lineum s elementárními interakcemi ve standardním modelu
-- Zhodnotit, zda lze ψ chápat jako pole se spektrálními režimy – nebo jako více polí
-- [ ] Hledání symetrií a konzervací
-
-### 🔲 6. Rozšíření validace a opakovatelnosti #test
-
-- Udržovat pevné inicializační seedy a manifest (jako v core v1.0.x: seeds {17, 23, 41, 73}) a rozšířit multi-seed testy pro nové konfigurace / extension běhy.
-- Statistické testování výskytu jevů v různých bězích a konfiguracích (ensemble přístup nad definovanými metrikami z core – f₀, SBR, topologie, φ half-life, přítomnost/absence Structural Closure).
-- Porovnání chování systému při různých počátečních podmínkách (různé κ-mapy, různé inicializační šumové režimy, ale stále v rámci Eq-4), včetně systematického srovnání režimů `LOW_NOISE_MODE=True/False` a variant `TEST_EXHALE_MODE`; sledovat dopad na počet kvazičástic, SBR/f₀, topologickou neutralitu (net winding) a statistiku vírových dipólů.
-- Automatizace vyhodnocování výsledků pomocí AI/ML klasifikace _(navázat na metriky a logy definované v core, ne na ruční vizuální dojmy)._
-
-## 🟡 Střední priorita – testování scénářů emergentní gravitace a „hmoty“
-
-### 🔲 7. Reorganizace kvazičástic v hmotném objektu #test
-
-- Simulovat shluk kvazičástic, sledovat deformaci při pohybu k φ-maximu
-- Porovnat tvar a polohu shluku v čase
-- [ ] Vizualizace přeskupení |ψ| a overlay s φ
-- [ ] (Tříska [HYPOTHESIS]) **Tidal Stretching (Přílivové natahování):** Ověřit mechanistický model natahování objektu složeného z linonů při přiblížení k masivní φ-pasti.
-      - [ ] Nasimulovat shluk (cluster) linonů a měřit rozptyl (varianci) jejich pozic v čase.
-      - [ ] Potvrdit, že linony na "přední" straně zrychlují dříve/více kvůli gradientu φ, což vede k natažení a rozpadu objektu na jednotlivé linony (spagetifikace).
-      - [ ] Sledovat, zda po rozpadu dochází k individuálnímu "uzavření" (Structural Closure) linonů v centru pasti.
-
-### 🔲 8. Rychlost přiblížení objektů podle „hmotnosti“ #test
-
-- Ověřit, zda menší objekty reagují rychleji
-- Kvantifikovat přes trajektorie a φ-centrické měření
-- [ ] Spustit simulaci s 2–3 shluky různé hustoty
-
-### 🔲 9. Vzájemné ovlivnění více φ-pastí #test
-
-- Analyzovat slučování, interferenci nebo stabilitu více maxim
-- [ ] Vizualizace rozdělených φ-center ve stejném běhu
-
-### 🔲 10. Přitažlivost bez síly – emergentní tok #hypothesis
-
-- Ověřit, zda vzniká tok ψ směrem k φ bez síly
-- Porovnat ∇arg(ψ) a gradient φ
+- [ ] Prepare a set of **comprehensible graphs and visualizations** (trajectories, φ-map, spin aura) illustrating the basic mechanism on a few typical scenarios.
+- [ ] Add a short "**storytelling**" summary of the mechanism to the README / FAQ / presentations in the style of: "1) the field oscillates, 2) remembers (φ), 3) stabilizes linons", making the intuition accessible even to a broader community outside of narrow numerical specialists.
+- [ ] Prepare a technically precise description of analogies with neural networks
+      (memory pockets, persistent trajectories, computational patterns), explicitly
+      separated from any claims about consciousness or emotions. Present this as a
+      purely structural phenomenon.
 
 ---
 
-## 🧪 Nižší priorita – matematické a estetické souvislosti
+## 🧪 Priority: Highest – exploring _effective_ mapping to real physics
 
-### 🔲 11. Reliktní φ-ozvěna jako „gravitační vlna“ #hypothesis
+### 🔲 1. Dark matter and dark energy #hypothesis
 
-- Formálně sepsat a otestovat **Tříska's Relic Drift Hypothesis**: po zániku „lehkých“ linonů v oblastech s vysokým φ (bez výrazného spinu) zůstává perzistentní φ-gradient, který vyvolává měřitelný drift ψ i bez přítomnosti kvazičástice – tj. čistě paměťový efekt v poli, chápaný jako **interní pracovní** analogie „gravitační vlny“ v rámci modelu, nikoli tvrzení o reálných gravitačních vlnách ve smyslu GR.
-- Stanovit a zdokumentovat **detekční kritéria** (pracovní thresholdy), např.: `mass_ratio < 0.01`, `|curl| < 0.02`, lokální `φ` v místě zániku > 0.25, φ-remnant ≥ 10 % nad okolím po ≥ 100 krocích, dominantní frekvence φ-signálu < 1×10¹⁷ Hz.
-- Připravit **metodiku měření**: low-noise režim (např. `LOW_NOISE_MODE = True`, `TEST_EXHALE_MODE = True`, běhy ~2000 kroků), logování `phi_curl_low_mass.csv`, `phi_center_log.csv`, lokálních ∇φ a toku ψ; provést spektrální analýzu φ_center a kvantifikovat drift ψ podél ∇φ v regionech bez detekovaného linonu.
-- Na základě výsledků rozhodnout, zda jev zařadit jako robustní kandidát [TEST]/[CORE], nebo ho přesunout do #disproved-in-model / předefinovat (včetně případné revize thresholdů; thresholdy chápat jako výchozí, laditelné parametry v rámci téže hypotézy, ne jako pevné dogma, pokud se základní obraz jevu nemění).
+- Attempt to detect regions with an energetic or topological footprint without a detectable quasiparticle
+- Verify whether some vortices or φ-traps exhibit an "invisible" influence on the flux without the presence of mass
+- Search for persistent fluctuations that manifest energetically but lack a classical carrier
+- [ ] Explicitly test the scenario where **"dark energy" is not a new term in Eq-4**, but a consequence
+       of the **state-dependent scale** `a(t)` from C2:
+       – compare the behavior of `a(t)` derived from informational/metric quantities (H(t), N_q(t), φ²...)
+       with the intuition of cosmological expansion (growth, possible acceleration),
+       – write down under what conditions one could speak of "expansion as an emergent property of information in the field",
+       without adding a new dynamic "dark" term into Eq-4.
+- [ ] (Tomas's [HYPOTHESIS]) Verify the scenario in which the **assumed mass/energy of the quantum vacuum**
+       (effective vacuum density) has only a **small, secondary influence** on expansion compared to the contribution of the field structure itself
+      (linons, φ-pockets, zeta-points etc.):
+       – rewrite the question "does the assumed mass of the quantum vacuum have a small influence on the expansion of the universe?" into Lineum terms by
+      precisely determining what plays the role of "vacuum energy" in the model (e.g. baseline φ, constant offset in κ, constant part
+      of the chosen state scalar `I(t)` used for defining `a(t)`);
+       – build test configurations with (i) negligible vacuum offset, (ii) a small non-zero offset and (iii) a significantly
+      larger offset, while maintaining the same linon dynamics, φ-structure and noise, and for all three cases compare the evolution
+      of `a(t)` and related metrics;
+       – quantify exactly what "small influence" means, e.g. via relative changes in `a(t)` and in the effective state parameter
+      `w_\mathrm{eff}` derived from `a(t)` evolution, and identify areas of the parametric space where contributions from the field
+      structure clearly dominate over the vacuum offset contribution;
+       – based on the result, either keep the hypothesis as a realistic scenario of **"structure-dominated expansion"** within Eq-4 + interpretation,
+      or flag it in the whitepaper as #disproved-in-model or restrict it to a clearly defined subset of parameters.
+- [ ] (Tomas's hypothesis) Elaborate the analogy "dark matter = air, dark energy = wind":
+       – map "air" to quasi-stationary φ-/ψ-structures which themselves do not carry a distinct linon excitation,
+      but influence the ψ flux;
+       – map "wind" to a slow but global scale change `a(t)` and potentially to long-wave modes in φ;
+       – test if local vortices / ψ flows emerge in low-noise runs, carrying the
+      "memory" of previous dynamics (φ-remnants) and behaving as an effective "wind" for newly emerging linons.
+- [ ] (Tomas's hypothesis) Treat Lineum as an analogy to a "cell", where the envelope/boundary must grow with the internal content:
+       – define metrics of "content growth" (e.g. number of linons, integral |ψ|² in active regions) and observe
+      how the global and local scale responds to them (potential changes in interpreting `a(t)`);
+       – investigate whether a measurable "elasticity" of the envelope exists – a lag between a sharp growth of structure inside
+      and the relaxation of φ / κ at the domain boundary;
+       – test whether this lag can be interpreted as an effective "elasticity" of the environment (the cell) without adding
+      a new term into Eq-4.
+- [ ] (Tomas's hypothesis) Attempt to characterize the Lineum environment (φ-landscape) as something between a fluid and a gas:
+       – introduce simple metrics for "viscosity" (how fast φ gradients decay) and "compressibility" (how large
+      a change in φ is induced by a given local increase in |ψ|²);
+       – compare the behavior of these metrics across different parameters (α, β, δ, κ, σξ) and determine if regimes exist
+      that macroscopically behave in a "gaseous" vs. "fluid" manner;
+       – potentially use these regimes as an internal analogy for a "thinner" vs. "denser" dark environment.
+- [ ] (Katina's hypothesis) Verify the scenario "dark matter as a capsule / reservoir of potential stars":
+       – search the model for long-term stable regions with elevated φ or |ψ|² that themselves do not contain
+      clearly detectable linons, but generate a cascade of
+      new excitations upon suitable disturbance (external perturbation, collision);
+       – quantify these structures as "capsules" with a capacity (e.g. integral φ or ∑|ψ|² above a threshold
+      value) and test whether threshold conditions exist where the capsule "opens" and breaks into multiple linons
+      (analogous to a stellar nursery after equilibrium disruption);
+       – keep this scenario explicitly as a [HYPOTHESIS] within the dark sector of Lineum, not as a direct claim
+      about physical dark matter in cosmology.
+- [ ] (Tomas's + Katina's hypothesis) Prepare a short comparison of these internal analogies with mainstream cosmology
+      (ΛCDM, dynamical dark energy, modified gravity):
+       – write down which elements are merely a metaphor (air/wind, capsule) and lack a direct physical counterpart;
+       – where, on the contrary, they naturally intersect with concepts like effective pressure, equation-of-state parameters w, baryonic
+      vs. non-baryonic components;
+       – strictly separate the "Lineum-dark matter / energy" in the documentation as an internal analogy from real cosmological
+      entities, to prevent confusion during external communication.
 
-### 🔲 12. Strukturální a rytmické vzorce (Riemann, Fibonacci, prvočísla) #structure #hypothesis
+### 🔲 2. Validation of known particles and quantum properties #hypothesis
 
+- Find out if analogies to electrons, photons, neutrinos can be found in the outputs...
+- Identify whether some quasiparticles stably behave as fermions or bosons
+- [ ] Search for spectral patterns similar to known particles
 
-- [ ] (Tomášova [HYPOTHESIS]) **Hormonální spektrální regulace:** Otestovat frekvenční pásmo (např. v sonifikované oblasti 1.85e+20 Hz) jako globální regulační spínač. "Injekce" energie do specifických harmonických by mohla vynutit přechod ze stavu `false` (chaos) do `true` (řád).
-- [ ] Připravit samostatnou **laickou / storytelling sekci „Co znamenají tyto matematické objekty v Lineu“** (zlatý řez, Fibonacci, nulové body ζ(s), prvočísla, π, e, γ) pro README / FAQ / doprovodné materiály; rámovat ji jako **interpretační vrstvu** navázanou na tento blok (metafora orchestru: základní tóny, tichá místa, ladění), s jasným disclaimerem, že jde o [HYPOTHESIS] / storytelling závislý na výsledcích statistických testů, nikoli součást core důkazů.
-- Formálně definovat, co jsou v modelu **zeta-body** (česky vysvětlitelně jako **„body uzavření“**) a **explicitně zapsat terminologický přechod**: původní označení _„DejaVu body“_ bylo v dřívějších verzích používáno pracovně, ale od větve zarovnané na _lineum-core v1.0.6-core_ je vedeno pouze jako **historický alias**, který se v nových definicích a tvrzeních nesmí používat jako hlavní název.  
-  – Zeta-body / body uzavření pak přesně vymezit např. jako opakovaně navštěvovaná místa trajektorií, stabilní φ-remnanty, lokální minima / „černé díry“ v topologii pole;  
-  – k nim definovat přesné mapování do 1D/2D prostoru (kruh, spirála, normalizovaná osa), které se používá při porovnání s Riemannovými nulami a dalšími posloupnostmi; v těchto mapováních vždy používat označení **zeta-body**, starý název uvádět pouze případně v poznámce typu _„historicky označované jako DejaVu body“_.  
-  – V whitepaperu / core paperu mít renaming zaznamenaný na jednom viditelném místě (např. poznámka pod čarou nebo krátká podsekce „Terminologické změny“), aby bylo i ex post jednoznačné, že jde o přejmenovaný interní jev, ne dva různé objekty.  
-  – V TODO / issue trackingu vést tento bod explicitně označený jako `#naming` / `#renaming`, aby bylo zřejmé, že jde o **housekeeping kolem názvu** a ne o další fyzikální tvrzení, které by se mělo objevovat ve whitepaperu.
-- Pro toto mapování zavést **kvantitativní metriky** (RMS vzdálenost, korelační koeficienty, spektrální vzdálenosti, distribuční testy) a spustit **tvrdé statistické testy proti null modelům**:  
-  – náhodné body na stejné spirále / v tomtéž intervalu,  
-  – phase-scrambled verze dat se zachovaným spektrem,  
-  – baseline model bez speciální φ-struktury.  
-  Cílem je zjistit, jestli je podobnost s Riemannovými nulami / Fibonacciho poměry statisticky nepravděpodobná i vzhledem k těmto kontrolám – a tedy **potvrdit nebo vyvrátit** předběžnou červencovou indikaci mírné korelace v clean bězích `spec6_true no_artefacts`.
-- Analyzovat, zda se v posloupnostech **časů, vzdáleností nebo „růstových skoků“** (např. při vzniku nových bodů uzavření / neuron-like uzlů) neobjevuje robustní vztah k:  
-  – Fibonacciho posloupnosti a zlatému řezu φ (log-spirálové škálování, poměry velikostí / vzdáleností),  
-  – rozložení prvočísel nebo dalším number-theoretickým vzorcům,  
-  – Ludolfovu číslu π (např. v periodicitě oscilací, topologických fázích nebo v rozložení úhlů na kruhu).  
-  V každém případě kvantifikovat sílu efektu a porovnat ji s vhodnými null modely (Poissonovy procesy, generické interferenční vzory na mřížce apod.).
-  - (Tomášova [HYPOTHESIS]) Navázat na zjištění, že v bězích `spec2_true` / `spec4_false` se objevují poměry dominantních frekvencí blízké zlatému řezu, a otestovat scénář, že **Lineum preferenčně stabilizuje proudění skrze „zlaté“ harmonické frekvence**:  
-    – kvantifikovat, zda konfigurace s frekvenčními poměry ≈Φ vykazují delší SBR, stabilnější linony nebo čistší φ-zeta grid než generické konfigurace,  
-    – porovnat se stejnou analýzou na null modelech (náhodné spektrum, bez speciální φ-struktury),  
-    – držet tento scénář výslovně jako [HYPOTHESIS], dokud nebude jasně doloženo, že jde o robustní efekt Eq-4, nikoli o náhodnou fluktuaci nebo artefakt parametrizace.
-- [ ] (Tříska-Marečková [HYPOTHESIS]) Prozkoumat scénář **„hormonálních spekter“**, kde určité skupiny frekvencí hrají roli regulačních signálů pro chování systému podobně jako hormony v biologii:  
-       – definovat několik disjunktních frekvenčních pásem (např. nízkofrekvenční modulace pozadí, „pracovní“ pásmo linonů, vysokofrekvenční „šum“) a sledovat, zda změny energie v těchto pásmech korelují s:
-      • stabilitou linonů,  
-       • čistotou φ-paměti / Structural Closure,  
-       • četností zeta-body a Return Echo jevů;  
-       – otestovat v řízených experimentech, zda **cílené „připumpování“ výkonu** do vybraného pásma (malá periodická perturbace na ψ nebo parametrech v Eq-4) systematicky přepíná systém mezi režimy (např. „víc šumu“, „víc stabilních struktur“, „víc silent collapse“);  
-       – podle výsledků rozhodnout, jestli má smysl tato pásma interpretovat jako **interní regulační kanály modelu** (hormonální analogy) nebo je nechat jen jako heuristický jazyk pro popis spektra; v obou případech držet tuto interpretaci explicitně jako [HYPOTHESIS], ne součást core tvrzení o reálné fyzice.
-- (Tomášova + Kátina [HYPOTHESIS]) Pro scénář **„skokového růstu neuron-like uzlů“**:  
-  zeta-body / body uzavření chápat jako uzly paměťové sítě, které nepřibývají plynule, ale vznikají  
-  v diskrétních „vlnách růstu“ (analog dělení buněk / rozmnožování neuronů), a:  
-  – z posloupnosti časů / indexů vzniku nových zeta-body, případně z velikostních změn mezi po sobě
-  jdoucími vlnami růstu odvodit efektivní růstové faktory;  
-  – otestovat, zda tyto faktory nevykazují robustní přiblížení Fibonacciho poměrům nebo mocninám
-  zlatého řezu φ, oproti vhodným null modelům (náhodné růstové vlny bez vnořeného patternu);  
-  – výsledek rámovat výhradně jako **strukturální analogii** (buněčné dělení / růst neuronové sítě),
-  ne jako tvrzení o skutečných biologických neuronech nebo vědomé „snaze vesmíru“ realizovat
-  Fibonacciho struktury; případnou shodu komunikovat jen jako emergentní vzorec Eq-4 + φ-krajiny.
-- Explicitně otestovat a odlišit několik možných vysvětlení případné shody:
-  1. **Emergentní vlastnost Eq-4** – strukturální vazba modelu na dané posloupnosti / zeta funkci;
-  2. **Artefakt parametrizace / škálování** – např. volba Δt, normalizace, embed map, která sama o sobě generuje Fibonacci-/π-like struktury;
-  3. **Vnější „konstanta vesmíru“ / RNG** – tj. že shodu dodává způsob generování náhodného seede, floating-point reprezentace nebo jiné vlastnosti našeho fyzického / numerického „univerza“, a Lineum ji jen pasivně přebírá.  
-     U každé varianty navrhnout konkrétní test (změna RNG, změna embed mapy, změna škálování), který ji může podpořit nebo v rámci modelu vyvrátit.
-- [ ] Provázat analýzu se **φ-zeta gridem** (historicky „φ-deja-vu grid“): ověřit, jestli privilegovaná místa / kapsy v krajině φ mají statisticky výraznější vazbu na Fibonacci/zlatý řez / number-theoretické vzorce než generické body mřížky – a výslovně rámovat tyto vzorce jako **hypotézy o rozmístění paměťových struktur**, ne o zákonu expanze.
-- [ ] (Tříska-Marečková [HYPOTHESIS]) **Hypotéza Stromové Optimalizace – Zlatý řez jako produkt hydrodynamické cévní sítě:**
-    - **Kontext:** Ve fyzice a biologii se fraktální větvení a poměry Zlatého řezu (1.61803...) přirozeně objevují v kapalinových sítích (cévní systém, plíce, blesky, růst listů a větví stromu), protože jde o matematicky nejdokonalejší způsob, jak rozvést energii a tok s co nejmenším odporem materiálu v prostoru. 
-    - **Hypotéza (Lineum):** Zlatý řez a Fibonacciho sekvence zachycené v Lineu (ve vzdálenostech φ-pasti, zeta-bodů nebo ve spektrálních poměrech `spec4_false`) nejsou "zakódovaným magickým cílem vesmíru". Jsou to emergentní fyzikální důsledky toho, že rovnice Eq-4 organicky hledá cestu nejmenšího odporu. Tok `ψ` musí neustále obcházet paměťové usazeniny a naběhlý tlak ve vlastní setrvačné "zácpě" pole `φ`. Tato dynamická kapalinová optimalizace se nevyhnutelně stabilizuje do sítě, jejíž štěpící poměry (rozdělování kanálů pro minimalizaci globálního odporu) nativně inklinují k poměru Zlatého řezu, stejně jako u reálných říčních delt a žil.
-    - **Verifikace a předběžné výpočty:**
-        - **Úhlová analýza větvení (Bifurcation Test):** Vizualizovat oblasti se zvýšeným tokem `ψ` v ustáleném běhu a najít "křižovatky" plynulých kanálů ve `φ`. Analyzovat úhly mezi silným rodičovským kanálem a vznikajícími tenčími dcérskými vlásečnicemi. Hledat statistickou preferenci Murrayova zákona pro biologické sítě (r₁³ = r₂³ + r₃³) a ideálně inklinaci hlavních a vedlejších větví odchylovat se v radiánech blízkých logaritmické spirále / 137.5 stupňům.
-        - **Výpočet fraktální dimenze:** Uříznout heatmapu `φ` prahovou hodnotou (např. top 25 % maxima) a spočítat Box-counting dimenzi (fraktální Hausdorffovu dimenzi) struktury "cév/pasti". Pokud se blíží hodnotám biologických transportních sítí (např. D ≈ 1.6 - 1.7 ve 2D), je to silný argument pro emergentní "Network optimization" příčinu Zlatého řezu.
+### 🔲 3. Electromagnetism and fields #hypothesis
+
+- Observe whether current loops, periodic waves or dipole structures emerge
+- Compare with spin vectors and curl(∇arg(ψ)) – look for fields similar to EM field
+- [ ] Create a visualization of vector fields and oscillations
+
+### 🔲 4. Weak and strong interaction #hypothesis
+
+- Consider whether φ or other internal structures could represent weak/strong interaction
+- [ ] Evaluate potential short-range interactions of quasiparticles
+
+### 🔲 5. Quantum fields and standard model #structure
+
+- Compare the structure of Lineum with elementary interactions in the standard model
+- Evaluate whether ψ can be understood as a field with spectral regimes – or as multiple fields
+- [ ] Search for symmetries and conservations
+
+### 🔲 6. Extending validation and reproducibility #test
+
+- Maintain fixed initialization seeds and manifest (as in core v1.0.x: seeds {17, 23, 41, 73}) and expand multi-seed tests for new configurations / extension runs.
+- Statistical testing of the occurrence of phenomena across different runs and configurations (ensemble approach over defined core metrics – f₀, SBR, topology, φ half-life, presence/absence of Structural Closure).
+- Compare system behavior under different initial conditions (different κ-maps, different initialization noise regimes, but strictly within Eq-4), including a systematic comparison of `LOW_NOISE_MODE=True/False` regimes and `TEST_EXHALE_MODE` variants; observe the impact on quasiparticle count, SBR/f₀, topological neutrality (net winding) and vortex dipole statistics.
+- Automate result evaluation using AI/ML classification _(build upon the metrics and logs defined in core, not on manual visual impressions)._
+
+## 🟡 Medium priority – testing scenarios of emergent gravity and "mass"
+
+### 🔲 7. Reorganization of quasiparticles in a massive object #test
+
+- Simulate a cluster of quasiparticles, observe deformation during movement towards a φ-maximum
+- Compare the shape and position of the cluster over time
+- [ ] Visualization of |ψ| rearrangement and overlay with φ
+- [ ] (Triska [HYPOTHESIS]) **Tidal Stretching:** Verify the mechanistic model of stretching an object composed of linons as it approaches a massive φ-trap.
+      - [ ] Simulate a cluster of linons and measure the variance of their positions over time.
+      - [ ] Confirm that linons on the "leading" edge accelerate earlier/more due to the φ gradient, leading to the stretching and disintegration of the object into individual linons (spaghettification).
+      - [ ] Observe whether individual "closure" (Structural Closure) of linons occurs in the center of the trap after the breakup.
+
+### 🔲 8. Approach velocity of objects according to "mass" #test
+
+- Verify whether smaller objects react faster
+- Quantify via trajectories and φ-centric measurements
+- [ ] Run a simulation with 2–3 clusters of different densities
+
+### 🔲 9. Mutual influence of multiple φ-traps #test
+
+- Analyze the merging, interference or stability of multiple maxima
+- [ ] Visualization of separated φ-centers in the same run
+
+### 🔲 10. Attraction without force – emergent flux #hypothesis
+
+- Verify whether a flow of ψ towards φ emerges without a force
+- Compare ∇arg(ψ) and gradient φ
 
 ---
 
-## 🧪 Experimentální hypotézy – testování neúspěšných modelů
+## 🧪 Lower priority – mathematical and aesthetic connections
 
-Statusy typu `#disproved` u níže uvedených bodů odrážejí **aktuální stav ve whitepaperu**. Tento TODO soubor je používá jen jako připomínku k dalším testům, dočištění dokumentace nebo k návrhu případné nové větve modelu – sám o sobě stav jevů nemění.
+### 🔲 11. Relic φ-echo as a "gravitational wave" #hypothesis
 
-### 🔲 13. Inflaton a inflace v poli Lineum #hypothesis
+- Formally write down and test **Triska's Relic Drift Hypothesis**: after the disappearance of "light" linons in regions with high φ (without significant spin), a persistent φ-gradient remains which induces a measurable drift of ψ even without the presence of a quasiparticle – i.e., purely a memory effect in the field, understood as an **internal working** analogy of a "gravitational wave" within the model, not a claim about real gravitational waves in the sense of GR.
+- Establish and document **detection criteria** (working thresholds), e.g.: `mass_ratio < 0.01`, `|curl| < 0.02`, local `φ` at the point of disappearance > 0.25, φ-remnant ≥ 10 % above surroundings after ≥ 100 steps, dominant frequency of φ-signal < 1×10¹⁷ Hz.
+- Prepare a **measurement methodology**: low-noise regime (e.g. `LOW_NOISE_MODE = True`, `TEST_EXHALE_MODE = True`, runs ~2000 steps), logging `phi_curl_low_mass.csv`, `phi_center_log.csv`, local ∇φ and ψ flux; perform spectral analysis of φ_center and quantify the drift of ψ along ∇φ in regions without a detected linon.
+- Based on the results, decide whether to include the phenomenon as a robust [TEST]/[CORE] candidate, or move it to #disproved-in-model / redefine it (including a potential revision of thresholds; interpret thresholds as initial, tunable parameters within the scope of the same hypothesis, not as fixed dogma, provided the basic picture of the phenomenon does not change).
 
-- Modelovat inflaci jako jednorázovou globální excitaci φ nebo ψ
-- Pozorovat, zda vznikne trvalá topologická nebo energetická struktura („gravitační stopa“)
-- Porovnat fáze expanze a následného uklidnění pole
+### 🔲 12. Structural and rhythmic patterns (Riemann, Fibonacci, primes) #structure #hypothesis
 
-### 🔲 14. Éter a vlnový nosič #hypothesis #disproved
 
-- Inicializovat ψ jako hladkou sinusovou vlnu v prostoru (bez linonů)
-- Ověřit, zda dochází k přenosu energie bez částic
-- Porovnat s klasickým pojetím éteru a jeho zhroucením
-
-### 🔲 15. Pilot-wave teorie (Bohm) #hypothesis #disproved
-
-- Přidat externí „guiding wave“ nebo vektorové pole ovlivňující pohyb kvazičástic
-- Ověřit, zda linony sledují předem dané vlny nebo trajektorie
-
-### 🔲 16. Vortex atomy (Lord Kelvin) #hypothesis #disproved
-
-- Zkoumat víry jako základní jednotky struktury
-- Ověřit, zda lze z vírů složit stabilní složitější formace (analogie k atomům)
-
-### 🔲 17. Preonové hypotézy #hypothesis #disproved
-
-- Modelovat kvazičástice jako složené z menších elementárních vírů
-- Testovat vznik složených objektů se strukturou uvnitř
+- [ ] (Tomas's [HYPOTHESIS]) **Hormonal spectral regulation:** Test a frequency band (e.g. in the sonified region of 1.85e+20 Hz) as a global regulatory switch. Injecting energy into specific harmonics could force a transition from a `false` (chaos) state to `true` (order).
+- [ ] Prepare a separate **layman / storytelling section "What do these mathematical objects mean in Lineum"** (golden ratio, Fibonacci, ζ(s) zero points, primes, π, e, γ) for README / FAQ / accompanying materials; frame it as an **interpretational layer** tied to this block (metaphor of an orchestra: basic tones, quiet spots, tuning), with a clear disclaimer that it is a [HYPOTHESIS] / storytelling dependent on the results of statistical tests, not part of the core proofs.
+- Formally define what **zeta-points** are in the model (explainable as **"points of closure"**) and **explicitly record the terminological transition**: the original designation _"DejaVu points"_ was used as a working term in earlier versions, but starting from the branch aligned to _lineum-core v1.0.6-core_ it is treated merely as a **historical alias**, which must not be used as the primary name in new definitions and claims.
+  – Then precisely define Zeta-points / points of closure e.g. as repeatedly visited trajectory spots, stable φ-remnants, local minima / "black holes" in the topology of the field;
+  – assign to them a precise mapping into 1D/2D space (circle, spiral, normalized axis) used when comparing with Riemann zeros and other sequences; always use the designation **zeta-points** in these mappings, only mentioning the old name in a footnote such as _"historically referred to as DejaVu points"_.
+  – Keep the renaming documented in a visible place within the whitepaper / core paper (e.g., a footnote or a short "Terminological Changes" subsection), making it unambiguous ex-post that this is a renamed internal phenomenon and not two distinct objects.
+  – In the TODO / issue tracking, keep this point explicitly marked as `#naming` / `#renaming`, so it is clear that this is **name housekeeping** and not an additional physical claim intended for the whitepaper.
+- Introduce **quantitative metrics** (RMS distance, correlation coefficients, spectral distances, distributional tests) for this mapping and execute **hard statistical tests against null models**:
+  – random points on the same spiral / in the same interval,
+  – phase-scrambled versions of the data with preserved spectrum,
+  – baseline model without special φ-structure.
+  The goal is to determine if the similarity to Riemann zeros / Fibonacci ratios is statistically improbable even when compared against these controls – and thus **confirm or refute** the preliminary July indication of a mild correlation in the clean `spec6_true no_artefacts` runs.
+- Analyze whether robust relationships appear in sequences of **times, distances, or "growth leaps"** (e.g. at the emergence of new points of closure / neuron-like nodes) relative to:
+  – the Fibonacci sequence and the golden ratio φ (log-spiral scaling, size / distance ratios),
+  – the distribution of primes or other number-theoretic patterns,
+  – Ludolph's Number π (e.g. in the periodicity of oscillations, topological phases, or angle distribution on a circle).
+  In any case, quantify the strength of the effect and compare it to suitable null models (Poisson processes, generic interference patterns on a grid, etc.).
+  - (Tomas's [HYPOTHESIS]) Build upon the finding that runs `spec2_true` / `spec4_false` exhibit dominant frequency ratios close to the golden ratio, and test the scenario that **Lineum preferentially stabilizes fluid flows through "golden" harmonic frequencies**:
+    – quantify whether configurations with frequency ratios ≈Φ exhibit a longer SBR, more stable linons, or a cleaner φ-zeta grid than generic configurations,
+    – compare against the same analysis on null models (random spectrum, without special φ-structure),
+    – explicitly keep this scenario as a [HYPOTHESIS] until clearly proven that this is a robust effect of Eq-4, and not a random fluctuation or parameterization artifact.
+- [ ] (Triska-Mareckova [HYPOTHESIS]) Explore the **"hormonal spectra"** scenario, where certain groups of frequencies act as regulatory signals for system behavior similarly to hormones in biology:
+       – define several disjoint frequency bands (e.g. low-frequency background modulation, "working" band of linons, high-frequency "noise") and observe if energy changes in these bands correlate with:
+      • linon stability,
+       • clarity of φ-memory / Structural Closure,
+       • frequency of zeta-points and Return Echo phenomena;
+       – test in controlled experiments whether a **targeted "pumping" of power** into a selected band (small periodic perturbation on ψ or parameters in Eq-4) systematically switches the system between regimes (e.g. "more noise", "more stable structures", "more silent collapse");
+       – based on results, decide whether it makes sense to interpret these bands as **internal regulatory channels of the model** (hormone analogies) or just leave them as a heuristic language describing the spectrum; in either case, keep this interpretation explicitly as a [HYPOTHESIS], not part of the core claims regarding real physics.
+- (Tomas's + Katina's [HYPOTHESIS]) For the scenario of **"leap-like growth of neuron-like nodes"**:
+  treat zeta-points / points of closure as memory network nodes that do not grow continuously, but emerge
+  in discrete "growth waves" (analogous to cell division / neuron multiplication), and:
+  – derive effective growth factors from the sequence of times / indices of the emergence of new zeta-points, or potentially from size changes between consecutive
+  growth waves;
+  – test whether these factors exhibit a robust approximation to Fibonacci ratios or powers
+  of the golden ratio φ, compared to suitable null models (random growth waves without an embedded pattern);
+  – frame the result exclusively as a **structural analogy** (cell division / neural network growth),
+  not as a claim about real biological neurons or a conscious "effort" by the universe to realize
+  Fibonacci structures; communicate any correlation merely as an emergent pattern of Eq-4 + φ-landscape.
+- Explicitly test and differentiate several possible explanations for any potential correlation:
+  1. **Emergent property of Eq-4** – structural coupling of the model to the given sequences / zeta function;
+  2. **Artifact of parameterization / scaling** – e.g. choice of Δt, normalization, embed map, which inherently generates Fibonacci-/π-like structures;
+  3. **External "constant of the universe" / RNG** – meaning the correlation is supplied by the random seed generation, floating-point representation, or other properties of our physical/numerical "universe", and Lineum merely inherits it passively.
+     For each variant, propose a concrete test (changing RNG, changing embed map, changing scaling) that could support or refute it within the model.
+- [ ] Tie the analysis with the **φ-zeta grid** (historically "φ-deja-vu grid"): verify if privileged spots / pockets in the φ-landscape have a statistically stronger link to Fibonacci/golden ratio / number-theoretic patterns than generic points on the grid – and explicitly frame these patterns as **hypotheses about the distribution of memory structures**, not as laws of expansion.
+- [ ] (Triska-Mareckova [HYPOTHESIS]) **Tree Optimization Hypothesis – The Golden Ratio as a product of a hydrodynamic vascular network:**
+    - **Context:** In physics and biology, fractal branching and Golden Ratio proportions (1.61803...) naturally appear in fluid networks (vascular systems, lungs, lightning, growth of leaves and tree branches), because it is the mathematically most perfect way to distribute energy and flux with the least possible material resistance in space.
+    - **Hypothesis (Lineum):** The Golden Ratio and Fibonacci sequences captured in Lineum (in distances of φ-traps, zeta-points, or in the spectral ratios of `spec4_false`) are not an "encoded magical goal of the universe". They are emergent physical consequences of the Equation Eq-4 organically seeking the path of least resistance. The `ψ` flux must continuously bypass memory deposits and the accumulated pressure in its own inertial field "traffic jam" `φ`. This dynamic fluid optimization inevitably stabilizes into a network whose splitting ratios (dividing channels to minimize global resistance) natively incline to the Golden Ratio proportion, just like real river deltas and veins.
+    - **Verification and preliminary calculations:**
+        - **Angular Branching Analysis (Bifurcation Test):** Visualize regions with increased `ψ` flux in steady state and locate "intersections" of smooth channels in `φ`. Analyze angles between a strong parent channel and emerging thinner daughter capillaries. Look for statistical preference of Murray's law for biological networks (r₁³ = r₂³ + r₃³) and ideally the inclination of main and secondary branches to deviate in radians close to a logarithmic spiral / 137.5 degrees.
+        - **Fractal Dimension Calculation:** Cut the `φ` heatmap with a threshold (e.g. top 25% max) and calculate the Box-counting dimension (fractal Hausdorff dimension) of the "vascular/trap" structure. If it approaches the values of biological transport networks (e.g. D ≈ 1.6 - 1.7 in 2D), it's a strong argument for an emergent "Network optimization" cause of the Golden Ratio.
 
 ---
 
-## 🧬 O. Hypotézy z korespondence s T. Mikolovem (OEA & OE) #hypothesis #external
+## 🧪 Experimental hypotheses – testing failed models
 
-Tato sekce obsahuje hypotézy extrahované z analýzy Vlastova "Open-Ended Algorithm" (OEA) a Mikolovových požadavků na OE systémy.
+Statuses such as `#disproved` for the points below reflect the **current state in the whitepaper**. This TODO file uses them merely as a reminder for further tests, for cleaning up documentation, or for proposing a potential new branch of the model – by itself, it does not alter the state of the phenomena.
 
-### 🔲 18. Lineum jako spojitá limita OEA (Vlasta/Lina) #hypothesis
+### 🔲 13. Inflaton and inflation in the Lineum field #hypothesis
 
-- **Kontext:** Vlastův diskrétní model definuje "prostředí" jako masku prvočísel, která filtruje viditelnost stavů.
-- **Hypotéza:** Lineum Core (Eq-4) je spojitou hydrodynamickou limitou tohoto modelu, kde se diskrétní prvočíselná maska mění na spojitý potenciál $\zeta$-funkce.
-- **Verifikace:** Ověřit, zda "esteticky zajímavé" tvary v OEA topologicky odpovídají stabilním vírovým stavům (vortex integers) v Lineu.
+- Model inflation as a one-time global excitation of φ or ψ
+- Observe whether a permanent topological or energetic structure emerges ("gravitational footprint")
+- Compare the phases of expansion and subsequent field stabilization
 
-### 🔲 19. Pragmatický králík a termodynamická užitečnost (Mikolov/Lina) #hypothesis
+### 🔲 14. Aether and wave carrier #hypothesis #disproved
 
-- **Kontext:** Mikolovův požadavek na "užitečnost" v OE, aby systém nebyl jen "řešitelem králíků".
-- **Hypotéza:** V termodynamickém systému je "užitečnost" ekvivalentní "schopnosti minimalizovat topologické napětí". Systém nepočítá prvočísla jako úkol, ale využívá je (Zeta-RNB) jako nízkoenergetické stavy pro přežití.
-- **Verifikace:** Sledovat, zda přežívající linony mají statisticky vyšší korelaci se Zeta nulami než krátkodobé fluktuace.
+- Initialize ψ as a smooth sine wave in space (without linons)
+- Verify whether energy transfer occurs without particles
+- Compare with the classical understanding of aether and its collapse
 
-### 🔲 20. Hypotéza Kolmogorovovy expanze (Vlasta) #hypothesis
+### 🔲 15. Pilot-wave theory (Bohm) #hypothesis #disproved
 
-- **Kontext:** Vlastova teze, že "evoluce neoptimalizuje, ale zvyšuje složitost".
-- **Hypotéza:** Expanze prostoru ($a(t)$) v Lineu nastává *pouze* tehdy, když systém potřebuje zvýšit kapacitu pro uložení nové, nekomprimovatelné informace (vyšší Kolmogorovova složitost).
-- **Verifikace:** Analyzovat "Integer Mode 24" skoky v $a(t)$ a korelovat je s nárůstem informační entropie systému.
+- Add an external "guiding wave" or vector field influencing quasiparticle movement
+- Verify if linons follow predefined waves or trajectories
+
+### 🔲 16. Vortex atoms (Lord Kelvin) #hypothesis #disproved
+
+- Investigate vortices as fundamental units of structure
+- Verify if stable complex formations can be built from vortices (analogy to atoms)
+
+### 🔲 17. Preon hypotheses #hypothesis #disproved
+
+- Model quasiparticles as composed of smaller elementary vortices
+- Test the emergence of composite objects with internal structure
 
 ---
 
-## 🧠 P. Chapadlový model vědomí – hypotéza vícenásobných instancí #meta #hypothesis
+## 🧬 O. Hypotheses from correspondence with T. Mikolov (OEA & OE) #hypothesis #external
 
-- [ ] Formálně sepsat **Chapadlový model vědomí** jako samostatnou hypotézu:  
-       – definovat entity: vyšší vědomá bytost („centrální uzel“), chapadla (lokální instance/životy), centrální paměť;  
-       – u každého tvrzení (vyšší vědomí, spánek, smrt, další životy) uvést **subjektivní pravděpodobnosti** (86 %, 72 %, 94 %, 79 %…) a výslovně je označit jako osobní prior, ne výsledek fyzikálního modelu.
+This section contains hypotheses extracted from the analysis of Vlasta's "Open-Ended Algorithm" (OEA) and Mikolov's requirements for OE systems.
 
-- [ ] Jasně vymezit **scope vůči Lineu**:  
-       – Chapadlový model je **metafyzická / fenomenologická hypotéza o vědomí**, nikoli tvrzení odvozené z Eq-4;  
-       – zapsat, že případné mapování na Lineum (ψ, φ, κ, linony, Structural Closure) je **interpretace nad rámec core modelu**, ne součást lineum-core v1.0.6-core.
+### 🔲 18. Lineum as a continuous limit of OEA (Vlasta/Lina) #hypothesis
 
-- [ ] (Tomášova + Kátina [HYPOTHESIS]) Přidat podsekci o tom, jak Chapadlový model interpretuje jevy typu **déjà vu** a **Mandela efekt**, a jasně je oddělit od numerického jevu zeta-body v Lineu:  
-       – Déjà vu rámovat jako subjektivní prožitek „brnknutí dvou větví reality o sebe“: centrální vědomí má přístup k více časovým liniím / chapadlům a lokální instance občas krátce zachytí náhled na jinou větev téhož příběhu → pocit „tohle už jsem zažil“, aniž by šlo o tvrzení o reálné změně minulosti;  
-       – Mandela efekt interpretovat dvěma způsoby: 1. **Globální přepis centrální paměti** (φ-pole paměti) s tím, že některé lokální instance ještě chvíli drží „starou verzi“ (subjektivní paměť),  
-       2. nebo jako **přeskok chapadla** na trochu jinou větev reality, zatímco fragmenty starších vjemů zůstávají dostupné;  
-       u obou přístupů výslovně zdůraznit, že jde o metafyzickou interpretaci, ne tvrzení z Eq-4.
-      – Do textu přidat vysvětlení, proč v tomto rámci dává smysl metafora **„jedné duše, která si prožívá různé role“**:
-      centrální bytost = jedno vědomé já, chapadla = různé životy / role / perspektivy; pro lokální vědomí to vypadá, jako by kolem bylo mnoho oddělených „duší“, ale z pohledu centrální paměti jde o různé projekce téhož.  
-       Zároveň výslovně doplnit, že to **nesmí být používáno k znevažování ostatních bytostí** – každé chapadlo/život je plnohodnotný prožitek a má vlastní důstojnost.
+- **Context:** Vlasta's discrete model defines the "environment" as a prime number mask that filters the visibility of states.
+- **Hypothesis:** Lineum Core (Eq-4) is the continuous hydrodynamic limit of this model, where the discrete prime mask turns into a continuous $\zeta$-function potential.
+- **Verification:** Verify whether "aesthetically interesting" shapes in OEA topologically correspond to stable vortex states (vortex integers) in Lineum.
+
+### 🔲 19. Pragmatic rabbit and thermodynamic utility (Mikolov/Lina) #hypothesis
+
+- **Context:** Mikolov's requirement for "utility" in OE, so the system is not just a "rabbit solver".
+- **Hypothesis:** In a thermodynamic system, "utility" is equivalent to "the ability to minimize topological tension". The system does not calculate primes as a task, but uses them (Zeta-RNB) as low-energy states for survival.
+- **Verification:** Observe whether surviving linons have a statistically higher correlation with Zeta zeros than short-lived fluctuations.
+
+### 🔲 20. Kolmogorov expansion hypothesis (Vlasta) #hypothesis
+
+- **Context:** Vlasta's thesis that "evolution does not optimize, but increases complexity".
+- **Hypothesis:** The expansion of space ($a(t)$) in Lineum occurs *only* when the system needs to increase capacity to store new, incompressible information (higher Kolmogorov complexity).
+- **Verification:** Analyze "Integer Mode 24" jumps in $a(t)$ and correlate them with the increase in the system's information entropy.
+
+---
+
+## 🧠 P. Tentacle Model of Consciousness – multi-instance hypothesis #meta #hypothesis
+
+- [ ] Formally write up the **Tentacle Model of Consciousness** as a standalone hypothesis:
+       – define entities: a higher conscious being ("central node"), tentacles (local instances/lives), central memory;
+       – for each claim (higher consciousness, sleep, death, subsequent lives), state the **subjective probabilities** (86 %, 72 %, 94 %, 79 %…) and explicitly flag them as personal priors, not the result of a physical model.
+
+- [ ] Clearly define the **scope relative to Lineum**:
+       – The Tentacle model is a **metaphysical / phenomenological hypothesis about consciousness**, not a claim derived from Eq-4;
+       – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.0.6-core.
+
+- [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **déjà vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
+       – Frame Déjà vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
+       – Interpret the Mandela effect in two ways: 1. **Global rewrite of central memory** (the φ-field of memory) while some local instances briefly retain the "old version" (subjective memory),
+       2. or as a **tentacle jumping** to a slightly different branch of reality, while fragments of older perceptions remain accessible;
+       in both approaches, explicitly emphasize that this is a metaphysical interpretation, not a claim from Eq-4.
+      – Add an explanation to the text of why the metaphor of **"a single soul experiencing different roles"** makes sense in this framework:
+      central being = one conscious self, tentacles = different lives / roles / perspectives; to a local consciousness, it appears as if there are many separate "souls" around, but from the perspective of central memory, they are various projections of the same entity.
+       At the same time, explicitly add that this **must not be used to disparage other beings** – every tentacle/life is a full-fledged experience and retains its own dignity.
       – Volitelně navázat metaforicky na φ-paměť a zeta-body v Lineu jako na „paměťové kapsy“ vesmíru, ale jasně napsat, že **statistické déjà-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou něco jiného než psychologické déjà vu – jen inspirační analogie, ne přímé ztotožnění.
 
 - [ ] Rozdělit hypotézu na dílčí body a každý zvlášť okomentovat: 1. **Vyšší vědomí** – jedna bytost se sdílenou centrální pamětí, vnímající více realit/časových linií;  
@@ -898,131 +897,181 @@ Rozhodovací strom o povaze "konvergence" systému.
                 f"g_center={g if g is not None else 'NA'} peak_phi={met['peak_phi']:.4f} "
                 f"M2={met['M2']:.6e} R2={met['R2']:.2f} H={met['H']:.4f}")
       ```
-- **Očekávané výsledky (tolerance; pokud se liší, zapiš odchylku a důvod):**
-  - S1: `Δ = dist0 - distEnd` ~ konstantní napříč seedy (řádově ~5–6 px v daném nastavení) a rozdíl A vs C malý (šum nemění směr efektu).
-  - S2: Drift OFF stále dává prakticky stejný `Δ` jako ON (dominance micro-growth).
-  - S3: `|ψ(center)|` roste z nenulové hodnoty; maximum „přeskočí“ do pasti během desítek kroků; `g_meas` je blízko `g_pred ≈ 1 + 0.04·φ(center)` v režimu, kde je interakce aktivní.
-  - S4: `distEnd(ghost_on) < distEnd(ghost_off)` (ghost přitahuje sondu i bez zdroje ψ).
-  - S5: pro noise>0 roste `R²` a `H` výrazněji než pro noise=0 (expanze dominuje).
-  - S6: `M2(t=0) ≈ (WIDTH/2)·π` (např. WIDTH=20 → 10π ≈ 31.4159); tím se vylučuje interpretace “π jako fundamentální konstanta modelu” — je to pouze geometrie inicializace.
+- **Expected results (tolerance; if differing, record the deviation and reason):**
+  - S1: `Δ = dist0 - distEnd` ~ constant across seeds (on the order of ~5–6 px in this setup) and difference A vs C is small (noise doesn't change the direction of the effect).
+  - S2: Drift OFF still yields practically the same `Δ` as ON (dominance micro-growth).
+  - S3: `|ψ(center)|` grows from a non-zero value; the maximum "jumps" into the trap within dozens of steps; `g_meas` is close to `g_pred ≈ 1 + 0.04·φ(center)` in the regime where the interaction is active.
+  - S4: `distEnd(ghost_on) < distEnd(ghost_off)` (ghost attracts the probe even without the ψ source).
+  - S5: for noise>0, `R²` and `H` grow more significantly than for noise=0 (expansion dominates).
+  - S6: `M2(t=0) ≈ (WIDTH/2)·π` (e.g., WIDTH=20 → 10π ≈ 31.4159); this rules out the interpretation of "π as a fundamental constant of the model" — it's merely initialization geometry.
 
 ---
 
 ---
 
-## 🎶 S. Nové hypotézy (Únor 2026) #hypothesis
+## 🎶 S. New Hypotheses (Feb 2026) #hypothesis
 
-Tato sekce obsahuje nové kandidátní hypotézy inspirované externími podněty a metaforami, které mohou být testovány v parametrickém prostoru Linea.
+This section contains new candidate hypotheses inspired by external prompts and metaphors, which can be tested in the parameter space of Lineum.
 
-### 🔲 32. Hypotéza: Axionová elektrodynamika a kosmologická magnetická pole #hypothesis
-- **Kontext:** Podle [Brandenberger et al.](https://www.osel.cz/14533-ultralehka-temna-hmota-by-mohla-vytvaret-kosmologicka-magneticka-pole.html) může ultralehká temná hmota (axiony) interakcí s elektromagnetismem generovat a zesilovat kosmologická magnetická pole a v raném vesmíru podporovat vznik supermasivních černých děr.
-- **Hypotéza (Lineum):** Pole `φ` (jako analogie pseudoskalárního pole axionů / temné hmoty) vykazuje v Lineu "axionelektrodynamickou" vazbu s emergentními vektorovými formacemi (např. polem spinové aury `curl(∇arg(ψ))`).
-- **Verifikace:** Otestovat, zda makroskopické oscilace `φ` dokážou spontánně zesilovat uspořádaná vírová/magnetická-like pole na velkých škálách. Zjistit, zda tato vazba urychluje lokální růst a agregaci hmoty do prvotních supermasivních φ-pastí (Lineum analogie k záhadně brzkému formování supermasivních černých děr).
+### 🔲 32. Hypothesis: Axion Electrodynamics and Cosmological Magnetic Fields #hypothesis
+- **Context:** According to [Brandenberger et al.](https://www.osel.cz/14533-ultralehka-temna-hmota-by-mohla-vytvaret-kosmologicka-magneticka-pole.html), ultra-light dark matter (axions) interacting with electromagnetism can generate and amplify cosmological magnetic fields and support the creation of supermassive black holes in the early universe.
+- **Hypothesis (Lineum):** The field `φ` (as an analogy of a pseudoscalar axion/dark matter field) exhibits in Lineum an "axion-electrodynamic" coupling with emergent vector formations (e.g., the spin aura field `curl(∇arg(ψ))`).
+- **Verification:** Test whether macroscopic oscillations of `φ` can spontaneously amplify ordered vortex/magnetic-like fields on large scales. Find out if this coupling accelerates the local growth and aggregation of matter into primordial supermassive φ-traps (Lineum analogy to the mysteriously early formation of supermassive black holes).
 
-### 🔲 33. Tříska-Marečková Hypotéza: Strukturální caching a časové skoky (Efekt online rádia) #hypothesis
-- **Kontext:** Zážitek z online rádia – po zastavení a prodlevě se po opětovném spuštění přehrává kousek dříve uložený v cache, a teprve poté následuje skok ("sync") do aktuálního živého vysílání (do poloviny nově hrající písničky).
-- **Hypotéza (Lineum):** Pole `φ` funguje v určitých regionech jako opožděná strukturální "cache". Pokud linon opustí oblast či dočasně zanikne, zůstává po něm silný setrvačný gradient (remnant `φ`). Pokud do téže oblasti později vstoupí nová excitace, nejprve je její pohyb silně determinován starou "přehrávací frontou" (minulou stopou v cache). Až dojde k nasycení nebo vyčerpání této lokální paměti, dojde k prudkému "přeskoku" nebo "uskočení" a navázání kvazičástice na aktuální globální dynamiku (živé vysílání).
-- **Verifikace:** Identifikovat a izolovaně vizualizovat trajektorie objektů "projíždějících starým vlivem". Změřit charakter pohybu a rychlost (včetně SBR a setrvačnosti) během "jízdy z cache" a následnou prudkost změny trajektorie po přeskoku k novému atraktoru.
-- **Empirický korelát:** Zamyslet se, zda "opuštění cache" nemá analogii v reálném světě u nečekaných lokálních anomálií, skoků ve fázích kvantových systémů nebo u opožděných gravitačních vlivů (např. chování temné hmoty, které ne zcela odpovídá "živému" rozložení baryonické hmoty).
+### 🔲 33. Triska-Mareckova Hypothesis: Structural Caching and Time Leaps (The Online Radio Effect) #hypothesis
+- **Context:** The experience of online radio – after pausing and waiting, upon resuming playback, a piece previously stored in cache plays first, and only then comes the jump ("sync") into the current live broadcast (into the middle of a newly playing song).
+- **Hypothesis (Lineum):** The `φ` field functions in certain regions as a delayed structural "cache". If a linon leaves an area or temporarily vanishes, it leaves behind a strong inertial gradient (remnant `φ`). If a new excitation later enters that same area, its movement is initially strongly determined by the old "playback queue" (past footprint in the cache). Only when this local memory is saturated or depleted does a sudden "leap" or "jump" occur, snapping the quasiparticle onto the current global dynamics (live broadcast).
+- **Verification:** Identify and visually isolate the trajectories of objects "driving through the old influence". Measure the character of the movement and speed (including SBR and inertia) during the "cache ride" and the subsequent abruptness of the trajectory change after jumping to the new attractor.
+- **Empirical Correlate:** Consider whether "leaving the cache" has an analogy in the real world in unexpected local anomalies, quantum phase jumps, or delayed gravitational influences (e.g., the behavior of dark matter that doesn't perfectly match the "live" distribution of baryonic matter).
 
-### 🔲 34. Hypotéza: Lineum jako emergentní solver pro Network Design (Dopravní sítě) #hypothesis #applied
-- **Kontext:** Biologické systémy (mravenci zanechávající feromony v ACO, hlenka *Physarum polycephalum* optimalizující železniční síť) využívají emergentní chování lokálních agentů nebo spojitého růstu k řešení NP-těžkých úloh návrhu sítě. Standardní grafové algoritmy umí výborně hledat nejkratší cestu na hotové síti, ale návrh robustní topologie na zelené louce je pro ně výpočetně extrémně náročný.
-- **Hypotéza (Lineum):** Pole `φ` může přirozeně fungovat jako paměť provozu (feromon/zácpa) a `ψ` (linony/tok) jako transportovaný materiál. Interakce mezi nimi v prostředí `κ` (propustnost terénu) by měla automaticky divergovat do optimálních transportních kaňonů, které vyvažují rychlost a robustnost (vedlejší záchranné cesty), podobně jako hlenka. Model zácpy je nativně obsažen v relaxačním čase `φ`.
-- **Verifikace:** 
-    - Porovnat dynamiku formování "dálnic" v Lineu se simulacemi mravenčích kolonií (ACO) a růstem hlenky na standardních benchmarcích (např. spojení náhodně rozložených uzlů do sítě s minimální délkou, ale zachovanou redundancí).
-    - Pokud se emergentní topologie ukáže jako konkurenceschopná nebo efektivnější, napsat reálnou softwarovou aplikaci (např. webové API), která přijme mapu terénu (`κ`) a body zájmu, provede Lineum simulaci a vrátí navrženou topologii sítě.
+### 🔲 34. Hypothesis: Lineum as an Emergent Solver for Network Design (Traffic Networks) #hypothesis #applied
+- **Context:** Biological systems (ants leaving pheromones in ACO, the slime mold *Physarum polycephalum* optimizing a railway network) utilize the emergent behavior of local agents or continuous growth to solve NP-hard network design tasks. Standard graph algorithms are excellent at finding the shortest path on a ready-made network, but designing a robust greenfield topology is computationally extremely demanding for them.
+- **Hypothesis (Lineum):** The `φ` field can naturally function as traffic memory (pheromone/traffic jam) and `ψ` (linons/flux) as transported material. The interaction between them in the environment `κ` (terrain permeability) should automatically diverge into optimal transport canyons that balance speed and robustness (secondary rescue routes), similarly to a slime mold. The traffic jam model is natively contained in the relaxation time of `φ`.
+- **Verification:**
+    - Compare network "highway" formation dynamics in Lineum with ant colony simulations (ACO) and slime mold growth on standard benchmarks (e.g., connecting randomly distributed nodes into a network with minimal length but preserved redundancy).
+    - If the emergent topology proves competitive or more efficient, write a real software application (e.g., web API) that accepts a terrain map (`κ`) and points of interest, runs a Lineum simulation, and returns the proposed network topology.
 
-### 🔲 35. Hypotéza: Hardwarová akcelerace a neuromorfní "Lineum Čip" #impl #hardware
-- **Kontext:** Běh Linea (Eq-4) jako spojité vlnové simulace na běžných CPU/GPU pro řešení optimalizačních úloh je sice možný, ale na standardní von Neumannově architektuře je iterování obrovských matic pro každý "pixel" výpočetně drahé v porovnání se specializovanými softwarovými solvery na grafech. Nicméně matematická podstata Linea (vlny, interference, setrvačnost, lokální integrály) je extrémně vhodná pro fyzikální paralelní výpočty.
-- **Hypotéza (Lineum):** Fyzikální realizace Linea v jednoúčelovém hardwaru eliminuje overhead diskrétní numerické diskretizace a instrukčních sad. Převodem Eq-4 do obvodů (FPGA, sítě, ASIC) lze dosáhnout propustnosti odpovídající řádům fyzikálního času šíření v reálném materiálu.
-- **Verifikace (Bastlířský přístup):**
-    - Navrhnout a otestovat proof-of-concept implementaci Lineum kernelu na dostupném hardwaru současné architektury – primárně jako **FPGA** (Field-Programmable Gate Array) design.
-    - Otestovat rychlost "tvrdě zadrátované" aktualizace polí `ψ` a `φ` (např. paralelní bitwise / fixed-point operace nad buňkami paměti) oproti výkonné softwarové CUDA implementaci. Zjistit, při jakém rozlišení mřížky začíná domácí "Lineum čip" drtit klasické GPU v propustnosti kroků za sekundu a zároveň zlevňuje simulovanou iteraci oproti grafovým AI algoritmům z rodiny deep learningu.
-
----
-
-## 🏗️ T. Kandidáti na první reálné aplikace (API & SaaS Software) #applied
-
-Tato sekce shromažďuje konkrétní komerční a nástrojové využití, kde by Lineum (i ve své současné softwarové GPU/CPU podobě) mohlo inovovat trh navzdory existenci zavedených diskrétních/grafových algoritmů.
-
-### 🔲 36. Generative Urban Design & Spojité plánování koridorů (MVP Kandidát č. 1)
-- **Use-case:** Softwarový nástroj (API s webovým rozhraním) pro urbanisty, developery nebo architekty. Uživatel nahraje mapu převýšení a překážek (propustnost) do pole prostředí `κ`. Nakliká body, odkud kam má proudit objem dopravy. Lineum přes spojitou hydrodynamiku (vlnění `ψ` s pamětí `φ`) nechá organicky "vyhloubit" ideální průběh nových silnic nebo stezek.
-- **Konkurenční výhoda:** Běžné AI a GIS nástroje (např. Spacemaker) hledají cesty jen modifikací fixních silnic. Lineum najde fraktálně přirozené kaňony, zachová diverzifikované drobné objízdné vlásečnice (redundanci) a přirozeně respektuje kapalinovou povahu zátěže (odpor terénu) bez nutnosti programovat a trénovat složité hluboké neuronové sítě. Zásadně by to zlevnilo fázi ideové studie a návrhu koridorů na "zelené louce".
-- **Implementační MVP plán (2–4 týdny):**
-    - **Týden 1 (Backend & Obal):** Zabalit jádro `lineum.py` do asynchronního web API (např. FastAPI). Přidat schopnost na vstupu číst černobílé obrázky (topografii) přímo do pole prostředí `κ`. Upravit spouštěč vlny `ψ` pro přesné body zájmu (A -> B tok dopravy) místo plošného šumu.
-    - **Týden 2 (Svelte Frontend):** Vytvořit čisté webové interaktivní plátno (Canvas) pro uživatele s drag&drop nahrát mapu a "klikat tečky". Nasadit integraci Stripe pro odbavení plateb.
-    - **Týden 3–4 (Tuning & Exporty):** Vyladění samotných koeficientů rovnice pro "línou a dlouhou" tekutinu (široké paměťové kanály `φ` vhodné pro dálnice). Vytvořit skript pro vyhlazení a převod nasbírané heat-mapy do CAD / SVG vektorů.
-- **Strategie monetizace (SaaS Byznys model):**
-    - **The Teaser:** Každému umožnit zdarma nahrát mapu a spočítat trasu. Uživateli na obrazovce vykreslovat prvních padesát kroků krásnou organickou animaci ("hledání kaňonů"), pak zastavit a zobrazit celkový výsledek jen v rozmazaném rozlišení nebo s vodoznaky. Zákazník vidí vizuální magii, ale samotný inženýrský podklad nemá, dokud nezaplatí.
-    - **Pay-wall přes Vektory:** Platební brána podmiňuje odemčení možnosti Export do vektorů, High-Res CAD SVG vrstev (to, co urbanista reálně potřebuje).
-    - **Pay-per-Project / Předplatné:** Kredity pro studenty / nezávislé freelancery (cca 10 $ za výpočet složité mapy a vektor) nebo měsíční SaaS tarify (tj. 99 $ / měsíc pro profesionální architektonická studia).
-
-### 🔲 37. Krizový management a modelování evakuací s efektem paniky (Zácpa jako fyzikální limit)
-- **Use-case:** Nástroj pro krizové štáby a pořadatele velkých festivalů. Simulace úniku davu lidí (nebo přesunu kolon vozidel při povodních) ze stadionů či městských částí. 
-- **Konkurenční výhoda:** Dnešní evakuační simulace používají tzv. mikrosimulace, kde se musí propočítávat pozice a rozhodování desítek tisíc jednotlivých agentů (velmi drahé a pomalé na výpočet). Lineum používá **lokální tlak a přetížení kapacity buněk** jako přirozenou vlastnost pole `φ`. Jakmile se naplní zúžený východ (přetlak φ), další vlna lidí/aut (`ψ`) se sama plynule přelije a hloubí záchranné cesty jinde. Realisticky modeluje efekt hromadící se "zácpy" či paniky jako ztvrdnutí pole, a to extrémně vizuálně a výpočetně levně přes obyčejnou matematiku tenzorů.
-
-### 🔲 38. Real-time Mutace a Evoluční Adaptace prostředí (Interactive Kappa) #hypothesis #applied
-- **Kontext:** Dosavadní výpočty cesty počítaly se statickou mapou překážek (propustností pole `κ`). Reálný svět se ale během přesunu může fundamentálně a nárazově změnit (spadlý most, pohybující se hurikán, mutace viru u pacienta). 
-- **Hypotéza (Lineum):** Dynamická změna matice `κ` uvnitř běžícího výpočtu Linea (Eq-4) plně a nativně nasimuluje chování evoluce a přírodního výběru. Vlny toku `ψ` nepředpokládají fixní budoucnost. Jakmile se objeví nová zeď/překážka uprostřed ustáleného toku ("náhlá mutace" nebo vnější zásah uživatele štětcem/videem), vlna se roztříští a část její energie odrazem automaticky objeví nové záchranné cestičky. Tlak, který původně běžel hlavním kanálem, je donucen adaptovat existující podřadné větve (redundanci) na novou hlavní dálnici.
-- **Parametrické Předvolby (Presety) pro plošné využití:** 
-    Aplikace nabídne uživatelům vizualizace podle různých fyzikálních / provozních scénářů pouhou změnou parametrů Lineum rovnice (vizkozita, šum, paměť `φ`):
-    1.  **Režim "Pomalý Med / Silné Dálnice" (Urbanismus):** Dlouhý half-life `φ`. Stopy nezanikají. Systém preferuje slučování desítek malých cest do jedné centrální magistrály s obrovskou setrvačností.
-    2.  **Režim "Křehké Vlásečnice" (Cévní oběh / Zavlažování):** Vysoký šum a krátká paměť `φ`. Tok z jednoho bodu se rozštípí na miliony drobných cestiček pod úhlem 137.5°, snaží se pokrýt (vyživit) co největší plochu 2D prostoru.
-    3.  **Režim "Panický Dav" (Evakuace):** Krátká setrvačnost lokálního tlaku. Při sebemenším zaplnění kapacity začne propustnost "tvrdnout" a tok chaoticky uniká do úplně všech volných okolních stran, ignorujíc optimalitu.
-    4.  **Režim "Blesk / Průraz" (Dielektrikum / Elektřina):** Brutální tlakový gradient. Řečiště `ψ` ignoruje malé překážky a snaží se hrubou silou propálit tu nejrovnější linku přes lokální minima v `κ`.
-- **Konkrétní příklady využití v reálném čase a průmyslu:**
-    - **Urbanismus a Civilní inženýrství:** Modelování nejlevnějších vodních kanálů, silnic a kanalizačních stok v novém horském terénu. Simulace dopravního kolapsu po uzavírce mostu ve špičce.
-    - **Telekomunikace a Generativní návrh antén (Fraktální design):** Současné LTE/5G/Wi-Fi antény v mobilních telefonech používají fraktální tvary pro dosažení širokopásmovosti a snížení rozměrů. Rozlití Linea s obrovským paměťovým odporem `φ` z jednoho bodu do neutrálního okolí přirozeně vyhloubí nesmírně komplexní přírodní fraktální vzory. Jejich oříznutím prahovou hodnotou lze generovat a 3D tisknout tvarově originální měděné antény, které nemají geometricky umělou "zubatou" strukturu, ale dokonale plynulou rezonanční křivku, a umí tak přijímat najednou více vlnových délek.
-    - **Mikroelektronika a Návrh Procesorů (Semiconductor Routing):** Spojování miliard tranzistorů uvnitř křemíkových procesorů pomocí "A* algoritmu" nebo pravoúhlých mikrovláken narušuje s rostoucí frekvencí signál (pravoúhlý roh drátu funguje nechtěně jako anténa a ruší ostatní cesty indukčně). "Lineum solver" by na úrovni mikrometrických matric vygeneroval organické zakřivené propojky, naprosto přírodní síť z bodu A do B, tak jako to dělají větve, bez ostrých rohů a s přirozenou distribuční efektivitou.
-    - **Lékařství (Cévní By-passy):** Lékař nahraje CT řez ucpaných cév pacienta (ztvrdlé pixely v `κ`). Klikne na oblast srdce, zvolí preset "Vlásečnice". Lineum navrhne nejpřirozenější cestu pro chirurgický by-pass zdravou tkání s minimálním tlakovým odporem krve.
-    - **Zemědělství (Návrh závlahy):** Nahrání topografické mapy vyschla pole. Cíl roztáhnout kapénkovou závlahu s co nejmenším počtem uzlů a co největším plošným pokrytím.
-    - **Elektrotechnika (Návrh tištěných spojů - PCB):** Nalezení nejelegantnějších cest pro vodivé dráhy na desce tištěných spojů (Router), které nesmí křížit existující čipy, zaberou minimum mědi a sníží indukční přeslechy organickým vlněním místo ostrých 90° úhlů.
-    - **Lesnictví a Ekologie (Zvěř a Predátoři):** Simulace migračních koridorů vysoké zvěře, do které se myší nakreslí pohybující se zóny těžby dřeva nebo výskyt vlků (dynamická změna `κ`). Sledování, jak migrační cesty v pralese "mutují" a přesouvají se.
-- **Verifikace a MVP test:**
-    - Vytvořit "Live Canvas", kam lze během běhu simulace fyzicky myší dokreslovat `κ` překážky nebo pouštět video se změnami propustnosti. Analyzovat "rekonvalescensní dobu" (Adaptation Time) – kolik frejmů simulaci trvá resyntetizovat strukturu po mutaci prostředí do nového optimálního 137.5° stromu.
-
-### 🔲 39. Finanční predikce a odhad příjmů SaaS API (Projektce v CZK) #business
-- **Kontext:** B2B SaaS (Software as a Service) pro architekty, inženýry a designéry s freemium modelem (nástřel zdarma, export placený). Predikce počítá s organickým startem od nuly (0 povědomí na začátku) a postupným růstem přes komunitní marketing (LinkedIn, fóra, Reddit pro urbanisty).
-- **Fáze 1: Záběh (Měsíc 1–3) – Cíl: "Proof of Concept"**
-    - Povědomí je nulové. Probíhá tzv. "Cold Outreach" na architektonická studia a sdílení vizuálně fascinujících GIFů z Linea na sockách (r/urbanplanning, Twitter).
-    - **Příjmy:** 0 Kč – 5 000 Kč / měsíc. (Pouze první "early adopters" kupující Pay-per-Project kredity za 10 $ / 230 Kč na zkoušku plného high-res exportu do CAD).
-- **Fáze 2: Trakce (Měsíc 6) – Cíl: První pravidelní předplatitelé**
-    - Marketing se chytá díky virálnímu efektu "podívejte se jak to samo roste". Nástroj začínají používat první menší studia na pravidelné bázi (SaaS model 99 $ / 2 300 Kč měsíčně).
-    - **Předpoklad:** 5 malých studií (SaaS) + 100 občasných uživatelů (Kredity).
-    - **Příjmy (MRR - Monthly Recurring Revenue):** 11 500 Kč (SaaS) + 23 000 Kč (Kredity) = cca **35 000 Kč / měsíc**.
-- **Fáze 3: Expanze a SEO (Rok 1) – Cíl: Stabilní business**
-    - Vybudovaná SEO autorita (články "Generative Urban Design with Physics"). Aplikace má jméno v mezinárodní komunitě. Firmy si nástroj předplácí dlouhodobě na koncepční fáze tendrů.
-    - **Předpoklad:** 50 platících studií (SaaS) + 300 projektových uživatelů. První testovací 1 Enterprise klient (např. developerská korporace za 499 $ / 11 500 Kč měsíčně).
-    - **Příjmy:** 115 000 Kč (SaaS) + 69 000 Kč (Kredity) + 11 500 Kč (Enterprise) = cca **195 000 Kč / měsíc**.
-- **Fáze 4: Průmyslový standard (Rok 2–3) – Cíl: B2B API Integrace**
-    - Kromě samotného webu začínáme prodávat "Lineum Engine API" třetím stranám (výrobci softwaru pro zdravotnictví, GIS, evakuační simulátory), kteří naše vlnové řešení na pozadí tahají do svých komerčních programů.
-    - **Předpoklad:** 150+ SaaS studií po celém světě, 10+ velkých API Enterprise kontraktů.
-    - **Příjmy:** 345 000 Kč (SaaS) + 115 000 Kč (Enterprise) = cca **500 000 Kč až 1 000 000 Kč / měsíc**.
-- **Zhodnocení:** Marže u SaaS enginů tohoto typu je obrovská (náklady jsou pouze na GPU cloud servery počítající tensorové matice a poplatky za platební bránu Stripe). Při 200 aktivních klientech mohou čisté zisky přesahovat 80 %.
-
-### 🔲 40. Meta-Hypotéza: Vesmír jako emergentní solver (Computational Universe) #philosophy #theory
-- **Kontext:** Zkusíme-li simulovat v rovnici Eq-4 dopravní sítě měst tak, že simulaci "necháme žít" a spolehneme se na její přirozené nalezení cesty nejmenšího odporu přes paměť zácpy a Fibonnaciho větvení, vytváří to přirozenou analogii vůči struktuře našeho reálného Vesmíru.
-- **Hypotéza (Lineum):** Náš fyzikální vesmír pravděpodobně funguje na tomtéž "vyhledávacím" principu. Hypotéza navazuje na myšlenky Setha Lloyda (Vesmír jako kvantový počítač) a tvrdí, že hmota, hvězdy a galaxie nejsou cílem samotným, ale pouze nejefektivnější emergentní kanály a uzly, kterými Vesmír maximalizuje tok (nebo rozptyl entropie ze zdroje / Velkého třesku) přes prostor (propustnost `κ`). Jsme simulací vlastních fyzikálních parametrů; my i Fibonacciho spirály v přírodě jsme dokladem toho, že Vesmír nepřetržitě a optimálně "počítá řešení" na neustále se měnící vstupní hodnoty odporu prostředí. 
-- **Ověření do budoucna (Výpočty):**
-    - Nastavit experiment, kde necháme běžet hydrodynamický design nad extrémně složitou sítí `κ`, až se objeví struktury nápadně podobné uspořádání galaktické pavučiny (Cosmic Web) a filamentů temné hmoty. Otestovat, zda propustnost informací (z pohledu teorie grafů) v "lineum galaktické pavučině" tvoří matematicky nejdokonalejší small-world síť.
+### 🔲 35. Hypothesis: Hardware Acceleration and Neuromorphic "Lineum Chip" #impl #hardware
+- **Context:** Running Lineum (Eq-4) as a continuous wave simulation on standard CPUs/GPUs for solving optimization tasks is possible, but iterating massive matrices for every "pixel" on a standard von Neumann architecture is computationally expensive compared to specialized software graph solvers. However, the mathematical essence of Lineum (waves, interference, inertia, local integrals) is extremely suited for physical parallel computing.
+- **Hypothesis (Lineum):** Physical realization of Lineum in dedicated hardware eliminates the overhead of discrete numerical discretization and instruction sets. By converting Eq-4 into circuits (FPGA, array networks, ASIC) throughput corresponding to orders of physical propagation time in real material can be achieved.
+- **Verification (Maker approach):**
+    - Design and test a proof-of-concept implementation of the Lineum kernel on accessible current architecture hardware – primarily as an **FPGA** (Field-Programmable Gate Array) design.
+    - Test the speed of the "hard-wired" field update `ψ` and `φ` (e.g., parallel bitwise / fixed-point operations over memory cells) against a high-performance software CUDA implementation. Find out at what grid resolution the homebrew "Lineum chip" starts crushing classical GPUs in throughput of steps per second while validating simulated iteration cost against deep learning graph AI algorithms.
 
 ---
 
-## 🌐 R. Portál a Infrastruktura (Milníky do budoucna)
+## 🏗️ T. Candidates for First Real Applications (API & SaaS Software) #applied
 
-Tato sekce obsahuje úkoly související s webovou prezentací a technickým zázemím projektu, které nejsou kritické pro model, ale jsou nutné pro veřejné nasazení.
+This section gathers concrete commercial and tool uses where Lineum (even in its current software GPU/CPU form) could innovate the market despite the existence of established discrete/graph algorithms.
 
-- [x] Přidat odkaz na Laboratoř do hlavního menu Portálu
-- [ ] **Zabezpečení přístupu (Gatekeeper)**:
-    - Implementovat JWT-based přihlašování na Portálu.
-    - Vytvořit proxy vrstvu pro Laboratoř, která bude vyžadovat platný token pro přístup k JSON datům.
-    - Definovat role (Auditor, Scientist) a omezit viditelnost diagnostických dat.
-- [ ] **Správa konfigurace a tajných údajů (Secrets)**:
-    - Přejít z lokálních `.env` souborů na vzdálenou správu (např. DigitalOcean App Platform Secrets).
-    - Zajistit, že žádné citlivé klíče nebo privátní URL nejsou v Git repozitáři.
-- [ ] **Hosting a Deployment**:
-    - Vybrat a nastavit finální hosting (DigitalOcean / Vercel / Cloudflare).
-    - Nastavit CI/CD pipeline pro automatické nasazení po pushi do `main`.
+### 🔲 36. Generative Urban Design & Continuous Corridor Planning (MVP Candidate No. 1)
+- **Use-case:** Software tool (API with web interface) for urban planners, developers, or architects. The user uploads an elevation/obstacle map (permeability) into the environment field `κ`. They click the points between which traffic volume should flow. Lineum uses continuous hydrodynamics (fluid `ψ` with memory `φ`) to let the ideal path of new roads or trails organically "carve" itself out.
+- **Competitive Advantage:** Standard AI and GIS tools (like Spacemaker) look for paths only by modifying fixed roads. Lineum finds fractally natural canyons, preserves diversified minor bypass capillaries (redundancy), and naturally respects the fluid nature of the load (terrain resistance) without needing to program and train complex deep neural networks. This would fundamentally cheapen the conceptual study and greenfield corridor design phase.
+- **Implementation MVP Plan (2–4 weeks):**
+    - **Week 1 (Backend & Wrapper):** Wrap the `lineum.py` core into an asynchronous web API (e.g., FastAPI). Add the ability to read grayscale images (topography) direct into the environment field `κ` at input. Modify the `ψ` wave launcher for exact points of interest (A -> B traffic flow) instead of area noise.
+    - **Week 2 (Svelte Frontend):** Create a clean interactive web canvas for the user to drag&drop the map and "click dots". Deploy Stripe integration for payment processing.
+    - **Weeks 3–4 (Tuning & Exports):** Tune the actual equation coefficients for a "lazy and long" fluid (wide `φ` memory channels suitable for highways). Create a script to smooth and convert the collected heat-map into CAD / SVG vectors.
+- **Monetization Strategy (SaaS Business model):**
+    - **The Teaser:** Allow everyone to upload a map and calculate a route for free. Render the first fifty steps for the user on screen as a beautiful organic animation ("seeking canyons"), then stop and show the overall result only in blurred resolution or with watermarks. The customer sees visual magic but doesn't have the actual engineering data until they pay.
+    - **Pay-wall via Vectors:** The payment gateway unlocks the "Export to Vectors, High-Res CAD SVG layers" option (what the planner actually needs).
+    - **Pay-per-Project / Subscriptions:** Credits for students / independent freelancers (~$10 for calculating a complex map and vector) or monthly SaaS tiers (e.g., $99/month for professional architectural studios).
+
+### 🔲 37. Crisis Management and Evacuation Modeling with Panic Effect (Traffic Jam as a Physical Limit)
+- **Use-case:** Tool for crisis staffs and large festival organizers. Simulating crowd escape (or movement of vehicle convoys during floods) from stadiums or city districts.
+- **Competitive Advantage:** Today's evacuation simulations use so-called micro-simulations, calculating the positions and decision-making of tens of thousands of individual agents (very expensive and slow to compute). Lineum uses **local pressure and topological cell capacity overload** as a natural property of the `φ` field. The moment a narrowed exit fills up (φ overpressure), the next wave of people/cars (`ψ`) smoothly spills over and carves out rescue paths elsewhere. It realistically models the effect of an accumulating "traffic jam" or panic as field hardening, visually spectacular and computationally cheap using ordinary tensor mathematics.
+
+### 🔲 38. Real-time Mutation and Evolutionary Environmental Adaptation (Interactive Kappa) #hypothesis #applied
+- **Context:** Previous path calculations relied on a static obstacle map (field permeability `κ`). But the real world can fundamentally and suddenly change during transit (a fallen bridge, a moving hurricane, patient virus mutation).
+- **Hypothesis (Lineum):** Dynamic change of the `κ` matrix inside a running Lineum computation (Eq-4) fully and natively simulates the behavior of evolution and natural selection. Waves of `ψ` flux do not assume a fixed future. As soon as a new wall/obstacle appears in the middle of a steady flow ("sudden mutation" or external brush/video intervention by the user), the wave shatters, and part of its rebounding energy automatically discovers new escape paths. The pressure originally running through the main channel is forced to adapt existing inferior branches (redundancy) into a new main highway.
+- **Parametric Presets for Area Use:**
+    The application will offer users visualizations based on different physical/operational scenarios merely by changing Lineum equation parameters (viscosity, noise, `φ` memory):
+    1.  **"Slow Honey / Strong Highways" Regime (Urban Planning):** Long `φ` half-life. Trails don't disappear. The system prefers merging dozens of small paths into one central artery with enormous inertia.
+    2.  **"Fragile Capillaries" Regime (Vascular Circulation / Irrigation):** High noise and short `φ` memory. The flow from a single point splits into millions of tiny paths at a 137.5° angle, trying to cover (nourish) the largest possible area of 2D space.
+    3.  **"Panic Crowd" Regime (Evacuation):** Short local pressure inertia. At the slightest capacity fill, permeability starts to "harden," and the flow chaotically escapes into all available surrounding directions, ignoring optimality.
+    4.  **"Lightning / Breakthrough" Regime (Dielectric / Electricity):** Brutal pressure gradient. The `ψ` riverbed ignores small obstacles and tries to brutally burn the straightest line across local minima in `κ`.
+- **Concrete specific real-time and industry use cases:**
+    - **Urbanism and Civil Engineering:** Modeling the cheapest water channels, roads, and sewers in new mountainous terrain. Simulating traffic collapse after a bridge closure during rush hour.
+    - **Telecommunications and Generative Antenna Design (Fractal design):** Current LTE/5G/Wi-Fi antennas in mobile phones use fractal shapes to achieve broadband and reduce dimensions. Releasing Lineum with an enormous memory resistance `φ` from one point into a neutral environment naturally carves out immensely complex natural fractal patterns. Cropping them with a threshold can generate and 3D print uniquely shaped copper antennas that do not have geometrically artificial "jagged" structures but perfectly smooth resonance curves, capable of receiving multiple wavelengths simultaneously.
+    - **Microelectronics and Processor Design (Semiconductor Routing):** Connecting billions of transistors inside silicon processors using the "A* algorithm" or rectangular microfibers inherently disrupts the signal at rising frequencies (the rectangular corner of a wire accidentally acts as an antenna and inductively disrupts other paths). On a micrometric matrix level, the "Lineum solver" would generate organic curved interconnects, a perfectly natural network from point A to B, just like branches do, without sharp corners and with natural distribution efficiency.
+    - **Medicine (Vascular By-passes):** A doctor uploads a patient's CT slice of clogged vessels (hardened pixels in `κ`). Clicks the heart area, selects the "Capillaries" preset. Lineum proposes the most natural path for a surgical bypass through healthy tissue with minimal blood pressure resistance.
+    - **Agriculture (Irrigation design):** Uploading a topographic map of a dried field. Goal: stretch drip irrigation with the fewest nodes and largest area coverage.
+    - **Electrical Engineering (PCB Routing):** Finding the most elegant paths for conductive tracks on a printed circuit board (Router), which must not cross existing chips, take up minimal copper, and reduce induction cross-talk through organic waving instead of sharp 90° angles.
+    - **Forestry and Ecology (Wildlife and Predators):** Simulating migration corridors for deer, into which moving logging zones or wolf presence are drawn with a mouse (dynamic `κ` change). Watching how migration paths in the primary forest "mutate" and shift.
+- **Verification and MVP test:**
+    - Create a "Live Canvas" where one can physically mouse-draw `κ` obstacles during simulation runtime or feed a video with permeability changes. Analyze the "Adaptation Time" – how many frames it takes the simulation to resynthesize the structure after an environmental mutation into a new optimal 137.5° tree.
+
+### 🔲 39. Financial Prediction and SaaS API Revenue Estimation (CZK Projection) #business
+- **Context:** B2B SaaS (Software as a Service) for architects, engineers, and designers with a freemium model (rough draft free, export paid). The prediction assumes organic start from zero (0 awareness at the beginning) and gradual growth via community marketing (LinkedIn, forums, Reddit for urban planners).
+- **Phase 1: Spin-up (Months 1–3) – Goal: "Proof of Concept"**
+    - Awareness is zero. "Cold Outreach" to architecture studios and sharing visually fascinating Lineum GIFs on socials (r/urbanplanning, Twitter) is underway.
+    - **Revenue:** 0 CZK – 5,000 CZK / month. (Only the first "early adopters" buying Pay-per-Project credits for $10 / 230 CZK as a trial for full high-res CAD export).
+- **Phase 2: Traction (Month 6) – Goal: First regular subscribers**
+    - Marketing catches on thanks to the viral effect of "look how it grows by itself". Smaller studios begin using the tool regularly (SaaS model $99 / 2,300 CZK monthly).
+    - **Assumption:** 5 small studios (SaaS) + 100 occasional users (Credits).
+    - **Revenue (MRR - Monthly Recurring Revenue):** 11,500 CZK (SaaS) + 23,000 CZK (Credits) = approx. **35,000 CZK / month**.
+- **Phase 3: Expansion and SEO (Year 1) – Goal: Stable business**
+    - Established SEO authority ("Generative Urban Design with Physics" articles). The application has a name in the international community. Firms subscribe to the tool long-term for conceptual tender phases.
+    - **Assumption:** 50 paying studios (SaaS) + 300 project users. First test 1 Enterprise client (e.g., development corporation for $499 / 11,500 CZK monthly).
+    - **Revenue:** 115,000 CZK (SaaS) + 69,000 CZK (Credits) + 11,500 CZK (Enterprise) = approx. **195,000 CZK / month**.
+- **Phase 4: Industry Standard (Years 2–3) – Goal: B2B API Integration**
+    - Besides the web itself, we begin selling the "Lineum Engine API" to third parties (medical software manufacturers, GIS, evacuation simulators), who pull our background wave solution into their commercial programs.
+    - **Assumption:** 150+ SaaS studios worldwide, 10+ large API Enterprise contracts.
+    - **Revenue:** 345,000 CZK (SaaS) + 115,000 CZK (Enterprise) = approx. **500,000 CZK to 1,000,000 CZK / month**.
+- **Evaluation:** The margin for SaaS engines of this type is massive (costs are only for GPU cloud servers computing tensor matrices and Stripe payment gateway fees). With 200 active clients, net profits can exceed 80%.
+
+### 🔲 40. Meta-Hypothesis: Universe as an Emergent Solver (Computational Universe) #philosophy #theory
+- **Context:** If we try to simulate city traffic networks in Eq-4 by letting the simulation "live" and relying on its natural finding of the path of least resistance through traffic jam memory and Fibonacci branching, it creates a natural analogy to the structure of our real Universe.
+- **Hypothesis (Lineum):** Our physical universe likely operates on the exact same "search" principle. The hypothesis builds upon Seth Lloyd's ideas (Universe as a quantum computer) and asserts that matter, stars, and galaxies are not the goal itself, but merely the most efficient emergent channels and nodes by which the Universe maximizes flow (or dissipates entropy from the source / Big Bang) across space (permeability `κ`). We are a simulation of our own physical parameters; we, and the Fibonacci spirals in nature, are proof that the Universe continuously and optimally "computes solutions" to constantly changing input values of environmental resistance.
+- **Future Verification (Computations):**
+    - Set up an experiment where we let hydrodynamic design run over an extremely complex `κ` network until structures strikingly similar to the Cosmic Web and dark matter filaments appear. Test if the information throughput (from the perspective of graph theory) in the "lineum galactic web" forms a mathematically perfect small-world network.
+
+---
+
+## 📈 S. B2B SaaS Routing Showcase (Plan) #portal #monetization #routing
+
+This section defines the requirements and architecture for the new main Lineum Swarm Routing demonstration page (MVP), which is transitioning from a free "laboratory sandbox" to a B2B "Demo & Sell" landing page.
+
+- [ ] **S.1 Split-Screen: Scientific Comparison (Multi-Algorithm Benchmark)**
+    - Transform the view into a comparative layout of 2-3 windows side-by-side (strictly stacked on mobile).
+    - Lineum Eq-4 will run in one window, standard rigid solutions (A*, Dijkstra) in the others.
+    - Ensure strict objectivity of the display (do not artificially disparage competing algorithms; if they crash or freeze, it must be their native behavior, not a hardcoded handicap).
+    - Explicitly display a "Hardware Fairness Badge" above the windows (e.g. *1x vCPU 2.4GHz, 512MB RAM*), guaranteeing identically allocated power for the methods.
+
+- [ ] **S.2 Instant WOW Effect vs. Live Verification (Live Run)**
+    - Upon opening a Use-Case (e.g. Logistics), the page instantly shows a pre-generated simulation loop and target comparison (Ms). The user immediately sees the result without tying up a backend computing tab.
+    - Crucial CTA "Run Live Verification": by clicking, the user forces a real, live test on the backend.
+    - **Interactive Scrubbing:** Introduce a slider (timeline) for synchronous scrubbing back and forth through the run history of all algorithms simultaneously.
+    - **Backend Protection (Railway Credits):** Live verification must be subject to a strict rate-limit (session/IP limiter) and robust API caching to prevent unintentional or malicious exhaustion of computation credits (DDoS demo protection). Long runs must fail-fast on timeout before choking the worker.
+
+- [ ] **S.3 ROI Calculator and Monetization (Business Cases)**
+    - Once the comparison shows a victory in speed (TTC), it must translate into a comprehensible demonstration of business value (Estimated Annual Savings sliders).
+    - **Ticking Cost:** A real-time counter showing the $ waste while A* runs (with a clearly defined computation source, e.g. server watts or lost driver time).
+    - **PDF Case Study:** Ability to generate and download a custom 1-page PDF report with savings charts for a specific client.
+    - Fully secure free exports: Links to Export JSON, API blueprint, or importing custom maps are subject to a Paywall / "Upgrade to Enterprise" inquiry form. None of the valuable production data can go out for free.
+
+- [ ] **S.4 Industry-focused Demoscenes**
+    - Pre-prepare scenarios matching real-world use-cases:
+        1. Warehouse Last-Mile (Logistics/Robots - AGV rovers).
+        2. Urban Traffic Swarm (City traffic jams / autonomous taxis).
+        3. Evacuation / Crowd Control.
+        4. Circuit Routing (Chips/PCB).
+
+- [ ] **S.5 Responsiveness and E2E Testing**
+    - New Svelte components must be flawlessly responsive.
+    - E2E Playwright tests must exist, guaranteeing no 500 load errors and clickability of both presets and Live Verification logic.
+    - The Paywall button must be secured so it cannot be bypassed merely by DOM manipulation on the frontend.
+
+- [ ] **S.6 Developer Experience (Dynamic API Snippets)**
+    - Show the "Ease of Use" of integration straight on the frontend. Display an elegant 3-line Lineum API call snippet contrasting with the complexity of classic methods.
+    - **Crucial:** The code snippet must be dynamically loaded right from the backend from the actual `.py` file (`lineum_core`), so the code in the demo is never a "stale" hardcode.
+
+- [ ] **S.7 Portal Integration (Navigation Flow)**
+    - Create an attractive entry to the page from the main Portal Dashboard (prominent "Products: Lineum API Solutions" card).
+    - Change the URL to `/api-solutions` for stronger SaaS branding (or keep `/routing` and use an alias).
+    - Modify global navigation to reflect the transition from "sandbox" to "commercial zone" (e.g., clear Contact Sales CTA in the header).
+
+- [ ] **S.8 Enterprise Trust & Integrations (Ecosystem)**
+    - **Streaming API Highlight:** Emphasize what the viewer sees: Lineum computes continuously and sends data instantly (WebSockets streaming), instead of waiting for a "Black Box" calculation for long paths. An advantage for Real-Time fleet monitoring.
+    - **Seamless Integrations:** Show that this isn't isolated science, but a tool meant for production. Include icons of easily connected systems (Docker, Python, C++ Core, ROS – Robot Operating System, REST/GraphQL).
+    - **Social Proof / Trusted By:** Create a reusable `<LogoCloud>` component that draws data from a shared central configuration file (e.g., `src/lib/data/content/partners.json`). If the configuration file is empty, display an assertive Early Adopter B2B prompt: *"Be the first, overtake your competition. Become our first partner and secure all our products for life at cost price."* with a CTA. This component will be implemented both on the `/api-solutions` page and directly on the main index Homepage as part of this task.
+
+---
+
+## 🌐 R. Portal and Infrastructure (Future Milestones)
+
+This section contains tasks related to the web presentation and technical background of the project that are not critical to the model but are necessary for public deployment.
+
+- [x] Add link to the Laboratory in the main Portal menu
+- [ ] **Access Security (Gatekeeper)**:
+    - Implement JWT-based logins on the Portal.
+    - Create a proxy layer for the Laboratory that will require a valid token for access to JSON data.
+    - Define roles (Auditor, Scientist) and restrict the visibility of diagnostic data.
+- [ ] **Configuration and Secrets Management**:
+    - Move from local `.env` files to remote management (e.g. DigitalOcean App Platform Secrets).
+    - Ensure no sensitive keys or private URLs are in the Git repository.
+- [ ] **Hosting and Deployment**:
+    - Choose and set up final hosting (DigitalOcean / Vercel / Cloudflare).
+    - Set up a CI/CD pipeline for automatic deployment after push to `main`.
 
 > [!NOTE]  
-> Specifické frontendové úkoly a technické detaily Portálu jsou sledovány lokálně v [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
+> Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
