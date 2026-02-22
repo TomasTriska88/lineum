@@ -165,6 +165,7 @@ The highest "cross-cutting" priority across all sections is to show that observe
 | **Element 846** | **$0$** | Another perfectly balanced, highly common neutral structure. | The highest-frequency neutral (charge 0) macro-attractor. | **Silicon / Iron** (Abundant, stable). |
 | **Element 945** | **$-3$** | A massive, bloated, super-heavy structure on the brink of collapse. | The absolute maximum surviving Linon count before immediate $\nabla^2\varphi$ forced annihilation. | **Uranium / Plutonium** (Super-heavy, unstable radioactive boundaries). |
 
+           *- Note: Did we discover other elements? Yes. We discovered exactly 214 different elements (every single number spanning continuously from Element 731 to Element 945). The table above only highlights the "Noble Gases" and the extreme boundaries, much like how a real periodic table groups common elements to remain readable.*
            - **The Isotope Spread (Cosmological Charge):** The system intensely favors stability. Across 830,000+ generated fundamental particles, the net topological charge of any given mathematical universe almost never exceeds $\pm 4$. Eq-4 is a perfect, self-balancing zero-sum particle generator.
 - [ ] **[HYPOTHESIS: Emergence of the 4 Fundamental Forces (Layman's Analogy)]**
        - **Observation:** If Eq-4 is a true "universe engine", the 4 basic forces of nature must appear on their own without us coding separate rules for them. And they do! Here is how the two fields ($\psi$ and $\varphi$) naturally create them:
