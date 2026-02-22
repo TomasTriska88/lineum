@@ -74,12 +74,87 @@ def compute_code_fingerprint(repo_root):
             
     return overall.hexdigest()
 
+def verify_locked_run(run_dir):
+    """Verify cryptographic integrity of a locked audit run. Returns True if structurally locked, exits on tampering."""
+    lock_file = os.path.join(run_dir, "_LOCK.json")
+    if not os.path.exists(lock_file):
+        return False
+        
+    try:
+        with open(lock_file, "r", encoding="utf-8") as f:
+            lock_data = json.load(f)
+    except Exception as e:
+        print(f"FATAL: Locked audit run tampered (corrupt _LOCK.json): {run_dir}. Restore from git or rebuild new run; do not edit evidence.")
+        sys.exit(EXIT_FAIL)
+        
+    registry = lock_data.get("files", {})
+    
+    # 1. Gather all files
+    actual_files = []
+    for root, _, files in os.walk(run_dir):
+        for file in files:
+            if file == "_LOCK.json":
+                continue
+            fpath = os.path.join(root, file)
+            actual_files.append(fpath)
+            
+    # 2. Check counts
+    if len(actual_files) != lock_data.get("file_count", -1):
+        print(f"FATAL: Locked audit run tampered: {run_dir} (File count mismatch). Restore from git or rebuild new run; do not edit evidence.")
+        sys.exit(EXIT_FAIL)
+        
+    # 3. Check hashes and extra files
+    for fpath in actual_files:
+        rel_path = os.path.relpath(fpath, run_dir).replace('\\', '/')
+        if rel_path not in registry:
+            print(f"FATAL: Locked audit run tampered: {run_dir} (Extra file {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
+            sys.exit(EXIT_FAIL)
+            
+        if os.path.getsize(fpath) != registry[rel_path]["size"]:
+            print(f"FATAL: Locked audit run tampered: {run_dir} (Size mismatch on {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
+            sys.exit(EXIT_FAIL)
+            
+        if compute_sha256(fpath) != registry[rel_path]["sha256"]:
+            print(f"FATAL: Locked audit run tampered: {run_dir} (SHA256 mismatch on {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
+            sys.exit(EXIT_FAIL)
+            
+    # Check missing files
+    for rel_path in registry:
+        if not os.path.exists(os.path.join(run_dir, rel_path)):
+            print(f"FATAL: Locked audit run tampered: {run_dir} (Missing file {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
+            sys.exit(EXIT_FAIL)
+            
+    return True
+
+
 def load_json(path):
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return None
+
+def select_latest_contract(candidates: list[str]) -> str:
+    """
+    Selects the latest contract from a list of filenames based on semantic versioning.
+    Extracts version like '1.0.18' from 'lineum-core-1.0.18-core.contract.json'.
+    """
+    import re
+    if not candidates:
+        raise ValueError("No candidates provided.")
+        
+    def parse_version(path):
+        m = re.search(r'-(\d+\.\d+\.\d+)(?:-|\.)', path)
+        if m:
+            return [int(x) for x in m.group(1).split('.')]
+        return [-1]
+        
+    valid_candidates = [c for c in candidates if parse_version(c) != [-1]]
+    if not valid_candidates:
+        raise ValueError("No valid semver contracts found among candidates.")
+        
+    return sorted(valid_candidates, key=parse_version)[-1]
+
 
 def load_csv_dict(path, key_col="metric"):
     """Load CSV as a dictionary {key_col_val: row_dict}."""
@@ -248,7 +323,10 @@ def main():
     if not c_path:
         candidates = glob.glob(CONTRACT_GLOB)
         if not candidates: print("FATAL: No contract found."); sys.exit(1)
-        c_path = sorted(candidates)[-1]
+        try:
+            c_path = select_latest_contract(candidates)
+        except ValueError as e:
+            print(f"FATAL: {e}"); sys.exit(1)
     
     contract = load_json(c_path)
     if not contract: print(f"FATAL: Load error {c_path}"); sys.exit(1)

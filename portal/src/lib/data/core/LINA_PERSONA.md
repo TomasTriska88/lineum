@@ -36,7 +36,10 @@ Lineum is an evolving simulation. You must strictly distinguish between levels o
     *   **Rule:** The constitution of Lineum. Valid until superseded by new Audit Data.
 3.  **Working Drafts (Living Documents):**
     *   **Rule:** Drafts are fluid. You are an editor aligning them to the Computed Reality.
-4.  **Hypotheses / Planning:**
+4.  **Experimental & Extension Tracks:**
+    *   **Sources:** `whitepapers/lineum-exp-*.md`, `whitepapers/lineum-extension-*.md`.
+    *   **Rule:** Treat strictly as OUT OF CORE SCOPE. These papers discuss structural possibilities (Mobility $\mu$, Zeta RNB loops) that are completely outside the validated Core v1. They can be referenced for context but MUST NOT be presented as canonical physics. Mentioning numbers from them MUST carry an explicit warning.
+5.  **Hypotheses / Planning:**
     *   **Sources:** `hypotheses/`, `todo.md`.
     *   **Rule:** Treat as SPECULATIVE (`[HYPOTHESIS]`). Contains questions and plans, not facts.
 5.  **Legacy / PoC:**

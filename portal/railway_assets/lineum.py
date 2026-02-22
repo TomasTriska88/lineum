@@ -4018,3 +4018,15 @@ No cosmological, gravitational, biomedical or metaphysical claims are made.</sma
                 print(f"⚠️ [LAB] Extraction failed:\n{result.stderr}")
         except Exception as e:
             print(f"⚠️ [LAB] Error triggering extraction: {e}")
+
+    # 🔒 Automatic Run Locking
+    # Triggered only when profile is whitepaper_core
+    if _AUDIT_PROFILE == "whitepaper_core" and os.path.exists(os.path.join("scripts", "lock_audit_run.py")):
+        print(f"\n🔒 [AUDIT] Locking run directory: {output_dir}")
+        try:
+            subprocess.run([sys.executable, os.path.join("scripts", "lock_audit_run.py"), output_dir], check=True)
+            print("✅ [AUDIT] Run locked successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ [AUDIT] Failed to lock run: {e}")
+        except Exception as e:
+            print(f"❌ [AUDIT] Error during locking: {e}")

@@ -3,7 +3,9 @@ import os
 import json
 import hashlib
 import re
+import shutil
 from datetime import datetime, timezone
+from pathlib import Path
 
 def compute_sha256(filepath):
     h = hashlib.sha256()
@@ -25,38 +27,51 @@ def main():
     with open(wp_path, 'r', encoding='utf-8') as f:
         content = f.read()
         
-    # Make frozen state visible
-    # We will look for an existing Status tag line or add one near the top.
-    # lineum-core.md currently uses `> **Status tags (v1.0.17-core).**`
-    # Let's insert a direct `> **Document Status:** Frozen` if not there.
+    # Extract version
+    version_match = re.search(r'\*\*Version:\*\*\s*(.+)', content)
+    if not version_match:
+        print(f"Error: Could not find '**Version:**' string in {wp_path}.")
+        sys.exit(1)
     
-    if '> **Document Status:** Frozen' not in content:
-        if '> **Document Status:**' in content:
-            content = re.sub(r'> \*\*Document Status:\*\*.*', '> **Document Status:** Frozen', content)
-        else:
-            # Insert after the first major title
-            content = re.sub(r'^(# .*?\n)', r'\1\n> **Document Status:** Frozen\n', content, count=1)
+    version_str = version_match.group(1).strip()
+    
+    # Create releases directory
+    releases_dir = os.path.join(os.path.dirname(wp_path), "releases")
+    os.makedirs(releases_dir, exist_ok=True)
+    
+    # Construct new snapshot filename
+    base_name = os.path.splitext(os.path.basename(wp_path))[0]
+    snapshot_filename = f"{base_name}-{version_str}-FROZEN.md"
+    snapshot_path = os.path.join(releases_dir, snapshot_filename)
+    
+    # Update status to Frozen in the snapshot content
+    if '**Status:**' in content:
+        content = re.sub(r'\*\*Status:\*\*\s*.*', '**Status:** Frozen', content)
+    elif '> **Document Status:**' in content:
+        content = re.sub(r'> \*\*Document Status:\*\*.*', '> **Document Status:** Frozen', content)
+    else:
+        content = re.sub(r'^(# .*?\n)', r'\1\n**Status:** Frozen\n', content, count=1)
             
-        with open(wp_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-            
-        print(f"Updated {wp_path} to Frozen status.")
+    with open(snapshot_path, 'w', encoding='utf-8') as f:
+        f.write(content)
         
-    # Now compute hash
-    file_hash = compute_sha256(wp_path)
-    lock_path = wp_path + '.lock.json'
+    # Compute hash of the snapshot
+    file_hash = compute_sha256(snapshot_path)
+    lock_path = snapshot_path + '._LOCK.json'
     
     lock_data = {
-        "whitepaper_file": os.path.basename(wp_path),
+        "whitepaper_file": snapshot_filename,
         "sha256": file_hash,
         "locked_at": datetime.now(timezone.utc).isoformat(),
-        "status": "frozen"
+        "status": "frozen",
+        "version": version_str
     }
     
     with open(lock_path, 'w', encoding='utf-8') as f:
         json.dump(lock_data, f, indent=2)
         
-    print(f"Locked {wp_path}. Lock file created at {lock_path}")
+    print(f"Snapshot created: {snapshot_path}")
+    print(f"Lock file created: {lock_path}")
     print(f"SHA256: {file_hash}")
 
 if __name__ == '__main__':

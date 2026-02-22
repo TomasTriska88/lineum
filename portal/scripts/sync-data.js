@@ -123,11 +123,22 @@ function copyRecursiveSync(src, dest) {
 function extractMetadata(content, filePath) {
     const fileName = path.basename(filePath);
     let status = 'Current';
+    let track = 'other';
 
     if (filePath.includes('hypotheses')) {
         status = 'Hypothesis';
     } else if (filePath.includes('whitepapers-legacy')) {
         status = 'LEGACY / UNRELIABLE'; // Explicit warning
+    } else if (filePath.includes('whitepapers')) {
+        if (fileName.startsWith('lineum-core')) {
+            track = 'core';
+        } else if (fileName.startsWith('lineum-exp')) {
+            track = 'exp';
+            status = 'EXPERIMENTAL / OUT OF CORE SCOPE — do not treat as VALIDATED';
+        } else if (fileName.startsWith('lineum-extension')) {
+            track = 'extension';
+            status = 'EXTENSION / OUT OF CORE SCOPE — do not treat as VALIDATED';
+        }
     } else if (filePath.includes('project')) {
         status = 'Project Context';
     } else if (filePath.includes('workflows')) {
@@ -136,9 +147,9 @@ function extractMetadata(content, filePath) {
         status = 'Site Structure';
     }
 
-    // Look for [STATUS: ...] or # STATUS: ...
-    const statusMatch = content.match(/\[STATUS:\s*([^\]]+)\]/i) || content.match(/#\s*STATUS:\s*([^\r\n]+)/i);
-    if (statusMatch) {
+    // Look for [STATUS: ...] or # STATUS: ... or > **Document Status:** ...
+    const statusMatch = content.match(/\[STATUS:\s*([^\]]+)\]/i) || content.match(/#\s*STATUS:\s*([^\r\n]+)/i) || content.match(/> \*\*Document Status:\*\*\s*([^\r\n]+)/i);
+    if (statusMatch && !status.includes('OUT OF CORE SCOPE')) {
         status = statusMatch[1].trim();
     }
 
@@ -146,7 +157,8 @@ function extractMetadata(content, filePath) {
         name: fileName,
         path: filePath.replace(ROOT, '').replace(/\\/g, '/'),
         status: status,
-        type: fileName.endsWith('.md') ? 'documentation' : 'code'
+        type: fileName.endsWith('.md') ? 'documentation' : 'code',
+        track: track
     };
 }
 

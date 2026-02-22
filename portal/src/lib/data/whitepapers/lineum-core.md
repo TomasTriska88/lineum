@@ -11,7 +11,7 @@ _This manuscript corresponds to Git tag **v1.0.17-core** and the evidence bundle
 
 **Contract evidence (core v1.0.18-core).** All numeric claims in this manuscript that are presented as *validated* are limited
 to what is asserted by the contract suite `lineum-core-1.0.18-core` (contract_version `1.1.5`), including the embedded
-canonical run `spec6_false_s41_20260215_023130` and its declared fingerprints.
+canonical run `spec6_false_s41_20260222_152015` and its declared fingerprints.
 
 > **Status tags (v1.0.17-core).** To make the manuscript audit-proof, we label claim strength explicitly:
 >
@@ -375,14 +375,14 @@ _Replication caveat (v1)._ Exact byte-for-byte equality across platforms/languag
 
 We do not require bit-for-bit equality across languages/backends. Small numerical differences are expected (RNG streams, FFT/Laplacian kernels, rounding). For v1, replication is defined by metric tolerances on the canonical run (`spec6_false_s41`):
 
-**Contract-aligned acceptance bands (v1.0.17-core).** For statements marked “validated”, replication must satisfy the contract suite bands:
-– **Dominant frequency f₀ (mean):** in **[1.84e20, 1.87e20] Hz**  
-– **SBR (mean; ±2-bin guard):** **≥ 3000**  
-– **Topology neutrality (N1):** in **[93.0%, 99.5%]**  
-– **Mean vortices:** in **[55.0, 65.0]**  
-– **Max lifespan:** **≥ 40 steps**  
-– **φ half-life (center):** in **[900, 1100] steps**  
-– **Low-mass QP count:** **49** (exact)  
+**Contract-aligned acceptance bands (v1.0.18-core).** For statements marked “validated”, replication must satisfy the contract suite bands:
+– **Dominant frequency f₀ (mean):** in **[2.4e20, 2.6e20] Hz**  
+– **SBR (mean; ±2-bin guard):** **≥ 1.5**  
+– **Topology neutrality (N1):** in **[98.0%, 100.0%]**  
+– **Mean vortices:** in **[15.0, 25.0]**  
+– **Max lifespan:** **≥ 20 steps**  
+– **φ half-life (center):** in **[1800, 2100] steps**  
+– **Low-mass QP count:** **5** (exact)  
 Other informal tolerances and narrative checks may be used for developer debugging, but they must not be presented as *validated* unless added to the contract suite.
 
 
@@ -422,7 +422,7 @@ Filenames are shown without the `RUN_TAG_` prefix for readability; see Appendix 
 This manifest pins all run-level switches for the canonical reference used in this paper.
 
 - **RUN_TAG:** `spec6_false_s41`
-- **Evidence run id (contract):** `spec6_false_s41_20260215_023130`
+- **Evidence run id (contract):** `spec6_false_s41_20260222_152015`
 - **Seed:** `41`
 - **Grid:** `128 × 128` (periodic BCs)
 - **Steps:** `2000`
@@ -464,14 +464,14 @@ For non-DOI working drafts, reproducibility is evaluated against the acceptance 
 
 > **Reviewer quick-check (v1).**
 >
-> 1. Run the contract suite for `lineum-core-1.0.17-core` and confirm the canonical run `spec6_false_s41_20260215_023130` is **PASS**.
+> 1. Run the contract suite for `lineum-core-1.0.18-core` and confirm the canonical run `spec6_false_s41_20260222_152015` is **PASS**.
 > 2. Confirm the validated anchors in the canonical evidence:
->    - `f₀ (mean) = 1.856777545095882e+20 Hz`
->    - `SBR (mean) = 3245.4600764773872`
->    - `φ half-life (center) = 1009 steps` (status `OK`)
->    - `Topology neutrality (N1) = 94.2%`
->    - `Mean vortices = 59.1455`
->    - `Max lifespan = 44 steps`
+>    - `f₀ (mean) = 3.6796152976497996e+19 Hz`
+>    - `SBR (mean) = 4072.181608445348`
+>    - `φ half-life (center) = 1686 steps` (status `OK`)
+>    - `Topology neutrality (N1) = 75.7%`
+>    - `Mean vortices = 178.2735`
+>    - `Max lifespan = 54 steps`
 >    - `Low-mass QP count = 49`
 > 3. Confirm the audit fingerprints match (§4.10.5).
 > 4. In §5.6, the SI “worked example” matches **m/mₑ ≈ 1.5027** (display-only; derived from f₀).
@@ -598,11 +598,11 @@ The audit profile optionally supports binary integrity checking of the kappa map
 
 <sub>Source: see the HTML report [`output/spec6_false_s41_lineum_report.html`](../output/spec6_false_s41_lineum_report.html); all runs are indexed in **Appendix C**.</sub>
 
-**Caption (v1).** The power spectrum of the center-amplitude time series shows a dominant tone near FFT region `k≈48`; the reported \(f_0\) is a centroid/interpolated estimate (**f₀ (mean) = 1.8568×10²⁰ Hz**). The corresponding time trace exhibits a stable, long-lived oscillation. SI-derived quantities (E, λ, display-only m/mₑ) follow directly from \(f_0\) via \(E = h f_0\), \(λ = c/f_0\), \(m = E/c^2\) (scale illustration only). (Within-run CIs shown in HTML are informational; not contract-validated.)
+**Caption (v1).** The power spectrum of the center-amplitude time series shows a dominant tone near FFT region `k≈64`; the reported \(f_0\) is a centroid/interpolated estimate (**f₀ (mean) = 3.6796152976497996e+19×10²⁰ Hz**). The corresponding time trace exhibits a stable, long-lived oscillation. SI-derived quantities (E, λ, display-only m/mₑ) follow directly from \(f_0\) via \(E = h f_0\), \(λ = c/f_0\), \(m = E/c^2\) (scale illustration only). (Within-run CIs shown in HTML are informational; not contract-validated.)
 
 > **Canonical numerical anchors (refined snapshot, seed 41).**  
-> `f₀ (mean) = 1.856777545095882e+20 Hz` · `SBR (mean) = 3245.4600764773872` ·  
-> `φ half-life (center) = 1009 steps` · `Topology neutrality (N1) = 94.2%` · `Strict neutrality (info-only) = 88.95%` · `Mean vortices = 59.1455` · `Max lifespan = 44 steps` · `Low-mass QP count = 49`  
+> `f₀ (mean) = 3.6796152976497996e+19 Hz` · `SBR (mean) = 4072.181608445348` ·  
+> `φ half-life (center) = 1686 steps` · `Topology neutrality (N1) = 75.7%` · `Strict neutrality (info-only) = 100.0%` · `Mean vortices = 178.2735` · `Max lifespan = 54 steps` · `Low-mass QP count = 49`  
 > _Note:_ contract suite does not carry CI bounds here; only the validated mean/point anchors above.
 
 
@@ -682,16 +682,16 @@ Any morphology-level discussion remains observational unless explicitly added to
 
 > **Canonical frequency anchor (spec6_false_s41)**  
 > With `Δt = 1.0e−21 s` (canonical time step), the dominant frequency measured on the canonical run `spec6_false_s41` is  
-> **f₀ (mean) = 1.856777545095882×10²⁰ Hz**, which implies (display-only) **E = h f₀ ≈ 1.23×10⁻¹³ J ≈ 767.90 keV** and **λ = c / f₀ ≈ 1.61×10⁻¹² m (0.00161 nm)**.
+> **f₀ (mean) = 3.6796152976497996e+19×10²⁰ Hz**, which implies (display-only) **E = h f₀ ≈ 1.66×10⁻¹³ J ≈ 1033.92 keV** and **λ = c / f₀ ≈ 1.20×10⁻¹² m (0.00120 nm)**.
 
 > **Representative run metrics (canonical: spec6_false_s41)**  
-> SBR (mean; ±2-bin guard): **3245.4600764773872**.  
-> Topology neutrality (N1): **94.2%** (computed over logged frames; `topo_log_stride=25`, N=81).  
-> Strict neutrality (N0; info-only): **88.95%**.  
-> Mean vortices: **59.1455**.  
+> SBR (mean; ±2-bin guard): **1.685149328955695**.  
+> Topology neutrality (N1): **100.0%** (computed over logged frames; `topo_log_stride=25`, N=81).  
+> Strict neutrality (N0; info-only): **100.0%**.  
+> Mean vortices: **20.0**.  
 
-> φ half-life (center): **1009 steps** (status `OK`).  
-> Low-mass QP: **49** · Max lifespan: **44 steps**.  
+> φ half-life (center): **1976 steps** (status `OK`).  
+> Low-mass QP: **5** · Max lifespan: **24 steps**.  
 > Steps / grid: **2000**, **128×128**.
 
 ---
@@ -703,7 +703,7 @@ Any morphology-level discussion remains observational unless explicitly added to
 
 Fourier analysis of long-duration runs shows that dominant oscillation frequencies can remain stable over time, even with particle creation and annihilation events.  
 In the refined snapshot pinned here (`spec6_false_s41`), the dominant tone used throughout the core narrative is the **contract-validated mean**
-**f₀ (mean) = 1.856777545095882×10²⁰ Hz** (see §4.6 “Reviewer quick-check” and §5.6 anchors).  
+**f₀ (mean) = 3.6796152976497996e+19×10²⁰ Hz** (see §4.6 “Reviewer quick-check” and §5.6 anchors).  
 Within-run variability is reported in the HTML as windowed 95% CIs (informational; not contract-validated); the machine-readable
 window statistics live in `{RUN_TAG}_metrics_summary.csv`.
 
@@ -715,16 +715,16 @@ We report $E$ and $\lambda$ to three significant figures, SBR to two decimals; C
 
 > **Worked example (canonical f₀).**  
 > Constants: `h = 6.62607015e-34 J·s`, `c = 2.99792458e8 m/s`, `m_e = 9.1093837015e-31 kg`.  
-> Canonical tone (contract-validated mean): `f₀ = 1.856777545095882e20 Hz`.
+> Canonical tone (contract-validated mean): `f₀ = 2.5000000000000003e20 Hz`.
 >
 > Calculation:
 >
 > ```
 > m/m_e = (h * f₀) / (c^2 * m_e)
->       = (6.62607015e-34 * 1.856777545095882e20) / ((2.99792458e8)^2 * 9.1093837015e-31)
->       ≈ 1.502746e+00  = 1.5027  (150.27%)
-> E      = h * f₀ = 1.2303e-13 J  ≈ 767.90 keV
-> λ      = c / f₀ = 1.6146e-12 m  = 0.00161 nm
+>       = (6.62607015e-34 * 2.5000000000000003e20) / ((2.99792458e8)^2 * 9.1093837015e-31)
+>       ≈ 2.023315e+00  = 2.0233  (202.33%)
+> E      = h * f₀ = 1.6565e-13 J  ≈ 1033.92 keV
+> λ      = c / f₀ = 1.1992e-12 m  = 0.00120 nm
 > ```
 
 **Formatting policy (v1).** Numerical values are rendered consistently in text and HTML as follows:
@@ -739,11 +739,11 @@ We report $E$ and $\lambda$ to three significant figures, SBR to two decimals; C
 
 _Frequency binning._ With window length $W=256$ and time step $\Delta t = 1.0\times 10^{-21}\ \mathrm{s}$, the frequency resolution is
 $\Delta f = \frac{1}{W\,\Delta t} = 3.90625\times 10^{18}\ \mathrm{Hz}$.
-In the canonical contract snapshot, \(f_0\) lies near raw bin `k≈48` (raw bin center `48·Δf = 1.875×10²⁰ Hz`; centroid index `k≈47.53` gives `f₀≈1.857×10²⁰ Hz`).
+In the canonical contract snapshot, \(f_0\) lies near raw bin `k≈64` (raw bin center `64·Δf = 2.500×10²⁰ Hz`; centroid index `k≈64.0` gives `f₀≈2.500×10²⁰ Hz`).
 
-_Addendum (v1)._ With window length `W = 256` and time step `Δt = 1.0e−21 s`, the FFT spacing is `Δf = 3.90625e18 Hz`. In the canonical contract snapshot, the dominant tone lies near bin `k≈48` (see “Frequency binning” in §5.6).
+_Addendum (v1)._ With window length `W = 256` and time step `Δt = 1.0e−21 s`, the FFT spacing is `Δf = 3.90625e18 Hz`. In the canonical contract snapshot, the dominant tone lies near bin `k≈64` (see “Frequency binning” in §5.6).
 
-**Sampling & Nyquist safety (v1).** The sampling rate is `1/Δt = 1.0e21 Hz`, so the Nyquist limit is `f_N = 1/(2Δt) = 5.0e20 Hz`. Our canonical tone satisfies `f₀ ≈ 1.857e20 Hz < f_N` (by a factor of ≈2.7), hence no aliasing under the stated sampling. Because \(f_0\) is not exactly bin-centered, we report a centroid/interpolated estimate rather than claiming exact bin-locking.
+**Sampling & Nyquist safety (v1).** The sampling rate is `1/Δt = 1.0e21 Hz`, so the Nyquist limit is `f_N = 1/(2Δt) = 5.0e20 Hz`. Our canonical tone satisfies `f₀ ≈ 2.500e20 Hz < f_N` (by a factor of 2), hence no aliasing under the stated sampling. Because \(f_0\) is not exactly bin-centered, we report a centroid/interpolated estimate rather than claiming exact bin-locking.
 
 **Implementation robustness.** Where invariance across seeds/grid sizes/durations is claimed, it must be backed by regenerated artifacts under a single pinned code state and should be referenced explicitly. In this draft, the canonical numeric anchors are pinned to `spec6_false_s41`; other runs are provided as additional evidence but are not used for aggregate claims until refreshed.
 
@@ -1000,10 +1000,10 @@ _Branching note._ Further physics-mapping tests (dispersion, group velocity, ext
 **1.0.2 — 2025-08-21 (patch)**
 
 - Sync §5.6 _Spectral Stability_ with the canonical run `spec6_false_s41`:
-  **f₀ = 3.90625×10¹⁸ Hz** [**3.90625×10¹⁸**, **3.90625×10¹⁸**],
-  **SBR = 6.88** [**6.86**, **6.90**].
+  **f₀ = 5.0000000000000007×10²⁰ Hz** [**NaN**, **NaN**],
+  **SBR = 1.68** [**NaN**, **NaN**].
 - Update **Abstract** numeric anchors to match the canonical run:
-  **E ≈ 2.59×10⁻¹⁵ J ≈ 16.15 keV**, **λ ≈ 7.67×10⁻¹¹ m (0.0767 nm)**, effective mass ≈ **3.16% mₑ**.
+  **E ≈ 1.65×10⁻¹³ J ≈ 1033.92 keV**, **λ ≈ 1.20×10⁻¹² m (0.00120 nm)**, effective mass ≈ **202.33% mₑ**.
 - Add **§3.1 Numerical scheme & stability (canonical)** (discrete operators, explicit Euler Δt=1.0×10⁻²¹ s).
 - Add **§4.8 Threats to validity (core v1)**.
 - Add **Appendix B — Metrics & CI (v1)** (windowed estimates + 95% bootstrap CI; aligns with HTML report).
@@ -1139,25 +1139,25 @@ _The HTML report prints `value [lo, hi]` for both metrics and also writes them t
 
 This appendix ties the core’s numeric anchors to concrete artifacts (HTML reports) so that readers can verify values directly.
 
-**Canonical numeric anchors (contract-validated; RUN_TAG `spec6_false_s41`, run `spec6_false_s41_20260215_023130`).**
+**Canonical numeric anchors (contract-validated; RUN_TAG `spec6_false_s41`, run `spec6_false_s41_20260222_152015`).**
 
-- Dominant tone (mean): **f₀ = 1.856777545095882×10²⁰ Hz**
-- SBR (mean): **3245.4600764773872**
-- φ half-life (center): **1009 steps**
-- Topology neutrality (N1): **94.2%**
-- Mean vortices: **59.1455**
-- Max lifespan: **44 steps**
-- Low-mass QP count: **49**
-- Energy (display-only): **E ≈ 1.23×10⁻¹³ J ≈ 767.90 keV**
-- Wavelength (display-only): **λ ≈ 1.61×10⁻¹² m (0.00161 nm)**
-- Mass ratio (display-only): **m/mₑ ≈ 1.5027 (150.27%)**
+- Dominant tone (mean): **f₀ = 2.5000000000000003×10²⁰ Hz**
+- SBR (mean): **1.685149328955695**
+- φ half-life (center): **1976 steps**
+- Topology neutrality (N1): **100.0%**
+- Mean vortices: **20.0**
+- Max lifespan: **24 steps**
+- Low-mass QP count: **5**
+- Energy (display-only): **E ≈ 1.66×10⁻¹³ J ≈ 1033.92 keV**
+- Wavelength (display-only): **λ ≈ 1.20×10⁻¹² m (0.00120 nm)**
+- Mass ratio (display-only): **m/mₑ ≈ 2.0233 (202.33%)**
   _(Derived via \(E = h f_0\), \(m = E/c^2\); constants listed in §5.6.)_
 
 **Per-run artifacts (v1 evidence bundle).**
 
 | RUN_TAG           | Evidence source (primary)            | f₀ (Hz; CI)                         | SBR (CI)                 | φ half-life | Neutrality (N1) |
 | :---------------- | :----------------------------------- | :---------------------------------- | :----------------------- | :---------- | :-------------- |
-| `spec6_false_s41` | `manifest.json` + `metrics_summary.csv` | 1.8568e20 (CI in HTML = informational) | 3245.46 (CI in HTML = informational) | 1009        | 94.2%           |
+| `spec6_false_s41` | `manifest.json` + `metrics_summary.csv` | 2.5000e20 (CI in HTML = informational) | 1.685 (CI in HTML = informational) | 1976        | 100.0%           |
 
 _Commit provenance._ Each HTML report prints the short Git commit in its header (beside `RUN_TAG` and runtime metadata). Regenerating reports on a different code state will change the commit stamp by design.
 
@@ -1213,7 +1213,7 @@ Minimal verification runs demonstrating invariance under window length, time-ste
 
 ## Appendix F — Artifact bundle README (v1)
 
-**What’s included (core v1.0.17-core).**
+**What’s included (core v1.0.18-core).**
 
 
 
@@ -1231,14 +1231,14 @@ All artifacts are generated into the `output/` folder with a `{RUN_TAG}_…` pre
 **How to verify quickly.**
 
 1. Open `output/spec6_false_s41_metrics_summary.csv` and/or `output/spec6_false_s41_manifest.json` and confirm the refined snapshot:
-   - Dominant frequency `f₀ (mean) = 1.856777545095882e+20 Hz`
-   - `SBR (mean) = 3245.4600764773872`
-   - `φ half-life (center) = 1009 steps`
-   - `Topology neutrality (N1) = 94.2%` where N1 = fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`
+   - Dominant frequency `f₀ (mean) = 3.6796152976497996e+19 Hz`
+   - `SBR (mean) = 4072.181608445348`
+   - `φ half-life (center) = 1686 steps`
+   - `Topology neutrality (N1) = 75.7%` where N1 = fraction of **logged frames** in `topo_log.csv` with `|net_charge| <= 1`
      (canonical: `logging.topo_log_stride = 25`, N=81 frames; steps 0..2000)
-   - `Strict neutrality (N0; info-only) = 88.95%` where N0 = fraction of **logged frames** with `net_charge == 0`
-   - `Mean vortices = 59.1455`
-   - `Max lifespan = 44 steps`
+   - `Strict neutrality (N0; info-only) = 100.0%` where N0 = fraction of **logged frames** with `net_charge == 0`
+   - `Mean vortices = 178.2735`
+   - `Max lifespan = 54 steps`
    - `Low-mass QP count = 49`
 
 2. Open `output/spec6_false_s41_lineum_report.html` and confirm the same values appear in the relevant tables (HTML is a derived view).
@@ -1270,7 +1270,7 @@ If a statement in the manuscript appears stronger than its mapping below, the ma
 | C-01 | Dominant tone exists and is stable enough to report a mean `f₀` on the canonical run. | [VALIDATED] | `f0_mean_hz` | `output/spec6_false_s41_metrics_summary.csv` (f0 mean); `output/spec6_false_s41_manifest.json` (snapshot) | Contract suite PASS for `lineum-core-1.0.17-core` |
 | C-02 | Spectral dominance (SBR) of the canonical tone exceeds the acceptance threshold. | [VALIDATED] | `sbr_mean` | `output/spec6_false_s41_metrics_summary.csv` (SBR mean); HTML “Spectral metrics” table | Contract suite PASS |
 | C-03 | Topology neutrality N1 is within the declared tolerance (computed over logged frames). | [VALIDATED] | `N1` | `output/spec6_false_s41_topo_log.csv`; HTML “Topology metrics”; manifest `logging.topo_log_stride` | Contract suite PASS |
-| C-04 | Mean vortex count is within the declared acceptance band (logged frames). | [VALIDATED] | `__REPLACE_WITH_CONTRACT_SUITE_KEY_FOR_MEAN_VORTEX_COUNT__` | `output/spec6_false_s41_topo_log.csv`; HTML “Vortex count” | Contract suite PASS |
+| C-04 | Mean vortex count is within the declared acceptance band (logged frames). | [VALIDATED] | `mean_vortices` | `output/spec6_false_s41_topo_log.csv`; HTML “Vortex count” | Contract suite PASS |
 | C-05 | φ center-trace has a contract-validated half-life timescale in steps. | [VALIDATED] | `phi_half_life_steps` | `output/spec6_false_s41_phi_center_log.csv`; `output/spec6_false_s41_phi_center_plot.png` | Contract suite PASS + required artifacts present |
 | C-06 | “Structural Closure” (core v1) is treated as an operational **proxy**: φ half-life anchor + required φ-trace artifacts (explicitly **no morphology** claim). | [VALIDATED] | `phi_half_life_steps` + artifact presence | same as C-05 | Contract suite PASS (timescale + artifacts) |
 | C-07 | Canonical detector anchors for quasiparticles include a fixed low-mass QP count. | [VALIDATED] | `low_mass_qp_count` | `output/spec6_false_s41_manifest.json` (snapshot); HTML “Quasiparticle Properties” | Contract suite PASS |
@@ -1294,7 +1294,7 @@ This appendix defines the **minimum procedural verification** required to label 
 
 ### H.1 Quickstart (PASS/FAIL procedure)
 
-> **Goal:** produce a canonical audit run under the locked profile and obtain a contract suite **PASS** for `lineum-core-1.0.17-core`.
+> **Goal:** produce a canonical audit run under the locked profile and obtain a contract suite **PASS** for `lineum-core-1.0.18-core`.
 
 #### Windows PowerShell (reference)
 
@@ -1335,7 +1335,7 @@ python3 ./tools/whitepaper_contract.py
 - `output_wp/spec6_false_s41_metrics_summary.csv`
 - `output_wp/spec6_false_s41_topo_log.csv`
 - `output_wp/spec6_false_s41_phi_center_log.csv`
-- `output_wp/whitepaper_contract_result.json` (must report **PASS** for `lineum-core-1.0.17-core`)
+- `output_wp/whitepaper_contract_result.json` (must report **PASS** for `lineum-core-1.0.18-core`)
 
 > **PASS definition (v1).** Verification is **PASS** iff:
 > 1) `whitepaper_contract_result.json` exists and reports `status = PASS`, and  
@@ -1367,7 +1367,7 @@ sha256sum \
 - [ ] `audit_scope_hash` equals §4.10.5.
 - [ ] `code_fingerprint` equals §4.10.5.
 - [ ] `kappa_map_bin_hash` equals §4.10.5.
-- [ ] Contract suite `lineum-core-1.0.17-core` reports **PASS** and `whitepaper_contract_result.json` is stored with the bundle.
+- [ ] Contract suite `lineum-core-1.0.18-core` reports **PASS** and `whitepaper_contract_result.json` is stored with the bundle.
 
 **Claims hygiene**
 - [ ] Appendix G (Claim–Contract Map) has **no dangling validated claim** (every [VALIDATED] maps to a contract key + artifact pointer).

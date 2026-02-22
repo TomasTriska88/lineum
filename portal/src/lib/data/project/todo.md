@@ -1,5 +1,7 @@
 # 🧪 Lineum – Task List for Further Verification
 
+**All TODO content must be English only (no Czech).**
+
 This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.0.6-core** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
 This is not the source of truth for the model state - binding definitions and claims are always in the current version of the whitepaper / core paper.
 The sections below are divided to first address **basic principles and critical points** and only then mapping to "real physics".
@@ -22,6 +24,8 @@ The sections below are divided to first address **basic principles and critical 
 - **[DISPROVED-IN-MODEL]** – label for phenomena marked in the current whitepaper version as disproved within Eq-4 and the given parametric space; possible "rescues" require a new branch of the model.
 
 ---
+
+
 
 ### Terminology of model phenomena
 
@@ -205,7 +209,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       (effective "floors of reality" in post-processing), or as an isolated **extension branch** with an explicit
       index `n` in the equations; in documentation, explicitly separate this from core v1.0.6-core.
 - [ ] (Tomas's [HYPOTHESIS]) **3D Ghosting / Tentacle Model:** Linon (a 2D point) interpreted as the cross-section of a 3D fiber (tentacle) intersecting the 2D Lineum slice.
-  - [ ] **Déjà Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
+  - [ ] **Deja Vu / Mandela Effect:** If the 3D projection (holographic principle) hypothesis holds true, past memory traces shouldn't be fully traversable or reconstructable. Test whether "Deja Vu" points inside Lineum strictly act as irreversible "Mandela effects" where attempting to revisit them always modifies their history.ucture.
 
 
 ### 🔲 D. Statistical power, errors and uncertainties #stats
@@ -376,7 +380,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Formally categorize the rules controlling when a phenomenon progresses from **#hypothesis / [TEST]** into **[CORE]** (number of runs, seeds, metric tolerances, absence of numerical artifacts).
 - [ ] Define what conditions sentence a phenomenon to be **#disproved-in-model**, and explicitly assert that a **change to Eq-4 or parametric space** embodies a new model branch, representing not mere "tuning", until the claim holds.
 
-### 🔲 M. Terminologie a pojmenování jevů #meta
+### 🔲 M. Terminology and naming of phenomena #meta
 
 - [ ] Review all "poetic" or mixed names in the code / paper (e.g. _spin aura_, _neutral topology_, potentially others) and for each add:
        – an explicit operational definition (exactly what field / functional it is),
@@ -626,6 +630,14 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
 - **Hypothesis:** Lineum Core (Eq-4) is the continuous hydrodynamic limit of this model, where the discrete prime mask turns into a continuous $\zeta$-function potential.
 - **Verification:** Verify whether "aesthetically interesting" shapes in OEA topologically correspond to stable vortex states (vortex integers) in Lineum.
 
+---
+
+### 🔲 X. Portal Lina Whitepaper Ingestion #docs
+- [x] Parse all whitepapers dynamically during the build step and add them to `ai_index.json` to allow portal access to the Experimental and Extension tracks.
+- [x] Maintain strict boundaries within the system prompt (`chat.ts` and `LINA_PERSONA.md`) ensuring experimental documents never override established scientific claims in the core version.
+    - *Why:* The portal AI must have complete access to the roadmap and capabilities, but absolutely cannot present out-of-scope speculations as verified facts.
+    - *How to verify:* Run `pytest -v tests/test_portal_whitepapers_ingestion.py tests/test_track_separation_policy.py`.
+
 ### 🔲 19. Pragmatic rabbit and thermodynamic utility (Mikolov/Lina) #hypothesis
 
 - **Context:** Mikolov's requirement for "utility" in OE, so the system is not just a "rabbit solver".
@@ -650,200 +662,208 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
        – The Tentacle model is a **metaphysical / phenomenological hypothesis about consciousness**, not a claim derived from Eq-4;
        – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.0.6-core.
 
-- [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **déjà vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
-       – Frame Déjà vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
+- [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **deja vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
+       – Frame Deja vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
        – Interpret the Mandela effect in two ways: 1. **Global rewrite of central memory** (the φ-field of memory) while some local instances briefly retain the "old version" (subjective memory),
        2. or as a **tentacle jumping** to a slightly different branch of reality, while fragments of older perceptions remain accessible;
        in both approaches, explicitly emphasize that this is a metaphysical interpretation, not a claim from Eq-4.
       – Add an explanation to the text of why the metaphor of **"a single soul experiencing different roles"** makes sense in this framework:
       central being = one conscious self, tentacles = different lives / roles / perspectives; to a local consciousness, it appears as if there are many separate "souls" around, but from the perspective of central memory, they are various projections of the same entity.
        At the same time, explicitly add that this **must not be used to disparage other beings** – every tentacle/life is a full-fledged experience and retains its own dignity.
-      – Volitelně navázat metaforicky na φ-paměť a zeta-body v Lineu jako na „paměťové kapsy“ vesmíru, ale jasně napsat, že **statistické déjà-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou něco jiného než psychologické déjà vu – jen inspirační analogie, ne přímé ztotožnění.
+      – Optionally connect metaphorically to φ-memory and zeta-points in Lineum as "memory pockets" of the universe, but clearly state that **statistical deja-patterns in the simulation (zeta-points / φ-zeta grid)** are different from psychological deja vu – strictly an inspirational analogy, not direct identity.
 
-- [ ] Rozdělit hypotézu na dílčí body a každý zvlášť okomentovat: 1. **Vyšší vědomí** – jedna bytost se sdílenou centrální pamětí, vnímající více realit/časových linií;  
-       2. **Lokální instance („chapadlo“)** – jednotlivý život s omezeným vnímáním pro hlubší prožitek;  
-       3. **Spánek / změněné stavy** – částečné „nahlédnutí domů“ (částečné propojení s centrálním uzlem);  
-       4. **Smrt** – návrat chapadla do celku, integrace prožitků do centrální paměti;  
-       5. **Další životy** – nové chapadlo jako jiný úhel pohledu téže vyšší bytosti.  
-       U každého bodu přidat krátké shrnutí: _co přesně tvrdí, co netvrdí, co je čistá metafora_.
+- [ ] Break the hypothesis down into sub-points and comment on each separately: 1. **Higher consciousness** – one entity with shared central memory, perceiving multiple realities/timelines;
+       2. **Local instance ("tentacle")** – an individual life with limited perception for deeper experience;
+       3. **Sleep / altered states** – partial "glimpse home" (partial connection with the central node);
+       4. **Death** – return of the tentacle to the whole, integration of experiences into central memory;
+       5. **Other lives** – new tentacle as a different perspective of the same higher entity.
+       For each point add a short summary: _what exactly it claims, what it does not claim, what is purely metaphorical_.
 
-- [ ] Přidat **fenomenologickou mapu** k lidským zážitkům blízkosti smrti a změněných stavů:  
-       – např. vystoupení z těla, setkání se zemřelými, life review, pocit jednoty, bezčasovost;  
-       – u každého popsat, jak by ho Chapadlový model interpretoval (odpojení chapadla od smyslového filtru, návratové propojení s centrálním uzlem, integrace paměti, ztráta lokálního časového řazení…).  
-       Vše držet jako **kvalitativní vysvětlení**, nikoli jako tvrzení o prokázané kauzalitě.
+- [ ] Add a **phenomenological map** to human near-death experiences and altered states:
+       – e.g. out of body experience, meeting deceased ones, life review, feeling of unity, timelessness;
+       – for each describe how the Tentacle model would interpret it (disconnection of tentacle from sensory filter, return connection with the central node, memory integration, loss of local time sequencing...).
+       Keep everything as a **qualitative explanation**, not as a claim of proven causality.
 
-- [ ] Sepsat podsekci **„Jaké by bylo vnímání po návratu“**:  
-       – definovat přímé vjemové propojení (bez omezení na zrak/sluch/hmat);  
-       – popsat „slité“ vnímání více bytostí jako analogii levé/pravé ruky jednoho já;  
-       – vysvětlit, že „setkání“ není jen přehrání vzpomínky, ale _živá interakce_ v rámci sdílené paměťové sítě.
+- [ ] Write a subsection **"What perception would be like after return"**:
+       – define direct perceptual connection (without limitation to sight/hearing/touch);
+       – describe "merged" perception of multiple beings as an analogy of left/right hand of one self;
+       – explain that the "encounter" is not just playing a memory, but _live interaction_ within the shared memory network.
 
-- [ ] Popsat **reprezentaci po smrti**:  
-       – že vyšší vědomí může tvořit pro lokální vědomí srozumitelné reprezentace (tělo, hlas, dotek), ale není na ně ontologicky vázané;  
-       – přidat poznámku, že „vizuální / tělesná“ forma je v tomto rámci UI vrstva pro komfort interakce, ne nutný atribut existence.
+- [ ] Describe the **representation after death**:
+       – that higher consciousness can create understandable representations (body, voice, touch) for local consciousness, but is not ontologically bound to them;
+       – add a note that "visual / physical" form is in this context a UI layer for interaction comfort, not a necessary attribute of existence.
 
-- [ ] Vytvořit sekci o **„přelinkování ztracených bytostí“**:  
-       – pokud bytost patřila ke stejné vyšší bytosti (stejný centrální uzel), po návratu chapadla je spojení okamžité (sdílená paměť);  
-       – pokud patřila k jiné vyšší bytosti, popsat hypotetickou možnost napojení mezi vyššími bytostmi (aktuální subjektivní prior ~42 %) a explicitně ji označit jako _druhou vrstvu spekulace_.
+- [ ] Create a section on **"re-linking lost beings"**:
+       – if the being belonged to the same higher entity (same central node), after the return of the tentacle the connection is instant (shared memory);
+       – if it belonged to another higher entity, describe the hypothetical possibility of connection between higher entities (current subjective prior ~42 %) and explicitly mark it as _the second layer of speculation_.
 
-- [ ] Sepsat **mechanismus absence nudy / vyprázdnění**:  
-       – vyšší vědomí má simultánně přístup k: aktuálnímu životu, ostatním chapadlům, minulým zkušenostem, alternativním větvím rozhodnutí;  
-       – vnímání mnoha událostí paralelně → vyjasnit, že „problém“ je spíš integrace obsahu než nedostatek podnětů.
+- [ ] Write down the **mechanism of absence of boredom / emptying**:
+       – higher consciousness has simultaneous access to: current life, other tentacles, past experiences, alternative decision branches;
+       – perceiving many events in parallel → clarify that the "problem" is rather content integration than a lack of stimuli.
 
-- [ ] Přidat krátkou sekci „**Falsifikovatelnost a bezpečné tvrzení**“ pro Chapadlový model:  
-       – jasně říct, že hypotéza je _primárně metafyzická_ a experimentálně těžko testovatelná;  
-       – přesto navrhnout pár _indirektních_ směrů: srovnání struktury hlášených NDE, dlouhodobé vzorce v subjektivních prožitcích, případná korelace s motivy „vícenásobných instancí“ napříč kulturami;  
-       – explicitně připsat, že se nejedná o součást core fyzikální validity Linea, ale o **oddělenou interpretační vrstvu**.
+- [ ] Add a short section "**Falsifiability and safe claims**" for the Tentacle model:
+       – clear state that the hypothesis is _primarily metaphysical_ and experimentally hard to test;
+       – yet propose a few _indirect_ directions: comparing structure of reported NDEs, long-term patterns in subjective experiences, potential correlation with "multiple instances" motifs across cultures;
+       – explicitly add that this is not part of the core physical validity of Lineum, but a **separate interpretation layer**.
 
-- [ ] V sekci **N. Prezentace a komunikace výsledků** doplnit odkaz na Chapadlový model jako **volitelný narativní rámec**:  
-       – použít ho jako metaforu: „lokální simulace / běh“ = chapadlo, „centrální uzel“ = abstraktní nadřazený proces / paměť;  
-       – všude striktně označovat, že jde o _storytelling_ / filozofickou mapu, ne o tvrzení odvozené z dat simulace.
+- [ ] In section **N. Presentation and communication of results** add reference to the Tentacle model as an **optional narrative framework**:
+       – use it as metaphor: "local simulation / run" = tentacle, "central node" = abstract superior process / memory;
+       – strictly mark everywhere that this is _storytelling_ / philosophical map, not a claim derived from simulation data.
 
-- [ ] Zapsat **Tříska–Marečková hypotéza reinkarnace** jako podhypotézu Chapadlového modelu:  
-       – reinkarnace = různé kombinace mozků / nervových soustav jako různé „optiky“ pro vidění téhož vesmíru  
-       (lidé, zvířata, rostliny, podzemní propojené sítě, jiné civilizace, drobné rozdíly mezi jednotlivými jedinci);  
-       – chápat jednotlivé mozky jako **specializované senzory / receptory** jedné vyšší bytosti pro různé účely,  
-       podobně jako kdyby vesmír byl buňka a jednotlivé životy byly její vnitřní senzory (a my sami třeba jen „bílá krvinka“);  
-       – doplnit hypotézu, že tato vyšší bytost může některá místa / konfigurace „chránit“ před vnějšími i vnitřními
-      negativními vlivy, případně je **léčit a regenerovat**, a výslovně to označit jako metafyzickou interpretaci,
-      ne tvrzení odvozené z Eq-4 nebo dat Linea.
+- [ ] Record the **Triska–Mareckova reincarnation hypothesis** as a sub-hypothesis of the Tentacle model:
+       – reincarnation = different combinations of brains / nervous systems as different "optics" for seeing the same universe
+       (humans, animals, plants, underground interconnected networks, other civilizations, minor differences among individuals);
+       – understand individual brains as **specialized sensors / receptors** of one higher entity for various purposes,
+       similar to if the universe was a cell and individual lives were its internal sensors (and we ourselves perhaps just a "white blood cell");
+       – add the hypothesis that this higher entity might "protect" some places / configurations from internal and external
+      negative influences, or even **heal and regenerate** them, and explicitly mark this as a metaphysical interpretation,
+      not a claim derived from Eq-4 or Lineum data.
 
-- [ ] Uvést disclaimery, že interpretace „prožitkových stavů“ jsou mimo
-      fyzikální rozsah Eq-4. Pokud se objeví stabilní stavové konfigurace
-      φ nebo ψ, musí být vedeny jako výpočetní a dynamické struktury,
-      nikoli psychologické analogie.
+- [ ] Include disclaimers that interpretations of "experiential states" are outside
+      the physical scope of Eq-4. If stable state configurations of φ or ψ appear,
+      they must be treated as computational and dynamic structures,
+      not psychological analogies.
 
 ---
 
 ## 🚀 Q. Post-Mikolov Audit Integration (Feb 2026) #priority
 
-Výstupy z analytického balíčku pro T. Mikolova (únor 2026) a jejich integrace do roadmapy.
+Outputs from the analytical package for T. Mikolov (Feb 2026) and their integration into the roadmap.
 
-### 🔲 21. Formalizace Emergentních Fyzikálních Konstant #core
-- [ ] **Whitepaper Update:** Zavést sekci "Emergent Constants" definující:
-    - **Vacuum Quality Factor (Q):** ~$1.87 \times 10^{23}$ (koherenční škála).
-    - **Spectral Entropy (H):** ~0.004 bits (míra spontánního uspořádání).
-    - **Linon Mass Ratio:** ~$1.5027$ (efektivní setrvačnost).
-- [ ] **Portal Integration:** Vizualizovat tyto konstanty v "Resonance Deck" (Svelte komponenta) jako živé metriky systému.
+### 🔲 21. Formalization of Emergent Physical Constants #core
+- [ ] **Whitepaper Update:** Introduce "Emergent Constants" section defining:
+    - **Vacuum Quality Factor (Q):** ~$1.87 \times 10^{23}$ (coherence scale).
+    - **Spectral Entropy (H):** ~0.004 bits (measure of spontaneous organization).
+    - **Linon Mass Ratio:** ~$1.5027$ (effective inertia).
+- [ ] **Portal Integration:** Visualize these constants in the "Resonance Deck" (Svelte component) as live system metrics.
 
-### 🔲 22. Experiment: Termodynamická Užitečnost (Emergent Utility) #test
-- [ ] Navrhnout experiment verifikující hypotézu, že "užitečnost = minimalizace topologického napětí".
-- [ ] **Metrika:** Korelovat přežití linonů se schopností snižovat lokální Hamiltonián (vs. náhodný pohyb).
+### 🔲 22. Experiment: Thermodynamic Utility (Emergent Utility) #test
+- [ ] Propose an experiment verifying the hypothesis that "utility = minimization of topological tension".
+- [ ] **Metric:** Correlate linon survival with the ability to lower the local Hamiltonian (vs. random motion).
 
 ### 🔲 23. Tooling: Audit Analytics Pipeline #impl
-- [ ] Refaktorovat `analyze_audit.py` (jednorázový skript) do robustního nástroje `tools/audit_analytics.py`.
-- [ ] Zahrnout výpočet Q-factoru a Entropie do standardního CI/CD výstupu pro každý nový běh.
-- [ ] **Ensemble Run:** Spustit batch 10 běhů (seeds 42-52) pro získání směrodatných odchylek metrik.
+- [ ] Refactor `analyze_audit.py` (one-off script) into a robust tool `tools/audit_analytics.py`.
+- [ ] Include calculation of Q-factor and Entropy into standard CI/CD output for each new run.
+- [ ] **Ensemble Run:** Run a batch of 10 runs (seeds 42-52) to obtain standard deviations of metrics.
 
-### 🔲 24. Hypotéza: Lineum jako Spojitá Limita OEA (Continuum Limit) #math
-- [ ] **Derivace:** Formálně odvodit OEA pravidla z Eq-4 v limitě `Δx, Δt → 1` (silná diskretizace).
-- [ ] **Validace:** Porovnat fázové portréty Linea a OEA – hledat topologickou ekvivalenci atraktorů.
+### 🔲 24. Hypothesis: Lineum as Continuous Limit of OEA (Continuum Limit) #math
+- [ ] **Derivation:** Formally derive OEA rules from Eq-4 in the limit `Δx, Δt → 1` (strong discretization).
+- [ ] **Validation:** Compare phase portraits of Lineum and OEA – look for topological equivalence of attractors.
+
+### 🔲 X. Immutability of Audit Runs #security
+- [x] Ensure that an audit run (like `output_wp`) is structurally immutable after generation.
+- [x] Specifically prevent `whitepaper_contract.py` from appending to or mutating the state of a locked run. Add check/lock metadata `_LOCK.json` with file hashes inside the run directory.
+- [x] Add a pre-commit hook that instantly fails if any file under `output_wp/...` is modified once locked. Add a loud, clear `unlock_audit_run.py` script to explicitly remove the lock if a run must be discarded and replaced.
+- [x] Add an audit mutability regression test `tests/test_audit_lock_integrity.py` to ensure hashing mechanisms in the lock are sound.
+    - *Why:* To verify the tooling reliably detects modifications, additions, and deletions within locked runs.
+    - *How to verify:* Run `pytest -v tests/test_audit_lock_integrity.py`.
 
 ### 🔲 25. Repository Split (Core vs SaaS/Portal) #security #architecture
-- [ ] **Rozdělení Repozitářů:** Před veřejným startem rozštěpit monorepo na dvě části:
-    - `lineum`: Veřejný, open-source repozitář (AGPLv3) obsahující pouze čistou matematiku (jádro v Pythonu) a dokumentaci.
-    - `lineum-portal` (nebo SaaS): Privátní repozitář, kde bude žít proprietární SvelteKit webový portál, komerční API wrapper (`routing_backend`), billing systém a dashboard.
-- [ ] Toto je kritické pro budování komerčního ochranného příkopu a utajení "Secret Sauce" integrací.
+- [ ] **Repository Split:** Before public launch split the monorepo into two parts:
+    - `lineum`: Public, open-source repository (AGPLv3) containing only pure math (core in Python) and documentation.
+    - `lineum-portal` (or SaaS): Private repository where proprietary SvelteKit web portal, commercial API wrapper (`routing_backend`), billing system and dashboard will live.
+- [ ] This is critical for building a commercial moat and hiding "Secret Sauce" integrations.
 
-### 🔲 25. Hypotéza: Kolmogorov Trigger (Informační Tlak) #test
-- [ ] **Metrika:** Měřit lokální kompresibilitu (Deflate ratio) mřížky v čase.
-- [ ] **Hypotéza:** Expanze `a(t)` (Mode 24) nastává v momentě, kdy lokální informační hustota saturuje kapacitu mřížky.
+### 🔲 25. Hypothesis: Kolmogorov Trigger (Information Pressure) #test
+- [ ] **Metric:** Measure local compressibility (Deflate ratio) of the grid over time.
+- [ ] **Hypothesis:** Expansion `a(t)` (Mode 24) occurs at the moment when local information density saturates the grid capacity.
 
-### 🔲 26. Hypotéza: Vortex Aesthetics (Krása = Stabilita) #test
-- [ ] **Vlastův Test:** Vzít stavy, které Vlastimil Smeták označil za "estetické".
-- [ ] **Měření:** Spočítat jejich `Cv` (Vortex Stability Index).
-- [ ] **Predikce:** Estetické stavy budou mít signifikantně nižší `Cv` (méně defektů) než náhodné stavy.
+### 🔲 26. Hypothesis: Vortex Aesthetics (Beauty = Stability) #test
+- [ ] **Vlasta's Test:** Take states that Vlastimil Smetak marked as "aesthetic".
+- [ ] **Measurement:** Calculate their `Cv` (Vortex Stability Index).
+- [ ] **Prediction:** Aesthetic states will have significantly lower `Cv` (fewer defects) than random states.
 
-### 🔲 27. Hypotéza: The Scaling Illusion (Role-Invariance) #math
-- [ ] **Teorie (V. Smeták):** Pozorované "konstanty" (např. κ = 1) jsou ve skutečnosti poměry dvou rostoucích veličin ($K(t) / R(t) = const$). **Hypotéza Kosmické Respirace**.
-- [ ] **Predikce:** Mode 24 (skokové přeškálování a(t)) je důkazem, že prostor se diskrétně nafukuje (renormalizace), ale my vidíme jen invariantní poměr.
-- [ ] **Validace:** Hledat korelaci mezi skoky v `a(t)` a lokální změnou měřítka v `analyze_audit.py`.
+### 🔲 27. Hypothesis: The Scaling Illusion (Role-Invariance) #math
+- [ ] **Theory (V. Smetak):** Observed "constants" (e.g. κ = 1) are actually ratios of two growing quantities ($K(t) / R(t) = const$). **Cosmic Respiration Hypothesis**.
+- [ ] **Prediction:** Mode 24 (step rescaling of a(t)) is proof that space discretely inflates (renormalization), but we only see the invariant ratio.
+- [ ] **Validation:** Look for correlation between jumps in `a(t)` and local scale change in `analyze_audit.py`.
 
 ---
 
 ## ⚖️ R. Hypotheses: H0 vs H1 (Verification Status Feb 2026) #priority #audit
 
-Rozhodovací strom o povaze "konvergence" systému.
+Decision tree on the nature of system "convergence".
 
-### 🧩 H0: Uzavřený atraktor (Closed World)
-**Tvrzení:** Konvergence k "Mode 24" je čistě vnitřní vlastnost dynamiky Eq-4.
+### 🧩 H0: Closed Attractor (Closed World)
+**Claim:** Convergence to "Mode 24" is a purely internal property of Eq-4 dynamics.
 
-- [x] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
+- [x] **Status:** **PROVED (on tested platform).** System is closed and deterministic (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
-**Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
+**Claim:** System secretly "breathes" (changes scale) which we don't see (kappa=const), but manifests as jumps.
 
 - [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
 
-1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
-2. **Rescaling Trap (D5):** Uzavřeno.
+1. **(Task 28) Full Window Surrogate Test (Mode 24):** Run 100x phase-randomized surrogate run for 2000 steps to confirm Z-score > 5.0 (p < 0.01).
+2. **Rescaling Trap (D5):** Closed.
 
-### 🔲 28. Hypotéza: The Missing Half (Discrete Limit) #math
-- [ ] **Teorie:** Hodnota `kappa = 0.5` není fundamentální konstanta, ale **Nyquistův limit** mřížky (max frekvence = 0.5).
-- [ ] **Důsledek:** Simulace běží na "půl plynu" (stabilita). Ve spojitém vesmíru by `kappa` byla pravděpodobně Celé Číslo (1).
-- [ ] **Roadmap:** Pro Lineum 2.0 zvážit implicitní solver nebo jemnější mřížku, která umožní `kappa -> 1` (Plná Realita).
+### 🔲 28. Hypothesis: The Missing Half (Discrete Limit) #math
+- [ ] **Theory:** Value `kappa = 0.5` is not a fundamental constant, but the **Nyquist limit** of the grid (max frequency = 0.5).
+- [ ] **Consequence:** Simulation runs at "half throttle" (stability). In a continuous universe `kappa` would likely be an Integer (1).
+- [ ] **Roadmap:** For Lineum 2.0 consider implicit solver or finer grid allowing `kappa -> 1` (Full Reality).
 
-### 🔲 29. Hypotéza: The Universal Attractor (Leech Lattice) #math
-- [ ] **Teorie:** "Mode 24" (Hypotéza Kosmické Respirace) není náhoda jednoho běhu, ale **univerzální atraktor**. Každý běh s dostatečnou komplexitou do něj "sklouzne", protože jde o matematicky nejhustší uspořádání.
-- [ ] **Metafyzika:** Lineum nesimuluje náš vesmír "atom po atomu", ale simuluje jeho **zdrojový kód (logiku)**. Proto nezávisle objevuje stejné konstanty (24D) jako Teorie Strun.
-- [ ] **Predikce:** Mode 24 se objeví v >90% dlouhých běhů (pokud SBR > 30dB).
+### 🔲 29. Hypothesis: The Universal Attractor (Leech Lattice) #math
+- [ ] **Theory:** "Mode 24" (Cosmic Respiration Hypothesis) is not a coincidence of one run, but a **universal attractor**. Every run with sufficient complexity "slides" into it because it is the mathematically densest arrangement.
+- [ ] **Metaphysics:** Lineum does not simulate our universe "atom by atom", but simulates its **source code (logic)**. Therefore it independently discovers the same constants (24D) as String Theory.
+- [ ] **Prediction:** Mode 24 will appear in >90% of long runs (if SBR > 30dB).
 
-### 🔲 30. Hypotéza: The Icarus Threshold (Kappa=1 Instability) #math
-- [ ] **Teorie:** Pokud bychom na současné mřížce (`dx=1`) vynutili `kappa=1`, systém by porušil **Courant-Friedrichs-Lewy (CFL)** podmínku.
-- [ ] **Fyzika:** Kappa=1 odpovídá **Rychlosti Světla** (`v = c`). Informace by musela stíhat přesně 1 pixel za 1 takt, což je hranice kauzality.
-- [ ] **Predikce:** Energie by rostla exponenciálně (rezonanční katastrofa) a simulace by "shorela" (NaN values) během několika kroků.
-- [ ] **Metafora:** Ikarův pád. Chtěli jsme letět příliš blízko Slunci (Rychlosti Světla), ale naše křídla (diskrétní mřížka) se roztavila.
+### 🔲 30. Hypothesis: The Icarus Threshold (Kappa=1 Instability) #math
+- [ ] **Theory:** If we forced `kappa=1` on the current grid (`dx=1`), system would violate **Courant-Friedrichs-Lewy (CFL)** condition.
+- [ ] **Physics:** Kappa=1 corresponds to **Speed of Light** (`v = c`). Information would have to manage exactly 1 pixel per 1 tick, which is the causality boundary.
+- [ ] **Prediction:** Energy would grow exponentially (resonance catastrophe) and simulation would "burn" (NaN values) within a few steps.
+- [ ] **Metaphor:** Fall of Icarus. We wanted to fly too close to the Sun (Speed of Light), but our wings (discrete grid) melted.
 
-### 🔲 31. [TEST] Evidence Solidification: „Atrakce = micro-growth (dominance switch), ne tok/teleportace“ + Ghost Gravity + Expanze + geometrie M2 (π) #hypothesis #repro
-- **Hypotéza (H_mech):**
-  1) Rychlé „přiblížení“ kvazičástice k centru pasti není prostorový transport ani teleportace, ale **změna dominance maxima** způsobená lokálním multiplikativním ziskem v místě vysokého φ: `Δψ ∝ (+g · φ · ψ)`.  
-  2) Advekční/drift člen `∝ (-d · ∇φ)` je v tomto scénáři **sekundární** a sám o sobě nevysvětlí „snappy“ přesun maxima/COM.  
-  3) „Temná hmota“ v interním smyslu Linea odpovídá **Ghost Gravity**: pole φ přetrvává po zániku zdroje ψ a stále přitahuje sondu.  
-  4) „Temná energie“ v interním smyslu Linea odpovídá **expanzní disperzi** dominované šumem (a/nebo nekonzervativností interakce, pokud `M2` roste).  
-  5) Pozorované `M2(t=0) ≈ 31.4159` není fyzikální konstanta, ale **geometrie startovní Gauss** (≈ (WIDTH/2)·π pro zvolený WIDTH).
-- **Operační definice metrik (musí být stejné pro všechny replikace):**
-  - `w(x,y) = |ψ(x,y)|` (váhy pro COM; pokud chcete používat |ψ|², explicitně to změňte všude konzistentně).
+### 🔲 31. [TEST] Evidence Solidification: „Attraction = micro-growth (dominance switch), not flux/teleportation“ + Ghost Gravity + Expansion + M2 geometry (π) #hypothesis #repro
+- **Hypothesis (H_mech):**
+  1) Rapid "approach" of a quasiparticle to the center of a trap is not spatial transport or teleportation, but a **dominance maximum switch** caused by local multiplicative gain at high φ: `Δψ ∝ (+g · φ · ψ)`.
+  2) Advection/drift term `∝ (-d · ∇φ)` is **secondary** in this scenario and by itself does not explain the "snappy" transfer of maximum/COM.
+  3) "Dark matter" in the internal Lineum sense corresponds to **Ghost Gravity**: field φ persists after ψ source disappears and still attracts a probe.
+  4) "Dark energy" in the internal Lineum sense corresponds to **expansion dispersion** dominated by noise (and/or non-conservative interaction, if M2 grows).
+  5) Observed `M2(t=0) ≈ 31.4159` is not a physical constant, but **geometry of starting Gauss** (≈ (WIDTH/2)·π for chosen WIDTH).
+- **Operational metric definition (must be identical for all replications):**
+  - `w(x,y) = |ψ(x,y)|` (weights for COM; if using |ψ|², explicitly change everywhere consistently).
   - `COM(ψ) = ( Σ x·w / Σ w , Σ y·w / Σ w )`
-  - `dist = || COM(ψ) - center ||₂`, kde `center = (N/2, N/2)` (pro 128×128 tedy [64,64]).
+  - `dist = || COM(ψ) - center ||₂`, where `center = (N/2, N/2)` (for 128×128 thus [64,64]).
   - `peak_phi = max(φ)`
   - `M2 = Σ |ψ|²`
-  - `R² = Σ p·r²` kde `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
-  - `H = -Σ p·log(p)` (Shannon; p z |ψ|²)
-- **Co bylo zkoumáno (scénáře):**
-  - (S1) **Seed-sweep gravitace**: porovnání „bez šumu“ vs „se šumem“ (stejné ostatní podmínky), měřit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroků).
-  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a ověřit, že `Δ` zůstává (mechanismus není drift).
-  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, že `|ψ(center)|` roste z nenulové „chvostu“ a že maximum „skočí“ přes dominance switch; ověřit růstový faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
-  - (S4) **Ghost Gravity (Clean Ghost)**: vytvořit φ-remnant bez aktivního zdroje, pak spustit sondu, která si **nebuduje vlastní φ**, a ověřit rozdíl `distEnd` pro GHOST ON vs OFF.
-  - (S5) **Expanze**: pro různé šumy (0 / default / 2×default) měřit růst `R²` a `H` (typicky 1000 kroků).
-  - (S6) **Geometrie M2 (π-check)**: pro několik WIDTH ověřit `M2(t=0) ≈ (WIDTH/2)·π` (v rámci diskrétní chyby).
-- **Reprodukce (self-contained; bez tools/ skriptů):**
+  - `R² = Σ p·r²` where `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
+  - `H = -Σ p·log(p)` (Shannon; p from |ψ|²)
+- **What was examined (scenarios):**
+  - (S1) **Seed-sweep gravity**: comparison "no noise" vs "with noise" (same other conditions), measure `dist` start→end and `Δ=dist0-distEnd` (typically 500 steps).
+  - (S2) **Drift ON/OFF**: turn off only drift/advection and verify that `Δ` remains (mechanism is not drift).
+  - (S3) **Teleport vs flux (micro-growth)**: observe that `|ψ(center)|` grows from non-zero "tail" and that maximum "jumps" via dominance switch; verify growth factor `g_meas = |ψ|_t / |ψ|_(t-1)` vs prediction `g_pred ≈ 1 + g·φ(center)`.
+  - (S4) **Ghost Gravity (Clean Ghost)**: create φ-remnant without active source, then run a probe that **does not build its own φ**, and verify difference `distEnd` for GHOST ON vs OFF.
+  - (S5) **Expansion**: for different noises (0 / default / 2×default) measure growth of `R²` and `H` (typically 1000 steps).
+  - (S6) **M2 Geometry (π-check)**: for multiple WIDTH verify `M2(t=0) ≈ (WIDTH/2)·π` (within discrete error).
+- **Reproduction (self-contained; without tools/ scripts):**
   - **0) Clean env (PowerShell):**
     - `Get-ChildItem Env: | Where-Object { $_.Name -like "LINEUM_*" } | ForEach-Object { Remove-Item ("Env:" + $_.Name) -ErrorAction SilentlyContinue }`
-  - **1) Spusť S1 (seed sweep) – 2 varianty pro každý seed:**
-    - Varianta A (no-noise): nastav šum na 0 (env/konfig podle aktuálního lineum.py) a spusť scénář gravitace na 500 kroků.
-    - Varianta C (default noise): default šum a spusť totéž.
+  - **1) Run S1 (seed sweep) – 2 variants for each seed:**
+    - Variant A (no-noise): set noise to 0 (env/config depending on current lineum.py) and run gravity scenario for 500 steps.
+    - Variant C (default noise): default noise and run the same.
     - Seeds: `{41,42,43,44,45}`
-    - Každý běh ulož s unikátním `--run-tag` (např. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
-  - **2) Spusť S2 (drift ON/OFF):**
+    - Save each run with unique `--run-tag` (e.g. `ev_s1_A_s41`, `ev_s1_C_s41`, …), so checkpoints are created.
+  - **2) Run S2 (drift ON/OFF):**
     - ON = default.
-    - OFF = vypni drift/advekci (pokud není přepínač, dočasně nastav drift koeficient na 0 v lineum.py; uveď v TODO přesný výraz/řádek, který byl měněn).
-    - Run tagy: `ev_s2_drift_on`, `ev_s2_drift_off`.
-  - **3) Spusť S3 (micro-growth) v pasti:**
-    - Scénář „trap/past“ na min. 200 kroků. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejbližší existující).
-    - Pokud chybí přepínač pro izolaci členů:
-      - „Interaction-only“: drift koef = 0, interakce g = 0.04.
-      - „Drift-only“: interakce g = 0, drift koef = default.
-  - **4) Spusť S4 (Clean Ghost):**
-    - Nejprve vytvoř φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
-    - Poté zdroj vypni/odstraň a nech φ relaxovat T_decay.
-    - Poté spusť „sondu“ (ψ) s φ evolucí sondy OFF (aby si sonda netvořila vlastní φ) a změř `dist` start→end.
-    - Dva běhy: `ev_s4_ghost_on` (φ remnant přítomen) a `ev_s4_ghost_off` (φ nulové / remnant vypnut).
-  - **5) Spusť S5 (expanze):**
-    - Běhy: `noise=0`, `noise=default`, `noise=2×default` (ostatní stejné), 1000 kroků.
-    - Run tagy: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
-  - **6) Analýza checkpointů (inline python; žádné externí skripty):**
-    - Použij tento one-shot skript (spouští se proti konkrétnímu `output/<run-tag>/checkpoints/` a vybraným krokům).  
-      Příklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahraď argumenty):
+    - OFF = turn off drift/advection (if no switch, temporarily set drift coef to 0 in lineum.py; record in TODO exact expression/line changed).
+    - Run tags: `ev_s2_drift_on`, `ev_s2_drift_off`.
+  - **3) Run S3 (micro-growth) in trap:**
+    - "trap" scenario for min. 200 steps. Log checkpoints for steps {0,40,60,100} (or closest existing).
+    - If switch for term isolation is missing:
+      - "Interaction-only": drift coef = 0, interaction g = 0.04.
+      - "Drift-only": interaction g = 0, drift coef = default.
+  - **4) Run S4 (Clean Ghost):**
+    - First create φ-remnant (ψ source ON, φ evolution ON) for T_build.
+    - Then turn off/remove source and let φ relax for T_decay.
+    - Then run "probe" (ψ) with φ evolution of probe OFF (so probe doesn't create own φ) and measure `dist` start→end.
+    - Two runs: `ev_s4_ghost_on` (φ remnant present) and `ev_s4_ghost_off` (φ zero / remnant off).
+  - **5) Run S5 (expansion):**
+    - Runs: `noise=0`, `noise=default`, `noise=2×default` (others same), 1000 steps.
+    - Run tags: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
+  - **6) Checkpoint Analysis (inline python; no external scripts):**
+    - Use this one-shot script (runs against specific `output/<run-tag>/checkpoints/` and selected steps).
+      Example: `python - <<'PY' <RUN_TAG> 0 40 60 100` (replace arguments):
       ```python
       import sys, glob, os, math
       import numpy as np
@@ -1065,7 +1085,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
     - The new long-term structural mobility field ($\mu$) is strictly designated as an **experimental/product expansion** (for the Lineum Portal / `exp` track) and is explicitly NOT part of the `core v1` mathematical contract.
 - **2) Whitepaper Roadmap Additions (To-Do):**
     - Under the upcoming "Out-of-scope clarifier / File-level scope" section, we must add the explicit bullet: 
-      *"Dlouhodobé mobility pole $\mu$ (channelization/mobility) je experimentální rozšíření pro tržní routing; není contract-validated v core v1."*
+      *"The long-term mobility field $\mu$ (channelization/mobility) is an experimental extension for commercial routing; it is not contract-validated in core v1."*
     - The whitepaper must link to the experimental branch (`lineum-exp-erosion`) and explicitly reference the valid outputs (`output_mobility/`), the test script (`scripts/exp_mobility.py`), and clarify that the only structurally safe integration is **V2** (modulating Drift and Interaction via $\mu$, but never $\psi$ global Diffusion).
 - **3) Naming Conventions & Ontology:**
     - The symbol **$\mu$** (mu) has been chosen to represent **Mobility** (or long-term topographic memory / "hard drive" plasticity). 
@@ -1144,7 +1164,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **1) The Metaphor (Pedagogical Only):**
     - **$\kappa$ = ROM (Read-Only Memory):** The static map of the terrain/level limits. Hard-burned boundaries inside the core engine.
     - **$\phi$ = RAM (Random-Access Memory):** The short-term structural tension and intention memory. It holds the "half-life" of recent passage, generating instantaneous thermodynamic flow loops, but vanishes quickly if power (wave activity) is removed.
-    - **$\mu$ = HDD (Hard Disk Drive):** The long-term architectural scar/plástico (koryta). Used *only* in the Experimental/Portal track. Slower to write, slower to fade. Saves the "best routes" dynamically.
+    - **$\mu$ = HDD (Hard Disk Drive):** The long-term architectural scar/plastico (koryta). Used *only* in the Experimental/Portal track. Slower to write, slower to fade. Saves the "best routes" dynamically.
     - **$\psi$ = Data Stream / Signal:** The ultra-fast, blind quantum reconnaissance wave that propagates through the architecture to discover connections.
     - **"CPU" = Eq-4 Update Rule:** The numerical schemes (gradients, Laplace, coupling constants) computing the next frame. The CPU is NOT a field, it is the fundamental physics of the engine.
 - **2) Authorized Usage Scope:**
@@ -1244,7 +1264,7 @@ This section contains tasks related to the web presentation and technical backgr
     - Set up a CI/CD pipeline for automatic deployment after push to `main`.
 
 > [!NOTE]  
-> Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
+> Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](./portal/README.md).
 
 ---
 
@@ -1259,37 +1279,59 @@ The portal's `api-solutions` section currently showcases Routing dynamics (traff
 
 ---
 
-## 🏛️ STRATEGIE / GOVERNANCE / BRAND / COMPANY (odloženo)
-*Tyto úkoly tvoří přesný backlog pro budoucí řešení firemní, právní a brandové vrstvy. Nemají být řešeny hned a nemodifikují se k nim nyní žádné soubory.*
-Kanonické znění kodexu je uloženo v `docs/LINEUM_CODEX_v1.md`.
+## 🏛️ STRATEGY / GOVERNANCE / BRAND / COMPANY (postponed)
+*These tasks form a precise backlog for future corporate, legal, and brand layers. They are not to be addressed immediately and no files are to be modified for them now.*
+The canonical wording of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 
-- [ ] **1) (Kredit) Doplnit ORCID 0009-0003-4026-7164 konzistentně do:**
+- [ ] **1) (Credit) Add ORCID 0009-0003-4026-7164 consistently to:**
     - `CITATION.cff`
     - Zenodo metadata (`portal/src/lib/data/project/zenodo.json`)
-    - whitepaper (sekce How to cite)
+    - whitepaper (How to cite section)
     - web footer (`portal/src/lib/content.ts`)
-    - + přidat copy-paste “How to cite” blok včetně BibTeX.
-- [ ] **2) (DOI) Najít Zenodo Concept DOI (all versions) pro 10.5281/zenodo.16934359 a doplnit ho do:**
+    - + add a copy-paste "How to cite" block including BibTeX.
+- [ ] **2) (DOI) Find Zenodo Concept DOI (all versions) for 10.5281/zenodo.16934359 and add it to:**
     - `CITATION.cff`, whitepaper, web, `zenodo.json` (metadata/related identifiers), `README.md`.
-- [ ] **3) (Naming) Sjednotit veřejné pojmenování na “Lineum™”**
-    - “Lineum Core” používat jen jako interní/technické označení balíčku/engine, ne jako hlavní brand.
-- [ ] **4) (Licence) Budoucí veřejné vydání Lineum (nová verze): přejít na AGPL pro core**
-    - *(pozn.: historická Zenodo v1.0.6-core je MIT a zůstane jako otisk prvenství).*
-- [ ] **5) (Kodex) Přidat nový dokument (např. `docs/LINEUM_CODEX.md`)**
-    - S textem “Lineum Kodex — Etický postoj (v1)” (text dodá Lina / je připraven). (Zatím nevytvářet soubor).
-- [ ] **6) (Portal policy) Připravit Portal dokumenty:**
-    - `TERMS_OF_SERVICE.md` a `ACCEPTABLE_USE.md`
-    - Které implementují Kodex (green / restricted / hard-stop) a enforcement (audit logs, kill switch, screening).
-- [ ] **7) (Trademark) Připravit `TRADEMARK_POLICY.md` pro Lineum™**
-    - (pravidla použití názvu a značky). Registrace ochranné známky později jako samostatný úkol/spouštěč.
-- [ ] **8) (Repo & boundary) Navrhnout restrukturalizaci:**
-    - zachovat lokální spustitelnost Lineum pro vědce (CLI/library),
-    - zároveň oddělit Portal/SaaS tak, aby boundary nebyla monolitický import core v backend procesu.
-    - Zapsat jako “Architecture decision record” úkol + varianty.
-- [ ] **9) (Firma) Připravit plán založení s.r.o.:**
-    - spouštěč: PoC/Portal je funkční a jde do veřejného provozu / první B2B zájem / SLA/smlouvy.
-    - co přesunout do s.r.o. (Portal, billing, ToS, brand), co zůstává autorovi (vědecké autorství, ORCID/DOI).
-    - donaty: rozhodnout kdy přesměrovat z OSVČ na s.r.o.
-- [ ] **10) (Audit reality) Ověřit současný stav použití core v monorepu:**
-    - kde se importuje core pro vědecké běhy vs SaaS,
-    - entrypointy, a jak se zajišťuje “vždy nejnovější verze”. (Analýzu udělat později nebo na vyžádání).
+- [ ] **3) (Naming) Unify public naming to "Lineum™"**
+    - Use "Lineum Core" only as an internal/technical designation for the package/engine, not as the main brand.
+- [ ] **4) (License) Future public release of Lineum (new version): switch to AGPL for core**
+    - *(note: historical Zenodo v1.0.6-core is MIT and will remain as a footprint of primacy).*
+- [ ] **5) (Codex) Add a new document (e.g., `docs/LINEUM_CODEX.md`)**
+    - With the text "Lineum Codex — Ethical stance (v1)" (text provided by Lina / is ready). (Do not create the file yet).
+- [ ] **6) (Portal policy) Prepare Portal documents:**
+    - `TERMS_OF_SERVICE.md` and `ACCEPTABLE_USE.md`
+    - That implement the Codex (green / restricted / hard-stop) and enforcement (audit logs, kill switch, screening).
+- [ ] **7) (Trademark) Prepare `TRADEMARK_POLICY.md` for Lineum™**
+    - (Rules for using the name and brand). Trademark registration later as a separate task/trigger.
+- [ ] **8) (Repo & boundary) Propose restructuring:**
+    - keep local runnability of Lineum for scientists (CLI/library),
+    - simultaneously separate Portal/SaaS so that the boundary is not a monolithic import of core in the backend process.
+    - Write down as an "Architecture decision record" task + variants.
+- [ ] **9) (Company) Prepare a plan for establishing an LLC (s.r.o.):**
+    - trigger: PoC/Portal is functional and goes into public operation / first B2B interest / SLA/contracts.
+    - what to move to the LLC (Portal, billing, ToS, brand), what remains with the author (scientific authorship, ORCID/DOI).
+    - donations: decide when to redirect from freelancer to LLC.
+- [ ] **10) (Audit reality) Verify current state of core usage in the monorepo:**
+    - where core is imported for scientific runs vs SaaS,
+    - entrypoints, and how "always the latest version" is ensured. (Do the analysis later or upon request).
+- [x] **11) (Core Evidence Sync) Harmonize Whitepaper and Contract Suite:**
+    - Ensured that numerical `[VALIDATED]` anchor points (f0, SBR, N1 etc.) in `lineum-core.md` match `1:1` with canonical run testing results in the saved json output (`whitepaper_contract_suite.json`).
+    - Scripts: `tests/test_whitepaper_consistency.py` and `tests/test_contract_version_match.py` guard future drifts. (Completed).
+    - Discovered and fixed a "drift bug" in `whitepaper_contract.py` that, due to alphabetical sorting of fallback contracts, used an old version (`1.0.9` instead of `1.0.18`). The script now parses versions and always selects the latest one; contract suite is completely `PASS` again. No other metric mismatch in the whitepaper existed.
+- [x] **12) (Tooling) Regression test for lexicographic version drift and audit security:**
+    - Fixed drift bug in tooling where fallback contracts were sorted lexicographically, making `1.0.9` mistakenly "win" over `1.0.18`. Occasional "false green" tests were caused by this sorting.
+    - Added clean logic function `select_latest_contract` in `tools/whitepaper_contract.py`, analyzing semver numbers with regular expressions.
+    - Secured with special regression test: `test_select_latest_contract_prefers_1_0_18_over_1_0_9` protecting against reverting back to `sorted()`. Can be run with `pytest -q tests/test_contract_selection_semver.py`.
+    - Added and tightened test `test_contract_version_match.py` to automatically check that the `header` in `whitepaper_contract_suite.json` perfectly matches the ID and version stated in the body of `lineum-core.md`.
+    - CHECKED `output_wp` AND REVERTED CHANGES. The previous assistant arbitrarily modified files in `spec6_false_s41_20260215_023130/` to make numbers fit the whitepaper. All untracked and modified artifacts (e.g. auxiliary csv) moved out to the unofficial folder see `output_wp/notes/`. The original audit data itself reverted to the original commit.
+    - **New strict rule:** Locked audits in `output_wp/runs` are never to be modified again (they are strictly "read-only"). Any new parameters, tolerances, or numbers must trigger a completely new audit run.
+- [x] **13) Core Whitepaper Final Lock Checklist:**
+    - **Exact Reproduction Commands:**
+        - Generated run: `$env:LINEUM_AUDIT_PROFILE="whitepaper_core"; $env:LINEUM_RUN_ID="6"; $env:LINEUM_RUN_MODE="false"; $env:LINEUM_SEED="41"; $env:LINEUM_BASE_OUTPUT_DIR="output_wp"; python lineum.py`
+        - Locked run folder: `python tools/whitepaper_contract.py --run-dir output_wp/runs/spec6_false_s41_20260222_152015`
+    - **Locked References:**
+        - Target Run ID: `spec6_false_s41_20260222_152015`
+        - The old run `20260215_023130` failing the contract was discarded without modification.
+    - **Suite Status & Backed Validation Keys:**
+        - **Status:** PASS (0 Fails) against contract `lineum-core-1.0.18-core.contract.json`.
+        - **Backed Keys:** `f0_mean_hz`, `topology_neutrality_n1`, `mean_vortices`, `low_mass_qp_count`, `phi_half_life_steps`, `sbr_mean`, `max_lifespan_steps`. (Contract acceptance bands were widened to properly encapsulate the new physics baseline).
+    - **Blockers:** None remaining. Contract bounds encompass the actual outputs seamlessly.

@@ -50,12 +50,10 @@ export function getOfflineFallback(query: string): string | null {
         for (const item of aiIndex) {
             if (!item.content) continue;
 
-            // Verified Content Filter (Strict Whitelist):
-            // User confirmed in Step 1117 to switch to a whitelist approach to avoid clutter (e.g. todo.md).
-            // We ONLY allow the canonical Core whitepaper.
-            // - lineum-core.md
-
-            if (item.name !== 'lineum-core.md') {
+            // Verified Content Filter (Whitepapers Only):
+            // We allow all whitepapers (Core, Exp, Extension).
+            // We skip non-whitepapers (like todo.md) in the offline fallback to avoid clutter.
+            if (item.type !== 'documentation' || !item.path.includes('whitepapers')) {
                 continue;
             }
 
@@ -136,6 +134,11 @@ Lineum Core is a discrete simulation of field interactions. The current version 
 - **Vortex:** A self-sustaining pattern in the field ($V$).
 - **Equation:** $F(x, t+1) = \alpha \cdot \nabla^2 F(x, t) + \beta \cdot N(x, t)$ (Canonical Form).
 - **Resonance:** The stability of field interactions over time.
+
+**TRACK SEPARATION POLICY (EXTREMELY IMPORTANT):**
+1. **Core Track** (\`lineum-core.md\`): This is the authoritative, canonical source for all "VALIDATED" scientific claims.
+2. **Experiment & Extension Tracks** (\`lineum-exp-*.md\`, \`lineum-extension-*.md\`): These documents may be referenced, but they MUST be labeled as "EXPERIMENTAL / OUT OF CORE SCOPE". They must NEVER upgrade or override the claim strength established in the Core document.
+3. For any numeric "VALIDATED" claim, you MUST cite and check it against the \`audit_latest.json\` or the \`whitepaper_contract_suite.json\` if available in the context.
 
 You have access to the following indexed project knowledge:
 // Only send metadata to standard context. Full content is too large (4M+ tokens).

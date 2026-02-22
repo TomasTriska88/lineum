@@ -12,7 +12,8 @@ def compute_sha256(filepath):
     return h.hexdigest()
 
 def verify_locks(whitepapers_dir):
-    lock_files = glob.glob(os.path.join(whitepapers_dir, '*.lock.json'))
+    releases_dir = os.path.join(whitepapers_dir, 'releases')
+    lock_files = glob.glob(os.path.join(releases_dir, '*._LOCK.json'))
     
     if not lock_files:
         print("No whitepaper locks found.")
@@ -26,7 +27,7 @@ def verify_locks(whitepapers_dir):
         wp_file = lock_data.get('whitepaper_file')
         expected_hash = lock_data.get('sha256')
         
-        wp_path = os.path.join(whitepapers_dir, wp_file)
+        wp_path = os.path.join(releases_dir, wp_file)
         if not os.path.exists(wp_path):
             print(f"FAIL: Locked whitepaper {wp_file} is missing.")
             all_valid = False
@@ -34,7 +35,8 @@ def verify_locks(whitepapers_dir):
             
         actual_hash = compute_sha256(wp_path)
         if actual_hash != expected_hash:
-            print(f"FAIL: Whitepaper {wp_file} has been tampered with or modified. Expected SHA256 {expected_hash}, got {actual_hash}.")
+            print(f"FAIL: Whitepaper {wp_file} has been tampered with or modified. Expected SHA256 {expected_hash}, got {actual_hash}.\n"
+                  f"Frozen docs cannot be edited directly; changes must go into a separate addendum file (e.g. addenda/{wp_file}.addendum-YYYYMMDD.md).")
             all_valid = False
         else:
             print(f"PASS: Whitepaper {wp_file} matches locked SHA256.")

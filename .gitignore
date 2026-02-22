@@ -52,3 +52,5 @@ portal/src/lib/data/ai_index.json
 # portal/src/lib/data/
 repro_audit.ps1
 docs/reports/2026-02-17-audit/audit_report.md
+
+temp/

@@ -43,7 +43,8 @@ def lock_run(run_dir):
     suite_sha256 = compute_sha256(suite_path) if os.path.exists(suite_path) else None
     
     lock_data = {
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "locked": True,
         "run_id": run_id,
         "file_count": len(file_registry),
         "suite_sha256": suite_sha256,
@@ -57,25 +58,33 @@ def lock_run(run_dir):
     print(f"Created {lock_file} with {len(file_registry)} files.")
     
     # Apply filesystem protections
-    if platform.system() == "Windows":
-        try:
-            subprocess.check_call(f'attrib +R "{run_dir}\\*" /S /D', shell=True)
-            # Apply deny ACL for current user for Write, Modify, Delete Child
-            username = os.environ.get("USERNAME")
-            if username:
-                subprocess.check_call(f'icacls "{run_dir}" /deny "{username}":(OI)(CI)(W,M,DC)', shell=True)
-            print("Windows filesystem protections applied (attrib +R and icacls deny).")
-        except subprocess.CalledProcessError as e:
-            print(f"Failed to apply Windows permissions: {e}")
+    if "--no-os-lock" not in sys.argv:
+        if platform.system() == "Windows":
+            try:
+                subprocess.check_call(f'attrib +R "{run_dir}\\*" /S /D', shell=True)
+                # Apply deny ACL for current user for Write, Modify, Delete Child
+                username = os.environ.get("USERNAME")
+                if username:
+                    subprocess.check_call(f'icacls "{run_dir}" /deny "{username}":(OI)(CI)(W,M,DC)', shell=True)
+                print("Windows filesystem protections applied (attrib +R and icacls deny).")
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to apply Windows permissions: {e}")
+        else:
+            try:
+                subprocess.check_call(['chmod', '-R', 'a-w', run_dir])
+                print("POSIX filesystem protections applied (chmod -R a-w).")
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to apply POSIX permissions: {e}")
     else:
-        try:
-            subprocess.check_call(['chmod', '-R', 'a-w', run_dir])
-            print("POSIX filesystem protections applied (chmod -R a-w).")
-        except subprocess.CalledProcessError as e:
-            print(f"Failed to apply POSIX permissions: {e}")
+        print("Skipped OS-level filesystem protections (--no-os-lock).")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python lock_audit_run.py <path_to_run_dir>")
+        print("Usage: python lock_audit_run.py <path_to_run_dir> [--no-os-lock]")
         sys.exit(1)
-    lock_run(sys.argv[1])
+    
+    target_dir = sys.argv[1]
+    if target_dir == "--no-os-lock" and len(sys.argv) > 2:
+        target_dir = sys.argv[2]
+        
+    lock_run(target_dir)
