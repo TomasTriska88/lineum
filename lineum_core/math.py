@@ -16,7 +16,6 @@ PSI_AMP_CAP = 1e6
 GRAD_CAP = 1e6
 PHI_CAP = 1e6
 
-# --- Default Tunable Constants ---
 TEST_EXHALE_MODE = False
 NOISE_STRENGTH = 0.005
 PHI_INTERACTION_CAP = 10.0
@@ -25,6 +24,8 @@ DISSIPATION_RATE = 0.005
 PSI_DIFFUSION = 0.05
 REACTION_STRENGTH = 0.00070
 PHI_DIFFUSION = 0.05
+
+EXPERIMENTAL_TERM = 0 # Default OFF (0). Toggle to 1 to test fail-fast theoretical loops.
 
 
 def sigmoid(x, k=5):
@@ -139,6 +140,11 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     phi_int = torch.clamp(phi, 0.0, float(PHI_INTERACTION_CAP))
     interaction_term = 0.04 * phi_int * psi * kappa
 
+    # --- EXPERIMENTAL NEW TERM FAIL-FAST HOOK ---
+    if EXPERIMENTAL_TERM:
+        experimental_factor = 0.0 * psi * kappa # Placeholder logic
+        psi += experimental_factor
+
     grads_phi = torch.gradient(phi)
     
     phi_flow_term = DRIFT_STRENGTH * (grads_phi[0] + 1j * grads_phi[1]) * kappa
@@ -207,6 +213,11 @@ def _evolve_numpy(psi, delta, phi, kappa):
     
     interaction_term = 0.04 * phi_int * psi * kappa
 
+    # --- EXPERIMENTAL NEW TERM FAIL-FAST HOOK ---
+    if EXPERIMENTAL_TERM:
+        experimental_factor = 0.0 * psi * kappa # Placeholder logic
+        psi += experimental_factor
+        
     grad_phi_x, grad_phi_y = np.gradient(phi)
     phi_flow_term = DRIFT_STRENGTH * (grad_phi_x + 1j * grad_phi_y) * kappa
     psi += phi_flow_term

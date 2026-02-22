@@ -1,16 +1,16 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-02-15T09:07:33.080404+00:00",
-    "contract_id": "lineum-core-1.0.15-core",
-    "contract_version": "1.1.5",
+    "timestamp": "2026-02-22T02:54:18.164233+00:00",
+    "contract_id": "lineum-core-1.0.9-core",
+    "contract_version": "1.1.0",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "1.0.14-core"
   },
   "fingerprints": {
-    "whitepaper_sha256": "b6f345d836e0172e97ef5078adf0dbd106c96b7dc21daa2ce4c48ae19d956cef",
-    "contract_sha256": "d04df24444d598122e32cf2131164f8c8291c2c1b9daae9526d7ec12d422517e",
-    "codebase_sha256": "eb82acfa7ef56bed79a591f95cef981daf48630a85d69dd3d58836f4024d8974"
+    "whitepaper_sha256": "535bf98ab49df57e4105d542ba15f55e5ba428dc9b976b261fb00b34e5dea9b7",
+    "contract_sha256": "96378e59065185606ae1177454c85734149e8e08a5672a354830186f242f118f",
+    "codebase_sha256": "796eacf95fe7537ba0eaf7195aeb4cf2bd7d0ae271b3896d4206adcf78eca14d"
   },
   "embedded_context": {
     "runs": {
@@ -340,13 +340,13 @@
         {
           "id": "canonical.anchor.f0_mean_hz",
           "expected": {
-            "min": 1.84e+20,
-            "max": 1.87e+20,
+            "min": 1.701827566964286e+20,
+            "max": 1.718931361607143e+20,
             "paper_ref": "\u00a74.6"
           },
           "actual": 1.856777545095882e+20,
-          "status": "PASS",
-          "message": "Value 1.856777545095882e+20 OK",
+          "status": "FAIL",
+          "message": "1.856777545095882e+20 > max 1.718931361607143e+20",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
@@ -356,8 +356,8 @@
         {
           "id": "canonical.anchor.topology_neutrality_n1",
           "expected": {
-            "min": 93.0,
-            "max": 99.5,
+            "min": 93.25,
+            "max": 99.25,
             "paper_ref": "\u00a74.4"
           },
           "actual": 94.19999999999999,
@@ -389,13 +389,13 @@
         {
           "id": "canonical.anchor.mean_vortices",
           "expected": {
-            "min": 55.0,
-            "max": 65.0,
+            "min": 88.8975,
+            "max": 108.6525,
             "paper_ref": "\u00a74.4"
           },
           "actual": 59.1455,
-          "status": "PASS",
-          "message": "Value 59.1455 OK",
+          "status": "FAIL",
+          "message": "59.1455 < min 88.8975",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
@@ -421,12 +421,12 @@
         {
           "id": "canonical.anchor.max_lifespan_steps",
           "expected": {
-            "min": 40,
+            "min": 500,
             "paper_ref": "\u00a74.5"
           },
           "actual": 44,
-          "status": "PASS",
-          "message": "Value 44.0 OK",
+          "status": "FAIL",
+          "message": "44.0 < min 500",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.max_lifespan_steps",
@@ -436,8 +436,8 @@
         {
           "id": "canonical.anchor.phi_half_life_steps",
           "expected": {
-            "min": 900,
-            "max": 1100,
+            "min": 836,
+            "max": 1254,
             "paper_ref": "\u00a74.6"
           },
           "actual": 1009,
@@ -452,7 +452,7 @@
         {
           "id": "canonical.anchor.sbr_mean",
           "expected": {
-            "min": 3000.0,
+            "min": 100.0,
             "paper_ref": "\u00a74.6"
           },
           "actual": 3245.4600764773872,
@@ -541,18 +541,24 @@
           "status": "PASS"
         },
         {
-          "id": "canonical.artifact.*kappa_map.png",
+          "id": "canonical.artifact.*spin_aura_map.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*spin_aura_profile.csv",
           "expected": "exists",
           "actual": "found",
           "status": "PASS"
         }
       ],
-      "status": "PASS"
+      "status": "FAIL"
     }
   ],
   "summary": {
-    "pass": 1,
-    "fail": 0,
+    "pass": 0,
+    "fail": 1,
     "skip": 0,
     "matched_canonical": 1
   }

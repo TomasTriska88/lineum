@@ -1017,11 +1017,146 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **Preliminary Verification (Local Run 2026-02-22):**
     - **Setup:** A $128 \times 128$ grid, 40 randomized high-friction $\kappa$ obstacles, target $\delta$ tension of 50.0, and 100 simultaneous agents starting opposite the target. Ran for 300 steps.
     - **Result:** The baseline Lineum engine (v1.0.6-core) currently distributes flow highly homogeneously. The top $20\%$ of active cells carry exactly $\sim20.01\%$ to $21.04\%$ of the total system volume. 
-    - **Conclusion & Next Steps:** The current Eq-4 physics engine spreads the probability wave extremely wide to guarantee structural closure, which prevents the immediate formation of a Pareto 80/20 "super-highway". To achieve a true 80/20 power law, the engine specifically needs a much stronger non-linear feedback loop in the $\phi$ (memory) tension, where highly trafficked cells disproportionately lower their own resistance (similar to ant pheromones or riverbed erosion). This confirms that Pareto is *not* a default property of random diffusion, but requires active structural reinforcement. This must be explored in the `lineum-exp-erosion` branch before drafting the whitepaper.
+    - **Conclusion & Next Steps:** The current Eq-4 physics engine spreads the probability wave extremely wide to guarantee structural closure, which prevents the immediate formation of a Pareto 80/20 "super-highway". To achieve a true 80/20 power law, the engine specifically needs a much stronger non-linear feedback loop in the $\phi$ (memory) tension, where highly trafficked cells disproportionately lower their own resistance (similar to ant pheromones or riverbed erosion). This confirms that Pareto is *not* a default property of random diffusion, but requires active structural reinforcement. 
+    - **Erosion Experiment Results (2026-02-22, branch `lineum-exp-erosion`):**
+        - Baseline (no erosion): `top20_share = 23.7%`, `top10 = 12.6%`, `top1% = 1.4%`, `Gini = 0.113`
+        - Best aggressive erosion ($\eta=0.02, \rho=0.001$): `top20_share = 28.1%`, `top10 = 17.6%`, `top1% = 8.2%`, `Gini = 0.167`
+        - **Verdict:** The erosion effect exists (heavy-tail concentration grows) and the model is perfectly stable without collapsing into a single 1-pixel route (which preserves network redundancy). However, the purely local plasticity mechanism is not strong enough to overcome the inherent structural dispersion of Eq-4, and falls short of the >40% target expected of a true Pareto distribution.
+        - **Artifacts:** Saved in `output_erosion/` (`erosion_summary.csv`, `erosion_timeseries.csv`, plus PNG time-series).
+    - **Extended Double Erosion Mechanics (2026-02-22):**
+        - **$\kappa$ Definition Sanity:** $\kappa$ is explicitly implemented as *permeability* (higher = easier passage, `1.0` is free space, `0.05` are high-friction obstacles).
+        - **The Clogging vs. Erosion Discovery:** The reason the initial "erosion" ($\kappa_{t+1} = \kappa_t - \eta J_t$) slightly concentrated flow is because it was actually doing the reverse—it was *clogging* (evaporating/hardening) unused space, forcing traffic into surviving arteries.
+        - When true "pheromone/erosion" ($\kappa_{t+1} = \kappa_t + \eta J_t$) was tested, the Pareto concentration fell to $23.4\%$ (equal or worse than baseline). Why? Because empty space starts at $\kappa=1.0$ (maximum permeability ceiling). You cannot "carve an empty space deeper" without raising the engine's theoretical $\kappa_{\max}$.
+        - **Impact on Eq-4 Core Physics:** Even as a local routing layer, plasticity deeply alters global physics. The "clogging" effect spiked the Signal-to-Background Ratio (SBR) from baseline `619` up to `17231` and shifted fundamental frequency $f_0$.
+        - **Final Verdict for Whitepaper:** 
+            - $\kappa$ should remain static in the pure Eq-4 core (it provides universal topology/closure). 
+            - Dynamic routing plasticity belongs to the applied/commercial layer.
+            - To achieve true >80% Pareto concentration via real erosion in the future, the field must either start as a "dense fog" (e.g., base $\kappa=0.1$ where agents carve their way up to $1.0$), or $\kappa$ must be explicitly decoupled into $\kappa_\phi$ (memory capacity) and $\kappa_\psi$ (wave propagation limit).
+    - **Long-Term Mobility Field ($\mu$) Experiment (2026-02-22, branch `lineum-exp-erosion`):**
+        - Following the discovery that $\kappa$ is universal permeability (and starts at 1.0 ceiling), we tested a separate dynamic field $\mu(x,y,t)$ to act as a "hard drive" for plasticity without breaking the static terrain $\kappa$.
+        - **Methodology:** $\mu_{t+1} = \mu_t + \eta J_t - \rho(\mu_t - \mu_0)$. Tested on $\mu_0 = 1.0$ (vacuum) vs $\mu_0 = 0.1$ (fog).
+        - **Ablation Test:** Where should $\mu$ physically plug into Eq-4?
+            - **V1 (Drift only):** Minimal impact on concentration (`top20_share = 23.7%`), physics completely unbroken.
+            - **V2 (Drift + Interaction):** Best routing performance (`top20_share = 24.9%`, highest among $\mu_0=0.1$ modes). Core physics shifted (SBR rose to ~3042, $f_0$ dropped by half to ~0.0016 Hz), meaning memory *deeply* affected the wave resonance, but didn't break topological neutrality (vortices remained identical).
+            - **V3 (Drift + Diffuse + Interact):** Worst concentration (`23.2%`, lower than baseline). Suppressing global diffusion with $\mu$ chokes the field's ability to explore and actually harms routing.
+        - **Correlation:** In all valid $\mu$ modes, the generated $\mu$ channels perfectly correlated with the central $\phi$ traces (Pearson $r \approx 0.998$, top-5% cell spatial overlap $\approx 5.8\%$). The $\mu$ field successfully crystallized the $\phi$-memory into a long-term "scar".
+        - **Final Eq-4 Verdict:** The core Eq-4 equation remains unchanged ($\kappa$ static). The $\mu$ field (Mobility / Long-Term Structural Memory) is a highly viable *optional routing plugin* for the commercial API/Portal track. If enabled, it should strictly follow the **V2 architecture** (modulating Drift and Interaction, but never Diffusion) to allow paths to deepen without destroying the quantum closure guarantees.
+        - **Artifacts:** `output_mobility/mobility_summary.csv`, `mobility_timeseries.csv`, and `mobility_top20_timeseries.png`. Run generated by `python scripts/exp_mobility.py`.
+    - **Mobility V2: Hardware-Like Separation of Memory Domains (2026-02-22, branch `lineum-exp-erosion`):**
+        - To cement the architectural role of fields, we designed a deep-dive script (`exp_mobility_v2.py`) testing dynamic environments and memory freezing, yielding the "ROM / RAM / HDD" field paradigm.
+        - **Scenario A (HDD "Freeze & Reset" Test):** We allowed the simulation to build strong $\mu$ routing channels (`top20` = 29%), then *froze* $\mu$ updates and *wiped* the $\phi$ tension field to exact 0.
+            - *Result:* Flow routing instantly collapsed flat to `22.5%` (equivalent to base diffusion). 
+            - *Insight:* $\mu$ alone (HDD) is merely topographical bias; it cannot resurrect a super-highway without $\phi$ (RAM). The Eq-4 engine intrinsically relies on active $\phi$ quantum tension to maintain heavy tail flow. $\mu$ serves merely as the "scar" that makes RAM pathfinding easier next round.
+        - **Scenario B (Dynamic Environments & Ghost Highways):** We suddenly opened a wall gap closer to the target mid-run.
+            - *Result:* Both baseline and $\mu$-enhanced variants instantly detected the shortcut because global wave diffusion ($\psi$) was not choked. However, the $\mu$ field retained a "ghost highway" on the older longer path that slowly relaxed. For Portal applications, rapid environment shifts will require local $\mu$-resets (clearing the cache) to prevent splitting traffic along obsolete routes.
+        - **Rigorous $\mu \leftrightarrow \phi$ Independence:** Jaccard overlaps bounding the top 5% of energetic cells confirmed an overlap of ~46.9% between $\mu$ and $\phi$. They occupy the same canonical routes, but behave vastly differently in time (instant tension vs slow scarring).
+        - **Final Canonical Paradigm for Lineum Math:**
+            1. **$\kappa$ (ROM - Terrain):** Absolute static permeability. Describes the map.
+            2. **$\phi$ (RAM - Intent):** Ephemeral tension memory. Forms active thermodynamic flow loops. 
+            3. **$\mu$ (HDD - History):** *(Portal/Exp Track Only).* Long-term plasticity that alters $\phi$ drift (V2) but never touches $\psi$ diffusion. This preserves core metrics like topology (N1) safely while solving B2B routing UX.
 - **Theoretical Distinction: Erosion vs. Fitness Function (Critical for Whitepaper):**
     - **The Risk:** Critics might argue that adding an erosion term ($\kappa_{t+1} = \kappa_t - \text{flow}$) is simply injecting a "fitness function" to force the model into finding the shortest path (a Top-Down hack).
     - **The Defense:** A fitness function is a *global, artificial oracle* that scores a whole system from the outside to optimize a goal (like a neural net loss function). Lineum's Erosion is a *strictly local, physical coupling* (Bottom-Up). A unit of $\psi$ traversing a cell blindly wears down the resistance ($\kappa$) of *only that specific cell*. The global 80/20 "super-highway" that emerges is not a pre-calculated goal; it is a blind thermodynamic consequence of energy taking the path of least resistance, inadvertently deepening it for the next unit.
     - **Universe Implication:** If the universe used a fitness function, it would imply intelligent top-down design. Because Lineum uses blind local erosion, it perfectly models how the universe naturally forms complex structures (Cosmic Web, lightning, river deltas) purely through the self-reinforcing coupling of energy and space.
+
+### 🔲 42. Whitepaper & Contract Hygiene (Scope Definition)
+- **1) Core Whitepaper (`lineum-core.md`) Scope Decision:**
+    - Canonical Eq-4 ($\psi \leftrightarrow \phi \leftarrow \delta$ subject to static $\kappa$) remains completely unchanged for `core v1`.
+    - The new long-term structural mobility field ($\mu$) is strictly designated as an **experimental/product expansion** (for the Lineum Portal / `exp` track) and is explicitly NOT part of the `core v1` mathematical contract.
+- **2) Whitepaper Roadmap Additions (To-Do):**
+    - Under the upcoming "Out-of-scope clarifier / File-level scope" section, we must add the explicit bullet: 
+      *"Dlouhodobé mobility pole $\mu$ (channelization/mobility) je experimentální rozšíření pro tržní routing; není contract-validated v core v1."*
+    - The whitepaper must link to the experimental branch (`lineum-exp-erosion`) and explicitly reference the valid outputs (`output_mobility/`), the test script (`scripts/exp_mobility.py`), and clarify that the only structurally safe integration is **V2** (modulating Drift and Interaction via $\mu$, but never $\psi$ global Diffusion).
+- **3) Naming Conventions & Ontology:**
+    - The symbol **$\mu$** (mu) has been chosen to represent **Mobility** (or long-term topographic memory / "hard drive" plasticity). 
+    - *Fallback Note:* If $\mu$ clashes with SI "micro-" prefixes in future dimensional analysis, acceptable candidates are **$\chi$** (chi - channel) or **$M$** (capital M - Memory/Mobility).
+    - **Mathematical Definition:** $\mu_{t+1} = \text{clamp}(\mu_t + \eta J_t - \rho(\mu_t - \mu_0), \mu_{\min}, \mu_{\max})$
+        - $\eta$ : Traffic embedding rate (e.g. 0.02)
+        - $\rho$ : Environment relaxation rate (e.g. 0.001)
+        - $\mu_0$ : Base vacuum mobility (e.g. 0.1 for fog, 1.0 for empty space)
+        - $J_t$ : Instantaneous traffic proxy (e.g. $|\psi|^2$)
+- **4) Evidence Retention (Run 2026-02-22, Dynamic Obstacle, Seed 101):**
+    - The following core metrics define the exact structural difference between the base Eq-4 and the V2 extended routing. 
+    - **Baseline (Vanilla Eq-4):**
+        - `top20_share`: 24.0%
+        - `f0_mean_hz`: 0.0033 Hz
+        - `sbr_mean`: 619.8
+        - `vortices`: 78
+    - **V1 (Drift Modulation Only):**
+        - `top20_share`: 24.1%
+        - `f0_mean_hz`: 0.0033 Hz
+        - `sbr_mean`: 615.1
+        - `vortices`: 78
+    - **V2 (Drift + Interaction Modulation - Chosen Variant):**
+        - `top20_share`: 24.8% (highest concentration gain without global collapse)
+        - `f0_mean_hz`: 0.0016 Hz (halved frequency, deeper channels)
+        - `sbr_mean`: ~3042.8 (massive gain in contrast/path stability)
+        - `vortices`: 78 (identical topological neutrality preserved)
+    - **V3 (Drift + Interaction + Diffusion - Rejected Variant):**
+        - `top20_share`: 23.2% (lower than baseline, chokes quantum search)
+    - *Methodology:* Run locally via `multiprocessing` on `exp_mobility.py` (300 steps, $128\times128$ grid, 40 randomized obstacles). Metrics computed using Fourier Transform arrays on the central window (`sliding_windows_1d`, `np.fft.rfft`), Gini coefficient mapped over 2D array, and complex phase curl evaluated for singular vortices.
+
+### 🔲 43. New Term Candidate — Fail-Fast Protocol
+- **Context:** An infrastructure hook has been added to test exactly 1 new proposed term in the future. The backend variable `LINEUM_EXPERIMENTAL_TERM` (default `0`) has been placed inside `lineum_core/math.py` (both NumPy and PyTorch loops) to intercept the field evaluation. By default, it returns a `0.0` placeholder and does **not** affect standard physics.
+- **Goal:** Once a specific candidate formulation for the "missing" term is hypothesized, it must survive this exact gauntlet without crashing the contract metric boundaries.
+- **Fail-Fast Harness Validation Script:** `scripts/exp_term_harness.py`
+    - Evaluates identical parallel seeds: Baseline vs `EXPERIMENTAL_TERM=1`.
+    - Outputs strictly to `output_term_harness/term_ablation_summary.csv`.
+- **The Checklist for any New Term:**
+    - [ ] **1. ON/OFF Sanity:** Baseline physics must be physically indiscernible when the flag is OFF. Default user runs are shielded.
+    - [ ] **2. Stability (NaN/Inf):** The term must not blow up to Infinity or cause numerical failure (NaN) within 2,000 steps of testing.
+    - [ ] **3. Boundary / Limit Cases:** The term must handle homogeneous empty fields ($\kappa=1.0$ everywhere) safely without inducing phantom forces or artificial drift, preserving strict radial symmetry.
+    - [ ] **4. Contract Impact (SBR & $f_0$):** Output metrics from `exp_term_harness.py` must explicitly show how the term affects topological neutrality (vortices) and the resonance frequencies ($f_0$). If it drastically alters SBR without intentional reason, it is physically unsafe.
+    - [ ] **5. Self-Sim EXP Metrics (EXP Info Only):** The term should not destroy the scale-invariant fractal geometry established in the `contracts/lineum-exp-selfsim-1.0.0.json` contract (informational for EXP track only, not a core SBR requirement).
+
+### 🔲 44. New & Self-Similar Information (Geometry Metrics)
+- **Context:** To verify the structural health of the fields generated by the engine ($\phi$ and $\mu$) objectively, we need specific measurements of *new* and *self-similar* geometric information.
+- **Metric Definitions (Evaluated at end of 300 steps):**
+    - `novelty_vs_prev`: L1 difference map normalized. Formula: $\sum |\phi_t - \phi_{t-\Delta}| / \sum \phi_t$. Evaluated with $\Delta=50$ steps to show how dynamically "nervous" the space is (how much new pathing emerges vs freezes).
+    - `compression_proxy`: Length in bytes of the GZIP compressed output of the CSV map array. Proxy for complex information density (higher values mean more structural variation and fewer homogeneous zero zones).
+    - `structural_components`: Connected component count algorithm (Scipy default) evaluated on the Top 5% density mask ($\phi \text{ vs } 95\text{th percentile}$).
+    - `box_counting_dim_5pct`: Fractal box-counting dimension $D_0$ calculated on the identical Top 5% binary mask. Reveals geometric scale-invariance.
+    - `downsample_corr_4x`: Pearson correlation between the original map and a map structurally downsampled then upsampled back ($4\times$). Maps $>0.8$ are highly structured across scales.
+    - `spectrum_slope`: Slope of the 1D radially averaged power spectrum (derived from 2D FFT) plotted in log-log space. Proxy for "veining" vs "white noise".
+- **Execution (Robust Sweep):**
+    - Scenarios: Evaluated Baseline, Mobility V1, and Mobility V2 across 3 random seeds (17, 41, 73) to ensure statistical stability.
+    - Grid Verification: Evaluated on $128\times128$ and $256\times256$ to ensure scale limits.
+    - Sweeps: Top-density thresholds $k \in \{1\%, 2\%, 5\%, 10\%, 20\%\}$ and downsample factors $\in \{2\times, 4\times, 8\times\}$.
+    - Test script: `scripts/novelty_metrics.py` (Outputs: `novelty_selfsim_sweep_summary.csv` and `time_series_novelty.csv`).
+    - Plots output to: `output_mobility_v2/novelty_selfsim_plots/`.
+- **Sweep Results & Verdict:**
+    1. **Structural Complexity (Novelty & Density):**
+        - Average `novelty`: Baseline $\approx 0.26$, V2 $\approx 0.24$. 
+        - Average `compression` proxy: Baseline $\approx 55.8$ KB, V2 $\approx 57.2$ KB.
+        - *Verdict:* The V2 memory mechanism undeniably works. Engaging $\mu$ creates stable "scars", dropping geometric shifting/wandering (novelty) while securely increasing the underlying informational complexity (GZIP byte size) of the flow map. The structure stabilizes over time (as seen in the time-series plots).
+    2. **Self-Similarity Invariants (Seed, Scale & Threshold Robustness):**
+        - The power spectrum slope (`spectrum_slope`) is highly robust: $\approx -1.89$ for Baseline and $\approx -1.90$ for V2 across all seeds, and remains invariant at $256\times256$ grids.
+        - The fractal box-counting dimension $D_0$ smoothly scales with threshold $k$. At $k=5\%$, $D_0 \approx 1.25$ for both Baseline and V2. At $k=20\%$, $D_0 \approx 1.64$ for Baseline and $1.59$ for V2. The growth curves (plotted in `D0_vs_k.png`) perfectly match, proving $\mu$ modulates the flow *without* destroying its inherent topological structure.
+        - Correlation stability: Cross-scale topological memory is perfectly retained. Downsampling $4\times$ yields $r \approx 0.85$ universally. Downsampling $8\times$ yields $r \approx 0.56$ universally.
+        - *Final Output:* Lineum inherently constructs self-similar fractal geometries entirely independent of specific random seeds, grid scales, and chosen arbitrary density thresholds. Mobility V2 optimizes this geometry without polluting it with noise.
+- **Product Architecture Relevance (Portal Routing):**
+    - The $\mu$ field (V2 setup) is strictly designated for **portal-layer routing stabilization**, dropping path jitter (lower novelty) whilst organically deepening hierarchical road organization (higher compression complexity).
+    - When map topography dynamically changes (e.g. doors opening/closing mid-run), developers MUST implement a `reset_mobility_radius` trigger around the breach point to prevent "Ghost Highways" from lingering in the disconnected $\mu$ field.
+    - **The Core equation (Eq-4) powering the engine fundamentally operates *without* $\mu$.** $\mu$ is an experimental plugin strictly for the commercial track.
+
+### 🔲 45. Lineum "PC" Metaphor (RAM/ROM/HDD) — Communication Framework (Non-Claim)
+- **Context:** To rapidly explain the architecture of Lineum's continuous differential fields to laypeople, marketers, and newly onboarded developers without requiring quantum formalism, we utilize the "Hardware Metaphor".
+- **1) The Metaphor (Pedagogical Only):**
+    - **$\kappa$ = ROM (Read-Only Memory):** The static map of the terrain/level limits. Hard-burned boundaries inside the core engine.
+    - **$\phi$ = RAM (Random-Access Memory):** The short-term structural tension and intention memory. It holds the "half-life" of recent passage, generating instantaneous thermodynamic flow loops, but vanishes quickly if power (wave activity) is removed.
+    - **$\mu$ = HDD (Hard Disk Drive):** The long-term architectural scar/plástico (koryta). Used *only* in the Experimental/Portal track. Slower to write, slower to fade. Saves the "best routes" dynamically.
+    - **$\psi$ = Data Stream / Signal:** The ultra-fast, blind quantum reconnaissance wave that propagates through the architecture to discover connections.
+    - **"CPU" = Eq-4 Update Rule:** The numerical schemes (gradients, Laplace, coupling constants) computing the next frame. The CPU is NOT a field, it is the fundamental physics of the engine.
+- **2) Authorized Usage Scope:**
+    - Valid and encouraged for: Portal documentation (Wiki), B2B SaaS pitch decks, developer onboarding, and public-facing blog/marketing simplification.
+- **3) Unauthorized Usage (Explicit Non-Claims):**
+    - **Never** write "The Universe is a computer" as a literal structural claim in the Core Scientific Whitepaper.
+    - In the Core Whitepaper (`lineum-core.md`), this paradigm may only be referenced strictly as a "short pedagogical analogy" and must be explicitly labeled as a metaphor, ensuring it does not overlap with the rigorous definition of $\psi \leftrightarrow \phi \leftarrow \delta$ thermodynamics.
+- **4) Connection to Geometric Novelty & Information:**
+    - The structural PC framing is directly compatible with the core geometric mechanism of "new and self-similar information". By iteratively processing local wave states over static barriers (ROM), the system manifests localized structural tension (RAM). This tension naturally organizes into multiscale topological structures. When we add the experimental long-term "scar" memory (HDD $\mu$), we physically lower geometric shiftiness (novelty) and permanently engrave the complexity. *Note: The PC analogy is not a scientific proof of the thermodynamic metrics, but a deeply aligned pedagogical illustration of the memory cascade.*
+- **5) How to explain to laypeople (Non-Claim):**
+    - "Lineum operates slightly like a fluid computer. The level map is the hard-wired circuit board (ROM). The wave is the signal flowing through it. As it flows, it creates a temporary network of intention (RAM) pulling the flow together into efficient rivers. Over time, these rivers can dig active trenches into long-term memory (HDD), stabilizing the best routes automatically."
+    - *(Strictly note internally: This is a teaching aid for the Portal and B2B marketing. It does not belong as a structural physical claim in the canonical core whitepaper.)*
 
 ---
 

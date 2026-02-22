@@ -1,0 +1,57 @@
+{
+    "contract_id": "lineum-exp-selfsim",
+    "contract_version": "1.0.0",
+    "scope": "Experimental / Portal Track",
+    "description": "Validation bounds for New & Self-Similar Information geometric metrics. This does NOT participate in Baseline Core Certification.",
+    "canonical_evaluation_script": "scripts/novelty_metrics.py",
+    "profiles": [
+        {
+            "name": "baseline_exp_geometry",
+            "selectors": {
+                "model": "Baseline",
+                "grid_size": 128,
+                "seed": 41
+            },
+            "checks": {
+                "self_similarity": {
+                    "box_counting_dim_top_5pct": {
+                        "min": 1.20,
+                        "max": 1.30,
+                        "target": 1.25,
+                        "description": "Fractal dimension must confirm stable cross-scale structural branching"
+                    },
+                    "downsample_corr_4x": {
+                        "min": 0.80,
+                        "description": "Cross-scale structural memory retention must remain high"
+                    },
+                    "spectrum_slope": {
+                        "min": -2.1,
+                        "max": -1.7,
+                        "target": -1.9,
+                        "description": "Power spectrum must indicate stochastic fractal veining, not Brownian noise"
+                    }
+                }
+            }
+        },
+        {
+            "name": "mobility_v2_geometry",
+            "selectors": {
+                "model": "V2",
+                "grid_size": 128,
+                "seed": 41
+            },
+            "checks": {
+                "structural_complexity_vs_baseline": {
+                    "novelty_vs_prev": {
+                        "condition": "< baseline",
+                        "description": "V2 must lower random geometric wandering (stabilize paths)"
+                    },
+                    "compression_bytes": {
+                        "condition": ">= baseline + 1000",
+                        "description": "V2 must increase structural complexity proxy by at least 1 KB compared to baseline"
+                    }
+                }
+            }
+        }
+    ]
+}
