@@ -18,5 +18,15 @@ The 1000-seed topological limit scan proves that Eq-4 actively manufactures a hi
 | **Element 846** | **$0$** | Another perfectly balanced, highly common neutral structure. | The highest-frequency neutral (charge 0) macro-attractor. | **Silicon / Iron** (Abundant, stable). |
 | **Element 945** | **$-3$** | A massive, bloated, super-heavy structure on the brink of collapse. | The absolute maximum surviving Linon count before immediate $\nabla^2\varphi$ forced annihilation. | **Uranium / Plutonium** (Super-heavy, unstable radioactive boundaries). |
 
-## Cosmological Charge (Isotope Spread)
-The system intensely favors stability. Across 830,000+ generated fundamental particles examined during the A3 Limit Scan, the net topological charge of any given mathematical universe almost never exceeds $\pm 4$. Eq-4 is a perfect, self-balancing zero-sum particle generator.
+## Isotope vs. Mass (Why Element 731 and 840 are different)
+If Element 731 and Element 840 both have a Net Charge of $-2$, why are they different elements? 
+- **The Element Number (Mass):** Defines the total absolute number of surviving Linons in that universe. A universe with 840 Linons is vastly heavier, denser, and more gravitationally complex than a universe with only 731 Linons. This defines the "Element".
+- **The Net Charge (Isotope):** Defines the balance between Left-handed (+1) and Right-handed (-1) Linons. Two universes can both contain exactly 840 Linons, but one might have 420 Left / 420 Right (Isotope 0, perfectly neutral), while another has 419 Left / 421 Right (Isotope -2).
+
+## The Absence of Complex Hadrons (Mesons/Baryons)
+Are there any "Molecules" (tightly bound clusters of 2, 3, or 4 Linons orbiting each other) in the Lineum simulation? 
+**No.** The mathematical mechanics of the Lineum vacuum strictly forbid it:
+1. **Opposites Annihilate (Mesons fail):** If a $+1$ and a $-1$ Linon get too close to each other, the extreme gradient causes the $\nabla^2$ restoring force to violently pull them together until they perfectly cancel each other out into empty space.
+2. **Likes Repel (Baryons fail):** If two $+1$ Linons get too close to each other, their overlapping phase geometries create immense structural friction. They unconditionally repel each other, bouncing away like two identical magnetic poles.
+
+**Conclusion:** The Lineum universe is a "Monatomic Gas." Every single Linon is an isolated island, repelling its identical neighbors and annihilating its opposites. Complex chemistry cannot form in the open vacuum. *To build complex molecules, the Linons must be forcibly trapped inside geometric boundaries (like the Topographic $\kappa$ Cities).*
