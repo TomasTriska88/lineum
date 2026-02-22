@@ -738,6 +738,12 @@ Výstupy z analytického balíčku pro T. Mikolova (únor 2026) a jejich integra
 - [ ] **Derivace:** Formálně odvodit OEA pravidla z Eq-4 v limitě `Δx, Δt → 1` (silná diskretizace).
 - [ ] **Validace:** Porovnat fázové portréty Linea a OEA – hledat topologickou ekvivalenci atraktorů.
 
+### 🔲 25. Repository Split (Core vs SaaS/Portal) #security #architecture
+- [ ] **Rozdělení Repozitářů:** Před veřejným startem rozštěpit monorepo na dvě části:
+    - `lineum`: Veřejný, open-source repozitář (AGPLv3) obsahující pouze čistou matematiku (jádro v Pythonu) a dokumentaci.
+    - `lineum-portal` (nebo SaaS): Privátní repozitář, kde bude žít proprietární SvelteKit webový portál, komerční API wrapper (`routing_backend`), billing systém a dashboard.
+- [ ] Toto je kritické pro budování komerčního ochranného příkopu a utajení "Secret Sauce" integrací.
+
 ### 🔲 25. Hypotéza: Kolmogorov Trigger (Informační Tlak) #test
 - [ ] **Metrika:** Měřit lokální kompresibilitu (Deflate ratio) mřížky v čase.
 - [ ] **Hypotéza:** Expanze `a(t)` (Mode 24) nastává v momentě, kdy lokální informační hustota saturuje kapacitu mřížky.
@@ -1011,19 +1017,19 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 
 This section defines the requirements and architecture for the new main Lineum Swarm Routing demonstration page (MVP), which is transitioning from a free "laboratory sandbox" to a B2B "Demo & Sell" landing page.
 
-- [ ] **S.1 Split-Screen: Scientific Comparison (Multi-Algorithm Benchmark)**
+- [ ] **[PAUSED] S.1 Split-Screen: Scientific Comparison (Multi-Algorithm Benchmark)**
     - Transform the view into a comparative layout of 2-3 windows side-by-side (strictly stacked on mobile).
     - Lineum Eq-4 will run in one window, standard rigid solutions (A*, Dijkstra) in the others.
     - Ensure strict objectivity of the display (do not artificially disparage competing algorithms; if they crash or freeze, it must be their native behavior, not a hardcoded handicap).
     - Explicitly display a "Hardware Fairness Badge" above the windows (e.g. *1x vCPU 2.4GHz, 512MB RAM*), guaranteeing identically allocated power for the methods.
 
-- [ ] **S.2 Instant WOW Effect vs. Live Verification (Live Run)**
+- [x] **S.2 Instant WOW Effect vs. Live Verification (Live Run)**
     - Upon opening a Use-Case (e.g. Logistics), the page instantly shows a pre-generated simulation loop and target comparison (Ms). The user immediately sees the result without tying up a backend computing tab.
     - Crucial CTA "Run Live Verification": by clicking, the user forces a real, live test on the backend.
     - **Interactive Scrubbing:** Introduce a slider (timeline) for synchronous scrubbing back and forth through the run history of all algorithms simultaneously.
     - **Backend Protection (Railway Credits):** Live verification must be subject to a strict rate-limit (session/IP limiter) and robust API caching to prevent unintentional or malicious exhaustion of computation credits (DDoS demo protection). Long runs must fail-fast on timeout before choking the worker.
 
-- [ ] **S.3 ROI Calculator and Monetization (Business Cases)**
+- [ ] **[PAUSED] S.3 ROI Calculator and Monetization (Business Cases)**
     - Once the comparison shows a victory in speed (TTC), it must translate into a comprehensible demonstration of business value (Estimated Annual Savings sliders).
     - **Ticking Cost:** A real-time counter showing the $ waste while A* runs (with a clearly defined computation source, e.g. server watts or lost driver time).
     - **PDF Case Study:** Ability to generate and download a custom 1-page PDF report with savings charts for a specific client.
@@ -1041,19 +1047,36 @@ This section defines the requirements and architecture for the new main Lineum S
     - E2E Playwright tests must exist, guaranteeing no 500 load errors and clickability of both presets and Live Verification logic.
     - The Paywall button must be secured so it cannot be bypassed merely by DOM manipulation on the frontend.
 
-- [ ] **S.6 Developer Experience (Dynamic API Snippets)**
+- [x] **S.6 Developer Experience (Dynamic API Snippets)**
     - Show the "Ease of Use" of integration straight on the frontend. Display an elegant 3-line Lineum API call snippet contrasting with the complexity of classic methods.
-    - **Crucial:** The code snippet must be dynamically loaded right from the backend from the actual `.py` file (`lineum_core`), so the code in the demo is never a "stale" hardcode.
+    - **Crucial:** The code snippet must be dynamically loaded right from the backend from the actual `.py` file (`lineum_core`), so the code in the demo is never a "stale" hardcode. *Note: As discussed with the user on 2026-02-21, for security reasons we are intentionally NOT showing internal generation code, but instead showing connection integration code (Python/Node/cURL).*
 
 - [ ] **S.7 Portal Integration (Navigation Flow)**
     - Create an attractive entry to the page from the main Portal Dashboard (prominent "Products: Lineum API Solutions" card).
     - Change the URL to `/api-solutions` for stronger SaaS branding (or keep `/routing` and use an alias).
     - Modify global navigation to reflect the transition from "sandbox" to "commercial zone" (e.g., clear Contact Sales CTA in the header).
 
-- [ ] **S.8 Enterprise Trust & Integrations (Ecosystem)**
+- [x] **S.8 Enterprise Trust & Integrations (Ecosystem)**
     - **Streaming API Highlight:** Emphasize what the viewer sees: Lineum computes continuously and sends data instantly (WebSockets streaming), instead of waiting for a "Black Box" calculation for long paths. An advantage for Real-Time fleet monitoring.
     - **Seamless Integrations:** Show that this isn't isolated science, but a tool meant for production. Include icons of easily connected systems (Docker, Python, C++ Core, ROS – Robot Operating System, REST/GraphQL).
     - **Social Proof / Trusted By:** Create a reusable `<LogoCloud>` component that draws data from a shared central configuration file (e.g., `src/lib/data/content/partners.json`). If the configuration file is empty, display an assertive Early Adopter B2B prompt: *"Be the first, overtake your competition. Become our first partner and secure all our products for life at cost price."* with a CTA. This component will be implemented both on the `/api-solutions` page and directly on the main index Homepage as part of this task.
+
+---
+
+## ⚖️ L. Strategic Governance & Licensing Harmonization #strategy #legal
+*Note: Development of the API Solutions showcase is temporarily paused while we establish the foundational legal and authorship barriers for the Lineum project.*
+
+- [ ] **L.1 Authorship & Cite-ability Consolidation**
+    - Ensure ORCID (`0009-0003-4026-7164`) is injected consistently across `CITATION.cff`, `zenodo.json`, the Whitepapers, and the Portal Footer.
+    - Synchronize "Lineum Core" as the engine package name vs "Lineum" as the brand name across all files (`README.md`, `LICENSE`, etc.).
+- [ ] **L.2 License Overhaul (MIT -> AGPLv3)**
+    - Execute the planned shift of the core mathematical engine from MIT to AGPLv3 to establish the true open-core boundary and prevent closed-source corporate wrapping.
+- [ ] **L.3 SaaS Boundary & Monorepo Separation**
+    - Address the architectural mixing of Proprietary SaaS API code (`routing_backend/main.py`) and the AGPL Engine (`lineum_core`). Establish a formal API boundary or repository split to avoid license contamination.
+- [ ] **L.4 Acceptable Use & Ethical ToS**
+    - Draft and integrate a Terms of Service/Responsible Use policy specifying forbidden API usage (military swarm drones, malicious market HFT, etc.).
+- [ ] **L.5 Trademark & Brand Protection**
+    - Create a basic Trademark Policy defining the usage of the "Lineum" name and logo for third-party wrappers.
 
 ---
 
@@ -1075,3 +1098,14 @@ This section contains tasks related to the web presentation and technical backgr
 
 > [!NOTE]  
 > Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
+
+---
+
+## 🚀 Commercial Roadmap: Future Domain Applications
+The portal's `api-solutions` section currently showcases Routing dynamics (traffic, evacuation, hardware traces). Based on the underlying physics engine capabilities (Lineum as a universal PDE solver), we need to expand the B2B showcases to demonstrate the full potential of continuous field dynamics.
+
+- [ ] **Aerodynamics & Fluid Dynamics:** Create a demo showcase illustrating airflow optimization inside jet engines or fluid dynamics in pipelines.
+- [ ] **Reactor Physics:** Add a visualization for radiation propagation or thermal dissipation in complex enclosed environments.
+- [ ] **Structural Mechanics:** Implement an API example showing stress distribution, structural integrity, and material failure under pressure.
+- [ ] **Economic Routing:** Develop a demo illustrating supply chain optimization and the flow of capital/resources around global bottlenecks.
+- [x] **Portal Integration:** Embed a layman "True Potential" explainer section on the main `/api-solutions` page to explicitly state that Routing is just the beginning of the engine's capabilities.
