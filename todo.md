@@ -1121,3 +1121,40 @@ The portal's `api-solutions` section currently showcases Routing dynamics (traff
 - [ ] **Structural Mechanics:** Implement an API example showing stress distribution, structural integrity, and material failure under pressure.
 - [ ] **Economic Routing:** Develop a demo illustrating supply chain optimization and the flow of capital/resources around global bottlenecks.
 - [x] **Portal Integration:** Embed a layman "True Potential" explainer section on the main `/api-solutions` page to explicitly state that Routing is just the beginning of the engine's capabilities.
+
+---
+
+## 🏛️ STRATEGIE / GOVERNANCE / BRAND / COMPANY (odloženo)
+*Tyto úkoly tvoří přesný backlog pro budoucí řešení firemní, právní a brandové vrstvy. Nemají být řešeny hned a nemodifikují se k nim nyní žádné soubory.*
+Kanonické znění kodexu je uloženo v `docs/LINEUM_CODEX_v1.md`.
+
+- [ ] **1) (Kredit) Doplnit ORCID 0009-0003-4026-7164 konzistentně do:**
+    - `CITATION.cff`
+    - Zenodo metadata (`portal/src/lib/data/project/zenodo.json`)
+    - whitepaper (sekce How to cite)
+    - web footer (`portal/src/lib/content.ts`)
+    - + přidat copy-paste “How to cite” blok včetně BibTeX.
+- [ ] **2) (DOI) Najít Zenodo Concept DOI (all versions) pro 10.5281/zenodo.16934359 a doplnit ho do:**
+    - `CITATION.cff`, whitepaper, web, `zenodo.json` (metadata/related identifiers), `README.md`.
+- [ ] **3) (Naming) Sjednotit veřejné pojmenování na “Lineum™”**
+    - “Lineum Core” používat jen jako interní/technické označení balíčku/engine, ne jako hlavní brand.
+- [ ] **4) (Licence) Budoucí veřejné vydání Lineum (nová verze): přejít na AGPL pro core**
+    - *(pozn.: historická Zenodo v1.0.6-core je MIT a zůstane jako otisk prvenství).*
+- [ ] **5) (Kodex) Přidat nový dokument (např. `docs/LINEUM_CODEX.md`)**
+    - S textem “Lineum Kodex — Etický postoj (v1)” (text dodá Lina / je připraven). (Zatím nevytvářet soubor).
+- [ ] **6) (Portal policy) Připravit Portal dokumenty:**
+    - `TERMS_OF_SERVICE.md` a `ACCEPTABLE_USE.md`
+    - Které implementují Kodex (green / restricted / hard-stop) a enforcement (audit logs, kill switch, screening).
+- [ ] **7) (Trademark) Připravit `TRADEMARK_POLICY.md` pro Lineum™**
+    - (pravidla použití názvu a značky). Registrace ochranné známky později jako samostatný úkol/spouštěč.
+- [ ] **8) (Repo & boundary) Navrhnout restrukturalizaci:**
+    - zachovat lokální spustitelnost Lineum pro vědce (CLI/library),
+    - zároveň oddělit Portal/SaaS tak, aby boundary nebyla monolitický import core v backend procesu.
+    - Zapsat jako “Architecture decision record” úkol + varianty.
+- [ ] **9) (Firma) Připravit plán založení s.r.o.:**
+    - spouštěč: PoC/Portal je funkční a jde do veřejného provozu / první B2B zájem / SLA/smlouvy.
+    - co přesunout do s.r.o. (Portal, billing, ToS, brand), co zůstává autorovi (vědecké autorství, ORCID/DOI).
+    - donaty: rozhodnout kdy přesměrovat z OSVČ na s.r.o.
+- [ ] **10) (Audit reality) Ověřit současný stav použití core v monorepu:**
+    - kde se importuje core pro vědecké běhy vs SaaS,
+    - entrypointy, a jak se zajišťuje “vždy nejnovější verze”. (Analýzu udělat později nebo na vyžádání).
