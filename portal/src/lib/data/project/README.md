@@ -26,7 +26,21 @@ The heart of the project. A Python-based engine that runs the discrete field upd
     # Run a simulation
     python lineum.py
     ```
-*   **Audit**: See `whitepapers/` for full scientific methodology and reproduction steps.
+*   **Audit**: See `whitepapers/` for full scientific methodology or [Verification Checklist](docs/verification_checklist.md) for independent reproduction.
+
+### ⚡ Hardware Acceleration (CUDA/GPU)
+Lineum Core runs on standard CPU (NumPy) by default and does **not** force heavy GPU dependencies in `requirements.txt`.
+However, for massive scientific grid runs, reference pack generations, or local testing, you can seamlessly unlock **10x-30x speedups** if you have an Nvidia GPU:
+1. Install PyTorch with CUDA support locally: `pip install torch --index-url https://download.pytorch.org/whl/cu121`
+2. The core physics engine (`lineum_core/math.py`) will **auto-detect** the GPU and automatically route tensor calculations through hardware CUDA cores.
+
+### 📦 Reference Pack
+For independent offline verification without reproducing the entire run, download the pre-built reference pack from the [GitHub Releases](https://github.com/TomasTriska88/lineum-private/releases) page (attached as an asset to `v*` tags).
+
+To verify the downloaded pack:
+```bash
+python scripts/verify_reference_pack.py --pack <path_to_downloaded_zip>
+```
 
 ---
 

@@ -1,0 +1,92 @@
+# Tier 3: Ontology
+
+This directory contains the Tier 3: Ontology tier of the Lineum publication architecture.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- INDEX_START -->
+## 📚 Document Index
+
+| Document | Status | File |
+| :--- | :--- | :--- |
+| **Ontology of the Soul and the Database** | ⚠️ Unknown | `01-ontology-hyp-genesis.md` |
+<!-- INDEX_END -->

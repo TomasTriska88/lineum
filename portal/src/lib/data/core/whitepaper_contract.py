@@ -316,6 +316,8 @@ def main():
     parser.add_argument("--runs-root", default=DEFAULT_RUNS_ROOT)
     parser.add_argument("--contract", default=None)
     parser.add_argument("--strict", action="store_true")
+    parser.add_argument("--backfill-analysis-config", action="store_true")
+    parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
     # Determine contract
@@ -358,6 +360,14 @@ def main():
 
     seen_identities = {}
     for r_dir in candidates:
+        if os.path.exists(os.path.join(r_dir, "_LOCK.json")):
+            # Refuse in-place modifications on locked runs
+            if args.backfill_analysis_config:
+                print(f"FATAL: Refusing to perform in-place modifications (--backfill-analysis-config) on locked run {r_dir}")
+                sys.exit(EXIT_FAIL)
+            # Verify lock integrity
+            verify_locked_run(r_dir)
+            
         run_id = os.path.basename(r_dir)
         m_path = find_manifest(r_dir)
         if not m_path: continue

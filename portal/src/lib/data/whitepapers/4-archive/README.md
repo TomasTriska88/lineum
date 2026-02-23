@@ -1,0 +1,22 @@
+# Tier 4: Archive
+
+This directory contains the Tier 4: Archive tier of the Lineum publication architecture.
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- INDEX_START -->
+## 📚 Document Index
+
+| Document | Status | File |
+| :--- | :--- | :--- |
+| *(No documents yet)* | - | - |
+<!-- INDEX_END -->

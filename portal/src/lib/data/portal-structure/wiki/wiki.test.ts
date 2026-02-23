@@ -8,37 +8,42 @@ describe('Wiki Loader: Advanced Features', () => {
         expect(result).toHaveProperty('papers');
         const papers = result.papers;
 
-        // Check for Core categorization
-        const corePaper = papers.find((p: any) => p.slug === 'lineum-core');
+        // Check for Core categorization (now uses numerical prefixes)
+        const corePaper = papers.find((p: any) => p.slug === '01-core-lineum');
         expect(corePaper).toBeDefined();
         if (corePaper) {
             expect(corePaper.category).toBe('Core');
+            expect(corePaper.status).toBe('Draft');
         }
 
-        // Check for Extensions
-        const extension = papers.find((p: any) => p.slug.startsWith('lineum-extension-'));
-        if (extension) expect(extension.category).toBe('Extension');
+        // Check for Cosmology
+        const cosmologyPaper = papers.find((p: any) => p.slug === '01-cosmo-base');
+        if (cosmologyPaper) {
+            expect(cosmologyPaper.category).toBe('Cosmology');
+            expect(cosmologyPaper.status).toBe('Draft');
+        }
 
-        // Check for Experiments
-        const experiment = papers.find((p: any) => p.slug.startsWith('lineum-exp'));
-        if (experiment) expect(experiment.category).toBe('Experiment');
+        // Check for Extensions (if any remain in mock data)
+        const extension = papers.find((p: any) => p.slug.includes('-ext-'));
+        if (extension) expect(extension.category).toBe('Core');
     });
 
-    it('should sort Lineum Core as the first item', async () => {
+    it('should sort Lineum Core as the first item via category order and numerical prefix', async () => {
         const result = await load();
         const papers = result.papers;
         if (papers.length > 0) {
-            expect(papers[0].slug).toBe('lineum-core');
+            expect(papers[0].slug).toBe('01-core-lineum');
         }
     });
 
-    it('should avoid "Unknown" for metadata if possible', async () => {
+    it('should extract correct metadata and avoid Unknowns', async () => {
         const result = await load();
-        const core = result.papers.find((p: any) => p.slug === 'lineum-core');
+        const core = result.papers.find((p: any) => p.slug === '01-core-lineum');
         expect(core).toBeDefined();
         if (core) {
             expect(core.version).not.toBe('Unknown');
-            expect(core.date).not.toBe('Unknown');
+            expect(core.date).not.toBe('Unknown Date');
+            expect(core.status).toBe('Draft');
         }
     });
 });

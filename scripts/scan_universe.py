@@ -9,6 +9,7 @@ warnings.filterwarnings('ignore')
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 from lineum_core.math import evolve
 
+
 def detect_vortices(phase: np.ndarray) -> np.ndarray:
     p00 = phase[:-1, :-1]
     p01 = phase[:-1, 1:]
@@ -34,14 +35,31 @@ def run_seed_native(seed):
     steps_total = 500
     
     try:
-        # Initialize Universe (spec6_true)
-        # In Run 6 True, KAPPA_MODE="constant" so everything is 1.0. Delta is 0.0 normally.
-        psi = np.random.randn(128, 128) + 1j * np.random.randn(128, 128)
-        phi = np.zeros((128, 128))
-        kappa = np.ones((128, 128))
-        delta = np.zeros((128, 128))
+        # Initialize True Universe (spec6_true) manually matching lineum.py
+        # spec6 = dt=0.5, true = keep artifacts (standard eq4 tracking)
+        from scipy.ndimage import gaussian_filter
         
-        print(f"Evolving {steps_total} steps for seed {seed}...")
+        size = 128
+        
+        # 1. Delta (Structured Noise)
+        noise = np.random.normal(0.0, 1.0, (size, size))
+        blurred = gaussian_filter(noise, sigma=10)
+        delta = blurred / np.max(np.abs(blurred)) * 0.05
+        
+        # 2. Psi (Complex scalar field)
+        amp = np.random.normal(0.0, 0.1, (size, size))
+        phase = np.random.uniform(0, 2*np.pi, (size, size))
+        amp[size//2, size//2] += 1.0  # Asymmetry at center
+        psi = amp * np.exp(1j * phase)
+        
+        # 3. Phi (Interaction field)
+        phi = np.zeros((size, size), dtype=np.float64)
+        
+        # 4. Kappa (spec6 uses 'constant' mode which is 0.5)
+        kappa = np.ones((size, size), dtype=np.float64) * 0.5
+
+        
+        print(f"Evolving {steps_total} steps for seed {seed} (Kappa min/max: {kappa.min():.2f}/{kappa.max():.2f})...")
         for step in range(steps_total):
             psi, phi = evolve(psi, delta, phi, kappa)
             if step % 100 == 0 and step > 0:
@@ -80,7 +98,7 @@ def run_seed_native(seed):
         return seed, f"{seed},ERROR,ERROR,ERROR,ERROR,ERROR,ERROR"
 
 def main():
-    total_seeds = 1000
+    total_seeds = 100
     seeds = list(range(1, total_seeds + 1))
     
     print(f"============================================================")
@@ -94,10 +112,10 @@ def main():
     results = []
     
     # Ensure output directory exists for live writing
-    os.makedirs("output", exist_ok=True)
+    os.makedirs(".scratch", exist_ok=True)
     
     # Initialize CSV file with header
-    out_file = "output/periodic_table_scan_1000.csv"
+    out_file = ".scratch/attractor_scan_100.csv"
     with open(out_file, "w") as f:
         f.write("seed,steps,phi_center,n_plus,n_minus,q_total,avg_radius\n")
 

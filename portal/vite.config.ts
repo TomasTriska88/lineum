@@ -67,6 +67,7 @@ export default defineConfig({
 		exclude: ['src/tests/e2e/**'],
 		environment: 'jsdom',
 		globals: true,
-		setupFiles: ['src/tests/setup.ts']
+		setupFiles: ['src/tests/setup.ts'],
+		fileParallelism: false
 	}
 });

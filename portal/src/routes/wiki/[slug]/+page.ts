@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
     try {
-        const whitepapers = import.meta.glob('$whitepapers/*.md', {
+        const whitepapers = import.meta.glob('$whitepapers/**/*.md', {
             query: '?raw',
             import: 'default',
             eager: true
@@ -25,9 +25,13 @@ export async function load({ params }) {
         const titleMatch = content.match(/\*\*(?:Document ID|Title):\*\*\s*([^\r\n]*)/i);
         const title = titleMatch ? titleMatch[1].trim() : params.slug;
 
+        const statusMatch = content.match(/\*\*Status:\*\*\s*([^\r\n]*)/i);
+        const status = statusMatch ? statusMatch[1].trim() : 'Draft';
+
         return {
             content,
             title,
+            status,
             slug: params.slug
         };
     } catch (e) {

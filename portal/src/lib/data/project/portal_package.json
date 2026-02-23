@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "npm run sync && vite dev",
 		"build": "node scripts/railway-build.cjs",
 		"preview": "vite preview",
 		"start": "node build",
@@ -15,6 +15,7 @@
 		"test": "vitest run",
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
+		"stage": "node scripts/stage-railway.js",
 		"prebuild": "npm run sync",
 		"safe-merge": "node scripts/safe-merge.cjs"
 	},
@@ -26,17 +27,21 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/svelte": "^5.3.1",
 		"@types/node": "^25.2.3",
+		"autoprefixer": "^10.4.24",
 		"cross-env": "^10.1.0",
 		"jsdom": "^28.1.0",
 		"mdsvex": "^0.12.6",
+		"postcss": "^8.5.6",
 		"svelte": "^5.49.2",
 		"svelte-check": "^4.3.6",
+		"tailwindcss": "^4.2.0",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1",
 		"vitest": "^4.0.18"
 	},
 	"dependencies": {
 		"@google/generative-ai": "^0.24.1",
+		"@tailwindcss/postcss": "^4.2.0",
 		"@types/uuid": "^10.0.0",
 		"dotenv": "^17.3.1",
 		"katex": "^0.16.28",

@@ -2,6 +2,7 @@
     import FieldShader from "$lib/components/FieldShader.svelte";
     import Legend from "$lib/components/Legend.svelte";
     import MarginShards from "$lib/components/MarginShards.svelte";
+    import LogoCloud from "$lib/components/LogoCloud.svelte";
     import { content } from "$lib/content";
 </script>
 
@@ -29,18 +30,33 @@
                 faq={content.legend.faq}
             />
         </div>
-        <h1>{content.hero.title}</h1>
+        <h1>
+            {content.hero.title_prefix}
+            <span class="text-gradient-multi animate-breathe">
+                {content.hero.title_highlight}
+            </span>
+        </h1>
         <p>
             {content.hero.subtitle}
         </p>
         <div class="cta-group">
             <a href="/wiki" class="btn btn-primary">{content.hero.cta_wiki}</a>
+            <a
+                href="/api-solutions"
+                class="btn btn-outline"
+                style="border-color: #38bdf8; color: #38bdf8;"
+                >API Solutions (Live Demo)</a
+            >
             <a href="#evidence" class="btn btn-outline"
                 >{content.hero.cta_audit}</a
             >
         </div>
     </div>
 </section>
+
+<div class="container">
+    <LogoCloud />
+</div>
 
 <section id="layman" class="info-section">
     <div class="container">
@@ -102,13 +118,34 @@
                     >{content.sections.scientist.simulacrum.link}</a
                 >
             </div>
+            <div class="card">
+                <h3>{content.sections.scientist.referencePack.title}</h3>
+                <p>{content.sections.scientist.referencePack.desc}</p>
+                <a
+                    href="https://github.com/TomasTriska88/lineum-private/releases"
+                    target="_blank"
+                    >{content.sections.scientist.referencePack.link}</a
+                >
+            </div>
         </div>
     </div>
 </section>
 
 <footer class="container">
     <div class="footer-content">
-        <p>{content.footer.copy}</p>
+        <div class="footer-info">
+            <p>{content.footer.copy}</p>
+            <div class="operator-info">
+                <p>
+                    Operator: {content.operator.name}, {content.operator
+                        .address}
+                </p>
+                <p>
+                    IČO: {content.operator.ico} | Tel: {content.operator.phone} |
+                    Email: {content.contactEmail}
+                </p>
+            </div>
+        </div>
         <div class="footer-links">
             <a href="/support">{content.footer.support}</a>
             <a href="/privacy">{content.footer.privacy}</a>
@@ -121,6 +158,9 @@
 </footer>
 
 <style>
+    :global(:root) {
+        --nav-height: 0px;
+    }
     .hero {
         height: 100vh;
         display: flex;
@@ -178,7 +218,6 @@
         font-weight: 700;
         line-height: 1.1;
         margin-bottom: 1.5rem;
-        color: white;
     }
 
     p {
@@ -289,11 +328,62 @@
     }
 
     @media (max-width: 768px) {
-        .logo-text {
+        .hero {
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding-top: 120px; /* Offset for taller nav */
+            height: auto;
+            min-height: 100vh;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .logo-symbol {
             font-size: 3rem;
         }
+
+        .logo-text {
+            font-size: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .cta-group {
+            flex-direction: column;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .cta-group .btn {
+            width: 100%;
+            text-align: center;
+        }
+
         .scientific-grid {
             grid-template-columns: 1fr;
+        }
+
+        .footer-content {
+            flex-direction: column;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            flex-direction: column;
+            gap: 1rem;
         }
     }
 </style>

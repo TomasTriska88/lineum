@@ -2,32 +2,39 @@
     import { onMount } from "svelte";
     import { content } from "$lib/content";
     import MarginShards from "$lib/components/MarginShards.svelte";
-    import WhitepaperWarningModal from "$lib/components/WhitepaperWarningModal.svelte";
     let { data }: { data: any } = $props();
     let papers = $derived(data.papers as any[]);
 
-    // Warning Modal Logic
-    // Warning Modal Logic - Show only once per visit
-    let showWarning = $state(false);
-
-    onMount(() => {
-        const hasAcked = sessionStorage.getItem("lineum_whitepaper_acked");
-        if (!hasAcked) {
-            showWarning = true;
-        }
-    });
-
-    function handleAck() {
-        showWarning = false;
-        sessionStorage.setItem("lineum_whitepaper_acked", "true");
-    }
-
     // Group papers by category
-    const categories = ["Core", "Extension", "Experiment", "Other"];
+    const categories = [
+        {
+            id: "Core",
+            desc: "The foundational, mathematically locked ruleset. Claims here are validated by automated contracts and hold the highest authority.",
+        },
+        {
+            id: "Cosmology",
+            desc: "Working drafts exploring macroscopic phenomena (gravity, multiverse). These are hypotheses extrapolated from Core and are subject to revision.",
+        },
+        {
+            id: "Ontology",
+            desc: "Philosophical and interpretive frameworks regarding the nature of information, memory, and consciousness within the Lineum universe.",
+        },
+        {
+            id: "Experiment",
+            desc: "Laboratory logs, raw data, and empirical observations from simulation scans that inform the higher-level theories.",
+        },
+        {
+            id: "Extension",
+            desc: "Archived or specialized sub-atomic studies that extend the Core behavior but are not part of the primary canon.",
+        },
+        { id: "Other", desc: "Miscellaneous documentation." },
+    ];
+
     let groupedPapers = $derived(
-        categories.reduce((acc: any[], cat: string) => {
-            const list = papers.filter((p: any) => p.category === cat);
-            if (list.length > 0) acc.push({ label: cat, list });
+        categories.reduce((acc: any[], cat) => {
+            const list = papers.filter((p: any) => p.category === cat.id);
+            if (list.length > 0)
+                acc.push({ label: cat.id, desc: cat.desc, list });
             return acc;
         }, [] as any[]),
     );
@@ -38,9 +45,6 @@
 </svelte:head>
 
 <div class="wiki-container">
-    {#if showWarning}
-        <WhitepaperWarningModal onAck={handleAck} />
-    {/if}
     <div class="container wrapper">
         <aside class="toc">
             <div class="toc-sticky">
@@ -89,19 +93,49 @@
                 {#each groupedPapers as group}
                     <div class="category-group">
                         <h2 class="cat-label">{group.label}</h2>
+                        <p class="cat-desc">{group.desc}</p>
                         <div class="papers-list">
                             {#each group.list as paper}
-                                <div class="paper-item">
+                                <a
+                                    href="/wiki/{paper.slug}"
+                                    class="paper-item"
+                                    style="text-decoration: none; color: inherit; cursor: pointer;"
+                                >
                                     <div class="paper-info">
-                                        <h3>{paper.title}</h3>
+                                        <h3>
+                                            {paper.title}
+                                            {#if paper.status === "Locked"}
+                                                <span
+                                                    class="status-badge locked"
+                                                    title="Structurally locked and validated"
+                                                    >🔒 Locked</span
+                                                >
+                                            {:else if paper.status === "Falsified"}
+                                                <span
+                                                    class="status-badge falsified"
+                                                    title="Mathematically or empirically disproven"
+                                                    >❌ Falsified</span
+                                                >
+                                            {:else if paper.status === "Retracted"}
+                                                <span
+                                                    class="status-badge retracted"
+                                                    title="Retracted hypothesis or dead end"
+                                                    >🚫 Retracted</span
+                                                >
+                                            {:else}
+                                                <span
+                                                    class="status-badge draft"
+                                                    title="Working draft subject to revision"
+                                                    >⚠️ Draft</span
+                                                >
+                                            {/if}
+                                        </h3>
                                         <p class="version">
                                             {paper.version} • {paper.date}
                                         </p>
                                     </div>
-                                    <a href="/wiki/{paper.slug}" class="btn"
-                                        >Read Paper &rarr;</a
-                                    >
-                                </div>
+                                    <span class="btn">Read Paper &rarr;</span>
+                                </a>
                             {/each}
                         </div>
                     </div>
@@ -296,7 +330,14 @@
         color: var(--accent-color);
         border-bottom: 1px solid rgba(126, 184, 255, 0.2);
         padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cat-desc {
+        color: rgba(255, 255, 255, 0.65);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        font-size: 0.95rem;
     }
 
     .papers-list {
@@ -326,6 +367,44 @@
         margin: 0;
         font-size: 1rem;
         color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        font-family: var(--font-mono, monospace);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+
+    .status-badge.locked {
+        background: rgba(46, 160, 67, 0.15);
+        color: #3fb950;
+        border: 1px solid rgba(46, 160, 67, 0.3);
+    }
+
+    .status-badge.draft {
+        background: rgba(210, 153, 34, 0.15);
+        color: #d29922;
+        border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .status-badge.retracted {
+        background: rgba(248, 81, 73, 0.15);
+        color: #f85149;
+        border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .status-badge.falsified {
+        background: rgba(186, 26, 26, 0.2);
+        color: #ff6b6b;
+        border: 1px solid rgba(255, 107, 107, 0.4);
+        font-weight: 600;
     }
 
     .paper-info .version {

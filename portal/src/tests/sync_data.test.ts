@@ -6,11 +6,20 @@ import { sync } from '../../scripts/sync-data.js';
 
 const PROJECT_ROOT = process.cwd();
 const SOURCE_DIR = path.join(PROJECT_ROOT, '../whitepapers'); // Assuming standard structure
-const TARGET_DIR = path.join(PROJECT_ROOT, 'src/lib/data/whitepapers');
-const AI_INDEX_PATH = path.join(PROJECT_ROOT, 'src/lib/data/ai_index.json');
+const SCRATCH_ROOT = path.join(PROJECT_ROOT, '.scratch/test_sync');
+process.env.SYNC_TARGET_ROOT = SCRATCH_ROOT; // Redirect sync output to tests scratch folder
+const TARGET_DIR = path.join(SCRATCH_ROOT, 'src/lib/data/whitepapers');
+const AI_INDEX_PATH = path.join(SCRATCH_ROOT, 'src/lib/data/ai_index.json');
 
-const TEST_FILE_NAME = '_test_sync_automated.md';
-const TEST_FILE_CONTENT = '# STATUS: Hypothesis\n\nThis is a temporary test file for sync verification.';
+const TEST_FILE_NAME = '_test_sync_hyp_automated.md';
+const TEST_FILE_CONTENT = `**Document ID:** test-automated
+**Document Type:** Hypothesis
+**Version:** 1.0.0
+**Status:** Hypothesis
+**Date:** 2026-02-23
+
+# Test File
+This is a temporary test file for sync verification.`;
 const SOURCE_FILE_PATH = path.join(SOURCE_DIR, TEST_FILE_NAME);
 
 describe('Data Synchronization', () => {
@@ -29,10 +38,10 @@ describe('Data Synchronization', () => {
     });
 
     afterAll(() => {
-        // Cleanup
+        // Cleanup source mock
         if (fs.existsSync(SOURCE_FILE_PATH)) fs.unlinkSync(SOURCE_FILE_PATH);
-        const targetFile = path.join(TARGET_DIR, TEST_FILE_NAME);
-        if (fs.existsSync(targetFile)) fs.unlinkSync(targetFile);
+        // Completely destroy the temporary scratch sync directory
+        if (fs.existsSync(SCRATCH_ROOT)) fs.rmSync(SCRATCH_ROOT, { recursive: true, force: true });
     });
 
     it('should copy new files from source to target', () => {
@@ -68,13 +77,38 @@ describe('Data Synchronization', () => {
         expect(entry.type).toBe('documentation');
     });
 
+    it('should purge old target directories before syncing (preventing stale memory)', () => {
+        // Create a stale file in the target directory BEFORE sync
+        const STALE_FILE = path.join(TARGET_DIR, 'stale-memory-hyp-do-not-keep.md');
+        if (!fs.existsSync(TARGET_DIR)) {
+            fs.mkdirSync(TARGET_DIR, { recursive: true });
+        }
+        fs.writeFileSync(STALE_FILE, `**Document ID:** test-stale
+**Document Type:** Hypothesis
+**Version:** 1.0.0
+**Status:** Hypothesis
+**Date:** 2026-02-23
+
+# I am old data`);
+
+        sync();
+
+        // The entire target directory should have been overwritten, erasing the stale file
+        expect(fs.existsSync(STALE_FILE), 'Stale files MUST be wiped by the sync script').toBe(false);
+    });
+
     it('should track robust context files (LINA_PERSONA.md)', () => {
         // Verify that critical context files are present in the synced data/core
-        const CORE_TARGET = path.join(PROJECT_ROOT, 'src/lib/data/core');
+        const CORE_TARGET = path.join(SCRATCH_ROOT, 'src/lib/data/core');
         const PERSONA = path.join(CORE_TARGET, 'LINA_PERSONA.md');
         const DESIGN = path.join(CORE_TARGET, 'DESIGN_GUIDE.md');
 
         expect(fs.existsSync(PERSONA), 'LINA_PERSONA.md should be synced to core').toBe(true);
         expect(fs.existsSync(DESIGN), 'DESIGN_GUIDE.md should be synced to core').toBe(true);
+    });
+
+    it('should synchronize lineum_core Python libraries into data index', () => {
+        const CORE_TARGET = path.join(SCRATCH_ROOT, 'src/lib/data/core/lineum_core');
+        expect(fs.existsSync(CORE_TARGET), 'lineum_core python library must be synced for the AI assistant').toBe(true);
     });
 });

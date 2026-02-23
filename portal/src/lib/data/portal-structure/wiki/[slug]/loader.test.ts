@@ -3,15 +3,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { load } from './+page';
 
 describe('Wiki Dynamic Loader', () => {
-    it('should find lineum-core paper', async () => {
-        // We mock the glob for the test or use the correct relative path
-        // In Vitest, the code runs from the file location
-        const result = await load({ params: { slug: 'lineum-core' } });
+    it('should find 01-core-lineum paper', async () => {
+        const result = await load({ params: { slug: '01-core-lineum' } });
         expect(result).toHaveProperty('content');
         expect(result).toHaveProperty('title');
-        expect(result.slug).toBe('lineum-core');
-        // lineum-core should have a version extracted
-        expect(result.title).toContain('lineum-core'); // Based on current Document ID
+        expect(result).toHaveProperty('status');
+        expect(result.slug).toBe('01-core-lineum');
+        expect(result.status).toBe('Draft');
+        expect(result.title).toContain('lineum');
     });
 
     it('should throw 404 for non-existent paper', async () => {
@@ -25,8 +24,8 @@ describe('Wiki Dynamic Loader', () => {
     });
 
     it('should be case-insensitive to slug matching', async () => {
-        const result = await load({ params: { slug: 'LINEUM-CORE' } });
-        expect(result.slug).toBe('LINEUM-CORE');
+        const result = await load({ params: { slug: '01-CORE-LINEUM' } });
+        expect(result.slug).toBe('01-CORE-LINEUM');
         expect(result).toHaveProperty('content');
     });
 });

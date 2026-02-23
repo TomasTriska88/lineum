@@ -2621,6 +2621,13 @@ if __name__ == "__main__":
             if out_px is not None:
                 img = img.resize((out_px, out_px), RESAMPLE)
             pil_frames.append(img)
+            
+        # Protect against Pillow 16-bit overflow and immense file sizes on 10k+ step runs
+        MAX_GIF_FRAMES = 500
+        if len(pil_frames) > MAX_GIF_FRAMES:
+            step = max(1, len(pil_frames) // MAX_GIF_FRAMES)
+            print(f"[*] Downsampling {filename} GIF from {len(pil_frames)} frames (step={step})...")
+            pil_frames = pil_frames[::step]
 
         try:
             if len(pil_frames) == 1:
@@ -2759,6 +2766,12 @@ if __name__ == "__main__":
 
             pil_frames.append(comp)
 
+        MAX_GIF_FRAMES = 500
+        if len(pil_frames) > MAX_GIF_FRAMES:
+            step = max(1, len(pil_frames) // MAX_GIF_FRAMES)
+            print(f"[*] Downsampling {filename} GIF from {len(pil_frames)} frames (step={step})...")
+            pil_frames = pil_frames[::step]
+
         try:
             if len(pil_frames) == 1:
                 pil_frames[0].save(filename)
@@ -2850,6 +2863,12 @@ if __name__ == "__main__":
                 comp = comp.resize((out_px, out_px), RESAMPLE)
 
             pil_frames.append(comp)
+
+        MAX_GIF_FRAMES = 500
+        if len(pil_frames) > MAX_GIF_FRAMES:
+            step = max(1, len(pil_frames) // MAX_GIF_FRAMES)
+            print(f"[*] Downsampling {filename} GIF from {len(pil_frames)} frames (step={step})...")
+            pil_frames = pil_frames[::step]
 
         try:
             if len(pil_frames) == 1:

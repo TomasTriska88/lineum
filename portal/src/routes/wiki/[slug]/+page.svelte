@@ -75,6 +75,66 @@
 
         <article class="paper">
             <section class="card">
+                <div class="paper-header">
+                    {#if status === "Locked"}
+                        <span
+                            class="status-badge locked"
+                            title="Structurally locked and validated"
+                            >🔒 Locked</span
+                        >
+                    {:else if status === "Falsified"}
+                        <span
+                            class="status-badge falsified"
+                            title="Mathematically or empirically disproven"
+                            >❌ Falsified</span
+                        >
+                    {:else if status === "Retracted"}
+                        <span
+                            class="status-badge retracted"
+                            title="Retracted hypothesis or dead end"
+                            >🚫 Retracted</span
+                        >
+                    {:else}
+                        <span
+                            class="status-badge draft"
+                            title="Working draft subject to revision"
+                            >⚠️ Draft</span
+                        >
+                    {/if}
+                </div>
+
+                {#if status === "Falsified"}
+                    <div class="draft-warning falsified">
+                        <strong>Falsified Theory</strong>
+                        <p>
+                            This whitepaper details a theory or hypothesis that
+                            has been explicitly mathematically or systemically
+                            <b>disproven</b>. It is preserved here as a
+                            documented dead end to prevent repeated research.
+                        </p>
+                    </div>
+                {:else if status === "Retracted"}
+                    <div class="draft-warning retracted">
+                        <strong>Retracted Document</strong>
+                        <p>
+                            This whitepaper details a theory or hypothesis that
+                            has been withdrawn or superseded. It is preserved
+                            here for historical context and should not be
+                            treated as part of the current Lineum canon.
+                        </p>
+                    </div>
+                {:else if status !== "Locked"}
+                    <div class="draft-warning">
+                        <strong>Draft Document</strong>
+                        <p>
+                            This whitepaper is an active working draft and has
+                            not been structurally locked or canonically
+                            validated by the contract suite. Concepts and claims
+                            herein are subject to active revision.
+                        </p>
+                    </div>
+                {/if}
+
                 <div class="prose">
                     {@html marked(displayContent)}
                 </div>
@@ -129,6 +189,90 @@
         font-size: 0.9rem;
         color: var(--accent-color);
         text-decoration: none;
+    }
+
+    .paper-header {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        font-family: var(--font-mono, monospace);
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-badge.locked {
+        background: rgba(46, 160, 67, 0.15);
+        color: #3fb950;
+        border: 1px solid rgba(46, 160, 67, 0.3);
+    }
+
+    .status-badge.draft {
+        background: rgba(210, 153, 34, 0.15);
+        color: #d29922;
+        border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .status-badge.retracted {
+        background: rgba(248, 81, 73, 0.15);
+        color: #f85149;
+        border: 1px solid rgba(248, 81, 73, 0.3);
+    }
+
+    .status-badge.falsified {
+        background: rgba(186, 26, 26, 0.2);
+        color: #ff6b6b;
+        border: 1px solid rgba(255, 107, 107, 0.4);
+        font-weight: 600;
+    }
+
+    .draft-warning {
+        background: rgba(210, 153, 34, 0.05);
+        border-left: 4px solid #d29922;
+        padding: 1.5rem;
+        margin-bottom: 2.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .draft-warning.retracted {
+        background: rgba(248, 81, 73, 0.05);
+        border-left: 4px solid #f85149;
+    }
+
+    .draft-warning.falsified {
+        background: rgba(186, 26, 26, 0.1);
+        border-left: 4px solid #ff6b6b;
+    }
+
+    .draft-warning strong {
+        color: #d29922;
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .draft-warning.retracted strong {
+        color: #f85149;
+    }
+
+    .draft-warning.falsified strong {
+        color: #ff6b6b;
+    }
+
+    .draft-warning p {
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+        line-height: 1.6;
+        font-size: 0.95rem;
     }
 
     .toc h3 {

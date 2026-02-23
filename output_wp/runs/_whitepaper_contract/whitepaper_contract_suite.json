@@ -1,38 +1,143 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-02-22T02:54:18.164233+00:00",
-    "contract_id": "lineum-core-1.0.9-core",
-    "contract_version": "1.1.0",
+    "timestamp": "2026-02-23T18:33:37.776400+00:00",
+    "contract_id": "lineum-core-1.0.18-core",
+    "contract_version": "1.1.5",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "1.0.14-core"
   },
   "fingerprints": {
-    "whitepaper_sha256": "535bf98ab49df57e4105d542ba15f55e5ba428dc9b976b261fb00b34e5dea9b7",
-    "contract_sha256": "96378e59065185606ae1177454c85734149e8e08a5672a354830186f242f118f",
-    "codebase_sha256": "796eacf95fe7537ba0eaf7195aeb4cf2bd7d0ae271b3896d4206adcf78eca14d"
+    "whitepaper_sha256": "23ffd912af928eedeb966cbf1b06ac4434ab8a0f3e21ea8f8272fa78131ff34e",
+    "contract_sha256": "81dcfdf46ef5f5be41987c58947b0d52ab932987a390845a654debb593a7b2fb",
+    "codebase_sha256": "b50b424d94de2b2f6e52e99be287af1aad81a1ab64f5ba78392bf20032a8f090"
   },
   "embedded_context": {
     "runs": {
-      "spec6_false_s41_20260215_023130": {
+      "spec6_false_s41_20260222_152015": {
         "manifest": {
           "run": {
             "run_id": 6,
             "run_tag": "spec6_false_s41",
             "seed": 41,
-            "run_mode": false,
-            "steps": 2000,
+            "run_mode": "false",
+            "param_tag": "",
+            "kappa_mode": "constant",
+            "low_noise_mode": false,
+            "test_exhale_mode": true,
             "grid_size": 128,
+            "steps": 2000,
             "pixel_size_m": 1e-12,
             "time_step_s": 1e-21,
-            "equation": "Eq-4",
-            "kappa_mode": "constant",
-            "params": {
-              "alpha": 0.0007,
-              "beta": 0.015,
-              "delta": 0.00462,
-              "sigma_xi": 0.005
+            "window_W": 256,
+            "window_hop": 128,
+            "phi_interaction_cap": 10.0,
+            "phi_cap": 1000000.0,
+            "psi_amp_cap": 1000000.0,
+            "grad_cap": 1000000.0
+          },
+          "spectral_pipeline": {
+            "dt": 1e-21,
+            "sampling_rate_hz": 1.0000000000000001e+21,
+            "df_hz": 3.9062500000000005e+18,
+            "nyquist_hz": 5.0000000000000007e+20,
+            "window_length": 256,
+            "hop_length": 128,
+            "guard_bins": 2,
+            "window_function": "Hann",
+            "dc_remove": true,
+            "fft_type": "RFFT",
+            "estimator": "parabolic_3_bin",
+            "estimator_threshold": 1e-12
+          },
+          "analysis_config": {
+            "spectrum_definition": "power |FFT(x)|^2",
+            "window_type": "Hann",
+            "window_length": 256,
+            "hop_length": 128,
+            "guard_bins": 2,
+            "estimator": "centroid",
+            "bootstrap_iterations": 1000,
+            "bootstrap_ci_level": 0.95,
+            "sbr_guard_bins": 2
+          },
+          "kappa": {
+            "mode": "constant",
+            "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+            "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+            "hash_basis": "map_at_init",
+            "is_dynamic": false,
+            "stats": {
+              "spatial_final_mean": 0.5,
+              "spatial_final_std": 0.0,
+              "temporal_mean_of_spatial_means": null,
+              "temporal_std_of_spatial_means": null
             }
+          },
+          "metrics": {
+            "dominant_freq_Hz": 3.6796152976497996e+19,
+            "f0_mean_hz": 3.6796152976497996e+19,
+            "sbr": 4072.181608445348,
+            "sbr_mean": 4072.181608445348,
+            "f0_ci": [
+              3.085785224679439e+18,
+              8.703231718410697e+19
+            ],
+            "sbr_ci": [
+              495.81790460223976,
+              8892.081392656914
+            ],
+            "phi_half_life_steps": 1686,
+            "phi_half_life_status": "OK",
+            "phi_steady_state": 1360.294453045014,
+            "pct_neutral": 75.7,
+            "topology_neutrality_n1": 75.7,
+            "mean_total_vortices": 178.2735,
+            "mean_vortices": 178.2735,
+            "max_lifespan_steps": 54,
+            "median_lifespan_steps": 6,
+            "phi_mean_near": 1623.086181640625,
+            "phi_mean_field": 1622.961585862456,
+            "phi_std_near": 141.2510986328125,
+            "phi_std_field": 141.82758375637562,
+            "low_mass_quasiparticle_count": 49,
+            "low_mass_qp_count": 49
+          },
+          "data_files": {
+            "html_report": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_report.html",
+            "amplitude_log_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_amplitude_log.csv",
+            "phi_center_log_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_phi_center_log.csv",
+            "topo_log_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_topo_log.csv",
+            "trajectories_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_trajectories.csv",
+            "multi_spectrum_summary_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_multi_spectrum_summary.csv",
+            "metrics_summary_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_metrics_summary.csv",
+            "phi_grid_summary_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_phi_grid_summary.csv",
+            "phi_grid_dejavu_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_phi_grid_dejavu.csv",
+            "phi_curl_low_mass_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_phi_curl_low_mass.csv",
+            "spin_aura_profile_csv": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_spin_aura_profile.csv",
+            "spectrum_plot_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_spectrum_plot.png",
+            "phi_center_plot_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_phi_center_plot.png",
+            "topo_charge_plot_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_topo_charge_plot.png",
+            "vortex_count_plot_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_vortex_count_plot.png",
+            "kappa_map_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_kappa_map.png",
+            "figure0_canonical_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_figure0_canonical.png",
+            "spin_aura_avg_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_spin_aura_avg.png",
+            "spin_aura_map_png": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_spin_aura_map.png",
+            "gif_amplitude": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_amplitude.gif",
+            "gif_spin": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_spin.gif",
+            "gif_vortices": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_vortices.gif",
+            "gif_particles": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_particles.gif",
+            "gif_flow": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_flow.gif",
+            "gif_full_overlay": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_lineum_full_overlay.gif",
+            "frames_vortices_npy": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_frames_vortices.npy",
+            "frames_curl_npy": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_frames_curl.npy",
+            "frames_amp_npy": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_frames_amp.npy",
+            "frames_phi_npy": "output_wp\\runs/spec6_false_s41_20260222_152015\\spec6_false_s41_frames_phi.npy"
+          },
+          "topology": {
+            "computed_over": "logged_frames_only",
+            "includes_step_0": true,
+            "raw_winding_used": true
           },
           "invariants": {
             "dim": "2D",
@@ -42,72 +147,170 @@
             "grid_size": 128,
             "dt": 0.01
           },
-          "analysis_config": {
-            "spectrum_definition": "power |FFT(x)|^2",
-            "window_length": 256,
-            "hop_length": 128,
-            "guard_bins": 2,
-            "estimator": "centroid",
-            "bootstrap_ci_level": 0.95
+          "run_configuration": {
+            "resolved_config": {
+              "run_id": 6,
+              "run_mode": "false",
+              "seed": 41,
+              "param_tag": "",
+              "low_noise_mode": false,
+              "test_exhale_mode": true,
+              "kappa_mode": "constant",
+              "window_w": 256,
+              "window_hop": 128,
+              "phi_interaction_cap": 0,
+              "steps": 2000,
+              "store_every": 5,
+              "disable_tracking": false
+            },
+            "resolved_config_hash": "799b4f3067aa50ddb324f590ef06706408c4cd8a13b832385882513e61d8231d"
           },
-          "metrics": {
-            "dominant_freq_Hz": 1.856777545095882e+20,
-            "f0_mean_hz": 1.856777545095882e+20,
-            "sbr": 3245.4600764773872,
-            "sbr_mean": 3245.4600764773872,
-            "phi_center": 4431.842082321052,
-            "phi_steady_state": 4232.881964031552,
-            "vortices_total": 20,
-            "mean_vortices": 59.1455,
-            "net_charge": 0,
-            "topology_neutrality_n1": 94.19999999999999,
-            "strict_neutrality": 88.94999999999999,
-            "particles_count": 4530,
-            "low_mass_qp_count": 49,
-            "max_lifespan_steps": 44,
-            "phi_half_life_steps": 1009,
-            "phi_half_life_status": "OK"
+          "provenance": {
+            "rng_backend": "MT19937",
+            "seed": 41,
+            "rng_state_hash": "04622966fb7606bce8950a5cc26a421058f6e70fe0effb0497d79727b7cb8c51"
+          },
+          "logging": {
+            "topo_log_stride": 1
           },
           "audit_scope": {
             "profile": "whitepaper_core",
+            "expected": {
+              "test_exhale_mode": true,
+              "low_noise_mode": false,
+              "steps": 2000,
+              "seed": 41,
+              "run_id": 6,
+              "run_mode": false,
+              "resume": false,
+              "base_output_dir": "output_wp",
+              "kappa_mode": "constant",
+              "kappa_hash_basis": "N/A",
+              "kappa_schedule_id": "N/A",
+              "kappa_stride": "N/A"
+            },
+            "actual": {
+              "test_exhale_mode": true,
+              "low_noise_mode": false,
+              "steps": 2000,
+              "seed": 41,
+              "run_id": 6,
+              "run_mode": false,
+              "resume": false,
+              "base_output_dir": "output_wp",
+              "kappa_mode": "constant",
+              "kappa_hash_basis": "N/A",
+              "kappa_schedule_id": "N/A",
+              "kappa_stride": "N/A"
+            },
             "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
-            "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
+            "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+            "diff_keys": []
           },
           "code_fingerprint": {
-            "sha256": "48ea56d33508a9579e01afde42e3522e6d491d6c68a3b9631d926c431fe6390c"
-          },
-          "kappa": {
-            "mode": "constant",
-            "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
-            "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a"
-          },
-          "run_configuration": {
-            "resolved_config_hash": "153015216b84e8d54df8e78983d93354638ce9be2763a14d40e6baa748d9b6bc"
-          },
-          "data_files": {}
+            "sha256": "cc0df977d8e8639aca62f3f2385bfba8b0668c7ee60ebae3ba5bf20a78528622",
+            "files": [
+              "lineum.py",
+              "tools/whitepaper_contract.py"
+            ],
+            "file_hashes": {
+              "lineum.py": "ca56bf55d3d7ff547c1f2dbbea33aa7c1c3737369503159be0cbcc4da7315e44",
+              "tools/whitepaper_contract.py": "2f29f11fbc177afa2cb1a6bd68f411b4fddee56b8a583f807bd2005ff52d0456"
+            },
+            "normalized_newlines": true
+          }
         },
-        "manifest_sha256": "6596ec3b15f9368b494043458c52755f20f00522342f2789719858c311d0b14e",
-        "spectral_pipeline": {},
+        "manifest_sha256": "abee163efe2d6fcce9742012dcda09f653c7373eb583308c58421c79a19d4818",
+        "spectral_pipeline": {
+          "dt": 1e-21,
+          "sampling_rate_hz": 1.0000000000000001e+21,
+          "df_hz": 3.9062500000000005e+18,
+          "nyquist_hz": 5.0000000000000007e+20,
+          "window_length": 256,
+          "hop_length": 128,
+          "guard_bins": 2,
+          "window_function": "Hann",
+          "dc_remove": true,
+          "fft_type": "RFFT",
+          "estimator": "parabolic_3_bin",
+          "estimator_threshold": 1e-12
+        },
         "run_configuration": {
-          "resolved_config_hash": "153015216b84e8d54df8e78983d93354638ce9be2763a14d40e6baa748d9b6bc"
+          "resolved_config": {
+            "run_id": 6,
+            "run_mode": "false",
+            "seed": 41,
+            "param_tag": "",
+            "low_noise_mode": false,
+            "test_exhale_mode": true,
+            "kappa_mode": "constant",
+            "window_w": 256,
+            "window_hop": 128,
+            "phi_interaction_cap": 0,
+            "steps": 2000,
+            "store_every": 5,
+            "disable_tracking": false
+          },
+          "resolved_config_hash": "799b4f3067aa50ddb324f590ef06706408c4cd8a13b832385882513e61d8231d"
         },
-        "provenance": {},
+        "provenance": {
+          "rng_backend": "MT19937",
+          "seed": 41,
+          "rng_state_hash": "04622966fb7606bce8950a5cc26a421058f6e70fe0effb0497d79727b7cb8c51"
+        },
         "audit_scope": {
           "profile": "whitepaper_core",
+          "expected": {
+            "test_exhale_mode": true,
+            "low_noise_mode": false,
+            "steps": 2000,
+            "seed": 41,
+            "run_id": 6,
+            "run_mode": false,
+            "resume": false,
+            "base_output_dir": "output_wp",
+            "kappa_mode": "constant",
+            "kappa_hash_basis": "N/A",
+            "kappa_schedule_id": "N/A",
+            "kappa_stride": "N/A"
+          },
+          "actual": {
+            "test_exhale_mode": true,
+            "low_noise_mode": false,
+            "steps": 2000,
+            "seed": 41,
+            "run_id": 6,
+            "run_mode": false,
+            "resume": false,
+            "base_output_dir": "output_wp",
+            "kappa_mode": "constant",
+            "kappa_hash_basis": "N/A",
+            "kappa_schedule_id": "N/A",
+            "kappa_stride": "N/A"
+          },
           "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
-          "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
+          "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "diff_keys": []
         },
         "kappa": {
           "mode": "constant",
           "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
-          "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a"
+          "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+          "hash_basis": "map_at_init",
+          "is_dynamic": false,
+          "stats": {
+            "spatial_final_mean": 0.5,
+            "spatial_final_std": 0.0,
+            "temporal_mean_of_spatial_means": null,
+            "temporal_std_of_spatial_means": null
+          }
         }
       }
     }
   },
   "runs": [
     {
-      "run_id": "spec6_false_s41_20260215_023130",
+      "run_id": "spec6_false_s41_20260222_152015",
       "profiles": [
         "baseline",
         "canonical"
@@ -121,7 +324,7 @@
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.audit_scope.actual_hash"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.audit_scope.actual_hash"
           }
         },
         {
@@ -131,7 +334,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:invariants.dim",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.dim"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.dim"
           }
         },
         {
@@ -141,7 +344,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:invariants.bcs",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.bcs"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.bcs"
           }
         },
         {
@@ -151,7 +354,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:invariants.precision",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.invariants.precision"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.precision"
           }
         },
         {
@@ -174,7 +377,7 @@
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.audit_scope.actual_hash"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.audit_scope.actual_hash"
           }
         },
         {
@@ -184,7 +387,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.seed",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.seed"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.seed"
           }
         },
         {
@@ -194,7 +397,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.steps",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.steps"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.steps"
           }
         },
         {
@@ -204,7 +407,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.grid_size",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.grid_size"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.grid_size"
           }
         },
         {
@@ -214,17 +417,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.time_step_s",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.time_step_s"
-          }
-        },
-        {
-          "id": "canonical.identity.equation",
-          "expected": "Eq-4",
-          "actual": "Eq-4",
-          "status": "PASS",
-          "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run.equation",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.equation"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.time_step_s"
           }
         },
         {
@@ -234,47 +427,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.kappa_mode",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.kappa_mode"
-          }
-        },
-        {
-          "id": "canonical.identity.params.alpha",
-          "expected": 0.0007,
-          "actual": 0.0007,
-          "status": "PASS",
-          "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run.params.alpha",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.alpha"
-          }
-        },
-        {
-          "id": "canonical.identity.params.beta",
-          "expected": 0.015,
-          "actual": 0.015,
-          "status": "PASS",
-          "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run.params.beta",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.beta"
-          }
-        },
-        {
-          "id": "canonical.identity.params.delta",
-          "expected": 0.00462,
-          "actual": 0.00462,
-          "status": "PASS",
-          "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run.params.delta",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.delta"
-          }
-        },
-        {
-          "id": "canonical.identity.params.sigma_xi",
-          "expected": 0.005,
-          "actual": 0.005,
-          "status": "PASS",
-          "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run.params.sigma_xi",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.run.params.sigma_xi"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.kappa_mode"
           }
         },
         {
@@ -284,7 +437,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.spectrum_definition",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.spectrum_definition"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.spectrum_definition"
           }
         },
         {
@@ -294,7 +447,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.window_length",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.window_length"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.window_length"
           }
         },
         {
@@ -304,7 +457,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.hop_length",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.hop_length"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.hop_length"
           }
         },
         {
@@ -314,7 +467,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.guard_bins",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.guard_bins"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.guard_bins"
           }
         },
         {
@@ -324,7 +477,7 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.estimator",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.estimator"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.estimator"
           }
         },
         {
@@ -334,39 +487,39 @@
           "status": "PASS",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:analysis_config.bootstrap_ci_level",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.analysis_config.bootstrap_ci_level"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.analysis_config.bootstrap_ci_level"
           }
         },
         {
           "id": "canonical.anchor.f0_mean_hz",
           "expected": {
-            "min": 1.701827566964286e+20,
-            "max": 1.718931361607143e+20,
+            "min": 3.5e+19,
+            "max": 3.9e+19,
             "paper_ref": "\u00a74.6"
           },
-          "actual": 1.856777545095882e+20,
-          "status": "FAIL",
-          "message": "1.856777545095882e+20 > max 1.718931361607143e+20",
+          "actual": 3.6796152976497996e+19,
+          "status": "PASS",
+          "message": "Value 3.6796152976497996e+19 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.f0_mean_hz"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.f0_mean_hz"
           }
         },
         {
           "id": "canonical.anchor.topology_neutrality_n1",
           "expected": {
-            "min": 93.25,
-            "max": 99.25,
+            "min": 70.0,
+            "max": 85.0,
             "paper_ref": "\u00a74.4"
           },
-          "actual": 94.19999999999999,
+          "actual": 75.7,
           "status": "PASS",
-          "message": "Value 94.19999999999999 OK",
+          "message": "Value 75.7 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.topology_neutrality_n1",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.topology_neutrality_n1"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.topology_neutrality_n1"
           }
         },
         {
@@ -377,29 +530,29 @@
             "severity": "info",
             "paper_ref": "\u00a74.4"
           },
-          "actual": 88.94999999999999,
+          "actual": 56.85,
           "status": "PASS",
-          "message": "Value 88.94999999999999 OK",
+          "message": "Value 56.85 OK",
           "severity": "info",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.strict_neutrality",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.strict_neutrality"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.strict_neutrality"
           }
         },
         {
           "id": "canonical.anchor.mean_vortices",
           "expected": {
-            "min": 88.8975,
-            "max": 108.6525,
+            "min": 150.0,
+            "max": 200.0,
             "paper_ref": "\u00a74.4"
           },
-          "actual": 59.1455,
-          "status": "FAIL",
-          "message": "59.1455 < min 88.8975",
+          "actual": 178.2735,
+          "status": "PASS",
+          "message": "Value 178.2735 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.mean_vortices"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.mean_vortices"
           }
         },
         {
@@ -415,53 +568,53 @@
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.low_mass_qp_count",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.low_mass_qp_count"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.low_mass_qp_count"
           }
         },
         {
           "id": "canonical.anchor.max_lifespan_steps",
           "expected": {
-            "min": 500,
+            "min": 20,
             "paper_ref": "\u00a74.5"
           },
-          "actual": 44,
-          "status": "FAIL",
-          "message": "44.0 < min 500",
+          "actual": 54,
+          "status": "PASS",
+          "message": "Value 54.0 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.max_lifespan_steps",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.max_lifespan_steps"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.max_lifespan_steps"
           }
         },
         {
           "id": "canonical.anchor.phi_half_life_steps",
           "expected": {
-            "min": 836,
-            "max": 1254,
+            "min": 1500,
+            "max": 1800,
             "paper_ref": "\u00a74.6"
           },
-          "actual": 1009,
+          "actual": 1686,
           "status": "PASS",
-          "message": "Value 1009.0 OK",
+          "message": "Value 1686.0 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.phi_half_life_steps",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.phi_half_life_steps"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.phi_half_life_steps"
           }
         },
         {
           "id": "canonical.anchor.sbr_mean",
           "expected": {
-            "min": 100.0,
+            "min": 1.5,
             "paper_ref": "\u00a74.6"
           },
-          "actual": 3245.4600764773872,
+          "actual": 4072.181608445348,
           "status": "PASS",
-          "message": "Value 3245.4600764773872 OK",
+          "message": "Value 4072.181608445348 OK",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.sbr_mean",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260215_023130.manifest.metrics.sbr_mean"
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.metrics.sbr_mean"
           }
         },
         {
@@ -541,24 +694,18 @@
           "status": "PASS"
         },
         {
-          "id": "canonical.artifact.*spin_aura_map.png",
-          "expected": "exists",
-          "actual": "found",
-          "status": "PASS"
-        },
-        {
-          "id": "canonical.artifact.*spin_aura_profile.csv",
+          "id": "canonical.artifact.*kappa_map.png",
           "expected": "exists",
           "actual": "found",
           "status": "PASS"
         }
       ],
-      "status": "FAIL"
+      "status": "PASS"
     }
   ],
   "summary": {
-    "pass": 0,
-    "fail": 1,
+    "pass": 1,
+    "fail": 0,
     "skip": 0,
     "matched_canonical": 1
   }

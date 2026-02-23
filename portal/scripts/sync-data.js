@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,9 +20,9 @@ function findRoot(startDir) {
         }
     }
 
-    // Check for Railway Staged Assets
+    // Check for Railway Staged Assets ONLY if in Railway
     const stagedPath = path.join(startDir, '../railway_assets'); // Assuming startDir is scripts/
-    if (fs.existsSync(stagedPath)) {
+    if ((process.env.RAILWAY_ENVIRONMENT || fs.existsSync('/app')) && fs.existsSync(stagedPath)) {
         console.log(`[SYNC] Detected Railway Staged Assets at: ${stagedPath}`);
         return stagedPath;
     }
@@ -65,13 +66,14 @@ function findRoot(startDir) {
 }
 
 const ROOT = findRoot(__dirname);
-const DATA_TARGET = path.resolve(__dirname, '../src/lib/data');
+const TARGET_ROOT = process.env.SYNC_TARGET_ROOT ? path.resolve(process.env.SYNC_TARGET_ROOT) : path.resolve(__dirname, '../');
+const DATA_TARGET = path.join(TARGET_ROOT, 'src/lib/data');
 
 const directoriesToSync = [
     { source: 'whitepapers', target: 'src/lib/data/whitepapers' },
     { source: 'hypotheses', target: 'src/lib/data/hypotheses' },
-    { source: 'whitepaper-old', target: 'src/lib/data/whitepapers-legacy' }, // Added Legacy
     { source: 'source', target: 'static/data/source' },
+    { source: 'lineum_core', target: 'src/lib/data/core/lineum_core' }, // Added Python core library
     { source: '.agent/workflows', target: 'src/lib/data/workflows' }, // Added Operational Knowledge
     { source: 'portal/src/routes', target: 'src/lib/data/portal-structure' } // Added Site Structure
 ];
@@ -120,24 +122,49 @@ function copyRecursiveSync(src, dest) {
     }
 }
 
+function robustRmSync(targetPath, maxRetries = 5, retryDelayMs = 100) {
+    if (!fs.existsSync(targetPath)) return;
+
+    let retries = 0;
+    while (retries < maxRetries) {
+        try {
+            fs.rmSync(targetPath, { recursive: true, force: true });
+            // Verify removal worked (Windows sometimes delays deletion silently)
+            if (!fs.existsSync(targetPath)) return;
+        } catch (err) {
+            // EBUSY or ENOTEMPTY on Windows
+            if (retries === maxRetries - 1) {
+                console.warn(`[SYNC] WARNING: Could not delete ${targetPath} after ${maxRetries} attempts. Stale files may persist:`, err.message);
+            }
+        }
+
+        // Block synchronously for a short delay on retry
+        const start = Date.now();
+        while (Date.now() - start < retryDelayMs) { /* spin wait */ }
+        retries++;
+    }
+}
+
 function extractMetadata(content, filePath) {
     const fileName = path.basename(filePath);
     let status = 'Current';
     let track = 'other';
+    let docType = null;
 
     if (filePath.includes('hypotheses')) {
         status = 'Hypothesis';
     } else if (filePath.includes('whitepapers-legacy')) {
         status = 'LEGACY / UNRELIABLE'; // Explicit warning
     } else if (filePath.includes('whitepapers')) {
-        if (fileName.startsWith('lineum-core')) {
+        if (filePath.includes('1-core')) {
             track = 'core';
-        } else if (fileName.startsWith('lineum-exp')) {
-            track = 'exp';
-            status = 'EXPERIMENTAL / OUT OF CORE SCOPE — do not treat as VALIDATED';
-        } else if (fileName.startsWith('lineum-extension')) {
-            track = 'extension';
-            status = 'EXTENSION / OUT OF CORE SCOPE — do not treat as VALIDATED';
+            if (fileName.includes('-exp-') || fileName.includes('-ext-')) {
+                status = 'EXPERIMENTAL / EXTENSION — do not treat as VALIDATED';
+            }
+        } else if (filePath.includes('2-cosmology')) {
+            track = 'cosmology';
+        } else if (filePath.includes('3-ontology')) {
+            track = 'ontology';
         }
     } else if (filePath.includes('project')) {
         status = 'Project Context';
@@ -147,17 +174,65 @@ function extractMetadata(content, filePath) {
         status = 'Site Structure';
     }
 
-    // Look for [STATUS: ...] or # STATUS: ... or > **Document Status:** ...
-    const statusMatch = content.match(/\[STATUS:\s*([^\]]+)\]/i) || content.match(/#\s*STATUS:\s*([^\r\n]+)/i) || content.match(/> \*\*Document Status:\*\*\s*([^\r\n]+)/i);
+    // Look for various status formats
+    const statusMatch = content.match(/\[STATUS:\s*([^\]]+)\]/i) ||
+        content.match(/#\s*STATUS:\s*([^\r\n]+)/i) ||
+        content.match(/> \*\*Document Status:\*\*\s*([^\r\n]+)/i) ||
+        content.match(/\*\*Status:\*\*\s*([^\r\n]+)/i); // Added direct frontmatter match
+
+    // --- WHITEPAPER CONTRACT VALIDATION ---
+    const isMdWhitepaper = filePath.replace(/\\/g, '/').includes('/whitepapers/') &&
+        fileName.endsWith('.md') &&
+        fileName !== 'README.md' &&
+        fileName !== 'TEMPLATE.md';
+
+    if (isMdWhitepaper && !filePath.includes('hypotheses') && !filePath.includes('whitepapers-legacy')) {
+        const idMatch = content.match(/\*\*Document ID:\*\*\s*([^\r\n]+)/i);
+        const typeMatch = content.match(/\*\*Document Type:\*\*\s*([^\r\n]+)/i);
+        const versionMatch = content.match(/\*\*Version:\*\*\s*([^\r\n]+)/i);
+        const statusValMatch = content.match(/\*\*Status:\*\*\s*([^\r\n]+)/i);
+        const dateMatch = content.match(/\*\*Date:\*\*\s*([^\r\n]+)/i);
+
+        if (!idMatch || !typeMatch || !versionMatch || !statusValMatch || !dateMatch) {
+            console.error('\n\n[CRITICAL] FAILED FILE:', filePath, '\n\n');
+            throw new Error(`[SYNC CONTRACT VIOLATION] Whitepaper "${fileName}" is missing required frontmatter (Document ID, Document Type, Version, Status, or Date) defined in TEMPLATE.md. Extraction matched: ID=${!!idMatch}, Type=${!!typeMatch}, Version=${!!versionMatch}, Status=${!!statusValMatch}, Date=${!!dateMatch}`);
+        }
+
+        // Optionally map Document Type over the filename-based generic 'type'
+        docType = typeMatch[1].trim();
+
+        const expectedTypeFragments = {
+            'Core': '-core-',
+            'Hypothesis': '-hyp-',
+            'Experiment': '-exp-',
+            'Extension': '-ext-'
+        };
+        const expectedFragment = expectedTypeFragments[docType];
+
+        if (expectedFragment && !fileName.includes(expectedFragment)) {
+            console.error('\n\n[CRITICAL] FAILED FILE NAMING CONVENTION:', filePath, '\n\n');
+            throw new Error(`[SYNC CONTRACT VIOLATION] Whitepaper "${fileName}" declares Document Type '${docType}' but is missing '${expectedFragment}' in its filename.`);
+        }
+    }
+    // ---------------------------------------
+
     if (statusMatch && !status.includes('OUT OF CORE SCOPE')) {
-        status = statusMatch[1].trim();
+        let extractedStatus = statusMatch[1].trim();
+        // Normalize specific statuses
+        if (extractedStatus.toLowerCase() === 'falsified') {
+            status = 'Falsified';
+        } else if (extractedStatus.toLowerCase() === 'retracted') {
+            status = 'Retracted';
+        } else {
+            status = extractedStatus;
+        }
     }
 
     return {
         name: fileName,
         path: filePath.replace(ROOT, '').replace(/\\/g, '/'),
         status: status,
-        type: fileName.endsWith('.md') ? 'documentation' : 'code',
+        type: docType ? docType : (fileName.endsWith('.md') ? 'documentation' : 'code'),
         track: track
     };
 }
@@ -167,7 +242,6 @@ function generateAiIndex(targetDir) {
     const index = [];
     const sourceDirs = [
         path.join(targetDir, 'whitepapers'),
-        path.join(targetDir, 'whitepapers-legacy'),
         path.join(targetDir, 'hypotheses'),
         path.join(targetDir, 'core'),
         path.join(targetDir, 'project'),
@@ -219,10 +293,17 @@ function sync() {
         return;
     }
 
+    try {
+        console.log('[SYNC] Updating whitepaper READMEs...');
+        execSync(`node ${path.join(ROOT, 'scripts/update-readmes.js')}`, { stdio: 'inherit' });
+    } catch (err) {
+        console.warn('[SYNC] Failed to update READMEs:', err.message);
+    }
+
     // 1. Sync directories
     for (const { source, target } of directoriesToSync) {
         const sourcePath = path.join(ROOT, source);
-        const targetPath = path.join(path.resolve(__dirname, '../'), target);
+        const targetPath = path.join(TARGET_ROOT, target);
 
         if (!fs.existsSync(sourcePath)) {
             console.warn(`[SYNC] Warning: Source directory not found: ${sourcePath}`);
@@ -231,7 +312,7 @@ function sync() {
 
         console.log(`[SYNC] Syncing ${source} -> ${targetPath}`);
         if (fs.existsSync(targetPath)) {
-            fs.rmSync(targetPath, { recursive: true, force: true });
+            robustRmSync(targetPath);
         }
         copyRecursiveSync(sourcePath, targetPath);
     }
@@ -240,7 +321,7 @@ function sync() {
     const allFilesToSync = [...coreFilesToSync, ...projectFilesToSync];
     for (const { source, target } of allFilesToSync) {
         const sourcePath = path.join(ROOT, source);
-        const targetPath = path.join(path.resolve(__dirname, '../'), target);
+        const targetPath = path.join(TARGET_ROOT, target);
 
         if (fs.existsSync(sourcePath)) {
             console.log(`[SYNC] Syncing file: ${source} -> ${targetPath}`);
@@ -281,7 +362,7 @@ export { sync, findRoot };
 
 // Run if called directly
 import { pathToFileURL } from 'url';
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     try {
         sync();
     } catch (err) {
