@@ -62,4 +62,4 @@ Define a repeatable way to talk about “temperature” and “entropy” in Lin
 - Entropy choice must be fixed before runs; měnit definici = nový experiment.
 - All numbers live in `output/` with the `{RUN_TAG_T}_…` prefix; HTML shows the calibrated T next to σ_ξ.
 
-_Track policy:_ This is **experimental** (v1.1.x-exp). Core v1.0.3-core zůstává beze změny a neobsahuje T ani S.
+_Track policy:_ This is **experimental** (v1.1.x-exp). Core v1.0.3-core remains unchanged and does not contain T or S.

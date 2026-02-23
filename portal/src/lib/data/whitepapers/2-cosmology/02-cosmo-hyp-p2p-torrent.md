@@ -1,5 +1,5 @@
 **Title:** The Torrent Computation Hypothesis
-**Document ID:** cosmo-hyp-p2p-torrent
+**Document ID:** 02-cosmo-hyp-p2p-torrent
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

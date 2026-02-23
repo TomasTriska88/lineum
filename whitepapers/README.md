@@ -113,6 +113,45 @@ To maintain scientific credibility and prevent confusion between hard proofs and
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- INDEX_START -->
 ## 📚 Master Document Index
 
@@ -134,12 +173,18 @@ To maintain scientific credibility and prevent confusion between hard proofs and
 | **Lineum Cosmology (Book II)** | ⚠️ Unknown | `01-cosmo-hyp-base.md` |
 | **The Torrent Computation Hypothesis** | ⚠️ Unknown | `02-cosmo-hyp-p2p-torrent.md` |
 | **Brane Cosmology and the $\mu$ Field** | ⚠️ Unknown | `03-cosmo-hyp-brane-multiverse.md` |
+| **Hypothesis: Jet Emission from a Saturated φ-Trap** | ⚠️ Unknown | `04-hyp-jet.md` |
+| **Hypothesis: Emergent Spectrum During Law Transition (Tříska’s Law Transition Hypothesis)** | ⚠️ Unknown | `05-hyp-law-transition.md` |
+| **Tříska’s Spectral Mirror Hypothesis** | ⚠️ Unknown | `06-hyp-spectral-mirror.md` |
+| **Tříska’s Conceptual Notes on Transverson Resonance (Hypothesis)** | ⚠️ Unknown | `07-hyp-transverson-resonance.md` |
 
 ### [Tier 3: Ontology](./3-ontology/)
 
 | Document | Status | File |
 | :--- | :--- | :--- |
 | **Ontology of the Soul and the Database** | ⚠️ Unknown | `01-ontology-hyp-genesis.md` |
+| **Tříska’s Spectral Observer Hypothesis** | ⚠️ Unknown | `02-hyp-spectral-observer.md` |
+| **Tříska-Smeták Zeta–RNB Resonance Hypothesis** | ⚠️ Unknown | `03-hyp-zeta-resonance.md` |
 
 ### [Tier 4: Archive](./4-archive/)
 

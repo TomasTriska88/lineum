@@ -1,5 +1,5 @@
 **Title:** Brane Cosmology and the $\mu$ Field
-**Document ID:** cosmo-hyp-brane-multiverse
+**Document ID:** 03-cosmo-hyp-brane-multiverse
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

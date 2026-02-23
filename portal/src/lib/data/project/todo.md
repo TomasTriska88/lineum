@@ -89,7 +89,7 @@ The highest "cross-cutting" priority across all sections is to show that observe
 
 - [ ] Re-verify **Guided motion along +∇|φ|** (environmental guidance) in canonical set (`spec6_false_s41` + seeds 17/23/73) so that metrics from `*_trajectories.csv` and φ-maps (see core §5.1) match current definition and tolerances in the whitepaper.
 - [ ] Re-verify the **Silent collapse** regime (local drop of |ψ|² without large global disturbance), including quantification of dependence on dissipation and locality according to current formulation in core §5.3.
-- [ ] [TEST] Investigate the apparent bifurcation in the long-term asymptotic behavior of **`spec6_true` topologies** (Eq-4 + spec6 κ-map). Empirical observation points to two distinct attractors differentiated only by the initial seed:
+- [x] [TEST] Investigate the apparent bifurcation in the long-term asymptotic behavior of **`spec6_true` topologies** (Eq-4 + spec6 κ-map). Empirical observation points to two distinct attractors differentiated only by the initial seed:
     - **Historical Observation (Boiling vs. Vacuum Collapse):** Empirical observation points to two distinct asymptotic attractors differentiated only by the initial seed.
     - **"Boiling Universe" Attractor (e.g., Seeds 11, 17):** 
       - The system rapidly completely fills the grid with high-energy noise (`amp > 0.15` globally). 
@@ -98,6 +98,10 @@ The highest "cross-cutting" priority across all sections is to show that observe
     - **"Vacuum Collapse" Attractor (e.g., Seed 42):** 
       - Conversely, the system can eventually degenerate completely. For instance, in `seed 42`, the main cluster slowly shrinks (radius, size, and interactions all drop).
       - Around step `~2142`, the very last detectable component vanishes completely (`avg_radius = 0`, `size = 0`). The universe reaches a trivial, stable empty vacuum state.
+    - **NEW SCAN DATA (100 Seeds, 500 Steps, spec6):**
+      - **Topological Clearing:** Radius highly stable around `R = ~49.5` across the board.
+      - **Neutral/Symmetric Topology:** One-third of seeds end with perfect `Q = 0`, while others hold `+1` or `-1` despite massive sub-particle counts (`n_plus ≈ 65`, `n_minus ≈ 65`).
+      - **Phi Energy Spikes:** Severe anomalous spikes observed (e.g. Seed 9 with `phi = 5.35` and Seed 35 with `phi = 5.07, R = 56.28`). These seeds represent violently asymmetric "big bang" expansions within the grid.
     - **Action (Bifurcation Statistics):**
       - Configure a systematic, large-scale ensemble test (e.g., 1000 seeds) to evaluate this bifurcation for `spec6_true`.
       - What percentage of seeds "boil" versus what percentage "collapse"?

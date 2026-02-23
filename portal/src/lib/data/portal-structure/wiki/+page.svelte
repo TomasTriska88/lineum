@@ -20,18 +20,6 @@
             desc: "Philosophical and interpretive frameworks regarding the nature of information, memory, and consciousness within the Lineum universe.",
         },
         {
-            id: "Core",
-            desc: "The foundational, mathematically locked ruleset. Claims here are validated by automated contracts and hold the highest authority.",
-        },
-        {
-            id: "Cosmology",
-            desc: "Working drafts exploring macroscopic phenomena (gravity, multiverse). These are hypotheses extrapolated from Core and are subject to revision.",
-        },
-        {
-            id: "Ontology",
-            desc: "Philosophical and interpretive frameworks regarding the nature of information, memory, and consciousness within the Lineum universe.",
-        },
-        {
             id: "Experiment",
             desc: "Laboratory logs, raw data, and empirical observations from simulation scans that inform the higher-level theories.",
         },
@@ -108,7 +96,11 @@
                         <p class="cat-desc">{group.desc}</p>
                         <div class="papers-list">
                             {#each group.list as paper}
-                                <div class="paper-item">
+                                <a
+                                    href="/wiki/{paper.slug}"
+                                    class="paper-item"
+                                    style="text-decoration: none; color: inherit; cursor: pointer;"
+                                >
                                     <div class="paper-info">
                                         <h3>
                                             {paper.title}
@@ -142,10 +134,8 @@
                                             {paper.version} • {paper.date}
                                         </p>
                                     </div>
-                                    <a href="/wiki/{paper.slug}" class="btn"
-                                        >Read Paper &rarr;</a
-                                    >
-                                </div>
+                                    <span class="btn">Read Paper &rarr;</span>
+                                </a>
                             {/each}
                         </div>
                     </div>
@@ -340,7 +330,14 @@
         color: var(--accent-color);
         border-bottom: 1px solid rgba(126, 184, 255, 0.2);
         padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cat-desc {
+        color: rgba(255, 255, 255, 0.65);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        font-size: 0.95rem;
     }
 
     .papers-list {

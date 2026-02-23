@@ -135,3 +135,51 @@ null_ER, null_align = null_shuffle_tests(phi, grad_phi, trajectories)
 
 **Policy.** Semantic Versioning applies to this document; compatibility with the core is pinned in the header.  
 **1.0.0 — 2025-08-19 (initial)** — operational metrics (enrichment, capture, alignment, survival), null/A-B controls, canonical 2D scope.
+
+
+---
+
+## Appendix B — Conceptual Notes on Silent Gravity
+
+
+> _The hypothesis explores the possibility that the gravitational effect in the Lineum system does not arise as an independent force, but as a byproduct of a silent tension in the φ field, which does not manifest in the dynamics of the ψ field, but determines the spatial distribution of quasiparticles._
+
+---
+
+## Initial Motivation
+
+During the examination of simulations `spec1_true` to `spec3_true`, it was repeatedly observed that quasiparticles tend to cluster in certain regions, even though there are no explicit attractive forces between them. This phenomenon cannot be explained solely by the rotation of vortices or their interference in ψ, but appears to be related to gradual gradients in the φ field.
+
+In some simulations, regions with minimal φ flux (∇φ ≈ 0) occur, which simultaneously act as natural "gravitational wells" – quasiparticles remain in these regions longer, or migrate into them, without an apparent causal mechanism in ψ.
+
+This phenomenon has been provisionally termed "silent gravitational field" – it does not manifest turbulently, but structures space through subtle tension in φ. It may be an analogy to the metric field in classical general relativity, with the φ field here playing the role of a hidden geometric background.
+
+---
+
+## Hypothesis Assumptions
+
+- Quasiparticles avoid regions with high φ gradient and accumulate in regions where ∇φ → 0.
+- These regions have a higher probability of containing resonant return points.
+- Tension in φ influences the energy distribution in ψ, even if it does not manifest as a direct flow.
+- The gravitational effect is not an explicit force, but an emergent consequence of φ dynamics around vortex structures.
+
+---
+
+## Verification Criteria
+
+- Statistical preference for the occurrence of quasiparticles in regions with low ∇φ.
+- High correlation of these regions with the occurrence of resonant return points (`phi_grid_dejavu.csv`).
+- Positive correlation between local φ topography and cumulative particle occurrence across multiple simulations (`spec1_true`, `spec2_true`, `spec3_true`).
+- Presence of a stable φ minimum without vortex activity at its center.
+
+---
+
+## Status
+
+✅ confirmed – a statistically significant correlation between silent φ regions and the occurrence of quasiparticles was found in multiple simulations. The results suggest the existence of a metric background that shapes the spatial occurrence of particles without explicit dynamics.
+
+---
+
+## Outlook
+
+Silent gravity in the Lineum system can be interpreted as a **primary geometric framework** within which the ψ field organizes itself. This hypothesis connects emergent behavior with the principles of general relativity without the need to introduce traditional spacetime curvature.

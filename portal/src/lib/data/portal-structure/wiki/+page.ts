@@ -57,11 +57,19 @@ export async function load() {
             category: categories[categoryKey].label,
             categoryOrder: categories[categoryKey].order
         };
-    }).filter(p => !p.slug?.includes('old'))
+    }).filter(p => {
+        const safeSlug = p.slug?.toLowerCase() || '';
+        const safeTitle = p.title?.toLowerCase() || '';
+        return !safeSlug.includes('old') &&
+            !safeSlug.includes('readme') &&
+            !safeSlug.includes('template') &&
+            !safeSlug.includes('stale') &&
+            !safeTitle.includes('lowercase-kebab');
+    })
         .sort((a, b) => {
             // Priority 1: Category order
             if (a.categoryOrder !== b.categoryOrder) return a.categoryOrder - b.categoryOrder;
-            
+
             // Priority 2: Slug alphabetical (respects 01-, 02- prefixes)
             return a.slug.localeCompare(b.slug);
         });

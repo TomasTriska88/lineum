@@ -1,5 +1,5 @@
 **Title:** Emergent Macrodynamics and Information Architecture in the Lineum Field
-**Document ID:** cosmo-hyp-base
+**Document ID:** 01-cosmo-hyp-base
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft
