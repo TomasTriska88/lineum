@@ -1417,3 +1417,633 @@ Without them, Lineum would not be what it is.
 I also thank everyone I have lost during my life, as well as those who still stand by me – people and animals. Everyone who shared the journey with me changed me in their own way. They taught me modesty, silence, and a different view of the world than the one offered by equations.
 
 A special place in my heart belongs to Moulík, Jůlinka and Vikinka, Eliška and others... – they were not just ordinary pets, but real members of the family. Their presence and departure reminded me that even love without words has the power to shape a person. And their imprint also remains in what has been created here.
+
+
+## Appendix K — Vortex–Particle Coupling
+
+### 1. Abstract
+
+We formalize how phase vortices in Lineum bind into long-lived, particle-like structures (“linons”). Empirically, co-rotating vortex triads (↺↺↺ / ↻↻↻) form near-equilateral configurations stabilized by a symmetric φ basin; their interferential pattern in `arg ψ` persists for ≥20 steps. This extension provides operational detection rules, output schemas, and a validation plan for independent replication under the canonical 2D, periodic-BC regime of the core paper.
+
+---
+
+### 2. Motivation
+
+The core documents robust linon dynamics but leaves micro-mechanics of binding to interpretation. This supplement isolates the vortex-binding rules: rotation sense, geometry, φ-mediated stability, and reproducible criteria. The goal is a falsifiable protocol that other groups can run on their Lineum outputs without modifying the canonical Equation (1).
+
+---
+
+### 3. Scope & Assumptions (canonical)
+
+- **Dimensionality:** 2D discrete grid, **periodic BCs**.
+- **κ map:** static spatial tuner sampled per step (no time evolution).
+- **Inputs:** snapshots or timeseries of `ψ` (phase) and `φ` (value, ∇φ), plus run metadata.
+- **Out of scope:** dynamic-κ variants, 3D, non-periodic boundaries (treat as separate experiments).
+
+---
+
+### 4. Definitions & Notation
+
+| Term                 | Meaning                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| **Vortex (↺/↻)**     | Phase singularity from winding of `arg ψ` (counter-/clockwise).                           |
+| **Triad**            | Unordered set of three vortices.                                                          |
+| **Near-equilateral** | Triangle with edge-ratio tolerance ≤ 10% (configurable).                                  |
+| **Linon**            | Localized &#124;ψ&#124;² excitation (per core).                                           |
+| **Binding basin**    | Local low-&#124;∇φ&#124; pocket (often with a φ extremum) at/near the triad centroid.     |
+| **Symbolic record**  | e.g., `↺⟨u ⊙ u ⊙ d⟩_△` for a co-rotating triad in triangular topology with φ-bridges (⊙). |
+
+> **ASCII fallback:** use `CCW<C,C,D>_TRI` for ↺⟨u,u,d⟩\_△ and `BRIDGE` for ⊙ when Unicode is unavailable.
+
+---
+
+### 5. Expected Data Inputs
+
+- `phi_grid_summary.csv` — φ values and (optionally) ∇φ per grid cell / per frame
+- `psi_phase.(png|npy)` — phase field or images sufficient for vortex detection
+- `true_trajectories.csv` (optional) — tracked linon centers over time
+- Run metadata: grid size, seeds, κ-map description, noise amplitude, step count
+
+---
+
+### 6. Detection Algorithm (operational)
+
+**Parameters (defaults):**
+
+```
+VORTEX_MIN_SEP = 3           # cells; de-duplicate near-overlapping cores
+EQUILATERAL_TOL = 0.10       # 10% edge-ratio tolerance
+STABILITY_STEPS = 20         # min consecutive frames
+MAX_CENTROID_DRIFT = 2       # cells across STABILITY_STEPS
+QUIET_BASIN_Q = 0.20         # centroid |∇φ| ≤ 20th percentile of local neighborhood
+PHI_BRIDGE_TOL = 1           # ±1 cell around pair midpoint
+```
+
+**Steps:**
+
+1. **Vortex identification** — compute winding of `arg ψ`; label each core as ↺ or ↻.
+2. **Triad candidates** — enumerate 3-tuples with same rotation (↺↺↺ or ↻↻↻); keep near-equilateral by `EQUILATERAL_TOL`.
+3. **Centroid basin check** — at triad centroid, require quiet φ pocket: local |∇φ| ≤ `QUIET_BASIN_Q` quantile; Laplacian indicates extremum (minimum/maximum) consistent with capture.
+4. **Interference criterion** — between cores, detect persistent striping / nodal pattern in `arg ψ` (e.g., Fourier anisotropy vs. randomized null).
+5. **Temporal stability** — track the three cores (or φ proxies) across frames; require ≥ `STABILITY_STEPS` with centroid drift ≤ `MAX_CENTROID_DRIFT`.
+6. **φ-bridges (⊙)** — for each pair, test for φ extremum near pair midpoint (± `PHI_BRIDGE_TOL` cells).
+7. **Emit record** — if all pass, write structured record (see §7), including symbolic form, e.g. `↺⟨u ⊙ u ⊙ d⟩_△`.
+
+---
+
+### 7. Output Schema (per confirmed triad)
+
+CSV columns (suggested):
+
+```
+run_id, frame_start, frame_end, rotation (CCW/CW),
+x1,y1, x2,y2, x3,y3,  # vortex core coords
+a,b,c, equilateral_tol_pass,
+centroid_x,centroid_y, phi_centroid, gradphi_centroid, laplace_phi_centroid,
+bridge_12, bridge_23, bridge_31,        # boolean flags
+interference_score, stability_steps, centroid_drift_max,
+symbol, notes
+```
+
+---
+
+### 8. Validation Plan
+
+**A/B κ-maps:** `island` vs `constant` to contrast triad incidence, basin symmetry, bridge rate.  
+**Noise sweep (ξ):** plot survival curves vs. noise amplitude.  
+**Tolerance sweep:** 5–15 % equilateral tolerance; evaluate precision/recall vs. manual labels.  
+**Shuffled null:** per-frame randomization of vortex positions; estimate false-positive rate (FPR).  
+**Cross-runs:** replicate on `spec6_true`, `spec7_true`; pool metrics with CIs.
+
+**Primary metrics:**
+
+- **Incidence:** triads / 1000 frames (by rotation class).
+- **Stability:** mean (±SD) confirmed frames; Kaplan–Meier survival if censoring.
+- **Basin contrast:** centroid |∇φ| quantiles vs. neighborhood / background.
+- **Interference score:** Fourier energy ratio in oriented bands vs. isotropic null.
+- **Bridge rate:** fraction of edges with detected φ-bridge.
+
+---
+
+### 9. Results (empirical summary)
+
+- Co-rotating triads occur significantly more often as stable configurations than mixed-rotation triples.
+- Passing triads consistently show a quiet φ basin at the centroid and robust interferential structure in `arg ψ`.
+- The ≥20-step threshold filters turbulence without suppressing genuine bindings.
+
+_(Numerical tables belong to the validation report; this extension stays model-procedural.)_
+
+---
+
+### 10. Discussion
+
+Binding emerges without explicit forces: φ provides the quiet, metric-like background shaping where |ψ|² accumulates; `arg ψ` interference encodes phase-locking between cores. Rotation sense (↺/↻) acts as a particle/antiparticle tag, while binding topology (triangle vs. chain) encodes species. We do not fix a universal taxonomy here; the symbolic layer is a pragmatic recording language.
+
+---
+
+### 11. Limitations & Failure Modes
+
+- 2D canonical scope; 3D or non-periodic boundaries may alter vortex statistics.
+- Vortex detection quality depends on phase unwrapping and image SNR.
+- Near-equilateral constraint is pragmatic; other motifs (chains, multi-rings) need dedicated criteria.
+- False positives can rise when φ gradients are globally shallow; require null controls.
+
+---
+
+### 12. Reproducibility Checklist
+
+- Publish seeds, κ-map, parameter dump.
+- Include raw phase fields (or reproducible FFT pipeline), φ grids, and code to recompute vortices.
+- Provide overlay figures: `arg ψ` with vortex markers; φ heatmap with centroid and bridges; drift tracks.
+- Export full triad CSVs and a README with parameter values matching §6 defaults or stating deviations.
+
+---
+
+### 13. Appendix A — Minimal Pseudocode
+
+```python
+## inputs: vortices = [(x,y,rot), ...], phi_grid, phase_field, frames
+V = deduplicate_close_vortices(vortices, min_sep=VORTEX_MIN_SEP)
+triads = [T for T in combinations_same_rotation(V, k=3) if near_equilateral(T, tol=EQUILATERAL_TOL)]
+
+for T in triads:
+    c = centroid(T)
+    if quiet_phi_basin(phi_grid, c, q=QUIET_BASIN_Q) and persistent_interference(phase_field, T):
+        if stable_over_time(T, frames, min_steps=STABILITY_STEPS, max_centroid_drift=MAX_CENTROID_DRIFT):
+            bridges = detect_phi_bridges(phi_grid, T, tol=PHI_BRIDGE_TOL)  # (b12, b23, b31)
+            emit_record(T, c, bridges, symbol="↺⟨u ⊙ u ⊙ d⟩_△")
+```
+
+---
+
+### 14. Appendix B — Symbol Key
+
+| Symbol | Meaning                                                                              |
+| ------ | ------------------------------------------------------------------------------------ |
+| ↺ / ↻  | CCW/CW rotation (particle/antiparticle tag)                                          |
+| ⊙      | φ-bridge (local extremum between a pair)                                             |
+| △      | triangular binding topology                                                          |
+| `u, d` | visual/role tags for cores within triad (analogy labels; non-essential to detection) |
+
+### 15. Versioning & Changelog
+
+**Policy.** Semantic Versioning applies to this document; compatibility with the core is pinned in the header.  
+**1.0.0 — 2025-08-19 (initial)**
+
+- Operational criteria for co-rotating vortex triads, output schema, and validation plan (canonical 2D, periodic BCs).
+
+
+## Appendix L — Spectral Structure
+
+### 1. Abstract
+
+We consolidate Lineum's spectral phenomena into a single extension covering **Spectral Balance**, **Harmonic Spectrum**, and **Harmonic Depth**. We provide operational definitions, detection algorithms, controls, and reporting standards for reproducible analysis of the dominant tone and its secondary structure under the canonical 2D, periodic-BC regime. The goal is to standardize spectra across runs, seeds, and implementations, enabling independent replication and cross-language checks.
+
+---
+
+### 2. Motivation
+
+The core paper documents a stable dominant frequency with low across-run variance. Multiple hypotheses have noted secondary peaks and layered structure. This extension formalizes the spectral toolkit: how to compute spectra, define peak sets, quantify harmonicity, and evaluate persistence (depth) across time, runs, and parameter sets.
+
+---
+
+### 3. Scope & Assumptions (canonical)
+
+- **Dimensionality:** 2D discrete grid, **periodic BCs**.
+- **κ:** static spatial map (no time evolution).
+- **Signals:** per-frame fields of ψ (magnitude/phase) and φ; spectra computed from chosen scalar time series (see §4).
+- **Out of scope:** dynamic-κ variants, 3D, non-periodic boundaries (treat separately).
+
+---
+
+### 4. Definitions & Notation
+
+| Term                             | Meaning                                                                                                  |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Sampling step (Δt)**           | Simulation time step per frame.                                                                          |
+| **Signal**                       | Scalar observable used for spectrum (e.g., global mean of &#124;ψ&#124;², or spatial FFT energy at k=0). |
+| **Dominant frequency (f₀)**      | Frequency of the largest spectral peak of the chosen signal.                                             |
+| **Spectral Balance Ratio (SBR)** | `SBR = P(f₀) / P(rest)` where `P(rest)` excludes a ±δf window around f₀.                                 |
+| **Harmonic set (H)**             | Detected secondary peaks `{fᵢ}` above a threshold; see §6.2 for rules.                                   |
+| **Harmonicity score (HS)**       | Minimum normalized distance of `{fᵢ}` to rational multiples of f₀ within tolerance τ.                    |
+| **Harmonic Depth (D)**           | Persistence of the harmonic set across time windows and runs (e.g., mean Jaccard overlap).               |
+| **Window**                       | Sliding segment of length `W` frames with hop `H`.                                                       |
+| **Spectral leakage guard**       | Window function (e.g., Hann) and zero-padding used to stabilize peak estimation.                         |
+
+> Use one primary signal throughout a study; recommended default: global mean of &#124;ψ&#124;² per frame.
+
+---
+
+### 5. Data Requirements
+
+- Time series: length `T` frames of the chosen scalar signal; record Δt.
+- Windowing config: `W`, `H`, window function, zero-padding factor.
+- Run metadata: grid size, seeds, κ-map description, noise amplitude, step count, implementation ID (language/build).
+
+---
+
+### 6. Methods
+
+### 6.1 Spectral Balance (SBR)
+
+**Parameters (defaults):**
+
+```
+WINDOW_LEN W = 1024          # frames
+HOP_LEN H   = 256            # frames
+PEAK_GUARD δf = 2 bins       # excluded around f₀ for P(rest)
+PEAK_MIN_PROM = 6 dB         # min prominence for f₀
+```
+
+**Procedure:**
+
+1. Compute STFT (or windowed FFT of the signal) with Hann window and zero-padding ×2.
+2. For each window, locate the dominant peak `f₀` (max power, ≥ PEAK_MIN_PROM).
+3. Compute `P(rest)` as total power minus the energy within ±δf bins around `f₀`.
+4. Report window-wise `SBR`; aggregate as median and IQR across windows.  
+   **Robustness:** Report variance of `f₀` across windows; stable systems should show narrow spread.
+
+### 6.2 Harmonic Spectrum (secondary peaks)
+
+**Parameters (defaults):**
+
+```
+PEAK_MIN_PROM_SEC = 3 dB     # min prominence for secondary peaks
+MULTIPLES R = {1/2, 2/3, 3/2, 2, 3}   # tested rational relations to f₀
+TOL τ = 0.01                  # relative tolerance for |fᵢ - r·f₀| / f₀
+MAX_PEAKS = 8
+```
+
+**Procedure:**
+
+1. After identifying `f₀`, find local maxima above `PEAK_MIN_PROM_SEC`.
+2. Keep at most `MAX_PEAKS` by descending power.
+3. For each `{fᵢ}`, compute `min_r |fᵢ - r·f₀| / f₀` over `r ∈ R`; mark _harmonic-consistent_ if `< τ`.
+4. Report the set `H` and the **Harmonicity Score (HS)** as the average minimum distance across retained peaks.
+
+**Null controls:** Phase-scramble the signal or shuffle frame order; harmonic consistency should drop toward chance.
+
+### 6.3 Harmonic Depth (persistence across time & runs)
+
+**Parameters (defaults):**
+
+```
+DEPTH_WINDOW = 8             # number of consecutive analysis windows
+JACCARD_MIN  = 0.5           # threshold for considering two sets 'consistent'
+```
+
+**Procedure:**
+
+1. Define peak sets `H_t` per window `t`.
+2. Compute pairwise Jaccard similarity `J(H_t, H_{t+1}) = |H_t ∩ H_{t+1}| / |H_t ∪ H_{t+1}|`.
+3. Define **Depth D** as the mean Jaccard over a block of `DEPTH_WINDOW` windows and across runs/seeds.
+4. Report the distribution of `D` and the fraction of adjacent windows with `J ≥ JACCARD_MIN`.
+
+**Cross-implementation check:** Repeat on two independent implementations; report overlap of `H` and `D`.
+
+---
+
+### 7. Controls & Sensitivity Analyses
+
+- **Nulls:** phase-scramble, time-shuffle, or use AR(1) surrogates with matched power.
+- **Window sensitivity:** vary `W ∈ {512, 1024, 2048}` and `H ∈ {128, 256, 512}`.
+- **Prominence thresholds:** ±3 dB sweeps for primary/secondary peaks.
+- **Zero-padding:** ×1, ×2, ×4; confirm `f₀` stability and harmonic labels.
+- **Implementation variance:** repeat analyses across languages/builds; compare `f₀` and `H` overlap.
+
+---
+
+### 8. Expected Results (summary)
+
+> **Canonical anchor (example).**  
+> With `Δt = 1.0e−21 s` (canonical time step), a canonical run (`spec6_false`) yields  
+> **f₀ = 1.00×10¹⁸ Hz**, **E = h f₀ = 6.63×10⁻¹⁶ J ≈ 4.14 keV**, **λ = c / f₀ = 3.00×10⁻¹⁰ m**.  
+> These are direct unit conversions and serve as a replication anchor for all spectral analyses (SBR, harmonicity, depth).
+
+> **Representative metrics (spec6_false).**  
+> **SBR ≈ 2.98** with a ±2-bin guard around f₀. Secondary peaks are **not prominent**, i.e., harmonicity is low in this run.  
+> The dominant frequency **f₀ = 1.00×10¹⁸ Hz** is **consistent across sampled points** (see multi-point spectrum logs).
+
+- **Stable f₀** with narrow within-run variance and small across-run drift.
+- **Consistent secondary structure**: a limited set of peaks harmonic-consistent with `f₀` under τ.
+- **Non-trivial depth**: adjacent-window Jaccard above random baseline; persistence across seeds.
+- **Nulls collapse harmonicity**: HS approaches chance; `H` overlap drops.
+
+_(Detailed numeric tables belong in validation reports.)_
+
+---
+
+### 9. Limitations & Failure Modes
+
+- Aliasing and leakage can bias peak positions; ensure Δt and zero-padding are reported.
+- Short runs (T ≪ W) reduce reliability; prefer `T ≥ 8W`.
+- Global signal choice can mask localized dynamics; document the observable used.
+- Grid-size resonances may introduce spurious peaks; compare across sizes.
+
+---
+
+### 10. Reproducibility Checklist
+
+- Publish seeds, κ-map, Δt, grid size, noise amplitude, and full parameter dump.
+- Provide raw signal time series (CSV) and windowing config.
+- Share code to compute STFT/FFT, peak picking, harmonic labeling, and Jaccard depth.
+- Include null and sensitivity scripts; report CIs for SBR, HS, and D.
+
+---
+
+### 11. Appendix A — Default Parameters
+
+```
+WINDOW_LEN = 1024
+HOP_LEN = 256
+PEAK_GUARD = 2 bins
+PEAK_MIN_PROM = 6 dB
+PEAK_MIN_PROM_SEC = 3 dB
+R = {1/2, 2/3, 3/2, 2, 3}
+TOL = 0.01
+DEPTH_WINDOW = 8
+JACCARD_MIN = 0.5
+```
+
+---
+
+### 12. Appendix B — Minimal Pseudocode
+
+```python
+## inputs: signal[t], dt, W, H
+windows = sliding_windows(signal, W, hop=H, window='hann', pad=2)
+records = []
+for win in windows:
+    spec = fft_power(win)
+    f0 = pick_peak(spec, min_prom_db=6)
+    sbr = power_at(f0, guard=2) / power_rest(spec, exclude=f0, guard=2)
+    peaks = pick_secondary_peaks(spec, min_prom_db=3, max_peaks=8)
+    H = []
+    for fi in peaks:
+        dmin = min(abs(fi - r*f0)/f0 for r in [0.5, 2/3, 1.5, 2, 3])
+        if dmin < 0.01:
+            H.append(fi)
+    records.append((f0, sbr, H))
+
+## Depth: compute Jaccard(H_t, H_{t+1}) and aggregate
+```
+
+---
+
+### 13. Versioning & Changelog
+
+**Policy.** Semantic Versioning applies to this document; compatibility with the core is pinned in the header.  
+**1.0.0 — 2025-08-19 (initial)** — consolidated methods and metrics for Spectral Balance, Harmonic Spectrum, and Harmonic Depth; canonical 2D scope.
+
+
+## Appendix M — Return Echo
+
+### 1. Abstract
+
+We formalize **Return Echo**: a behavioral bias where future linon trajectories revisit the ε-neighborhood of prior decay locations after a delay, distinct from **Structural Closure**. Closure denotes a static φ remnant after decay; echo denotes **later arrivals** steered by local ∇φ shaping toward the old site. This document provides operational detection, metrics, controls, and validation guidance under the canonical 2D, periodic-BC scope of the core paper.
+
+---
+
+### 2. Motivation
+
+The core interprets closure as a field memory independent of active ψ, and notes a separate echo phenomenon in which new linons return to prior decay coordinates. A dedicated extension is required to (i) disambiguate echo from closure, (ii) define falsifiable tests and controls, and (iii) standardize outputs for replication across runs.
+
+---
+
+### 3. Scope & Assumptions (canonical)
+
+- **Dimensionality:** 2D discrete grid, periodic BCs.
+- **κ map:** static spatial tuner (no temporal variation).
+- **Inputs:** time series of linon detections/decays, φ and ∇φ fields (or summaries), run metadata.
+- **Out of scope:** dynamic-κ variants, 3D, non-periodic boundaries.
+
+---
+
+### 4. Definitions
+
+- **Decay event:** time `t0` and location `L` where a tracked linon drops below persistence criteria.
+- **Echo window:** a time interval `[t0 + τ_min, t0 + τ_max]` during which revisits are checked.
+- **ε-neighborhood:** set of coordinates within distance `ε` from `L`.
+- **Revisit:** detection of a new (distinct) linon whose center enters the ε-neighborhood in the echo window.
+- **Matched control sites:** K locations per decay matched on φ and |∇φ| quantiles but unrelated to any decay; used to estimate baseline revisit rates.
+- **Null-shuffle:** randomized per-frame positions of candidate targets or time-shuffled trajectories to estimate chance revisits.
+
+---
+
+### 5. Operational Detection
+
+### 5.1 Parameters (defaults)
+
+```
+EPSILON = 2                 # cells (radius)
+TAU_MIN = 5                 # steps after decay (avoid immediate, trivial proximity)
+TAU_MAX = 500               # steps after decay
+K_CONTROLS = 10             # matched control sites per decay (φ, |∇φ| ±10% quantiles)
+MAX_ID_GAP = 1              # frames tolerated between detections in tracking
+PHI_MATCH_TOL = 0.10        # matching tolerance for φ and |∇φ| quantiles
+```
+
+> Tune `TAU_MAX` to your run length; report chosen values in metadata.
+
+### 5.2 Procedure
+
+1. Detect and log all **decay events** `(L, t0)`.
+2. For each decay, construct **K** matched control sites (same frame `t0`, similar φ, |∇φ| quantiles, not overlapping any decay).
+3. Scan frames `t ∈ [t0 + τ_min, t0 + τ_max]` for **revisits**: new linon centers entering `B(L, ε)`.
+4. Compute **echo metrics** (below) and repeat for all decays; aggregate across runs.
+
+### 5.3 Metrics
+
+- **Echo Rate (ER):** `ER = P(revisit | decay) / P(revisit | control)`; report 95% CIs (bootstrap).
+- **Delay Distribution:** histogram / KDE of `(t - t0)` for revisits.
+- **Offset Distribution:** distances from `L` at revisit time, to assess ε sensitivity.
+- **Approach Alignment:** mean `⟨cos θ⟩` of approach vector vs local `∇φ` near entry into `B(L, ε)`.
+- **Occupancy Surplus:** revisit density map vs. control density map around `L`.
+
+### 5.4 Controls
+
+- **Null-shuffle:** randomize candidate positions or time indices; ER should → 1, alignment → 0.
+- **A/B κ-maps:** `island` vs `constant` κ; echo should persist if driven by φ topology rather than κ edges alone.
+- **ε/τ Sensitivity:** sweep `ε ∈ {1,2,3,4}` and `τ_max ∈ {250,500,1000}`; report ER stability.
+
+### 5.5 Disambiguation from Closure
+
+- **Closure check:** flag whether a **static φ remnant** (persistent imprint) exists at `L` post-decay (e.g., low-|∇φ| pocket or Laplacian extremum persisting ≥ M steps).
+- **Independence test:** compute ER separately for decays **with** and **without** detected φ remnants. An echo effect that remains >1 in both strata supports a behavioral interpretation.
+- **Co-occurrence report:** report fraction of echoes that occur at sites with closure vs. without closure.
+
+---
+
+### 6. Expected Results (summary)
+
+- ER > 1 across seeds and κ-maps, with a unimodal delay distribution.
+- Positive approach alignment (`⟨cos θ⟩ > 0`) indicating guidance by local ∇φ near re-entry.
+- Occupancy surplus localized around prior decay sites; null-shuffles collapse ER → 1.
+
+_(Full numerical tables belong in validation reports.)_
+
+---
+
+### 7. Limitations & Failure Modes
+
+- Echo detection is sensitive to tracking quality (ID switches).
+- Very flat φ landscapes reduce alignment signal; larger samples may be needed.
+- Poor matching of control sites can bias ER; pre-register matching rules.
+
+---
+
+### 8. Reproducibility Checklist
+
+- Publish seeds, κ-map, parameter dump.
+- Export per-decay logs, control-site selection, revisit events, and φ/∇φ fields at relevant frames.
+- Provide scripts for ER bootstrap, alignment calculations, and null-shuffles.
+- Report ε/τ sensitivity and stratified ER (with/without closure).
+
+---
+
+### 9. Appendix — Minimal Pseudocode
+
+```python
+## inputs: decays[(L, t0)], detections[t], phi[t], gradphi[t]
+for (L, t0) in decays:
+    controls = match_controls(L, t0, phi[t0], gradphi[t0], k=K_CONTROLS, tol=PHI_MATCH_TOL)
+    echo_hits = 0; control_hits = 0
+
+    for t in range(t0 + TAU_MIN, min(t0 + TAU_MAX, T)):
+        # echo test
+        if exists_new_linon_in_ball(detections[t], center=L, eps=EPSILON):
+            echo_hits += 1; break
+
+    for C in controls:
+        for t in range(t0 + TAU_MIN, min(t0 + TAU_MAX, T)):
+            if exists_new_linon_in_ball(detections[t], center=C, eps=EPSILON):
+                control_hits += 1; break
+
+    record_ER_sample(echo_hit=(echo_hits>0), control_hit=(control_hits>0))
+
+ER = bootstrap_ratio(p_echo, p_control)
+```
+
+---
+
+### 10. Versioning & Changelog
+
+**Policy.** Semantic Versioning applies to this document; compatibility with the core is pinned in the header.  
+**1.0.0 — 2025-08-19 (initial)** — operational definition, ER metric, controls (null, A/B κ), alignment and occupancy analyses; canonical 2D scope.
+
+
+## Appendix N — Zeta–RNB Resonance
+
+### 1. Abstract
+
+We investigate a putative resonance between **Resonant Return Points (RNB)** detected in Lineum and the imaginary parts of the **nontrivial zeros of the Riemann zeta function** on the critical line. Using a normalized axis for comparison, preliminary analyses show a strong distributional similarity (e.g., Pearson correlation ≈ 0.9842 in one canonical family of runs), despite the fact that no zeta-related mathematics is encoded in the model. This extension formalizes the datasets, metrics, and controls required to reproduce or refute the observation under the canonical 2D, periodic-BC regime.
+
+---
+
+### 2. Motivation
+
+RNBs are repeatedly visited coordinates that arise from the system’s own dynamics; they were previously nicknamed “deja‑vu points” but have been standardized as **Resonant Return Points (RNB)**. If RNB distributions echo the spacing of zeta zeros, that would suggest a surprising numerical structure emergent from purely local update rules, without explicit number theory in the code base.
+
+---
+
+### 3. Scope & Assumptions (canonical)
+
+- **Dimensionality:** 2D discrete grid, **periodic BCs**.
+- **κ:** static spatial map (no time evolution) in the canonical scope of this extension.
+- **Signals:** RNB positions measured along a normalized axis; reference set of zeta zeros’ imaginary parts `{t_n}` on Re(s)=1/2, normalized to [0,1].
+- **Evidence to date:** initial strong matches were observed on specific runs including _spec7_true_; some experiments used a κ trajectory (e.g., `island_to_constant`), which is **non‑canonical**. We separate canonical from non‑canonical evidence in reporting.
+
+---
+
+### 4. Data Requirements
+
+- **RNB dataset:** per‑run CSV with normalized positions (e.g., `rnb_positions.csv`), including run ID, frame bounds, normalization method.
+- **Zeta zeros:** list of the first _N_ imaginary parts `{t_n}` of zeros on Re(s)=1/2, normalized to [0,1].
+- **Metadata:** grid size, Δt, seeds, κ map description (and κ trajectory if used), noise level, detection parameters.
+- **Optional:** occupancy maps around RNBs, echo/closure flags, spectrum logs for cross‑checks.
+
+---
+
+### 5. Definitions
+
+- **RNB (Resonant Return Point):** a coordinate (or small neighborhood) that is revisited by _distinct_ linons after prior decay at the same site, beyond a minimal delay window; RNBs are **behavioral** (not merely structural fossils).
+- **Normalized axis:** affine map of the comparison coordinate to [0,1]; the same mapping must be used for both RNBs and `{t_n}`.
+- **Distributional match:** similarity of empirical CDFs, histograms, or kernel density estimates under the chosen normalization.
+
+---
+
+### 6. Methods
+
+### 6.1 Preprocessing
+
+1. Build the **RNB set** for a run: detect decays, define an echo window, record revisits within ε of prior decay locations; deduplicate to unique sites.
+2. Normalize coordinates to [0,1] along the chosen axis (report axis and mapping).
+3. Load the first _N_ zeta zeros `{t_n}` and normalize to [0,1].
+
+### 6.2 Comparison Metrics
+
+- **Pearson correlation** between binned densities of RNBs and normalized `{t_n}`.
+- **Euclidean distance** between normalized histogram vectors.
+- **KS statistic** between empirical CDFs.
+- **Peak‑alignment error:** absolute differences between leading modes of the two distributions.
+
+### 6.3 Controls
+
+- **Null shuffles (position):** randomize RNB positions or bootstrap with replacement; correlations should collapse toward chance.
+- **Null surrogates (spacing):** compare to Poisson or Wigner surrogates with matched counts.
+- **Sensitivity:** sweep bin counts, bandwidths, and _N_ (e.g., 25, 49, 75) to test stability.
+- **Cross‑runs:** replicate across seeds, κ maps (constant vs island), and grid sizes.
+
+### 6.4 Reporting
+
+- Always report normalization, binning/bandwidth, _N_, and confidence intervals from bootstrap.
+- Separate **canonical** (κ static) from **non‑canonical** (κ trajectory) results.
+
+---
+
+### 7. Expected Results (illustrative)
+
+- High Pearson correlation and low Euclidean distance for canonical runs showing RNB structure.
+- Robustness of the match across reasonable binning/bandwidth choices.
+- Nulls reduce correlation and increase distances toward baseline.
+- Some high‑index deviations (phase offset) are plausible and should be discussed.
+
+---
+
+### 8. Limitations & Caveats
+
+- **Normalization bias:** different axis choices can alter apparent similarity; pre‑register mapping.
+- **Finite‑sample effects:** small _N_ and sparse RNBs inflate variance; aggregate across runs.
+- **Non‑canonical confounders:** κ trajectories can restructure spectra; report separately.
+- **Multiple comparisons:** control for tuning of _N_, binning, and bandwidth (e.g., hold‑out or pre‑registration).
+
+---
+
+### 9. Reproducibility Checklist
+
+- Publish RNB CSVs, zeros list, code for normalization and metrics.
+- Share seeds, κ config, Δt, and all detection parameters (ε, τ windows).
+- Provide null/surrogate scripts and cross‑run aggregation notebooks.
+- Include plots of histograms, CDFs, and peak alignments with CIs.
+
+---
+
+### 10. Appendix — Minimal Pseudocode
+
+```python
+## inputs: rnb_positions[], zeta_zeros[]
+x = normalize_to_unit_interval(rnb_positions)
+t = normalize_to_unit_interval(zeta_zeros)
+h_x = histogram(x, bins=B, density=True)
+h_t = histogram(t, bins=B, density=True)
+pearson = corr(h_x, h_t)
+edist = l2_norm(h_x - h_t)
+ks = ks_statistic(ecdf(x), ecdf(t))
+```
+
+---
+
+### 11. Versioning & Changelog
+
+**Policy.** Semantic Versioning applies to this document; compatibility with the core is pinned in the header.  
+**1.0.0 — 2025-08-19 (initial)** — datasets, metrics (Pearson, Euclidean, KS), null/surrogate controls, canonical vs non‑canonical reporting, reproducibility checklist.
