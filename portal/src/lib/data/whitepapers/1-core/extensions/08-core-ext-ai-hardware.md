@@ -93,4 +93,9 @@ Imagine you want to program a quadruped robot dog to walk over rocks.
 
 *You are physically mapping the real-world kinematics directly to the fluid topology.* LPL allows a developer to bypass millions of hours of machine learning training by letting the raw physics of Eq-4 calculate spatial balance for them.
 
-*(Conclusion: The complexity is abstracted away into physics itself, trading line-by-line coding or million-dollar RL training for topographic CAD sculpting.)*
+### 8. Dynamic Topology (The "Shifting Board")
+**A Revolutionary Concept:** In traditional computers, data must travel from Motherboard Component A (e.g., CPU) to Component B (e.g., RAM) through physical wires.
+In Lineum, you do not need to move the data. The fluid equation ($\Psi$) simply stays running in the grid. If you need to switch from calculating a Logic Gate to saving data to memory, **you simply redraw the Mask (the walls) in real-time.** 
+The fluid waves are sent back and forth across the *same* pool of space, while the labyrinth walls dynamically shift around them. The Processor physically transforms into the Hard Drive, and then transforms back into an ALU an instant later. This completely eradicates the "Von Neumann Bottleneck" (the delay of moving data between memory and CPU) because the data and the processor occupy the exact same spatial medium.
+
+*(Conclusion: The complexity is abstracted away into physics itself, trading line-by-line coding or million-dollar RL training for topographic CAD sculpting and dynamic fluid routing.)*
