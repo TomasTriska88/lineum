@@ -4,6 +4,7 @@
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
     import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte";
     import HypothesisTester from "./lib/components/HypothesisTester.svelte";
+    import ExtremeSpikes from "./lib/components/ExtremeSpikes.svelte";
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import { t, locale } from "./lib/i18n";
 
@@ -206,6 +207,13 @@
                 >
                     {$t("discovery_analysis")}
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "spikes"}
+                    on:click={() => (activeTab = "spikes")}
+                >
+                    Phenomena
+                </button>
             </div>
 
             <div class="tab-content">
@@ -288,6 +296,8 @@
                         {dataRoot}
                         on:maximize={(e) => (maximizedChart = e.detail)}
                     />
+                {:else if activeTab === "spikes"}
+                    <ExtremeSpikes {engine} {frame} />
                 {/if}
             </div>
         </div>

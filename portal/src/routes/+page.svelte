@@ -4,6 +4,11 @@
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import { content } from "$lib/content";
+    import { dev } from "$app/environment";
+
+    const SIMULACRUM_URL = dev
+        ? "http://localhost:5174"
+        : "https://simulacrum.lineum.io";
 </script>
 
 <svelte:head>
@@ -114,7 +119,7 @@
             <div class="card">
                 <h3>{content.sections.scientist.simulacrum.title}</h3>
                 <p>{content.sections.scientist.simulacrum.desc}</p>
-                <a href="https://simulacrum.lineum.io" target="simulacrum"
+                <a href={SIMULACRUM_URL} target="simulacrum"
                     >{content.sections.scientist.simulacrum.link}</a
                 >
             </div>

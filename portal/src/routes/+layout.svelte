@@ -4,6 +4,11 @@
     import CookieBanner from "$lib/components/CookieBanner.svelte";
     import { hudActive } from "$lib/stores/hudStore";
     import { page } from "$app/stores"; // For closing menu on nav
+    import { dev } from "$app/environment";
+
+    const SIMULACRUM_URL = dev
+        ? "http://localhost:5174"
+        : "https://simulacrum.lineum.io";
 
     let menuOpen = false;
 
@@ -36,9 +41,7 @@
         <div class="nav-links" class:mobile-open={menuOpen}>
             <a href="/wiki">Wiki</a>
             <a href="/wiki#faq">FAQ</a>
-            <a href="https://simulacrum.lineum.io" target="simulacrum"
-                >Simulacrum</a
-            >
+            <a href={SIMULACRUM_URL} target="simulacrum">Simulacrum</a>
             <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
                 >API Solutions</a
             >

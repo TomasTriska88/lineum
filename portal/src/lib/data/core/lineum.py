@@ -368,6 +368,13 @@ RUN_TAG = _os.environ.get("LINEUM_RUN_TAG", "").strip() or _RUN_TAG_DERIVED
 
 np.random.seed(SEED)
 random.seed(SEED)
+try:
+    import torch
+    torch.manual_seed(SEED)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(SEED)
+except ImportError:
+    pass
 
 # 🔧 Configuration mapping
 CONFIGS = {

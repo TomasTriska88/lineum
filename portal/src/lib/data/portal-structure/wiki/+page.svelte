@@ -30,11 +30,37 @@
         { id: "Other", desc: "Miscellaneous documentation." },
     ];
 
+    // Group papers by track, then by subType
     let groupedPapers = $derived(
         categories.reduce((acc: any[], cat) => {
-            const list = papers.filter((p: any) => p.category === cat.id);
-            if (list.length > 0)
-                acc.push({ label: cat.id, desc: cat.desc, list });
+            const trackPapers = papers.filter((p: any) => p.track === cat.id);
+            if (trackPapers.length > 0) {
+                // Group by subType within this track
+                const subGroups = trackPapers.reduce((subAcc: any, p: any) => {
+                    if (!subAcc[p.subType]) subAcc[p.subType] = [];
+                    subAcc[p.subType].push(p);
+                    return subAcc;
+                }, {});
+
+                // Ordered output
+                const subTypeOrder = [
+                    "Canonical",
+                    "Hypothesis",
+                    "Extension",
+                    "Experiment",
+                    "Retracted",
+                    "Documentation",
+                ];
+                const orderedSubGroups = subTypeOrder
+                    .filter((st) => subGroups[st])
+                    .map((st) => ({ label: st, list: subGroups[st] }));
+
+                acc.push({
+                    label: cat.id,
+                    desc: cat.desc,
+                    subGroups: orderedSubGroups,
+                });
+            }
             return acc;
         }, [] as any[]),
     );
@@ -94,50 +120,56 @@
                     <div class="category-group">
                         <h2 class="cat-label">{group.label}</h2>
                         <p class="cat-desc">{group.desc}</p>
-                        <div class="papers-list">
-                            {#each group.list as paper}
-                                <a
-                                    href="/wiki/{paper.slug}"
-                                    class="paper-item"
-                                    style="text-decoration: none; color: inherit; cursor: pointer;"
-                                >
-                                    <div class="paper-info">
-                                        <h3>
-                                            {paper.title}
-                                            {#if paper.status === "Locked"}
-                                                <span
-                                                    class="status-badge locked"
-                                                    title="Structurally locked and validated"
-                                                    >🔒 Locked</span
-                                                >
-                                            {:else if paper.status === "Falsified"}
-                                                <span
-                                                    class="status-badge falsified"
-                                                    title="Mathematically or empirically disproven"
-                                                    >❌ Falsified</span
-                                                >
-                                            {:else if paper.status === "Retracted"}
-                                                <span
-                                                    class="status-badge retracted"
-                                                    title="Retracted hypothesis or dead end"
-                                                    >🚫 Retracted</span
-                                                >
-                                            {:else}
-                                                <span
-                                                    class="status-badge draft"
-                                                    title="Working draft subject to revision"
-                                                    >⚠️ Draft</span
-                                                >
-                                            {/if}
-                                        </h3>
-                                        <p class="version">
-                                            {paper.version} • {paper.date}
-                                        </p>
-                                    </div>
-                                    <span class="btn">Read Paper &rarr;</span>
-                                </a>
-                            {/each}
-                        </div>
+
+                        {#each group.subGroups as subGroup}
+                            <h3 class="subcat-label">{subGroup.label}</h3>
+                            <div class="papers-list">
+                                {#each subGroup.list as paper}
+                                    <a
+                                        href="/wiki/{paper.slug}"
+                                        class="paper-item"
+                                        style="text-decoration: none; color: inherit; cursor: pointer;"
+                                    >
+                                        <div class="paper-info">
+                                            <h4>
+                                                {paper.title}
+                                                {#if paper.status === "Locked"}
+                                                    <span
+                                                        class="status-badge locked"
+                                                        title="Structurally locked and validated"
+                                                        >🔒 Locked</span
+                                                    >
+                                                {:else if paper.status === "Falsified"}
+                                                    <span
+                                                        class="status-badge falsified"
+                                                        title="Mathematically or empirically disproven"
+                                                        >❌ Falsified</span
+                                                    >
+                                                {:else if paper.status === "Retracted"}
+                                                    <span
+                                                        class="status-badge retracted"
+                                                        title="Retracted hypothesis or dead end"
+                                                        >🚫 Retracted</span
+                                                    >
+                                                {:else}
+                                                    <span
+                                                        class="status-badge draft"
+                                                        title="Working draft subject to revision"
+                                                        >⚠️ Draft</span
+                                                    >
+                                                {/if}
+                                            </h4>
+                                            <p class="version">
+                                                {paper.version} • {paper.date}
+                                            </p>
+                                        </div>
+                                        <span class="btn"
+                                            >Read Paper &rarr;</span
+                                        >
+                                    </a>
+                                {/each}
+                            </div>
+                        {/each}
                     </div>
                 {/each}
             </section>
@@ -340,6 +372,15 @@
         font-size: 0.95rem;
     }
 
+    .subcat-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
     .papers-list {
         display: flex;
         flex-direction: column;
@@ -363,7 +404,7 @@
         transform: translateX(4px);
     }
 
-    .paper-info h3 {
+    .paper-info h4 {
         margin: 0;
         font-size: 1rem;
         color: rgba(255, 255, 255, 0.9);

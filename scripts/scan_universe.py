@@ -32,6 +32,13 @@ def run_seed_native(seed):
     print(f"\n--- [ Starting Universe Seed: {seed} ] ---")
     
     np.random.seed(seed)
+    try:
+        import torch
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+    except ImportError:
+        pass
     steps_total = 500
     
     try:

@@ -6,13 +6,12 @@ export async function load() {
         eager: true
     });
 
-    const categories = {
+    const tracks = {
         'core': { label: 'Core', order: 1 },
         'cosmology': { label: 'Cosmology', order: 2 },
         'ontology': { label: 'Ontology', order: 3 },
-        'extension': { label: 'Extension', order: 4 },
-        'exp': { label: 'Experiment', order: 5 },
-        'other': { label: 'Other', order: 6 }
+        'archive': { label: 'Archive', order: 4 },
+        'other': { label: 'Other', order: 5 }
     };
 
     const papers = Object.entries(whitepapers).map(([path, content]) => {
@@ -34,18 +33,31 @@ export async function load() {
         const date = findMeta(['Date']) || 'Unknown Date';
         const status = findMeta(['Status']) || 'Draft';
 
-        // Categorization logic based on folder path or filename
-        let categoryKey: keyof typeof categories = 'other';
-        if (path.includes('/1-core/')) {
-            categoryKey = path.includes('/experiments/') ? 'exp' : 'core';
-        } else if (path.includes('/2-cosmology/')) {
-            categoryKey = 'cosmology';
-        } else if (path.includes('/3-ontology/')) {
-            categoryKey = 'ontology';
-        } else if (slug.startsWith('lineum-extension-')) {
-            categoryKey = 'extension';
-        } else if (slug.startsWith('lineum-exp')) {
-            categoryKey = 'exp';
+        const docType = findMeta(['Document Type', 'Type']) || 'Documentation';
+
+        // Track & Subtype Categorization logic based on folder paths or filename
+        let trackKey: keyof typeof tracks = 'other';
+        let subType = 'Canonical'; // default to Canonical unless overridden
+
+        // Track Mapping
+        if (path.includes('/1-core/') || slug.includes('-core-') || slug.startsWith('01-core') || slug.startsWith('02-core') || slug.startsWith('lineum-core')) {
+            trackKey = 'core';
+        } else if (path.includes('/2-cosmology/') || slug.includes('cosmo-')) {
+            trackKey = 'cosmology';
+        } else if (path.includes('/3-ontology/') || slug.includes('ontology-')) {
+            trackKey = 'ontology';
+        } else if (path.includes('/4-archive/')) {
+            trackKey = 'archive';
+            subType = 'Retracted';
+        }
+
+        // SubType Mapping (Override Canonical with specific logic)
+        if (slug.includes('-exp-') || docType.toLowerCase() === 'experiment') {
+            subType = 'Experiment';
+        } else if (slug.includes('-ext-') || docType.toLowerCase() === 'extension') {
+            subType = 'Extension';
+        } else if (slug.includes('-hyp-') || docType.toLowerCase() === 'hypothesis') {
+            subType = 'Hypothesis';
         }
 
         return {
@@ -54,8 +66,9 @@ export async function load() {
             version,
             date,
             status,
-            category: categories[categoryKey].label,
-            categoryOrder: categories[categoryKey].order
+            track: tracks[trackKey].label,
+            trackOrder: tracks[trackKey].order,
+            subType
         };
     }).filter(p => {
         const safeSlug = p.slug?.toLowerCase() || '';
@@ -67,10 +80,16 @@ export async function load() {
             !safeTitle.includes('lowercase-kebab');
     })
         .sort((a, b) => {
-            // Priority 1: Category order
-            if (a.categoryOrder !== b.categoryOrder) return a.categoryOrder - b.categoryOrder;
+            // Priority 1: Track order
+            if (a.trackOrder !== b.trackOrder) return a.trackOrder - b.trackOrder;
 
-            // Priority 2: Slug alphabetical (respects 01-, 02- prefixes)
+            // Priority 2: Subtype order (Canonical first, then others, then Hypotheses)
+            const subTypeOrder = { 'Canonical': 1, 'Hypothesis': 2, 'Extension': 3, 'Experiment': 4, 'Retracted': 5, 'Documentation': 6 };
+            const aSub = subTypeOrder[a.subType as keyof typeof subTypeOrder] || 99;
+            const bSub = subTypeOrder[b.subType as keyof typeof subTypeOrder] || 99;
+            if (aSub !== bSub) return aSub - bSub;
+
+            // Priority 3: Slug alphabetical (respects 01-, 02- prefixes)
             return a.slug.localeCompare(b.slug);
         });
 

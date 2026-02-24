@@ -122,12 +122,95 @@ This directory contains the Tier 3: Ontology tier of the Lineum publication arch
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- INDEX_START -->
 ## 📚 Document Index
 
 | Document | Status | File |
 | :--- | :--- | :--- |
-| **Ontology of the Soul and the Database** | ⚠️ Unknown | `01-ontology-hyp-genesis.md` |
-| **Tříska’s Spectral Observer Hypothesis** | ⚠️ Unknown | `02-hyp-spectral-observer.md` |
-| **Tříska-Smeták Zeta–RNB Resonance Hypothesis** | ⚠️ Unknown | `03-hyp-zeta-resonance.md` |
+| *(No documents yet)* | - | - |
 <!-- INDEX_END -->
