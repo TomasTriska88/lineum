@@ -7,6 +7,7 @@
     import ExtremeSpikes from "./lib/components/ExtremeSpikes.svelte";
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import LplCompiler from "./lib/components/LplCompiler.svelte";
+    import TrueRng from "./lib/components/TrueRng.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -133,7 +134,10 @@
         class:dimmed={activeTab === "lpl"}
         bind:this={container}
     ></div>
-    <div class="overlay" class:lpl-mode={activeTab === "lpl"}>
+    <div
+        class="overlay"
+        class:lpl-mode={activeTab === "lpl" || activeTab === "rng"}
+    >
         <div class="header-section">
             <div class="header-top">
                 <h1>{$t("simulakrum")}</h1>
@@ -226,6 +230,13 @@
                 >
                     {$t("tab_lpl")}
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "rng"}
+                    on:click={() => (activeTab = "rng")}
+                >
+                    TRUE RNG
+                </button>
             </div>
 
             <div class="tab-content">
@@ -312,11 +323,13 @@
                     <ExtremeSpikes {engine} {frame} />
                 {:else if activeTab === "lpl"}
                     <LplCompiler />
+                {:else if activeTab === "rng"}
+                    <TrueRng />
                 {/if}
             </div>
         </div>
 
-        {#if activeTab !== "lpl"}
+        {#if activeTab !== "lpl" && activeTab !== "rng"}
             <div class="side-panel side-panel-right">
                 <div class="guide-panel">
                     <h3>{$t("guide_title")}</h3>

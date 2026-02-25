@@ -66,8 +66,13 @@ function findRoot(startDir) {
 }
 
 const ROOT = findRoot(__dirname);
-const TARGET_ROOT = process.env.SYNC_TARGET_ROOT ? path.resolve(process.env.SYNC_TARGET_ROOT) : path.resolve(__dirname, '../');
-const DATA_TARGET = path.join(TARGET_ROOT, 'src/lib/data');
+function getTargetRoot() {
+    return process.env.SYNC_TARGET_ROOT ? path.resolve(process.env.SYNC_TARGET_ROOT) : path.resolve(__dirname, '../');
+}
+
+function getDataTarget() {
+    return path.join(getTargetRoot(), 'src/lib/data');
+}
 
 const directoriesToSync = [
     { source: 'whitepapers', target: 'src/lib/data/whitepapers' },
@@ -306,7 +311,7 @@ function sync() {
     // 1. Sync directories
     for (const { source, target } of directoriesToSync) {
         const sourcePath = path.join(ROOT, source);
-        const targetPath = path.join(TARGET_ROOT, target);
+        const targetPath = path.join(getTargetRoot(), target);
 
         if (!fs.existsSync(sourcePath)) {
             console.warn(`[SYNC] Warning: Source directory not found: ${sourcePath}`);
@@ -324,7 +329,7 @@ function sync() {
     const allFilesToSync = [...coreFilesToSync, ...projectFilesToSync];
     for (const { source, target } of allFilesToSync) {
         const sourcePath = path.join(ROOT, source);
-        const targetPath = path.join(TARGET_ROOT, target);
+        const targetPath = path.join(getTargetRoot(), target);
 
         if (fs.existsSync(sourcePath)) {
             console.log(`[SYNC] Syncing file: ${source} -> ${targetPath}`);
@@ -343,7 +348,7 @@ function sync() {
 
             // Note: If audit_report.json doesn't exist, we might want to check for something else or just skip
             if (fs.existsSync(auditReportPath)) {
-                const targetPath = path.join(DATA_TARGET, 'project/audit_latest.json');
+                const targetPath = path.join(getDataTarget(), 'project/audit_latest.json');
                 console.log(`[SYNC] Syncing latest audit report: ${auditReportPath} -> ${targetPath}`);
                 copyRecursiveSync(auditReportPath, targetPath);
             } else {
@@ -355,7 +360,7 @@ function sync() {
     }
 
     // Generate AI Index
-    generateAiIndex(DATA_TARGET);
+    generateAiIndex(getDataTarget());
 
     console.log('[SYNC] Synchronization complete.');
 }

@@ -8,15 +8,22 @@ export function intersect(node: HTMLElement, callback: (inView: boolean) => void
         });
     };
 
-    observer = new IntersectionObserver(handleIntersect, { threshold: 0 });
-    observer.observe(node);
+    if (typeof IntersectionObserver !== 'undefined') {
+        observer = new IntersectionObserver(handleIntersect, { threshold: 0 });
+        observer.observe(node);
+    } else {
+        // Fallback for SSR/JSDOM testing: assume it's visible
+        callback(true);
+    }
 
     return {
         update(newCallback: (inView: boolean) => void) {
             callback = newCallback;
         },
         destroy() {
-            observer.disconnect();
+            if (observer) {
+                observer.disconnect();
+            }
         }
     };
 }

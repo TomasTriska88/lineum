@@ -68,4 +68,18 @@ describe('Static Analysis: No Hardcoded Text in Svelte Components', () => {
 
         expect(hardcodedViolations, `Found hardcoded text that should be localized:\n${hardcodedViolations.join('\n')}`).toEqual([]);
     });
+
+    it('Should not contain any @gmail.com addresses (must use config/central emails)', () => {
+        const srcDir = './src';
+        const allFiles = getAllSvelteFiles(srcDir);
+        let violations: string[] = [];
+
+        for (const file of allFiles) {
+            const content = readFileSync(file, 'utf-8');
+            if (content.includes('@gmail.com')) {
+                violations.push(file);
+            }
+        }
+        expect(violations, `Found files with hardcoded @gmail.com addresses: ${violations.join(', ')}`).toEqual([]);
+    });
 });

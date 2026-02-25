@@ -12,20 +12,20 @@ describe('Wiki Loader: Advanced Features', () => {
         const corePaper = papers.find((p: any) => p.slug === '01-core-lineum');
         expect(corePaper).toBeDefined();
         if (corePaper) {
-            expect(corePaper.category).toBe('Core');
+            expect(corePaper.track).toBe('Core');
             expect(corePaper.status).toBe('Draft');
         }
 
         // Check for Cosmology
         const cosmologyPaper = papers.find((p: any) => p.slug === '01-cosmo-base');
         if (cosmologyPaper) {
-            expect(cosmologyPaper.category).toBe('Cosmology');
+            expect(cosmologyPaper.track).toBe('Cosmology');
             expect(cosmologyPaper.status).toBe('Draft');
         }
 
         // Check for Extensions (if any remain in mock data)
         const extension = papers.find((p: any) => p.slug.includes('-ext-'));
-        if (extension) expect(extension.category).toBe('Core');
+        if (extension) expect(extension.track).toBe('Core');
     });
 
     it('should sort Lineum Core as the first item via category order and numerical prefix', async () => {

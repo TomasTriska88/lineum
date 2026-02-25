@@ -15,7 +15,8 @@ export const translations = {
             lab: "Laboratoř",
             api: "API Řešení",
             wiki: "Wiki / Science",
-            support: "Podpora"
+            support: "Podpora",
+            about: "O Nás"
         },
         hero: {
             headline: "Objevte strukturu samotného prostoru.",
@@ -179,7 +180,8 @@ export const translations = {
             lab: "Laboratory",
             api: "API Solutions",
             wiki: "Wiki / Science",
-            support: "Support"
+            support: "Support",
+            about: "About Us"
         },
         hero: {
             headline: "Discover the structure of space itself.",
@@ -343,7 +345,8 @@ export const translations = {
             lab: "Labor",
             api: "API-Lösungen",
             wiki: "Wiki / Science",
-            support: "Support"
+            support: "Support",
+            about: "Über uns"
         },
         hero: {
             headline: "Entdecken Sie die Struktur des Raumes.",
@@ -449,7 +452,7 @@ export const translations = {
             retry_now: "Erneut versuchen",
             placeholder: "Stellen Sie Lina eine Frage...",
             stop_audio: "Audio stoppen",
-            status_idle: "Klicken Sie, um mich etwas zu Lineum zu fragen ✨",
+            status_idle: "Frag mich nach Lineum ✨",
             status_active: "VERBINDUNG HERGESTELLT",
             privacy: "Lina ist ein Forschungsinstrument. Anonyme Gespräche können zu Analysezwecken gespeichert werden.",
             insight_header: "ENTDECKER-EINBLICK"
@@ -507,7 +510,8 @@ export const translations = {
             lab: "研究所 [Lab]",
             api: "API ソリューション",
             wiki: "Wiki / Science",
-            support: "サポート"
+            support: "サポート",
+            about: "私たちについて"
         },
         hero: {
             headline: "空間そのものの構造を発見する。",

@@ -2,6 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
+    import { intersect } from "$lib/actions/intersect";
 
     // Místo Concurrenty opět voláme spouštění jen po jednom (čistší dev zkušenost)
     let canvas: HTMLCanvasElement = null as any;
@@ -27,6 +28,17 @@
     let isScrubbing = false;
     let socket: WebSocket | null = null;
     let currentStep = 0;
+
+    let isVisible = false;
+    function handleIntersect(inView: boolean) {
+        isVisible = inView;
+        if (isVisible && gl) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(renderFrame);
+        } else {
+            cancelAnimationFrame(animationFrameId);
+        }
+    }
 
     // === STAV APLIKACE & PRESETY ===
     type PresetId = "urban_design" | "evacuation" | "vascular" | "dielectric";
@@ -396,7 +408,7 @@
     }
 
     function renderFrame(time: number) {
-        if (!gl || !program) return;
+        if (!isVisible || !gl || !program) return;
 
         // Resize Fix (Downsampling for GPU Performance)
         // Vynutíme limit výpočetní matice, aby 4K monitory netočily GPU větráčky na max.
@@ -617,7 +629,7 @@
         initWebGL();
         generateMapForPreset();
         uploadKappa();
-        animationFrameId = requestAnimationFrame(renderFrame);
+        // handled by intersect: animationFrameId = requestAnimationFrame(renderFrame);
 
         return () => {
             cancelAnimationFrame(animationFrameId);
@@ -1015,6 +1027,7 @@ logic_result = solver.compile_lpl(
 
                 <!-- WebGL Canvas Area -->
                 <div
+                    use:intersect={handleIntersect}
                     class="relative w-full aspect-square bg-black overflow-hidden flex items-center justify-center"
                 >
                     <canvas
