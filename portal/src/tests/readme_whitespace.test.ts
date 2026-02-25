@@ -15,9 +15,10 @@ describe('Whitepaper Formatting Standard Enforcement', () => {
             const content = fs.readFileSync(file, 'utf8');
             const hasRunawayWhitespace = /\n{3,}/.test(content);
 
-            expect(hasRunawayWhitespace).toBeFalsy({
-                message: `Formatting Violation: ${path.basename(path.dirname(file))}/README.md contains 3 or more consecutive blank lines. This breaks canonical script parsers.`
-            });
+            expect(
+                hasRunawayWhitespace,
+                `Formatting Violation: ${path.basename(path.dirname(file))}/README.md contains 3 or more consecutive blank lines. This breaks canonical script parsers.`
+            ).toBe(false);
         }
     });
 });

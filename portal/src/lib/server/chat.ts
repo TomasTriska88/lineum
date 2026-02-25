@@ -50,10 +50,10 @@ export function getOfflineFallback(query: string): string | null {
         for (const item of aiIndex) {
             if (!item.content) continue;
 
-            // Verified Content Filter (Whitepapers Only):
-            // We allow all whitepapers (Core, Exp, Extension).
-            // We skip non-whitepapers (like todo.md) in the offline fallback to avoid clutter.
-            if (item.type !== 'documentation' || !item.path.includes('whitepapers')) {
+            // Verified Content Filter (Whitepapers & Administrative Docs Only):
+            // We allow all whitepapers (Core, Exp, Extension) and official administrative documents (docs/).
+            // We skip operational noise (like todo.md or workflows) in the offline fallback to avoid clutter.
+            if (item.type !== 'documentation' || (!item.path.includes('whitepapers') && !item.path.includes('docs'))) {
                 continue;
             }
 

@@ -18,9 +18,10 @@ describe('Localization Completeness', () => {
                     if (titleMatches) {
                         for (const title of titleMatches) {
                             // Enforce that $t is present. No hardcoded global static titles.
-                            expect(title.includes('$t')).toBeTruthy({
-                                message: `Translation Violation: ${file.name} contains a hardcoded <title> block instead of using Svelte $t(...) i18n variables.`
-                            });
+                            expect(
+                                title.includes('$t'),
+                                `Translation Violation: ${file.name} contains a hardcoded <title> block instead of using Svelte $t(...) i18n variables.`
+                            ).toBe(true);
                         }
                     }
                 }

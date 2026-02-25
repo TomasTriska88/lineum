@@ -19,6 +19,12 @@ description: How to manage git branches and commits
     (Create it if it doesn't exist: `git checkout -b dev`)
 
 3.  **Commit & Push:** Only when you are safely on `dev` (or a feature branch), you may proceed with `git add`, `git commit`, and `git push origin dev`.
+4.  **No Chaining on Windows:** DO NOT use the `&&` operator to chain Git commands together (e.g. `git add . && git commit`). Older versions of PowerShell (v5.1 and below) do not support `&&` and will throw syntax errors. ALWAYS execute commands on separate lines:
+    ```bash
+    git add .
+    git commit -m "..."
+    git push origin dev
+    ```
 
 **Correction Protocol:**
 If you accidentally commit to `main` locally:

@@ -17,13 +17,15 @@ describe('Navigation Link Integrity', () => {
                     const hasEmptyHref = /href=""/.test(content);
                     const hasHashHref = /href="#"/.test(content);
 
-                    expect(hasEmptyHref).toBeFalsy({
-                        message: `Navigation Violation: ${file.name} contains an empty href="" link.`
-                    });
+                    expect(
+                        hasEmptyHref,
+                        `Navigation Violation: ${file.name} contains an empty href="" link.`
+                    ).toBe(false);
 
-                    expect(hasHashHref).toBeFalsy({
-                        message: `Navigation Violation: ${file.name} contains a dead href="#" anchor.`
-                    });
+                    expect(
+                        hasHashHref,
+                        `Navigation Violation: ${file.name} contains a dead href="#" anchor.`
+                    ).toBe(false);
                 }
             }
         };

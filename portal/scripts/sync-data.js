@@ -75,7 +75,8 @@ const directoriesToSync = [
     { source: 'source', target: 'static/data/source' },
     { source: 'lineum_core', target: 'src/lib/data/core/lineum_core' }, // Added Python core library
     { source: '.agent/workflows', target: 'src/lib/data/workflows' }, // Added Operational Knowledge
-    { source: 'portal/src/routes', target: 'src/lib/data/portal-structure' } // Added Site Structure
+    { source: 'portal/src/routes', target: 'src/lib/data/portal-structure' }, // Added Site Structure
+    { source: 'docs', target: 'src/lib/data/docs' } // Added Administrative Documentation
 ];
 
 const coreFilesToSync = [
@@ -247,6 +248,7 @@ function generateAiIndex(targetDir) {
         path.join(targetDir, 'core'),
         path.join(targetDir, 'project'),
         path.join(targetDir, 'workflows'),
+        path.join(targetDir, 'docs'),
         path.join(targetDir, 'portal-structure'), // Added portal structure
         path.join(path.resolve(__dirname, '../src/lib')), // Include portal logic
     ];
