@@ -7,7 +7,7 @@
     import { dev } from "$app/environment";
 
     const SIMULACRUM_URL = dev
-        ? "http://localhost:5174"
+        ? "http://127.0.0.1:5174"
         : "https://simulacrum.lineum.io";
 
     $: legendItems = [

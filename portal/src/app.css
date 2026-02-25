@@ -128,3 +128,57 @@ a:hover {
         /* Will serve as a fallback or override dependent on specificity */
     }
 }
+
+/* Custom Tooltips (Extracted from ResonanceDeck) */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 100000;
+    pointer-events: none;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+[data-tooltip]:hover::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    margin-bottom: -2px;
+    z-index: 100000;
+    pointer-events: none;
+}
+
+/* Bottom positioned tooltips for elements near top edges (to avoid clipping) */
+[data-tooltip-pos="bottom"]:hover::before {
+    bottom: auto;
+    top: 100%;
+    margin-bottom: 0;
+    margin-top: 8px;
+}
+
+[data-tooltip-pos="bottom"]:hover::after {
+    bottom: auto;
+    top: 100%;
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+    margin-bottom: 0;
+    margin-top: -2px;
+}

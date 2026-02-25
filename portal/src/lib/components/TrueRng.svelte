@@ -72,8 +72,8 @@
         if (!animationId) animateBoiling();
 
         try {
-            // Target the SvelteKit proxy on the portal (assuming portal runs on 5173 in dev)
-            const res = await fetch("http://localhost:5173/api/v1/rng", {
+            // Target the local SvelteKit proxy on the portal
+            const res = await fetch("/api/v1/rng", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

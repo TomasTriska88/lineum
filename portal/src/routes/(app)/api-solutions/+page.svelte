@@ -4,8 +4,11 @@
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
     import { intersect } from "$lib/actions/intersect";
+    import TrueRng from "$lib/components/TrueRng.svelte";
+    import HashingDemo from "$lib/components/HashingDemo.svelte";
+    import CompressionDemo from "$lib/components/CompressionDemo.svelte";
 
-    // Místo Concurrenty opět voláme spouštění jen po jednom (čistší dev zkušenost)
+    // Instead of Concurrency we launch one by one again (cleaner dev experience)
     let canvas: HTMLCanvasElement = null as any;
     let gl: WebGLRenderingContext | null;
     let program: WebGLProgram | null;
@@ -17,10 +20,10 @@
     // Simulation state
     let kappaFlat = new Float32Array(MAP_SIZE * MAP_SIZE).fill(1);
     let phiFlat = new Float32Array(MAP_SIZE * MAP_SIZE).fill(0);
-    // Využijeme Blue channel druhé textury pro trasu
+    // We'll use the Blue channel of the second texture for the route
     let pathMap = new Float32Array(MAP_SIZE * MAP_SIZE).fill(0);
 
-    // Body zájmu (nyní re-assignované podle presetu)
+    // Points of interest (now re-assigned based on preset)
     let startPoint = { x: 10, y: 10 };
     let targetPoint = { x: 110, y: 110 };
 
@@ -41,45 +44,47 @@
         }
     }
 
-    // === STAV APLIKACE & PRESETY ===
-    type PresetId = "urban_design" | "evacuation" | "vascular" | "dielectric";
+    // === APP STATE & PRESETS ===
+    type PresetId =
+        | "urban_design"
+        | "evacuation"
+        | "vascular"
+        | "dielectric"
+        | "city_connections";
     let activePreset: PresetId = "urban_design";
 
-    // Dynamické Definice Agentů pro daný preset
-    let scenarioAgents = [
-        {
-            id: "A",
-            start: { x: 50, y: 15 },
-            color: "#38bdf8",
-            name: "Convoy Alpha",
-            eta: "4.2 mins",
-        },
-    ];
+    // Dynamic Agent Definitions for given preset
+    let scenarioAgents: any[] = [];
 
     const PRESETS = {
         urban_design: {
-            name: "1. Urban & Traffic Routing",
+            name: "URBAN_LOGISTICS",
             desc: "Heavy momentum memory. Merges small paths into efficient wide highways.",
             target: { x: 60, y: 110 },
         },
         evacuation: {
-            name: "2. Crowd Panic & Evacuation",
+            name: "CROWD_EVACUATION",
             desc: "Short memory, high pressure. Crowds scatter around bottlenecks chaotically.",
             target: { x: 60, y: 120 },
         },
         vascular: {
-            name: "3. Vascular / Irrigation Network",
+            name: "IRRIGATION_NETWORK",
             desc: "High noise divergence. Fluid covers maximum tissue area forming fractals.",
             target: { x: 60, y: 100 },
         },
         dielectric: {
-            name: "4. Dielectric Breakdown (Lightning)",
+            name: "DIELECTRIC_BREAKDOWN",
             desc: "Brutal gradient pressure. Burns straight through micro-pores in insulators.",
             target: { x: 60, y: 120 },
         },
+        city_connections: {
+            name: "TOPOGRAPHIC_CITIES",
+            desc: "Connecting neighboring cities with minimal infrastructure, avoiding geographic obstacles.",
+            target: { x: 64, y: 64 },
+        },
     };
 
-    // Textury pro GPU
+    // GPU Textures
     let kappaTexture: WebGLTexture | null = null;
     let dynTexture: WebGLTexture | null = null;
 
@@ -89,9 +94,9 @@
         varying vec2 v_uv;
         void main() {
             gl_Position = vec4(a_position, 0.0, 1.0);
-            // Prepočet -1..1 na 0..1 (UV)
+            // Recalculate -1..1 to 0..1 (UV)
             v_uv = a_position * 0.5 + 0.5; 
-            // WebGL ma flipnuté Y
+            // WebGL has flipped Y
             v_uv.y = 1.0 - v_uv.y; 
         }
     `;
@@ -262,7 +267,7 @@
         };
 
         if (activePreset === "urban_design") {
-            // Městské bloky
+            // City blocks
             addWall(20, 30, 80, 10);
             addWall(40, 60, 80, 10);
             addWall(10, 90, 80, 10);
@@ -302,7 +307,7 @@
             ];
             targetPoint = { x: 60, y: 120 };
         } else if (activePreset === "vascular") {
-            // Orgán tkáně, nepravidelné blokace, hledání cest skrz buňky
+            // Tissue organ, irregular blockages, pathfinding through cells
             for (let k = 0; k < 15; k++) {
                 addWall(
                     Math.random() * 100 + 10,
@@ -311,7 +316,7 @@
                     Math.random() * 15 + 5,
                 );
             }
-            addWall(0, 110, 128, 5); // Membrána dole
+            addWall(0, 110, 128, 5); // Bottom membrane
             scenarioAgents = [
                 {
                     id: "A",
@@ -323,10 +328,10 @@
             ];
             targetPoint = { x: 64, y: 120 };
         } else if (activePreset === "dielectric") {
-            // Izolant (tlustá zeď s malýma dírkama / kazy materiálu)
+            // Insulator (thick wall with small pores / material defects)
             addWall(0, 50, 128, 30);
-            // Uděláme póry
-            const p = 0; // zruseni zdi v dire
+            // Create pores
+            const p = 0; // remove wall in pore
             for (let i = 0; i < 10; i++) {
                 const px = Math.floor(Math.random() * 120);
                 const py = Math.floor(Math.random() * 28) + 51;
@@ -343,6 +348,62 @@
                 },
             ];
             targetPoint = { x: 64, y: 120 };
+        } else if (activePreset === "city_connections") {
+            // Topographic mountain map (sine combinations for natural terrain)
+            for (let j = 0; j < MAP_SIZE; j++) {
+                for (let i = 0; i < MAP_SIZE; i++) {
+                    let nx = (i / MAP_SIZE) * Math.PI * 4;
+                    let ny = (j / MAP_SIZE) * Math.PI * 4;
+                    let elevation =
+                        Math.sin(nx) * Math.cos(ny) +
+                        Math.sin(nx * 2.5 + 1) * 0.5;
+                    if (elevation > 0.75) {
+                        kappaFlat[j * MAP_SIZE + i] = 0.0; // Absolute rock/mountains
+                    } else if (elevation > 0.45) {
+                        kappaFlat[j * MAP_SIZE + i] = 0.1; // Heavy hill - high resistance (slow road building)
+                    } else if (elevation > 0.2) {
+                        kappaFlat[j * MAP_SIZE + i] = 0.5; // Undulating terrain
+                    }
+                }
+            }
+            scenarioAgents = [
+                {
+                    id: "City1",
+                    start: { x: 15, y: 15 },
+                    color: "#fcd34d",
+                    name: "Alpha Hub",
+                    eta: "Ready",
+                },
+                {
+                    id: "City2",
+                    start: { x: 110, y: 20 },
+                    color: "#fcd34d",
+                    name: "Beta Hub",
+                    eta: "Ready",
+                },
+                {
+                    id: "City3",
+                    start: { x: 20, y: 110 },
+                    color: "#fcd34d",
+                    name: "Gamma Hub",
+                    eta: "Ready",
+                },
+                {
+                    id: "City4",
+                    start: { x: 105, y: 105 },
+                    color: "#fcd34d",
+                    name: "Delta Hub",
+                    eta: "Ready",
+                },
+                {
+                    id: "City5",
+                    start: { x: 110, y: 64 },
+                    color: "#fcd34d",
+                    name: "Echo Hub",
+                    eta: "Ready",
+                },
+            ];
+            targetPoint = { x: 64, y: 64 }; // Capital city in the central valley
         }
     }
 
@@ -734,7 +795,7 @@ logic_result = solver.compile_lpl(
                 <span
                     class="px-3 py-1 bg-white/5 border border-white/10 text-slate-300 text-xs font-bold rounded-full uppercase tracking-wider backdrop-blur-md"
                 >
-                    Lineum API Solutions
+                    {$t("api_solutions.hero.domain")}
                 </span>
                 <span
                     class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-2 backdrop-blur-md"
@@ -742,7 +803,7 @@ logic_result = solver.compile_lpl(
                     <span
                         class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"
                     ></span>
-                    Systems Operational
+                    {$t("common.beta")}
                 </span>
             </div>
 
@@ -750,17 +811,15 @@ logic_result = solver.compile_lpl(
                 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-8 leading-[1.05]"
                 style="font-family: var(--font-sans);"
             >
-                Fluid processing API <br class="hidden sm:block" />
-                for neuromorphic AI. <br class="hidden lg:block" />
+                {@html $t("api_solutions.hero.title")}
+                <br class="hidden lg:block" />
                 <span class="text-gradient-multi">
-                    True RNG. Hashing. LPL Logic.
+                    {$t("api_solutions.hero.highlight")}
                 </span>
             </h1>
 
             <p class="text-slate-400 text-xl max-w-2xl font-light mb-12">
-                Integrate the math of physical wave interference into your B2B
-                stack. Harness Lineum's Edge-of-Chaos dynamics to replace
-                discrete computation with spatial calculation.
+                {$t("api_solutions.hero.subtitle")}
             </p>
 
             <div class="cta-group">
@@ -768,13 +827,13 @@ logic_result = solver.compile_lpl(
                     href="#roi"
                     class="btn btn-primary"
                     style="background-color: var(--accent-cyan); color: #020617;"
-                    >Start Building</a
+                    >{$t("api_solutions.hero.cta_build")}</a
                 >
                 <a
                     href="/wiki"
                     class="btn btn-outline"
                     style="border-color: rgba(255,255,255,0.2); color: white;"
-                    >Read Docs</a
+                    >{$t("api_solutions.hero.cta_docs")}</a
                 >
             </div>
 
@@ -790,15 +849,10 @@ logic_result = solver.compile_lpl(
         >
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-                    Neuromorphic AI Ecosystem
+                    {$t("api_solutions.roi.title")}
                 </h2>
                 <p class="text-slate-400 text-xl font-light max-w-3xl mx-auto">
-                    Lineum introduces a revolutionary non-von-Neumann
-                    architecture. By calculating data physically via fluid wave
-                    interference, we unlock <strong
-                        class="text-white font-semibold"
-                        >True Randomness, Hashing, and LPL Compilers</strong
-                    >.
+                    {@html $t("api_solutions.roi.subtitle")}
                 </p>
             </div>
 
@@ -814,19 +868,17 @@ logic_result = solver.compile_lpl(
 
                     <!-- Massive Callout -->
                     <div
-                        class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-violet-500/50 drop-shadow-[0_0_15px_rgba(139,92,246,0.3)] select-none"
+                        class="text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-violet-500/50 drop-shadow-[0_0_15px_rgba(139,92,246,0.3)] select-none uppercase"
                     >
-                        10⁻¹⁵
+                        ENTROPY
                     </div>
-                    <h4 class="text-xl font-bold text-white mb-3">
-                        True RNG Harvest
+                    <h4 class="text-lg font-bold text-white mb-3">
+                        {$t("api_solutions.features.rng.title")}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        Generates mathematically perfect randomness by
-                        amplifying CPU hardware thermal noise at the Edge of
-                        Chaos.
+                        {$t("api_solutions.features.rng.desc")}
                     </p>
                 </div>
 
@@ -841,19 +893,17 @@ logic_result = solver.compile_lpl(
 
                     <!-- Massive Callout -->
                     <div
-                        class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-emerald-500/50 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] select-none"
+                        class="text-4xl sm:text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-emerald-500/50 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] select-none uppercase"
                     >
-                        Hash
+                        AVALANCHE
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        Avalanche Effect
+                        {$t("api_solutions.features.hash.title")}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        One-way cryptographic spatial hashing. A 1-byte payload
-                        change rigorously triggers massive topological
-                        macro-fractures.
+                        {$t("api_solutions.features.hash.desc")}
                     </p>
                 </div>
 
@@ -868,19 +918,17 @@ logic_result = solver.compile_lpl(
 
                     <!-- Massive Callout -->
                     <div
-                        class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-sky-500/50 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)] select-none"
+                        class="text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-sky-500/50 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)] select-none uppercase"
                     >
-                        LPL
+                        LOGIC
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        Visual Logic Gates
+                        {$t("api_solutions.features.lpl.title")}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        Upload a structural CAD mask. The fluid compiles
-                        Universal Logic strictly through physical, training-free
-                        wave reflections.
+                        {$t("api_solutions.features.lpl.desc")}
                     </p>
                 </div>
             </div>
@@ -906,13 +954,10 @@ logic_result = solver.compile_lpl(
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    Lineum Polygon<br />Language (LPL)
+                    {@html $t("api_solutions.scenarios.urban.title")}
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    Forget training neural networks for millions of hours. With
-                    LPL, you simply compile a visual CAD mask. The fluid physics
-                    engine naturally calculates Universal Logic Gates (AND, OR,
-                    XOR) just through wave interference.
+                    {$t("api_solutions.scenarios.urban.description")}
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -934,11 +979,11 @@ logic_result = solver.compile_lpl(
                             >
                         </div>
                         <div>
-                            <strong class="text-white block"
-                                >Zero-Training Intelligence</strong
-                            >
+                            <strong class="text-white block">Problem</strong>
                             <span class="text-slate-500 text-sm"
-                                >Compute logic visually via physical geometry.</span
+                                >{$t(
+                                    "api_solutions.scenarios.urban.problem",
+                                )}</span
                             >
                         </div>
                     </li>
@@ -960,12 +1005,11 @@ logic_result = solver.compile_lpl(
                             >
                         </div>
                         <div>
-                            <strong class="text-white block"
-                                >Geometric Telemetry</strong
-                            >
+                            <strong class="text-white block">Solution</strong>
                             <span class="text-slate-500 text-sm"
-                                >Receive raw mathematical standing wave
-                                interference as JSON output.</span
+                                >{$t(
+                                    "api_solutions.scenarios.urban.solution",
+                                )}</span
                             >
                         </div>
                     </li>
@@ -1003,19 +1047,27 @@ logic_result = solver.compile_lpl(
                                 : "SYSTEM READY"}
                         </span>
                     </div>
-                    <div>
+                    <div class="flex items-center gap-4">
+                        <select
+                            class="bg-slate-950 border border-slate-700 text-sky-400 text-xs font-mono rounded px-2 py-1 outline-none focus:border-sky-500 transition-colors shadow-inner"
+                            bind:value={activePreset}
+                            on:change={handlePresetChange}
+                        >
+                            {#each Object.entries(PRESETS) as [key, p]}
+                                <option value={key}>SCENARIO: {p.name}</option>
+                            {/each}
+                        </select>
                         {#if isSimulating}
                             <button
-                                class="px-4 py-1.5 bg-red-500/10 border border-red-500/30 text-red-500 rounded-lg text-[10px] font-bold tracking-wider hover:bg-red-500/20 transition-all font-mono shadow-lg"
+                                class="whitespace-nowrap px-4 py-1.5 bg-red-500/10 border border-red-500/30 text-red-500 rounded-lg text-[10px] font-bold tracking-wider hover:bg-red-500/20 transition-all font-mono shadow-lg"
                                 on:click={stopSimulation}
                             >
                                 ■ ABORT
                             </button>
                         {:else}
                             <button
-                                class="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-[10px] font-bold tracking-wider hover:bg-emerald-500/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all font-mono shadow-lg group-hover:bg-emerald-500/20"
+                                class="whitespace-nowrap px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-[10px] font-bold tracking-wider hover:bg-emerald-500/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all font-mono shadow-lg group-hover:bg-emerald-500/20"
                                 on:click={() => {
-                                    activePreset = "urban_design";
                                     generateMapForPreset();
                                     startSimulation();
                                 }}
@@ -1240,13 +1292,10 @@ logic_result = solver.compile_lpl(
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    True RNG &<br />Cryptographic Hashing
+                    {@html $t("api_solutions.scenarios.evac.title")}
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    By running the fluid equation at the mathematical "Edge of
-                    Chaos", Lineum amplifies microscopic CPU thermal float
-                    variance into massive waves. This generates mathematically
-                    perfect True Random Numbers and One-Way Avalanche Hashing.
+                    {$t("api_solutions.scenarios.evac.description")}
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -1268,12 +1317,11 @@ logic_result = solver.compile_lpl(
                             >
                         </div>
                         <div>
-                            <strong class="text-white block"
-                                >Hardware Entropy Harvest</strong
-                            >
+                            <strong class="text-white block">Problem</strong>
                             <span class="text-slate-500 text-sm"
-                                >Does not rely on pseudo-RNG formulas. Harvests
-                                physical CPU timing errors.</span
+                                >{$t(
+                                    "api_solutions.scenarios.evac.problem",
+                                )}</span
                             >
                         </div>
                     </li>
@@ -1295,16 +1343,42 @@ logic_result = solver.compile_lpl(
                             >
                         </div>
                         <div>
-                            <strong class="text-white block"
-                                >Extreme Avalanche Effect</strong
-                            >
+                            <strong class="text-white block">Solution</strong>
                             <span class="text-slate-500 text-sm"
-                                >A 1-byte payload difference causes a rigorous
-                                topological macro-fracture.</span
+                                >{$t(
+                                    "api_solutions.scenarios.evac.solution",
+                                )}</span
                             >
                         </div>
                     </li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- Live Technical Previews -->
+        <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col gap-8">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-5xl font-bold text-white mb-4">
+                    {$t("api_solutions.demos.title") ||
+                        "Live Interactive Prototypes"}
+                </h3>
+                <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                    {$t("api_solutions.demos.desc") ||
+                        "Experiment with the Lineum Core tensor engine directly in your browser."}
+                </p>
+            </div>
+
+            <!-- Previews Stack -->
+            <div class="flex flex-col gap-24">
+                <div id="demo-rng" class="scroll-mt-32">
+                    <TrueRng />
+                </div>
+                <div id="demo-hashing" class="scroll-mt-32">
+                    <HashingDemo />
+                </div>
+                <div id="demo-compression" class="scroll-mt-32">
+                    <CompressionDemo />
+                </div>
             </div>
         </div>
 
@@ -1315,12 +1389,10 @@ logic_result = solver.compile_lpl(
         <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col items-center">
             <div class="text-center mb-12">
                 <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                    Explore Specialized Domains
+                    {$t("api_solutions.domains.title")}
                 </h3>
                 <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                    The Lineum equation is terrain-agnostic. While swarm routing
-                    is our most visible application, the engine natively handles
-                    any scenario where continuous flow meets resistance.
+                    {$t("api_solutions.domains.desc")}
                 </p>
             </div>
 
@@ -1353,17 +1425,16 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-violet-300 transition-colors"
                         >
-                            PCB & Hardware Routing
+                            {$t("api_solutions.domains.hardware.title")}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            Generate organic, interference-free curve traces for
-                            printed circuit boards and silicon. Avoid 90°
-                            corners that act as antennas.
+                            {$t("api_solutions.domains.hardware.desc")}
                         </p>
                         <div
                             class="flex items-center text-violet-400 text-sm font-bold mt-auto"
                         >
-                            Explore Technical Details <span
+                            {$t("api_solutions.domains.hardware.link")}
+                            <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
                             >
@@ -1399,17 +1470,16 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors"
                         >
-                            Generative Antennas
+                            {$t("api_solutions.domains.antennas.title")}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            Carve perfectly smooth, fractal-like resonance
-                            shapes for telecommunications, capable of receiving
-                            multiple wavelengths simultaneously.
+                            {$t("api_solutions.domains.antennas.desc")}
                         </p>
                         <div
                             class="flex items-center text-sky-400 text-sm font-bold mt-auto"
                         >
-                            Explore Technical Details <span
+                            {$t("api_solutions.domains.antennas.link")}
+                            <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
                             >
@@ -1445,17 +1515,16 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors"
                         >
-                            Biological By-passes
+                            {$t("api_solutions.domains.fluid.title")}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            Input CT scans as terrain resistance to calculate
-                            the most natural, least-invasive paths for surgical
-                            bypasses through living tissue.
+                            {$t("api_solutions.domains.fluid.desc")}
                         </p>
                         <div
                             class="flex items-center text-emerald-400 text-sm font-bold mt-auto"
                         >
-                            Explore Technical Details <span
+                            {$t("api_solutions.domains.fluid.link")}
+                            <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
                             >
@@ -1480,7 +1549,7 @@ logic_result = solver.compile_lpl(
                             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                         ></path></svg
                     >
-                    Download Full Domain Architecture (PDF)
+                    {$t("api_solutions.domains.btn_download")}
                 </button>
             </div>
         </div>
@@ -1502,35 +1571,23 @@ logic_result = solver.compile_lpl(
                         <div
                             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold font-mono w-fit mb-6"
                         >
-                            VISION & ROADMAP
+                            {$t("api_solutions.vision.tag")}
                         </div>
                         <h2
                             class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight"
                         >
-                            Beyond Routing:<br />The True Potential
+                            {@html $t("api_solutions.vision.title")}
                         </h2>
                         <p class="text-slate-400 text-lg leading-relaxed mb-6">
-                            Traditional software treats every moving object as a
-                            separate entity on a graph (like finding a path on
-                            Google Maps point-by-point). This is incredibly slow
-                            for thousands of objects.
+                            {$t("api_solutions.vision.p1")}
                         </p>
                         <p class="text-slate-400 text-lg leading-relaxed mb-6">
-                            <strong class="text-white"
-                                >Lineum completely abandons this approach.</strong
-                            > Instead, we treat the entire environment as a continuous
-                            mathematical field—like water flowing down a hill. The
-                            water naturally and instantly finds every possible path
-                            to the bottom, whether you drop one leaf or a million
-                            leaves into it.
+                            {@html $t("api_solutions.vision.p2")}
                         </p>
                         <p
                             class="text-slate-400 text-lg leading-relaxed font-medium"
                         >
-                            While we currently showcase this via "Swarm
-                            Routing", the underlying physics engine is a
-                            universal solver. We are just scratching the
-                            surface.
+                            {$t("api_solutions.vision.p3")}
                         </p>
                     </div>
 
@@ -1541,13 +1598,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                <span class="text-sky-400">01.</span> Aerodynamics
-                                & Fluid Dynamics
+                                {@html $t("api_solutions.vision.f1_title")}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                Calculate perfect airflow inside jet engines or
-                                fluid propagation in pipeline networks
-                                instantly.
+                                {$t("api_solutions.vision.f1_desc")}
                             </p>
                         </div>
                         <div
@@ -1556,13 +1610,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                <span class="text-orange-400">02.</span> Reactor
-                                & Thermodynamics
+                                {@html $t("api_solutions.vision.f2_title")}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                Model the exact spread of thermal energy or
-                                radiation through complex containment
-                                structures.
+                                {$t("api_solutions.vision.f2_desc")}
                             </p>
                         </div>
                         <div
@@ -1571,13 +1622,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                <span class="text-emerald-400">03.</span> Economic
-                                Flow
+                                {@html $t("api_solutions.vision.f3_title")}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                Treat capital and supply chains as physical
-                                fields flowing around global transport
-                                bottlenecks.
+                                {$t("api_solutions.vision.f3_desc")}
                             </p>
                         </div>
                     </div>
@@ -1595,11 +1643,10 @@ logic_result = solver.compile_lpl(
             >
                 <div>
                     <h3 class="text-xl font-bold text-white mb-2">
-                        Business Impact Calculator
+                        {$t("api_solutions.calculator.title")}
                     </h3>
                     <p class="text-slate-400 text-sm mb-8">
-                        Estimate your annual savings based on compute reduction
-                        and increased operational elasticity.
+                        {$t("api_solutions.calculator.desc")}
                     </p>
 
                     <div class="flex flex-col gap-6">
@@ -1608,7 +1655,9 @@ logic_result = solver.compile_lpl(
                                 <label
                                     for="fleetSizeInput"
                                     class="text-xs font-bold text-slate-300 uppercase tracking-wider"
-                                    >Fleet Size / Concurrent Agents</label
+                                    >{$t(
+                                        "api_solutions.calculator.fleet_label",
+                                    )}</label
                                 >
                                 <span
                                     class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded"
@@ -1631,7 +1680,9 @@ logic_result = solver.compile_lpl(
                                 <label
                                     for="dailyOpsInput"
                                     class="text-xs font-bold text-slate-300 uppercase tracking-wider"
-                                    >Daily Route Recalculations</label
+                                    >{$t(
+                                        "api_solutions.calculator.ops_label",
+                                    )}</label
                                 >
                                 <span
                                     class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded"
@@ -1658,7 +1709,7 @@ logic_result = solver.compile_lpl(
                         <div
                             class="text-[10px] text-emerald-500/70 uppercase tracking-widest font-bold mb-1"
                         >
-                            Estimated Annual Savings
+                            {$t("api_solutions.calculator.savings_label")}
                         </div>
                         <div
                             class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200"
@@ -1670,7 +1721,7 @@ logic_result = solver.compile_lpl(
                         class="btn btn-primary"
                         style="background-color: var(--accent-color); color: white;"
                     >
-                        Talk to Sales
+                        {$t("api_solutions.calculator.btn_sales")}
                     </button>
                 </div>
             </div>

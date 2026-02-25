@@ -164,6 +164,144 @@ export const translations = {
                 "Používejte tyto dokumenty jako základní reference, ale věřte živým datům a Lině stran aktuálního stavu výzkumu."
             ],
             ack_label: "Rozumím, pokračovat"
+        },
+        api_solutions: {
+            hero: {
+                domain: "SPECIALIZOVANÁ DOMÉNA",
+                title: "Fluidní výpočetní API pro<br class='hidden sm:block' /> prostorovou umělou inteligenci.",
+                highlight: "True RNG. Hašování. LPL Logika.",
+                subtitle: "Integrujte plně deterministickou matematiku fyzikální interference do vašeho B2B stacku. Využitím hraničních fázových přechodů ('Edge-of-Chaos') můžete nahradit tradiční diskrétní algoritmy přirozeným prostorovým výpočtem.",
+                cta_build: "Začít Stavět",
+                cta_docs: "Přečíst Dokumentaci"
+            },
+            roi: {
+                title: "Neuromorfní ekosystém AI",
+                subtitle: "Lineum představuje revoluční ne-von-Neumannovskou architekturu. Prostřednictvím výpočtů založených čistě na interferenci vln odemykáme <strong class='text-white font-semibold'>absolutní náhodnost (True RNG), nevratné hašování a LPL překladače</strong>. Nevyžaduje se žádný trénink neuronových sítí."
+            },
+            features: {
+                rng: {
+                    title: "Těžba True RNG",
+                    desc: "Generuje matematicky dokonalou náhodnost zesílením kvantového a termálního šumu procesorů na samou hranici chaosu."
+                },
+                hash: {
+                    title: "Kryptografická lavina",
+                    desc: "Jednosměrné hardwarové hašování. Změna jediného bytu nevyhnutelně spouští masivní topologické makro-fraktury."
+                },
+                lpl: {
+                    title: "Vizuální logická hradla",
+                    desc: "Nahrajte strukturální CAD masku. Pohybující se vlny zkompilují univerzální logiku čistě skrze geometrické odrazy (bez jakéhokoliv učení)."
+                }
+            },
+            usecases: {
+                lpl: {
+                    label: "PŘÍPADOVÁ STUDIE 01",
+                    title: "Lineum Polygon<br />Language (LPL)",
+                    desc: "Zapomeňte na statisíce hodin trénování neuronových sítí. Pomocí LPL jednoduše zkompilujete CAD návrh. Fyzikální fluidní engine přirozeně spočítá libovolná logická hradla a obvody čistě dynamikou vlnění.",
+                    bullet1_title: "Inteligentní Zero-Training",
+                    bullet1_desc: "Vyhodnocuje výpočetní logiku vizuálně formou geometrie.",
+                    bullet2_title: "Geometrická telemetrie",
+                    bullet2_desc: "Získávejte raw parametry matematické interference v JSON výstupu."
+                },
+                rng: {
+                    label: "PŘÍPADOVÁ STUDIE 02",
+                    title: "True RNG a<br />Zbytková entropie",
+                    desc: "Lineum rovnice operující těsně pod hranicí fázového přesycení zesiluje mikroskopické odchylky v časování procesoru do masivních turbulencí. Vytváří tak dokonalá náhodná čísla a nevratné kryptografické otisky.",
+                    bullet1_title: "Těžba absolutní entropie",
+                    bullet1_desc: "Nezávisí na žádných deterministických pseudo-vzorcích.",
+                    bullet2_title: "Destruktivní lavinový efekt",
+                    bullet2_desc: "Minimální odlišnost na vstupu způsobuje geometrickou explozi vzorce."
+                }
+            },
+            demos: {
+                title: "Live Interaktivní Prototypy",
+                desc: "Experimentujte s tenzorovým enginem Lineum Core přímo ve vašem prohlížeči."
+            },
+            domains: {
+                title: "Objevujte aplikované domény",
+                desc: "Rovnice Lineum je zcela univerzální. Pokud tradiční swarm routing slouží jako ideální prozatimní ukázka, náš engine je navržen obsloužit libovolný problém, kde se dynamický tok setkává s odporem prostředí.",
+                hardware: {
+                    title: "Návrh hardwaru a PCB",
+                    desc: "Generování organických vodičů odolných vůči rušení. Lineum obchází pravoúhlé zlomy působící jako nežádoucí antény.",
+                    link: "Detailní informace →"
+                },
+                antennas: {
+                    title: "Generativní fraktální antény",
+                    desc: "Interference vlnoploch zcela přirozeně a efektivně optimalizuje rozložení zářičů pro specifická frekvenční pásma (RF).",
+                    link: "Prozkoumat metamateriály →"
+                },
+                fluid: {
+                    title: "Tlakové kanály a chlazení",
+                    desc: "Simulujte ideální odvádění tepla a rozvod kapalin ve strojírenství i letectví čistě formou tlakových map.",
+                    link: "Topologický průzkum →"
+                },
+                btn_download: "Stáhnout kompilátor (Brzy)"
+            },
+            vision: {
+                tag: "ZA HRANICE VON NEUMANNA",
+                title: "Skutečný potenciál <br /> prostorových výpočtů",
+                p1: "Posledních 70 let neustále nutíme spojitou logiku naší prrírody do diskrétních jedniček a nul. Stavíme obrovské grafové algoritmy, abychom náročně simulovali to, co nám fyzikální svět dokáže nabídnout zcela přirozeně a zdarma.",
+                p2: "Návratem ke spojitým matematickým rovnicím a interferenci zcela ustupujeme od architektonického úzkého hrdla von Neumannova konceptu.",
+                p3: "Nejedná se pouze o nový routovací algoritmus. Prezentujeme fundamentální stavební kámen post-křemíkové formy inteligence.",
+                f1_title: "1. Vše bez nutnosti učení",
+                f1_desc: "Jakákoliv logika vystupuje okamžitě a přímo s rozložením překážek. Nahrajte půdorys (masku), získejte logickou abstrakci.",
+                f2_title: "2. Nekompromisní soukromí",
+                f2_desc: "Výpočetní pole si pamatuje celoplošné tlaky, ne datové pakety specifických individuálních agentů.",
+                f3_title: "3. Extrémní paralelizace řešení",
+                f3_desc: "Vyhodnotí simulaci pro 1 unikátního agenta i pro milion cílů s naprosto totožnou časovou komplexitou – rigorózní algoritmus O(1)."
+            },
+            calculator: {
+                title: "Návratnost serverové latence",
+                desc: "Porovnejte, o kolik procent zredukujete zátěž hardwarové infrastruktury výměnou grafových tras (A*) za dynamiku polí.",
+                fleet_label: "Aktivní pohybliví agenti",
+                ops_label: "API požadavky celkem / den",
+                compute_density: "Výpočetní zátěž v uzlech (Density)",
+                compute_1: "O(1) masivní tenzorová operace",
+                compute_2: "O(N log N) kritické prohledávání",
+                compute_3: "Exponenciální míra selkání map"
+            },
+            cta: {
+                title: "Jste připraveni uvolnit blokády?",
+                desc: "Implementujte robustní rozhraní Lineum a provždy se vyhněte algoritmickým omezením ve svých systémech.",
+                sales: "Kontaktovat Enterprise tým",
+                docs: "Analýza a dokumentace (Docs)"
+            },
+            scenarios: {
+                urban: {
+                    title: "Městská doprava a logistika",
+                    subtitle: "Synchronizace tras desetitisíců cílů současně.",
+                    description: "Diskrétní a grafové systémy pravidelně při extrémní datové zátěži kolabují. Ekosystém Lineum vyřeší infrastrukturu velkoměsta na úrovni mikrosekund díky jediné paralelní operaci na matici.",
+                    problem: "Grafové hledání z bodu do bodu nesplňuje moderní parametry rychlosti škálování. Jakákoliv dopravní překážka dokáže ochromit a restartovat veškeré operace celého uzlu.",
+                    solution: "Globální mapa generující O(1) komplexitu. Jakýkoliv doručovací agent okamžitě a bez přepočítávání intuitivně objíždí formující se shluky zácp přímo 'strháván proudem' odporu."
+                },
+                evac: {
+                    title: "Bezpečnost mas a evakuace",
+                    subtitle: "Prevence klenutí a predikce kritického shluku lidských těl.",
+                    description: "Dynamické modelování obrovských vln lidí naráz upadajících do paniky. Navrhněte odvětrané dýchající architektury na míru odvrácení těch nejtěžších pošlapání.",
+                    problem: "Standardní graf nemůže simulovat fyzický tlak a zachytávání lidských ramen v zúžených koridorech. Tyto 'klenbové' formace tvoří letální smrtící překážky, které jsou před stavbou budovy vizuálně skryté.",
+                    solution: "Kapalinová forma tlaku částice přirozeně brání proti překryvům kompresními a radiálními impulsy. Není potřeba žádné složité umělé chování davu – nebezpečí jednoduše plyne přímo ze samotných rovnic jako v řece plné kmenů stromů."
+                },
+                hardware: {
+                    title: "Automatizované PCB spojování",
+                    subtitle: "Obvody navržené plynulým odporem bez přehřívání.",
+                    description: "Nová éra softwarového návrhu desek plošných spojů. Cestičky křemíkem vznikají samovolným odpuzováním a tvoří organické sítě minimalizující tepelnou stopu pamětí i procesorů.",
+                    problem: "Labyrintové přístupy (Lee Algo) generují drtivé pravoúhlé ohyby a hrany, které na obvodech s vysokými frekvencemi působí jako nepatřičné rádiové antény ničící signál.",
+                    solution: "Pole se chová jako kapalinový proud protékající mezi komponentami. Linie se přirozeně navzájem míjejí a elegantně optimalizují ty nejkratší plynulé zatáčky, zamezující přeslechům."
+                },
+                rng: {
+                    title: "Entropie z okraje chaosu",
+                    subtitle: "Extrakce fraktální termodynamiky pro kryptografii.",
+                    description: "Lineum rovnice dokáže uchopit i sebemenší mikro-inženýnské teplotní výchylky CPU hardwaru a skrze iterativní rovnici tento malý lokální šum zvětšit a zesílit ho na obrovskou celoplošnou turbulenci sloužící jako absolutní a neopakovatelný šifrovací klíč nebo Hash.",
+                    problem: "Všechny implementace běžných pseudo-náhodných sekvencí (PRNG) nakonec sleví a zacyklí se, dokud nevytvoří prolomitelný bezpečnostní vzorec zranitelnosti.",
+                    solution: "Udržujeme vlnový tenzor vždy těsně na hraně teoretického kolapsu (Edge-of-Chaos). Tento stav se nedá oklamat na druhý pokus. Generuje dokonale nelineární laviny na celý operační systém."
+                }
+            },
+            slug: {
+                back: "Zpět na API Solutions",
+                demo_title: "Modulární test prostředí",
+                fail_title: "Reálné selhání grafových algoritmů (A*)",
+                success_title: "Aplikovaná fyzikální dynamika polí v čase",
+                integration: "Programmatická Integrace a Tenzory"
+            }
         }
     },
     en: {
@@ -329,6 +467,144 @@ export const translations = {
                 "Use these documents as a foundational reference, but trust the live data and Lina for the current state of the art."
             ],
             ack_label: "I Understand, Continue"
+        },
+        api_solutions: {
+            hero: {
+                domain: "SPECIALIZED DOMAIN",
+                title: "Fluid processing API <br class='hidden sm:block' /> for neuromorphic AI.",
+                highlight: "True RNG. Hashing. LPL Logic.",
+                subtitle: "Integrate the math of physical wave interference into your B2B stack. Harness Lineum's Edge-of-Chaos dynamics to replace discrete computation with spatial calculation.",
+                cta_build: "Start Building",
+                cta_docs: "Read Docs"
+            },
+            roi: {
+                title: "Neuromorphic AI Ecosystem",
+                subtitle: "Lineum introduces a revolutionary non-von-Neumann architecture. By calculating data physically via fluid wave interference, we unlock <strong class='text-white font-semibold'>True Randomness, Hashing, and LPL Compilers</strong> directly from wave phenomena. No neural network training required."
+            },
+            features: {
+                rng: {
+                    title: "True RNG Harvest",
+                    desc: "Generates mathematically perfect randomness by amplifying CPU hardware thermal noise at the Edge of Chaos."
+                },
+                hash: {
+                    title: "Avalanche Effect",
+                    desc: "One-way cryptographic spatial hashing. A 1-byte payload change rigorously triggers massive topological macro-fractures."
+                },
+                lpl: {
+                    title: "Visual Logic Gates",
+                    desc: "Upload a structural CAD mask. The fluid compiles Universal Logic strictly through physical, training-free wave reflections."
+                }
+            },
+            usecases: {
+                lpl: {
+                    label: "USE CASE 01",
+                    title: "Lineum Polygon<br />Language (LPL)",
+                    desc: "Forget training neural networks for millions of hours. With LPL, you simply compile a visual CAD mask. The fluid physics engine naturally calculates Universal Logic Gates (AND, OR, XOR) just through wave interference.",
+                    bullet1_title: "Zero-Training Intelligence",
+                    bullet1_desc: "Compute logic visually via physical geometry.",
+                    bullet2_title: "Geometric Telemetry",
+                    bullet2_desc: "Receive raw mathematical standing wave interference as JSON output."
+                },
+                rng: {
+                    label: "USE CASE 02",
+                    title: "True RNG &<br />Cryptographic Hashing",
+                    desc: "By running the fluid equation at the mathematical \"Edge of Chaos\", Lineum amplifies microscopic CPU thermal float variance into massive waves. This generates mathematically perfect True Random Numbers and One-Way Avalanche Hashing.",
+                    bullet1_title: "Hardware Entropy Harvest",
+                    bullet1_desc: "Does not rely on pseudo-RNG formulas. Harvests physical CPU timing errors.",
+                    bullet2_title: "Extreme Avalanche Effect",
+                    bullet2_desc: "A 1-byte payload difference causes a rigorous topological macro-fracture."
+                }
+            },
+            demos: {
+                title: "Live Interactive Prototypes",
+                desc: "Experiment with the Lineum Core tensor engine directly in your browser."
+            },
+            domains: {
+                title: "Explore Specialized Domains",
+                desc: "The Lineum equation is terrain-agnostic. While swarm routing is our most visible application, the engine natively handles any scenario where continuous flow meets resistance.",
+                hardware: {
+                    title: "PCB & Hardware Routing",
+                    desc: "Generate organic, interference-free curve traces for printed circuit boards and silicon. Avoid 90° corners that act as antennas.",
+                    link: "Explore Technical Details →"
+                },
+                antennas: {
+                    title: "Generative Antennas",
+                    desc: "The wavefront interference naturally finds resonant fractal geometries for RF antennas, optimizing for specific frequency bands automatically.",
+                    link: "Explore Metamaterials →"
+                },
+                fluid: {
+                    title: "Fluid & Heat Topologies",
+                    desc: "Calculate optimal cooling channel designs for aerospace and automotive parts using pure pressure gradients.",
+                    link: "Explore Topology →"
+                },
+                btn_download: "Download SDK (Coming Soon)"
+            },
+            vision: {
+                tag: "BEYOND VON NEUMANN",
+                title: "The True Potential of <br /> Spatial Computation",
+                p1: "For 70 years, we've forced nature's continuous logic into discrete 1s and 0s. We've built towering algorithms to simulate what the physical world calculates for free.",
+                p2: "By returning to continuous physics via the Lineum equation, we bypass the von Neumann bottleneck entirely.",
+                p3: "This isn't just a new routing algorithm. It's the blueprint for post-silicon intelligence.",
+                f1_title: "1. No Training Required",
+                f1_desc: "Logic emerges directly from geometry. Upload a CAD mask, get intelligence.",
+                f2_title: "2. Absolute Privacy",
+                f2_desc: "The field remembers pressure, not individual agent identities or payloads.",
+                f3_title: "3. Infinite Parallelism",
+                f3_desc: "Resolves 1 or 1,000,000 agents in the exact same O(1) time complexity."
+            },
+            calculator: {
+                title: "Latency & Compute ROI",
+                desc: "See how replacing A* with Lineum Field Dynamics saves infrastructure costs.",
+                fleet_label: "Active Agents / Fleet",
+                ops_label: "API Calls / Day",
+                compute_density: "Compute Density",
+                compute_1: "O(1) tensor op",
+                compute_2: "O(N log N) graph search",
+                compute_3: "Exponential graph failure"
+            },
+            cta: {
+                title: "Ready to scale your domain?",
+                desc: "Deploy Lineum API and eliminate algorithmic bottlenecks today.",
+                sales: "Contact Enterprise Sales",
+                docs: "Read Documentation"
+            },
+            scenarios: {
+                urban: {
+                    title: 'Urban Traffic & Logistics',
+                    subtitle: 'Routing 10,000 agents without graph algorithms.',
+                    description: 'Traditional discrete routing (A*) collapses when calculating dynamic traffic for thousands of agents simultaneously. The Lineum Field processes entire cities in a single tensor operation.',
+                    problem: 'Graph algorithms scale poorly (O(N*logN)) for multiple agents. In dense urban grids, updating traffic values triggers cascading recalculations across the entire network.',
+                    solution: 'Lineum computes the resistance landscape globally in O(1). All agents simply flow down the gradient, reacting to congestion instantly without pathfinding overhead.',
+                },
+                evac: {
+                    title: 'Crowd Panic & Evacuation',
+                    subtitle: 'Real-time bottleneck prevention in stadiums.',
+                    description: 'Model massive crowd dynamics. Understand how physical constraints and panic behaviors lead to dangerous arching and crushing, and design exits that breathe.',
+                    problem: 'Evacuation modeling requires fluid-like equations combined with discrete agent goals. Standard shortest-path algorithms ignore the physical space agents take up, failing to predict lethal crushes.',
+                    solution: 'The Lineum spatial field models agents as repulsive density waves. Bottlenecks naturally emerge from the math, allowing architects to optimize hallways long before concrete is poured.',
+                },
+                hardware: {
+                    title: 'Hardware & Dielectric Routing',
+                    subtitle: 'Finding optimal tracks on multi-layer PCBs.',
+                    description: 'Autorouting for complex printed circuit boards (PCBs) or VLSI chips. Lineum naturally finds non-intersecting, optimal trace paths around thousands of components.',
+                    problem: 'Traditional PCB autorouters use grid-based maze-solving (Lee algorithm), which scales terribly on high-density boards, often failing to find 100% completion.',
+                    solution: 'Lineum treats components as impenetrable barriers and traces as flowing rivers of current. The field inherently repels competing traces, finding harmonious layouts organically.',
+                },
+                rng: {
+                    title: 'True RNG & Thermodynamic Entropy',
+                    subtitle: 'Harvesting edge-of-chaos physics.',
+                    description: 'Leverage the Lineum chaotic fluid equations to magnify microscopic hardware thermal fluctuations into a cryptographically unassailable entropy source.',
+                    problem: 'Standard pseudo-RNG algorithms eventually repeat or reveal a pattern. They are deterministic mathematical formulas rather than genuinely unpredictable environmental noise.',
+                    solution: 'By pushing the wave calculations directly to the phase-transition threshold (the edge of chaos), we harness pure spatial turbulence, making patterns impossible to predict.',
+                }
+            },
+            slug: {
+                back: "Back to API Solutions",
+                demo_title: "WebGL Module Provisioning",
+                fail_title: "Graph Algorithm Failure (A*)",
+                success_title: "Continuous Field Dynamics",
+                integration: "Production Integration"
+            }
         }
     },
     de: {
@@ -336,6 +612,7 @@ export const translations = {
             title: "Lineum | Diskrete Felddynamik",
             description: "Eine kontinuierliche räumliche Physik-Engine, die Intelligenz und Logik aus emergenten Wellenfeldern erzeugt."
         },
+
         common: {
             brand: "Lineum",
             beta: "BETA"
@@ -500,6 +777,144 @@ export const translations = {
         meta: {
             title: "Lineum | 離散場力学",
             description: "創発的な波動場から知能と論理を生成する連続空間物理エンジン。"
+        },
+        api_solutions: {
+            hero: {
+                domain: "SPECIALIZED DOMAIN",
+                title: "Fluid processing API <br class='hidden sm:block' /> for neuromorphic AI.",
+                highlight: "True RNG. Hashing. LPL Logic.",
+                subtitle: "Integrate the math of physical wave interference into your B2B stack. Harness Lineum's Edge-of-Chaos dynamics to replace discrete computation with spatial calculation.",
+                cta_build: "Start Building",
+                cta_docs: "Read Docs"
+            },
+            roi: {
+                title: "Neuromorphic AI Ecosystem",
+                subtitle: "Lineum introduces a revolutionary non-von-Neumann architecture. By calculating data physically via fluid wave interference, we unlock <strong class='text-white font-semibold'>True Randomness, Hashing, and LPL Compilers</strong> directly from wave phenomena. No neural network training required."
+            },
+            features: {
+                rng: {
+                    title: "True RNG Harvest",
+                    desc: "Generates mathematically perfect randomness by amplifying CPU hardware thermal noise at the Edge of Chaos."
+                },
+                hash: {
+                    title: "Avalanche Effect",
+                    desc: "One-way cryptographic spatial hashing. A 1-byte payload change rigorously triggers massive topological macro-fractures."
+                },
+                lpl: {
+                    title: "Visual Logic Gates",
+                    desc: "Upload a structural CAD mask. The fluid compiles Universal Logic strictly through physical, training-free wave reflections."
+                }
+            },
+            usecases: {
+                lpl: {
+                    label: "USE CASE 01",
+                    title: "Lineum Polygon<br />Language (LPL)",
+                    desc: "Forget training neural networks for millions of hours. With LPL, you simply compile a visual CAD mask. The fluid physics engine naturally calculates Universal Logic Gates (AND, OR, XOR) just through wave interference.",
+                    bullet1_title: "Zero-Training Intelligence",
+                    bullet1_desc: "Compute logic visually via physical geometry.",
+                    bullet2_title: "Geometric Telemetry",
+                    bullet2_desc: "Receive raw mathematical standing wave interference as JSON output."
+                },
+                rng: {
+                    label: "USE CASE 02",
+                    title: "True RNG &<br />Cryptographic Hashing",
+                    desc: "By running the fluid equation at the mathematical \"Edge of Chaos\", Lineum amplifies microscopic CPU thermal float variance into massive waves. This generates mathematically perfect True Random Numbers and One-Way Avalanche Hashing.",
+                    bullet1_title: "Hardware Entropy Harvest",
+                    bullet1_desc: "Does not rely on pseudo-RNG formulas. Harvests physical CPU timing errors.",
+                    bullet2_title: "Extreme Avalanche Effect",
+                    bullet2_desc: "A 1-byte payload difference causes a rigorous topological macro-fracture."
+                }
+            },
+            demos: {
+                title: "Live Interactive Prototypes",
+                desc: "Experiment with the Lineum Core tensor engine directly in your browser."
+            },
+            domains: {
+                title: "Explore Specialized Domains",
+                desc: "The Lineum equation is terrain-agnostic. While swarm routing is our most visible application, the engine natively handles any scenario where continuous flow meets resistance.",
+                hardware: {
+                    title: "PCB & Hardware Routing",
+                    desc: "Generate organic, interference-free curve traces for printed circuit boards and silicon. Avoid 90° corners that act as antennas.",
+                    link: "Explore Technical Details →"
+                },
+                antennas: {
+                    title: "Generative Antennas",
+                    desc: "The wavefront interference naturally finds resonant fractal geometries for RF antennas, optimizing for specific frequency bands automatically.",
+                    link: "Explore Metamaterials →"
+                },
+                fluid: {
+                    title: "Strömungs- und Wärmetopologien",
+                    desc: "Berechnen Sie optimale Kühlkanaldesigns für Luft- und Raumfahrtteile mithilfe reiner Druckgradienten.",
+                    link: "Topologie erkunden →"
+                },
+                btn_download: "SDK Herunterladen (Demnächst)"
+            },
+            vision: {
+                tag: "JENSEITS VON NEUMANN",
+                title: "Das wahre Potenzial <br /> Räumlicher Berechnungen",
+                p1: "Seit 70 Jahren zwingen wir die kontinuierliche Logik der Natur in diskrete 1en und 0en. Wir bauen riesige Algorithmen, um das zu simulieren, was die physische Welt kostenlos berechnet.",
+                p2: "Indem wir zur kontinuierlichen Physik über die Lineum-Gleichung zurückkehren, umgehen wir den von-Neumann-Engpass vollständig.",
+                p3: "Dies ist nicht nur ein neuer Routing-Algorithmus. Es ist der Entwurf für Post-Silicon-Intelligenz.",
+                f1_title: "1. Kein Training erforderlich",
+                f1_desc: "Logik entsteht direkt aus der Geometrie. Laden Sie eine CAD-Maske hoch, erhalten Sie Intelligenz.",
+                f2_title: "2. Absolute Privatsphäre",
+                f2_desc: "Das Feld speichert Druck, keine individuellen Agentenidentitäten oder Datenpakete.",
+                f3_title: "3. Unendliche Parallelität",
+                f3_desc: "Löst 1 oder 1.000.000 Agenten in exakt derselben O(1)-Zeitkomplexität auf."
+            },
+            calculator: {
+                title: "Latenz & Compute ROI",
+                desc: "Sehen Sie, wie der Ersatz von A* durch Lineum Field Dynamics Infrastrukturkosten spart.",
+                fleet_label: "Aktive Agenten",
+                ops_label: "API-Aufrufe / Tag",
+                compute_density: "Berechnungsdichte",
+                compute_1: "O(1) Tensor-Operation",
+                compute_2: "O(N log N) Graphensuche",
+                compute_3: "Exponentieller Ausfall"
+            },
+            cta: {
+                title: "Ready to scale your domain?",
+                desc: "Deploy Lineum API and eliminate algorithmic bottlenecks today.",
+                sales: "Contact Enterprise Sales",
+                docs: "Read Documentation"
+            },
+            scenarios: {
+                urban: {
+                    title: 'Urban Traffic & Logistics',
+                    subtitle: 'Routing 10,000 agents without graph algorithms.',
+                    description: 'Traditional discrete routing (A*) collapses when calculating dynamic traffic for thousands of agents simultaneously. The Lineum Field processes entire cities in a single tensor operation.',
+                    problem: 'Graph algorithms scale poorly (O(N*logN)) for multiple agents. In dense urban grids, updating traffic values triggers cascading recalculations across the entire network.',
+                    solution: 'Lineum computes the resistance landscape globally in O(1). All agents simply flow down the gradient, reacting to congestion instantly without pathfinding overhead.',
+                },
+                evac: {
+                    title: 'Crowd Panic & Evacuation',
+                    subtitle: 'Real-time bottleneck prevention in stadiums.',
+                    description: 'Model massive crowd dynamics. Understand how physical constraints and panic behaviors lead to dangerous arching and crushing, and design exits that breathe.',
+                    problem: 'Evacuation modeling requires fluid-like equations combined with discrete agent goals. Standard shortest-path algorithms ignore the physical space agents take up, failing to predict lethal crushes.',
+                    solution: 'The Lineum spatial field models agents as repulsive density waves. Bottlenecks naturally emerge from the math, allowing architects to optimize hallways long before concrete is poured.',
+                },
+                hardware: {
+                    title: 'Hardware & Dielectric Routing',
+                    subtitle: 'Finding optimal tracks on multi-layer PCBs.',
+                    description: 'Autorouting for complex printed circuit boards (PCBs) or VLSI chips. Lineum naturally finds non-intersecting, optimal trace paths around thousands of components.',
+                    problem: 'Traditional PCB autorouters use grid-based maze-solving (Lee algorithm), which scales terribly on high-density boards, often failing to find 100% completion.',
+                    solution: 'Lineum treats components as impenetrable barriers and traces as flowing rivers of current. The field inherently repels competing traces, finding harmonious layouts organically.',
+                },
+                rng: {
+                    title: 'True RNG & Thermodynamic Entropy',
+                    subtitle: 'Harvesting edge-of-chaos physics.',
+                    description: 'Leverage the Lineum chaotic fluid equations to magnify microscopic hardware thermal fluctuations into a cryptographically unassailable entropy source.',
+                    problem: 'Standard pseudo-RNG algorithms eventually repeat or reveal a pattern. They are deterministic mathematical formulas rather than genuinely unpredictable environmental noise.',
+                    solution: 'By pushing the wave calculations directly to the phase-transition threshold (the edge of chaos), we harness pure spatial turbulence, making patterns impossible to predict.',
+                }
+            },
+            slug: {
+                back: "Back to API Solutions",
+                demo_title: "WebGL Module Provisioning",
+                fail_title: "Graph Algorithm Failure (A*)",
+                success_title: "Continuous Field Dynamics",
+                integration: "Production Integration"
+            }
         },
         common: {
             brand: "Lineum",

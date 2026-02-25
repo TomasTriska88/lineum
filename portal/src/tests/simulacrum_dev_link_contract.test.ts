@@ -10,7 +10,7 @@ describe('Simulacrum Link Contract', () => {
         expect(fileContent).toMatch(/import\s+\{\s*dev\s*\}\s+from\s+["']\$app\/environment["']/);
 
         // Ensure the ternary conditional for URLs exists
-        expect(fileContent).toMatch(/dev\s*\?\s*["']http:\/\/localhost:5174["']\s*:\s*["']https:\/\/simulacrum\.lineum\.io["']/);
+        expect(fileContent).toMatch(/dev\s*\?\s*["']http:\/\/127\.0\.0\.1:5174["']\s*:\s*["']https:\/\/simulacrum\.lineum\.io["']/);
 
         // Ensure 'https://simulacrum.lineum.io' is NOT hardcoded directly in the HTML anymore
         expect(fileContent).not.toMatch(/href=["']https:\/\/simulacrum\.lineum\.io["']/);
@@ -23,7 +23,7 @@ describe('Simulacrum Link Contract', () => {
         expect(fileContent).toMatch(/import\s+\{\s*dev\s*\}\s+from\s+["']\$app\/environment["']/);
 
         // Ensure the ternary conditional for URLs exists
-        expect(fileContent).toMatch(/dev\s*\?\s*["']http:\/\/localhost:5174["']\s*:\s*["']https:\/\/simulacrum\.lineum\.io["']/);
+        expect(fileContent).toMatch(/dev\s*\?\s*["']http:\/\/127\.0\.0\.1:5174["']\s*:\s*["']https:\/\/simulacrum\.lineum\.io["']/);
 
         // Ensure 'https://simulacrum.lineum.io' is NOT hardcoded directly in the HTML anymore
         expect(fileContent).not.toMatch(/href=["']https:\/\/simulacrum\.lineum\.io["']/);

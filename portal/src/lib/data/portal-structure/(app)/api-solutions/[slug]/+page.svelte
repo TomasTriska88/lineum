@@ -5,13 +5,18 @@
 
 <script lang="ts">
     import { t } from "$lib/i18n";
+    import TrueRng from "$lib/components/TrueRng.svelte";
     import type { PageData } from "./$types";
 
     export let data: PageData;
 </script>
 
 <svelte:head>
-    <title>{data.title} | {$t("common.brand")} API</title>
+    <title
+        >{$t(`api_solutions.scenarios.${data.scenarioKey}.title`)} | {$t(
+            "common.brand",
+        )} API</title
+    >
 </svelte:head>
 
 <div class="min-h-screen bg-black text-white selection:bg-{data.accent}/30">
@@ -39,7 +44,7 @@
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
             </svg>
-            Back to API Solutions
+            {$t("api_solutions.slug.back")}
         </a>
 
         <!-- Hero -->
@@ -53,43 +58,54 @@
                 SPECIALIZED DOMAIN
             </div>
             <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8">
-                {data.title}
+                {$t(`api_solutions.scenarios.${data.scenarioKey}.title`)}
             </h1>
             <p
                 class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-3xl"
             >
-                {data.subtitle}
-                {data.description}
+                <strong class="text-white"
+                    >{$t(
+                        `api_solutions.scenarios.${data.scenarioKey}.subtitle`,
+                    )}</strong
+                ><br /><br />
+                {$t(`api_solutions.scenarios.${data.scenarioKey}.description`)}
             </p>
         </div>
 
-        <!-- Placeholder for Domain Specific WebGL Demo -->
-        <div
-            class="w-full aspect-video md:aspect-[21/9] bg-slate-900/50 border border-slate-800 rounded-3xl mb-32 flex items-center justify-center relative overflow-hidden group"
-        >
-            <div
-                class="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"
-            ></div>
-            <div class="flex flex-col items-center gap-4">
-                <svg
-                    class="w-12 h-12 text-slate-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
-                    />
-                </svg>
-                <span
-                    class="text-slate-500 font-mono text-sm tracking-widest uppercase"
-                    >WebGL Module Provisioning</span
-                >
+        <!-- Domain Specific WebGL Demo -->
+        {#if data.slug === "true-rng"}
+            <div class="mb-32">
+                <TrueRng />
             </div>
-        </div>
+        {:else}
+            <!-- Placeholder for Domain Specific WebGL Demo -->
+            <div
+                class="w-full aspect-video md:aspect-[21/9] bg-slate-900/50 border border-slate-800 rounded-3xl mb-32 flex items-center justify-center relative overflow-hidden group"
+            >
+                <div
+                    class="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"
+                ></div>
+                <div class="flex flex-col items-center gap-4">
+                    <svg
+                        class="w-12 h-12 text-slate-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.5"
+                            d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
+                        />
+                    </svg>
+                    <span
+                        class="text-slate-500 font-mono text-sm tracking-widest uppercase"
+                        >{$t("api_solutions.slug.demo_title")}</span
+                    >
+                </div>
+            </div>
+        {/if}
 
         <!-- The Paradigm Shift -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-32">
@@ -113,10 +129,10 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-4">
-                    Graph Algorithm Failure (A*)
+                    {$t("api_solutions.slug.fail_title")}
                 </h3>
                 <p class="text-slate-400 leading-relaxed text-lg">
-                    {data.problem}
+                    {$t(`api_solutions.scenarios.${data.scenarioKey}.problem`)}
                 </p>
             </div>
 
@@ -147,10 +163,12 @@
                         </svg>
                     </div>
                     <h3 class="text-2xl font-bold mb-4">
-                        Continuous Field Dynamics
+                        {$t("api_solutions.slug.success_title")}
                     </h3>
                     <p class="text-slate-300 leading-relaxed text-lg">
-                        {data.solution}
+                        {$t(
+                            `api_solutions.scenarios.${data.scenarioKey}.solution`,
+                        )}
                     </p>
                 </div>
             </div>
@@ -158,7 +176,9 @@
 
         <!-- Integration & API -->
         <div class="max-w-4xl mb-32">
-            <h2 class="text-3xl font-bold mb-8">Production Integration</h2>
+            <h2 class="text-3xl font-bold mb-8">
+                {$t("api_solutions.slug.integration")}
+            </h2>
             <div
                 class="rounded-2xl overflow-hidden border border-slate-800 shadow-2xl"
             >
@@ -199,23 +219,23 @@
             <h2
                 class="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10"
             >
-                Ready to scale your domain?
+                {$t("api_solutions.cta.title")}
             </h2>
             <p class="text-slate-400 text-lg mb-10 max-w-xl relative z-10">
-                Deploy Lineum API and eliminate algorithmic bottlenecks today.
+                {$t("api_solutions.cta.desc")}
             </p>
             <div class="flex gap-4 relative z-10">
                 <a
                     href="#sales"
                     class="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors"
                 >
-                    Contact Enterprise Sales
+                    {$t("api_solutions.cta.sales")}
                 </a>
                 <a
                     href="/docs"
                     class="px-8 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/5 transition-colors"
                 >
-                    Read Documentation
+                    {$t("api_solutions.cta.docs")}
                 </a>
             </div>
         </div>

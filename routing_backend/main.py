@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lineum_core.math import evolve
 from lineum_core import math as core_math
 
-# Tuning Lineum na webové prostředí
+# Tuning Lineum for web environment
 core_math.TEST_EXHALE_MODE = False
 core_math.NOISE_STRENGTH = 0.0
 core_math.PSI_DIFFUSION = 0.15
@@ -31,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Modely pro REST upload z prohlížeče
+# Models for REST upload from browser
 class Point(BaseModel):
     x: int
     y: int
@@ -45,11 +45,11 @@ class RouteRequest(BaseModel):
     size: int # např 64 nebo 128
     agents: List[AgentDef]
     target: Point
-    kappa_flat: List[float] # Zploštělé (flatten) pole propustností z canvasu Svelte
+    kappa_flat: List[float] # Flattened terrain traversability array from Svelte canvas
     max_steps: int = 1000
     preset: Optional[str] = "urban_design" # ['urban_design', 'evacuation', 'vascular', 'dielectric']
 
-# Úložiště nastavení tasků
+# Task configuration storage
 active_tasks: Dict[str, RouteRequest] = {}
 
 def extract_path(phi_field: np.ndarray, kappa: np.ndarray, start_x: int, start_y: int, target_x: int, target_y: int, size: int) -> Tuple[List[int], List[int]]:
@@ -75,7 +75,7 @@ def extract_path(phi_field: np.ndarray, kappa: np.ndarray, start_x: int, start_y
             while curr in came_from:
                 curr = came_from[curr]
                 raw_path.append(curr)
-            # Návrat už v rozloženém JSON-ready formátu
+            # Return in decomposed JSON-ready format
             return [start_x] + [p[0] for p in raw_path], [start_y] + [p[1] for p in raw_path]
             
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)]:
@@ -99,14 +99,14 @@ from fastapi import Request
 # Simple In-Memory Rate Limiter (prod deployments might use Redis)
 ip_request_counts: Dict[str, list] = {}
 MAX_CONCURRENT_TASKS = int(os.environ.get("LINEUM_API_MAX_CONCURRENT_TASKS", 100))
-RATE_LIMIT_REQUESTS = int(os.environ.get("LINEUM_API_RATE_LIMIT_MAX_REQUESTS", 5)) # Maximální počet simulací za okno 
-RATE_LIMIT_WINDOW = int(os.environ.get("LINEUM_API_RATE_LIMIT_WINDOW_SECONDS", 60)) # Okno v sekundách
+RATE_LIMIT_REQUESTS = int(os.environ.get("LINEUM_API_RATE_LIMIT_MAX_REQUESTS", 5)) # Maximum number of simulations per window 
+RATE_LIMIT_WINDOW = int(os.environ.get("LINEUM_API_RATE_LIMIT_WINDOW_SECONDS", 60)) # Window in seconds
 
 @app.post("/api/route/task")
 async def create_routing_task(req: RouteRequest, request: Request):
     """
-    Krok 1: Klient odešle rozsáhlou mapu a souřadnice. Server nezahajuje smyčku výpočtu.
-    Pouze to uloží do RAM paměti a vrátí vstupenku (ID), kterou klient zadá do WebSocketu.
+    Step 1: Client sends a large map and coordinates. The server doesn't start the compute loop.
+    It only stores it in RAM and returns a ticket (ID) that the client inputs into the WebSocket.
     """
     client_ip = request.client.host if request.client else "unknown"
     now = time.time()
@@ -136,7 +136,7 @@ async def create_routing_task(req: RouteRequest, request: Request):
 @app.websocket("/api/route/stream/{task_id}")
 async def websocket_endpoint(websocket: WebSocket, task_id: str):
     """
-    Krok 2: Živé spuštění on-demand výpočtu pouze po dobu trvání spojení.
+    Step 2: Live execution of on-demand computing only for the duration of the connection.
     """
     await websocket.accept()
     
@@ -145,10 +145,10 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
         await websocket.close()
         return
         
-    req = active_tasks.pop(task_id) # Vyjmout ze stacku
+    req = active_tasks.pop(task_id) # Remove from stack
     size = req.size
     
-    # Rekonstrukce mřížky z odeslaného 1D pole do 2D Numpy Float matice
+    # Reconstruct grid from sent 1D array to 2D Numpy Float matrix
     kappa = np.array(req.kappa_flat, dtype=np.float64).reshape((size, size))
     psi = np.zeros((size, size), dtype=np.complex128)
     delta = np.zeros((size, size), dtype=np.float64)
@@ -157,13 +157,13 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     target_y = req.target.y
     target_x = req.target.x
     
-    # APLIKACE "PRESET" (Demosféra fyziky Linea k ukázkovým Use-cases)
+    # APPLY "PRESET" (Lineum physics demosphere for showcase Use-cases)
     preset = req.preset if hasattr(req, 'preset') and req.preset else "urban_design"
     preset_settings = {
         "urban_design": {"dissipation": 0.005, "noise": 0.0, "reaction": 0.1, "phi_diff": 0.05},
-        "evacuation": {"dissipation": 0.08, "noise": 0.0, "reaction": 0.3, "phi_diff": 0.15},    # Rychlý rozpad zácpy, chaotičtější
-        "vascular": {"dissipation": 0.002, "noise": 0.08, "reaction": 0.02, "phi_diff": 0.02},  # Křehké dlouhotrvající větvičky s šumem
-        "dielectric": {"dissipation": 0.001, "noise": 0.0, "reaction": 0.5, "phi_diff": 0.005}, # Masivní bleskový rovný push s propálením
+        "evacuation": {"dissipation": 0.08, "noise": 0.0, "reaction": 0.3, "phi_diff": 0.15},    # Fast congestion decay, more chaotic
+        "vascular": {"dissipation": 0.002, "noise": 0.08, "reaction": 0.02, "phi_diff": 0.02},  # Fragile long-lasting branches with noise
+        "dielectric": {"dissipation": 0.001, "noise": 0.0, "reaction": 0.5, "phi_diff": 0.005}, # Massive lightning straight push with burn-through
     }
     
     cfg = preset_settings.get(preset, preset_settings["urban_design"])
@@ -174,10 +174,10 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     core_math.PHI_DIFFUSION = cfg["phi_diff"]
     
     start_time = time.time()
-    MAX_COMPUTE_TIME = 15.0 # Max 15 sekund výpočtu per connection
+    MAX_COMPUTE_TIME = 15.0 # Max 15 seconds of computing per connection
     
     try:
-        # Plynulý On-Demand Render Loop
+        # Smooth On-Demand Render Loop
         for step in range(req.max_steps):
             if time.time() - start_time > MAX_COMPUTE_TIME:
                 print(f"Task {task_id} exceeded {MAX_COMPUTE_TIME}s limit.")
@@ -186,33 +186,33 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
                 except: pass
                 break
                 
-            # Injekce Zdrojů (Agentů)
+            # Source Injection (Agents)
             for agent in req.agents:
                 sy, sx = agent.start.y, agent.start.x
-                # Ošetření okrajů matice
+                # Matrix boundary handling
                 sy_start, sy_end = max(0, sy-1), min(size, sy+2)
                 sx_start, sx_end = max(0, sx-1), min(size, sx+2)
                 psi[sy_start:sy_end, sx_start:sx_end] = 10.0
                 
-            # Odsávání Cíle
+            # Target Suction
             ty_start, ty_end = max(0, target_y-2), min(size, target_y+3)
             tx_start, tx_end = max(0, target_x-2), min(size, target_x+3)
             psi[ty_start:ty_end, tx_start:tx_end] *= 0.1
             
-            # 1. KROK FYZIKY
+            # 1. PHYSICS STEP
             psi, phi = evolve(psi, delta, phi, kappa)
             psi *= (kappa > 0.05)
             
-            # ODESLÁNÍ DAT DO SVELTE KLIENTA KAŽDÝCH 5 KROKŮ (šetření bandwidth sítě)
+            # SEND DATA TO SVELTE CLIENT EVERY 5 STEPS (saving network bandwidth)
             if step % 5 == 0:
-                # Načteme trasu pro všechny agenty (Extrakcne)
+                # Load path for all agents (extraction)
                 paths = {}
                 for agent in req.agents:
                     px, py = extract_path(phi, kappa, agent.start.x, agent.start.y, target_x, target_y, size)
                     paths[agent.id] = {"x": px, "y": py, "color": agent.color}
                 
-                # Zkomprimování PHI heatmapy (posíláme pouze 1D array jako u kappa pro WebGL render v JS)
-                # Normujeme phi na 0.0 - 1.0 pro odesílání Float32 bufferu Svelte canvasu
+                # Compress PHI heatmap (sending only 1D array like kappa for WebGL render in JS)
+                # Normalize phi to 0.0 - 1.0 for sending Float32 buffer to Svelte canvas
                 max_phi = np.max(phi)
                 phi_normalized = (phi / max_phi).flatten().tolist() if max_phi > 0 else phi.flatten().tolist()
                 
@@ -220,21 +220,21 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
                     "step": step,
                     "max_steps": req.max_steps,
                     "paths": paths,
-                    "phi_flat": phi_normalized  # Lze pak v budoucnu pro úsporu přes binární struct
+                    "phi_flat": phi_normalized  # Can be optimized in future via binary struct
                 }
                 
-                # Umožnění asyncio smyčky přijmout mutace počasí ("Dynamic Weather")
-                # Zkoušíme "neblokovaně" přijmout dotaz ze svelte, např změnu KAPPA
-                # Doplňující implementace v dalších krocích...
+                # Allow asyncio loop to accept weather mutations ("Dynamic Weather")
+                # Trying to "non-blockingly" accept request from svelte, e.g. KAPPA change
+                # Additional implementation in upcoming steps...
                 
                 await websocket.send_json(payload)
-                await asyncio.sleep(0.01) # Yield vlákna pro Pytorch/Threading stabilitu
+                await asyncio.sleep(0.01) # Yield thread for Pytorch/Threading stability
                 
-        # Korektní a bezpečné uzavření trubky po uběhnutí celého cyklu
+        # Correct and safe pipe closure after full cycle completion
         await websocket.close()
                 
     except WebSocketDisconnect:
-        # Jakmile Svelte komponenta umře, výpočetní "while" smyčka skončí a CPU zátěž končí (0%)
+        # Once the Svelte component dies, the compute "while" loop ends and CPU load stops (0%)
         print(f"Client disconnected task {task_id}. Cleaning up compute.")
     except Exception as e:
         print(f"Server Error in simulation loop: {e}")

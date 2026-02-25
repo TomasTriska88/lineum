@@ -8,7 +8,7 @@
     import { t, locale } from "$lib/i18n";
 
     const SIMULACRUM_URL = dev
-        ? "http://localhost:5174"
+        ? "http://127.0.0.1:5174"
         : "https://simulacrum.lineum.io";
 
     let menuOpen = false;
@@ -93,7 +93,8 @@
                         class="lang-btn"
                         class:active={$locale === lang.code}
                         on:click={() => changeLang(lang.code)}
-                        title={lang.label}
+                        data-tooltip={lang.label}
+                        data-tooltip-pos="bottom"
                     >
                         {lang.code.toUpperCase()}
                     </button>

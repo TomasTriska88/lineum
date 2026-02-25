@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "npm run sync && vite dev",
+		"dev": "npm run sync && vite dev --host 127.0.0.1 --port 5173 --strictPort",
 		"build": "node scripts/railway-build.cjs",
 		"preview": "vite preview",
 		"start": "node build",

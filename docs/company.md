@@ -19,3 +19,8 @@ This document serves as the single source of truth for all permanent legal, admi
 ---
 
 > **Note for AI Agents:** When asked to draft business or legal content, always parse this document first to ensure the correct corporate identity is represented.
+
+---
+
+## 💻 Engineering Standards
+- **Code Comments:** All comments within the codebase MUST be written exclusively in English. No Czech comments are allowed in any source code, scripts, or configuration files, to ensure international maintainability.

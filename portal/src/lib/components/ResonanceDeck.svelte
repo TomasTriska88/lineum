@@ -1286,6 +1286,7 @@
                     <div
                         class="token-badge"
                         data-tooltip="Daily Safety Budget Used"
+                        data-tooltip-pos="bottom"
                     >
                         <span class="shield-icon">🛡️</span>
                         <span class="token-val">
@@ -1306,6 +1307,7 @@
                             }}
                             aria-label={$t("lina.clear_history")}
                             data-tooltip={$t("lina.clear_history")}
+                            data-tooltip-pos="bottom"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1328,7 +1330,9 @@
                                 e.stopPropagation();
                                 $isChatOpen = false;
                             }}
-                            title="Close"
+                            aria-label="Close"
+                            data-tooltip="Close"
+                            data-tooltip-pos="bottom"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1350,8 +1354,9 @@
                         <button
                             class="icon-btn header-action minimize-btn"
                             onclick={toggleMinimize}
-                            title="Minimize to Orb"
                             aria-label="Minimize"
+                            data-tooltip="Minimize to Orb"
+                            data-tooltip-pos="bottom"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1436,7 +1441,8 @@
                                                         index,
                                                     )}
                                                 aria-label="Read aloud"
-                                                title="Read Text"
+                                                data-tooltip="Read Text"
+                                                data-tooltip-pos="bottom"
                                             >
                                                 {#if speakingId === `${index}-${selectedVoice}`}
                                                     ⏹️
@@ -1535,7 +1541,7 @@
                                                 );
                                             }}
                                             aria-label="Copy Markdown"
-                                            title="Copy as Markdown"
+                                            data-tooltip="Copy as Markdown"
                                         >
                                             <svg
                                                 width="14"
@@ -2404,41 +2410,5 @@
         color: var(--accent-cyan);
         background: rgba(6, 182, 212, 0.1);
         transform: scale(1.1);
-    }
-
-    [data-tooltip] {
-        position: relative;
-        cursor: help;
-    }
-
-    [data-tooltip]:hover::before {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 6px 10px;
-        background: rgba(0, 0, 0, 0.9);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        font-size: 0.7rem;
-        white-space: nowrap;
-        z-index: 2000;
-        pointer-events: none;
-        margin-bottom: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-    [data-tooltip]:hover::after {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 5px solid transparent;
-        border-top-color: rgba(0, 0, 0, 0.9);
-        margin-bottom: -2px;
-        z-index: 2000;
-        pointer-events: none;
     }
 </style>
