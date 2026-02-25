@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
     import { onMount, onDestroy } from "svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
@@ -780,7 +780,7 @@ logic_result = solver.compile_lpl(
 </script>
 
 <svelte:head>
-    <title>{$t("common.brand")} API Solutions | Swarm Routing Showcase</title>
+    <title>{m.common_brand()} API Solutions | Swarm Routing Showcase</title>
 </svelte:head>
 
 <div class="min-h-screen text-slate-50 font-sans flex flex-col pt-[104px]">
@@ -795,7 +795,7 @@ logic_result = solver.compile_lpl(
                 <span
                     class="px-3 py-1 bg-white/5 border border-white/10 text-slate-300 text-xs font-bold rounded-full uppercase tracking-wider backdrop-blur-md"
                 >
-                    {$t("api_solutions.hero.domain")}
+                    {m.api_solutions_hero_domain()}
                 </span>
                 <span
                     class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full uppercase tracking-wider flex items-center gap-2 backdrop-blur-md"
@@ -803,7 +803,7 @@ logic_result = solver.compile_lpl(
                     <span
                         class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"
                     ></span>
-                    {$t("common.beta")}
+                    {m.common_beta()}
                 </span>
             </div>
 
@@ -811,15 +811,15 @@ logic_result = solver.compile_lpl(
                 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-8 leading-[1.05]"
                 style="font-family: var(--font-sans);"
             >
-                {@html $t("api_solutions.hero.title")}
+                {@html m.api_solutions_hero_title()}
                 <br class="hidden lg:block" />
                 <span class="text-gradient-multi">
-                    {$t("api_solutions.hero.highlight")}
+                    {m.api_solutions_hero_highlight()}
                 </span>
             </h1>
 
             <p class="text-slate-400 text-xl max-w-2xl font-light mb-12">
-                {$t("api_solutions.hero.subtitle")}
+                {m.api_solutions_hero_subtitle()}
             </p>
 
             <div class="cta-group">
@@ -827,13 +827,13 @@ logic_result = solver.compile_lpl(
                     href="#roi"
                     class="btn btn-primary"
                     style="background-color: var(--accent-cyan); color: #020617;"
-                    >{$t("api_solutions.hero.cta_build")}</a
+                    >{m.api_solutions_hero_cta_build()}</a
                 >
                 <a
                     href="/wiki"
                     class="btn btn-outline"
                     style="border-color: rgba(255,255,255,0.2); color: white;"
-                    >{$t("api_solutions.hero.cta_docs")}</a
+                    >{m.api_solutions_hero_cta_docs()}</a
                 >
             </div>
 
@@ -849,10 +849,10 @@ logic_result = solver.compile_lpl(
         >
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-                    {$t("api_solutions.roi.title")}
+                    {m.api_solutions_roi_title()}
                 </h2>
                 <p class="text-slate-400 text-xl font-light max-w-3xl mx-auto">
-                    {@html $t("api_solutions.roi.subtitle")}
+                    {@html m.api_solutions_roi_subtitle()}
                 </p>
             </div>
 
@@ -873,12 +873,12 @@ logic_result = solver.compile_lpl(
                         ENTROPY
                     </div>
                     <h4 class="text-lg font-bold text-white mb-3">
-                        {$t("api_solutions.features.rng.title")}
+                        {m.api_solutions_features_rng_title()}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        {$t("api_solutions.features.rng.desc")}
+                        {m.api_solutions_features_rng_desc()}
                     </p>
                 </div>
 
@@ -898,12 +898,12 @@ logic_result = solver.compile_lpl(
                         AVALANCHE
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        {$t("api_solutions.features.hash.title")}
+                        {m.api_solutions_features_hash_title()}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        {$t("api_solutions.features.hash.desc")}
+                        {m.api_solutions_features_hash_desc()}
                     </p>
                 </div>
 
@@ -923,12 +923,12 @@ logic_result = solver.compile_lpl(
                         LOGIC
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        {$t("api_solutions.features.lpl.title")}
+                        {m.api_solutions_features_lpl_title()}
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        {$t("api_solutions.features.lpl.desc")}
+                        {m.api_solutions_features_lpl_desc()}
                     </p>
                 </div>
             </div>
@@ -954,10 +954,10 @@ logic_result = solver.compile_lpl(
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    {@html $t("api_solutions.scenarios.urban.title")}
+                    {@html m.api_solutions_scenarios_urban_title()}
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    {$t("api_solutions.scenarios.urban.description")}
+                    {m.api_solutions_scenarios_urban_description()}
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -981,9 +981,7 @@ logic_result = solver.compile_lpl(
                         <div>
                             <strong class="text-white block">Problem</strong>
                             <span class="text-slate-500 text-sm"
-                                >{$t(
-                                    "api_solutions.scenarios.urban.problem",
-                                )}</span
+                                >{m.api_solutions_scenarios_urban_problem()}</span
                             >
                         </div>
                     </li>
@@ -1007,9 +1005,7 @@ logic_result = solver.compile_lpl(
                         <div>
                             <strong class="text-white block">Solution</strong>
                             <span class="text-slate-500 text-sm"
-                                >{$t(
-                                    "api_solutions.scenarios.urban.solution",
-                                )}</span
+                                >{m.api_solutions_scenarios_urban_solution()}</span
                             >
                         </div>
                     </li>
@@ -1292,10 +1288,10 @@ logic_result = solver.compile_lpl(
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    {@html $t("api_solutions.scenarios.evac.title")}
+                    {@html m.api_solutions_scenarios_evac_title()}
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    {$t("api_solutions.scenarios.evac.description")}
+                    {m.api_solutions_scenarios_evac_description()}
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -1319,9 +1315,7 @@ logic_result = solver.compile_lpl(
                         <div>
                             <strong class="text-white block">Problem</strong>
                             <span class="text-slate-500 text-sm"
-                                >{$t(
-                                    "api_solutions.scenarios.evac.problem",
-                                )}</span
+                                >{m.api_solutions_scenarios_evac_problem()}</span
                             >
                         </div>
                     </li>
@@ -1345,9 +1339,7 @@ logic_result = solver.compile_lpl(
                         <div>
                             <strong class="text-white block">Solution</strong>
                             <span class="text-slate-500 text-sm"
-                                >{$t(
-                                    "api_solutions.scenarios.evac.solution",
-                                )}</span
+                                >{m.api_solutions_scenarios_evac_solution()}</span
                             >
                         </div>
                     </li>
@@ -1359,11 +1351,11 @@ logic_result = solver.compile_lpl(
         <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col gap-8">
             <div class="text-center mb-12">
                 <h3 class="text-3xl md:text-5xl font-bold text-white mb-4">
-                    {$t("api_solutions.demos.title") ||
+                    {m.api_solutions_demos_title() ||
                         "Live Interactive Prototypes"}
                 </h3>
                 <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                    {$t("api_solutions.demos.desc") ||
+                    {m.api_solutions_demos_desc() ||
                         "Experiment with the Lineum Core tensor engine directly in your browser."}
                 </p>
             </div>
@@ -1389,10 +1381,10 @@ logic_result = solver.compile_lpl(
         <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col items-center">
             <div class="text-center mb-12">
                 <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                    {$t("api_solutions.domains.title")}
+                    {m.api_solutions_domains_title()}
                 </h3>
                 <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                    {$t("api_solutions.domains.desc")}
+                    {m.api_solutions_domains_desc()}
                 </p>
             </div>
 
@@ -1425,15 +1417,15 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-violet-300 transition-colors"
                         >
-                            {$t("api_solutions.domains.hardware.title")}
+                            {m.api_solutions_domains_hardware_title()}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            {$t("api_solutions.domains.hardware.desc")}
+                            {m.api_solutions_domains_hardware_desc()}
                         </p>
                         <div
                             class="flex items-center text-violet-400 text-sm font-bold mt-auto"
                         >
-                            {$t("api_solutions.domains.hardware.link")}
+                            {m.api_solutions_domains_hardware_link()}
                             <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
@@ -1470,15 +1462,15 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors"
                         >
-                            {$t("api_solutions.domains.antennas.title")}
+                            {m.api_solutions_domains_antennas_title()}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            {$t("api_solutions.domains.antennas.desc")}
+                            {m.api_solutions_domains_antennas_desc()}
                         </p>
                         <div
                             class="flex items-center text-sky-400 text-sm font-bold mt-auto"
                         >
-                            {$t("api_solutions.domains.antennas.link")}
+                            {m.api_solutions_domains_antennas_link()}
                             <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
@@ -1515,15 +1507,15 @@ logic_result = solver.compile_lpl(
                         <h4
                             class="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors"
                         >
-                            {$t("api_solutions.domains.fluid.title")}
+                            {m.api_solutions_domains_fluid_title()}
                         </h4>
                         <p class="text-sm text-slate-400 mb-6 flex-grow">
-                            {$t("api_solutions.domains.fluid.desc")}
+                            {m.api_solutions_domains_fluid_desc()}
                         </p>
                         <div
                             class="flex items-center text-emerald-400 text-sm font-bold mt-auto"
                         >
-                            {$t("api_solutions.domains.fluid.link")}
+                            {m.api_solutions_domains_fluid_link()}
                             <span
                                 class="ml-2 group-hover:translate-x-1 transition-transform"
                                 >→</span
@@ -1549,7 +1541,7 @@ logic_result = solver.compile_lpl(
                             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                         ></path></svg
                     >
-                    {$t("api_solutions.domains.btn_download")}
+                    {m.api_solutions_domains_btn_download()}
                 </button>
             </div>
         </div>
@@ -1571,23 +1563,23 @@ logic_result = solver.compile_lpl(
                         <div
                             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold font-mono w-fit mb-6"
                         >
-                            {$t("api_solutions.vision.tag")}
+                            {m.api_solutions_vision_tag()}
                         </div>
                         <h2
                             class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight"
                         >
-                            {@html $t("api_solutions.vision.title")}
+                            {@html m.api_solutions_vision_title()}
                         </h2>
                         <p class="text-slate-400 text-lg leading-relaxed mb-6">
-                            {$t("api_solutions.vision.p1")}
+                            {m.api_solutions_vision_p1()}
                         </p>
                         <p class="text-slate-400 text-lg leading-relaxed mb-6">
-                            {@html $t("api_solutions.vision.p2")}
+                            {@html m.api_solutions_vision_p2()}
                         </p>
                         <p
                             class="text-slate-400 text-lg leading-relaxed font-medium"
                         >
-                            {$t("api_solutions.vision.p3")}
+                            {m.api_solutions_vision_p3()}
                         </p>
                     </div>
 
@@ -1598,10 +1590,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                {@html $t("api_solutions.vision.f1_title")}
+                                {@html m.api_solutions_vision_f1_title()}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                {$t("api_solutions.vision.f1_desc")}
+                                {m.api_solutions_vision_f1_desc()}
                             </p>
                         </div>
                         <div
@@ -1610,10 +1602,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                {@html $t("api_solutions.vision.f2_title")}
+                                {@html m.api_solutions_vision_f2_title()}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                {$t("api_solutions.vision.f2_desc")}
+                                {m.api_solutions_vision_f2_desc()}
                             </p>
                         </div>
                         <div
@@ -1622,10 +1614,10 @@ logic_result = solver.compile_lpl(
                             <h4
                                 class="text-white font-bold mb-2 flex items-center gap-2"
                             >
-                                {@html $t("api_solutions.vision.f3_title")}
+                                {@html m.api_solutions_vision_f3_title()}
                             </h4>
                             <p class="text-sm text-slate-500">
-                                {$t("api_solutions.vision.f3_desc")}
+                                {m.api_solutions_vision_f3_desc()}
                             </p>
                         </div>
                     </div>
@@ -1643,10 +1635,10 @@ logic_result = solver.compile_lpl(
             >
                 <div>
                     <h3 class="text-xl font-bold text-white mb-2">
-                        {$t("api_solutions.calculator.title")}
+                        {m.api_solutions_calculator_title()}
                     </h3>
                     <p class="text-slate-400 text-sm mb-8">
-                        {$t("api_solutions.calculator.desc")}
+                        {m.api_solutions_calculator_desc()}
                     </p>
 
                     <div class="flex flex-col gap-6">
@@ -1655,9 +1647,7 @@ logic_result = solver.compile_lpl(
                                 <label
                                     for="fleetSizeInput"
                                     class="text-xs font-bold text-slate-300 uppercase tracking-wider"
-                                    >{$t(
-                                        "api_solutions.calculator.fleet_label",
-                                    )}</label
+                                    >{m.api_solutions_calculator_fleet_label()}</label
                                 >
                                 <span
                                     class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded"
@@ -1680,9 +1670,7 @@ logic_result = solver.compile_lpl(
                                 <label
                                     for="dailyOpsInput"
                                     class="text-xs font-bold text-slate-300 uppercase tracking-wider"
-                                    >{$t(
-                                        "api_solutions.calculator.ops_label",
-                                    )}</label
+                                    >{m.api_solutions_calculator_ops_label()}</label
                                 >
                                 <span
                                     class="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded"
@@ -1709,7 +1697,7 @@ logic_result = solver.compile_lpl(
                         <div
                             class="text-[10px] text-emerald-500/70 uppercase tracking-widest font-bold mb-1"
                         >
-                            {$t("api_solutions.calculator.savings_label")}
+                            {m.api_solutions_calculator_savings_label()}
                         </div>
                         <div
                             class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200"
@@ -1721,7 +1709,7 @@ logic_result = solver.compile_lpl(
                         class="btn btn-primary"
                         style="background-color: var(--accent-color); color: white;"
                     >
-                        {$t("api_solutions.calculator.btn_sales")}
+                        {m.api_solutions_calculator_btn_sales()}
                     </button>
                 </div>
             </div>

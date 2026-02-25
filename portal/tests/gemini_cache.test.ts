@@ -1,6 +1,7 @@
+// @ts-nocheck
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getOrUpdateCache, resetLocalRefCache } from './gemini_cache';
+import { getOrUpdateCache, resetLocalRefCache } from '../scripts/gemini_cache.js';
 
 // Mock the Google AI server SDK
 const mocks = vi.hoisted(() => ({

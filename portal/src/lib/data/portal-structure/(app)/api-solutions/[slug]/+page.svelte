@@ -4,7 +4,7 @@
 </script>
 
 <script lang="ts">
-    import { t } from "$lib/i18n";
+    import * as m from "$lib/paraglide/messages.js";
     import TrueRng from "$lib/components/TrueRng.svelte";
     import type { PageData } from "./$types";
 
@@ -12,11 +12,11 @@
 </script>
 
 <svelte:head>
-    <title
-        >{$t(`api_solutions.scenarios.${data.scenarioKey}.title`)} | {$t(
-            "common.brand",
-        )} API</title
-    >
+    <title>
+        {m[
+            `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
+        ]()} | {m.common_brand()} API
+    </title>
 </svelte:head>
 
 <div class="min-h-screen bg-black text-white selection:bg-{data.accent}/30">
@@ -44,7 +44,7 @@
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
             </svg>
-            {$t("api_solutions.slug.back")}
+            {m.api_solutions_slug_back()}
         </a>
 
         <!-- Hero -->
@@ -58,17 +58,21 @@
                 SPECIALIZED DOMAIN
             </div>
             <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8">
-                {$t(`api_solutions.scenarios.${data.scenarioKey}.title`)}
+                {m[
+                    `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
+                ]()}
             </h1>
             <p
                 class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-3xl"
             >
                 <strong class="text-white"
-                    >{$t(
-                        `api_solutions.scenarios.${data.scenarioKey}.subtitle`,
-                    )}</strong
+                    >{m[
+                        `api_solutions_scenarios_${data.scenarioKey}_subtitle` as keyof typeof m
+                    ]()}</strong
                 ><br /><br />
-                {$t(`api_solutions.scenarios.${data.scenarioKey}.description`)}
+                {m[
+                    `api_solutions_scenarios_${data.scenarioKey}_description` as keyof typeof m
+                ]()}
             </p>
         </div>
 
@@ -101,7 +105,7 @@
                     </svg>
                     <span
                         class="text-slate-500 font-mono text-sm tracking-widest uppercase"
-                        >{$t("api_solutions.slug.demo_title")}</span
+                        >{m.api_solutions_slug_demo_title()}</span
                     >
                 </div>
             </div>
@@ -129,10 +133,12 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-4">
-                    {$t("api_solutions.slug.fail_title")}
+                    {m.api_solutions_slug_fail_title()}
                 </h3>
                 <p class="text-slate-400 leading-relaxed text-lg">
-                    {$t(`api_solutions.scenarios.${data.scenarioKey}.problem`)}
+                    {m[
+                        `api_solutions_scenarios_${data.scenarioKey}_problem` as keyof typeof m
+                    ]()}
                 </p>
             </div>
 
@@ -163,12 +169,12 @@
                         </svg>
                     </div>
                     <h3 class="text-2xl font-bold mb-4">
-                        {$t("api_solutions.slug.success_title")}
+                        {m.api_solutions_slug_success_title()}
                     </h3>
                     <p class="text-slate-300 leading-relaxed text-lg">
-                        {$t(
-                            `api_solutions.scenarios.${data.scenarioKey}.solution`,
-                        )}
+                        {m[
+                            `api_solutions_scenarios_${data.scenarioKey}_solution` as keyof typeof m
+                        ]()}
                     </p>
                 </div>
             </div>
@@ -177,7 +183,7 @@
         <!-- Integration & API -->
         <div class="max-w-4xl mb-32">
             <h2 class="text-3xl font-bold mb-8">
-                {$t("api_solutions.slug.integration")}
+                {m.api_solutions_slug_integration()}
             </h2>
             <div
                 class="rounded-2xl overflow-hidden border border-slate-800 shadow-2xl"
@@ -219,23 +225,23 @@
             <h2
                 class="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10"
             >
-                {$t("api_solutions.cta.title")}
+                {m.api_solutions_cta_title()}
             </h2>
             <p class="text-slate-400 text-lg mb-10 max-w-xl relative z-10">
-                {$t("api_solutions.cta.desc")}
+                {m.api_solutions_cta_desc()}
             </p>
             <div class="flex gap-4 relative z-10">
                 <a
                     href="#sales"
                     class="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors"
                 >
-                    {$t("api_solutions.cta.sales")}
+                    {m.api_solutions_cta_sales()}
                 </a>
                 <a
                     href="/docs"
                     class="px-8 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/5 transition-colors"
                 >
-                    {$t("api_solutions.cta.docs")}
+                    {m.api_solutions_cta_docs()}
                 </a>
             </div>
         </div>

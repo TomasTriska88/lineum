@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
     import { content } from "$lib/content";
     import MarginShards from "$lib/components/MarginShards.svelte";
     let { data }: { data: any } = $props();
@@ -68,7 +68,7 @@
 </script>
 
 <svelte:head>
-    <title>{$t("nav.wiki")} | {$t("common.brand")}</title>
+    <title>{m.nav_wiki()} | {m.common_brand()}</title>
 </svelte:head>
 
 <div class="wiki-container">
@@ -90,22 +90,22 @@
                     {
                         id: "vortex",
                         selector: "#glossary dt:nth-of-type(1)",
-                        text: $t("wiki.hints.vortex"),
+                        text: m.wiki_hints_vortex(),
                     },
                     {
                         id: "psi",
                         selector: "#glossary dt:nth-of-type(2)",
-                        text: $t("wiki.hints.psi"),
+                        text: m.wiki_hints_psi(),
                     },
                     {
                         id: "kappa",
                         selector: "#glossary dt:nth-of-type(4)",
-                        text: $t("wiki.hints.kappa"),
+                        text: m.wiki_hints_kappa(),
                     },
                     {
                         id: "faq-physics",
                         selector: "#faq details:nth-of-type(1)",
-                        text: $t("wiki.hints.faq_physics"),
+                        text: m.wiki_hints_faq_physics(),
                     },
                 ]}
             />

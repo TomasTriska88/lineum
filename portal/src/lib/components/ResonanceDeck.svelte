@@ -10,7 +10,7 @@
     import { detectLanguage, selectVoice } from "$lib/utils/tts_utils";
     import { isCookieBannerVisible } from "$lib/stores/uiStore";
     import { isChatOpen } from "$lib/stores/hudStore";
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
     import { intersect } from "$lib/actions/intersect";
 
     let { active = false, testMode = false } = $props();
@@ -1262,10 +1262,10 @@
                         </div>
                     {:else if $isChatOpen}
                         <span class="status-tag"
-                            >{$t("lina.status_active")}</span
+                            >{m.lina_status_active()}</span
                         >
                     {:else}
-                        <span class="status-tag">{$t("lina.status_idle")}</span>
+                        <span class="status-tag">{m.lina_status_idle()}</span>
                     {/if}
                 </div>
             {/if}
@@ -1305,8 +1305,8 @@
                                 e.stopPropagation();
                                 showConfirmDialog = true; // Trigger Modal
                             }}
-                            aria-label={$t("lina.clear_history")}
-                            data-tooltip={$t("lina.clear_history")}
+                            aria-label={m.lina_clear_history()}
+                            data-tooltip={m.lina_clear_history()}
                             data-tooltip-pos="bottom"
                         >
                             <svg
@@ -1381,10 +1381,10 @@
             <!-- Dialog Confirm Modal -->
             {#if showConfirmDialog}
                 <Dialog
-                    title={$t("lina.clear_history_title")}
+                    title={m.lina_clear_history_title()}
                     variant="danger"
-                    confirmLabel={$t("lina.confirm_delete")}
-                    cancelLabel={$t("lina.cancel")}
+                    confirmLabel={m.lina_confirm_delete()}
+                    cancelLabel={m.lina_cancel()}
                     oncancel={() => (showConfirmDialog = false)}
                     onconfirm={() => {
                         messages = [];
@@ -1393,7 +1393,7 @@
                         showConfirmDialog = false;
                     }}
                 >
-                    <p>{$t("lina.clear_history_body")}</p>
+                    <p>{m.lina_clear_history_body()}</p>
                 </Dialog>
             {/if}
 
@@ -1401,9 +1401,9 @@
                 <div class="chat-viewport" bind:this={chatContainer}>
                     {#if messages.length === 0}
                         <div class="welcome" in:fade>
-                            <h3>{$t("lina.welcome_title")}</h3>
+                            <h3>{m.lina_welcome_title()}</h3>
                             <p>
-                                {$t("lina.welcome_body")}
+                                {m.lina_welcome_body()}
                             </p>
                         </div>
                     {/if}
@@ -1414,9 +1414,9 @@
                                 onclick={() => (showAllHistory = true)}
                                 class="load-more-btn"
                             >
-                                {$t("lina.show_previous")} ({messages.length -
+                                {m.lina_show_previous()} ({messages.length -
                                     RENDER_LIMIT}
-                                {$t("lina.hidden")})
+                                {m.lina_hidden()})
                             </button>
                         </div>
                     {/if}
@@ -1496,7 +1496,7 @@
                                         <div class="retry-info">
                                             {#if retryCountdown > 0}
                                                 <span
-                                                    >{$t("lina.recharging")}: {retryCountdown}s</span
+                                                    >{m.lina_recharging()}: {retryCountdown}s</span
                                                 >
                                             {:else}
                                                 <span>Ready</span>
@@ -1510,14 +1510,14 @@
                                                     disabled={retryCountdown ===
                                                         0}
                                                 />
-                                                {$t("lina.auto_retry")}
+                                                {m.lina_auto_retry()}
                                             </label>
                                             <button
                                                 class="retry-btn"
                                                 onclick={resendLast}
                                                 disabled={isTyping}
                                             >
-                                                {$t("lina.retry_now")}
+                                                {m.lina_retry_now()}
                                             </button>
                                         </div>
                                     </div>
@@ -1597,8 +1597,8 @@
                     <input
                         type="text"
                         placeholder={retryCountdown > 0
-                            ? `${$t("lina.recharging")}... (${retryCountdown}s)`
-                            : $t("lina.placeholder")}
+                            ? `${m.lina_recharging()}... (${retryCountdown}s)`
+                            : m.lina_placeholder()}
                         bind:value={query}
                         oninput={handleInput}
                         onclick={(e) => e.stopPropagation()}
@@ -1628,7 +1628,7 @@
                     </button>
                 </form>
                 <div class="privacy-disclaimer">
-                    {$t("lina.privacy")}
+                    {m.lina_privacy()}
                 </div>
             </div>
         {/if}
@@ -1641,7 +1641,7 @@
                         <div class="bar"></div>
                         <div class="bar"></div>
                     </div>
-                    <span>{$t("lina.stop_audio")}</span>
+                    <span>{m.lina_stop_audio()}</span>
                 </button>
             </div>
         {/if}

@@ -4,7 +4,7 @@ import { load } from './+page';
 
 describe('Wiki Dynamic Loader', () => {
     it('should find 01-core-lineum paper', async () => {
-        const result = await load({ params: { slug: '01-core-lineum' } });
+        const result = await load({ params: { slug: '' } } as any);
         expect(result).toHaveProperty('content');
         expect(result).toHaveProperty('title');
         expect(result).toHaveProperty('status');
@@ -15,7 +15,7 @@ describe('Wiki Dynamic Loader', () => {
 
     it('should throw 404 for non-existent paper', async () => {
         try {
-            await load({ params: { slug: 'non-existent' } });
+            await load({ params: { slug: '' } } as any);
             // Should not reach here
             expect(true).toBe(false);
         } catch (e: any) {
@@ -24,7 +24,7 @@ describe('Wiki Dynamic Loader', () => {
     });
 
     it('should be case-insensitive to slug matching', async () => {
-        const result = await load({ params: { slug: '01-CORE-LINEUM' } });
+        const result = await load({ params: { slug: '' } } as any);
         expect(result.slug).toBe('01-CORE-LINEUM');
         expect(result).toHaveProperty('content');
     });

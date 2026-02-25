@@ -1,8 +1,9 @@
-
+import { i18n } from '$lib/i18n';
+import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 
-export const handle: Handle = async ({ event, resolve }) => {
+const sessionHandle: Handle = async ({ event, resolve }) => {
     let sessionId = event.cookies.get('session_id');
 
     if (!sessionId) {
@@ -20,3 +21,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     const response = await resolve(event);
     return response;
 };
+
+// Důležité pro Paraglide i18n routing: i18n.handle() musí běžet jako první!
+export const handle = sequence(i18n.handle(), sessionHandle);

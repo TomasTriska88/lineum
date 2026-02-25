@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
     import { marked } from "marked";
     export let data;
     const { content, title, slug } = data;
@@ -43,7 +43,7 @@
 </script>
 
 <svelte:head>
-    <title>{title || $t("nav.wiki")} — {$t("common.brand")}</title>
+    <title>{title || m.nav_wiki()} — {m.common_brand()}</title>
 </svelte:head>
 
 <div class="wiki-container">

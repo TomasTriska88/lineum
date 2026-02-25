@@ -4,7 +4,11 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "npm run sync && vite dev --host 127.0.0.1 --port 5173 --strictPort",
+		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",
+		"dev": "npm run sync && npx -y concurrently -k -c \"blue,green,magenta\" -n \"portal,lab,api\" \"npm run dev:portal\" \"npm run dev:lab\" \"npm run dev:api\"",
+		"dev:portal": "vite dev --host 127.0.0.1 --port 5173 --strictPort",
+		"dev:lab": "cd ../lab && npm run dev",
+		"dev:api": "cd ../routing_backend && uvicorn main:app --reload --host 127.0.0.1 --port 8000",
 		"build": "node scripts/railway-build.cjs",
 		"preview": "vite preview",
 		"start": "node build",
@@ -41,6 +45,8 @@
 	},
 	"dependencies": {
 		"@google/generative-ai": "^0.24.1",
+		"@inlang/paraglide-js": "1.11.8",
+		"@inlang/paraglide-sveltekit": "^0.16.1",
 		"@tailwindcss/postcss": "^4.2.0",
 		"@types/uuid": "^10.0.0",
 		"dotenv": "^17.3.1",

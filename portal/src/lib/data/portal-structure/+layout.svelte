@@ -1,11 +1,15 @@
-<script>
+<script lang="ts">
+    import { ParaglideJS } from "@inlang/paraglide-sveltekit";
+    import { i18n } from "$lib/i18n";
+
     import "../app.css";
     import ResonanceDeck from "$lib/components/ResonanceDeck.svelte";
     import CookieBanner from "$lib/components/CookieBanner.svelte";
     import { hudActive } from "$lib/stores/hudStore";
     import { page } from "$app/stores"; // For closing menu on nav
     import { dev } from "$app/environment";
-    import { t, locale } from "$lib/i18n";
+    import * as m from "$lib/paraglide/messages.js";
+    import { languageTag, setLanguageTag } from "$lib/paraglide/runtime.js";
 
     const SIMULACRUM_URL = dev
         ? "http://127.0.0.1:5174"
@@ -30,14 +34,16 @@
         { code: "ja", label: "日本語" },
     ];
 
-    function changeLang(code) {
-        locale.set(code);
+    import type { AvailableLanguageTag } from "$lib/paraglide/runtime";
+
+    function changeLang(code: AvailableLanguageTag) {
+        setLanguageTag(code);
     }
 </script>
 
 <svelte:head>
-    <meta property="og:title" content={$t("meta.title")} />
-    <meta property="og:description" content={$t("meta.description")} />
+    <meta property="og:title" content={m.meta_title()} />
+    <meta property="og:description" content={m.meta_description()} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://lineum.io" />
     <meta property="og:image" content="https://lineum.io/social-preview.png" />
@@ -59,59 +65,63 @@
     </script>
 </svelte:head>
 
-<nav>
-    <div class="container nav-content">
-        <a href="/" class="nav-logo">Lineum</a>
+<ParaglideJS {i18n}>
+    <nav>
+        <div class="container nav-content">
+            <a href="/" class="nav-logo">Lineum</a>
 
-        <button
-            class="mobile-toggle"
-            on:click={toggleMenu}
-            aria-label="Toggle Menu"
-        >
-            {#if menuOpen}
-                ✕
-            {:else}
-                ☰
-            {/if}
-        </button>
-
-        <div class="nav-links" class:mobile-open={menuOpen}>
-            <a href="/">{$t("nav.portal")}</a>
-            <a href={SIMULACRUM_URL} target="simulacrum">{$t("nav.lab")}</a>
-            <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
-                >{$t("nav.api")}</a
+            <button
+                class="mobile-toggle"
+                on:click={toggleMenu}
+                aria-label="Toggle Menu"
             >
-            <a href="/#scientist" data-sveltekit-reload
-                >{$t("sections.scientist.label")}</a
-            >
-            <a href="/wiki#faq" data-sveltekit-reload>FAQ</a>
-            <a href="/support" class="nav-cta">{$t("nav.support")}</a>
+                {#if menuOpen}
+                    ✕
+                {:else}
+                    ☰
+                {/if}
+            </button>
 
-            <div class="lang-switcher">
-                {#each langs as lang}
-                    <button
-                        class="lang-btn"
-                        class:active={$locale === lang.code}
-                        on:click={() => changeLang(lang.code)}
-                        data-tooltip={lang.label}
-                        data-tooltip-pos="bottom"
-                    >
-                        {lang.code.toUpperCase()}
-                    </button>
-                {/each}
+            <div class="nav-links" class:mobile-open={menuOpen}>
+                <a href="/">{m.nav_portal()}</a>
+                <a href={SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a>
+                <a
+                    href="/api-solutions"
+                    style="color: #38bdf8; font-weight: bold;">{m.nav_api()}</a
+                >
+                <a href="/#scientist" data-sveltekit-reload
+                    >{m.sections_scientist_label()}</a
+                >
+                <a href="/wiki#faq" data-sveltekit-reload>FAQ</a>
+                <a href="/support" class="nav-cta">{m.nav_support()}</a>
+
+                <div class="lang-switcher">
+                    {#each langs as lang}
+                        <a
+                            href={$page.url.pathname}
+                            hreflang={lang.code}
+                            class="lang-btn"
+                            class:active={languageTag() === lang.code}
+                            data-tooltip={lang.label}
+                            data-tooltip-pos="bottom"
+                        >
+                            {lang.code.toUpperCase()}
+                        </a>
+                    {/each}
+                </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="grid-bg"></div>
+    <div class="grid-bg"></div>
 
-<main class:hud-pushed={$hudActive}>
-    <slot />
-</main>
+    <main class:hud-pushed={$hudActive}>
+        <slot />
+    </main>
 
-<ResonanceDeck active={$hudActive} />
-<CookieBanner />
+    <ResonanceDeck active={$hudActive} />
+    <CookieBanner />
+</ParaglideJS>
 
 <style>
     nav {
@@ -181,6 +191,7 @@
         cursor: pointer;
         padding: 0.3rem 0.5rem;
         border-radius: 4px;
+        text-decoration: none;
         transition: all 0.2s ease;
     }
 

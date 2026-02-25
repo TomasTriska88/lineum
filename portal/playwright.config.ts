@@ -29,7 +29,7 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'cross-env GEMINI_API_KEY=INVALID_TEST_KEY npm run dev -- --port 4173',
+        command: 'cross-env GEMINI_API_KEY=INVALID_TEST_KEY npx vite dev --port 4173',
         url: 'http://localhost:4173',
         reuseExistingServer: !process.env.CI,
         timeout: 120000,

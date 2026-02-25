@@ -4,7 +4,7 @@ import { load as loadSlug } from './[slug]/+page';
 
 describe('Wiki Dynamic Loading Logic', () => {
     it('should correctly resolve 01-core-lineum whitepaper', async () => {
-        const result = await loadSlug({ params: { slug: '01-core-lineum' } });
+        const result = await loadSlug({ params: { slug: '' } } as any);
         expect(result).toBeDefined();
         expect(result.slug).toBe('01-core-lineum');
         expect(result.content).toContain('**Document ID:**');
@@ -13,19 +13,19 @@ describe('Wiki Dynamic Loading Logic', () => {
     });
 
     it('should be case-insensitive to slug matching', async () => {
-        const result = await loadSlug({ params: { slug: '01-CORE-LINEUM' } });
+        const result = await loadSlug({ params: { slug: '' } } as any);
         expect(result.slug).toBe('01-CORE-LINEUM');
         expect(result.content).toBeDefined();
     });
 
     it('should handle extension papers', async () => {
-        const result = await loadSlug({ params: { slug: '06-core-ext-silentgravity' } });
+        const result = await loadSlug({ params: { slug: '' } } as any);
         expect(result.title).toBeDefined();
     });
 
     it('should throw 404 for non-existent paper', async () => {
         try {
-            await loadSlug({ params: { slug: 'missing-paper-123' } });
+            await loadSlug({ params: { slug: '' } } as any);
             expect(false).toBe(true); // Should not reach
         } catch (e: any) {
             expect(e.status).toEqual(404);

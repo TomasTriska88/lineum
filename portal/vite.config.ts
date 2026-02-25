@@ -1,3 +1,4 @@
+import { paraglide } from '@inlang/paraglide-sveltekit/vite'
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 import { spawn } from 'child_process';
@@ -58,7 +59,7 @@ const autoSyncPlugin = () => ({
 });
 
 export default defineConfig({
-	plugins: [sveltekit(), autoSyncPlugin()],
+	plugins: [paraglide({ project: './project.inlang', outdir: './src/lib/paraglide' }),sveltekit(), autoSyncPlugin()],
 	server: {
 		fs: {
 			allow: ['..']

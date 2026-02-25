@@ -10,7 +10,7 @@ vi.mock('$lib/stores/hudStore', async () => {
         // @ts-ignore
         ...actual,
         hudActive: { subscribe: (run: any) => { run(true); return () => { }; } }, // Active by default for these tests
-        isChatOpen: actual.writable(false),
+        isChatOpen: (actual as any).writable(false),
         addMessage: vi.fn(),
         hudMessages: { subscribe: (run: any) => { run([]); return () => { }; } }
     };

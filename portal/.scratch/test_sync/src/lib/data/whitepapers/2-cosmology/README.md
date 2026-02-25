@@ -1,8 +1,0 @@
-
-<!-- INDEX_START -->
-## 📚 Document Index
-
-| Document | Status | File |
-| :--- | :--- | :--- |
-| *(No documents yet)* | - | - |
-<!-- INDEX_END -->

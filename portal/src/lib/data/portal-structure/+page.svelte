@@ -3,7 +3,7 @@
     import Legend from "$lib/components/Legend.svelte";
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
-    import { t } from "$lib/i18n";
+    import * as m from "$lib/paraglide/messages.js";
     import { dev } from "$app/environment";
 
     const SIMULACRUM_URL = dev
@@ -14,38 +14,34 @@
         {
             id: "psi",
             color: "#00ffff",
-            ...(typeof $t("legend.items.psi") === "object"
-                ? $t("legend.items.psi")
-                : {}),
+            label: m.legend_items_psi_label(),
+            description: m.legend_items_psi_description(),
         },
         {
             id: "kappa",
             color: "#1a3a5a",
-            ...(typeof $t("legend.items.kappa") === "object"
-                ? $t("legend.items.kappa")
-                : {}),
+            label: m.legend_items_kappa_label(),
+            description: m.legend_items_kappa_description(),
         },
         {
             id: "phi",
             color: "#8a2be2",
-            ...(typeof $t("legend.items.phi") === "object"
-                ? $t("legend.items.phi")
-                : {}),
+            label: m.legend_items_phi_label(),
+            description: m.legend_items_phi_description(),
         },
         {
             id: "warp",
             color: "#ff00ff",
             colorAlt: "#8a2be2",
-            ...(typeof $t("legend.items.warp") === "object"
-                ? $t("legend.items.warp")
-                : {}),
+            label: m.legend_items_warp_label(),
+            description: m.legend_items_warp_description(),
         },
     ];
 </script>
 
 <svelte:head>
-    <title>{$t("meta.title")}</title>
-    <meta name="description" content={$t("meta.description")} />
+    <title>{m.meta_title()}</title>
+    <meta name="description" content={m.meta_description()} />
 </svelte:head>
 
 <section class="hero">
@@ -55,34 +51,36 @@
 
     <div class="hero-content container">
         <div class="logo">
-            <span class="logo-symbol">{$t("hero.symbol")}</span>
+            <span class="logo-symbol">{m.hero_symbol()}</span>
             <span class="logo-text">Lineum</span>
             <Legend
-                title={$t("legend.title")}
-                subtitle={$t("legend.subtitle")}
+                title={m.legend_title()}
+                subtitle={m.legend_subtitle()}
                 items={legendItems}
-                faq={$t("legend.faq")}
+                faq={[
+                    { q: m.legend_faq_0_q(), a: m.legend_faq_0_a() },
+                    { q: m.legend_faq_1_q(), a: m.legend_faq_1_a() },
+                    { q: m.legend_faq_2_q(), a: m.legend_faq_2_a() },
+                ]}
             />
         </div>
         <h1>
-            {$t("hero.title_prefix")}
+            {m.hero_title_prefix()}
             <span class="text-gradient-multi animate-breathe">
-                {$t("hero.title_highlight")}
+                {m.hero_title_highlight()}
             </span>
         </h1>
         <p>
-            {$t("hero.subtitle")}
+            {m.hero_subtitle()}
         </p>
         <div class="cta-group">
-            <a href="/wiki" class="btn btn-primary">{$t("hero.cta_wiki")}</a>
+            <a href="/wiki" class="btn btn-primary">{m.hero_cta_wiki()}</a>
             <a
                 href="/api-solutions"
                 class="btn btn-outline"
-                style="border-color: #38bdf8; color: #38bdf8;"
-                >{$t("nav.api")}</a
+                style="border-color: #38bdf8; color: #38bdf8;">{m.nav_api()}</a
             >
-            <a href="#scientist" class="btn btn-outline"
-                >{$t("hero.cta_audit")}</a
+            <a href="#scientist" class="btn btn-outline">{m.hero_cta_audit()}</a
             >
         </div>
     </div>
@@ -99,17 +97,17 @@
                 {
                     id: "hero-dynamic",
                     selector: ".hero-content h1",
-                    text: $t("sections.layman.p1"),
+                    text: m.sections_layman_p1(),
                 },
                 {
                     id: "layman-vibe",
                     selector: "#layman h2",
-                    text: $t("hero.subtitle"),
+                    text: m.hero_subtitle(),
                 },
                 {
                     id: "scientist-data",
                     selector: "#scientist h2",
-                    text: `✨ ${$t("sections.scientist.whitepaper.desc")}`,
+                    text: `✨ ${m.sections_scientist_whitepaper_desc()}`,
                 },
             ]}
         />
@@ -118,10 +116,10 @@
             class="text-block"
             style="text-align: center; margin-bottom: 4rem;"
         >
-            <span class="label">{$t("sections.layman.label")}</span>
-            <h2>{$t("sections.layman.title")}</h2>
+            <span class="label">{m.sections_layman_label()}</span>
+            <h2>{m.sections_layman_title()}</h2>
             <p style="margin: 0 auto 2rem; max-width: 800px;">
-                {$t("sections.layman.p1")}
+                {m.sections_layman_p1()}
             </p>
         </div>
     </div>
@@ -129,36 +127,36 @@
 
 <section id="scientist" class="info-section alternate">
     <div class="container">
-        <span class="label">{$t("sections.scientist.label")}</span>
-        <h2>{$t("sections.scientist.title")}</h2>
+        <span class="label">{m.sections_scientist_label()}</span>
+        <h2>{m.sections_scientist_title()}</h2>
         <div class="scientific-grid">
             <div class="card">
-                <h3>{$t("sections.scientist.whitepaper.title")}</h3>
-                <p>{$t("sections.scientist.whitepaper.desc")}</p>
-                <a href="/wiki">{$t("sections.scientist.whitepaper.link")}</a>
+                <h3>{m.sections_scientist_whitepaper_title()}</h3>
+                <p>{m.sections_scientist_whitepaper_desc()}</p>
+                <a href="/wiki">{m.sections_scientist_whitepaper_link()}</a>
             </div>
             <div class="card">
-                <h3>{$t("sections.scientist.zenodo.title")}</h3>
-                <p>{$t("sections.scientist.zenodo.desc")}</p>
+                <h3>{m.sections_scientist_zenodo_title()}</h3>
+                <p>{m.sections_scientist_zenodo_desc()}</p>
                 <a
                     href="https://doi.org/10.5281/zenodo.16934359"
-                    target="_blank">{$t("sections.scientist.zenodo.link")}</a
+                    target="_blank">{m.sections_scientist_zenodo_link()}</a
                 >
             </div>
             <div class="card">
-                <h3>{$t("sections.scientist.simulacrum.title")}</h3>
-                <p>{$t("sections.scientist.simulacrum.desc")}</p>
+                <h3>{m.sections_scientist_simulacrum_title()}</h3>
+                <p>{m.sections_scientist_simulacrum_desc()}</p>
                 <a href={SIMULACRUM_URL} target="simulacrum"
-                    >{$t("sections.scientist.simulacrum.link")}</a
+                    >{m.sections_scientist_simulacrum_link()}</a
                 >
             </div>
             <div class="card">
-                <h3>{$t("sections.scientist.referencePack.title")}</h3>
-                <p>{$t("sections.scientist.referencePack.desc")}</p>
+                <h3>{m.sections_scientist_referencePack_title()}</h3>
+                <p>{m.sections_scientist_referencePack_desc()}</p>
                 <a
                     href="https://github.com/TomasTriska88/lineum-private/releases"
                     target="_blank"
-                    >{$t("sections.scientist.referencePack.link")}</a
+                    >{m.sections_scientist_referencePack_link()}</a
                 >
             </div>
         </div>
@@ -168,17 +166,17 @@
 <footer class="container">
     <div class="footer-content">
         <div class="footer-info">
-            <p>{$t("footer.copy")}</p>
+            <p>{m.footer_copy()}</p>
             <!-- <div class="operator-info">
                 Operator info removed temporarily until dynamic translations for config are ready
             </div> -->
         </div>
         <div class="footer-links">
-            <a href="/support">{$t("footer.support")}</a>
-            <a href="/privacy">{$t("footer.privacy")}</a>
+            <a href="/support">{m.footer_support()}</a>
+            <a href="/privacy">{m.footer_privacy()}</a>
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
-                target="_blank">{$t("footer.github")}</a
+                target="_blank">{m.footer_github()}</a
             >
         </div>
     </div>

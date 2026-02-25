@@ -1,10 +1,10 @@
 <script lang="ts">
     import { content } from "$lib/content";
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
 </script>
 
 <svelte:head>
-    <title>{$t("nav.support")} | {$t("common.brand")}</title>
+    <title>{m.nav_support()} | {m.common_brand()}</title>
 </svelte:head>
 
 <div class="support-page">

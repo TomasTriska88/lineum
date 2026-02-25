@@ -1,7 +1,7 @@
 <script lang="ts">
     import { fade, scale } from "svelte/transition";
     import { onMount } from "svelte";
-    import { t } from "$lib/i18n";
+    import * as m from '$lib/paraglide/messages.js';
 
     export let insights: { id: string; selector: string; text: string }[] = [];
 
@@ -55,7 +55,7 @@
                         in:scale={{ duration: 300, start: 0.8 }}
                     >
                         <div class="popover-header">
-                            {$t("lina.insight_header")}
+                            {m.lina_insight_header()}
                         </div>
                         <div class="popover-content">{insight.text}</div>
                     </div>

@@ -1,3 +1,0 @@
-"""
-Lineum Core Shared Modules
-"""
