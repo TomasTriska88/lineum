@@ -8,6 +8,7 @@
     let animationFrameId: number;
     let isVisible = true;
     let isRendering = false;
+    let isLoaded = false;
     let renderer: ((time: number) => void) | null = null;
 
     function handleIntersect(inView: boolean) {
@@ -318,6 +319,10 @@
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
+            if (!isLoaded) {
+                isLoaded = true;
+            }
+
             if (isVisible) {
                 animationFrameId = requestAnimationFrame(render);
             } else {
@@ -345,14 +350,70 @@
     });
 </script>
 
-<canvas bind:this={canvas} class="shader-canvas" use:intersect={handleIntersect}
-></canvas>
+<div class="shader-container">
+    {#if !isLoaded}
+        <div class="loader-overlay">
+            <div class="spinner"></div>
+        </div>
+    {/if}
+    <canvas
+        bind:this={canvas}
+        class="shader-canvas"
+        class:loaded={isLoaded}
+        use:intersect={handleIntersect}
+    ></canvas>
+</div>
 
 <style>
+    .shader-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    .loader-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 2px solid rgba(124, 58, 237, 0.15); /* accent-violet */
+        border-top-color: #ff0080; /* accent-magenta */
+        border-radius: 50%;
+        animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        box-shadow: 0 0 20px rgba(255, 0, 128, 0.3);
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
     .shader-canvas {
         width: 100%;
         height: 100%;
         display: block;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+
+    .shader-canvas.loaded {
         opacity: 0.6;
     }
 </style>
