@@ -44,11 +44,8 @@
 </script>
 
 <svelte:head>
-    <title>Lineum | Discrete Field Dynamics</title>
-    <meta
-        name="description"
-        content="Official portal for the Lineum project. Discover the emergence of stable localized excitations in discrete field models."
-    />
+    <title>{$t("meta.title")}</title>
+    <meta name="description" content={$t("meta.description")} />
 </svelte:head>
 
 <section class="hero">
@@ -84,7 +81,7 @@
                 style="border-color: #38bdf8; color: #38bdf8;"
                 >{$t("nav.api")}</a
             >
-            <a href="#evidence" class="btn btn-outline"
+            <a href="#scientist" class="btn btn-outline"
                 >{$t("hero.cta_audit")}</a
             >
         </div>
@@ -102,12 +99,12 @@
                 {
                     id: "hero-dynamic",
                     selector: ".hero-content h1",
-                    text: `✨ ${$t("sections.layman.p1").substring(0, 100)}...`,
+                    text: $t("sections.layman.p1"),
                 },
                 {
                     id: "layman-vibe",
                     selector: "#layman h2",
-                    text: `✨ ${$t("hero.subtitle")}`,
+                    text: $t("hero.subtitle"),
                 },
                 {
                     id: "scientist-data",

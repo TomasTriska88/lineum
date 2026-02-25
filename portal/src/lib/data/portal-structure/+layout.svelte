@@ -35,6 +35,30 @@
     }
 </script>
 
+<svelte:head>
+    <meta property="og:title" content={$t("meta.title")} />
+    <meta property="og:description" content={$t("meta.description")} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lineum.io" />
+    <meta property="og:image" content="https://lineum.io/social-preview.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Lineum Field Engine",
+            "operatingSystem": "Any",
+            "applicationCategory": "Systema Software",
+            "description": "Continuous space particle dynamics simulator and API.",
+            "offers": {
+                "@type": "Offer",
+                "price": "0"
+            }
+        }
+    </script>
+</svelte:head>
+
 <nav>
     <div class="container nav-content">
         <a href="/" class="nav-logo">Lineum</a>
@@ -57,8 +81,10 @@
             <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
                 >{$t("nav.api")}</a
             >
-            <a href="/#scientist">{$t("sections.scientist.label")}</a>
-            <a href="/wiki#faq">FAQ</a>
+            <a href="/#scientist" data-sveltekit-reload
+                >{$t("sections.scientist.label")}</a
+            >
+            <a href="/wiki#faq" data-sveltekit-reload>FAQ</a>
             <a href="/support" class="nav-cta">{$t("nav.support")}</a>
 
             <div class="lang-switcher">
