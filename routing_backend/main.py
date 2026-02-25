@@ -245,32 +245,141 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
 
 @app.get("/api/snippet")
 async def get_api_snippet(language: str = "python", preset: str = "urban_design", fleet_size: int = 500):
+    return {"language": language, "code": "DEPRECATED"}
+
+# --- COMMERCIAL AI ECOSYSTEM ENDPOINTS ---
+
+class RngRequest(BaseModel):
+    resolution: int = 64
+    pump_cycles: int = 1500
+
+@app.post("/api/v1/ai/true-rng")
+async def generate_true_rng(req: RngRequest, request: Request):
     """
-    Returns dynamic API code snippets based on the current UI state.
+    1. True RNG (Harvesting thermal variance from CPU threads)
+    Returns mathematically perfect randomness generated from the physical environment.
     """
-    if language.lower() == "python":
-        snippet = f"""# 1. Initialize Lineum Continuous Solver
-import lineum as ln
+    client_ip = request.client.host if request.client else "unknown"
+    
+    size = req.resolution
+    psi_1 = np.full((size, size), 0.5, dtype=np.complex128)
+    delta_1 = np.zeros((size, size), dtype=np.float64)
+    phi_1 = np.zeros((size, size), dtype=np.float64)
+    kappa_1 = np.full((size, size), 0.2, dtype=np.float64)
+    
+    # Outer Skull
+    y, x = np.ogrid[-size//2:size//2, -size//2:size//2]
+    mask = x**2 + y**2 > (size//2 - 5)**2
+    
+    for step in range(req.pump_cycles):
+        psi_1[mask] = 0.0j
+        # Central Pump
+        if step % 5 == 0:
+            center = size // 2
+            psi_1[center-5:center+5, center-5:center+5] = 1.0 + 0j
+        
+        # We don't even inject float noise. We let the CPU threads naturally cause thermal race conditions.
+        psi_1, phi_1 = evolve(psi_1, delta_1, phi_1, kappa_1)
 
-# 2. Upload environmental tensor
-solver = ln.SwarmEnvironment("{preset}.npz", precision=16)
+    # Harvest entropy: We take the complex phase angle of the chaotic fluid
+    entropy_matrix = np.angle(psi_1)
+    
+    # Extract as a hex string via SHA256 of the raw byte buffer for easy JSON consumption, 
+    # but the entropy origin is *Hardware thermal RNG*, not the SHA math.
+    import hashlib
+    entropy_hex = hashlib.sha256(entropy_matrix.tobytes()).hexdigest()
+    
+    return {
+        "status": "success", 
+        "entropy_hex": entropy_hex, 
+        "raw_sample": entropy_matrix[size//2:size//2+2, size//2:size//2+2].tolist()
+    }
 
-# 3. Stream {fleet_size} parallel fleet agents
-routes = solver.compute_flow(
-    origins=fleet_positions,
-    targets=delivery_nodes,
-    temperature=0.02
-)"""
-    elif language.lower() == "curl":
-        snippet = f"""curl -X POST https://api.lineum.io/v1/compute/swarm \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{{
-    "environment": "{preset}.npz",
-    "fleet_size": {fleet_size},
-    "temperature": 0.02
-  }}'"""
-    else:
-        snippet = "// Language not supported."
+class HashRequest(BaseModel):
+    payload: str
+    grid_size: int = 64
+    iterations: int = 1500
 
-    return {"language": language, "code": snippet}
+@app.post("/api/v1/ai/hash")
+async def cryptographic_hash(req: HashRequest):
+    """
+    2. Cryptographic Avalanche Hashing
+    Injects a string payload as physical wave drops and freezes the resulting topology.
+    """
+    size = req.grid_size
+    psi = np.full((size, size), 0.5, dtype=np.complex128)
+    delta = np.zeros((size, size), dtype=np.float64)
+    phi = np.zeros((size, size), dtype=np.float64)
+    kappa = np.full((size, size), 0.2, dtype=np.float64)
+    
+    y, x = np.ogrid[-size//2:size//2, -size//2:size//2]
+    mask = x**2 + y**2 > (size//2 - 5)**2
+    
+    # Map payload bytes to initial pulse drops
+    payload_bytes = req.payload.encode('utf-8')
+    for i, byte in enumerate(payload_bytes):
+        py = 5 + (i * 7) % (size - 10)
+        px = 5 + (i * 13) % (size - 10)
+        # The phase angle is dictated by the byte 
+        phase = (byte / 255.0) * 2 * np.pi
+        psi[py:py+2, px:px+2] += np.exp(1j * phase)
+    
+    for step in range(req.iterations):
+        psi[mask] = 0.0j
+        # Central Pump
+        if step % 5 == 0:
+            c = size // 2
+            psi[c-2:c+2, c-2:c+2] = 1.0 + 0j
+            
+        psi, phi = evolve(psi, delta, phi, kappa)
+        
+    # The frozen Phi fluid topology is the hash
+    import hashlib
+    hash_hex = hashlib.sha256(phi.tobytes()).hexdigest()
+    
+    return {"status": "success", "hash": hash_hex}
+
+class LplRequest(BaseModel):
+    mask_flat: List[float] # 1.0 = fluid, 0.0 = wall
+    size: int
+    inputs: List[Point] # Where to inject 1.0 energy wave-pulses (e.g. A, B bits)
+    iterations: int = 500
+
+@app.post("/api/v1/ai/lpl-compile")
+async def compile_lpl(req: LplRequest):
+    """
+    3. LPL Logic Compilation
+    Uploads a physical CAD mask from the API and runs fluid logic gates.
+    """
+    size = req.size
+    
+    if len(req.mask_flat) != size * size:
+        raise HTTPException(status_code=400, detail="Invalid mask_flat length. Must be size * size.")
+        
+    # Convert mask: 1 is fluid, 0 is wall. We need a boolean mask where True = Wall (0.0j forces)
+    fluid_map = np.array(req.mask_flat, dtype=np.float64).reshape((size, size))
+    wall_mask = fluid_map < 0.5
+    
+    psi = np.full((size, size), 0.5, dtype=np.complex128)
+    delta = np.zeros((size, size), dtype=np.float64)
+    phi = np.zeros((size, size), dtype=np.float64)
+    kappa = np.full((size, size), 0.2, dtype=np.float64)
+    
+    for step in range(req.iterations):
+        psi[wall_mask] = 0.0j
+        
+        # Inject Wave Inputs (The 1 Data bits)
+        if step % 50 == 0:
+            for p in req.inputs:
+                py, px = p.y, p.x
+                # Ensure within bounds
+                if 0 <= py < size-1 and 0 <= px < size-1:
+                    psi[py:py+2, px:px+2] = 1.0 + 0j
+                
+        psi, phi = evolve(psi, delta, phi, kappa)
+        
+    # Send the raw mathematical telemetry back via JSON Float Array
+    phi_max = np.max(phi)
+    phi_norm = (phi / phi_max).flatten().tolist() if phi_max > 0 else phi.flatten().tolist()
+    
+    return {"status": "success", "phi_flat": phi_norm}

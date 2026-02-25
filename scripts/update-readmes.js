@@ -33,7 +33,7 @@ function processDirectory(dirPath, categoryName) {
     const files = fs.readdirSync(dirPath);
     const mdFiles = files.filter(f => f.endsWith('.md') && f !== 'README.md');
 
-    let indexContent = `\n<!-- INDEX_START -->\n## 📚 Document Index\n\n| Document | Status | File |\n| :--- | :--- | :--- |\n`;
+    let indexContent = `<!-- INDEX_START -->\n## 📚 Document Index\n\n| Document | Status | File |\n| :--- | :--- | :--- |\n`;
 
     if (mdFiles.length === 0) {
         indexContent += `| *(No documents yet)* | - | - |\n`;
@@ -86,7 +86,7 @@ const dirs = [
 
 console.log('Generating dynamic README indexes for the whitepapers...');
 
-let masterIndex = `\n<!-- INDEX_START -->\n## 📚 Master Document Index\n\n`;
+let masterIndex = `<!-- INDEX_START -->\n## 📚 Master Document Index\n\n`;
 
 for (const d of dirs) {
     const fullPath = path.join(whitepapersDir, d.dir);

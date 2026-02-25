@@ -130,9 +130,12 @@ def main():
     plt.legend(loc='upper right', fontsize='small')
     plt.xlabel("Simulation Steps ((0,0) -> (0,1) -> (1,0) -> (1,1))")
     
+    import os
+    os.makedirs("scripts/output", exist_ok=True)
+    
     plt.tight_layout()
-    plt.savefig("output_wp/reservoir_universal_gates.png")
-    print("Saved readout to output_wp/reservoir_universal_gates.png")
+    plt.savefig("scripts/output/reservoir_universal_gates.png")
+    print("Saved readout to scripts/output/reservoir_universal_gates.png")
 
 if __name__ == "__main__":
     main()

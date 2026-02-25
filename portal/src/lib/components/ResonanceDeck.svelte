@@ -10,6 +10,8 @@
     import { detectLanguage, selectVoice } from "$lib/utils/tts_utils";
     import { isCookieBannerVisible } from "$lib/stores/uiStore";
     import { isChatOpen } from "$lib/stores/hudStore";
+    import { t } from "$lib/i18n";
+    import { intersect } from "$lib/actions/intersect";
 
     let { active = false, testMode = false } = $props();
 
@@ -43,19 +45,43 @@
     /* --- Dynamic Wave Generation --- */
     let time = $state(0);
     let animationFrame: number;
+    let isVisible = true;
+    let isRendering = false;
+
+    function handleIntersect(inView: boolean) {
+        isVisible = inView;
+        if (isVisible && !isRendering) {
+            isRendering = true;
+            animationFrame = requestAnimationFrame(loop);
+        } else if (!isVisible) {
+            isRendering = false;
+        }
+    }
+
+    const loop = () => {
+        if (!isVisible) {
+            isRendering = false;
+            return;
+        }
+
+        // Base speed 0.015
+        // User Typing -> Speed up significantly (0.05)
+        // Model Generating -> Slow, heavy pulse (0.02)
+        let speed = 0.015;
+        if (userTyping) speed = 0.06;
+        if (isTyping) speed = 0.02;
+
+        time += speed;
+
+        if (isVisible) {
+            animationFrame = requestAnimationFrame(loop);
+        } else {
+            isRendering = false;
+        }
+    };
 
     onMount(() => {
-        const loop = () => {
-            // Base speed 0.015
-            // User Typing -> Speed up significantly (0.05)
-            // Model Generating -> Slow, heavy pulse (0.02)
-            let speed = 0.015;
-            if (userTyping) speed = 0.06;
-            if (isTyping) speed = 0.02;
-
-            time += speed;
-            animationFrame = requestAnimationFrame(loop);
-        };
+        isRendering = true;
         animationFrame = requestAnimationFrame(loop);
         return () => cancelAnimationFrame(animationFrame);
     });
@@ -773,6 +799,27 @@
                     },
                 ];
             } else if (data.text) {
+                // Log the interaction anonymously (only if cookie consent allows)
+                if (
+                    browser &&
+                    localStorage.getItem("cookie_consent") === "accepted"
+                ) {
+                    let sessionId = localStorage.getItem("lina_session_id");
+                    if (!sessionId) {
+                        sessionId = crypto.randomUUID();
+                        localStorage.setItem("lina_session_id", sessionId);
+                    }
+                    fetch("/api/v1/ai/log", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            sessionId,
+                            queryText: userMsg,
+                            responseText: data.text,
+                        }),
+                    }).catch((err) => console.error("Telemetry error:", err));
+                }
+
                 messages = [
                     ...messages,
                     {
@@ -1132,6 +1179,7 @@
     class="resonance-wrapper active"
     class:shifted={$isCookieBannerVisible}
     class:minimized={isMinimized}
+    use:intersect={handleIntersect}
 >
     <!-- The Deck -->
     <div
@@ -1213,11 +1261,11 @@
                             </svg>
                         </div>
                     {:else if $isChatOpen}
-                        <span class="status-tag">LINK ESTABLISHED</span>
-                    {:else}
                         <span class="status-tag"
-                            >Click to ask me anything about Lineum</span
+                            >{$t("lina.status_active")}</span
                         >
+                    {:else}
+                        <span class="status-tag">{$t("lina.status_idle")}</span>
                     {/if}
                 </div>
             {/if}
@@ -1256,8 +1304,8 @@
                                 e.stopPropagation();
                                 showConfirmDialog = true; // Trigger Modal
                             }}
-                            aria-label="Clear History"
-                            data-tooltip="Clear History"
+                            aria-label={$t("lina.clear_history")}
+                            data-tooltip={$t("lina.clear_history")}
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1328,10 +1376,10 @@
             <!-- Dialog Confirm Modal -->
             {#if showConfirmDialog}
                 <Dialog
-                    title="Clear Neural History?"
+                    title={$t("lina.clear_history_title")}
                     variant="danger"
-                    confirmLabel="Confirm Delete"
-                    cancelLabel="Cancel"
+                    confirmLabel={$t("lina.confirm_delete")}
+                    cancelLabel={$t("lina.cancel")}
                     oncancel={() => (showConfirmDialog = false)}
                     onconfirm={() => {
                         messages = [];
@@ -1340,7 +1388,7 @@
                         showConfirmDialog = false;
                     }}
                 >
-                    <p>This will erase all current context and memory.</p>
+                    <p>{$t("lina.clear_history_body")}</p>
                 </Dialog>
             {/if}
 
@@ -1348,11 +1396,9 @@
                 <div class="chat-viewport" bind:this={chatContainer}>
                     {#if messages.length === 0}
                         <div class="welcome" in:fade>
-                            <h3>Research Link Established</h3>
+                            <h3>{$t("lina.welcome_title")}</h3>
                             <p>
-                                I can scan the current whitepapers and
-                                simulation logic for you. How can I assist with
-                                your research today?
+                                {$t("lina.welcome_body")}
                             </p>
                         </div>
                     {/if}
@@ -1363,8 +1409,9 @@
                                 onclick={() => (showAllHistory = true)}
                                 class="load-more-btn"
                             >
-                                Show Previous Context ({messages.length -
-                                    RENDER_LIMIT} hidden)
+                                {$t("lina.show_previous")} ({messages.length -
+                                    RENDER_LIMIT}
+                                {$t("lina.hidden")})
                             </button>
                         </div>
                     {/if}
@@ -1443,7 +1490,7 @@
                                         <div class="retry-info">
                                             {#if retryCountdown > 0}
                                                 <span
-                                                    >Recharging: {retryCountdown}s</span
+                                                    >{$t("lina.recharging")}: {retryCountdown}s</span
                                                 >
                                             {:else}
                                                 <span>Ready</span>
@@ -1457,14 +1504,14 @@
                                                     disabled={retryCountdown ===
                                                         0}
                                                 />
-                                                Auto-Retry
+                                                {$t("lina.auto_retry")}
                                             </label>
                                             <button
                                                 class="retry-btn"
                                                 onclick={resendLast}
                                                 disabled={isTyping}
                                             >
-                                                Retry Now
+                                                {$t("lina.retry_now")}
                                             </button>
                                         </div>
                                     </div>
@@ -1544,8 +1591,8 @@
                     <input
                         type="text"
                         placeholder={retryCountdown > 0
-                            ? `Recharging... (${retryCountdown}s)`
-                            : "Ask Lina a question..."}
+                            ? `${$t("lina.recharging")}... (${retryCountdown}s)`
+                            : $t("lina.placeholder")}
                         bind:value={query}
                         oninput={handleInput}
                         onclick={(e) => e.stopPropagation()}
@@ -1574,6 +1621,9 @@
                         </svg>
                     </button>
                 </form>
+                <div class="privacy-disclaimer">
+                    {$t("lina.privacy")}
+                </div>
             </div>
         {/if}
         <!-- Floating Stop Button -->
@@ -1585,7 +1635,7 @@
                         <div class="bar"></div>
                         <div class="bar"></div>
                     </div>
-                    <span>Stop Audio</span>
+                    <span>{$t("lina.stop_audio")}</span>
                 </button>
             </div>
         {/if}
@@ -1593,6 +1643,14 @@
 </div>
 
 <style>
+    .privacy-disclaimer {
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+        margin-top: 0.5rem;
+        font-family: var(--font-mono);
+    }
+
     .tech-metrics {
         position: absolute;
         top: 0.8rem; /* Moved to top */

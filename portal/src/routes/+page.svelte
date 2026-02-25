@@ -3,20 +3,49 @@
     import Legend from "$lib/components/Legend.svelte";
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
-    import { content } from "$lib/content";
+    import { t } from "$lib/i18n";
     import { dev } from "$app/environment";
 
     const SIMULACRUM_URL = dev
         ? "http://localhost:5174"
         : "https://simulacrum.lineum.io";
+
+    $: legendItems = [
+        {
+            id: "psi",
+            color: "#00ffff",
+            ...(typeof $t("legend.items.psi") === "object"
+                ? $t("legend.items.psi")
+                : {}),
+        },
+        {
+            id: "kappa",
+            color: "#1a3a5a",
+            ...(typeof $t("legend.items.kappa") === "object"
+                ? $t("legend.items.kappa")
+                : {}),
+        },
+        {
+            id: "phi",
+            color: "#8a2be2",
+            ...(typeof $t("legend.items.phi") === "object"
+                ? $t("legend.items.phi")
+                : {}),
+        },
+        {
+            id: "warp",
+            color: "#ff00ff",
+            colorAlt: "#8a2be2",
+            ...(typeof $t("legend.items.warp") === "object"
+                ? $t("legend.items.warp")
+                : {}),
+        },
+    ];
 </script>
 
 <svelte:head>
-    <title>Lineum | Discrete Field Dynamics</title>
-    <meta
-        name="description"
-        content="Official portal for the Lineum project. Discover the emergence of stable localized excitations in discrete field models."
-    />
+    <title>{$t("meta.title")}</title>
+    <meta name="description" content={$t("meta.description")} />
 </svelte:head>
 
 <section class="hero">
@@ -26,34 +55,34 @@
 
     <div class="hero-content container">
         <div class="logo">
-            <span class="logo-symbol">{content.hero.symbol}</span>
+            <span class="logo-symbol">{$t("hero.symbol")}</span>
             <span class="logo-text">Lineum</span>
             <Legend
-                title={content.legend.title}
-                subtitle={content.legend.subtitle}
-                items={content.legend.items}
-                faq={content.legend.faq}
+                title={$t("legend.title")}
+                subtitle={$t("legend.subtitle")}
+                items={legendItems}
+                faq={$t("legend.faq")}
             />
         </div>
         <h1>
-            {content.hero.title_prefix}
+            {$t("hero.title_prefix")}
             <span class="text-gradient-multi animate-breathe">
-                {content.hero.title_highlight}
+                {$t("hero.title_highlight")}
             </span>
         </h1>
         <p>
-            {content.hero.subtitle}
+            {$t("hero.subtitle")}
         </p>
         <div class="cta-group">
-            <a href="/wiki" class="btn btn-primary">{content.hero.cta_wiki}</a>
+            <a href="/wiki" class="btn btn-primary">{$t("hero.cta_wiki")}</a>
             <a
                 href="/api-solutions"
                 class="btn btn-outline"
                 style="border-color: #38bdf8; color: #38bdf8;"
-                >API Solutions (Live Demo)</a
+                >{$t("nav.api")}</a
             >
-            <a href="#evidence" class="btn btn-outline"
-                >{content.hero.cta_audit}</a
+            <a href="#scientist" class="btn btn-outline"
+                >{$t("hero.cta_audit")}</a
             >
         </div>
     </div>
@@ -70,17 +99,17 @@
                 {
                     id: "hero-dynamic",
                     selector: ".hero-content h1",
-                    text: "✨ Lina: This simulation represents our 'Version 1' resonance. It's the most stable field we've achieved so far.",
+                    text: $t("sections.layman.p1"),
                 },
                 {
                     id: "layman-vibe",
                     selector: "#layman h2",
-                    text: "✨ Lina: Don't worry about the math! Think of Lineum like a musical instrument. We're just learning how to play the strings of reality.",
+                    text: $t("hero.subtitle"),
                 },
                 {
                     id: "scientist-data",
                     selector: "#scientist h2",
-                    text: "✨ Lina: For my fellow researchers—every data point here is cross-validated against the [VALIDATED] contract suite.",
+                    text: `✨ ${$t("sections.scientist.whitepaper.desc")}`,
                 },
             ]}
         />
@@ -89,10 +118,10 @@
             class="text-block"
             style="text-align: center; margin-bottom: 4rem;"
         >
-            <span class="label">{content.sections.layman.label}</span>
-            <h2>{content.sections.layman.title}</h2>
+            <span class="label">{$t("sections.layman.label")}</span>
+            <h2>{$t("sections.layman.title")}</h2>
             <p style="margin: 0 auto 2rem; max-width: 800px;">
-                {content.sections.layman.p1}
+                {$t("sections.layman.p1")}
             </p>
         </div>
     </div>
@@ -100,36 +129,36 @@
 
 <section id="scientist" class="info-section alternate">
     <div class="container">
-        <span class="label">{content.sections.scientist.label}</span>
-        <h2>{content.sections.scientist.title}</h2>
+        <span class="label">{$t("sections.scientist.label")}</span>
+        <h2>{$t("sections.scientist.title")}</h2>
         <div class="scientific-grid">
             <div class="card">
-                <h3>{content.sections.scientist.whitepaper.title}</h3>
-                <p>{content.sections.scientist.whitepaper.desc}</p>
-                <a href="/wiki">{content.sections.scientist.whitepaper.link}</a>
+                <h3>{$t("sections.scientist.whitepaper.title")}</h3>
+                <p>{$t("sections.scientist.whitepaper.desc")}</p>
+                <a href="/wiki">{$t("sections.scientist.whitepaper.link")}</a>
             </div>
             <div class="card">
-                <h3>{content.sections.scientist.zenodo.title}</h3>
-                <p>{content.sections.scientist.zenodo.desc}</p>
+                <h3>{$t("sections.scientist.zenodo.title")}</h3>
+                <p>{$t("sections.scientist.zenodo.desc")}</p>
                 <a
                     href="https://doi.org/10.5281/zenodo.16934359"
-                    target="_blank">{content.sections.scientist.zenodo.link}</a
+                    target="_blank">{$t("sections.scientist.zenodo.link")}</a
                 >
             </div>
             <div class="card">
-                <h3>{content.sections.scientist.simulacrum.title}</h3>
-                <p>{content.sections.scientist.simulacrum.desc}</p>
+                <h3>{$t("sections.scientist.simulacrum.title")}</h3>
+                <p>{$t("sections.scientist.simulacrum.desc")}</p>
                 <a href={SIMULACRUM_URL} target="simulacrum"
-                    >{content.sections.scientist.simulacrum.link}</a
+                    >{$t("sections.scientist.simulacrum.link")}</a
                 >
             </div>
             <div class="card">
-                <h3>{content.sections.scientist.referencePack.title}</h3>
-                <p>{content.sections.scientist.referencePack.desc}</p>
+                <h3>{$t("sections.scientist.referencePack.title")}</h3>
+                <p>{$t("sections.scientist.referencePack.desc")}</p>
                 <a
                     href="https://github.com/TomasTriska88/lineum-private/releases"
                     target="_blank"
-                    >{content.sections.scientist.referencePack.link}</a
+                    >{$t("sections.scientist.referencePack.link")}</a
                 >
             </div>
         </div>
@@ -139,24 +168,17 @@
 <footer class="container">
     <div class="footer-content">
         <div class="footer-info">
-            <p>{content.footer.copy}</p>
-            <div class="operator-info">
-                <p>
-                    Operator: {content.operator.name}, {content.operator
-                        .address}
-                </p>
-                <p>
-                    IČO: {content.operator.ico} | Tel: {content.operator.phone} |
-                    Email: {content.contactEmail}
-                </p>
-            </div>
+            <p>{$t("footer.copy")}</p>
+            <!-- <div class="operator-info">
+                Operator info removed temporarily until dynamic translations for config are ready
+            </div> -->
         </div>
         <div class="footer-links">
-            <a href="/support">{content.footer.support}</a>
-            <a href="/privacy">{content.footer.privacy}</a>
+            <a href="/support">{$t("footer.support")}</a>
+            <a href="/privacy">{$t("footer.privacy")}</a>
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
-                target="_blank">{content.footer.github}</a
+                target="_blank">{$t("footer.github")}</a
             >
         </div>
     </div>

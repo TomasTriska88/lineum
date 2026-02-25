@@ -124,3 +124,32 @@ def test_presets_websocket():
     with client.websocket_connect(f"/api/route/stream/{task_id}") as websocket:
         msg = websocket.receive_json()
         assert msg["step"] == 0
+
+# --- AI LTM ECOSYSTEM TESTS ---
+
+def test_ai_true_rng():
+    payload = {"resolution": 32, "pump_cycles": 10}
+    response = client.post("/api/v1/ai/true-rng", json=payload)
+    assert response.status_code == 200, f"RNG API Error: {response.text}"
+    data = response.json()
+    assert "entropy_hex" in data
+
+def test_ai_hash():
+    payload = {"payload": "LINEUM", "grid_size": 32, "iterations": 10}
+    response = client.post("/api/v1/ai/hash", json=payload)
+    assert response.status_code == 200, f"Hash API Error: {response.text}"
+    data = response.json()
+    assert "hash" in data
+
+def test_ai_lpl_compile():
+    size = 16
+    payload = {
+        "mask_flat": [1.0] * (size * size),
+        "size": size,
+        "inputs": [{"x": 2, "y": 2}],
+        "iterations": 10
+    }
+    response = client.post("/api/v1/ai/lpl-compile", json=payload)
+    assert response.status_code == 200, f"LPL API Error: {response.text}"
+    data = response.json()
+    assert "phi_flat" in data

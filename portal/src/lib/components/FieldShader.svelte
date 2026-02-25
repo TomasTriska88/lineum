@@ -1,10 +1,24 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { intersect } from "$lib/actions/intersect";
 
     let canvas: HTMLCanvasElement;
     let gl: WebGLRenderingContext | null;
     let program: WebGLProgram | null;
     let animationFrameId: number;
+    let isVisible = true;
+    let isRendering = false;
+    let renderer: ((time: number) => void) | null = null;
+
+    function handleIntersect(inView: boolean) {
+        isVisible = inView;
+        if (isVisible && !isRendering && gl && program && renderer) {
+            isRendering = true;
+            renderer(performance.now());
+        } else if (!isVisible) {
+            isRendering = false;
+        }
+    }
 
     const vs = `
         attribute vec2 position;
@@ -258,20 +272,35 @@
             "u_resolution",
         );
 
-        function render(time: number) {
-            if (!gl || !program) return;
+        // OPTIMIZATION: Move static WebGL state machine bindings OUTSIDE the render loop
+        // to prevent Main Thread memory/CPU starvation.
+        gl.useProgram(program);
+        gl.enableVertexAttribArray(positionLocation);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-            // Resize handle (Downsampling for GPU Performance)
-            // U velkých monitorů stáhneme fyzické rozlišení canvasu pro masivní úsporu výkonu
-            const scale = Math.min(1.0, 1280 / canvas.clientWidth);
-            const displayWidth = Math.max(
-                1,
-                Math.floor(canvas.clientWidth * scale),
-            );
-            const displayHeight = Math.max(
-                1,
-                Math.floor(canvas.clientHeight * scale),
-            );
+        function render(time: number) {
+            if (!gl || !program || !isVisible) {
+                isRendering = false;
+                return;
+            }
+
+            // Extreme Mobile Optimization: Max pixel ratio 1x on small screens, capped at 1280 on large screens.
+            const isMobile = window.innerWidth < 768;
+            const targetDpr = isMobile
+                ? 1
+                : Math.min(2, window.devicePixelRatio || 1);
+
+            // Further protect GPU by forcing a max width constraint.
+            let displayWidth = Math.floor(canvas.clientWidth * targetDpr);
+            let displayHeight = Math.floor(canvas.clientHeight * targetDpr);
+
+            if (displayWidth > 1280) {
+                const scale = 1280 / displayWidth;
+                displayWidth = 1280;
+                displayHeight = Math.floor(displayHeight * scale);
+            }
+
             if (
                 canvas.width !== displayWidth ||
                 canvas.height !== displayHeight
@@ -284,19 +313,20 @@
             gl.clearColor(0, 0, 0, 0);
             gl.clear(gl.COLOR_BUFFER_BIT);
 
-            gl.useProgram(program);
-            gl.enableVertexAttribArray(positionLocation);
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
             gl.uniform1f(timeLocation, time * 0.001);
             gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-            animationFrameId = requestAnimationFrame(render);
+            if (isVisible) {
+                animationFrameId = requestAnimationFrame(render);
+            } else {
+                isRendering = false;
+            }
         }
 
+        renderer = render;
+        isRendering = true;
         animationFrameId = requestAnimationFrame(render);
 
         return () => {
@@ -315,7 +345,8 @@
     });
 </script>
 
-<canvas bind:this={canvas} class="shader-canvas"></canvas>
+<canvas bind:this={canvas} class="shader-canvas" use:intersect={handleIntersect}
+></canvas>
 
 <style>
     .shader-canvas {

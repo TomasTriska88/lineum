@@ -61,3 +61,8 @@ The portal seamlessly integrates three distinct worlds, and the copy must reflec
 1. **Homepage / Main Portal:** Targeted at **laymen**. The text must be simple, clear, and self-explanatory. Focus on the core concepts (like "fields that breathe") without overwhelming jargon or heavy B2B marketing.
 2. **API / Routing Services (Pro):** Targeted at **clients/business**. This is where premium B2B marketing language is used to attract customers and explain the value proposition (ROI, milliseconds, logistics).
 3. **Whitepapers / Science / Wiki:** Targeted at the **scientific community**. The language must be rigorous, cautious, precise, and scientifically accurate.
+
+## 13. Diagnostic & Temporary Logs
+- **No Root Clutter:** NEVER create temporary files, error logs (`error.log`), `check.txt`, or any diagnostic output in the root directory of the repository (`/`).
+- **Use Scratch Directory:** ALL temporary outputs from agent debugging, script tests, or log dumping MUST be written solely to the `.scratch/` directory. If `.scratch/` does not exist, create it. It is `.gitignore`d to prevent polluting the codebase.
+

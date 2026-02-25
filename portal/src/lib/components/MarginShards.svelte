@@ -1,6 +1,7 @@
 <script lang="ts">
     import { fade, scale } from "svelte/transition";
     import { onMount } from "svelte";
+    import { t } from "$lib/i18n";
 
     export let insights: { id: string; selector: string; text: string }[] = [];
 
@@ -46,14 +47,16 @@
                 type="button"
                 aria-label="Toggle explorer insight"
             >
-                <div class="shard-crystal"></div>
+                <div class="shard-sparkle">✨</div>
 
                 {#if activeInsight === insight.id}
                     <div
                         class="insight-popover {positions[insight.id].side}"
                         in:scale={{ duration: 300, start: 0.8 }}
                     >
-                        <div class="popover-header">EXPLORER INSIGHT</div>
+                        <div class="popover-header">
+                            {$t("lina.insight_header")}
+                        </div>
                         <div class="popover-content">{insight.text}</div>
                     </div>
                 {/if}
@@ -94,40 +97,30 @@
         right: 2rem;
     }
 
-    .shard-crystal {
-        width: 12px;
-        height: 20px;
-        background: rgba(0, 112, 243, 0.4);
-        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        animation:
-            rotate 4s infinite linear,
-            pulse 2s infinite ease-in-out;
+    .shard-sparkle {
+        font-size: 20px;
+        line-height: 1;
+        color: #0070f3;
+        filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.5));
+        animation: pulse-sparkle 2s infinite ease-in-out;
+        user-select: none;
     }
 
-    @keyframes rotate {
-        0% {
-            transform: rotateY(0deg);
-        }
-        100% {
-            transform: rotateY(360deg);
-        }
-    }
-
-    @keyframes pulse {
+    @keyframes pulse-sparkle {
         0%,
         100% {
-            filter: brightness(1) drop-shadow(0 0 5px rgba(0, 112, 243, 0.5));
+            filter: drop-shadow(0 0 5px rgba(0, 112, 243, 0.5)) brightness(1);
+            transform: scale(1);
         }
         50% {
-            filter: brightness(1.5) drop-shadow(0 0 15px rgba(0, 112, 243, 0.8));
+            filter: drop-shadow(0 0 15px rgba(0, 112, 243, 0.8)) brightness(1.5);
+            transform: scale(1.2);
         }
     }
 
     .insight-popover {
         position: absolute;
-        width: 250px;
+        width: 280px;
         background: rgba(15, 15, 15, 0.95);
         backdrop-filter: blur(24px);
         border: 1px solid rgba(255, 255, 255, 0.1);

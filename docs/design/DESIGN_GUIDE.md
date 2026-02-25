@@ -49,6 +49,16 @@ All primary UI components (cards, modules) must utilize transparency and blur ef
 
 ---
 
+## 🧪 Visual Aesthetics: The Lab (Simulacrum)
+
+While the Portal focuses on accessible glassmorphism, the **Lab** (Simulacrum) is the practitioner's workspace. Its visual language shifts to **Sci-Fi Tactical / Cyberpunk**:
+1. **Full-Screen Immersion**: Complex tools (like the LPL Compiler) should optionally take over the full screen, hiding peripheral navigation to maximize focus on the workspace.
+2. **Tactical UI**: Use monospaced fonts for data, stark neon accents against pure black backgrounds, and visible millimeter grid overlays. The layout should resemble an advanced CAD terminal or a scientific monitoring station.
+3. **Physical Materiality**: Elements like "Lasers" or "Crystals" should have distinct, glowing colors (e.g., bright orange for inputs, cyan/neon-blue for crystal structure).
+4. **Data Over Chrome**: UI chrome (borders, rounded corners) should be minimized in favor of raw data visualization and wireframe/grid aesthetics.
+
+---
+
 ## AI-First Orientation
 Lineum Core isn't just a website with an AI chatbot; it is an AI-augmented research portal. All future features must be designed with the **Lineum Explorer** in mind as a primary UI actor.
 

@@ -1,9 +1,10 @@
 <script lang="ts">
     import { content } from "$lib/content";
+    import { t } from "$lib/i18n";
 </script>
 
 <svelte:head>
-    <title>Support — Lineum</title>
+    <title>{$t("nav.support")} | {$t("common.brand")}</title>
 </svelte:head>
 
 <div class="support-page">

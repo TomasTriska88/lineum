@@ -655,38 +655,35 @@
     const SNIPPETS = {
         python: `import lineum
 
-# 1. Initialize the Continuous Field
+# 1. Initialize the AI LTM Field
 solver = lineum.Client(api_key="lnm_enterprise_***")
 
-# 2. Upload the environment topology
-solver.upload_environment(
-    grid_matrix=traffic_grid, 
-    resolution="10m"
+# 2. True RNG: Harvest Edge-of-Chaos float variance
+random_entropy = solver.generate_true_rng(
+    resolution=64, 
+    pump_cycles=1500
 )
 
-# 3. Calculate 10,000 routes simultaneously (O(1) scaling)
-stream = solver.stream_swarm_routing(
-    agents=fleet_positions,
-    target=depot_coordinate,
-    pressure=0.85
+# 3. Cryptographic Hash: One-way topology fracture
+secure_hash = solver.hash(
+    payload="LINEUM_ENTERPRISE",
+    avalanche_threshold=0.01
 )
 
-for step in stream:
-    update_fleet_navigation(step.navigation_vectors)
+# 4. LPL Compile: Calculate logic via geometric CAD masks
+logic_result = solver.compile_lpl(
+    mask="reservoir_cad.png",
+    inputs=[1.0, 1.0] # Simulating AND gate
+)
 `,
-        curl: `curl -X POST https://api.lineum.io/v1/compute/swarm \\
+        curl: `curl -X POST https://api.lineum.io/v1/ai/hash \\
   -H "Authorization: Bearer lnm_enterprise_***" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "environment": "grid_matrix_traffic.json",
-    "agents": [
-      {"id": "A1", "x": 14.5, "y": 48.2},
-      {"id": "A2", "x": 14.8, "y": 48.5}
-    ],
-    "target": {"x": 15.0, "y": 49.0},
+    "payload": "LINEUM_ENTERPRISE",
     "parameters": {
-      "pressure": 0.85,
-      "resolution": "10m"
+      "grid_size": 64,
+      "iterations": 1500
     }
   }'`,
     };
@@ -740,17 +737,17 @@ for step in stream:
                 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-8 leading-[1.05]"
                 style="font-family: var(--font-sans);"
             >
-                Continuous routing API <br class="hidden sm:block" />
-                for production workloads. <br class="hidden lg:block" />
+                Fluid processing API <br class="hidden sm:block" />
+                for neuromorphic AI. <br class="hidden lg:block" />
                 <span class="text-gradient-multi">
-                    By orders of magnitude faster.
+                    True RNG. Hashing. LPL Logic.
                 </span>
             </h1>
 
             <p class="text-slate-400 text-xl max-w-2xl font-light mb-12">
-                Integrate physical swarm intelligence into your B2B stack.
-                Outperform traditional discrete graph searches without managing
-                infrastructure.
+                Integrate the math of physical wave interference into your B2B
+                stack. Harness Lineum's Edge-of-Chaos dynamics to replace
+                discrete computation with spatial calculation.
             </p>
 
             <div class="cta-group">
@@ -780,13 +777,14 @@ for step in stream:
         >
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-                    The Physics of Scale
+                    Neuromorphic AI Ecosystem
                 </h2>
                 <p class="text-slate-400 text-xl font-light max-w-3xl mx-auto">
-                    Traditional pathfinding collapses under concurrency. We
-                    replaced discrete graphs with fluid mechanics to calculate <strong
+                    Lineum introduces a revolutionary non-von-Neumann
+                    architecture. By calculating data physically via fluid wave
+                    interference, we unlock <strong
                         class="text-white font-semibold"
-                        >10,000 agents as fast as 1</strong
+                        >True Randomness, Hashing, and LPL Compilers</strong
                     >.
                 </p>
             </div>
@@ -805,16 +803,17 @@ for step in stream:
                     <div
                         class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-violet-500/50 drop-shadow-[0_0_15px_rgba(139,92,246,0.3)] select-none"
                     >
-                        O(1)
+                        10⁻¹⁵
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        Algorithmic Scaling
+                        True RNG Harvest
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        CPU cost remains completely flat whether you route 10 or
-                        10,000 agents. No bottlenecking.
+                        Generates mathematically perfect randomness by
+                        amplifying CPU hardware thermal noise at the Edge of
+                        Chaos.
                     </p>
                 </div>
 
@@ -831,16 +830,17 @@ for step in stream:
                     <div
                         class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-emerald-500/50 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] select-none"
                     >
-                        &lt;1<span class="text-4xl">ms</span>
+                        Hash
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        Response Latency
+                        Avalanche Effect
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        Instantaneous terrain tensor evaluation. Perfect for
-                        demanding WebSockets streaming.
+                        One-way cryptographic spatial hashing. A 1-byte payload
+                        change rigorously triggers massive topological
+                        macro-fractures.
                     </p>
                 </div>
 
@@ -857,16 +857,17 @@ for step in stream:
                     <div
                         class="text-7xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-sky-500/50 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)] select-none"
                     >
-                        0
+                        LPL
                     </div>
                     <h4 class="text-xl font-bold text-white mb-3">
-                        DevOps Required
+                        Visual Logic Gates
                     </h4>
                     <p
                         class="text-slate-400 text-sm leading-relaxed max-w-[200px]"
                     >
-                        Delivered as a scalable REST API from isolated GPU
-                        clusters. Do not maintain solvers.
+                        Upload a structural CAD mask. The fluid compiles
+                        Universal Logic strictly through physical, training-free
+                        wave reflections.
                     </p>
                 </div>
             </div>
@@ -892,13 +893,13 @@ for step in stream:
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    Urban Traffic &<br />Fleet Logistics
+                    Lineum Polygon<br />Language (LPL)
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    Traditional discrete routing (A*) collapses when calculating
-                    dynamic traffic for thousands of agents simultaneously. The
-                    Lineum Field processes entire cities in a single tensor
-                    operation.
+                    Forget training neural networks for millions of hours. With
+                    LPL, you simply compile a visual CAD mask. The fluid physics
+                    engine naturally calculates Universal Logic Gates (AND, OR,
+                    XOR) just through wave interference.
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -921,11 +922,10 @@ for step in stream:
                         </div>
                         <div>
                             <strong class="text-white block"
-                                >Real-time dynamic rerouting</strong
+                                >Zero-Training Intelligence</strong
                             >
                             <span class="text-slate-500 text-sm"
-                                >Every agent reacts to global congestion
-                                instantly.</span
+                                >Compute logic visually via physical geometry.</span
                             >
                         </div>
                     </li>
@@ -948,10 +948,11 @@ for step in stream:
                         </div>
                         <div>
                             <strong class="text-white block"
-                                >O(1) algorithmic scaling</strong
+                                >Geometric Telemetry</strong
                             >
                             <span class="text-slate-500 text-sm"
-                                >Calculate 10,000 agents as fast as 1 agent.</span
+                                >Receive raw mathematical standing wave
+                                interference as JSON output.</span
                             >
                         </div>
                     </li>
@@ -1225,13 +1226,13 @@ for step in stream:
                 <h2
                     class="text-3xl md:text-5xl font-bold text-white leading-tight"
                 >
-                    Crowd Panic &<br />Evacuation
+                    True RNG &<br />Cryptographic Hashing
                 </h2>
                 <p class="text-slate-400 text-lg leading-relaxed">
-                    Model human behavior under extreme pressure. Lineum
-                    inherently simulates bottlenecking, trampling zones, and
-                    spontaneous secondary path formation without complex
-                    multi-agent rules.
+                    By running the fluid equation at the mathematical "Edge of
+                    Chaos", Lineum amplifies microscopic CPU thermal float
+                    variance into massive waves. This generates mathematically
+                    perfect True Random Numbers and One-Way Avalanche Hashing.
                 </p>
 
                 <ul class="flex flex-col gap-4 mt-4">
@@ -1254,11 +1255,11 @@ for step in stream:
                         </div>
                         <div>
                             <strong class="text-white block"
-                                >Structural Stress Testing</strong
+                                >Hardware Entropy Harvest</strong
                             >
                             <span class="text-slate-500 text-sm"
-                                >Identify architecture failure points before
-                                they are built.</span
+                                >Does not rely on pseudo-RNG formulas. Harvests
+                                physical CPU timing errors.</span
                             >
                         </div>
                     </li>
@@ -1281,11 +1282,11 @@ for step in stream:
                         </div>
                         <div>
                             <strong class="text-white block"
-                                >API Data Export</strong
+                                >Extreme Avalanche Effect</strong
                             >
                             <span class="text-slate-500 text-sm"
-                                >Stream vector fields directly into Unreal
-                                Engine or Unity.</span
+                                >A 1-byte payload difference causes a rigorous
+                                topological macro-fracture.</span
                             >
                         </div>
                     </li>

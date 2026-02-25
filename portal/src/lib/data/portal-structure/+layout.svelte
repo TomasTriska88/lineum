@@ -5,9 +5,10 @@
     import { hudActive } from "$lib/stores/hudStore";
     import { page } from "$app/stores"; // For closing menu on nav
     import { dev } from "$app/environment";
+    import { t, locale } from "$lib/i18n";
 
     const SIMULACRUM_URL = dev
-        ? "http://localhost:5174"
+        ? "http://127.0.0.1:5174"
         : "https://simulacrum.lineum.io";
 
     let menuOpen = false;
@@ -19,6 +20,18 @@
     // Close menu when navigating
     $: if ($page.url.pathname) {
         menuOpen = false;
+    }
+
+    // Language handling
+    const langs = [
+        { code: "en", label: "English" },
+        { code: "cs", label: "Čeština" },
+        { code: "de", label: "Deutsch" },
+        { code: "ja", label: "日本語" },
+    ];
+
+    function changeLang(code) {
+        locale.set(code);
     }
 </script>
 
@@ -39,14 +52,27 @@
         </button>
 
         <div class="nav-links" class:mobile-open={menuOpen}>
-            <a href="/wiki">Wiki</a>
-            <a href="/wiki#faq">FAQ</a>
-            <a href={SIMULACRUM_URL} target="simulacrum">Simulacrum</a>
+            <a href="/">{$t("nav.portal")}</a>
+            <a href={SIMULACRUM_URL} target="simulacrum">{$t("nav.lab")}</a>
             <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
-                >API Solutions</a
+                >{$t("nav.api")}</a
             >
-            <a href="/#scientist">For Scientists</a>
-            <a href="/support" class="nav-cta">Support</a>
+            <a href="/#scientist">{$t("sections.scientist.label")}</a>
+            <a href="/wiki#faq">FAQ</a>
+            <a href="/support" class="nav-cta">{$t("nav.support")}</a>
+
+            <div class="lang-switcher">
+                {#each langs as lang}
+                    <button
+                        class="lang-btn"
+                        class:active={$locale === lang.code}
+                        on:click={() => changeLang(lang.code)}
+                        title={lang.label}
+                    >
+                        {lang.code.toUpperCase()}
+                    </button>
+                {/each}
+            </div>
         </div>
     </div>
 </nav>
@@ -107,6 +133,39 @@
         color: white !important;
         padding: 0.5rem 1rem;
         border-radius: 4px;
+    }
+
+    .lang-switcher {
+        display: flex;
+        gap: 0.2rem;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 0.3rem 0.4rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        align-items: center;
+    }
+
+    .lang-btn {
+        background: transparent;
+        border: none;
+        color: #666;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0.3rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .lang-btn:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lang-btn.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
     }
 
     .mobile-toggle {

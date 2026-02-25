@@ -6,8 +6,8 @@ import { getOrUpdateCache } from "./gemini_cache";
 
 // Resilient API key access
 // Persona Imports (Live updates via Vite)
-import linaPersona from '../../../LINA_PERSONA.md?raw';
-import designGuide from '../../../DESIGN_GUIDE.md?raw';
+import linaPersona from '$lib/data/core/LINA_PERSONA.md?raw';
+import designGuide from '$lib/data/core/DESIGN_GUIDE.md?raw';
 
 // Token Hygiene: Remove comments and excessive whitespace
 const strip = (text: string) => text.replace(/<!--[\s\S]*?-->/g, '').replace(/\n{3,}/g, '\n\n').trim();

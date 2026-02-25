@@ -84,7 +84,8 @@ const coreFilesToSync = [
     { source: 'tools/whitepaper_contract.py', target: 'src/lib/data/core/whitepaper_contract.py' },
     // Persona & Design (Active Prompt Source)
     { source: 'portal/LINA_PERSONA.md', target: 'src/lib/data/core/LINA_PERSONA.md' },
-    { source: 'portal/DESIGN_GUIDE.md', target: 'src/lib/data/core/DESIGN_GUIDE.md' }
+    { source: 'portal/COMMERCIAL_STRATEGY.md', target: 'src/lib/data/core/COMMERCIAL_STRATEGY.md' },
+    { source: 'portal/ARCHITECTURE.md', target: 'src/lib/data/core/ARCHITECTURE.md' }
 ];
 
 const projectFilesToSync = [

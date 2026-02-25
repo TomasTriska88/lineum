@@ -76,7 +76,9 @@ def main():
     plt.axis('off')
     
     plt.tight_layout()
-    output_path = "output_wp/lpl_compile_result.png"
+    import os
+    os.makedirs("scripts/output", exist_ok=True)
+    output_path = "scripts/output/lpl_compile_result.png"
     plt.savefig(output_path)
     print(f"Rendered to {output_path}")
 

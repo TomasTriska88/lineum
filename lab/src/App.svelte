@@ -6,6 +6,7 @@
     import HypothesisTester from "./lib/components/HypothesisTester.svelte";
     import ExtremeSpikes from "./lib/components/ExtremeSpikes.svelte";
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
+    import LplCompiler from "./lib/components/LplCompiler.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -127,8 +128,12 @@
         </div>
     {/if}
 
-    <div class="canvas-container" bind:this={container}></div>
-    <div class="overlay">
+    <div
+        class="canvas-container"
+        class:dimmed={activeTab === "lpl"}
+        bind:this={container}
+    ></div>
+    <div class="overlay" class:lpl-mode={activeTab === "lpl"}>
         <div class="header-section">
             <div class="header-top">
                 <h1>{$t("simulakrum")}</h1>
@@ -214,6 +219,13 @@
                 >
                     Phenomena
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "lpl"}
+                    on:click={() => (activeTab = "lpl")}
+                >
+                    {$t("tab_lpl")}
+                </button>
             </div>
 
             <div class="tab-content">
@@ -298,35 +310,35 @@
                     />
                 {:else if activeTab === "spikes"}
                     <ExtremeSpikes {engine} {frame} />
+                {:else if activeTab === "lpl"}
+                    <LplCompiler />
                 {/if}
             </div>
         </div>
 
-        <div class="side-panel side-panel-right">
-            <div class="guide-panel">
-                <h3>{$t("guide_title")}</h3>
-                <div class="guide-item">
-                    <strong>{$t("guide_watch_title")}</strong>
-                    {$t("guide_watch_desc")}
-                </div>
-                <div class="guide-item">
-                    <strong>{$t("guide_linons_title")}</strong>
-                    {$t("guide_linons_desc")}
-                </div>
-                <div class="guide-item">
-                    <strong>{$t("guide_topo_title")}</strong>
-                    {$t("guide_topo_desc")}
-                </div>
-                <div class="guide-item">
-                    <strong>{$t("guide_zeta_title")}</strong>
-                    {$t("guide_zeta_desc")}
-                </div>
-                <div class="guide-item">
-                    <strong>{$t("guide_grid_title")}</strong>
-                    {$t("guide_grid_desc")}
+        {#if activeTab !== "lpl"}
+            <div class="side-panel side-panel-right">
+                <div class="guide-panel">
+                    <h3>{$t("guide_title")}</h3>
+                    <div class="guide-item">
+                        <strong>{$t("guide_watch_title")}</strong>
+                        {$t("guide_watch_desc")}
+                    </div>
+                    <div class="guide-item">
+                        <strong>{$t("guide_linons_title")}</strong>
+                        {$t("guide_linons_desc")}
+                    </div>
+                    <div class="guide-item">
+                        <strong>{$t("guide_topo_title")}</strong>
+                        {$t("guide_topo_desc")}
+                    </div>
+                    <div class="guide-item">
+                        <strong>{$t("guide_zeta_title")}</strong>
+                        {$t("guide_zeta_desc")}
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
 
         <div class="sandbox-disclaimer">
             <div class="disclaimer-header">
@@ -390,6 +402,14 @@
         height: 100%;
         z-index: 1;
         pointer-events: none;
+        transition:
+            opacity 0.5s ease,
+            filter 0.5s ease;
+    }
+
+    .canvas-container.dimmed {
+        opacity: 0.15;
+        filter: blur(8px) grayscale(100%);
     }
 
     .overlay {
@@ -411,6 +431,21 @@
         gap: 20px;
         box-sizing: border-box;
         overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .overlay.lpl-mode {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "alert"
+            "left"
+            "footer";
+        background: rgba(0, 5, 15, 0.4);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(0, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 8px;
     }
 
     .header-section {

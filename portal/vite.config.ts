@@ -26,7 +26,8 @@ const autoSyncPlugin = () => ({
 			path.resolve(__dirname, '../whitepapers'),
 			path.resolve(__dirname, '../whitepapers-legacy'),
 			path.resolve(__dirname, 'LINA_PERSONA.md'),
-			path.resolve(__dirname, 'DESIGN_GUIDE.md')
+			path.resolve(__dirname, 'COMMERCIAL_STRATEGY.md'),
+			path.resolve(__dirname, 'ARCHITECTURE.md')
 		]);
 
 		watcher.on('change', (file: string) => {
@@ -35,7 +36,8 @@ const autoSyncPlugin = () => ({
 				file.includes('docs') ||
 				file.includes('hypotheses') ||
 				file.includes('LINA_PERSONA.md') ||
-				file.includes('DESIGN_GUIDE.md')
+				file.includes('COMMERCIAL_STRATEGY.md') ||
+				file.includes('ARCHITECTURE.md')
 			) {
 				executeSync();
 			}

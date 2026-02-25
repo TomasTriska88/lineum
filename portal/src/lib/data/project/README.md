@@ -80,6 +80,21 @@ This script runs tests, builds the site, checks for i18n issues, and only then m
 
 ---
 
+## 🛠 Troubleshooting
+### Localhost vs 127.0.0.1 (Windows IPv6 Bug)
+SvelteKit (Vite) development servers on Windows frequently bind to the IPv6 loopback (`::1`) while browsers attempt to resolve `localhost` via IPv4. This results in standard `npm run dev` endpoints returning a **404 error** or `ERR_CONNECTION_REFUSED`.
+To bypass this, always run the dev servers bound explicitly to IPv4 via `--host` and navigate to the numeric IP:
+```bash
+# Portal
+npx vite dev --host 127.0.0.1 --port 5173
+
+# Lab
+npx vite dev --host 127.0.0.1 --port 5174
+```
+**Do not use `localhost`** in the browser in these cases, always use `http://127.0.0.1:5173` explicitly.
+
+---
+
 ## 📜 License
 *   **Code**: MIT License.
 *   **Whitepapers**: CC BY 4.0.

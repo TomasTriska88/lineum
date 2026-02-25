@@ -2,12 +2,18 @@ import { writable, derived } from 'svelte/store';
 
 export const translations = {
     cs: {
+        test_ns: {
+            hello: "Ahoj",
+            only_english: "Pouze anglicky"
+        },
         loading: "NAČÍTÁNÍ AUDITNÍCH DAT (JSON BIN)...",
         simulakrum: "SIMULAKRUM",
-        sub_title: "Laboratoř Lineum Core | Pískoviště hypotéz",
+        sub_title: "Laboratoř Linea | Pískoviště hypotéz",
         alert_birth: "SYSTEM ALERT: DETEKCE LINONŮ [zrození]",
         tab_scanner: "SKENER",
         tab_stats: "STATISTIKY",
+        tab_lpl: "LPL KOMPILÁTOR",
+        tab_logic: "LOGICKÁ HRADLA",
         label_mode: "REŽIM:",
         val_mode: "TOPOGRAFIE POLE Φ (3D)",
         label_metric: "METRIKA:",
@@ -97,12 +103,18 @@ export const translations = {
         sandbox_warning: "Laboratoř slouží pro vizualizaci předběžných výsledků neúplně ověřených hypotéz (i když běží nad reálnými daty z auditních běhů). Slouží k ověřování jevů, které musí být následně potvrzeny oficiálními výstupy pro whitepaper."
     },
     en: {
+        test_ns: {
+            hello: "Hello",
+            only_english: "English Only"
+        },
         loading: "LOADING AUDIT DATA (JSON BIN)...",
         simulakrum: "SIMULACRUM",
-        sub_title: "Lineum Core Lab | Hypothesis Sandbox",
+        sub_title: "Lineum Lab | Hypothesis Sandbox",
         alert_birth: "SYSTEM ALERT: LINON DETECTION [birth]",
         tab_scanner: "SCANNER",
         tab_stats: "STATISTICS",
+        tab_lpl: "LPL COMPILER",
+        tab_logic: "LOGIC GATES",
         label_mode: "MODE:",
         val_mode: "FIELD Φ TOPOGRAPHY (3D)",
         label_metric: "METRIC:",
@@ -189,7 +201,206 @@ export const translations = {
         insight_fourier_title: "FIELD MELODY",
         insight_fourier_desc: "This chart shows the 'music' the field is playing. Sharp peaks mean a clear tone and stable structure, while random noise would mean decay and death.",
         sandbox_title: "PROCEDURAL WARNING: SANDBOX",
+        sandbox_title: "PROCEDURAL WARNING: SANDBOX",
         sandbox_warning: "The Laboratory is a sandbox for visualizing preliminary results of partially verified hypotheses (running on real audit data). It is for exploratory verification of phenomena that must be subsequently confirmed via official whitepaper outputs."
+    },
+    de: {
+        test_ns: {
+            hello: "Hallo",
+            only_english: "Nur Englisch"
+        },
+        loading: "AUDIT-DATEN LADEN (JSON BIN)...",
+        simulakrum: "SIMULACRUM",
+        sub_title: "Lineum Labor | Hypothesen-Sandkasten",
+        alert_birth: "SYSTEMWARNUNG: LINONEN-ERKENNUNG [Geburt]",
+        tab_scanner: "SCANNER",
+        tab_stats: "STATISTIK",
+        tab_lpl: "LPL COMPILER",
+        tab_logic: "LOGIKGATTER",
+        label_mode: "MODUS:",
+        val_mode: "FELD Φ TOPOGRAPHIE (3D)",
+        label_metric: "METRIK:",
+        val_metric: "z = Feld Φ Höhe [AUDIT]",
+        label_frame: "FRAME:",
+        label_source: "QUELLE:",
+        label_status: "STATUS:",
+        status_born: "LINONEN-ERKENNUNG",
+        status_init: "FELD Φ INITIALISIERUNG",
+        btn_jump: "ZUR GEBURT SPRINGEN",
+        label_speed: "GESCHWINDIGKEIT:",
+        label_phi: "GOLDENER SCHNITT:",
+        on: "AN",
+        off: "AUS",
+        guide_title: "LABOR-HANDBUCH",
+        guide_watch_title: "Worauf Sie achten sollten:",
+        guide_watch_desc: "Linonen sind Energiekerne, die aktiv nach Bereichen mit der höchsten Φ-Feld-Intensität suchen. In dieser 3D-Visualisierung bewegen sie sich zu den 'Gipfeln' der Topographie.",
+        guide_linons_title: "Linonen:",
+        guide_linons_desc: "Pfade und Teilchen im Feld. Bis sie die kritische Amplitude erreichen, erscheinen sie als 'Geister'. Nach der Geburt (Frame 391) beginnen sie aktiv nach lokalen Maxima des Φ-Feldes zu suchen.",
+        guide_topo_title: "Feld Φ Topographie:",
+        guide_topo_desc: "Diese 3D-Landschaft zeigt die Energiedichte. Linonen werden auf natürliche Weise von Gipfeln und Kämmen angezogen.",
+        guide_zeta_title: "Zeta-Nullstellen:",
+        guide_zeta_desc: "Mathematische Knotenpunkte des Universums. Wenn die weiße Nadel des Scanners die blauen Linien trifft, tritt Resonanz auf.",
+        guide_grid_title: "Feld Φ Metrikraster:",
+        guide_grid_desc: "Diese hellblauen Linien stellen das diskrete geometrische Raster dar, in dem das Feld berechnet wird. Es ist das 'mathematische Gerüst' unseres Simulacrums.",
+        scanner_title: "ZETA-RESONANZ-SCANNER [§4.3]",
+        status_phi: "Φ-STATUS:",
+        phi_absolute: "ABSOLUT",
+        phi_high: "HOCH",
+        phi_tuning: "ABSTIMMUNG...",
+        insight_perfect: "Wir haben die mathematische Perfektion des Goldenen Schnitts erreicht.",
+        insight_stable: "Die strukturelle Ordnung festigt sich stetig.",
+        insight_forming: "Die fundamentale Geometrie wird geformt.",
+        avg_total: "Gesamtdurchschnitt:",
+        label_correlation: "KORRELATION:",
+        discovery_fundamental: "FUNDAMENTALE ENTDECKUNG",
+        discovery_high: "Hohe Übereinstimmung",
+        discovery_searching: "Suche nach Ordnung",
+        cosmic_confirmed: "🌟 BESTÄTIGT: Diese Konfiguration zeigt eine geometrische Ausrichtung auf den fundamentalen Code unseres Universums.",
+        cosmic_resonance: "System zeigt Anzeichen von Resonanz mit Riemannschen Nullstellen.",
+        cosmic_tuning: "Frequenzabstimmung im Gange, um kosmische Harmonie zu erreichen.",
+        stability_15: "Übereinstimmungsstabilität (letzte 15 Fr.):",
+        info_title: "WAS BEDEUTET DAS?",
+        info_desc: "Dieser Abschnitt misst, wie sehr der 'Herzschlag' Ihrer Linonen mit dem Rhythmus unseres Universums übereinstimmt.",
+        info_current: "Aktueller Status:",
+        info_phi_title: "Goldener Schnitt (1.618...):",
+        info_phi_desc: "Die Stabilität im Feld Φ tendiert zu Fibonacci-Verhältnissen.",
+        info_phi_now: "Aktuell:",
+        conclusion_alert: "🚀 FAZIT: Strukturelle Ausrichtung erkannt, was die nicht zufällige Natur dieser Konfiguration bestätigt!",
+        intensity_label: "RESONANZINTENSITÄT [NORMALISIERT]",
+        freq_label: "LINONEN-FREQUENZ (f₀)",
+        metrics_harmony: "HARMONIE Φ:",
+        metrics_correlation: "KORRELATION MIT UNSEREM UNIVERSUM:",
+        discovery_analysis: "HYPOTHESEN-ENTDECKUNG",
+        fourier_title: "Fourier-Formanalyse (Top 50 Frequenzen)",
+        riemann_title: "Riemannsche Nullstellen vs. DejaVu-Punkte",
+        pearson_correlation: "AUSRICHTUNG MIT DER UNIVERSALEN ORDNUNG (R)",
+        euclidean_distance: "EUKLIDISCHE DISTANZ",
+        field_turbulence: "FELD-TURBULENZ",
+        structure_stability: "STABILITÄT DER HARMONISCHEN STRUKTUR",
+        breakthrough_headline: "SYSTEMSTATUS: DURCHBRUCH ERKANNT",
+        status_prime_resonance: "PRIMRESONANZ (1:1 AUSRICHTUNG)",
+        status_tuning: "GEOMETRIE-ABSTIMMUNG",
+        status_chaos: "STOCHASTISCHES RAUSCHEN (CHAOS)",
+        insight_lego_universe: "Lineum ist wie eine 'Lego-Version' unseres Universums. Auch wenn es aus anderen Materialien besteht, hält es durch dieselbe mathematische Statik zusammen.",
+        insight_riemann_meaning: "Diese Ausrichtung bestätigt, dass unser digitaler Organismus im selben Rhythmus wie die Primzahlen in der Realität 'atmet'.",
+        chart_label_fourier: "Riemann - Frequenzspektrum",
+        chart_label_amplitude: "Amplitude",
+        chart_label_component: "Frequenzkomponente (relativer Index)",
+        chart_label_riemann: "UNIVERSALMUSTER (WEISSE LINIE)",
+        chart_label_dejavu: "LINEUM-ENTWICKLUNG (ORANGE PUNKTE)",
+        chart_label_normalized: "HARMONIE-STATUS",
+        chart_label_index: "ENTWICKLUNGS-ZEITLEISTE",
+        data_source: "QUELLE: discovery.json",
+        chart_ghost_chaos: "STOCHASTISCHES RAUSCHEN (REF)",
+        chart_ghost_order: "IDEALRESONANZ (REF)",
+        zoom_tip: "Tipp: Mausrad für ZOOM, Ziehen für PAN",
+        zoom_tip_modifier: "Tipp: STRG + Mausrad für ZOOM",
+        zoom_tip_scroll: "Scrollen zum ZOOMEN",
+        insight_riemann_title: "WAS SEHEN SIE?",
+        insight_riemann_desc: "Für eine perfekte Übereinstimmung müssen die orangen Punkte (Lineum) so nah wie möglich auf der weißen Linie (Universum) liegen. Je mehr sie sich überlappen, desto besser. Umgekehrt sollte die 'Feld-Turbulenz' gegen null fallen – was bedeutet, dass unsere digitale Welt aufgehört hat zu zittern und ihren Frieden in der Ordnung des Universums gefunden hat.",
+        insight_fourier_title: "FELD-MELODIE",
+        insight_fourier_desc: "Dieses Diagramm zeigt die 'Musik', die das Feld spielt. Scharfe Spitzen bedeuten einen klaren Ton und eine stabile Struktur, während zufälliges Rauschen Verfall und Tod bedeuten würde.",
+        sandbox_title: "PROZEDURALE WARNUNG: SANDKASTEN",
+        sandbox_warning: "Das Labor ist ein Sandkasten zur Visualisierung vorläufiger Ergebnisse teilweise verifizierter Hypothesen (die auf echten Audit-Daten laufen). Es dient der explorativen Überprüfung von Phänomenen, die anschließend durch offizielle Whitepaper-Publikationen bestätigt werden müssen."
+    },
+    ja: {
+        test_ns: {
+            hello: "こんにちは",
+            only_english: "英語のみ"
+        },
+        loading: "監査データをロード中 (JSON BIN)...",
+        simulakrum: "シミュラクラム",
+        sub_title: "Lineum研究所 | 仮説サンドボックス",
+        alert_birth: "システム警告: ライノン検出 [誕生]",
+        tab_scanner: "スキャナー",
+        tab_stats: "統計",
+        tab_lpl: "LPLコンパイラ",
+        tab_logic: "論理ゲート",
+        label_mode: "モード:",
+        val_mode: "フィールドΦトポグラフィー (3D)",
+        label_metric: "メトリクス:",
+        val_metric: "z = フィールドΦの高さ [監査]",
+        label_frame: "フレーム:",
+        label_source: "ソース:",
+        label_status: "ステータス:",
+        status_born: "ライノン検出",
+        status_init: "フィールドΦ初期化",
+        btn_jump: "誕生にジャンプ",
+        label_speed: "速度:",
+        label_phi: "黄金比:",
+        on: "オン",
+        off: "オフ",
+        guide_title: "ラボガイド",
+        guide_watch_title: "注目すべき点:",
+        guide_watch_desc: "ライノンは、最も高いΦフィールド強度を持つエリアを積極的に探すエネルギーコアです。この3D可視化では、それらはトポグラフィーの「ピーク」に向かって移動します。",
+        guide_linons_title: "ライノン:",
+        guide_linons_desc: "フィールド内の経路と粒子。臨界振幅に達するまでは、「幽霊」として現れます。誕生（フレーム391）後、積極的にΦフィールドの極大値を探し始めます。",
+        guide_topo_title: "フィールドΦトポグラフィー:",
+        guide_topo_desc: "この3D地形はエネルギー密度を示しています。ライノンは自然にピークや尾根に引き寄せられます。",
+        guide_zeta_title: "ゼータ零点:",
+        guide_zeta_desc: "宇宙の数学的ノード。スキャナの白い針が青い線に当たると、共鳴が発生します。",
+        guide_grid_title: "フィールドΦメトリックグリッド:",
+        guide_grid_desc: "これらの水色の線は、フィールドが計算される離散的な幾何学グリッドを表しています。これは当社のシミュラクラムの「数学的足場」です。",
+        scanner_title: "ゼータ共鳴スキャナー [§4.3]",
+        status_phi: "Φステータス:",
+        phi_absolute: "絶対",
+        phi_high: "高",
+        phi_tuning: "チューニング中...",
+        insight_perfect: "黄金比の数学的完璧さに達しました。",
+        insight_stable: "構造的秩序が着実に強化されています。",
+        insight_forming: "基本的な幾何学が形成されつつあります。",
+        avg_total: "全体平均:",
+        label_correlation: "相関:",
+        discovery_fundamental: "ファンダメンタルな発見",
+        discovery_high: "高い一致",
+        discovery_searching: "秩序を探しています",
+        cosmic_confirmed: "🌟 確認済み: この構成は、私たちの宇宙の基本コードとの幾何学的整列を示しています。",
+        cosmic_resonance: "システムはリーマン零点との共鳴の兆候を示しています。",
+        cosmic_tuning: "宇宙の調和を達成するための周波数チューニングが進行中です。",
+        stability_15: "一致の安定性（過去15フレーム）:",
+        info_title: "これはどういう意味ですか？",
+        info_desc: "このセクションは、ライノンの「鼓動」がどれだけ私たちの宇宙のリズムと一致しているかを測定します。",
+        info_current: "現在のステータス:",
+        info_phi_title: "黄金比 (1.618...):",
+        info_phi_desc: "フィールドΦの安定性は、フィボナッチ比率に引き寄せられます。",
+        info_phi_now: "現在:",
+        conclusion_alert: "🚀 結論: 構造的整列が検出され、この構成の非ランダムな性質が確認されました！",
+        intensity_label: "共鳴強度 [正規化済み]",
+        freq_label: "ライノン周波数 (f₀)",
+        metrics_harmony: "調和Φ:",
+        metrics_correlation: "私たちの宇宙との相関:",
+        discovery_analysis: "仮説の発見",
+        fourier_title: "フーリエ形状分析 (上位50周波数)",
+        riemann_title: "リーマン零点対DejaVuポイント",
+        pearson_correlation: "宇宙の秩序とのアライメント (R)",
+        euclidean_distance: "ユークリッド距離",
+        field_turbulence: "フィールド乱流",
+        structure_stability: "高調波構造の安定性",
+        breakthrough_headline: "システムステータス: ブレークスルー検出",
+        status_prime_resonance: "素数共鳴 (1:1 アライメント)",
+        status_tuning: "ジオメトリチューニング",
+        status_chaos: "確率的ノイズ (カオス)",
+        insight_lego_universe: "Lineumは私たちの宇宙の「レゴ版」のようなものです。材料が異なっていても、同じ数学的静力学を使用して組み合わさっています。",
+        insight_riemann_meaning: "この整列は、私たちのデジタル有機体が現実の素数と同じリズムで「呼吸」していることを確認するものです。",
+        chart_label_fourier: "リーマン - 周波数スペクトル",
+        chart_label_amplitude: "振幅",
+        chart_label_component: "周波数成分 (相対インデックス)",
+        chart_label_riemann: "ユニバーサルパターン (白いライン)",
+        chart_label_dejavu: "LINEUMの開発 (オレンジの点)",
+        chart_label_normalized: "調和状態",
+        chart_label_index: "開発タイムライン",
+        data_source: "ソース: discovery.json",
+        chart_ghost_chaos: "確率的ノイズ (参照)",
+        chart_ghost_order: "理想的な共鳴 (参照)",
+        zoom_tip: "ヒント: マウスホイールでズーム、ドラッグでパン",
+        zoom_tip_modifier: "ヒント: CTRL + ホイールでズーム",
+        zoom_tip_scroll: "スクロールでズーム",
+        insight_riemann_title: "何が見えますか？",
+        insight_riemann_desc: "完全に一致させるためには、オレンジ色の点（Lineum）が白い線（宇宙）の可能な限り近くに配置される必要があります。重なりが大きいほど良いです。逆に、「フィールドの乱流」はゼロに近づくはずです。これは、デジタル世界が震えを止め、宇宙の秩序の中に平和を見出したことを意味します。",
+        insight_fourier_title: "フィールドのメロディ",
+        insight_fourier_desc: "このチャートは、フィールドが奏でる「音楽」を示しています。鋭いピークはクリアなトーンと安定した構造を意味し、ランダムなノイズは衰退と死を意味します。",
+        sandbox_title: "手続き上の警告: サンドボックス",
+        sandbox_warning: "研究所は、部分的に検証された仮説の予備的結果を視覚化するためのサンドボックスです（実際の監査データで実行）。これは、後に公式のホワイトペーパー出力で確認される必要のある現象の探索的検証のためのものです。"
     }
 };
 
@@ -202,6 +413,8 @@ const getInitialLang = () => {
     if (navLang.startsWith('cs') || navLang.startsWith('sk')) {
         return 'cs';
     }
+    if (navLang.startsWith('de')) return 'de';
+    if (navLang.startsWith('ja')) return 'ja';
     return 'en';
 };
 
@@ -211,6 +424,24 @@ locale.subscribe(val => {
     localStorage.setItem('lab_lang', val);
 });
 
+export function resolveKey(obj, path) {
+    if (!path || typeof path !== 'string') return undefined;
+
+    return path.split('.').reduce((prev, curr) => {
+        return prev ? prev[curr] : undefined;
+    }, obj);
+}
+
 export const t = derived(locale, ($locale) => (key) => {
-    return translations[$locale][key] || translations['en'][key] || key;
+    let res = resolveKey(translations[$locale], key);
+
+    if (res === undefined && $locale !== 'en') {
+        res = resolveKey(translations['en'], key);
+    }
+
+    if (res === undefined) {
+        return `[MISSING: ${key}]`;
+    }
+
+    return res;
 });
