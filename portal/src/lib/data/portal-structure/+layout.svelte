@@ -8,7 +8,7 @@
     import { t, locale } from "$lib/i18n";
 
     const SIMULACRUM_URL = dev
-        ? "http://127.0.0.1:5174"
+        ? "http://localhost:5174"
         : "https://simulacrum.lineum.io";
 
     let menuOpen = false;

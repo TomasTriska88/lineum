@@ -4,13 +4,14 @@
 </script>
 
 <script lang="ts">
+    import { t } from "$lib/i18n";
     import type { PageData } from "./$types";
 
     export let data: PageData;
 </script>
 
 <svelte:head>
-    <title>{data.title} | Lineum API Solutions</title>
+    <title>{data.title} | {$t("common.brand")} API</title>
 </svelte:head>
 
 <div class="min-h-screen bg-black text-white selection:bg-{data.accent}/30">

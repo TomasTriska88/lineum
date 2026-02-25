@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { t } from "$lib/i18n";
     import { marked } from "marked";
     export let data;
     const { content, title, slug } = data;
@@ -42,7 +43,7 @@
 </script>
 
 <svelte:head>
-    <title>{title || "Whitepaper"} — Lineum</title>
+    <title>{title || $t("nav.wiki")} — {$t("common.brand")}</title>
 </svelte:head>
 
 <div class="wiki-container">

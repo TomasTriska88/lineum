@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { t } from "$lib/i18n";
     import { onMount, onDestroy } from "svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
@@ -718,7 +719,7 @@ logic_result = solver.compile_lpl(
 </script>
 
 <svelte:head>
-    <title>Lineum API Solutions | Swarm Routing Showcase</title>
+    <title>{$t("common.brand")} API Solutions | Swarm Routing Showcase</title>
 </svelte:head>
 
 <div class="min-h-screen text-slate-50 font-sans flex flex-col pt-[104px]">
