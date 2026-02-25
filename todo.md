@@ -6,11 +6,6 @@ The sections below are divided to first address **basic principles and critical 
 
 ---
 
-### 🏢 Administrative & Legal
-- **Official Legal Entity:** `Lineum Dynamics s.r.o.` (Selected: Feb 2026). Always use this exact spelling for all future legal, formal, and public documentation.
-
----
-
 ### Scope and non-goals (high level)
 
 - Lineum is a **discrete dynamic field model ψ with emergent quasiparticles ("linons")** studied numerically within the given Eq-4 and parametric space.
