@@ -269,6 +269,15 @@ _Scope note (canonical dimensionality)._ All results in this core paper use a **
 
 No explicit spacetime geometry, global constants, or long-range interactions are predefined. All behavior results from repeated local updates of these fields.
 
+### 3.0 Continuous PDE Formulation (The elegant form)
+
+While Eq. (1) represents the exact computational *cellular automaton* update rule (using the assignment operator `←`), the underlying physics analogy is best captured by its continuous partial differential equation (PDE) limit. In this continuous limit, removing discrete step artifacts, noise ($\xi$), damping ($\delta$), and external stimuli ($\tilde{\lambda}$), the core topological and gravitational dynamics of Lineum reduce to the elegant coupled system:
+
+$$ \partial_t \psi = \nabla^2 \psi + \phi \psi + \nabla \phi $$
+$$ \partial_t \phi = \alpha |\psi|^2 - (\alpha \phi - \beta \nabla^2 \phi) $$
+
+This compact PDE form (specifically $\partial_t \psi = \nabla^2 \psi + \phi \psi + \nabla \phi$) serves as the canonical **symbolic representation** of the Lineum universe. It explicitly states that the evolution of the primary field ($\partial_t \psi$) is driven simultaneously by wave diffusion ($\nabla^2 \psi$), interaction with memory ($\phi \psi$), and environmental gravitational drift ($\nabla \phi$). Note that $\kappa$ is intentionally omitted in this highest-level symbolic representation, as it acts purely as a spatial tuning mask (a scaling factor on $\alpha$ and $\beta$) rather than a fundamental driving force.
+
 ## 3.1 Numerical scheme & stability (canonical)
 
 **Discrete operators (periodic, $\Delta x = \Delta y = 1$).**

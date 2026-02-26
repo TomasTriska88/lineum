@@ -99,6 +99,31 @@ By adding the gradient of φ, a gravity-like flow pattern emerges in the simulat
 By introducing the tuning field κ, the system’s response can be controlled locally – where the field “reacts” and where it is “deaf”.  
 In connection with the current Dimensional Transparency Hypothesis (DTH) test setup, κ appears to influence **visibility** in the simulation – in low-κ regions we typically do not observe particle or vortex formation. This is an empirical observation of the model, not a confirmed statement about any physical detector.
 
+---
+
+### 🔹 The Continuous PDE Limit (Symbolic Form)
+
+> **Note:** This is not a new chronological version, but the **theoretical continuous limit** of the canonical discrete update rule (V4).
+
+```text
+∂ₜψ = ∇²ψ + φψ + ∇φ
+∂ₜφ = α(|ψ|² - φ) + β∇²φ
+```
+
+While Lineum is fundamentally a discrete computational model (cellular automaton), its dynamics analogize to continuous physical fields. When stripped of discrete step mechanics, artificial damping, noise, and the spatial performance mask ($\kappa$), the universe's core engine reduces to this elegant PDE pair.
+This continuous formulation serves as the **canonical emblem** of the Lineum project—representing the pure mathematical concept of wave diffusion, memory interaction, and emergent gravitational drift, unburdened by algorithmic implementation details.
+
+#### Philosophical Parallel: The Schrödinger Equation
+
+For physicists, the structural similarity to the **Schrödinger equation** for a free particle ($i \hbar \partial_t \psi = -\frac{\hbar^2}{2m} \nabla^2 \psi$) is immediately apparent. Both equations describe how a wave function ($\psi$) evolves in time ($\partial_t$) based on its spatial curvature ($\nabla^2$). However, Lineum diverges in two critical, foundational ways:
+
+1. **The Absence of the Imaginary Unit ($i$):**
+   Schrödinger relies on complex numbers to represent probability amplitudes, creating the mystique of quantum mechanics. Lineum's PDE is entirely real-valued. It acts as a deterministic reaction-diffusion system.
+2. **Deterministic Stability via Memory ($\varphi$):**
+   A purely real continuous wave without $i$ would typically just dissipate (like heat). However, instead of relying on complex probabilities to maintain stable states, Lineum introduces the persistent memory/gravity field ($\varphi$). The terms $\varphi\psi + \nabla\varphi$ act as a feedback loop—the dissipating wave is constantly "pulled together" by the gravity of the very memory it creates, allowing stable gliders and particles to emerge purely from real-field deterministic interactions.
+
+This presents a paradigm shift: Instead of using abstract quantum probability to explain stable matter, Lineum achieves stability by endowing the fabric of space itself with memory. As Einstein famously argued against quantum randomness, *"God does not play dice."* Lineum offers a glimpse into a universe where stability and complexity emerge without randomness, built purely on cause, memory, and effect.
+
 ## 4. Discussion
 
 This progression shows a shift from a minimalistic ψ–φ interaction model to a more versatile three-field system capable of sustaining richer emergent structures **within the simulation**. Each modification was driven by simulation feedback and aimed at increasing stability, scalability, and interpretability of the model, not by fitting any specific physical constant or established gravitational law.
