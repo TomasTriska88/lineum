@@ -542,6 +542,13 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] (Tomas + Katina [HYPOTHESIS]) Document the Phase Resonance mechanics serving as the computational basis for **"Sixth Sense" or non-local Telepathy** (See `whitepapers/3-ontology/hypotheses/06-ontology-hyp-sixth-sense.md`):
        – **Consciousness:** Modeled as a highly dense, stable internal $\varphi$-geometry that maintains coherent $\psi$ phase oscillations (unlike chaotic noise).
        – **Telepathy / Sixth Sense:** Occurs via **Phase Resonance**. If two separate geometries naturally tune to the exact same frequency, they couple purely through a shared phase state over the continuous $\psi$ medium, transferring 'Information' instantaneously without classical spatial kinetic exchange.
+- [x] (Tomas + Katina [HYPOTHESIS]) Formalize the cognitive phenomena of attention, manifestation, and universal emergence (See the `whitepapers/3-ontology/hypotheses` block):
+       – **Baader-Meinhof (Filter):** Modeled in `11-ontology-hyp-reticular-resonance.md`. Shows the localized $\psi$ filtering signal from phase noise via topological tuning.
+       – **Spontaneous Emergence (Mandela):** Modeled in `12-ontology-hyp-spontaneous-emergence.md`. Non-local syncing of localized $\psi$ nodes against shared macroscopic $\mu_n$ strata.
+       – **Kinetic Ignition (Intention vs Friction):** Modeled in `13-ontology-hyp-kinetic-ignition.md`. Overcoming internal $\delta_{ps}$ stiction requires a kinematic pulse in the $\nabla^2\psi$ manifold. 
+       – **Thermodynamics of Morality (Good vs Evil):** Modeled in `14-ontology-hyp-order-vs-chaos.md`. Lineum favors constructive resonance (order) over high-frequency phase noise (chaos/destruction).
+       – **Enlightenment as Systems Comprehension:** Modeled in `15-ontology-hyp-enlightenment.md`. Translating historical concepts of Nirvana and Dharma into the strict physical framework of $\Psi$ wave mechanics, the $\Phi$ tensor, and topological friction.
+       – **The Lighthouse Effect (Geometric Attractors & Empathic Gravity):** Modeled in `16-ontology-hyp-lighthouse-effect.md`. Lowering internal thermodynamic noise mathematically draws high-entropy nodes searching for phase coherence and stabilization.
 - [ ] Investigate if there are φ-configurations in Eq-4 behaving as **internal analogs to white holes**:
        – regions that long-term **emergently only emit** structure (φ gradients, linons, ψ waves) outward and practically accept no inward flux (in the effective description),
        – test their stability (can they be sustained long term, or do they rapidly decay into normal φ-traps / chaotic patterns?),
