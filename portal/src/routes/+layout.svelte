@@ -8,6 +8,7 @@
     import Navigation from "$lib/components/Navigation.svelte";
     import { hudActive } from "$lib/stores/hudStore";
     import * as m from "$lib/paraglide/messages.js";
+    import { page } from "$app/stores";
 </script>
 
 <svelte:head>
@@ -40,7 +41,9 @@
     <div class="grid-bg"></div>
 
     <main class:hud-pushed={$hudActive}>
-        <slot />
+        {#key $page.url.pathname}
+            <slot />
+        {/key}
     </main>
 
     <ResonanceDeck active={$hudActive} />

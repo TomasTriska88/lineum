@@ -1,0 +1,495 @@
+﻿Loading svelte-check in workspace: c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal
+Getting Svelte diagnostics...
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:6:37
+[31mError[39m: Cannot find module './$types' or its corresponding type declarations. 
+[36mimport { usageGuard } from '$lib/server/usage_guard';
+import type { RequestHandler } from [35m'./$types'[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:46
+[31mError[39m: Binding element 'request' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ [35mrequest[36m, getClientAddress, locals }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:55
+[31mError[39m: Binding element 'getClientAddress' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, [35mgetClientAddress[36m, locals }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:73
+[31mError[39m: Binding element 'locals' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, getClientAddress, [35mlocals[36m }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:5:37
+[31mError[39m: Cannot find module './$types' or its corresponding type declarations. 
+[36mimport { usageGuard } from '$lib/server/usage_guard';
+import type { RequestHandler } from [35m'./$types'[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:46
+[31mError[39m: Binding element 'request' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ [35mrequest[36m, getClientAddress, locals }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:55
+[31mError[39m: Binding element 'getClientAddress' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, [35mgetClientAddress[36m, locals }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:73
+[31mError[39m: Binding element 'locals' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, getClientAddress, [35mlocals[36m }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\v1\ai\log\+server.ts[39m:5:39
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function POST({ request }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\v1\rng\+server.ts[39m:8:57
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function POST({ request, getClientAddress }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\source\[filename]\+server.ts[39m:5:37
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function GET({ params }[35m)[36m {
+    const { filename } = params;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\wiki\[slug]\+page.ts[39m:3:38
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function load({ params }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:7:56
+[31mError[39m: ',' expected. 
+[36m    it('should correctly resolve 01-core-lineum whitepaper', async () => {
+        const result = await loadSlug({ params } as any[35m:[36m { slug: '01-core-lineum' } });
+        expect(result).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:7:85
+[31mError[39m: ',' expected. 
+[36m    it('should correctly resolve 01-core-lineum whitepaper', async () => {
+        const result = await loadSlug({ params } as any: { slug: '01-core-lineum' } [35m}[36m);
+        expect(result).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:16:56
+[31mError[39m: ',' expected. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await loadSlug({ params } as any[35m:[36m { slug: '01-CORE-LINEUM' } });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:16:85
+[31mError[39m: ',' expected. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await loadSlug({ params } as any: { slug: '01-CORE-LINEUM' } [35m}[36m);
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:19:5
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result.content).toBeDefined();
+    [35m}[36m);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:19:6
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result.content).toBeDefined();
+    }[35m)[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:22:56
+[31mError[39m: ',' expected. 
+[36m    it('should handle extension papers', async () => {
+        const result = await loadSlug({ params } as any[35m:[36m { slug: '06-core-ext-silentgravity' } });
+        expect(result.title).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:22:96
+[31mError[39m: ',' expected. 
+[36m    it('should handle extension papers', async () => {
+        const result = await loadSlug({ params } as any: { slug: '06-core-ext-silentgravity' } [35m}[36m);
+        expect(result.title).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:24:5
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result.title).toBeDefined();
+    [35m}[36m);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:24:6
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result.title).toBeDefined();
+    }[35m)[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:45
+[31mError[39m: ',' expected. 
+[36m        try {
+            await loadSlug({ params } as any[35m:[36m { slug: 'missing-paper-123' } });
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:77
+[31mError[39m: ',' expected. 
+[36m        try {
+            await loadSlug({ params } as any: { slug: 'missing-paper-123' } [35m}[36m);
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:78
+[31mError[39m: 'catch' or 'finally' expected. 
+[36m        try {
+            await loadSlug({ params } as any: { slug: 'missing-paper-123' } }[35m)[36m;
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:30:9
+[31mError[39m: Declaration or statement expected. 
+[36m            expect(false).toBe(true); // Should not reach
+        [35m}[36m catch (e: any) {
+            expect(e.status).toEqual(404);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:30:11
+[31mError[39m: 'try' expected. 
+[36m            expect(false).toBe(true); // Should not reach
+        } [35mcatch[36m (e: any) {
+            expect(e.status).toEqual(404);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:33:5
+[31mError[39m: Declaration or statement expected. 
+[36m        }
+    [35m}[36m);
+});[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:33:6
+[31mError[39m: Declaration or statement expected. 
+[36m        }
+    }[35m)[36m;
+});[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:34:1
+[31mError[39m: Declaration or statement expected. 
+[36m    });
+[35m}[36m);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:34:2
+[31mError[39m: Declaration or statement expected. 
+[36m    });
+}[35m)[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:7:41
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m    it('should correctly resolve 01-core-lineum whitepaper', async () => {
+        const result = await loadSlug({ [35mparams[36m } as any: { slug: '01-core-lineum' } });
+        expect(result).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:7:58
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m    it('should correctly resolve 01-core-lineum whitepaper', async () => {
+        const result = await loadSlug({ params } as any: [35m{ slug: '01-core-lineum' }[36m });
+        expect(result).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:8:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        const result = await loadSlug({ params } as any: { slug: '01-core-lineum' } });
+        expect([35mresult[36m).toBeDefined();
+        expect(result.slug).toBe('01-core-lineum');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:9:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result).toBeDefined();
+        expect([35mresult[36m.slug).toBe('01-core-lineum');
+        expect(result.content).toContain('**Document ID:**');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:10:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result.slug).toBe('01-core-lineum');
+        expect([35mresult[36m.content).toContain('**Document ID:**');
+        // Check if title extraction works (fixed regex)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:12:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        // Check if title extraction works (fixed regex)
+        expect([35mresult[36m.title).toContain('lineum');
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:16:41
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await loadSlug({ [35mparams[36m } as any: { slug: '01-CORE-LINEUM' } });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:16:58
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await loadSlug({ params } as any: [35m{ slug: '01-CORE-LINEUM' }[36m });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:17:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        const result = await loadSlug({ params } as any: { slug: '01-CORE-LINEUM' } });
+        expect([35mresult[36m.slug).toBe('01-CORE-LINEUM');
+        expect(result.content).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:18:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result.slug).toBe('01-CORE-LINEUM');
+        expect([35mresult[36m.content).toBeDefined();
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:22:41
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m    it('should handle extension papers', async () => {
+        const result = await loadSlug({ [35mparams[36m } as any: { slug: '06-core-ext-silentgravity' } });
+        expect(result.title).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:22:58
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m    it('should handle extension papers', async () => {
+        const result = await loadSlug({ params } as any: [35m{ slug: '06-core-ext-silentgravity' }[36m });
+        expect(result.title).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:23:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        const result = await loadSlug({ params } as any: { slug: '06-core-ext-silentgravity' } });
+        expect([35mresult[36m.title).toBeDefined();
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:30
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m        try {
+            await loadSlug({ [35mparams[36m } as any: { slug: 'missing-paper-123' } });
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:47
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m        try {
+            await loadSlug({ params } as any: [35m{ slug: 'missing-paper-123' }[36m });
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:7:52
+[31mError[39m: ',' expected. 
+[36m    it('should find 01-core-lineum paper', async () => {
+        const result = await load({ params } as any[35m:[36m { slug: '01-core-lineum' } });
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:7:81
+[31mError[39m: ',' expected. 
+[36m    it('should find 01-core-lineum paper', async () => {
+        const result = await load({ params } as any: { slug: '01-core-lineum' } [35m}[36m);
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:41
+[31mError[39m: ',' expected. 
+[36m        try {
+            await load({ params } as any[35m:[36m { slug: 'non-existent' } });
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:68
+[31mError[39m: ',' expected. 
+[36m        try {
+            await load({ params } as any: { slug: 'non-existent' } [35m}[36m);
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:69
+[31mError[39m: 'catch' or 'finally' expected. 
+[36m        try {
+            await load({ params } as any: { slug: 'non-existent' } }[35m)[36m;
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:21:9
+[31mError[39m: Declaration or statement expected. 
+[36m            expect(true).toBe(false);
+        [35m}[36m catch (e: any) {
+            expect(e.status).toBe(404);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:21:11
+[31mError[39m: 'try' expected. 
+[36m            expect(true).toBe(false);
+        } [35mcatch[36m (e: any) {
+            expect(e.status).toBe(404);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:24:5
+[31mError[39m: Declaration or statement expected. 
+[36m        }
+    [35m}[36m);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:24:6
+[31mError[39m: Declaration or statement expected. 
+[36m        }
+    }[35m)[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:27:52
+[31mError[39m: ',' expected. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await load({ params } as any[35m:[36m { slug: '01-CORE-LINEUM' } });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:27:81
+[31mError[39m: ',' expected. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await load({ params } as any: { slug: '01-CORE-LINEUM' } [35m}[36m);
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:30:5
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result).toHaveProperty('content');
+    [35m}[36m);
+});[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:30:6
+[31mError[39m: Declaration or statement expected. 
+[36m        expect(result).toHaveProperty('content');
+    }[35m)[36m;
+});[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:31:1
+[31mError[39m: Declaration or statement expected. 
+[36m    });
+[35m}[36m);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:31:2
+[31mError[39m: Declaration or statement expected. 
+[36m    });
+}[35m)[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:7:37
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m    it('should find 01-core-lineum paper', async () => {
+        const result = await load({ [35mparams[36m } as any: { slug: '01-core-lineum' } });
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:7:54
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m    it('should find 01-core-lineum paper', async () => {
+        const result = await load({ params } as any: [35m{ slug: '01-core-lineum' }[36m });
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:8:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        const result = await load({ params } as any: { slug: '01-core-lineum' } });
+        expect([35mresult[36m).toHaveProperty('content');
+        expect(result).toHaveProperty('title');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:9:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result).toHaveProperty('content');
+        expect([35mresult[36m).toHaveProperty('title');
+        expect(result).toHaveProperty('status');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:10:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result).toHaveProperty('title');
+        expect([35mresult[36m).toHaveProperty('status');
+        expect(result.slug).toBe('01-core-lineum');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:11:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result).toHaveProperty('status');
+        expect([35mresult[36m.slug).toBe('01-core-lineum');
+        expect(result.status).toBe('Draft');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:12:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result.slug).toBe('01-core-lineum');
+        expect([35mresult[36m.status).toBe('Draft');
+        expect(result.title).toContain('lineum');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:13:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result.status).toBe('Draft');
+        expect([35mresult[36m.title).toContain('lineum');
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:26
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m        try {
+            await load({ [35mparams[36m } as any: { slug: 'non-existent' } });
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:43
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m        try {
+            await load({ params } as any: [35m{ slug: 'non-existent' }[36m });
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:27:37
+[31mError[39m: No value exists in scope for the shorthand property 'params'. Either declare one or provide an initializer. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await load({ [35mparams[36m } as any: { slug: '01-CORE-LINEUM' } });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:27:54
+[31mError[39m: Expected 1 arguments, but got 2. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await load({ params } as any: [35m{ slug: '01-CORE-LINEUM' }[36m });
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:28:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        const result = await load({ params } as any: { slug: '01-CORE-LINEUM' } });
+        expect([35mresult[36m.slug).toBe('01-CORE-LINEUM');
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:29:16
+[31mError[39m: Cannot find name 'result'. 
+[36m        expect(result.slug).toBe('01-CORE-LINEUM');
+        expect([35mresult[36m).toHaveProperty('content');
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\ui\Dialog.svelte[39m:47:13
+[33mWarn[39m: Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+https://svelte.dev/e/slot_element_deprecated (svelte)
+[36m        <div class="dialog-content">
+            [35m<slot />[36m
+        </div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\ui\Dialog.svelte[39m:51:13
+[33mWarn[39m: Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+https://svelte.dev/e/slot_element_deprecated (svelte)
+[36m        <div class="dialog-actions">
+            [35m<slot name="actions">
+                {#if showCancel}
+                    <button class="btn btn-cancel" onclick={handleCancel}
+                        >{cancelLabel}</button
+                    >
+                {/if}
+                <button class="btn btn-confirm" onclick={handleConfirm}
+                    >{confirmLabel}</button
+                >
+            </slot>[36m
+        </div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+layout.svelte[39m:35:24
+[31mError[39m: Argument of type 'string' is not assignable to parameter of type '"cs" | "en" | "de" | "ja" | (() => "cs" | "en" | "de" | "ja")'. (ts)
+[36m    function changeLang(code: string) {
+        setLanguageTag([35mcode[36m);
+    }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\(app)\api-solutions\[slug]\+page.svelte[39m:9:35
+[31mError[39m: Cannot find module './$types' or its corresponding type declarations. (ts)
+[36m    import TrueRng from "$lib/components/TrueRng.svelte";
+    import type { PageData } from [35m"./$types"[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\lab\extreme-spikes\+page.svelte[39m:115:9
+[33mWarn[39m: Also define the standard property 'background-clip' for compatibility (css)
+[36m        background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.6));
+        [35m-webkit-background-clip[36m: text;
+        -webkit-text-fill-color: transparent;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+layout.svelte[39m:38:24
+[31mError[39m: Argument of type 'string' is not assignable to parameter of type '"cs" | "en" | "de" | "ja" | (() => "cs" | "en" | "de" | "ja")'. (ts)
+[36m    function changeLang(code: string) {
+        setLanguageTag([35mcode[36m);
+    }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mtests\gemini_cache.test.ts[39m:3:54
+[31mError[39m: Cannot find module './gemini_cache' or its corresponding type declarations. 
+[36mimport { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getOrUpdateCache, resetLocalRefCache } from [35m'./gemini_cache'[36m;[39m
+
+====================================
+[31msvelte-check found 79 errors and 3 warnings in 14 files
+[39m

@@ -92,4 +92,77 @@ describe('Heuristic Linguistic Quality Assurance', () => {
             expect(suspiciousExpansions, `Too many suspicious string length expansions in ${lang}`).toBeLessThan(5);
         }
     });
+
+    it('should statically forbid splitting Paraglide strings via gradient spans', () => {
+        // Prevents incorrect splitting like: {m.foo()} <span class="text-gradient-multi">{m.bar()}</span>
+        // This is forbidden because it destroys the ability to reorder words for different languages (e.g., Japanese vs German).
+
+        const srcDir = path.resolve(__dirname, '../../src');
+
+        function findSvelteFiles(dir: string, fileList: string[] = []) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const stat = fs.statSync(path.join(dir, file));
+                if (stat.isDirectory()) {
+                    findSvelteFiles(path.join(dir, file), fileList);
+                } else if (file.endsWith('.svelte')) {
+                    fileList.push(path.join(dir, file));
+                }
+            }
+            return fileList;
+        }
+
+        const svelteFiles = findSvelteFiles(srcDir);
+        let offenders: string[] = [];
+
+        // Look for pattern: {m.something()} and closely followed by <span class="text-gradient-multi">{m.another_thing()}</span>
+        // Although regex isn't a perfect AST parser, it effectively catches instances of two paraglide keys separated by a static span.
+        const forbiddenPattern = /\{m\.[a-zA-Z0-9_]+\(\)\}[\s\S]{0,150}<span[^>]*class=["'][^"']*text-gradient-multi[^"']*["'][^>]*>[\s\S]{0,150}\{m\.[a-zA-Z0-9_]+\(\)\}/;
+
+        for (const sf of svelteFiles) {
+            const content = fs.readFileSync(sf, 'utf-8');
+            if (forbiddenPattern.test(content)) {
+                offenders.push(path.basename(sf));
+            }
+        }
+
+        // The test must pass cleanly; no files should contain this split pattern
+        expect(offenders.length, `Found incorrectly split translated strings using gradient spans in: ${offenders.join(', ')}. Use parameterized strings instead!`).toBe(0);
+    });
+
+    it('should forbid data-sveltekit-reload on hash links to preserve Paraglide reactivity', () => {
+        // Prevents the usage of the data-sveltekit-reload attribute on links starting with a hash (e.g., href="/#scientist" or href="#faq").
+        // This ensures SPA navigation and Paraglide translations do not lose reactivity by forcing a hard page reload from the server.
+
+        const srcDir = path.resolve(__dirname, '../../src');
+
+        function findSvelteFiles(dir: string, fileList: string[] = []) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const stat = fs.statSync(path.join(dir, file));
+                if (stat.isDirectory()) {
+                    findSvelteFiles(path.join(dir, file), fileList);
+                } else if (file.endsWith('.svelte')) {
+                    fileList.push(path.join(dir, file));
+                }
+            }
+            return fileList;
+        }
+
+        const svelteFiles = findSvelteFiles(srcDir);
+        let offenders: string[] = [];
+
+        // Looking for: <a ... href="[anything]#something" ... data-sveltekit-reload ... > 
+        // or in reverse order: <a ... data-sveltekit-reload ... href="[anything]#something" ... >
+        const badHashLinkPattern = /<a[^>]+(?:href=["'][^"']*#[^"']*["'][^>]*data-sveltekit-reload|data-sveltekit-reload[^>]*href=["'][^"']*#[^"']*["'])[^>]*>/i;
+
+        for (const sf of svelteFiles) {
+            const content = fs.readFileSync(sf, 'utf-8');
+            if (badHashLinkPattern.test(content)) {
+                offenders.push(path.basename(sf));
+            }
+        }
+
+        expect(offenders.length, `Found data-sveltekit-reload used alongside hash (#) links in: ${offenders.join(', ')}. This breaks SPA translation reactivity!`).toBe(0);
+    });
 });

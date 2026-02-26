@@ -20,3 +20,7 @@
 
 # 4. TASK TRACKING
 # Use todo.md for tracking scientific hypotheses and engineering tasks.
+
+# 5. LANGUAGE PROTOCOL FOR CODE
+# Always use English for code comments, function names, variables, and git commit messages.
+# Never use Czech or any other local language in the codebase or tests, unless explicitly modifying localization dictionaries (.json).

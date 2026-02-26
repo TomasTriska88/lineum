@@ -1,0 +1,1076 @@
+﻿Loading svelte-check in workspace: c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal
+Getting Svelte diagnostics...
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:6:37
+[31mError[39m: Cannot find module './$types' or its corresponding type declarations. 
+[36mimport { usageGuard } from '$lib/server/usage_guard';
+import type { RequestHandler } from [35m'./$types'[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:46
+[31mError[39m: Binding element 'request' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ [35mrequest[36m, getClientAddress, locals }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:55
+[31mError[39m: Binding element 'getClientAddress' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, [35mgetClientAddress[36m, locals }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\chat\+server.ts[39m:8:73
+[31mError[39m: Binding element 'locals' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, getClientAddress, [35mlocals[36m }) => {
+    // 0. Parse Body First[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:5:37
+[31mError[39m: Cannot find module './$types' or its corresponding type declarations. 
+[36mimport { usageGuard } from '$lib/server/usage_guard';
+import type { RequestHandler } from [35m'./$types'[36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:46
+[31mError[39m: Binding element 'request' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ [35mrequest[36m, getClientAddress, locals }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:55
+[31mError[39m: Binding element 'getClientAddress' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, [35mgetClientAddress[36m, locals }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\tts\+server.ts[39m:9:73
+[31mError[39m: Binding element 'locals' implicitly has an 'any' type. 
+[36m
+export const POST: RequestHandler = async ({ request, getClientAddress, [35mlocals[36m }) => {
+    // 1. Rate Limiting (Stricter for TTS)[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\v1\ai\log\+server.ts[39m:5:39
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function POST({ request }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\api\v1\rng\+server.ts[39m:8:57
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function POST({ request, getClientAddress }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\source\[filename]\+server.ts[39m:5:37
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function GET({ params }[35m)[36m {
+    const { filename } = params;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\wiki\[slug]\+page.ts[39m:3:38
+[31mError[39m: Cannot find module './$types.js' or its corresponding type declarations. (this likely means that SvelteKit's type generation didn't run yet - try running it by executing 'npm run dev' or 'npm run build') 
+[36m
+export async function load({ params }[35m)[36m {
+    try {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:7:39
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m    it('should correctly resolve 01-core-lineum whitepaper', async () => {
+        const result = await loadSlug([35m{ params: { slug: '01-core-lineum' } }[36m);
+        expect(result).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:16:39
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await loadSlug([35m{ params: { slug: '01-CORE-LINEUM' } }[36m);
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:22:39
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m    it('should handle extension papers', async () => {
+        const result = await loadSlug([35m{ params: { slug: '06-core-ext-silentgravity' } }[36m);
+        expect(result.title).toBeDefined();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\wiki-dynamic.test.ts[39m:28:28
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m        try {
+            await loadSlug([35m{ params: { slug: 'missing-paper-123' } }[36m);
+            expect(false).toBe(true); // Should not reach[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:7:35
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m    it('should find 01-core-lineum paper', async () => {
+        const result = await load([35m{ params: { slug: '01-core-lineum' } }[36m);
+        expect(result).toHaveProperty('content');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:18:24
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m        try {
+            await load([35m{ params: { slug: 'non-existent' } }[36m);
+            // Should not reach here[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\wiki\[slug]\loader.test.ts[39m:27:35
+[31mError[39m: Argument of type '{ params: { slug: string; }; }' is not assignable to parameter of type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">'.
+  Type '{ params: { slug: string; }; }' is missing the following properties from type 'LoadEvent<RouteParams, null, PageParentData, "/wiki/[slug]">': fetch, data, setHeaders, parent, and 5 more. 
+[36m    it('should be case-insensitive to slug matching', async () => {
+        const result = await load([35m{ params: { slug: '01-CORE-LINEUM' } }[36m);
+        expect(result.slug).toBe('01-CORE-LINEUM');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\ui\Dialog.svelte[39m:47:13
+[33mWarn[39m: Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+https://svelte.dev/e/slot_element_deprecated (svelte)
+[36m        <div class="dialog-content">
+            [35m<slot />[36m
+        </div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\ui\Dialog.svelte[39m:51:13
+[33mWarn[39m: Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+https://svelte.dev/e/slot_element_deprecated (svelte)
+[36m        <div class="dialog-actions">
+            [35m<slot name="actions">
+                {#if showCancel}
+                    <button class="btn btn-cancel" onclick={handleCancel}
+                        >{cancelLabel}</button
+                    >
+                {/if}
+                <button class="btn btn-confirm" onclick={handleConfirm}
+                    >{confirmLabel}</button
+                >
+            </slot>[36m
+        </div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\resonance_deck_interaction.test.ts[39m:13:21
+[31mError[39m: 'actual.writable' is of type 'unknown'. 
+[36m        hudActive: { subscribe: (run: any) => { run(true); return () => { }; } }, // Active by default for these tests
+        isChatOpen: [35mactual.writable[36m(false),
+        addMessage: vi.fn(),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:10:19
+[31mError[39m: Parameter 'startDir' implicitly has an 'any' type. 
+[36m// Improved ROOT detection: Walk up from __dirname to find the monorepo root
+function findRoot([35mstartDir[36m) {
+    let current = startDir;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:110:28
+[31mError[39m: Parameter 'src' implicitly has an 'any' type. 
+[36m
+function copyRecursiveSync([35msrc[36m, dest) {
+    if (!fs.existsSync(src)) {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:110:33
+[31mError[39m: Parameter 'dest' implicitly has an 'any' type. 
+[36m
+function copyRecursiveSync(src, [35mdest[36m) {
+    if (!fs.existsSync(src)) {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:132:23
+[31mError[39m: Parameter 'targetPath' implicitly has an 'any' type. 
+[36m
+function robustRmSync([35mtargetPath[36m, maxRetries = 5, retryDelayMs = 100) {
+    if (!fs.existsSync(targetPath)) return;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:144:135
+[31mError[39m: 'err' is of type 'unknown'. 
+[36m            if (retries === maxRetries - 1) {
+                console.warn(`[SYNC] WARNING: Could not delete ${targetPath} after ${maxRetries} attempts. Stale files may persist:`, [35merr[36m.message);
+            }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:155:26
+[31mError[39m: Parameter 'content' implicitly has an 'any' type. 
+[36m
+function extractMetadata([35mcontent[36m, filePath) {
+    const fileName = path.basename(filePath);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:155:35
+[31mError[39m: Parameter 'filePath' implicitly has an 'any' type. 
+[36m
+function extractMetadata(content, [35mfilePath[36m) {
+    const fileName = path.basename(filePath);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:217:34
+[31mError[39m: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ Core: string; Hypothesis: string; Experiment: string; Extension: string; }'. 
+[36m        };
+        const expectedFragment = [35mexpectedTypeFragments[docType][36m;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:247:26
+[31mError[39m: Parameter 'targetDir' implicitly has an 'any' type. 
+[36m
+function generateAiIndex([35mtargetDir[36m) {
+    console.log('[SYNC] Generating AI Index...');[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:249:11
+[31mError[39m: Variable 'index' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+[36m    console.log('[SYNC] Generating AI Index...');
+    const [35mindex[36m = [];
+    const sourceDirs = [[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:261:25
+[31mError[39m: Parameter 'dir' implicitly has an 'any' type. 
+[36m
+    const processDir = ([35mdir[36m) => {
+        if (!fs.existsSync(dir)) return;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:290:24
+[31mError[39m: Variable 'index' implicitly has an 'any[]' type. 
+[36m        path.join(targetDir, 'ai_index.json'),
+        JSON.stringify([35mindex[36m, null, 2)
+    );[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:308:58
+[31mError[39m: 'err' is of type 'unknown'. 
+[36m    } catch (err) {
+        console.warn('[SYNC] Failed to update READMEs:', [35merr[36m.message);
+    }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mscripts\sync-data.js[39m:359:61
+[31mError[39m: 'e' is of type 'unknown'. 
+[36m    } catch (e) {
+        console.warn('[SYNC] Failed to sync audit report:', [35me[36m.message);
+    }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:42:29
+[31mError[39m: Parameter 'text' implicitly has an 'any' type. 
+[36m            window.SpeechSynthesisUtterance = class {
+                constructor([35mtext[36m) {
+                    this.text = text;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:43:26
+[31mError[39m: Property 'text' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                constructor(text) {
+                    this.[35mtext[36m = text;
+                    this.lang = 'en-US';[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:44:26
+[31mError[39m: Property 'lang' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.text = text;
+                    this.[35mlang[36m = 'en-US';
+                    this.voice = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:45:26
+[31mError[39m: Property 'voice' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.lang = 'en-US';
+                    this.[35mvoice[36m = null;
+                    this.rate = 1;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:46:26
+[31mError[39m: Property 'rate' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.voice = null;
+                    this.[35mrate[36m = 1;
+                    this.pitch = 1;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:47:26
+[31mError[39m: Property 'pitch' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.rate = 1;
+                    this.[35mpitch[36m = 1;
+                    this.volume = 1;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:48:26
+[31mError[39m: Property 'volume' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.pitch = 1;
+                    this.[35mvolume[36m = 1;
+                    this.onstart = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:49:26
+[31mError[39m: Property 'onstart' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.volume = 1;
+                    this.[35monstart[36m = null;
+                    this.onend = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:50:26
+[31mError[39m: Property 'onend' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.onstart = null;
+                    this.[35monend[36m = null;
+                    this.onerror = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\tests\e2e\chat_tts.spec.ts[39m:51:26
+[31mError[39m: Property 'onerror' does not exist on type 'SpeechSynthesisUtterance'. 
+[36m                    this.onend = null;
+                    this.[35monerror[36m = null;
+                }[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:4:9
+[31mError[39m: Variable 'canvas' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+[36m
+    let [35mcanvas[36m;
+    let ctx;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:5:9
+[31mError[39m: Variable 'ctx' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+[36m    let canvas;
+    let [35mctx[36m;
+    let isGenerating = false;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:7:9
+[31mError[39m: Variable 'hexStream' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+[36m    let isGenerating = false;
+    let [35mhexStream[36m = [];
+    let error = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:8:9
+[31mError[39m: Variable 'error' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+[36m    let hexStream = [];
+    let [35merror[36m = null;
+    let animationId = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:9:9
+[31mError[39m: Variable 'animationId' implicitly has type 'any' in some locations where its type cannot be determined. (js)
+[36m    let error = null;
+    let [35manimationId[36m = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:12:9
+[31mError[39m: Variable 'noiseGrid' implicitly has type 'any[]' in some locations where its type cannot be determined. (js)
+[36m    // Simulate boiling pot while waiting
+    let [35mnoiseGrid[36m = [];
+    const GRID_SIZE = 64;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:26:23
+[31mError[39m: Parameter 'gridData' implicitly has an 'any' type. (js)
+[36m
+    const drawGrid = ([35mgridData[36m) => {
+        if (!ctx) return;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:27:14
+[31mError[39m: Variable 'ctx' implicitly has an 'any' type. (js)
+[36m    const drawGrid = (gridData) => {
+        if (![35mctx[36m) return;
+        const cellSize = canvas.width / GRID_SIZE;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:28:26
+[31mError[39m: Variable 'canvas' implicitly has an 'any' type. (js)
+[36m        if (!ctx) return;
+        const cellSize = [35mcanvas[36m.width / GRID_SIZE;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:29:29
+[31mError[39m: Variable 'canvas' implicitly has an 'any' type. (js)
+[36m        const cellSize = canvas.width / GRID_SIZE;
+        ctx.clearRect(0, 0, [35mcanvas[36m.width, canvas.height);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:29:43
+[31mError[39m: Variable 'canvas' implicitly has an 'any' type. (js)
+[36m        const cellSize = canvas.width / GRID_SIZE;
+        ctx.clearRect(0, 0, canvas.width, [35mcanvas[36m.height);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:49:21
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                for (let x = 1; x < GRID_SIZE - 1; x++) {
+                    [35mnoiseGrid[36m[y][x] =
+                        (noiseGrid[y][x] +[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:50:26
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                    noiseGrid[y][x] =
+                        ([35mnoiseGrid[36m[y][x] +
+                            noiseGrid[y - 1][x] +[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:51:29
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                        (noiseGrid[y][x] +
+                            [35mnoiseGrid[36m[y - 1][x] +
+                            noiseGrid[y + 1][x] +[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:52:29
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                            noiseGrid[y - 1][x] +
+                            [35mnoiseGrid[36m[y + 1][x] +
+                            noiseGrid[y][x - 1] +[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:53:29
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                            noiseGrid[y + 1][x] +
+                            [35mnoiseGrid[36m[y][x - 1] +
+                            noiseGrid[y][x + 1]) /[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:54:29
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m                            noiseGrid[y][x - 1] +
+                            [35mnoiseGrid[36m[y][x + 1]) /
+                        5;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:59:18
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m        }
+        drawGrid([35mnoiseGrid[36m);
+        animationId = requestAnimationFrame(animateBoiling);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:64:15
+[31mError[39m: Variable 'canvas' implicitly has an 'any' type. (js)
+[36m    onMount(() => {
+        ctx = [35mcanvas[36m.getContext("2d");
+        generateNoiseGrid();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:66:18
+[31mError[39m: Variable 'noiseGrid' implicitly has an 'any[]' type. (js)
+[36m        generateNoiseGrid();
+        drawGrid([35mnoiseGrid[36m);
+    });[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:72:14
+[31mError[39m: Variable 'animationId' implicitly has an 'any' type. (js)
+[36m        error = null;
+        if (![35manimationId[36m) animateBoiling();[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:93:34
+[31mError[39m: Variable 'animationId' implicitly has an 'any' type. (js)
+[36m            isGenerating = false;
+            cancelAnimationFrame([35manimationId[36m);
+            animationId = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:106:28
+[31mError[39m: Variable 'hexStream' implicitly has an 'any[]' type. (js)
+[36m                        `> [HARDWARE_ENTROPY] ${currentStr}`,
+                        ...[35mhexStream[36m,
+                    ].slice(0, 50);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:124:34
+[31mError[39m: Variable 'animationId' implicitly has an 'any' type. (js)
+[36m            isGenerating = false;
+            cancelAnimationFrame([35manimationId[36m);
+            animationId = null;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:126:21
+[31mError[39m: 'e' is of type 'unknown'. (js)
+[36m            animationId = null;
+            error = [35me[36m.message;
+            console.error(e);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:159:18
+[31mError[39m: Variable 'error' implicitly has an 'any' type. (js)
+[36m
+            {#if [35merror[36m}
+                <div class="error-msg">{error}</div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\components\TrueRng.svelte[39m:194:24
+[31mError[39m: Variable 'hexStream' implicitly has an 'any[]' type. (js)
+[36m                {/if}
+                {#each [35mhexStream[36m as line}
+                    <div>{line}</div>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+layout.svelte[39m:73:39
+[31mError[39m: `$locale` is an illegal variable name. To reference a global variable called `$locale`, use `globalThis.$locale`
+https://svelte.dev/e/global_reference_invalid (svelte)
+[36m                        class="lang-btn"
+                        class:active={[35m$locale[36m === lang.code}
+                        on:click={() => changeLang(lang.code)}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+layout.svelte[39m:34:25
+[31mError[39m: Parameter 'code' implicitly has an 'any' type. (js)
+[36m
+    function changeLang([35mcode[36m) {
+        setLanguageTag(code);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+layout.svelte[39m:73:39
+[31mError[39m: Cannot find name '$locale'. (js)
+[36m                        class="lang-btn"
+                        class:active={[35m$locale[36m === lang.code}
+                        on:click={() => changeLang(lang.code)}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:16:111
+[31mError[39m: Unexpected token
+https://svelte.dev/e/js_parse_error
+
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
+[36m            id: "psi",
+            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()[35m[36m),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:16:111
+[31mError[39m: ',' expected. (ts)
+[36m            id: "psi",
+            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:17:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color[35m:[36m "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:36
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label[35m:[36m m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:79
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description[35m:[36m m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:115
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:116
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:21:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color[35m:[36m "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:36
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label[35m:[36m m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:77
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description[35m:[36m m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:111
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:112
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:25:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:28:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "warp",
+            color[35m:[36m "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:21
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt[35m:[36m "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:39
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label[35m:[36m m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:81
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description[35m:[36m m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:116
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:117
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:30:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        }[35m,[36m
+    ];[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:31:5
+[31mError[39m: Declaration or statement expected. (ts)
+[36m        },
+    [35m][36m;
+</script>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:31:6
+[31mError[39m: Declaration or statement expected. (ts)
+[36m        },
+    ][35m;[36m
+</script>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:19:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"kappa"[36m,
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "kappa",
+            [35mcolor[36m: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "kappa",
+            color: [35m"#1a3a5a"[36m, label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:31
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", [35mlabel[36m: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:20:68
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), [35mdescription[36m: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:23:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"phi"[36m,
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "phi",
+            [35mcolor[36m: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "phi",
+            color: [35m"#8a2be2"[36m, label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:31
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", [35mlabel[36m: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:24:66
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), [35mdescription[36m: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:27:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"warp"[36m,
+            color: "#ff00ff",[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:28:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "warp",
+            [35mcolor[36m: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:28:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "warp",
+            color: [35m"#ff00ff"[36m,
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:13
+[31mError[39m: Cannot find name 'colorAlt'. (ts)
+[36m            color: "#ff00ff",
+            [35mcolorAlt[36m: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:23
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: [35m"#8a2be2"[36m, label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:34
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", [35mlabel[36m: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:29:70
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), [35mdescription[36m: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:51:24
+[31mError[39m: Cannot find name 'legendItems'. (ts)
+[36m                subtitle={m.legend_subtitle()}
+                items={[35mlegendItems[36m}
+                faq={m.legend_faq()}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:52:24
+[31mError[39m: Property 'legend_faq' does not exist on type 'typeof import("c:/Users/Tom\u00E1\u0161/Documents/GitHub/lineum-core/portal/src/lib/paraglide/messages")'. (ts)
+[36m                items={legendItems}
+                faq={m.[35mlegend_faq[36m()}
+            />[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\+page.svelte[39m:139:26
+[31mError[39m: Cannot find name 'SIMULACRUM_URL'. (ts)
+[36m                <p>{m.sections_scientist_simulacrum_desc()}</p>
+                <a href={[35mSIMULACRUM_URL[36m} target="simulacrum"
+                    >{m.sections_scientist_simulacrum_link()}</a[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\(app)\api-solutions\[slug]\+page.svelte[39m:67:45
+[31mError[39m: Expected token }
+https://svelte.dev/e/expected_token (svelte)
+[36m                ><br /><br />
+                {m.api_solutions_scenarios_$[35m[36m{data_scenarioKey}_description()}
+            </p>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\(app)\api-solutions\[slug]\+page.svelte[39m:67:45
+[31mError[39m: Expected token }
+https://svelte.dev/e/expected_token (ts)
+[36m                ><br /><br />
+                {m.api_solutions_scenarios_$[35m[36m{data_scenarioKey}_description()}
+            </p>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\lab\extreme-spikes\+page.svelte[39m:115:9
+[33mWarn[39m: Also define the standard property 'background-clip' for compatibility (css)
+[36m        background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.6));
+        [35m-webkit-background-clip[36m: text;
+        -webkit-text-fill-color: transparent;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\wiki\[slug]\+page.svelte[39m:21:47
+[31mError[39m: Parameter 'match' implicitly has an 'any' type. (ts)
+[36m        const regex = /^(#{1,4})\s+(.+)$/gm;
+        displayContent = text.replace(regex, ([35mmatch[36m, hashes, rawText) => {
+            const level = hashes.length;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\wiki\[slug]\+page.svelte[39m:21:54
+[31mError[39m: Parameter 'hashes' implicitly has an 'any' type. (ts)
+[36m        const regex = /^(#{1,4})\s+(.+)$/gm;
+        displayContent = text.replace(regex, (match, [35mhashes[36m, rawText) => {
+            const level = hashes.length;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\lib\data\portal-structure\wiki\[slug]\+page.svelte[39m:21:62
+[31mError[39m: Parameter 'rawText' implicitly has an 'any' type. (ts)
+[36m        const regex = /^(#{1,4})\s+(.+)$/gm;
+        displayContent = text.replace(regex, (match, hashes, [35mrawText[36m) => {
+            const level = hashes.length;[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+layout.svelte[39m:104:39
+[31mError[39m: `$locale` is an illegal variable name. To reference a global variable called `$locale`, use `globalThis.$locale`
+https://svelte.dev/e/global_reference_invalid (svelte)
+[36m                        class="lang-btn"
+                        class:active={[35m$locale[36m === lang.code}
+                        on:click={() => changeLang(lang.code)}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+layout.svelte[39m:37:25
+[31mError[39m: Parameter 'code' implicitly has an 'any' type. (js)
+[36m
+    function changeLang([35mcode[36m) {
+        setLanguageTag(code);[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+layout.svelte[39m:104:39
+[31mError[39m: Cannot find name '$locale'. (js)
+[36m                        class="lang-btn"
+                        class:active={[35m$locale[36m === lang.code}
+                        on:click={() => changeLang(lang.code)}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:16:111
+[31mError[39m: Unexpected token
+https://svelte.dev/e/js_parse_error
+
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
+[36m            id: "psi",
+            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()[35m[36m),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:16:111
+[31mError[39m: ',' expected. (ts)
+[36m            id: "psi",
+            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:17:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#00ffff", label: m.legend_items_psi_label(), description: m.legend_items_psi_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color[35m:[36m "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:36
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label[35m:[36m m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:79
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description[35m:[36m m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:115
+[31mError[39m: ';' expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:116
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:21:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color[35m:[36m "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:36
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label[35m:[36m m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:77
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description[35m:[36m m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:111
+[31mError[39m: ';' expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:112
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:25:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        }[35m,[36m
+        {[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:28:18
+[31mError[39m: ';' expected. (ts)
+[36m            id: "warp",
+            color[35m:[36m "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:21
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt[35m:[36m "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:39
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label[35m:[36m m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:81
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description[35m:[36m m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:116
+[31mError[39m: ';' expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()[35m)[36m,
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:117
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description())[35m,[36m
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:30:10
+[31mError[39m: Declaration or statement expected. (ts)
+[36m            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        }[35m,[36m
+    ];[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:31:5
+[31mError[39m: Declaration or statement expected. (ts)
+[36m        },
+    [35m][36m;
+</script>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:31:6
+[31mError[39m: Declaration or statement expected. (ts)
+[36m        },
+    ][35m;[36m
+</script>[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:19:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"kappa"[36m,
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "kappa",
+            [35mcolor[36m: "#1a3a5a", label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "kappa",
+            color: [35m"#1a3a5a"[36m, label: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:31
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", [35mlabel[36m: m.legend_items_kappa_label(), description: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:20:68
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            id: "kappa",
+            color: "#1a3a5a", label: m.legend_items_kappa_label(), [35mdescription[36m: m.legend_items_kappa_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:23:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"phi"[36m,
+            color: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "phi",
+            [35mcolor[36m: "#8a2be2", label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "phi",
+            color: [35m"#8a2be2"[36m, label: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:31
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", [35mlabel[36m: m.legend_items_phi_label(), description: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:24:66
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            id: "phi",
+            color: "#8a2be2", label: m.legend_items_phi_label(), [35mdescription[36m: m.legend_items_phi_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:27:17
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m        {
+            id: [35m"warp"[36m,
+            color: "#ff00ff",[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:28:13
+[31mError[39m: Cannot find name 'color'. (ts)
+[36m            id: "warp",
+            [35mcolor[36m: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:28:20
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            id: "warp",
+            color: [35m"#ff00ff"[36m,
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:13
+[31mError[39m: Cannot find name 'colorAlt'. (ts)
+[36m            color: "#ff00ff",
+            [35mcolorAlt[36m: "#8a2be2", label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:23
+[31mError[39m: Left side of comma operator is unused and has no side effects. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: [35m"#8a2be2"[36m, label: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:34
+[31mError[39m: Cannot find name 'label'. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", [35mlabel[36m: m.legend_items_warp_label(), description: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:29:70
+[31mError[39m: Cannot find name 'description'. (ts)
+[36m            color: "#ff00ff",
+            colorAlt: "#8a2be2", label: m.legend_items_warp_label(), [35mdescription[36m: m.legend_items_warp_description()),
+        },[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:51:24
+[31mError[39m: Cannot find name 'legendItems'. (ts)
+[36m                subtitle={m.legend_subtitle()}
+                items={[35mlegendItems[36m}
+                faq={m.legend_faq()}[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:52:24
+[31mError[39m: Property 'legend_faq' does not exist on type 'typeof import("c:/Users/Tom\u00E1\u0161/Documents/GitHub/lineum-core/portal/src/lib/paraglide/messages")'. (ts)
+[36m                items={legendItems}
+                faq={m.[35mlegend_faq[36m()}
+            />[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32msrc\routes\+page.svelte[39m:139:26
+[31mError[39m: Cannot find name 'SIMULACRUM_URL'. (ts)
+[36m                <p>{m.sections_scientist_simulacrum_desc()}</p>
+                <a href={[35mSIMULACRUM_URL[36m} target="simulacrum"
+                    >{m.sections_scientist_simulacrum_link()}</a[39m
+
+c:\Users\Tom├í┼í\Documents\GitHub\lineum-core\portal\[32mtests\gemini_cache.test.ts[39m:3:54
+[31mError[39m: Cannot find module './gemini_cache' or its corresponding type declarations. 
+[36mimport { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getOrUpdateCache, resetLocalRefCache } from [35m'./gemini_cache'[36m;[39m
+
+====================================
+[31msvelte-check found 171 errors and 3 warnings in 21 files
+[39m

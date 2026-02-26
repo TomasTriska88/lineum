@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages.js';
+    import * as m from "$lib/paraglide/messages.js";
     import { onMount, onDestroy } from "svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
@@ -811,11 +811,10 @@ logic_result = solver.compile_lpl(
                 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-8 leading-[1.05]"
                 style="font-family: var(--font-sans);"
             >
-                {@html m.api_solutions_hero_title()}
-                <br class="hidden lg:block" />
-                <span class="text-gradient-multi">
-                    {m.api_solutions_hero_highlight()}
-                </span>
+                {@html m.api_solutions_hero_title_full({
+                    highlight_span: "<span class='text-gradient-multi'>",
+                    highlight_span_end: "</span>",
+                })}
             </h1>
 
             <p class="text-slate-400 text-xl max-w-2xl font-light mb-12">

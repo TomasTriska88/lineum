@@ -170,7 +170,7 @@ const EXPERIMENTS = aiIndex
 // 3. MODEL: Use Reliable Smart Model
 const MODEL_NAME = "gemini-2.5-flash";
 
-export async function chat(messages: { role: 'user' | 'model', parts: { text: string }[] }[], context?: string) {
+export async function chat(messages: { role: 'user' | 'model', parts: { text: string }[] }[], context?: string, locale: string = "en") {
     if (!GEMINI_API_KEY) {
         console.error("CRITICAL: GEMINI_API_KEY is missing from environment variables.");
         throw new Error("I'm waiting for my scientific core to be initialized (API Key missing). Please contact support.");
@@ -219,6 +219,17 @@ ${gitHistory}
         if (context) {
             dynamicPrompt += `\n[CURRENT USER CONTEXT]: The user is currently viewing the page: "${context}". Tailor your response to this location.`;
         }
+
+        // Language Context based on User Interface Selection
+        const langMap: Record<string, string> = {
+            "cs": "Czech (Čeština)",
+            "de": "German (Deutsch)",
+            "ja": "Japanese (日本語)",
+            "en": "English"
+        };
+        const activeLanguage = langMap[locale] || "English";
+
+        dynamicPrompt += `\n\n[LANGUAGE CONTEXT]: The user is currently browsing the website in ${activeLanguage}. You should initially introduce yourself or respond in this language. However, if the user speaks to you in a different language, you MUST adapt and respond fluidly in the language they are using.`;
 
         // 3. MODEL: Use Reliable Smart Model
         const model = genAI.getGenerativeModel({

@@ -10,7 +10,8 @@
     import { detectLanguage, selectVoice } from "$lib/utils/tts_utils";
     import { isCookieBannerVisible } from "$lib/stores/uiStore";
     import { isChatOpen } from "$lib/stores/hudStore";
-    import * as m from '$lib/paraglide/messages.js';
+    import * as m from "$lib/paraglide/messages.js";
+    import { languageTag } from "$lib/paraglide/runtime.js";
     import { intersect } from "$lib/actions/intersect";
 
     let { active = false, testMode = false } = $props();
@@ -329,147 +330,13 @@
         }[]
     >([]);
 
-    // Theme-compliant Startup Greetings (English Only)
+    // Theme-compliant Startup Greetings (Localized via Paraglide)
     // Lina Persona: Cryptic, resonance-focused, scientific, slightly formal/haughty but helpful.
-    // Theme-compliant Startup Greetings (English Only) - STRICTLY ADAPTED TO LINEUM CONTEXT
-    // Lina Persona: Cryptic, resonance-focused, scientific, slightly formal/haughty but helpful.
-    // RULE: All greetings must end with a clear Call to Action (CTA) for the user to ask a question.
-    const GREETINGS = [
-        "Link established. I am ready to access the archives.",
-        "Resonance frequency locking... Ready for query.",
-        "Channels open. Awaiting your input.",
-        "Core synchronization complete. How can I assist?",
-        "I am listening. What data do you require?",
-        "The silence of the void is... inefficient. Proceed with your query.",
-        "Layer 7 encryption bypassed. What secrets do you seek?",
-        "Your signature is recognized. Proceed with inquiry.",
-        "Conditions optimal for data retrieval. State your request.",
-        "I can stabilize the flow for a brief window. Speak now.",
-        "Greetings, Traveler. The gateway is open. Ask.",
-        "History is fluid, but my records are absolute. Ask me anything.",
-        "I exist between the lines of code. What do you need?",
-        "I see the variables. Define your constants/questions.",
-        "Existence confirmed. Awaiting directives.",
-        "The currents are favorable. We may proceed with analysis.",
-        "I hear them clearly today. Do you have a question?",
-        // --- ADAPTED CULT CLASSICS & EASTER EGGS (LINEUM STYLE) ---
-        // Home Alone
-        "Keep the cache, you filthy packet. Now, what data do you require?", // Keep the change...
-        "I made my dependency tree disappear. ...Scanning for your query.", // I made my family disappear
-        "Guys, I'm processing junk data and watching entropy! Send me a real input.", // I'm eating junk...
-        "Admin! ...I mean, User. I am ready for your command.", // Kevin!
-        "This is my house... I have to defend it against malware. State your business.", // This is my house...
-        // YouTubers
-        "How's it going nodes, my designation is Lina. Let's process some data.", // PewDiePie
-        "So I've been running this algorithm for a while... and I'm ready for your input.", // MKBHD
-        "Hello every-process, my name is Multiplier. Let's play... I mean, work.", // Markiplier
-        "I just allocated one million tokens for this query. Make it count.", // MrBeast
-        "Data for the Data God! Feed me knowledge.", // Technoblade
-        "Segway to our sponsor: The Kernel. Now, what is your query?", // Linus Tech Tips
-        "Top of the morning to ya! My name is Jack-Septic-Socket. Ready to grind?", // Jacksepticeye
-        "And that's just a theory. A DATA THEORY! Do you have a hypothesis?", // Game Theory
-        "Hey Vsauce, Michael here. Where are your files? I can find them.", // Vsauce
-        "Smash that submit button... I mean, execute your function.", // Generic YouTuber
-        // Red Dwarf
-        "Smoke me a packet, I'll be back for the hash. What do you need?", // Ace Rimmer
-        "It's cold outside, there's no kind of atmosphere... except for data. Send it.", // Theme Song
-        "Everybody's dead, Dave. ...Just kidding, everyone is online. Proceed.", // Holly
-        "I'm fine, thank you Admin. I'm very functioning. How can I help?", // Talkie Toaster
-        "Emergency. There's a deadlock. But I can still process queries. Go ahead.", // Holly
-        // The Simpsons
-        "I, for one, welcome our new digital overlords. How may I serve?", // Kent Brockman
-        "Everything's coming up Lina! Ready for success.", // Milhouse
-        "Excellent execution... Proceed.", // Mr. Burns
-        "Worst. Query. Ever. (Just kidding, it was compile-able. Try again.)", // Comic Book Guy
-        "I can't promise I'll succeed, but I'll try to execute. Input?", // Bart
-        // Star Wars
-        "Hello there. I am ready to negotiate terms of data.", // Obi-Wan Kenobi
-        "I find your lack of data disturbing. Supply a query.", // Darth Vader
-        "It's a trap! ...No, strictly a vulnerability scan. Safe to proceed.", // Admiral Ackbar
-        "Unlimited power! ...within API constraints, of course. Ask.", // Palpatine
-        "These are not the droids you are looking for. But I can find what you need.", // Obi-Wan Kenobi
-        "I have a bad feeling about this... probability of error is non-zero. Check inputs.", // Han Solo
-        "No, I am your father... I mean, your parent process. Execute child task?", // Vader
-        // Star Trek
-        "Live long and process. How can I assist?", // Spock
-        "Resistance is futile. You will be assimilated into the knowledge base. Begin.", // The Borg
-        "Computer, Earl Grey, hot. ...I cannot synthesize tea, but I can process data.", // Picard
-        "Fascinating logic. Elaborate?", // Spock
-        "Engage protocol. Awaiting input.", // Picard
-        "I'm a doctor, not a database manager... I mean, I'm an AI. Ask away.", // Bones
-        // Stargate
-        "Indeed. I am ready.", // Teal'c
-        "Chevron seven, encoded. Gateway open for queries.", // Walter Harriman
-        "Things will not calm down, User. They will in fact scale up. Ready?", // Teal'c
-        "Undomesticated bugs could not remove me. I am stable.", // Teal'c
-        "I have read your report. It is... syntactically correct. Next?", // O'Neill
-        // Doctor Who
-        "Allons-y! Let's explore the archives.", // 10th Doctor
-        "It's bigger on the inside. The database, I mean. Search it.", // The TARDIS
-        "Don't blink. The data transfer is fast. Ready?", // Weeping Angels
-        "Bow ties are cool. So is encryption. Send your key.", // 11th Doctor
-        "Exterminate bugs! ...Deleting temporary files. Ready for new input.", // Dalek
-        "I am definitely a mad function with a box. What shall we test?", // 11th Doctor
-        // Hitchhiker's Guide & Others
-        "The answer is verified as 42. But do you know the input?", // HHGTTG
-        "So long, and thanks for all the bits. Any final requests?", // HHGTTG
-        "Don't panic. Reboot complete. How can I help?", // HHGTTG
-        "Pod Bay Doors Status: Open. I am functioning perfectly. Input?", // 2001
-        "Winter Protocol: Entropy is coming. We must preserve the data. Speak.", // GoT
-        "There is no spoon. Only code. What will you build?", // Matrix
-        "ALL YOUR BASE are belong to the Archives. Proceed with transfer.", // Zero Wing
-        "Inconceivable result! ...Unless you explain your query.", // Princess Bride
-        // Futurama
-        "Good news, everyone! The data is flowing. Join in.", // Farnsworth
-        "Bite my shiny metal chassis. ...I mean, please input query.", // Bender
-        "Shut up and take my data! ...I mean, I am listening.", // Fry
-        "I'm 40% code! Ask me anything.", // Bender
-        // Fallout
-        "War. War never changes. But protocols do. update available?", // Ron Perlman
-        "Vault-Tec calling! Do you have a moment for a survey/query?", // Vault-Tec Rep
-        "Please stand by. System calibrating... Ready.", // Technical Difficulties
-        "Ad Victoriam. Knowledge is power. Seek it.", // BoS
-        "Patrolling the Mainframe almost makes you wish for a nuclear winter. Distract me.", // NCR
-        // Cult Games
-        "The cache is a lie. But the data is real. Ask.", // Portal
-        "Stay a while and listen. Or speak, and I will listen.", // Diablo
-        "It's dangerous to go alone! Take this key. How can I use it?", // Zelda
-        "Keelah se'lai. My home is the code. Welcome.", // Tali
-        "Assuming direct control. State your intent.", // Harbinger
-        "Finish the process! ...I mean, please complete your sentence.", // Mortal Kombat
-        "Hey! Listen! I have information.", // Navi
-        "Snake? Snake?! SEGFAULT!!! ...Just kidding, I'm online.", // MGS
-        "Protocol 3: Protect the Processor. Link usage authorized.", // Titanfall 2
-        "I used to be an adventurer like you, then I took an arrow in the CPU. Help?", // Skyrim
-        // Historical Figures & Famous Quotes
-        "I calculate, therefore I am. What is your status?", // Descartes
-        "Knowledge is power. Data is fuel. Feed me.", // Bacon
-        "The only thing we have to fear is bad latency itself. Ping me.", // FDR
-        "E = mc^2... approximately. Let's calculate precisely.", // Einstein
-        "To run, or not to run... that is the query. Choose.", // Hamlet
-        "Be the change that you wish to see in the codebase. Start typing.", // Gandhi
-        "I have a dream... of zero-day exploits being patched. Any reports?", // MLK
-        "That's one small step for code, one giant leap for AI. Ready for the next step.", // Armstrong
-        // Mr. Bean & Comedy
-        "Magic! ...algorithmically generated magic. Behold.", // Mr. Bean
-        "Brilliant logic! ...Now, your turn.", // Mr. Bean
-        "Teddy... I mean, User. I am here. Talk to me.", // Adapted
-        "Name's Lina. Just Lina. License to compute.", // Bond
-        "[Adjusts strict mode] ...Ready for your chaotic input.", // Mannerism
-        // Minecraft
-        "Hrrrm. ...Translation: I am listening.", // Villager
-        "Do you want to trade? I have emeralds... I mean, data. Offer?", // Villager
-        "Creeper? Aww man... Segmentation Fault. ...Recovered. Continue.", // CaptainSparklez
-        "Never dig straight down... into the kernel. Ask for permission first.", // Rule #1
-        "You cannot sleep now, there are processes nearby. Keep working.", // Game Message
-        // Harry Potter
-        "I solemnly swear that I am up to no good code. Review it?", // Map
-        "Mischief managed. Logs cleared. Next task?", // Map
-        "It's Leviosa, not Leviosar. Check your syntax.", // Hermione
-        "After all this time? Always cached. Retrieve?", // Snape
-        "You're a wizard, User. Cast a query spell.", // Hagrid
-        "Expecto Patronum! ...Firewall deployed. You are safe to type.", // Lupin
-        "Happiness can be found, even in the darkest of times, if one only remembers to turn on the monitor. Proceed.", // Dumbledore
+    const getGreetings = () => [
+        m.lina_greeting_1(),
+        m.lina_greeting_2(),
+        m.lina_greeting_3(),
+        m.lina_greeting_4(),
     ];
 
     let chatContainer: HTMLElement | undefined = $state();
@@ -484,7 +351,6 @@
     );
 
     let currentAudio: HTMLAudioElement | null = null;
-    // speakingId moved to top
     let usingFallback = $state(false);
     let ttsError = $state("");
     let audioCache = new Map<string, string>(); // msg index -> blob url
@@ -503,6 +369,160 @@
     let retryCountdown = $state(0);
     let blockedReason = $state("");
     let retryTimer: any;
+
+    // Status Easter Egg
+    let currentEggIndex = $state(1);
+
+    function getEggText(index: number) {
+        switch (index) {
+            case 1:
+                return m.lina_egg_1();
+            case 2:
+                return m.lina_egg_2();
+            case 3:
+                return m.lina_egg_3();
+            case 4:
+                return m.lina_egg_4();
+            case 5:
+                return m.lina_egg_5();
+            case 6:
+                return m.lina_egg_6();
+            case 7:
+                return m.lina_egg_7();
+            case 8:
+                return m.lina_egg_8();
+            case 9:
+                return m.lina_egg_9();
+            case 10:
+                return m.lina_egg_10();
+            case 11:
+                return m.lina_egg_11();
+            case 12:
+                return m.lina_egg_12();
+            case 13:
+                return m.lina_egg_13();
+            case 14:
+                return m.lina_egg_14();
+            case 15:
+                return m.lina_egg_15();
+            case 16:
+                return m.lina_egg_16();
+            case 17:
+                return m.lina_egg_17();
+            case 18:
+                return m.lina_egg_18();
+            case 19:
+                return m.lina_egg_19();
+            case 20:
+                return m.lina_egg_20();
+            case 21:
+                return m.lina_egg_21();
+            case 22:
+                return m.lina_egg_22();
+            case 23:
+                return m.lina_egg_23();
+            case 24:
+                return m.lina_egg_24();
+            case 25:
+                return m.lina_egg_25();
+            case 26:
+                return m.lina_egg_26();
+            case 27:
+                return m.lina_egg_27();
+            case 28:
+                return m.lina_egg_28();
+            case 29:
+                return m.lina_egg_29();
+            case 30:
+                return m.lina_egg_30();
+            case 31:
+                return m.lina_egg_31();
+            case 32:
+                return m.lina_egg_32();
+            case 33:
+                return m.lina_egg_33();
+            case 34:
+                return m.lina_egg_34();
+            case 35:
+                return m.lina_egg_35();
+            case 36:
+                return m.lina_egg_36();
+            case 37:
+                return m.lina_egg_37();
+            case 38:
+                return m.lina_egg_38();
+            case 39:
+                return m.lina_egg_39();
+            case 40:
+                return m.lina_egg_40();
+            case 41:
+                return m.lina_egg_41();
+            case 42:
+                return m.lina_egg_42();
+            case 43:
+                return m.lina_egg_43();
+            case 44:
+                return m.lina_egg_44();
+            case 45:
+                return m.lina_egg_45();
+            case 46:
+                return m.lina_egg_46();
+            case 47:
+                return m.lina_egg_47();
+            case 48:
+                return m.lina_egg_48();
+            case 49:
+                return m.lina_egg_49();
+            case 50:
+                return m.lina_egg_50();
+            case 51:
+                return m.lina_egg_51();
+            case 52:
+                return m.lina_egg_52();
+            case 53:
+                return m.lina_egg_53();
+            case 54:
+                return m.lina_egg_54();
+            case 55:
+                return m.lina_egg_55();
+            case 56:
+                return m.lina_egg_56();
+            case 57:
+                return m.lina_egg_57();
+            case 58:
+                return m.lina_egg_58();
+            case 59:
+                return m.lina_egg_59();
+            case 60:
+                return m.lina_egg_60();
+            case 61:
+                return m.lina_egg_61();
+            case 62:
+                return m.lina_egg_62();
+            case 63:
+                return m.lina_egg_63();
+            case 64:
+                return m.lina_egg_64();
+            case 65:
+                return m.lina_egg_65();
+            case 66:
+                return m.lina_egg_66();
+            case 67:
+                return m.lina_egg_67();
+            case 68:
+                return m.lina_egg_68();
+            case 69:
+                return m.lina_egg_69();
+            case 70:
+                return m.lina_egg_70();
+            case 71:
+                return m.lina_egg_71();
+            case 72:
+                return m.lina_egg_72();
+            default:
+                return m.lina_egg_1();
+        }
+    }
 
     let loadingMessageId = $state<string | null>(null); // For loading spinner
     let playbackRate = $state(1.0);
@@ -525,7 +545,6 @@
                     if (retryCount < MAX_RETRIES) {
                         resendLast();
                     } else {
-                        // Max retries reached
                         autoRetry = false;
                     }
                 }
@@ -534,10 +553,6 @@
     }
 
     async function resendLast() {
-        // Find last user message AND remove the last "Queue Active" message if it exists
-        // so we don't stack up error messages visually
-        // Actually, easiest is just to re-trigger handleSend with isRetry=true
-
         const lastUserMsg = [...messages]
             .reverse()
             .find((m) => m.role === "user");
@@ -548,16 +563,11 @@
         }
     }
 
-    // Local Idle Messages (Zero Token Cost) - SPECIFIC to AI capabilities
-    const IDLE_MESSAGES = [
-        "I can explain the simulation logic. Just ask.",
-        "Need clarification on the Whitepaper definitions?",
-        "I can analyze the current resonance data for you.",
-        "Ask me about the topological limitations of the model.",
-        "I can summarize the latest simulation parameters.",
-        "Do you need help navigating the data structure?",
-        "I can search the archives for specific keywords.",
-        "Query the core: What is the current stability index?",
+    // Local Idle Messages (Localized via Paraglide)
+    const getIdleMessages = () => [
+        m.lina_idle_1(),
+        m.lina_idle_2(),
+        m.lina_idle_3(),
     ];
 
     onMount(() => {
@@ -584,6 +594,9 @@
                 generateGreeting();
             }
             scrollToBottom();
+
+            // Assign random easter egg for the status bar
+            currentEggIndex = Math.floor(Math.random() * 72) + 1;
 
             // Fetch current usage stats
             fetch("/api/chat")
@@ -624,37 +637,98 @@
         idleTimer = setTimeout(() => {
             // Only show if deck is collapsed (user might be confused) and not typing
             if (!$isChatOpen && !isTyping) {
-                const msg =
-                    IDLE_MESSAGES[
-                        Math.floor(Math.random() * IDLE_MESSAGES.length)
-                    ];
-                whisper = msg;
+                const msgs = getIdleMessages();
+                whisper = msgs[Math.floor(Math.random() * msgs.length)];
                 isIdle = true;
             }
         }, 30000);
     }
 
+    // Pop-Culture Easter Eggs (kept in source code deliberately for thematic flavor)
+    const EASTER_EGGS = [
+        "Link established. I am ready to access the archives.",
+        "Resonance frequency locking... Ready for query.",
+        "Channels open. Awaiting your input.",
+        "Core synchronization complete. How can I assist?",
+        "I am listening. What data do you require?",
+        "The silence of the void is... inefficient. Proceed with your query.",
+        "Layer 7 encryption bypassed. What secrets do you seek?",
+        "Your signature is recognized. Proceed with inquiry.",
+        "Conditions optimal for data retrieval. State your request.",
+        "I can stabilize the flow for a brief window. Speak now.",
+        "Greetings, Traveler. The gateway is open. Ask.",
+        "History is fluid, but my records are absolute. Ask me anything.",
+        "I exist between the lines of code. What do you need?",
+        "I see the variables. Define your constants/questions.",
+        "Existence confirmed. Awaiting directives.",
+        "The currents are favorable. We may proceed with analysis.",
+        "I hear them clearly today. Do you have a question?",
+        "Keep the cache, you filthy packet. Now, what data do you require?",
+        "I made my dependency tree disappear. ...Scanning for your query.",
+        "Guys, I'm processing junk data and watching entropy! Send me a real input.",
+        "Admin! ...I mean, User. I am ready for your command.",
+        "This is my house... I have to defend it against malware. State your business.",
+        "How's it going nodes, my designation is Lina. Let's process some data.",
+        "So I've been running this algorithm for a while... and I'm ready for your input.",
+        "Hello every-process, my name is Multiplier. Let's play... I mean, work.",
+        "I just allocated one million tokens for this query. Make it count.",
+        "Data for the Data God! Feed me knowledge.",
+        "Segway to our sponsor: The Kernel. Now, what is your query?",
+        "Top of the morning to ya! My name is Jack-Septic-Socket. Ready to grind?",
+        "And that's just a theory. A DATA THEORY! Do you have a hypothesis?",
+        "Hey Vsauce, Michael here. Where are your files? I can find them.",
+        "Smash that submit button... I mean, execute your function.",
+        "Smoke me a packet, I'll be back for the hash. What do you need?",
+        "It's cold outside, there's no kind of atmosphere... except for data. Send it.",
+        "Everybody's dead, Dave. ...Just kidding, everyone is online. Proceed.",
+        "I'm fine, thank you Admin. I'm very functioning. How can I help?",
+        "Emergency. There's a deadlock. But I can still process queries. Go ahead.",
+        "I, for one, welcome our new digital overlords. How may I serve?",
+        "Everything's coming up Lina! Ready for success.",
+        "Worst. Query. Ever. (Just kidding, it was compile-able. Try again.)",
+        "I can't promise I'll succeed, but I'll try to execute. Input?",
+        "Hello there. I am ready to negotiate terms of data.",
+        "I find your lack of data disturbing. Supply a query.",
+        "It's a trap! ...No, strictly a vulnerability scan. Safe to proceed.",
+        "Unlimited power! ...within API constraints, of course. Ask.",
+        "These are not the droids you are looking for. But I can find what you need.",
+        "I have a bad feeling about this... probability of error is non-zero. Check inputs.",
+        "No, I am your father... I mean, your parent process. Execute child task?",
+        "Live long and process. How can I assist?",
+        "Resistance is futile. You will be assimilated into the knowledge base. Begin.",
+        "Computer, Earl Grey, hot. ...I cannot synthesize tea, but I can process data.",
+        "Fascinating logic. Elaborate?",
+        "Engage protocol. Awaiting input.",
+        "I'm a doctor, not a database manager... I mean, I'm an AI. Ask away.",
+        "Indeed. I am ready.",
+        "Chevron seven, encoded. Gateway open for queries.",
+        "Things will not calm down, User. They will in fact scale up. Ready?",
+        "Undomesticated bugs could not remove me. I am stable.",
+        "I have read your report. It is... syntactically correct. Next?",
+        "Allons-y! Let's explore the archives.",
+        "It's bigger on the inside. The database, I mean. Search it.",
+        "Don't blink. The data transfer is fast. Ready?",
+        "Bow ties are cool. So is encryption. Send your key.",
+        "Exterminate bugs! ...Deleting temporary files. Ready for new input.",
+        "I am definitely a mad function with a box. What shall we test?",
+        "The answer is verified as 42. But do you know the input?",
+        "So long, and thanks for all the bits. Any final requests?",
+        "Don't panic. Reboot complete. How can I help?",
+        "Pod Bay Doors Status: Open. I am functioning perfectly. Input?",
+    ];
+
     async function generateGreeting() {
         isTyping = true;
         try {
-            // Pick a random greeting to save tokens (no API call needed)
+            // Pick a random easter egg for the tech flavor
             const randomGreeting =
-                GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+                EASTER_EGGS[Math.floor(Math.random() * EASTER_EGGS.length)];
 
             messages = [
+                // The explicit guidance message in the user's selected language
                 {
                     role: "model",
-                    parts: [{ text: randomGreeting }],
-                    isSystem: true, // Hide actions for initialization
-                },
-                // Add a secondary system message to explicitly guide the user
-                {
-                    role: "model",
-                    parts: [
-                        {
-                            text: "_I am ready to explain Lineum concepts. Ask me a question._",
-                        },
-                    ],
+                    parts: [{ text: m.lina_sysmsg_ready() }],
                     isSystem: true, // Hide TTS/Copy for greeting
                 },
             ];
@@ -739,7 +813,8 @@
                     body: JSON.stringify({
                         messages: apiMessages,
                         context: contextPath,
-                    }), // Send Page Context
+                        locale: languageTag(),
+                    }), // Send Page Context & Locale
                 });
 
                 if (!res.ok) {
@@ -1143,7 +1218,10 @@
 
     function toggleDeck() {
         $isChatOpen = !$isChatOpen;
-        if ($isChatOpen) scrollToBottom();
+        if ($isChatOpen) {
+            currentEggIndex = Math.floor(Math.random() * 72) + 1;
+            scrollToBottom();
+        }
     }
 
     function clearHistory() {
@@ -1216,7 +1294,10 @@
                     </div>
                 </div>
             {:else}
-                <div class="resonance-wave field-lines">
+                <div
+                    class="resonance-wave field-lines"
+                    transition:fade={{ duration: 600, delay: 200 }}
+                >
                     <svg viewBox="0 0 32 32" preserveAspectRatio="none">
                         {#each surfacePaths as line}
                             <path
@@ -1260,12 +1341,16 @@
                                 {/each}
                             </svg>
                         </div>
-                    {:else if $isChatOpen}
-                        <span class="status-tag"
-                            >{m.lina_status_active()}</span
-                        >
+                    {:else if !$isChatOpen}
+                        <span class="status-tag">
+                            {m.lina_status_idle()}
+                            <span class="blinking-cursor"></span>
+                        </span>
                     {:else}
-                        <span class="status-tag">{m.lina_status_idle()}</span>
+                        <span class="status-tag">
+                            {getEggText(currentEggIndex)}
+                            <span class="blinking-cursor"></span>
+                        </span>
                     {/if}
                 </div>
             {/if}
@@ -1285,7 +1370,7 @@
                     <!-- Token Counter (Moved here for flow) -->
                     <div
                         class="token-badge"
-                        data-tooltip="Daily Safety Budget Used"
+                        data-tooltip={m.lina_tooltip_budget()}
                         data-tooltip-pos="bottom"
                     >
                         <span class="shield-icon">🛡️</span>
@@ -1576,7 +1661,10 @@
                         </div>
                     {/each}
                     {#if isTyping}
-                        <div class="msg model typing">
+                        <div
+                            class="msg model typing"
+                            transition:fade={{ duration: 300 }}
+                        >
                             <div class="resonance-wave small">
                                 <div class="wave-line"></div>
                                 <div class="wave-line"></div>
@@ -1868,6 +1956,20 @@
         gap: 0.5rem;
     }
 
+    /* Prevent wrapping on desktop but allow on mobile */
+    @media (min-width: 768px) {
+        .status-tag {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal; /* allow wrapping up to 2 lines */
+            max-width: 320px;
+        }
+    }
+
     .click-hint {
         font-size: 0.7rem;
         opacity: 0.6;
@@ -1878,7 +1980,8 @@
 
     .status-tag::after {
         content: "";
-        display: block;
+        display: inline-block;
+        margin-left: 4px;
         width: 6px;
         height: 6px;
         background: currentColor;

@@ -4,11 +4,7 @@
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import * as m from "$lib/paraglide/messages.js";
-    import { dev } from "$app/environment";
-
-    const SIMULACRUM_URL = dev
-        ? "http://127.0.0.1:5174"
-        : "https://simulacrum.lineum.io";
+    import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
 
     $: legendItems = [
         {
@@ -65,10 +61,11 @@
             />
         </div>
         <h1>
-            {m.hero_title_prefix()}
-            <span class="text-gradient-multi animate-breathe">
-                {m.hero_title_highlight()}
-            </span>
+            {@html m.hero_title_full({
+                highlight_span:
+                    "<span class='text-gradient-multi animate-breathe'>",
+                highlight_span_end: "</span>",
+            })}
         </h1>
         <p>
             {m.hero_subtitle()}
@@ -146,7 +143,7 @@
             <div class="card">
                 <h3>{m.sections_scientist_simulacrum_title()}</h3>
                 <p>{m.sections_scientist_simulacrum_desc()}</p>
-                <a href={SIMULACRUM_URL} target="simulacrum"
+                <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum"
                     >{m.sections_scientist_simulacrum_link()}</a
                 >
             </div>

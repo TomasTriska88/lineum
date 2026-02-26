@@ -1,3 +1,4 @@
 [
-  "File mobile.spec.ts uses storage but is not whitelisted: localStorage.setItem('cookie_consent'"
+  "File ResonanceDeck.svelte uses unapproved key 'lina_session_id': localStorage.getItem(\"lina_session_id\"",
+  "File ResonanceDeck.svelte uses unapproved key 'lina_session_id': localStorage.setItem(\"lina_session_id\""
 ]
