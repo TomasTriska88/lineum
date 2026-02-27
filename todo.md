@@ -1646,6 +1646,7 @@ To ensure the growing ecosystem remains comprehensible and trustworthy to B2B cu
     - **B) Visual Immediacy:** The concept must be understood *instantly* via an interactive or animated UI component. The customer must not have to think.
     - **C) Head-to-Head Comparison:** Explicit pros/cons vs. traditional methods (e.g., vs A*, vs AES/SHA, vs standard TRNG).
     - **D) The Proof (Show, Don't Tell):** Hard visual or mathematical proof (benchmark logs, tensor visualizations) demonstrating performance at identical compute power, proving the claims are real.
+    - **E) Integration & Tooling Code:** Clear documentation on how to connect (code snippets for fetch/REST), plus helper libraries and utilities (e.g., scripts to convert the raw $\Phi$ heatmap/bitmap into traditional extracted paths for swarm systems).
 
 - [ ] **Phase 2: App-by-App Development**
   - Implement and finalize the applications one by one (backend logic + frontend connection).
