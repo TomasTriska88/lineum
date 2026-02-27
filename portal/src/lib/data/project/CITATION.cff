@@ -29,4 +29,4 @@ preferred-citation:
       given-names: "Tomáš"
   year: 2026
   doi: 10.5281/zenodo.16934359
-  notes: "Core manuscript: whitepaper/lineum-core.md (CC BY 4.0). Code & tooling: AGPL-3.0. Structural Closure is in-scope in v1.0.x; extensions (Return Echo, Dimensional Transparency) live in lineum-exp-*/lineum-extension-*."
+  notes: "Core manuscript: whitepaper/lineum-core.md (CC BY-NC-ND 4.0). Code & tooling: AGPL-3.0. Structural Closure is in-scope in v1.0.x; extensions (Return Echo, Dimensional Transparency) live in lineum-exp-*/lineum-extension-*."

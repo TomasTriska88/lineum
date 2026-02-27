@@ -203,6 +203,14 @@ The key motivation is to test if macroscopic phenomena, such as particle-like ex
 
 By isolating and quantifying these emergent behaviors, Lineum offers a controllable environment to evaluate which observed effects might have analogues in known physics, and which are unique to discrete, metric-free systems.
 
+### 2.1 Theoretical Context: Locality vs. Global Geometry
+
+Current theoretical frameworks, most notably the **Amplituhedron** used for calculating $n$-particle scattering amplitudes, attempt to bypass the complexities of physical spacetime by computing interactions from within abstract global geometries, effectively treating locality as an emergent artifact. Lineum tests the polar opposite approach: building a strictly local, dimensionless discrete grid to verify if complex physical laws can instead emerge "bottom-up".
+
+> **[OBS] Hypothesis: Asymptotic limits and the Half-Collinear Regime**
+> A key hypothesis under investigation involves complex quasi-particle interactions. For instance, in the **half-collinear regime** where highly energetic particles move in almost parallel trajectories, continuous amplitude calculations traditionally face mathematical divergences requiring external renormalization. We hypothesize that in a strictly discrete formulation like Lineum, these asymptotic singularities simply cannot form. Instead, structurally overlapping high-energy linons will mutually disrupt their phase topologies, resulting in "wave-breaking" and immediate energy distribution back into the scalar $\phi$ field. 
+> *Verification note:* This remains an observational hypothesis requiring explicit verification through targeted collision runs and is **not** a contract-validated behavior in the canonical v1 core.
+
 # 3. Equation
 
 The evolution of the system is defined on a discrete 2D grid by three coupled update rules for:

@@ -1,6 +1,6 @@
 # Proprietary License
 
-**Copyright (C) 2025 - 2026 Tomáš Tříska, Kateřina Marečková. All Rights Reserved.**
+**Copyright (C) 2025 - 2026 Tomáš Tříska. All Rights Reserved.**
 
 The source code, assets, and all related intellectual property contained within this `/portal` directory (and its subdirectories) are strictly proprietary and intended solely for internal and commercial SaaS operation.
 

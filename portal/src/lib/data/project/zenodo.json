@@ -32,7 +32,7 @@
   "license": "AGPL-3.0-only",
   "language": "eng",
   "access_right": "open",
-  "notes": "Core paper is included as whitepaper/lineum-core.md (manuscript text and figures intended under CC-BY-4.0). Software and scripts are AGPL-3.0-licensed. The display-only effective mass is a pure unit conversion from the canonical tone f0 (m = h f0 / c^2, m/m_e as a scale cue) and is explicitly not a rest-mass claim. Structural Closure is in scope for the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Phenomena such as Return Echo, Dimensional Transparency (time-varying κ), and other extensions live in the experimental/extension track (lineum-exp-*, lineum-extension-*) and are out of scope for this core bundle.",
+  "notes": "Core paper is included as whitepaper/lineum-core.md (manuscript text and figures intended under CC BY-NC-ND 4.0). Software and scripts are AGPL-3.0-licensed. The display-only effective mass is a pure unit conversion from the canonical tone f0 (m = h f0 / c^2, m/m_e as a scale cue) and is explicitly not a rest-mass claim. Structural Closure is in scope for the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Phenomena such as Return Echo, Dimensional Transparency (time-varying κ), and other extensions live in the experimental/extension track (lineum-exp-*, lineum-extension-*) and are out of scope for this core bundle.",
   "related_identifiers": [
     {
       "relation": "isSupplementTo",
