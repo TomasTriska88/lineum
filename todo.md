@@ -1433,7 +1433,7 @@ This section defines the requirements and architecture for the new main Lineum S
     - **The Need:** To serve enterprise on-premise clients, providing only Python is insufficient. We must eventually provide highly optimized native libraries (e.g., `C++`, `Rust`) and web-edge versions (`JS/WASM`) of the Engine.
     - **The Risk (Numerical Instability Hypothesis):** As established in `[TEST] Section F` and `Section G`, we hypothesize that Lineum's exact mathematical convergence (vortex count, $\phi$-tension loops) is highly dependent on floating-point precision and operation ordering. 
     - **Validation Gate:** Before selling a native C++ or JS enterprise port, it MUST pass the exact same rigid `whitepaper_contract_suite.json` matrix as the Python core. If the cross-language port drifts topologically due to architecture compilation (e.g., fast-math flags vs strict IEEE 754), it cannot be certified as valid canonical Lineum.
-- [ ] **L.3 SaaS Boundary & Monorepo Separation**
+- [x] **L.3 SaaS Boundary & Monorepo Separation**
     - Address the architectural mixing of Proprietary SaaS API code (`routing_backend/main.py`) and the AGPL Engine (`lineum_core`). Establish a formal API boundary or repository split to avoid license contamination.
 - [ ] **L.4 Acceptable Use & Ethical ToS**
     - Draft and integrate a Terms of Service/Responsible Use policy specifying forbidden API usage (military swarm drones, malicious market HFT, etc.).
