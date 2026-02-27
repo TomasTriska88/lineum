@@ -8,9 +8,9 @@ Full license text: https://creativecommons.org/licenses/by/4.0/
 
 **Scope**
 
-- Applies to: `whitepaper/` (including `lineum-core.md`, equation history, and figures in `source/` used by the paper).
-- Does **not** apply to: source code and scripts (see `LICENSE`, which is **MIT**).
+- Applies to: `whitepapers/` (including all cosmological and ontological hypotheses and figures).
+- Does **not** apply to: source code, scripts, and portal architecture (see `LICENSE`, which is **GNU AGPLv3**, and the proprietary `/portal` directory).
 
 **Attribution suggestion**
 
-> T. Tříska, _Lineum Core (v1.0.6-core)_, 2025. CC BY 4.0. DOI: 10.5281/zenodo.16934359.
+> T. Tříska, _Lineum Core (v1.0.18-core)_, 2026. CC BY 4.0. DOI: 10.5281/zenodo.14934359.
