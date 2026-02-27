@@ -117,7 +117,18 @@ async function main() {
     // 4. SYNC DATA (This is critical for Lina's context)
     run('npm run sync', 'Synchronize Data & Context');
 
-    // 5. Run Tests
+    // 5. License Audit
+    log("Running License Compliance Audit...", colors.yellow);
+    try {
+        run('npm run check:licenses', 'License Audit (GPL/AGPL Prevention)');
+    } catch (e) {
+        log("License Audit Failed! Viral open-source license detected. Rolling back...", colors.red);
+        execSync('git reset --hard origin/main');
+        execSync('git checkout dev');
+        error("License check failed. Merge aborted to protect proprietary codebase.");
+    }
+
+    // 6. Run Tests
     log("Running Validation Tests...", colors.yellow);
     try {
         run('npm test', 'Unit Tests & System Verification');
