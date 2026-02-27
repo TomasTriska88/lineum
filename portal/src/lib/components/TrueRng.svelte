@@ -1,6 +1,7 @@
 <script>
     // @ts-nocheck
     import { onMount } from "svelte";
+    import { intersect } from "$lib/actions/intersect";
 
     let canvas;
     let ctx;
@@ -8,6 +9,7 @@
     let hexStream = [];
     let error = null;
     let animationId = null;
+    let isVisible = false;
 
     // Simulate boiling pot while waiting
     let noiseGrid = [];
@@ -42,22 +44,24 @@
 
     const animateBoiling = () => {
         if (!isGenerating) return;
-        generateNoiseGrid();
-        // Smooth out the noise slightly for a "fluid" look
-        for (let i = 0; i < 3; i++) {
-            for (let y = 1; y < GRID_SIZE - 1; y++) {
-                for (let x = 1; x < GRID_SIZE - 1; x++) {
-                    noiseGrid[y][x] =
-                        (noiseGrid[y][x] +
-                            noiseGrid[y - 1][x] +
-                            noiseGrid[y + 1][x] +
-                            noiseGrid[y][x - 1] +
-                            noiseGrid[y][x + 1]) /
-                        5;
+        if (isVisible) {
+            generateNoiseGrid();
+            // Smooth out the noise slightly for a "fluid" look
+            for (let i = 0; i < 3; i++) {
+                for (let y = 1; y < GRID_SIZE - 1; y++) {
+                    for (let x = 1; x < GRID_SIZE - 1; x++) {
+                        noiseGrid[y][x] =
+                            (noiseGrid[y][x] +
+                                noiseGrid[y - 1][x] +
+                                noiseGrid[y + 1][x] +
+                                noiseGrid[y][x - 1] +
+                                noiseGrid[y][x + 1]) /
+                            5;
+                    }
                 }
             }
+            drawGrid(noiseGrid);
         }
-        drawGrid(noiseGrid);
         animationId = requestAnimationFrame(animateBoiling);
     };
 
@@ -130,7 +134,12 @@
     };
 </script>
 
-<div class="rng-container">
+<div
+    class="rng-container"
+    use:intersect
+    on:enter={() => (isVisible = true)}
+    on:leave={() => (isVisible = false)}
+>
     <div class="header">
         <h2>TRUE RNG HARVESTER</h2>
         <p>

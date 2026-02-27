@@ -68,7 +68,7 @@ describe('ResonanceDeck Interaction', () => {
         // await vi.advanceTimersByTimeAsync(1000);
 
         // Wait for inputs to appear
-        const input = await screen.findByPlaceholderText(/Ask Lina|Click to ask/i);
+        const input = await screen.findByPlaceholderText(/Zeptejte se Liny/i);
 
         if (!input) throw new Error("Input not found");
 

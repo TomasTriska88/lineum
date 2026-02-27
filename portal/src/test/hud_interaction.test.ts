@@ -53,7 +53,8 @@ describe('HUD Store and Interaction', () => {
         await fireEvent.click(deck);
 
         // When expanded, we expect "ONLINE" or "Lina"
-        // Also the "Close" button (svg) with title="Close"
-        expect(await screen.findByTitle('Close')).toBeDefined();
+        // The Minimize button was removed, so we just check for Lina's name
+        const linaText = await screen.findByText('Lina');
+        expect(linaText).toBeDefined();
     });
 });

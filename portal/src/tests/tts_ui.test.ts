@@ -91,7 +91,7 @@ describe('ResonanceDeck UI', () => {
         render(ResonanceDeck);
 
         // Wait for greeting
-        const greeting = await screen.findByText(/Lineum/, {}, { timeout: 3000 });
+        const greeting = await screen.findByText('Lina', {}, { timeout: 3000 });
         expect(greeting).toBeTruthy();
 
         // The Copy button has aria-label="Copy Markdown"
@@ -100,26 +100,11 @@ describe('ResonanceDeck UI', () => {
         expect(copyBtns.length).toBe(0);
     });
 
-    it.skip('should show usage indicator when data is available', async () => {
-        // Mock fetch with usage data
-        vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve({ usage: { totalTokenCount: 100 }, costInfo: { percentage: 42.5 } })
-        })));
 
-        render(ResonanceDeck, { active: true });
 
-        // Wait for fetch to complete and UI update matches '43%' (Math.ceil(42.5))
-        const indicator = await screen.findByText('43%', {}, { timeout: 4000 });
-        expect(indicator).toBeTruthy();
 
-        // Find badge container for tooltip check
-        // Note: .closest() might work differently in JSDOM/Testing Lib if structure is complex, 
-        // but checking the text presence confirms the logic passed.
-        // We'll trust the text presence as the primary verification.
-    });
 
-    it.skip('should trigger TTS when button is clicked', async () => {
+    it('should trigger TTS when button is clicked', async () => {
         render(ResonanceDeck, { active: true });
 
         // Open deck
@@ -127,7 +112,7 @@ describe('ResonanceDeck UI', () => {
         await fireEvent.click(toggleBtn);
 
         // Find input and type
-        const input = await screen.findByPlaceholderText(/Ask Lina/i, {}, { timeout: 3000 });
+        const input = await screen.findByPlaceholderText(/Zeptejte se Liny/i, {}, { timeout: 3000 });
         const sendBtn = screen.getByLabelText('Send Message');
 
         await fireEvent.input(input, { target: { value: 'Hello' } });
@@ -138,7 +123,7 @@ describe('ResonanceDeck UI', () => {
 
         // Find "Read Aloud" button. It should appear on the model message.
         // It might take a tick.
-        const ttsBtns = await screen.findAllByLabelText('Read Aloud', {}, { timeout: 3000 });
+        const ttsBtns = await screen.findAllByLabelText(/Read aloud/i, {}, { timeout: 3000 });
         expect(ttsBtns.length).toBeGreaterThan(0);
 
         await fireEvent.click(ttsBtns[0]);

@@ -161,7 +161,7 @@ describe('Chat Flow Integration', () => {
         await fireEvent.click(deckTrigger);
 
         // Send
-        const input = await screen.findByPlaceholderText('Ask Lina a question...');
+        const input = await screen.findByPlaceholderText('Zeptejte se Liny na cokoliv...');
         const sendBtn = screen.getByLabelText('Send Message');
         await fireEvent.input(input, { target: { value: 'Test Query' } });
         await fireEvent.click(sendBtn);
@@ -206,7 +206,7 @@ describe('Chat Flow Integration', () => {
         });
 
         // Should see Load More button
-        const loadBtn = screen.getByText(/Show Previous Context/);
+        const loadBtn = screen.getByText(/Zobrazit předchozí kontext/i);
         expect(loadBtn).toBeDefined();
 
         // Click Load More
@@ -215,17 +215,6 @@ describe('Chat Flow Integration', () => {
         // Now Msg 0 should appear
         expect(await screen.findByText('Msg 0')).toBeDefined();
     });
-
-
-
-
-
-
-
-
-
-
-
 
     it('should show copy button and copy markdown', async () => {
         const messageText = 'Some **bold** text';
@@ -250,6 +239,7 @@ describe('Chat Flow Integration', () => {
         await fireEvent.click(copyBtn);
         expect(writeText).toHaveBeenCalledWith(messageText);
     });
+
     it('should clear history when trash button is clicked', async () => {
         const history = [{ role: 'user', parts: [{ text: 'Old Msg' }] }];
         localStorage.setItem('resonance_history', JSON.stringify(history));
@@ -270,14 +260,15 @@ describe('Chat Flow Integration', () => {
 
 
         // Click Trash
-        // The button has aria-label="Clear History"
-        const trashBtn = await screen.findByLabelText('Clear History', {}, { timeout: 3000 });
+        // The button has aria-label="Clear History" ("Vymazat historii" in cs)
+        const trashBtn = await screen.findByLabelText('Vymazat historii', {}, { timeout: 3000 });
         await fireEvent.click(trashBtn);
 
-        // Verify confirm modal appears
-        await screen.findByText('Clear Neural History?');
+        // Verify confirm modal appears ("Smazat neuronové spojení?")
+        await screen.findByText('Smazat neuronové spojení?');
 
-        const confirmBtn = screen.getByRole('button', { name: /Confirm Delete/i });
+        // Confirm button is "Potvrdit smazání"
+        const confirmBtn = screen.getByRole('button', { name: /Potvrdit smazání/i });
         await fireEvent.click(confirmBtn);
 
         // Verify message gone (history cleared)
