@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use Lineum, please cite this work."
-title: "Lineum Core (v1.0.6-core): reference implementation & evidence bundle"
+title: "Lineum Core (v1.0.18-core): reference implementation & evidence bundle"
 doi: 10.5281/zenodo.16934359
-version: v1.0.6-core
-date-released: 2025-11-14
+version: v1.0.18-core
+date-released: 2026-02-27
 authors:
   - family-names: "Tříska"
     given-names: "Tomáš"
@@ -11,7 +11,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.16934359
 repository-code: "https://github.com/TomasTriska88/lineum"
-license: MIT
+license: AGPL-3.0-only
 keywords:
   - Lineum
   - emergent field
@@ -23,10 +23,10 @@ keywords:
   - Structural Closure
 preferred-citation:
   type: article
-  title: "Lineum Core (v1.0.6-core)"
+  title: "Lineum Core (v1.0.18-core)"
   authors:
     - family-names: "Tříska"
       given-names: "Tomáš"
-  year: 2025
+  year: 2026
   doi: 10.5281/zenodo.16934359
-  notes: "Core manuscript: whitepaper/lineum-core.md (CC BY 4.0). Code & tooling: MIT. Structural Closure is in-scope in v1.0.x; extensions (Return Echo, Dimensional Transparency) live in lineum-exp-*/lineum-extension-*."
+  notes: "Core manuscript: whitepaper/lineum-core.md (CC BY 4.0). Code & tooling: AGPL-3.0. Structural Closure is in-scope in v1.0.x; extensions (Return Echo, Dimensional Transparency) live in lineum-exp-*/lineum-extension-*."
