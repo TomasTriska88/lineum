@@ -2,12 +2,21 @@ import checker from 'license-checker-rseidelsohn';
 import path from 'path';
 
 const FORBIDDEN_LICENSES = [
-    'GPL',
-    'GPL-2.0',
-    'GPL-3.0',
-    'AGPL',
-    'AGPL-3.0',
-    'LGPL'
+    // 1. Classic Strong Copyleft
+    'GPL', 'GPL-2.0', 'GPL-3.0',
+    'AGPL', 'AGPL-1.0', 'AGPL-3.0',
+    'LGPL', 'LGPL-2.0', 'LGPL-2.1', 'LGPL-3.0',
+
+    // 2. Alternative Strong Copyleft
+    'OSL-3.0', 'EUPL-1.1', 'EUPL-1.2',
+    'Sleepycat',
+    'CC-BY-SA-4.0', 'CC-BY-SA-3.0',
+
+    // 3. Source-Available / Non-Commercial Traps
+    'SSPL-1.0', 'BSL-1.1', 'Commons-Clause',
+
+    // 4. No License / Proprietary Traps
+    'UNLICENSED'
 ];
 
 checker.init({
