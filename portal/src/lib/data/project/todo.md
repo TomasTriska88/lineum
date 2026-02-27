@@ -1597,6 +1597,16 @@ The Lineum Engine can natively output mathematically pure entropy derived from s
   - Generates millions of numbers per second cheaply.
   - **Analogy:** Listening to the chaotic "splash" of ocean waves.
   - **Target:** Standard web cryptography, session keys, lightweight randomness.
+  - **Output Format:** JSON response containing the entropy hashed into a raw hexadecimal/Base64 string. The raw $\psi/\varphi$ coordinates are scrubbed to prevent structural recreation. Example:
+    ```json
+    {
+      "status": "success",
+      "source": "lineum_quantum_chaos_trng",
+      "requested_bytes": 32,
+      "entropy_hex": "e7b9a23f8c01d4a9...9f1a",
+      "certification": "FIPS 140-3 compliant signature"
+    }
+    ```
 
 - [ ] **2. Extreme Zeta Entropy API (The Quantum Chaos)**
   - A premium B2B endpoint that artificially generates mathematically rare Riemann Zeta points by colliding massive $\varphi$ structures.
@@ -1604,3 +1614,44 @@ The Lineum Engine can natively output mathematically pure entropy derived from s
   - Generates computationally unbreakable sequences that match the GUE (Gaussian Unitary Ensemble) pattern of quantum chaos.
   - Since calculating these values analytically via Odlyzko algorithms takes supercomputers, Lineum acts as an *oracle-as-a-service* extracting them directly from simulated geometric collapse.
   - **Target:** National security, blockchain ZK-proof seeding, post-quantum cryptographic vaults.
+  - **Security Architecture:** To prevent the extraction of the entire Zeta topology (which could be used for global decryption or stealing the Riemann proof), the API endpoint MUST NOT return the sequential structural data.
+    - **Mixing:** The output is a hash of concurrent drops from thousands of isolated, parallel Lineum simulation instances.
+    - **Scrubbing:** Memory is wiped frequently and the initial noise seed is reset.
+    - **Output:** The customer receives pure, unbreakable entropy (via the same JSON hex format above) built from the highest-quality GUE interactions, but the underlying topological "map" of the universe is permanently destroyed in the hashing process.
+
+- [ ] **3. Web3 Oracle API (ZK-Proof Trusted Seed)**
+  - Specialized formatting of the Zeta entropy designed for zero-knowledge proofs (ZK-Rollups) and smart contracts requiring a "trusted setup".
+  - **Target:** Ethereum L2 networks, cryptography engineers, blockchain validation systems.
+  - **Output:** A mathematically provable seed formatted directly for elliptic curve generation.
+
+- [ ] **4. LineumHash API (Topological One-Way Function)**
+  - A physical, non-algorithmic hash function. Takes a user payload (`mojetajneheslo123`) and maps it into initial disturbance drops in the $\psi$ field.
+  - As the field evolves, it collapses into a complex structural memory footprint in $\varphi$. The final footprint serves as the hash payload.
+  - **Benefit:** Unlike SHA-256, mathematical inversion via Shor's algorithm on quantum computers is theoretically impossible because the topological fracture is chaotic and must be strictly forward-simulated step by step (cannot be accelerated or mathematically short-circuited).
+  - **Target:** High-security password storage, data integrity, HIPAA compliance.
+
+- [ ] **5. Provably-Fair Gaming API (Zeta-Certified RNG)**
+  - High-precision bounded number generation (e.g., limits `[1, 49]`) specifically tailored for statistical audits in gambling and state lotteries.
+  - **Output Format:** The random number alongside a JSON payload containing the mathematical simulation log proving the number was derived from a simulated topological interaction, not an algorithmic `rand()` function.
+  - **Target:** Online casinos, state lotteries, poker algorithms, gaming regulatory bodies.
+
+### 🔲 Portal Task: API Development Roadmap & UI Presentation Strategy
+To ensure the growing ecosystem remains comprehensible and trustworthy to B2B customers, development must follow this strict sequence and presentation logic:
+
+- [ ] **Phase 1: API Page Re-architecture (The Shop Window)**
+  - Add structural place-holders for all 5 Lineum applications to the `api-solutions` Svelte page.
+  - Reorganize the layout. With the growing number of applications, the page must not become a crowded wall of text.
+  - **Strict Content Rules for EVERY Application:**
+    - **A) Customer Explanation:** Immediate, jargon-free explanation of "what this solves".
+    - **B) Visual Immediacy:** The concept must be understood *instantly* via an interactive or animated UI component. The customer must not have to think.
+    - **C) Head-to-Head Comparison:** Explicit pros/cons vs. traditional methods (e.g., vs A*, vs AES/SHA, vs standard TRNG).
+    - **D) The Proof (Show, Don't Tell):** Hard visual or mathematical proof (benchmark logs, tensor visualizations) demonstrating performance at identical compute power, proving the claims are real.
+    - **E) Integration & Tooling Code:** Clear documentation on how to connect (code snippets for fetch/REST), plus helper libraries and utilities (e.g., scripts to convert the raw $\Phi$ heatmap/bitmap into traditional extracted paths for swarm systems).
+
+- [ ] **Phase 2: App-by-App Development**
+  - Implement and finalize the applications one by one (backend logic + frontend connection).
+  - Priority order does not matter; the entire suite will be launched at once when ready. 
+
+- [ ] **Phase 3: Customer Management Layer**
+  - Only after all routing/entropy applications are complete will the access layer be built.
+  - API key generation, customer accounts, rate-limiting, and billing dashboards.

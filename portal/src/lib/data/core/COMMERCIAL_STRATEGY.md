@@ -11,14 +11,34 @@ Lineum operates on a dual-layer strategy:
 3. **Time-to-Market:** Integrating the API takes 3 lines of code (e.g., in JavaScript or Python). Building custom cloud infrastructure around the open-source core takes months of engineering hours.
 4. **Proprietary Wrappers:** The API layer provides "Secret Sauce" features not found in the math core: geographical API bindings (GeoJSON/Mapbox), intelligent route caching, specific formatting, and hardware optimization.
 
-## 2. General Purpose Framework
+## 2. API Product Verticals & General Purpose Framework
 **CRITICAL:** Routing is currently the primary showcase, but **Lineum is a generalized physical solver.**
-The architecture and marketing portal must always reflect that Routing is simply the *first* application. Future endpoints will include:
+The architecture and marketing portal must always reflect the growing suite of tools:
+
+### Vertical A: Spatial Solvers (Routing, Swarms)
+- Swarm Routing (Primary Active Module)
 - Structural stress testing
 - Fluid dynamics & aerodynamic bounding
 - Supply chain equilibrium (economic fields)
 
-*Marketing Rule:* Always present "Lineum API Solutions" as a growing suite of tools, where "Swarm Routing" is just one active module.
+### Vertical B: True Random Number Generation (TRNG) & Entropy
+Lineum Engine natively outputs mathematically pure entropy derived from structural Zeta-points and the $\varphi$ tensor field.
+1. **Fast Entropy API (The Vacuum Noise):** A massive throughput endpoint reading microscopic phase fluctuations in the vacuum, acting as a TRNG for standard web cryptography and session keys.
+2. **Extreme Zeta Entropy API (The Quantum Chaos):** A premium B2B endpoint artificially generating mathematically rare Riemann Zeta points via geometric collapse. Generates computationally unbreakable sequences matching the GUE pattern for national security and post-quantum vaults.
+3. **Web3 Oracle API (ZK-Proof Trusted Seed):** Specialized Zeta entropy formatted directly for elliptic curve generation in zero-knowledge proofs (ZK-Rollups) and smart contracts requiring a "trusted setup".
+4. **LineumHash API (Topological One-Way Function):** A physical, non-algorithmic hash function mapping a user payload into initial wave disturbances, collapsing into an irreversible $\varphi$ geometry. Immune to Shor's algorithm on quantum computers.
+5. **Provably-Fair Gaming API (Zeta-Certified RNG):** High-precision bounded generation (e.g., `[1, 49]`) equipped with mathematical simulation logs proving physical origination, tailored for statistical audits in gambling.
+
+    - **Security & Output Format:** To guarantee zero mathematical exposure of the "Universal Topology" or Zeta proofs, the raw $\psi/\varphi$ coordinate data is **never returned**. The output is always obfuscated, mixed from concurrent simulations, and returned as a JSON object containing a pure Hexadecimal/Base64 string.
+    ```json
+    {
+      "status": "success",
+      "source": "lineum_quantum_chaos_trng",
+      "entropy_hex": "e7b9a23f8c01d4a9...9f1a"
+    }
+    ```
+
+*Marketing Rule:* Always present "Lineum API Solutions" as a unified enterprise suite where physics solve previously impossible computational bottlenecks.
 
 ## 3. The Dual-Revenue Model: Enterprise API + Open-Source Donations
 While the primary revenue engine is the Enterprise API, **Open-Source Donations (e.g., GitHub Sponsors, Patreon, BuyMeACoffee) are highly recommended.** 
