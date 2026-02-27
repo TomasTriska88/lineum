@@ -66,9 +66,7 @@
             <a href="/">{m.nav_portal()}</a>
             <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a
             >
-            <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
-                >{m.nav_api()}</a
-            >
+            <!-- <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;">{m.nav_api()}</a> -->
             <a href="/#scientist">{m.sections_scientist_label()}</a>
             <a href="/wiki#faq">FAQ</a>
             <a href="/support" class="nav-cta">{m.nav_support()}</a>

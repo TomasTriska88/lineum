@@ -49,6 +49,7 @@
 		"@inlang/paraglide-sveltekit": "^0.16.1",
 		"@tailwindcss/postcss": "^4.2.0",
 		"@types/uuid": "^10.0.0",
+		"canvas": "^3.2.1",
 		"dotenv": "^17.3.1",
 		"katex": "^0.16.28",
 		"marked": "^17.0.2",

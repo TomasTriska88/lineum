@@ -13,9 +13,11 @@
 
 <svelte:head>
     <title>
-        {m[
-            `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
-        ]()} | {m.common_brand()} API
+        {(
+            m[
+                `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
+            ] as (p?: any) => string
+        )()} | {m.common_brand()} API
     </title>
 </svelte:head>
 
@@ -58,21 +60,27 @@
                 SPECIALIZED DOMAIN
             </div>
             <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8">
-                {m[
-                    `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
-                ]()}
+                {(
+                    m[
+                        `api_solutions_scenarios_${data.scenarioKey}_title` as keyof typeof m
+                    ] as (p?: any) => string
+                )()}
             </h1>
             <p
                 class="text-xl md:text-2xl text-slate-300 leading-relaxed max-w-3xl"
             >
                 <strong class="text-white"
-                    >{m[
-                        `api_solutions_scenarios_${data.scenarioKey}_subtitle` as keyof typeof m
-                    ]()}</strong
+                    >{(
+                        m[
+                            `api_solutions_scenarios_${data.scenarioKey}_subtitle` as keyof typeof m
+                        ] as (p?: any) => string
+                    )()}</strong
                 ><br /><br />
-                {m[
-                    `api_solutions_scenarios_${data.scenarioKey}_description` as keyof typeof m
-                ]()}
+                {(
+                    m[
+                        `api_solutions_scenarios_${data.scenarioKey}_description` as keyof typeof m
+                    ] as (p?: any) => string
+                )()}
             </p>
         </div>
 
@@ -136,9 +144,11 @@
                     {m.api_solutions_slug_fail_title()}
                 </h3>
                 <p class="text-slate-400 leading-relaxed text-lg">
-                    {m[
-                        `api_solutions_scenarios_${data.scenarioKey}_problem` as keyof typeof m
-                    ]()}
+                    {(
+                        m[
+                            `api_solutions_scenarios_${data.scenarioKey}_problem` as keyof typeof m
+                        ] as (p?: any) => string
+                    )()}
                 </p>
             </div>
 
@@ -172,9 +182,11 @@
                         {m.api_solutions_slug_success_title()}
                     </h3>
                     <p class="text-slate-300 leading-relaxed text-lg">
-                        {m[
-                            `api_solutions_scenarios_${data.scenarioKey}_solution` as keyof typeof m
-                        ]()}
+                        {(
+                            m[
+                                `api_solutions_scenarios_${data.scenarioKey}_solution` as keyof typeof m
+                            ] as (p?: any) => string
+                        )()}
                     </p>
                 </div>
             </div>

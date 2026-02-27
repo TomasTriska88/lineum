@@ -1422,7 +1422,7 @@ This section defines the requirements and architecture for the new main Lineum S
 - [ ] **L.1 Authorship & Cite-ability Consolidation**
     - Ensure ORCID (`0009-0003-4026-7164`) is injected consistently across `CITATION.cff`, `zenodo.json`, the Whitepapers, and the Portal Footer.
     - Synchronize "Lineum Core" as the engine package name vs "Lineum" as the brand name across all files (`README.md`, `LICENSE`, etc.).
-- [ ] **L.2 License Overhaul (MIT -> AGPLv3)**
+- [x] **L.2 License Overhaul (MIT -> AGPLv3)**
     - Execute the planned shift of the core mathematical engine from MIT to AGPLv3 to establish the true open-core boundary and prevent closed-source corporate wrapping.
 - [ ] **L.2.b Enterprise On-Premise Licensing Strategy**
     - **Policy:** While the primary commercial model is SaaS/API, it is imperative to allow custom on-premise implementations for large clients (e.g., developers, government).

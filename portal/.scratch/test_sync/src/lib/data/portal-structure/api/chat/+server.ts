@@ -42,7 +42,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress, locals }
 
     try {
         // 2. Call Gemini
-        const result = await chat(messages, context);
+        const result = await chat(messages, context, body.locale);
 
         // Forward Smart 429s from Gemini
         if ((result as any).error) {

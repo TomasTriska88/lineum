@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages.js';
+    import * as m from "$lib/paraglide/messages.js";
     import { marked } from "marked";
     export let data;
     const { content, title, slug } = data;
@@ -18,27 +18,30 @@
 
         toc = [];
         const regex = /^(#{1,4})\s+(.+)$/gm;
-        displayContent = text.replace(regex, (match, hashes, rawText) => {
-            const level = hashes.length;
-            const cleanText = rawText
-                .replace(/[*_`]/g, "")
-                .replace(/\{#.*?\}/g, "")
-                .trim();
-            let id = cleanText
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/\s+/g, "-");
+        displayContent = text.replace(
+            regex,
+            (match: string, hashes: string, rawText: string) => {
+                const level = hashes.length;
+                const cleanText = rawText
+                    .replace(/[*_`]/g, "")
+                    .replace(/\{#.*?\}/g, "")
+                    .trim();
+                let id = cleanText
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, "")
+                    .replace(/\s+/g, "-");
 
-            // Handle duplicate IDs
-            let count = 1;
-            let originalId = id;
-            while (toc.find((t) => t.id === id)) {
-                id = `${originalId}-${count++}`;
-            }
+                // Handle duplicate IDs
+                let count = 1;
+                let originalId = id;
+                while (toc.find((t) => t.id === id)) {
+                    id = `${originalId}-${count++}`;
+                }
 
-            toc.push({ level, text: cleanText, id });
-            return `${hashes} <a id="${id}" class="anchor-offset"></a>${rawText}`;
-        });
+                toc.push({ level, text: cleanText, id });
+                return `${hashes} <a id="${id}" class="anchor-offset"></a>${rawText}`;
+            },
+        );
     }
 </script>
 

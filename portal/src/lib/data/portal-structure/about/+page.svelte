@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as m from '$lib/paraglide/messages.js';
+    import * as m from "$lib/paraglide/messages.js";
     import { config } from "$lib/config";
 </script>
 
@@ -44,11 +44,11 @@
             </p>
         </div>
 
-        <div class="cta-section">
+        <!-- <div class="cta-section">
             <a href="/api-solutions" class="btn btn-primary btn-large">
                 Explore The API Solutions
             </a>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -114,7 +114,7 @@
         text-decoration: none;
     }
 
-    .cta-section {
+    /* .cta-section {
         text-align: center;
         background: rgba(126, 184, 255, 0.05);
         padding: 4rem 2rem;
@@ -126,5 +126,5 @@
         padding: 1.25rem 3rem;
         font-size: 1.1rem;
         margin-bottom: 0;
-    }
+    } */
 </style>

@@ -96,5 +96,5 @@ npx vite dev --host 127.0.0.1 --port 5174
 ---
 
 ## 📜 License
-*   **Code**: MIT License.
+*   **Code**: GNU AGPLv3 License.
 *   **Whitepapers**: CC BY 4.0.
