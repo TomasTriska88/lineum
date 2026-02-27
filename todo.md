@@ -1,4 +1,5 @@
 # 🧪 Lineum – Task List for Further Verification
+> **[POLICY] ENGLSIH ONLY:** This file is the central repository backlog. All new entries, notes, and tasks must be written strictly in **English**. Do not use Czech or any other language in this document.
 
 This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.0.6-core** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
 This is not the source of truth for the model state - binding definitions and claims are always in the current version of the whitepaper / core paper.
@@ -1478,37 +1479,65 @@ The portal's `api-solutions` section currently showcases Routing dynamics (traff
 
 ---
 
-## 🏛️ STRATEGIE / GOVERNANCE / BRAND / COMPANY (odloženo)
-*Tyto úkoly tvoří přesný backlog pro budoucí řešení firemní, právní a brandové vrstvy. Nemají být řešeny hned a nemodifikují se k nim nyní žádné soubory.*
-Kanonické znění kodexu je uloženo v `docs/LINEUM_CODEX_v1.md`.
+## 🏛️ STRATEGY / GOVERNANCE / BRAND / COMPANY (Postponed)
+*These tasks form a precise backlog for future corporate, legal, and brand architecture. They are not to be executed immediately, and no files should be modified for them at this time.*
+The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 
-- [ ] **1) (Kredit) Doplnit ORCID 0009-0003-4026-7164 konzistentně do:**
+- [ ] **1) (Credit) Add ORCID 0009-0003-4026-7164 consistently to:**
     - `CITATION.cff`
     - Zenodo metadata (`portal/src/lib/data/project/zenodo.json`)
-    - whitepaper (sekce How to cite)
-    - web footer (`portal/src/lib/content.ts`)
-    - + přidat copy-paste “How to cite” blok včetně BibTeX.
-- [ ] **2) (DOI) Najít Zenodo Concept DOI (all versions) pro 10.5281/zenodo.16934359 a doplnit ho do:**
-    - `CITATION.cff`, whitepaper, web, `zenodo.json` (metadata/related identifiers), `README.md`.
-- [ ] **3) (Naming) Sjednotit veřejné pojmenování na “Lineum™”**
-    - “Lineum Core” používat jen jako interní/technické označení balíčku/engine, ne jako hlavní brand.
-- [ ] **4) (Licence) Budoucí veřejné vydání Lineum (nová verze): přejít na AGPL pro core**
-    - *(pozn.: historická Zenodo v1.0.6-core je MIT a zůstane jako otisk prvenství).*
-- [ ] **5) (Kodex) Přidat nový dokument (např. `docs/LINEUM_CODEX.md`)**
-    - S textem “Lineum Kodex — Etický postoj (v1)” (text dodá Lina / je připraven). (Zatím nevytvářet soubor).
-- [ ] **6) (Portal policy) Připravit Portal dokumenty:**
-    - `TERMS_OF_SERVICE.md` a `ACCEPTABLE_USE.md`
-    - Které implementují Kodex (green / restricted / hard-stop) a enforcement (audit logs, kill switch, screening).
-- [ ] **7) (Trademark) Připravit `TRADEMARK_POLICY.md` pro Lineum™**
-    - (pravidla použití názvu a značky). Registrace ochranné známky později jako samostatný úkol/spouštěč.
-- [ ] **8) (Repo & boundary) Navrhnout restrukturalizaci:**
-    - zachovat lokální spustitelnost Lineum pro vědce (CLI/library),
-    - zároveň oddělit Portal/SaaS tak, aby boundary nebyla monolitický import core v backend procesu.
-    - Zapsat jako “Architecture decision record” úkol + varianty.
-- [ ] **9) (Firma) Připravit plán založení s.r.o.:**
-    - spouštěč: PoC/Portal je funkční a jde do veřejného provozu / první B2B zájem / SLA/smlouvy.
-    - co přesunout do s.r.o. (Portal, billing, ToS, brand), co zůstává autorovi (vědecké autorství, ORCID/DOI).
-    - donaty: rozhodnout kdy přesměrovat z OSVČ na s.r.o.
-- [ ] **10) (Audit reality) Ověřit současný stav použití core v monorepu:**
-    - kde se importuje core pro vědecké běhy vs SaaS,
-    - entrypointy, a jak se zajišťuje “vždy nejnovější verze”. (Analýzu udělat později nebo na vyžádání).
+    - Whitepaper ("How to cite" section)
+    - Web footer (`portal/src/lib/content.ts`)
+    - + Add a copy-paste "How to cite" block including BibTeX.
+- [ ] **2) (DOI) Find the Zenodo Concept DOI (all versions) for 10.5281/zenodo.16934359 and add it to:**
+    - `CITATION.cff`, Whitepaper, Website, `zenodo.json` (metadata/related identifiers), `README.md`.
+- [ ] **3) (Naming) Unify public naming to "Lineum™"**
+    - Use "Lineum Core" solely as an internal/technical designation for the package/engine, not as the main brand.
+- [ ] **4) (License) Future public release of Lineum (new version): migrate core to AGPL**
+    - *(Note: historical Zenodo v1.0.6-core is MIT and will remain so as a proof of priority).*
+- [ ] **5) (Codex) Add a new document (e.g., `docs/LINEUM_CODEX.md`)**
+    - Containing the text "Lineum Codex — Ethical Stance (v1)" (text provided by Lina / ready). (Do not create the file yet).
+- [ ] **6) (Portal Policy) Prepare Portal documents:**
+    - `TERMS_OF_SERVICE.md` and `ACCEPTABLE_USE.md`
+    - To implement the Codex (green / restricted / hard-stop) and enforcement mechanisms (audit logs, kill switch, screening).
+- [ ] **7) (Trademark) Prepare `TRADEMARK_POLICY.md` for Lineum™**
+    - (Rules for using the name and brand). Trademark registration to follow later as a separate task/trigger.
+- [ ] **8) (Repo & Boundary) Propose restructuring:**
+    - Preserve local executability of Lineum for scientists (CLI/library).
+    - Simultaneously decouple Portal/SaaS so the boundary isn't a monolithic import of the core into the backend process.
+    - Record as an "Architecture decision record" task + options.
+- [ ] **9) (Company) Prepare the plan for establishing an LLC (s.r.o.):**
+    - Trigger: PoC/Portal is functional and goes public / first B2B interest / SLAs/contracts.
+    - Define what to transfer to the LLC (Portal, billing, ToS, brand) and what stays with the author (scientific authorship, ORCID/DOI).
+    - Donations: decide when to redirect from sole-proprietor (OSVČ) to the LLC.
+- [ ] **10) (Audit Reality) Verify the current state of core usage in the monorepo:**
+    - Where is the core imported for scientific runs vs SaaS.
+    - Entrypoints, and how "always the latest version" is ensured. (Perform analysis later or upon request).
+
+---
+
+## 🛍️ M. Merch & Portal Store (Future Implementation)
+*Record from strategy conversations. Primary goal is zero maintenance (via Print-on-Demand) and a highly premium "tech/science" aesthetic.*
+
+- [ ] **M.1 Strategy & Platform Selection**
+    - **Platform:** Select a Print-on-Demand solution with global reach and printing facilities in Europe (recommended: **Spreadshop**).
+    - **Zero Support:** The platform must take over 100% of operations (printing, payments, customs, shipping, returns, customer support).
+    - **Margin Strategy:** Implement a **moderate, fair margin** to support Lineum core development.
+        - *Reasoning:* The shop should help fund the project (API/server costs, research time), but prices must remain accessible to the community without feeling overpriced.
+        - *Premium Feel:* A slightly higher price point (due to the margin + premium blanks/materials) naturally reinforces the "exclusive tech/science" positioning, provided the actual product quality matches the price.
+        - *Accounting Implication:* Since revenue will be generated, ensure this is factored into the accounting strategy for the future LLC (s.r.o.) to handle the payout flow from Spreadshop efficiently.
+    - **Zero Financial Input:** The pricing policy must guarantee absolutely zero upfront financial input or risk from our side. The base manufacturing cost is deducted automatically by Spreadshop from the customer's payment, and we receive only the generated profit margin as a passive payout.
+- [ ] **M.2 Editions and Product Lines**
+    - Create cohesive thematic collections rather than a random assortment of apparel.
+    - **Minimalist / PR Edition:** Ultra-clean, dark apparel (premium t-shirts, polos, zip hoodies) featuring only a small embroidered Lineum hex logo. Perfect for interviews, conferences, and podcasts ("Quiet Luxury").
+    - **The Equation Edition:** Mathematical/Nerd pieces. E.g. the shortest form of the Lineum equation ($E=mc^2$ style) or an "API error code" on a matte black premium mug ("Developer's Coffee Mug").
+    - **Universum (All-over Print):** The extravagant edition. Full-surface print featuring the dark, abstract purple/cyan Lineum universe. Includes large-format **Desk Mats** and high-quality **Art Prints** for offices.
+    - **Accessories:** Hexagonal Sticker Pack tailored for developer laptops.
+- [ ] **M.3 Portal Integration**
+    - Do not just link outwards. Create a gorgeous, native Landing Page at `lineum.dev/store` showcasing the products elegantly ("Apple-style", potentially utilizing Three.js for 3D spinning models), with CTA buttons routing to the Spreadshop checkout.
+    - **QR Codes (Physical-Digital Bridge):** Incorporate small QR codes on the merch. When scanned, they open a hidden `/resonance` easter-egg portal page or an interactive Matrix message.
+    - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message (from Lina/Lineum) on the enclosed packing slips.
+- [ ] **M.4 Marketing (Drops & Gamification)**
+    - Present products as limited "Drops" (e.g., v1.0.0 Founder's edition) to foster exclusivity.
+    - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Core team and active beta-testers as an exclusive reward.
+    - **Gamification:** Offer hidden merch in the E-shop (e.g., a "Root Access" hoodie) that unlocks for purchase only when a user discovers a specific easter-egg in the portal's terminal/CLI interface.

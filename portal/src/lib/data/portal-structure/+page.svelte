@@ -49,6 +49,18 @@
         <div class="logo">
             <span class="logo-symbol">{m.hero_symbol()}</span>
             <span class="logo-text">Lineum</span>
+            <div class="equation-inline">
+                <span class="math-symbol"
+                    >∂<sub>t</sub><span style="color: var(--accent-cyan)"
+                        >ψ</span
+                    >
+                    = ∇²<span style="color: var(--accent-cyan)">ψ</span> +
+                    <span style="color: var(--accent-violet)">φ</span><span
+                        style="color: var(--accent-cyan)">ψ</span
+                    >
+                    + ∇<span style="color: var(--accent-violet)">φ</span></span
+                >
+            </div>
             <Legend
                 title={m.legend_title()}
                 subtitle={m.legend_subtitle()}
@@ -67,6 +79,7 @@
                 highlight_span_end: "</span>",
             })}
         </h1>
+
         <p>
             {m.hero_subtitle()}
         </p>
@@ -126,6 +139,21 @@
     <div class="container">
         <span class="label">{m.sections_scientist_label()}</span>
         <h2>{m.sections_scientist_title()}</h2>
+
+        <div class="equation-system-block">
+            <div class="eq-line">
+                <span class="math-term">∂<sub>t</sub>ψ</span> = ∇²ψ + φψ + ∇φ
+            </div>
+            <div class="eq-line">
+                <span class="math-term">∂<sub>t</sub>φ</span> = α(|ψ|² - φ) + β∇²φ
+            </div>
+            <div class="eq-caption">
+                The Continuous PDE Limit. A fully deterministic, coupled
+                oscillator network with emergent gravity and memory. No
+                predefined metric. No background spacetime.
+            </div>
+        </div>
+
         <div class="scientific-grid">
             <div class="card">
                 <h3>{m.sections_scientist_whitepaper_title()}</h3>
@@ -247,6 +275,61 @@
         color: #aaa;
         max-width: 600px;
         margin-bottom: 2.5rem;
+    }
+
+    .equation-inline {
+        margin-left: auto;
+        margin-right: 1rem;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .equation-inline .math-symbol {
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        color: #ffffff;
+        text-shadow:
+            0 0 10px rgba(124, 58, 237, 0.3),
+            0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .equation-system-block {
+        background: rgba(0, 0, 0, 0.3);
+        border-left: 3px solid var(--accent-color);
+        padding: 2.5rem;
+        margin: 3rem 0 4rem 0;
+        border-radius: 0 8px 8px 0;
+        font-family: "Courier New", Courier, monospace;
+    }
+
+    .eq-line {
+        font-size: 1.8rem;
+        color: #e0e0e0;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+    }
+
+    .eq-line .math-term {
+        color: #fff;
+        text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    }
+
+    .eq-caption {
+        font-family:
+            system-ui,
+            -apple-system,
+            sans-serif;
+        font-size: 0.9rem;
+        color: #888;
+        margin-top: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
     }
 
     .cta-group {

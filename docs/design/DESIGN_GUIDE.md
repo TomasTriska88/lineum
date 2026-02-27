@@ -38,10 +38,16 @@ All primary UI components (cards, modules) must utilize transparency and blur ef
 
 ### 2. Colors and Typography
 - **Primary Background**: Deep black/dark blue (`#0a0a0f`).
-- **Accent Colors**: Vibrant gradients. Avoid flat colors.
-  - Svelte Blue: `#0070f3`
-  - Violet/Cyan: For logos and special symbols.
-- **Typography**: Modern sans-serif fonts (e.g., Inter, Roboto) with precise letter-spacing.
+- **The Lineum Palette (Canonical Colors)**:
+  - **Lineum Wave/Light ($\psi$)**: Cyber-Cyan (`#06b6d4` / `var(--accent-cyan)`). Cyan represents high-frequency kinetic energy and unhindered propagation. It visually embodies the fast, glowing nature of a dynamic wave.
+  - **Lineum Memory/Gravity ($\phi$)**: Fuchsia/Purple (`#c026d3` / `var(--accent-violet)`). Purple represents a heavier, more mysterious and persistent substance ("gravilon" fields). It visually embodies the slower, sticky, network-like memory that bends the light and binds the universe together.
+  - *Rule*: Never mix these meanings. Cyan is strictly for dynamic wave functions; Purple is strictly for persistent memory fields. From this visual contrast stems the core duality of the simulation.
+  - *Gradients (The Flow of Time)*: When creating gradients (e.g., the `lineum.io` link or loading bars), the transition must always go from **Cyan to Purple** (Left to Right). This represents the canonical flow of cause and effect in the simulation: The fast kinetic energy (Cyan $\psi$) initiates the action, which ultimately creates and leaves behind the persistent memory structure (Purple $\phi$).
+- **General Accents**: Vibrant gradients spanning Cyan, Blue, Violet, and Magenta.
+- **Typography**: 
+  - **UI & Narrative**: `Inter` (Sans-serif) for all main portal text, ensuring clean, modern readability.
+  - **Math, Code & Equations**: `JetBrains Mono` (Monospace) to signify technical, scientific exactness.
+- **The Equation Emblem**: The canonical Lineum equation (`∂ₜψ = ∇²ψ + φψ + ∇φ`) must always adhere to this brand mapping: `JetBrains Mono` font, operators in pure white, $\psi$ in cyan, and $\phi$ in purple.
 
 ### 3. Dynamic Elements
 - Use subtle micro-animations (e.g., Svelte transitions `fade`, `fly`).
