@@ -1618,3 +1618,19 @@ The Lineum Engine can natively output mathematically pure entropy derived from s
     - **Mixing:** The output is a hash of concurrent drops from thousands of isolated, parallel Lineum simulation instances.
     - **Scrubbing:** Memory is wiped frequently and the initial noise seed is reset.
     - **Output:** The customer receives pure, unbreakable entropy (via the same JSON hex format above) built from the highest-quality GUE interactions, but the underlying topological "map" of the universe is permanently destroyed in the hashing process.
+
+- [ ] **3. Web3 Oracle API (ZK-Proof Trusted Seed)**
+  - Specialized formatting of the Zeta entropy designed for zero-knowledge proofs (ZK-Rollups) and smart contracts requiring a "trusted setup".
+  - **Target:** Ethereum L2 networks, cryptography engineers, blockchain validation systems.
+  - **Output:** A mathematically provable seed formatted directly for elliptic curve generation.
+
+- [ ] **4. LineumHash API (Topological One-Way Function)**
+  - A physical, non-algorithmic hash function. Takes a user payload (`mojetajneheslo123`) and maps it into initial disturbance drops in the $\psi$ field.
+  - As the field evolves, it collapses into a complex structural memory footprint in $\varphi$. The final footprint serves as the hash payload.
+  - **Benefit:** Unlike SHA-256, mathematical inversion via Shor's algorithm on quantum computers is theoretically impossible because the topological fracture is chaotic and must be strictly forward-simulated step by step (cannot be accelerated or mathematically short-circuited).
+  - **Target:** High-security password storage, data integrity, HIPAA compliance.
+
+- [ ] **5. Provably-Fair Gaming API (Zeta-Certified RNG)**
+  - High-precision bounded number generation (e.g., limits `[1, 49]`) specifically tailored for statistical audits in gambling and state lotteries.
+  - **Output Format:** The random number alongside a JSON payload containing the mathematical simulation log proving the number was derived from a simulated topological interaction, not an algorithmic `rand()` function.
+  - **Target:** Online casinos, state lotteries, poker algorithms, gaming regulatory bodies.
