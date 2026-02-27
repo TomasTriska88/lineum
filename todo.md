@@ -1597,6 +1597,16 @@ The Lineum Engine can natively output mathematically pure entropy derived from s
   - Generates millions of numbers per second cheaply.
   - **Analogy:** Listening to the chaotic "splash" of ocean waves.
   - **Target:** Standard web cryptography, session keys, lightweight randomness.
+  - **Output Format:** JSON response containing the entropy hashed into a raw hexadecimal/Base64 string. The raw $\psi/\varphi$ coordinates are scrubbed to prevent structural recreation. Example:
+    ```json
+    {
+      "status": "success",
+      "source": "lineum_quantum_chaos_trng",
+      "requested_bytes": 32,
+      "entropy_hex": "e7b9a23f8c01d4a9...9f1a",
+      "certification": "FIPS 140-3 compliant signature"
+    }
+    ```
 
 - [ ] **2. Extreme Zeta Entropy API (The Quantum Chaos)**
   - A premium B2B endpoint that artificially generates mathematically rare Riemann Zeta points by colliding massive $\varphi$ structures.
@@ -1604,3 +1614,7 @@ The Lineum Engine can natively output mathematically pure entropy derived from s
   - Generates computationally unbreakable sequences that match the GUE (Gaussian Unitary Ensemble) pattern of quantum chaos.
   - Since calculating these values analytically via Odlyzko algorithms takes supercomputers, Lineum acts as an *oracle-as-a-service* extracting them directly from simulated geometric collapse.
   - **Target:** National security, blockchain ZK-proof seeding, post-quantum cryptographic vaults.
+  - **Security Architecture:** To prevent the extraction of the entire Zeta topology (which could be used for global decryption or stealing the Riemann proof), the API endpoint MUST NOT return the sequential structural data.
+    - **Mixing:** The output is a hash of concurrent drops from thousands of isolated, parallel Lineum simulation instances.
+    - **Scrubbing:** Memory is wiped frequently and the initial noise seed is reset.
+    - **Output:** The customer receives pure, unbreakable entropy (via the same JSON hex format above) built from the highest-quality GUE interactions, but the underlying topological "map" of the universe is permanently destroyed in the hashing process.
