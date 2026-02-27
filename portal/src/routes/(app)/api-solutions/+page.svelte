@@ -20,6 +20,8 @@
     // Simulation state
     let kappaFlat = new Float32Array(MAP_SIZE * MAP_SIZE).fill(1);
     let phiFlat = new Float32Array(MAP_SIZE * MAP_SIZE).fill(0);
+    // Green channel for rendering all agent start dots
+    let startMap = new Float32Array(MAP_SIZE * MAP_SIZE).fill(0);
     // We'll use the Blue channel of the second texture for the route
     let pathMap = new Float32Array(MAP_SIZE * MAP_SIZE).fill(0);
 
@@ -30,8 +32,15 @@
     // Net State
     let isSimulating = false;
     let isScrubbing = false;
+    let isCompilingAPI = false;
+    let apiProgress = 0;
+    let progressInterval: any;
     let socket: WebSocket | null = null;
     let currentStep = 0;
+
+    // Scale Demo State
+    let agentScale = 1; // 1 to 100,000 array scaling factor
+    let returnPaths = true; // B2B Scalability bypass
 
     let isVisible = false;
     function handleIntersect(inView: boolean) {
@@ -111,7 +120,6 @@
         
         uniform float u_time;
         uniform vec2 u_resolution;
-        uniform vec2 u_start;
         uniform vec2 u_target;
 
         // --- Golden Mean Hyper-Fidelity Palette z Homepage ---
@@ -171,10 +179,10 @@
                 color += core * path_vis * 2.5; 
             }
 
-            // 4. Start (Tepající Modrá Dióda)
-            float distStart = length(v_uv - u_start);
-            if (distStart < 0.012) {
-                color += neon_path * smoothstep(0.012, 0.0, distStart) * (1.2 + 0.3 * sin(u_time * 5.0));
+            // 4. Start (Tepající Modré Diódy přes Raster Texture)
+            float starts_vis = dynTex.g;
+            if (starts_vis > 0.01) {
+                color += neon_path * starts_vis * (1.2 + 0.3 * sin(u_time * 5.0));
             }
 
             // 5. Cíl (Tepající Červená Dióda)
@@ -273,15 +281,17 @@
             addWall(10, 90, 80, 10);
             addWall(30, 40, 10, 20);
             addWall(90, 70, 10, 20);
-            scenarioAgents = [
-                {
-                    id: "A",
-                    start: { x: 50, y: 15 },
+            let swarmCount = Math.floor(agentScale);
+            scenarioAgents = [];
+            for (let i = 0; i < swarmCount; i++) {
+                scenarioAgents.push({
+                    id: `A_${i}`,
+                    start: { x: 50 + (i % 5), y: 15 + (Math.floor(i / 5) % 5) },
                     color: "#38bdf8",
-                    name: "Convoy Alpha",
+                    name: `Swarm Unit ${i}`,
                     eta: "4.2 mins",
-                },
-            ];
+                });
+            }
             targetPoint = { x: 60, y: 110 };
         } else if (activePreset === "evacuation") {
             // Skupina v hale a úzký východ s překážkami kolem
@@ -447,10 +457,37 @@
     function uploadDynamics() {
         if (!gl || !dynTexture) return;
 
+        // Build startMap raster based on current agents (helps visualize slider scaling instantly)
+        startMap.fill(0);
+        for (let i = 0; i < scenarioAgents.length; i++) {
+            const x = Math.floor(scenarioAgents[i].start.x);
+            const y = Math.floor(scenarioAgents[i].start.y);
+            if (x >= 0 && x < MAP_SIZE && y >= 0 && y < MAP_SIZE) {
+                for (let oy = -1; oy <= 1; oy++) {
+                    for (let ox = -1; ox <= 1; ox++) {
+                        const wx = x + ox;
+                        const wy = y + oy;
+                        if (
+                            wx >= 0 &&
+                            wx < MAP_SIZE &&
+                            wy >= 0 &&
+                            wy < MAP_SIZE
+                        ) {
+                            const brush = ox === 0 && oy === 0 ? 1.0 : 0.4;
+                            startMap[wy * MAP_SIZE + wx] = Math.max(
+                                startMap[wy * MAP_SIZE + wx],
+                                brush,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
         const data = new Uint8Array(MAP_SIZE * MAP_SIZE * 4);
         for (let i = 0; i < MAP_SIZE * MAP_SIZE; i++) {
             data[i * 4] = Math.min(255, phiFlat[i] * 255); // R = Fyzika tepla
-            data[i * 4 + 1] = 0; // G = nic
+            data[i * 4 + 1] = Math.min(255, startMap[i] * 255); // G = Start pozice z rasteru
             data[i * 4 + 2] = Math.min(255, pathMap[i] * 255); // B = Cesta z path_vis
             data[i * 4 + 3] = 255;
         }
@@ -504,18 +541,11 @@
 
         const timeLoc = gl.getUniformLocation(program, "u_time");
         const resLoc = gl.getUniformLocation(program, "u_resolution");
-        const startLoc = gl.getUniformLocation(program, "u_start");
         const targetLoc = gl.getUniformLocation(program, "u_target");
 
         gl.uniform1f(timeLoc, time * 0.002); // mírně pomalejší puls pro klidný UI běh
         gl.uniform2f(resLoc, canvas.width, canvas.height);
 
-        // Predáme relatvně - UV je odhora dolů z pohledu WebG (0,0..1,1) invertnuto.
-        gl.uniform2f(
-            startLoc,
-            scenarioAgents[0].start.x / MAP_SIZE,
-            scenarioAgents[0].start.y / MAP_SIZE,
-        );
         gl.uniform2f(
             targetLoc,
             targetPoint.x / MAP_SIZE,
@@ -602,15 +632,28 @@
     }
 
     async function startSimulation() {
-        if (isSimulating) return;
+        if (isSimulating || isCompilingAPI) return;
+        isCompilingAPI = true;
+
+        apiProgress = 0;
+        if (progressInterval) clearInterval(progressInterval);
+        progressInterval = setInterval(() => {
+            if (apiProgress < 99) {
+                // Rychlý fake loader odrážející čas výpočtu
+                apiProgress += Math.floor(Math.random() * 12) + 4;
+                if (apiProgress > 99) apiProgress = 99;
+            }
+        }, 30);
 
         const payload = {
             size: MAP_SIZE,
             agents: scenarioAgents,
+            agent_count: exponentialScale,
             target: targetPoint,
             kappa_flat: Array.from(kappaFlat),
             max_steps: 1000,
             preset: activePreset,
+            return_paths: returnPaths,
         };
 
         try {
@@ -626,6 +669,8 @@
             const data = await res.json();
 
             if (!res.ok) {
+                isCompilingAPI = false;
+                if (progressInterval) clearInterval(progressInterval);
                 alert(
                     `API Error (${res.status}): ${data.detail || "Server rejected request."}`,
                 );
@@ -634,7 +679,6 @@
 
             const taskId = data.task_id;
 
-            isSimulating = true;
             phiFlat.fill(0);
             pathMap.fill(0);
             currentStep = 0;
@@ -642,6 +686,10 @@
             socket = new WebSocket(`${wsUrl}/api/route/stream/${taskId}`);
 
             socket.onmessage = (event) => {
+                isSimulating = true;
+                isCompilingAPI = false;
+                if (progressInterval) clearInterval(progressInterval);
+
                 const msg = JSON.parse(event.data);
                 if (msg.error) {
                     console.error("Simulation anomaly:", msg.error);
@@ -661,10 +709,14 @@
 
             socket.onclose = () => {
                 isSimulating = false;
+                isCompilingAPI = false;
+                if (progressInterval) clearInterval(progressInterval);
                 socket = null;
             };
         } catch (error) {
             console.error(error);
+            isCompilingAPI = false;
+            if (progressInterval) clearInterval(progressInterval);
             alert(
                 "Connection to Python Backend failed. Ensure the server is running on port 8000.",
             );
@@ -765,11 +817,37 @@ logic_result = solver.compile_lpl(
     $: apiSnippet = SNIPPETS[snippetLanguage as keyof typeof SNIPPETS];
 
     // --- Ticking Cost & Progress Logic ---
+    $: exponentialScale = Math.floor(Math.pow(10, agentScale / 20)); // Up to ~100k
+
+    // Pre-generate a stable pool of 500 visual slider agents so their starting positions don't jump around when the user drags the slider.
+    const sliderAgentsPool = Array.from({ length: 500 }).map((_, i) => ({
+        id: `slider_agent_${i}`,
+        start: {
+            x: Math.floor(10 + Math.random() * 40),
+            y: Math.floor(10 + Math.random() * 108),
+        },
+        color: "#ef4444",
+    }));
+
+    // Reactively update local visual agents without freezing the browser (cap at 500 for visual canvas drawing)
+    $: {
+        const visualCap = Math.min(exponentialScale, 500);
+        if (
+            activePreset === "urban_design" &&
+            (!scenarioAgents || scenarioAgents.length !== visualCap)
+        ) {
+            scenarioAgents = sliderAgentsPool.slice(0, visualCap);
+        }
+    }
+
+    // Lineum is O(1) ~ 4ms. A* is O(N) ~ 1.5ms per agent per step.
+    $: aStarCostThisStepMs = exponentialScale * 1.5;
+
     $: aStarCost =
         isSimulating || isScrubbing
-            ? (currentStep / 1000) * 42.5
+            ? ((currentStep * aStarCostThisStepMs) / (1000 * 60 * 60)) * 42.5 // converting ms to hours of server time cost
             : currentStep > 0
-              ? 42.5
+              ? ((1000 * aStarCostThisStepMs) / (1000 * 60 * 60)) * 42.5
               : 0.0;
     $: progressWidth =
         isSimulating || isScrubbing
@@ -1009,6 +1087,82 @@ logic_result = solver.compile_lpl(
                         </div>
                     </li>
                 </ul>
+
+                <div
+                    class="mt-8 p-6 bg-slate-900/50 border border-slate-800 rounded-xl relative overflow-hidden group/scale"
+                >
+                    <div
+                        class="absolute inset-0 bg-sky-500/5 opacity-0 group-hover/scale:opacity-100 transition-opacity"
+                    ></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h4
+                                    class="text-white font-bold text-sm tracking-wider uppercase mb-1"
+                                >
+                                    Fleet Scale Validation
+                                </h4>
+                                <p class="text-slate-500 text-xs">
+                                    A* Server Cost vs Lineum O(1)
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <span
+                                    class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400"
+                                    >{exponentialScale.toLocaleString()}</span
+                                >
+                                <span
+                                    class="text-slate-500 text-sm font-bold ml-1"
+                                    >AGENTS</span
+                                >
+                            </div>
+                        </div>
+
+                        <input
+                            type="range"
+                            min="1"
+                            max="100"
+                            step="1"
+                            bind:value={agentScale}
+                            on:change={generateMapForPreset}
+                            class="w-full accent-sky-500 bg-slate-800 rounded-full h-2 appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-sky-500/50"
+                        />
+                        <div
+                            class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono font-bold"
+                        >
+                            <span>1 TRUCK</span>
+                            <span>100K LOGISTICS SWARM</span>
+                        </div>
+
+                        <div
+                            class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between"
+                        >
+                            <div class="flex flex-col">
+                                <span
+                                    class="text-slate-300 text-xs font-bold leading-tight"
+                                    >Request Individual Vector Paths (Browser
+                                    Only)</span
+                                >
+                                <span class="text-slate-500 text-[10px] mt-0.5"
+                                    >Toggle off to bench raw O(1) mathematical
+                                    throughput.</span
+                                >
+                            </div>
+                            <label
+                                class="relative inline-flex items-center cursor-pointer ml-4"
+                            >
+                                <input
+                                    type="checkbox"
+                                    bind:checked={returnPaths}
+                                    class="sr-only peer"
+                                />
+                                <div
+                                    class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"
+                                ></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Visual Right (Live WebGL Simulation) -->
@@ -1099,7 +1253,7 @@ logic_result = solver.compile_lpl(
                             <span class="text-slate-400">A* Search:</span>
                             <span
                                 class="text-red-400 font-bold opacity-60 line-through"
-                                >1450 ms</span
+                                >{aStarCostThisStepMs.toFixed(0)} ms</span
                             >
                         </div>
                         <div
@@ -1114,7 +1268,37 @@ logic_result = solver.compile_lpl(
                     </div>
 
                     <!-- Instruction Overlay -->
-                    {#if !isSimulating && currentStep === 0}
+                    {#if isCompilingAPI}
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 bg-black/40 backdrop-blur-sm transition-all"
+                        >
+                            <div class="w-12 h-12 mb-4 relative">
+                                <div
+                                    class="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"
+                                ></div>
+                                <div
+                                    class="absolute inset-1 border-r-2 border-sky-400 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center text-[10px] font-mono font-bold text-white drop-shadow-md"
+                                >
+                                    {apiProgress}%
+                                </div>
+                            </div>
+                            <div
+                                class="px-6 py-2 bg-slate-900/80 border border-emerald-500/30 rounded-full text-emerald-400 font-mono text-sm tracking-widest uppercase shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                            >
+                                {#if apiProgress < 99}
+                                    GENERATING {exponentialScale >= 1000
+                                        ? (exponentialScale / 1000).toFixed(0) +
+                                          "k"
+                                        : exponentialScale} AGENTS...
+                                {:else}
+                                    EXTRACTING ROUTES...
+                                {/if}
+                            </div>
+                        </div>
+                    {:else if !isSimulating && currentStep === 0}
                         <div
                             class="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
                         >
@@ -1155,9 +1339,9 @@ logic_result = solver.compile_lpl(
                             >Latency Waste Cost (A*)</span
                         >
                         <span class="text-red-400 font-mono font-bold text-sm"
-                            >-${aStarCost.toFixed(2)}
+                            >-${aStarCost.toFixed(4)}
                             <span class="text-slate-500 text-[10px] font-mono"
-                                >/ hour</span
+                                >/ batch</span
                             ></span
                         >
                     </div>

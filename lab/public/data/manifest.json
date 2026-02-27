@@ -1,9 +1,18 @@
 [
     {
-        "run_id": "spec6_false_s41_20260215_023130",
+        "run_id": "spec6_false_s41_20260222_152015",
         "run_tag": "spec6_false_s41",
-        "timestamp": "20260215_023130",
-        "birth_frame": 391,
+        "timestamp": "20260222_152015",
+        "birth_frame": 389,
+        "frame_count": 400,
+        "pearson_r": 0.9961299168203144,
+        "euclidean_dist": 0.5136243556801225
+    },
+    {
+        "run_id": "spec6_false_s41_20260227_200927",
+        "run_tag": "spec6_false_s41",
+        "timestamp": "20260227_200927",
+        "birth_frame": 389,
         "frame_count": 400,
         "pearson_r": 0.9961299168203144,
         "euclidean_dist": 0.5136243556801225

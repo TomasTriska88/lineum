@@ -1414,6 +1414,12 @@ This section defines the requirements and architecture for the new main Lineum S
     - **Seamless Integrations:** Show that this isn't isolated science, but a tool meant for production. Include icons of easily connected systems (Docker, Python, C++ Core, ROS – Robot Operating System, REST/GraphQL).
     - **Social Proof / Trusted By:** Create a reusable `<LogoCloud>` component that draws data from a shared central configuration file (e.g., `src/lib/data/content/partners.json`). If the configuration file is empty, display an assertive Early Adopter B2B prompt: *"Be the first, overtake your competition. Become our first partner and secure all our products for life at cost price."* with a CTA. This component will be implemented both on the `/api-solutions` page and directly on the main index Homepage as part of this task.
 
+- [ ] **S.9 B2B Investor Repositioning (The "Painkiller" Narrative)**
+    - **Context:** The validated core engine executes 500 steps (128x128 grid) under 2 seconds on CPU, and the WebSocket streaming API is confirmed stable with live cloud protections (Rate Limit, Kill Switch).
+    - **Goal:** Completely pivot the investor pitch from "Academic Physics Simulation" to "B2B Deep-Tech Routing SaaS".
+    - **Demo-Led Pitch:** Make the visual, split-screen demonstration (Lineum vs. rigid A*) the absolute centerpiece of any investor interaction. Show, don't tell, the "Slime-mold effect" organically bypassing constraints in real-time.
+    - **Value Proposition:** Emphasize that the API isn't a "nice-to-have" vitamin, but a "painkiller" that solves expensive CAD/routing bottlenecks for Architecture, Evacuation scenarios, and Microchip designers, replacing hours of manual work or server crashes with an instant fluid generation.
+
 ---
 
 ## ⚖️ L. Strategic Governance & Licensing Harmonization #strategy #legal
@@ -1433,7 +1439,7 @@ This section defines the requirements and architecture for the new main Lineum S
     - **The Need:** To serve enterprise on-premise clients, providing only Python is insufficient. We must eventually provide highly optimized native libraries (e.g., `C++`, `Rust`) and web-edge versions (`JS/WASM`) of the Engine.
     - **The Risk (Numerical Instability Hypothesis):** As established in `[TEST] Section F` and `Section G`, we hypothesize that Lineum's exact mathematical convergence (vortex count, $\phi$-tension loops) is highly dependent on floating-point precision and operation ordering. 
     - **Validation Gate:** Before selling a native C++ or JS enterprise port, it MUST pass the exact same rigid `whitepaper_contract_suite.json` matrix as the Python core. If the cross-language port drifts topologically due to architecture compilation (e.g., fast-math flags vs strict IEEE 754), it cannot be certified as valid canonical Lineum.
-- [ ] **L.3 SaaS Boundary & Monorepo Separation**
+- [x] **L.3 SaaS Boundary & Monorepo Separation**
     - Address the architectural mixing of Proprietary SaaS API code (`routing_backend/main.py`) and the AGPL Engine (`lineum_core`). Establish a formal API boundary or repository split to avoid license contamination.
 - [ ] **L.4 Acceptable Use & Ethical ToS**
     - Draft and integrate a Terms of Service/Responsible Use policy specifying forbidden API usage (military swarm drones, malicious market HFT, etc.).
@@ -1457,6 +1463,20 @@ This section contains tasks related to the web presentation and technical backgr
 - [ ] **Hosting and Deployment**:
     - Choose and set up final hosting (DigitalOcean / Vercel / Cloudflare).
     - Set up a CI/CD pipeline for automatic deployment after push to `main`.
+
+### 🔲 U. Edge SDK & Delta Streaming Architecture #architecture #api #legal
+
+- **Context:** To minimize server outbound bandwidth and reduce latency, we should avoid sending the full 2D $\varphi$ (heatmap) grid at high framerates (e.g., 60 FPS) to B2B clients over the WebSocket API. Instead, we should transmit only **deltas (changes)**.
+- [ ] **Delta Streaming Protocol:**
+    - The `routing_backend` computes structural changes between `step(t)` and `step(t-1)`. It streams a compressed sparse payload of coordinate changes `(x, y, new_value)`.
+    - Periodically (e.g., every 100 frames), the server sends a full "I-frame" (keyframe) sync of the continuous grid to prevent client desynchronization, analogous to video compression (H.264).
+- [ ] **Client-Side "Edge SDK":**
+    - Provide a lightweight, officially supported library in popular enterprise languages (Python, TypeScript, Go, Rust, C#).
+    - The client SDK asynchronously parses the Delta Stream, continuously reconstructs the local $\varphi$ state array in the client's memory, and applies local path-finding algorithms (e.g., vector flow extraction, steepest descent) to extract specific routes *on the client side*.
+    - **B2B Advantage:** Shifts heavy path-reconstruction compute and specific entity tracking to the client's "Edge" hardware. Conserves enormous AWS egress bandwidth.
+- [ ] **SDK Dual-Licensing Strategy:**
+    - **Open Source / Academic (AGPLv3):** The Edge SDK is publicly released under AGPLv3. This ensures maximum open-source compliance and acts as a "viral" forcing function—any corporation integrating the SDK into their proprietary backend over a network is obligated to open-source their code.
+    - **Enterprise Commercial License:** To bypass the AGPLv3 restrictions and keep their integration proprietary, B2B clients purchasing Enterprise SaaS API tiers will receive a discrete Commercial License for the SDK. This provides a massive upsell incentive.
 
 > [!NOTE]  
 > Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).

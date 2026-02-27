@@ -85,11 +85,11 @@
         </p>
         <div class="cta-group">
             <a href="/wiki" class="btn btn-primary">{m.hero_cta_wiki()}</a>
-            <!-- <a
+            <a
                 href="/api-solutions"
                 class="btn btn-outline"
                 style="border-color: #38bdf8; color: #38bdf8;">{m.nav_api()}</a
-            > -->
+            >
             <a href="#scientist" class="btn btn-outline">{m.hero_cta_audit()}</a
             >
         </div>

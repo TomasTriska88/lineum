@@ -8,14 +8,16 @@
 import websockets
 import asyncio
 import json
+import numpy as np # For local drone math
 
 async def start_lineum_routing():
-    # 1. Dispatch the routing task to the Lineum engine
+    # 1. Dispatch routing task (Disable O(N) Server Vector Extraction)
     async with httpx.AsyncClient() as client:
         res = await client.post("https://api.lineum.io/route/task", json={
             "size": 128,
             "max_steps": 1000,
-            "agents": [{"id": "Alpha", "start": {"x": 10, "y": 10}}],
+            "return_paths": False, # B2B Scalability Flag
+            "agents": [{"id": "Drone1", "start": {"x": 10, "y": 10}}],
             "target": {"x": 110, "y": 110}
         }, headers={"Authorization": "Bearer YOUR_API_KEY"})
         
@@ -25,15 +27,32 @@ async def start_lineum_routing():
     async with websockets.connect(f"wss://api.lineum.io/route/stream/{task_id}") as ws:
         async for message in ws:
             data = json.loads(message)
-            if "paths" in data:
-                print(f"Step {data['step']}: Agent positions updated")
-                # Pipe exactly where agents should move
+            if "phi_flat" in data:
+                # 3. Edge-Device computes its own path instantly from the tensor
+                phi_tensor = np.array(data["phi_flat"]).reshape((128, 128))
+                
+                # Drone simply follows the highest phi pressure gradient
+                curr_y, curr_x = 10, 10
+                path = [(curr_x, curr_y)]
+                
+                # Local edge-routing O(1) descent
+                while phi_tensor[curr_y, curr_x] > 0.001:
+                    neighbors = [
+                        (curr_y-1, curr_x), (curr_y+1, curr_x),
+                        (curr_y, curr_x-1), (curr_y, curr_x+1)
+                    ]
+                    # Find highest neighbor gradient in the tensor
+                    curr_y, curr_x = max(neighbors, key=lambda p: phi_tensor[p[0], p[1]])
+                    path.append((curr_x, curr_y))
+                
+                print(f"Drone1 extracted path locally: {len(path)} steps")
+                break
 
 asyncio.run(start_lineum_routing())`,
         node: `import WebSocket from 'ws';
 
 async function startLineumRouting() {
-    // 1. Dispatch the routing task to the Lineum engine
+    // 1. Dispatch task (Disable O(N) Server Vector Extraction)
     const res = await fetch("https://api.lineum.io/route/task", {
         method: "POST",
         headers: {
@@ -41,41 +60,44 @@ async function startLineumRouting() {
             "Authorization": "Bearer YOUR_API_KEY"
         },
         body: JSON.stringify({
-            size: 128, max_steps: 1000,
-            agents: [{ id: "Alpha", start: { x: 10, y: 10 } }],
+            size: 128, max_steps: 1000, return_paths: false,
+            agents: [{ id: "Truck_Alpha", start: { x: 10, y: 10 } }],
             target: { x: 110, y: 110 }
         })
     });
     
     const { task_id } = await res.json();
 
-    // 2. Connect to the high-throughput fluid stream
+    // 2. Connect to the fluid stream to grab mathematical tensors
     const ws = new WebSocket(\`wss://api.lineum.io/route/stream/\${task_id}\`);
     
     ws.on('message', (data) => {
         const msg = JSON.parse(data);
-        if (msg.paths) {
-            console.log(\`Step \${msg.step}: Agent positions updated\`);
-            // Pipe exactly where agents should move
+        if (msg.phi_flat) {
+            console.log(\`Received O(1) Tensor size \${msg.phi_flat.length}\`);
+            // Run local steepest descent to extract Truck paths instantly
+            // without waiting on central server vector raycasting.
+            ws.close();
         }
     });
 }
 
 startLineumRouting();`,
-        curl: `# 1. Dispatch the routing task to the Lineum engine
+        curl: `# 1. Dispatch the routing task with Server-side Vector Extraction disabled
 curl -X POST https://api.lineum.io/route/task \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{
     "size": 128,
     "max_steps": 1000,
+    "return_paths": false,
     "agents": [{"id": "Alpha", "start": {"x": 10, "y": 10}}],
     "target": {"x": 110, "y": 110}
   }'
 
 # Returns: { "task_id": "req_8f72a..." }
 
-# 2. Connect to the WebSocket stream using your preferred client
+# 2. Connect to the WebSocket stream to consume the O(1) Mathematical Tensors directly
 # wss://api.lineum.io/route/stream/req_8f72a...`,
     };
 

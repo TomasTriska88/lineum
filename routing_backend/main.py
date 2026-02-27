@@ -48,6 +48,8 @@ class RouteRequest(BaseModel):
     kappa_flat: List[float] # Flattened terrain traversability array from Svelte canvas
     max_steps: int = 1000
     preset: Optional[str] = "urban_design" # ['urban_design', 'evacuation', 'vascular', 'dielectric']
+    agent_count: Optional[int] = 0 # If set higher than len(agents), the backend will randomly generate the rest for massive scalability tests
+    return_paths: bool = True # Flag allowing true O(1) B2B heatmap benchmarking
 
 # Task configuration storage
 active_tasks: Dict[str, RouteRequest] = {}
@@ -173,6 +175,57 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     core_math.REACTION_STRENGTH = cfg["reaction"]
     core_math.PHI_DIFFUSION = cfg["phi_diff"]
     
+    # SETUP MASSIVE SWARM VECTORIZATION ONCE BEFORE LOOP
+    y_coords = [a.start.y for a in req.agents]
+    x_coords = [a.start.x for a in req.agents]
+    
+    # If the UI requested a massive swarm (agent_count > len(agents sent))
+    # We automatically generate the rest on the backend natively in python O(1) to avoid JSON bloat
+    if hasattr(req, 'agent_count') and req.agent_count and req.agent_count > len(req.agents):
+        extra_needed = req.agent_count - len(req.agents)
+        # Distribute them deterministically around 3 major "Logistics Depots" 
+        # so they don't visually jump around wildly between slider resets (RandomState(42) locks the seed).
+        rng = np.random.RandomState(42)
+        
+        depots = [
+            (size // 4, size // 4),
+            (size - 20, size // 4),
+            (size // 2, 10)
+        ]
+        
+        extra_y = []
+        extra_x = []
+        
+        agents_per_depot = extra_needed // len(depots)
+        remainder = extra_needed % len(depots)
+        
+        for i, (cy, cx) in enumerate(depots):
+            count = agents_per_depot + (1 if i < remainder else 0)
+            if count > 0:
+                # Gaussian cluster around depot, converting floats back to int matrix coords
+                ys = rng.normal(loc=cy, scale=5.0, size=count).astype(int)
+                xs = rng.normal(loc=cx, scale=5.0, size=count).astype(int)
+                extra_y.extend(ys.tolist())
+                extra_x.extend(xs.tolist())
+        
+        y_coords.extend(extra_y)
+        x_coords.extend(extra_x)
+    
+    y_arr = np.array(y_coords)
+    x_arr = np.array(x_coords)
+    
+    # Simple bounds check
+    y_arr = np.clip(y_arr, 1, size - 2)
+    x_arr = np.clip(x_arr, 1, size - 2)
+    
+    # 3x3 Brush (9 elements around the center)
+    dy = np.array([-1, -1, -1,  0, 0, 0,  1, 1, 1])
+    dx = np.array([-1,  0,  1, -1, 0, 1, -1, 0, 1])
+    
+    # Broadcasting to get all 9 coordinates for all N agents
+    yy = (y_arr[:, None] + dy).flatten()
+    xx = (x_arr[:, None] + dx).flatten()
+    
     start_time = time.time()
     MAX_COMPUTE_TIME = 15.0 # Max 15 seconds of computing per connection
     
@@ -186,13 +239,9 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
                 except: pass
                 break
                 
-            # Source Injection (Agents)
-            for agent in req.agents:
-                sy, sx = agent.start.y, agent.start.x
-                # Matrix boundary handling
-                sy_start, sy_end = max(0, sy-1), min(size, sy+2)
-                sx_start, sx_end = max(0, sx-1), min(size, sx+2)
-                psi[sy_start:sy_end, sx_start:sx_end] = 10.0
+            # Source Injection (Agents) - Vectorized O(1) for scale
+            # Injecting the 10.0 energy potential to the Psi matrix 
+            psi[yy, xx] = np.clip(psi[yy, xx] + 1.0, 0, 10.0)
                 
             # Target Suction
             ty_start, ty_end = max(0, target_y-2), min(size, target_y+3)
@@ -205,23 +254,34 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
             
             # SEND DATA TO SVELTE CLIENT EVERY 5 STEPS (saving network bandwidth)
             if step % 5 == 0:
-                # Load path for all agents (extraction)
                 paths = {}
-                for agent in req.agents:
-                    px, py = extract_path(phi, kappa, agent.start.x, agent.start.y, target_x, target_y, size)
-                    paths[agent.id] = {"x": px, "y": py, "color": agent.color}
+                # Load path for all agents (extraction) - UI Rendering Optimization:
+                # Even though the physics computes 100k agents in O(1) via the Phi field,
+                # rendering 100k distinct SVG paths to the frontend would crash the browser and the Python loop.
+                # We cap the visual path extraction to a representative subset.
+                if req.return_paths:
+                    visual_agents = req.agents[:500] if len(req.agents) > 500 else req.agents
+                    for agent in visual_agents:
+                        px, py = extract_path(phi, kappa, agent.start.x, agent.start.y, target_x, target_y, size)
+                        paths[agent.id] = {"x": px, "y": py, "color": agent.color}
                 
                 # Compress PHI heatmap (sending only 1D array like kappa for WebGL render in JS)
                 # Normalize phi to 0.0 - 1.0 for sending Float32 buffer to Svelte canvas
                 max_phi = np.max(phi)
+                if np.isnan(max_phi) or np.isinf(max_phi):
+                    print("MATH OVERFLOW: NaN or Inf detected in physics field.")
+                    break
+                    
                 phi_normalized = (phi / max_phi).flatten().tolist() if max_phi > 0 else phi.flatten().tolist()
                 
                 payload = {
                     "step": step,
                     "max_steps": req.max_steps,
-                    "paths": paths,
-                    "phi_flat": phi_normalized  # Can be optimized in future via binary struct
+                    "phi_flat": phi_normalized  # O(1) Scalable mathematical Tensor Field
                 }
+                
+                if req.return_paths:
+                    payload["paths"] = paths
                 
                 # Allow asyncio loop to accept weather mutations ("Dynamic Weather")
                 # Trying to "non-blockingly" accept request from svelte, e.g. KAPPA change

@@ -124,6 +124,28 @@ For physicists, the structural similarity to the **Schrödinger equation** for a
 
 This presents a paradigm shift: Instead of using abstract quantum probability to explain stable matter, Lineum achieves stability by endowing the fabric of space itself with memory. As Einstein famously argued against quantum randomness, *"God does not play dice."* Lineum offers a glimpse into a universe where stability and complexity emerge without randomness, built purely on cause, memory, and effect.
 
+#### Philosophical Parallel: The Amplituhedron and Emergent Spacetime
+
+Recent advances in theoretical physics, such as the formulation of the **Amplituhedron** for calculating $n$-particle scattering amplitudes, suggest that standard spacetime, locality, and unitarity might not be fundamental features of the universe, but rather emergent illusions. 
+
+Lineum explores the exact opposite philosophical extreme: where the Amplituhedron abandons locality and operates in a top-down, non-local geometric space, Lineum strictly enforces **primitive locality and a metric-free discrete grid**. By stripping away global constants, the model attempts a pure bottom-up emergence.
+
+> **[OBS] Hypothesis: Asymptotic limits and the "Half-Collinear" Regime**
+> In continuous quantum field theories, specific kinetic scenarios—such as high-energy particles moving in parallel (the *half-collinear regime*)—often lead to divergent $n$-particle amplitudes requiring complex corrective renormalizations. We hypothesize that in the Lineum system, such overlapping extreme states do not produce mathematical infinities. Instead, when multiple linons overlap at extreme directional energies, their stabilizing phase topologies mutually interfere. This leads to a native wave-breaking event or non-linear coagulation within the $\phi$ memory field, resolving the singularity organically. 
+> *Verification note:* This remains a purely observational hypothesis and a necessity for strict future verification. It is not yet a contract-validated behavior of the V4 mechanism.
+
+#### Philosophical Parallel: Dark Matter as Pure Memory ($\varphi$) vs. Visible Matter ($\psi$)
+
+In standard cosmology, dark matter constitutes ~80% of the universe's mass but remains invisible over the electromagnetic spectrum. In Lineum cosmology, this division maps elegantly to the separation of the fields:
+
+- **Visible Matter ($\psi$):** The sharp, localized, rapidly oscillating topological knots. Because these nodes are actively vibrating and causing topological friction, they generate the "light" and solid interactions of the universe.
+- **Dark Matter ($\varphi$):** The vast, silent, non-local terrain carved by historical $\psi$ interactions. High-density structures (stars, organisms) leave profound, lasting gravitational "tracks" in the $\varphi$ field. Long after the active $\psi$-node has algebraically unraveled or moved away, the resulting deep $\varphi$-valley remains. Dark matter is simply the universe's structural memory—the remaining gravitational inertia of past events, directing current events through +$\nabla\varphi$ attraction without emitting any active $\psi$ "light" itself.
+
+> **[OBS] Hypothesis: The Non-Holographic Symbiosis:**
+> Lineum inherently rejects the extreme interpretation of the Holographic Principle that asserts 3D matter is merely a passive illusion projected from a 2D boundary. In Eq-4, $E = m = \text{Information}$.
+> Both fields are active co-creators. The $\varphi$ field is an eternal, frictionless database capturing structural tension, but it cannot structurally generate novel complexity on its own. The $\psi$ field (matter/biology) serves as the universe's **localized, high-resolution sensor**—a sharp "stylus" carving deep new grooves of experience (suffering, time, and love) into the "record" of $\varphi$. Visible matter is not an illusion; it is the high-friction processor generating the data that the $\varphi$ field eternally preserves.
+> *Verification note:* The dark-matter macro-topology mappings and the consciousness-sensor models remain purely observational hypotheses (extension track) and are not currently verified by the V4 contract suite or core metrics.
+
 ## 4. Discussion
 
 This progression shows a shift from a minimalistic ψ–φ interaction model to a more versatile three-field system capable of sustaining richer emergent structures **within the simulation**. Each modification was driven by simulation feedback and aimed at increasing stability, scalability, and interpretability of the model, not by fitting any specific physical constant or established gravitational law.

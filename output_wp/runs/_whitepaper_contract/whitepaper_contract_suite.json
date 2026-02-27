@@ -1,16 +1,16 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-02-23T18:33:37.776400+00:00",
-    "contract_id": "lineum-core-1.0.18-core",
+    "timestamp": "2026-02-27T19:19:41.655848+00:00",
+    "contract_id": "lineum-core-1.0.15-core",
     "contract_version": "1.1.5",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "1.0.14-core"
   },
   "fingerprints": {
-    "whitepaper_sha256": "23ffd912af928eedeb966cbf1b06ac4434ab8a0f3e21ea8f8272fa78131ff34e",
-    "contract_sha256": "81dcfdf46ef5f5be41987c58947b0d52ab932987a390845a654debb593a7b2fb",
-    "codebase_sha256": "b50b424d94de2b2f6e52e99be287af1aad81a1ab64f5ba78392bf20032a8f090"
+    "whitepaper_sha256": null,
+    "contract_sha256": "d04df24444d598122e32cf2131164f8c8291c2c1b9daae9526d7ec12d422517e",
+    "codebase_sha256": "dbfac980574794662f0e654e34d59d8648c3b1bdb7cac32dee172fc6b5c7f842"
   },
   "embedded_context": {
     "runs": {
@@ -421,6 +421,16 @@
           }
         },
         {
+          "id": "canonical.identity.equation",
+          "expected": "Eq-4",
+          "actual": null,
+          "status": "FAIL",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.equation",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.equation"
+          }
+        },
+        {
           "id": "canonical.identity.kappa_mode",
           "expected": "constant",
           "actual": "constant",
@@ -428,6 +438,46 @@
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:run.kappa_mode",
             "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.kappa_mode"
+          }
+        },
+        {
+          "id": "canonical.identity.params.alpha",
+          "expected": 0.0007,
+          "actual": null,
+          "status": "FAIL",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.alpha",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.params.alpha"
+          }
+        },
+        {
+          "id": "canonical.identity.params.beta",
+          "expected": 0.015,
+          "actual": null,
+          "status": "FAIL",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.beta",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.params.beta"
+          }
+        },
+        {
+          "id": "canonical.identity.params.delta",
+          "expected": 0.00462,
+          "actual": null,
+          "status": "FAIL",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.delta",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.params.delta"
+          }
+        },
+        {
+          "id": "canonical.identity.params.sigma_xi",
+          "expected": 0.005,
+          "actual": null,
+          "status": "FAIL",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.params.sigma_xi",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.run.params.sigma_xi"
           }
         },
         {
@@ -493,13 +543,13 @@
         {
           "id": "canonical.anchor.f0_mean_hz",
           "expected": {
-            "min": 3.5e+19,
-            "max": 3.9e+19,
+            "min": 1.84e+20,
+            "max": 1.87e+20,
             "paper_ref": "\u00a74.6"
           },
           "actual": 3.6796152976497996e+19,
-          "status": "PASS",
-          "message": "Value 3.6796152976497996e+19 OK",
+          "status": "FAIL",
+          "message": "3.6796152976497996e+19 < min 1.84e+20",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
@@ -509,13 +559,13 @@
         {
           "id": "canonical.anchor.topology_neutrality_n1",
           "expected": {
-            "min": 70.0,
-            "max": 85.0,
+            "min": 93.0,
+            "max": 99.5,
             "paper_ref": "\u00a74.4"
           },
           "actual": 75.7,
-          "status": "PASS",
-          "message": "Value 75.7 OK",
+          "status": "FAIL",
+          "message": "75.7 < min 93.0",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.topology_neutrality_n1",
@@ -542,13 +592,13 @@
         {
           "id": "canonical.anchor.mean_vortices",
           "expected": {
-            "min": 150.0,
-            "max": 200.0,
+            "min": 55.0,
+            "max": 65.0,
             "paper_ref": "\u00a74.4"
           },
           "actual": 178.2735,
-          "status": "PASS",
-          "message": "Value 178.2735 OK",
+          "status": "FAIL",
+          "message": "178.2735 > max 65.0",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
@@ -574,7 +624,7 @@
         {
           "id": "canonical.anchor.max_lifespan_steps",
           "expected": {
-            "min": 20,
+            "min": 40,
             "paper_ref": "\u00a74.5"
           },
           "actual": 54,
@@ -589,13 +639,13 @@
         {
           "id": "canonical.anchor.phi_half_life_steps",
           "expected": {
-            "min": 1500,
-            "max": 1800,
+            "min": 900,
+            "max": 1100,
             "paper_ref": "\u00a74.6"
           },
           "actual": 1686,
-          "status": "PASS",
-          "message": "Value 1686.0 OK",
+          "status": "FAIL",
+          "message": "1686.0 > max 1100",
           "severity": "fatal",
           "actual_source": {
             "primary": "spec6_false_s41_manifest.json:metrics.phi_half_life_steps",
@@ -605,7 +655,7 @@
         {
           "id": "canonical.anchor.sbr_mean",
           "expected": {
-            "min": 1.5,
+            "min": 3000.0,
             "paper_ref": "\u00a74.6"
           },
           "actual": 4072.181608445348,
@@ -700,12 +750,12 @@
           "status": "PASS"
         }
       ],
-      "status": "PASS"
+      "status": "FAIL"
     }
   ],
   "summary": {
-    "pass": 1,
-    "fail": 0,
+    "pass": 0,
+    "fail": 1,
     "skip": 0,
     "matched_canonical": 1
   }

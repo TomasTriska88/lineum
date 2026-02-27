@@ -148,7 +148,7 @@ All reported phenomena arise from local operations on a discrete grid starting f
 
 The system is open for independent verification: the canonical run is fully pinned by manifest, artifacts, and the contract suite, and replication is evaluated by the contract-aligned acceptance bands in §4.3.1.
 
-**Out-of-scope clarifier (v1 core).** We **do not** claim: (i) predictability of “random” outcomes or a deterministic substrate for stochastic processes; (ii) any κ-dynamics phenomena (e.g., “Dimensional Transparency”); (iii) thermodynamic quantities (T, S) or fluctuation–dissipation calibration; (iv) identification with Standard-Model particles; or (v) gravitational analogies. These topics are deferred to the experimental/extension track and are not part of the v1 core evidence.
+**Out-of-scope clarifier (v1 core).** We **do not** claim: (i) predictability of “random” outcomes or a deterministic substrate for stochastic processes; (ii) any κ-dynamics phenomena (e.g., “Dimensional Transparency”); (iii) thermodynamic quantities (T, S) or fluctuation–dissipation calibration; (iv) identification with Standard-Model particles; (v) gravitational analogies; or (vi) ontological mappings of dark matter, consciousness, macro-soul networks, or theological (i.e., Trinity / P2P Universe) hypotheses. These topics are deferred to the experimental/extension track and are strictly **not** part of the v1 core evidence.
 
 **Graphical abstract.**
 
@@ -202,6 +202,14 @@ Lineum is designed as a minimal model to investigate whether complex, stable, an
 The key motivation is to test if macroscopic phenomena, such as particle-like excitations, field-mediated interactions, and stable wave patterns, can originate without embedding them explicitly into the governing equations.
 
 By isolating and quantifying these emergent behaviors, Lineum offers a controllable environment to evaluate which observed effects might have analogues in known physics, and which are unique to discrete, metric-free systems.
+
+### 2.1 Theoretical Context: Locality vs. Global Geometry
+
+Current theoretical frameworks, most notably the **Amplituhedron** used for calculating $n$-particle scattering amplitudes, attempt to bypass the complexities of physical spacetime by computing interactions from within abstract global geometries, effectively treating locality as an emergent artifact. Lineum tests the polar opposite approach: building a strictly local, dimensionless discrete grid to verify if complex physical laws can instead emerge "bottom-up".
+
+> **[OBS] Hypothesis: Asymptotic limits and the Half-Collinear Regime**
+> A key hypothesis under investigation involves complex quasi-particle interactions. For instance, in the **half-collinear regime** where highly energetic particles move in almost parallel trajectories, continuous amplitude calculations traditionally face mathematical divergences requiring external renormalization. We hypothesize that in a strictly discrete formulation like Lineum, these asymptotic singularities simply cannot form. Instead, structurally overlapping high-energy linons will mutually disrupt their phase topologies, resulting in "wave-breaking" and immediate energy distribution back into the scalar $\phi$ field. 
+> *Verification note:* This remains an observational hypothesis requiring explicit verification through targeted collision runs and is **not** a contract-validated behavior in the canonical v1 core.
 
 # 3. Equation
 

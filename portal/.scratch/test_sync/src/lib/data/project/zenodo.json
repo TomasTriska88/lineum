@@ -1,7 +1,7 @@
 {
-  "title": "Lineum Core (v1.0.6-core): reference implementation & evidence bundle",
+  "title": "Lineum Core (v1.0.18-core): reference implementation & evidence bundle",
   "upload_type": "software",
-  "description": "Reference implementation of the Lineum core (v1.0.6-core) with canonical HTML reports and CSV/PNG/GIF artifacts. The core paper (whitepaper/lineum-core.md) is the methodological spine: it fixes the canonical tone f0, SI conversions (E, λ, display-only m/m_e), Structural Closure as an in-scope consequence of the φ center-trace half-life, and falsifiable checks (C1/C2/C3). Evidence lives in output/; each HTML report is ground truth, commit-stamped, and tied to a specific RUN_TAG.",
+  "description": "Reference implementation of the Lineum core (v1.0.18-core) with canonical HTML reports and CSV/PNG/GIF artifacts. The core paper (whitepaper/lineum-core.md) is the methodological spine: it fixes the canonical tone f0, SI conversions (E, λ, display-only m/m_e), Structural Closure as an in-scope consequence of the φ center-trace half-life, and falsifiable checks (C1/C2/C3). Evidence lives in output/; each HTML report is ground truth, commit-stamped, and tied to a specific RUN_TAG.",
   "creators": [
     {
       "name": "Tomáš Tříska",
@@ -10,8 +10,14 @@
     }
   ],
   "contributors": [
-    { "name": "Kateřina Marečková", "type": "Other" },
-    { "name": "Vlastimil Smeták", "type": "Other" }
+    {
+      "name": "Kateřina Marečková",
+      "type": "Other"
+    },
+    {
+      "name": "Vlastimil Smeták",
+      "type": "Other"
+    }
   ],
   "keywords": [
     "Lineum",
@@ -23,10 +29,10 @@
     "ψ φ κ triad",
     "Structural Closure"
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "language": "eng",
   "access_right": "open",
-  "notes": "Core paper is included as whitepaper/lineum-core.md (manuscript text and figures intended under CC-BY-4.0). Software and scripts are MIT-licensed. The display-only effective mass is a pure unit conversion from the canonical tone f0 (m = h f0 / c^2, m/m_e as a scale cue) and is explicitly not a rest-mass claim. Structural Closure is in scope for the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Phenomena such as Return Echo, Dimensional Transparency (time-varying κ), and other extensions live in the experimental/extension track (lineum-exp-*, lineum-extension-*) and are out of scope for this core bundle.",
+  "notes": "Core paper is included as whitepaper/lineum-core.md (manuscript text and figures intended under CC BY-NC-ND 4.0). Software and scripts are AGPL-3.0-licensed. The display-only effective mass is a pure unit conversion from the canonical tone f0 (m = h f0 / c^2, m/m_e as a scale cue) and is explicitly not a rest-mass claim. Structural Closure is in scope for the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Phenomena such as Return Echo, Dimensional Transparency (time-varying κ), and other extensions live in the experimental/extension track (lineum-exp-*, lineum-extension-*) and are out of scope for this core bundle.",
   "related_identifiers": [
     {
       "relation": "isSupplementTo",
@@ -34,5 +40,5 @@
       "resource_type": "software"
     }
   ],
-  "version": "v1.0.6-core"
+  "version": "v1.0.18-core"
 }

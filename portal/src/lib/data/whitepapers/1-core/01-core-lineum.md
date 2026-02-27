@@ -148,7 +148,7 @@ All reported phenomena arise from local operations on a discrete grid starting f
 
 The system is open for independent verification: the canonical run is fully pinned by manifest, artifacts, and the contract suite, and replication is evaluated by the contract-aligned acceptance bands in §4.3.1.
 
-**Out-of-scope clarifier (v1 core).** We **do not** claim: (i) predictability of “random” outcomes or a deterministic substrate for stochastic processes; (ii) any κ-dynamics phenomena (e.g., “Dimensional Transparency”); (iii) thermodynamic quantities (T, S) or fluctuation–dissipation calibration; (iv) identification with Standard-Model particles; or (v) gravitational analogies. These topics are deferred to the experimental/extension track and are not part of the v1 core evidence.
+**Out-of-scope clarifier (v1 core).** We **do not** claim: (i) predictability of “random” outcomes or a deterministic substrate for stochastic processes; (ii) any κ-dynamics phenomena (e.g., “Dimensional Transparency”); (iii) thermodynamic quantities (T, S) or fluctuation–dissipation calibration; (iv) identification with Standard-Model particles; (v) gravitational analogies; or (vi) ontological mappings of dark matter, consciousness, macro-soul networks, or theological (i.e., Trinity / P2P Universe) hypotheses. These topics are deferred to the experimental/extension track and are strictly **not** part of the v1 core evidence.
 
 **Graphical abstract.**
 

@@ -1464,6 +1464,20 @@ This section contains tasks related to the web presentation and technical backgr
     - Choose and set up final hosting (DigitalOcean / Vercel / Cloudflare).
     - Set up a CI/CD pipeline for automatic deployment after push to `main`.
 
+### 🔲 U. Edge SDK & Delta Streaming Architecture #architecture #api #legal
+
+- **Context:** To minimize server outbound bandwidth and reduce latency, we should avoid sending the full 2D $\varphi$ (heatmap) grid at high framerates (e.g., 60 FPS) to B2B clients over the WebSocket API. Instead, we should transmit only **deltas (changes)**.
+- [ ] **Delta Streaming Protocol:**
+    - The `routing_backend` computes structural changes between `step(t)` and `step(t-1)`. It streams a compressed sparse payload of coordinate changes `(x, y, new_value)`.
+    - Periodically (e.g., every 100 frames), the server sends a full "I-frame" (keyframe) sync of the continuous grid to prevent client desynchronization, analogous to video compression (H.264).
+- [ ] **Client-Side "Edge SDK":**
+    - Provide a lightweight, officially supported library in popular enterprise languages (Python, TypeScript, Go, Rust, C#).
+    - The client SDK asynchronously parses the Delta Stream, continuously reconstructs the local $\varphi$ state array in the client's memory, and applies local path-finding algorithms (e.g., vector flow extraction, steepest descent) to extract specific routes *on the client side*.
+    - **B2B Advantage:** Shifts heavy path-reconstruction compute and specific entity tracking to the client's "Edge" hardware. Conserves enormous AWS egress bandwidth.
+- [ ] **SDK Dual-Licensing Strategy:**
+    - **Open Source / Academic (AGPLv3):** The Edge SDK is publicly released under AGPLv3. This ensures maximum open-source compliance and acts as a "viral" forcing function—any corporation integrating the SDK into their proprietary backend over a network is obligated to open-source their code.
+    - **Enterprise Commercial License:** To bypass the AGPLv3 restrictions and keep their integration proprietary, B2B clients purchasing Enterprise SaaS API tiers will receive a discrete Commercial License for the SDK. This provides a massive upsell incentive.
+
 > [!NOTE]  
 > Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
 
@@ -1547,3 +1561,46 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
     - Present products as limited "Drops" (e.g., v1.0.0 Founder's edition) to foster exclusivity.
     - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Core team and active beta-testers as an exclusive reward.
     - **Gamification:** Offer hidden merch in the E-shop (e.g., a "Root Access" hoodie) that unlocks for purchase only when a user discovers a specific easter-egg in the portal's terminal/CLI interface.
+
+### 🔲 Portal Task: Lineum Edge SDK & Dual Licensing Model
+The core of the Lineum Enterprise B2B strategy revolves around bypassing traditional $O(N)$ vector path extraction on centralized API servers. Instead, Lineum physically returns the mathematically pure $O(1)$ scalar pressure tensor (the Heatmap $\Phi$) to the client. This enables true **Decentralized Edge Routing**. 
+
+- A swarm of 100,000 logistics drones does not need 100,000 uniquely generated routes stringified into JSON.
+- Instead, the entire simulation field is processed instantly across the 100,000 agents locally. Each drone reads the broadcasted field tensor natively and dynamically performs a local steepest-descent computation $\nabla\Phi$.
+
+#### 1. Delta Streaming (Diff Compression)
+- [ ] To prevent network bandwidth saturation, implement **Delta Streaming** from the Core:
+  1. **Initialization:** The Edge Client downloads the full rigid terrain matrix $\kappa$ and initial wave boundaries once.
+  2. **Delta Transport:** In subsequent physics frames, the API server calculates the difference tensor: $\Delta\Phi_{t} = \Phi_{t} - \Phi_{t-1}$.
+  3. **Bandwidth Savings:** The payload strictly packages coordinates exceeding the mathematical threshold $|\Delta\Phi_{y,x}| > 0.001$. 
+  4. **SDK Mirroring:** The Edge SDK receiver decodes the JSON delta-array `[[y, x, value], ...]` and natively patches the client's localized memory field in C++, Rust, or NodeJS. 
+
+This compresses megabytes of traffic into kilobytes, granting infinite scalability to client endpoints.
+
+#### 2. Dual-License Architecture Strategy
+- [ ] Successfully commercialize Lineum by separating its codebase into two distinct licensing paradigms:
+  - **1) Lineum Edge SDK (AGPLv3)**
+    The Edge SDKs (Python, NodeJS, Rust, C++) designed to parse $\Delta\Phi$ tensors and perform local drone-routing are completely Open Source.
+    *Goal:* Foster community trust, enable custom physical robotic integrations, and demonstrate absolute transparency in the localized extraction logic. Because the SDK cannot run without connecting to the proprietary Lineum Cloud API, open-sourcing it poses zero threat to revenue.
+  - **2) Lineum Core Engine (Proprietary Commercial)**
+    The quantum fluid dynamics wave solver (e.g., the backend Python infrastructure and underlying Rust/C++ accelerators implementing the Lineum Equation) remains strictly closed source.
+    *License:* Proprietary Lineum B2B License (SaaS / Enterprise Premise).
+    *Goal:* Protect the core technological moat. Customers pay per API token/compute-time to generate the mathematical $\Phi$ fields that their open-source SDKs subsequently consume.
+
+This dual-license model aligns perfectly with the *Developer Experience First* slogan, granting engineers the freedom to build and inspect the "last mile" routing logic natively on their robots while subscribing to the Lineum Cloud for the heavy cognitive tensor-lifting.
+
+### 🔲 Portal Task: TRNG and Quantum Chaos API Products
+The Lineum Engine can natively output mathematically pure entropy derived from structural Zeta-points and the $\varphi$ tensor field. This allows two distinct commercial API products:
+
+- [ ] **1. Fast Entropy API (The Vacuum Noise)**
+  - Current TRNG implementation reading microscopic phase fluctuations in the vacuum.
+  - Generates millions of numbers per second cheaply.
+  - **Analogy:** Listening to the chaotic "splash" of ocean waves.
+  - **Target:** Standard web cryptography, session keys, lightweight randomness.
+
+- [ ] **2. Extreme Zeta Entropy API (The Quantum Chaos)**
+  - A premium B2B endpoint that artificially generates mathematically rare Riemann Zeta points by colliding massive $\varphi$ structures.
+  - **Analogy:** Hitting a crystal with a hammer and reading the exact atomic fracture pattern.
+  - Generates computationally unbreakable sequences that match the GUE (Gaussian Unitary Ensemble) pattern of quantum chaos.
+  - Since calculating these values analytically via Odlyzko algorithms takes supercomputers, Lineum acts as an *oracle-as-a-service* extracting them directly from simulated geometric collapse.
+  - **Target:** National security, blockchain ZK-proof seeding, post-quantum cryptographic vaults.

@@ -26,9 +26,7 @@ export class ContextSelector {
         // For whitepapers, we verify specific files.
 
         for (const file of aiIndex) {
-            // Filter: Whitepapers (Core + Legacy) AND todo.md (Planning)
-            // We include Legacy files for historical context/trivia, but they will be tagged as verifiable false.
-            if (!file.path.includes('whitepapers') && file.name !== 'todo.md') continue;
+            // Access expanded to all files. Everything indexed is searchable.
 
             const sections = file.content.split(/\n#{1,3}\s/); // Split by headers H1-H3
 

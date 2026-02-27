@@ -1,4 +1,4 @@
-# Lineum
+# Lineum™
 
 > **Emergence of stable localized excitations in discrete fields without physical constants.**
 
@@ -96,5 +96,6 @@ npx vite dev --host 127.0.0.1 --port 5174
 ---
 
 ## 📜 License
-*   **Code**: GNU AGPLv3 License.
-*   **Whitepapers**: CC BY 4.0.
+*   **Core Engine & Lab**: GNU AGPLv3 License.
+*   **Portal (SaaS Interface)**: Proprietary (All Rights Reserved). The code in the `/portal` directory is strictly for internal commercial use and is fundamentally excluded from the AGPLv3 license.
+*   **Whitepapers**: CC BY-NC-ND 4.0.
