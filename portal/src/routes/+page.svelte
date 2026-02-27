@@ -48,7 +48,7 @@
     <div class="hero-content container">
         <div class="logo">
             <span class="logo-symbol">{m.hero_symbol()}</span>
-            <span class="logo-text">Lineum</span>
+            <span class="logo-text">Lineum™</span>
             <div class="equation-inline">
                 <span class="math-symbol"
                     >∂<sub>t</sub><span style="color: var(--accent-cyan)"
