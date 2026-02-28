@@ -66,3 +66,7 @@ The portal seamlessly integrates three distinct worlds, and the copy must reflec
 - **No Root Clutter:** NEVER create temporary files, error logs (`error.log`), `check.txt`, or any diagnostic output in the root directory of the repository (`/`).
 - **Use Scratch Directory:** ALL temporary outputs from agent debugging, script tests, or log dumping MUST be written solely to the `.scratch/` directory. If `.scratch/` does not exist, create it. It is `.gitignore`d to prevent polluting the codebase.
 
+## 14. Synced Data Mirrors (CRITICAL)
+- **Do Not Edit Mirrored Data:** The folder `portal/src/lib/data/` contains auto-syncing mirrored copies of documentation (like `.md` files) used for the Lina AI memory and website context. NEVER edit markdown files directly inside this folder.
+- **Edit the Source of Truth:** If you need to update a whitepaper, workflow, or documentation, ALWAYS find and edit the true source file in the root directories (e.g., `whitepapers/`, `.agent/workflows/`, `docs/`). The `npm run dev` script will automatically mirror your changes to `portal/src/lib/data/`.
+
