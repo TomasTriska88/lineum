@@ -17,7 +17,7 @@
 
 ## 1. Abstract
 
-*To be written. Will summarize the leap from isolated linon dynamics (Book I) to cosmological structures: how absolute mathematical simplicity (Lineum Core) gives rise to apparent relativistic laws, gravity, and multiverse topologies purely through emergent geometry.*
+*To be written. Will summarize the leap from isolated linon dynamics (Book I) to cosmological structures: how absolute mathematical simplicity (Lineum) gives rise to apparent relativistic laws, gravity, and multiverse topologies purely through emergent geometry.*
 
 ## 2. Introduction: From Particle to Cosmos
 

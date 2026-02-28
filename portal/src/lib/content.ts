@@ -122,7 +122,7 @@ export const content = {
             },
             {
                 title: 'Open Source Development',
-                desc: 'Supporting the development of tools like Simulacrum and the Lineum Core engine.'
+                desc: 'Supporting the development of tools like Simulacrum and the Lineum engine.'
             },
             {
                 title: 'Independent Research',

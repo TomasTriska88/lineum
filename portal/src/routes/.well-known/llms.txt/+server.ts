@@ -1,5 +1,5 @@
 export async function GET() {
-    const content = `# Lineum Core Knowledge Base
+    const content = `# Lineum Knowledge Base
 
 Lineum is a discrete field dynamics simulation engine modeling continuous spatial computation.
 

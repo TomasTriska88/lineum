@@ -27,6 +27,6 @@ describe('System Prompt Configuration', () => {
 
     it('should include Project Context', () => {
         expect(SYSTEM_PROMPT).toContain("PROJECT CONTEXT (Context Window):");
-        expect(SYSTEM_PROMPT).toContain("Lineum Core is a discrete simulation");
+        expect(SYSTEM_PROMPT).toContain("Lineum is a discrete simulation");
     });
 });

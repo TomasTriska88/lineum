@@ -50,7 +50,7 @@ All primary UI components (cards, modules) must utilize transparency and blur ef
 ---
 
 ## AI-First Orientation
-Lineum Core isn't just a website with an AI chatbot; it is an AI-augmented research portal. All future features must be designed with the **Lineum Explorer** in mind as a primary UI actor.
+Lineum isn't just a website with an AI chatbot; it is an AI-augmented research portal. All future features must be designed with the **Lineum Explorer** in mind as a primary UI actor.
 
 ### Principles:
 1. **Always-On Awareness**: The AI interface (Resonance HUD) is a persistent layer.

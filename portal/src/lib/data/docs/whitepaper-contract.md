@@ -1,6 +1,6 @@
 # Whitepaper Contract Runner
 
-This tool (`tools/whitepaper_contract.py`) validates that an audit run meets the specific numerical and metadata anchors defined in the Lineum Core whitepaper.
+This tool (`tools/whitepaper_contract.py`) validates that an audit run meets the specific numerical and metadata anchors defined in the Lineum whitepaper.
 
 It is designed to be a standalone verification step, decoupled from the application test suite, ensuring that the "scientific claims" of the paper (e.g., specific frequency anchors, tolerances) are met by the generated evidence.
 

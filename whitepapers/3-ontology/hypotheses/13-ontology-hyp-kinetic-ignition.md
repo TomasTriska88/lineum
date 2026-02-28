@@ -7,7 +7,7 @@
 **Date:** 2026-02-26
 
 ## 1. Summary
-The user posited a fundamental rule for altering reality: "If you want something, you have to *start*—it doesn't matter where or how, but you must take action." Can this intuitive, practical rule of life be strictly derived from the mathematical mechanics of Eq-4 in the Lineum Core?
+The user posited a fundamental rule for altering reality: "If you want something, you have to *start*—it doesn't matter where or how, but you must take action." Can this intuitive, practical rule of life be strictly derived from the mathematical mechanics of Eq-4 in the Lineum?
 
 ## 2. Static Friction ($\delta_{ps}$) and the $\Phi$ Membrane
 Within Lineum, reality (the current state of the $\Psi$ field) is heavily anchored by the underlying memory field ($\Phi$). The $\Phi$ field acts as a viscous, stabilizing membrane. For any new structure or change to emerge, the localized phase momentum must overcome the system's inherent phase friction, primarily governed by parameters analogous to $\delta_{ps}$ (phase-slip friction/viscosity).

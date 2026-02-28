@@ -1,5 +1,5 @@
 ---
-description: How to execute a canonical whitepaper audit run for Lineum Core
+description: How to execute a canonical whitepaper audit run for Lineum
 ---
 
 To ensure a deterministic and audit-proof whitepaper run, follow these rules exactly:

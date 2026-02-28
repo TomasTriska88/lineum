@@ -6,7 +6,7 @@ description: How to run the test suite after code changes
 
 This project follows a strict **"No Temporary Tests"** policy. All tests must be integrated into the permanent test suites defined below.
 
-## 1. Lineum Core (Python)
+## 1. Lineum (Python)
 Located in the root directory. Tests cover physics, simulation logic, and output structure.
 // turbo
 ```bash

@@ -1,4 +1,4 @@
-# Verification Checklist for Lineum Core (spec6_false_s41)
+# Verification Checklist for Lineum (spec6_false_s41)
 
 This document serves for independent verification (reproduction) of the canonical Lineum simulation run in the `spec6_false_s41` configuration.
 

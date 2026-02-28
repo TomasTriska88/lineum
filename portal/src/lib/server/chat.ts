@@ -127,7 +127,7 @@ ${strip(designGuide)}
 ---
 
 **PROJECT CONTEXT (Context Window):**
-Lineum Core is a discrete simulation of field interactions. The current version is defined by the indexed documentation.
+Lineum is a discrete simulation of field interactions. The current version is defined by the indexed documentation.
 
 **CORE DEFINITIONS (ALWAYS AVAILABLE):**
 - **Lineum:** A simulation engine modeling discrete field interactions using the Equation of State.

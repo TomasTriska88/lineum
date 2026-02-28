@@ -72,13 +72,13 @@ def check_sync():
             mismatches.append(f"{glsl_name}: NOT FOUND in shader GLSL.")
             
     if mismatches:
-        print("\n🚨 [VISUAL DRIFT DETECTED] Portal visuals are out of sync with Lineum Core!")
+        print("\n🚨 [VISUAL DRIFT DETECTED] Portal visuals are out of sync with Lineum!")
         for m in mismatches:
             print(f"  - {m}")
         print("\n👉 To fix: Update #define values in FieldShader.svelte to match portal_params.json.")
         return False
     
-    print("\n✨ [SUCCESS] Portal visuals are perfectly synchronized with Lineum Core.")
+    print("\n✨ [SUCCESS] Portal visuals are perfectly synchronized with Lineum.")
     return True
 
 if __name__ == "__main__":

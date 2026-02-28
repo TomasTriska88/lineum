@@ -1,4 +1,4 @@
-# Lineum Core Orchestration Rules
+# Lineum Orchestration Rules
 
 ## 1. Audit Run (Generation)
 - **Objective:** Generate fresh simulation data and evidence.

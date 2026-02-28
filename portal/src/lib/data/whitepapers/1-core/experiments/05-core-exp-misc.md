@@ -5,7 +5,7 @@
 **Status:** Draft
 **Date:** 2025-08-23
 
-**Depends on:** Lineum Core **v1.0.3-core**
+**Depends on:** Lineum **v1.0.3-core**
 
 ---
 # Lineum — Experimental Track (v1.1.0-exp)

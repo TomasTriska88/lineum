@@ -158,7 +158,11 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     amp2 = torch.clamp(torch.abs(psi), 0.0, PSI_AMP_CAP)
     local_input = torch.clamp(amp2 * amp2, 0.0, 1e4)
 
-    phi += kappa * REACTION_STRENGTH * (local_input - phi)
+    # Scale geometric absorption based on grid AREA (128x128 baseline)
+    scale_ratio = (128.0 / size) ** 2
+    dynamic_reaction = REACTION_STRENGTH * scale_ratio
+
+    phi += kappa * dynamic_reaction * (local_input - phi)
     phi += kappa * PHI_DIFFUSION * _diffuse_complex_torch(phi, kappa, rate=0.05)
 
     phi = torch.clamp(phi, 0.0, PHI_CAP)
@@ -231,7 +235,11 @@ def _evolve_numpy(psi, delta, phi, kappa):
                         lo=0.0, hi=PSI_AMP_CAP, nan=0.0, posinf=PSI_AMP_CAP, neginf=0.0)
     local_input = np.clip(amp2 * amp2, 0.0, 1e4)
 
-    phi += kappa * REACTION_STRENGTH * (local_input - phi)
+    # Scale geometric absorption based on grid AREA (128x128 baseline)
+    scale_ratio = (128.0 / size) ** 2
+    dynamic_reaction = REACTION_STRENGTH * scale_ratio
+
+    phi += kappa * dynamic_reaction * (local_input - phi)
     phi += kappa * PHI_DIFFUSION * diffuse_real(phi, kappa, rate=0.05)
 
     psi = _finite_complex(psi, nan=0.0)

@@ -1,6 +1,6 @@
 # Project Rules and Intent
 
-These rules govern agent behavior and documentation standards for the Lineum Core project.
+These rules govern agent behavior and documentation standards for the Lineum project.
 
 ## 1. Interaction Language
 - **Mirror User Language**: If the user addresses the agent in Czech, the agent must respond in Czech.

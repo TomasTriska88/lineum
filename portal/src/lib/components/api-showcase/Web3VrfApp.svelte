@@ -317,7 +317,7 @@ contract LootBox is LineumVRFConsumer {
             <div
                 class="absolute top-4 left-6 text-[10px] sm:text-xs text-rose-500 font-bold tracking-widest uppercase opacity-70"
             >
-                Lineum Core
+                Lineum
             </div>
             <div
                 class="absolute top-4 right-6 text-[10px] sm:text-xs text-sky-500 font-bold tracking-widest uppercase opacity-70 text-right"

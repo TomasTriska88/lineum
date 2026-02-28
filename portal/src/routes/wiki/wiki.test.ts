@@ -28,7 +28,7 @@ describe('Wiki Loader: Advanced Features', () => {
         if (extension) expect(extension.track).toBe('Core');
     });
 
-    it('should sort Lineum Core as the first item via category order and numerical prefix', async () => {
+    it('should sort Lineum as the first item via category order and numerical prefix', async () => {
         const result = await load();
         const papers = result.papers;
         if (papers.length > 0) {

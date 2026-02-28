@@ -69,4 +69,4 @@ Evaluating Canonical Baseline against an active Mobility $\mu$ Field (V2 Drift+I
   - $k=5\% \rightarrow D_0 \approx 1.25$ (fully defined web)
   - $k=20\% \rightarrow D_0 \approx 1.60$ (diffuse aura filling space)
 
-**Conclusion:** The Lineum Core organically creates continuous scale-invariant geometry. The experimental $\mu$ V2 extension successfully deepens and stabilizes this structure for routing purposes without destroying its physical fractal guarantees.
+**Conclusion:** The Lineum organically creates continuous scale-invariant geometry. The experimental $\mu$ V2 extension successfully deepens and stabilizes this structure for routing purposes without destroying its physical fractal guarantees.

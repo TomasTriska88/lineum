@@ -98,7 +98,7 @@ describe('i18n Translation Quality & Completeness', () => {
     });
 
     it('ensure translations are not identical to english (detect missing localization)', () => {
-        // Some words might naturally be identical (like "API", "Lineum Core", etc.)
+        // Some words might naturally be identical (like "API", "Lineum", etc.)
         // We'll skip keys that are too short to accurately judge
         for (const lang of langs) {
             if (lang === 'en') continue;
@@ -112,7 +112,7 @@ describe('i18n Translation Quality & Completeness', () => {
 
                 if (!enText || !langText) continue;
                 if (enText.length < 15) continue; // Skip short strings like "Back", "API", etc.
-                if (enText.includes('Lineum Core') && enText.length < 20) continue; // Brand names
+                if (enText.includes('Lineum') && enText.length < 20) continue; // Brand names
 
                 totalChecked++;
                 if (enText === langText) {
