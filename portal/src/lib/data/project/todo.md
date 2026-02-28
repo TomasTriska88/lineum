@@ -773,6 +773,16 @@ Verify whether this density predicts changes in a(t) or local φ tension.
         - **Angular Branching Analysis (Bifurcation Test):** Visualize regions with increased `ψ` flux in steady state and locate "intersections" of smooth channels in `φ`. Analyze angles between a strong parent channel and emerging thinner daughter capillaries. Look for statistical preference of Murray's law for biological networks (r₁³ = r₂³ + r₃³) and ideally the inclination of main and secondary branches to deviate in radians close to a logarithmic spiral / 137.5 degrees.
         - **Fractal Dimension Calculation:** Cut the `φ` heatmap with a threshold (e.g. top 25% max) and calculate the Box-counting dimension (fractal Hausdorff dimension) of the "vascular/trap" structure. If it approaches the values of biological transport networks (e.g. D ≈ 1.6 - 1.7 in 2D), it's a strong argument for an emergent "Network optimization" cause of the Golden Ratio.
 
+- [ ] (Tomas [HYPOTHESIS]) **"Zeta-Deep" High-Resolution Resonance Experiment:** Design and execute a targeted simulation to extend the Lineum-Zeta topological correspondence from 49 roots to potentially 500+ roots by circumventing standard grid resolution and saturation limits.
+    - **Methodology (Parameter Calibration):**
+        - **Capacity Increase:** Increase `GRID_SIZE` from 128 to `1024` to provide sufficient spatial resolution for high-frequency interference (avoiding spatial aliasing of tight zeta-zero gaps).
+        - **Temporal Resolution & Decay:** Extend `STEPS` to `20000` for deep spatial relaxation.
+        - **Unrestricted Damping:** Disable arbitrary numerical caps to allow natural mathematical capacity limits.
+        - **Execution:** Do not run via `lineum.py`. Use the dedicated pure-CUDA mathematical kernel: **`python lab/zeta_deep/zeta_deep_runner.py`**. This skips all GUI/visual layers to allow continuous processing in VRAM without out-of-memory errors on standard GPUs.
+    - **Initial Findings (2026-02-28)**: A pure CUDA execution on 1024x1024 completed 20000 steps successfully in < 4 minutes (42MB VRAM). However, the standard 128x128 diffusion and reaction constants caused the `phi` field to saturate instantly at the `1e4` clamp. Extensive tuning of `REACTION_STRENGTH`, `PHI_DIFFUSION`, and local input clamps is required for the 1024x1024 grid to preserve the delicate topological structural minimums (roots).
+    - **Note on Scale Calibration vs P-Hacking**: Adjusting parameters for the 1024x1024 grid is not "p-hacking" the Zeta zeros into existence. Eq-4 models topological pressure. When the spatial resolution increases 64-fold, the "hydrodynamic" volume of the discrete cells changes drastically. If original coefficients are kept, the fluid saturates into a static block rather than flowing. We are using a Grid Search to find the thermodynamically stable *scale coefficient* for the new matrix volume, exactly as is standard when scaling up CFD (fluid dynamics) or weather simulations. If the nodes are not fundamental to the equation, no parameter tuning will synthesize 500 perfectly arranged Riemann roots.
+    - **Goal:** Verify if the topological pressure capacity (φ) stably resolves higher-order (frequencies 50 to 500) Riemann zeros with correlation r > 0.999, testing the true limit of Eq-4.
+
 ---
 
 ## 🧪 Experimental hypotheses – testing failed models
