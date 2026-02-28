@@ -1656,10 +1656,12 @@ To ensure the growing ecosystem remains comprehensible and trustworthy to B2B cu
     - [x] Build interactive topological collapse visual.
     - [x] Build Wigner Surmise (GUE) dynamic histogram generation.
     - [x] Build "Live Statistical Audit" (Terminal styling + KS simulation). 
+    - [x] Write component tests. 
   - [x] **Fast TRNG API**
     - [x] Create high-performance "quantum vacuum noise" canvas animation.
     - [x] Build interactive "Sample Vacuum" trigger.
     - [x] animated hex stream terminal (Matrix code drop) with NIST validations.
+    - [x] Write component tests.
 
 - [/] **Phase 3: Customer Management Layer**
   - Only after all routing/entropy applications are complete will the access layer be built.
@@ -1669,3 +1671,4 @@ To ensure the growing ecosystem remains comprehensible and trustworthy to B2B cu
   - [x] Build high-performance interactive visual (e.g., smart contract validation flow or cryptographically secure random number simulation).
   - [x] Create interactive simulation trigger (e.g., "Request VRF Randomness").
   - [x] Build the "Live Statistical Audit" terminal for the Proof section.
+  - [x] Write component tests.
