@@ -297,9 +297,7 @@ contract LootBox is LineumVRFConsumer {
     <!-- Visual -->
     <div
         slot="visual"
-        use:intersect
-        on:enter={() => (isVisible = true)}
-        on:leave={() => (isVisible = false)}
+        use:intersect={(inView) => (isVisible = inView)}
         class="w-full flex items-center justify-center p-8 bg-slate-950/80 rounded-3xl border border-sky-500/20 shadow-[0_0_80px_rgba(56,189,248,0.05)] overflow-hidden h-[450px] relative font-mono"
     >
         <!-- Canvas Container -->

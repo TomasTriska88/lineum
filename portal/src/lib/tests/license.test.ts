@@ -11,6 +11,7 @@ const arrayMatch = scriptContent.match(/const FORBIDDEN_LICENSES\s*=\s*\[([\s\S]
 // Safely evaluate the array content as a string of code to get exactly what JS gets
 let parsedForbiddenList: string[] = [];
 try {
+    if (!arrayMatch) throw new Error("Could not find FORBIDDEN_LICENSES array in check-licenses.js");
     const rawContent = arrayMatch[1];
     // Split by comma, extract anything between quotes, ignore comments
     const quotesRegex = /(?:'|")([^'"]+)(?:'|")/g;
