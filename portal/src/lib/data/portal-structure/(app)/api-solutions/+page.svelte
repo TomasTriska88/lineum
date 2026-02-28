@@ -4,6 +4,7 @@
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
     import { intersect } from "$lib/actions/intersect";
+    import { portal } from "$lib/actions/portal";
     import CompressionDemo from "$lib/components/CompressionDemo.svelte";
     import FastTrngApp from "$lib/components/api-showcase/FastTrngApp.svelte";
     import ZetaEntropyApp from "$lib/components/api-showcase/ZetaEntropyApp.svelte";
@@ -1021,6 +1022,7 @@ logic_result = solver.compile_lpl(
 
         <!-- Floating Side Navigation (Desktop) -->
         <nav
+            use:portal
             class="hidden xl:flex fixed left-8 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 bg-slate-900/60 backdrop-blur-xl border border-slate-800 p-4 rounded-3xl shadow-2xl"
         >
             <a
@@ -1099,39 +1101,39 @@ logic_result = solver.compile_lpl(
 
         <!-- Mobile/Tablet Top Navigation (Hidden on Large Screens) -->
         <div
-            class="w-full max-w-6xl mx-auto px-4 mb-24 sticky top-24 z-50 xl:hidden"
+            class="w-full max-w-6xl mx-auto px-4 mb-24 sticky top-[100px] z-[110] xl:hidden"
         >
             <div
-                class="flex flex-wrap items-center justify-center gap-2 bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-2 rounded-2xl md:rounded-full shadow-2xl"
+                class="flex items-center gap-3 bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-3 rounded-2xl shadow-xl overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
             >
                 <a
                     href="#routing"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Routing</a
                 >
                 <a
                     href="#fast_trng"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Fast TRNG</a
                 >
                 <a
                     href="#zeta"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Zeta</a
                 >
                 <a
                     href="#web3"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Web3</a
                 >
                 <a
                     href="#hash"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Hash</a
                 >
                 <a
                     href="#gaming"
-                    class="px-3 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
                     >Gaming</a
                 >
             </div>
