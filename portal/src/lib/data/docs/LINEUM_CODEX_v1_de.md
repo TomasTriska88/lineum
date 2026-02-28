@@ -134,4 +134,4 @@ Das Ziel bleibt dasselbe: **ein Geschenk an die Welt ohne Zerstörung**, der Weg
 
 ---
 
-> Veröffentlicht im Namen des Lineum Core Teams, basierend auf dem theoretischen Rahmenwerk nach Triska-Marecek und ethischen Diskussionen über Dual-Use-Algorithmen. Der Kodex ist bindend für alle kommerziellen Aktivitäten, das Portal-Interface und die KI-Agenten der Lineum API.
+> Veröffentlicht im Namen des Lineum Teams, basierend auf ethischen Diskussionen über Dual-Use-Algorithmen. Der Kodex ist bindend für alle kommerziellen Aktivitäten, das Portal-Interface und die KI-Agenten der Lineum API.

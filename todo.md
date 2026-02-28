@@ -1559,7 +1559,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
     - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message (from Lina/Lineum) on the enclosed packing slips.
 - [ ] **M.4 Marketing (Drops & Gamification)**
     - Present products as limited "Drops" (e.g., v1.0.0 Founder's edition) to foster exclusivity.
-    - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Core team and active beta-testers as an exclusive reward.
+    - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Lineum team and active beta-testers as an exclusive reward.
     - **Gamification:** Offer hidden merch in the E-shop (e.g., a "Root Access" hoodie) that unlocks for purchase only when a user discovers a specific easter-egg in the portal's terminal/CLI interface.
 
 ### 🔲 Portal Task: Lineum Edge SDK & Dual Licensing Model

@@ -134,4 +134,4 @@ Cíl zůstává stejný: **dar světa bez destrukce**, cesta nejmenšího odporu
 
 ---
 
-> Vydáno za Lineum Core Team, na základě Triska-Mareckova teoretického rámce a etických diskuzí o dual-usage algoritmech. Kodex je závazný pro veškeré komerční operace, portálové rozhraní i AI agenty Lineum API.
+> Vydáno za Lineum Team na základě etických diskuzí o dual-usage algoritmech. Kodex je závazný pro veškeré komerční operace, portálové rozhraní i AI agenty Lineum API.
