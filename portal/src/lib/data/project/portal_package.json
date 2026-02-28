@@ -1,7 +1,7 @@
 {
 	"name": "portal",
 	"private": true,
-	"version": "2026.02.28-1110",
+	"version": "2026.02.28-1116",
 	"type": "module",
 	"scripts": {
 		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",
@@ -12,7 +12,7 @@
 		"build": "node scripts/railway-build.cjs",
 		"preview": "vite preview",
 		"start": "node build",
-		"prepare": "svelte-kit sync || echo ''",
+		"prepare": "git config core.hooksPath ../.githooks && svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"check:i18n": "node scripts/check-czech.js",
@@ -21,7 +21,7 @@
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
 		"stage": "node scripts/stage-railway.js",
-		"prebuild": "node scripts/auto-version.js && npm run sync",
+		"prebuild": "npm run sync",
 		"safe-merge": "node scripts/safe-merge.cjs"
 	},
 	"devDependencies": {

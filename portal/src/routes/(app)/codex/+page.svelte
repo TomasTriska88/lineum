@@ -2,10 +2,6 @@
     import * as m from "$lib/paraglide/messages.js";
     import { marked } from "$lib/utils/markdown";
     export let data;
-
-    // The "One-Sentence" executive summary of the Codex
-    const oneSentence =
-        "Lineum is a purely scientific, deterministic computational framework strictly prohibiting casino, gambling, or mass-surveillance commercial applications.";
 </script>
 
 <svelte:head>
@@ -20,13 +16,13 @@
                     <span
                         class="status-badge locked"
                         title="This standard represents the canonical behavior constraints of the foundation."
-                        >🔒 Validated Standard</span
+                        >{m.codex_badge_standard()}</span
                     >
                 </div>
 
                 <div class="draft-warning codex-warning">
-                    <strong>The One-Sentence Framework</strong>
-                    <p>{oneSentence}</p>
+                    <strong>{m.codex_badge_warning()}</strong>
+                    <p>{m.codex_one_sentence()}</p>
                 </div>
 
                 <div class="prose">

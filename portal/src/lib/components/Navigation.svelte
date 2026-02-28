@@ -48,7 +48,7 @@
 
 <nav>
     <div class="container nav-content">
-        <a href="/" class="nav-logo">Lineum</a>
+        <a href="/" class="nav-logo">Lineum&trade;</a>
 
         <button
             class="mobile-toggle"
