@@ -1,6 +1,7 @@
 <script lang="ts">
     import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
     import { onMount, onDestroy } from "svelte";
+    import { intersect } from "$lib/actions/intersect";
 
     let state: "idle" | "sampling" | "done" = "idle";
     let canvas: HTMLCanvasElement;
@@ -8,6 +9,8 @@
     let animationId: number;
     let logs: string[] = [];
     let hexStream: string[] = [];
+
+    let isVisible = false;
 
     // FIPS 140-3 / NIST test suite validations
     let nistTests = [
@@ -165,6 +168,9 @@
     <!-- Visual -->
     <div
         slot="visual"
+        use:intersect
+        on:enter={() => (isVisible = true)}
+        on:leave={() => (isVisible = false)}
         class="w-full flex items-center justify-center p-8 bg-slate-950/80 rounded-3xl border border-sky-500/20 shadow-[0_0_80px_rgba(56,189,248,0.05)] overflow-hidden h-[450px] relative font-mono"
     >
         <!-- Canvas Container -->

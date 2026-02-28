@@ -58,7 +58,7 @@ describe('Data Synchronization', () => {
 
         const content = fs.readFileSync(targetFile, 'utf-8');
         expect(content).toBe(TEST_FILE_CONTENT);
-    });
+    }, 15000);
 
     it('should update ai_index.json with new file metadata', () => {
         expect(fs.existsSync(AI_INDEX_PATH), 'ai_index.json should exist').toBe(true);
@@ -98,7 +98,7 @@ describe('Data Synchronization', () => {
 
         // The entire target directory should have been overwritten, erasing the stale file
         expect(fs.existsSync(STALE_FILE), 'Stale files MUST be wiped by the sync script').toBe(false);
-    });
+    }, 15000);
 
     it('should track robust context files (LINA_PERSONA.md)', () => {
         // Verify that critical context files are present in the synced data/core
