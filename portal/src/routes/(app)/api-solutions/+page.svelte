@@ -4,9 +4,13 @@
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import ApiSnippet from "$lib/components/ApiSnippet.svelte";
     import { intersect } from "$lib/actions/intersect";
-    import TrueRng from "$lib/components/TrueRng.svelte";
-    import HashingDemo from "$lib/components/HashingDemo.svelte";
+    import { portal } from "$lib/actions/portal";
     import CompressionDemo from "$lib/components/CompressionDemo.svelte";
+    import FastTrngApp from "$lib/components/api-showcase/FastTrngApp.svelte";
+    import ZetaEntropyApp from "$lib/components/api-showcase/ZetaEntropyApp.svelte";
+    import Web3OracleApp from "$lib/components/api-showcase/Web3OracleApp.svelte";
+    import LineumHashApp from "$lib/components/api-showcase/LineumHashApp.svelte";
+    import GamingRngApp from "$lib/components/api-showcase/GamingRngApp.svelte";
 
     // Instead of Concurrency we launch one by one again (cleaner dev experience)
     let canvas: HTMLCanvasElement = null as any;
@@ -1011,554 +1015,709 @@ logic_result = solver.compile_lpl(
             </div>
         </div>
 
-        <!-- Scroll Anchor -->
+        <!-- Scroll Anchor & Navigation Tabs -->
         <div
-            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-24 max-w-4xl mx-auto"
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-12 max-w-4xl mx-auto"
         ></div>
-        <!-- Use Case 1: Urban Traffic & Logistics -->
-        <div
-            class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32"
+
+        <!-- Floating Side Navigation (Desktop) -->
+        <nav
+            use:portal
+            class="hidden xl:flex fixed left-8 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 bg-slate-900/60 backdrop-blur-xl border border-slate-800 p-4 rounded-3xl shadow-2xl"
         >
-            <!-- Text Left -->
-            <div class="flex flex-col gap-6">
-                <div
-                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold font-mono w-fit"
-                >
-                    <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"
-                    ></span>
-                    USE CASE 01
-                </div>
-                <h2
-                    class="text-3xl md:text-5xl font-bold text-white leading-tight"
-                >
-                    {@html m.api_solutions_scenarios_urban_title()}
-                </h2>
-                <p class="text-slate-400 text-lg leading-relaxed">
-                    {m.api_solutions_scenarios_urban_description()}
-                </p>
-
-                <ul class="flex flex-col gap-4 mt-4">
-                    <li class="flex items-start gap-4">
-                        <div
-                            class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 text-sky-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                ><path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2.5"
-                                    d="M5 13l4 4L19 7"
-                                /></svg
-                            >
-                        </div>
-                        <div>
-                            <strong class="text-white block">Problem</strong>
-                            <span class="text-slate-500 text-sm"
-                                >{m.api_solutions_scenarios_urban_problem()}</span
-                            >
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <div
-                            class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 text-sky-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                ><path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2.5"
-                                    d="M5 13l4 4L19 7"
-                                /></svg
-                            >
-                        </div>
-                        <div>
-                            <strong class="text-white block">Solution</strong>
-                            <span class="text-slate-500 text-sm"
-                                >{m.api_solutions_scenarios_urban_solution()}</span
-                            >
-                        </div>
-                    </li>
-                </ul>
-
-                <div
-                    class="mt-8 p-6 bg-slate-900/50 border border-slate-800 rounded-xl relative overflow-hidden group/scale"
-                >
-                    <div
-                        class="absolute inset-0 bg-sky-500/5 opacity-0 group-hover/scale:opacity-100 transition-opacity"
-                    ></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-end mb-4">
-                            <div>
-                                <h4
-                                    class="text-white font-bold text-sm tracking-wider uppercase mb-1"
-                                >
-                                    Fleet Scale Validation
-                                </h4>
-                                <p class="text-slate-500 text-xs">
-                                    A* Server Cost vs Lineum O(1)
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <span
-                                    class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400"
-                                    >{exponentialScale.toLocaleString()}</span
-                                >
-                                <span
-                                    class="text-slate-500 text-sm font-bold ml-1"
-                                    >AGENTS</span
-                                >
-                            </div>
-                        </div>
-
-                        <input
-                            type="range"
-                            min="1"
-                            max="100"
-                            step="1"
-                            bind:value={agentScale}
-                            on:change={generateMapForPreset}
-                            class="w-full accent-sky-500 bg-slate-800 rounded-full h-2 appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-sky-500/50"
-                        />
-                        <div
-                            class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono font-bold"
-                        >
-                            <span>1 TRUCK</span>
-                            <span>100K LOGISTICS SWARM</span>
-                        </div>
-
-                        <div
-                            class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between"
-                        >
-                            <div class="flex flex-col">
-                                <span
-                                    class="text-slate-300 text-xs font-bold leading-tight"
-                                    >Request Individual Vector Paths (Browser
-                                    Only)</span
-                                >
-                                <span class="text-slate-500 text-[10px] mt-0.5"
-                                    >Toggle off to bench raw O(1) mathematical
-                                    throughput.</span
-                                >
-                            </div>
-                            <label
-                                class="relative inline-flex items-center cursor-pointer ml-4"
-                            >
-                                <input
-                                    type="checkbox"
-                                    bind:checked={returnPaths}
-                                    class="sr-only peer"
-                                />
-                                <div
-                                    class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"
-                                ></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Visual Right (Live WebGL Simulation) -->
-            <div
-                class="border border-sky-500/30 rounded-2xl bg-slate-900/50 flex flex-col overflow-hidden relative shadow-[0_0_40px_rgba(56,189,248,0.1)] group"
+            <a
+                href="#routing"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
             >
-                <!-- Top Header: Status & Controls -->
                 <div
-                    class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center z-20"
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >Routing</span
                 >
-                    <div class="flex items-center gap-3">
-                        <span class="relative flex h-2 w-2">
-                            {#if isSimulating}
-                                <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
-                                ></span>
-                            {/if}
-                            <span
-                                class="relative inline-flex rounded-full h-2 w-2 {isSimulating
-                                    ? 'bg-emerald-500'
-                                    : 'bg-slate-600'}"
-                            ></span>
-                        </span>
-                        <span
-                            class="text-xs font-mono font-bold {isSimulating
-                                ? 'text-emerald-400'
-                                : 'text-slate-400'}"
-                        >
-                            {isSimulating
-                                ? `LIVE: ${currentStep} hz`
-                                : "SYSTEM READY"}
-                        </span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <select
-                            class="bg-slate-950 border border-slate-700 text-sky-400 text-xs font-mono rounded px-2 py-1 outline-none focus:border-sky-500 transition-colors shadow-inner"
-                            bind:value={activePreset}
-                            on:change={handlePresetChange}
-                        >
-                            {#each Object.entries(PRESETS) as [key, p]}
-                                <option value={key}>SCENARIO: {p.name}</option>
-                            {/each}
-                        </select>
-                        {#if isSimulating}
-                            <button
-                                class="whitespace-nowrap px-4 py-1.5 bg-red-500/10 border border-red-500/30 text-red-500 rounded-lg text-[10px] font-bold tracking-wider hover:bg-red-500/20 transition-all font-mono shadow-lg"
-                                on:click={stopSimulation}
-                            >
-                                ■ ABORT
-                            </button>
-                        {:else}
-                            <button
-                                class="whitespace-nowrap px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-[10px] font-bold tracking-wider hover:bg-emerald-500/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all font-mono shadow-lg group-hover:bg-emerald-500/20"
-                                on:click={() => {
-                                    generateMapForPreset();
-                                    startSimulation();
-                                }}
-                            >
-                                ▶ RUN LIVE CALCULATION
-                            </button>
-                        {/if}
-                    </div>
-                </div>
-
-                <!-- WebGL Canvas Area -->
+            </a>
+            <a
+                href="#fast_trng"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
+            >
                 <div
-                    use:intersect={handleIntersect}
-                    class="relative w-full aspect-square bg-black overflow-hidden flex items-center justify-center"
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-violet-400 group-hover:shadow-[0_0_15px_rgba(139,92,246,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >Fast TRNG</span
                 >
-                    <canvas
-                        bind:this={canvas}
-                        class="w-full h-full object-cover mix-blend-screen opacity-90 transition-opacity max-w-full group-hover:opacity-100"
-                    ></canvas>
-                    <div
-                        class="absolute inset-0 pointer-events-none"
-                        style="background: radial-gradient(circle at center, transparent 20%, #000 120%); opacity: 0.8;"
-                    ></div>
+            </a>
+            <a
+                href="#zeta"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
+            >
+                <div
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-rose-400 group-hover:shadow-[0_0_15px_rgba(244,63,94,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >Zeta Entropy</span
+                >
+            </a>
+            <a
+                href="#web3"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
+            >
+                <div
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-sky-400 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >Web3 Oracle</span
+                >
+            </a>
+            <a
+                href="#hash"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
+            >
+                <div
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-emerald-400 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >LineumHash</span
+                >
+            </a>
+            <a
+                href="#gaming"
+                class="group flex items-center gap-4 px-2 py-2 rounded-xl transition-all hover:bg-slate-800"
+            >
+                <div
+                    class="w-2.5 h-2.5 rounded-full bg-slate-600 group-hover:bg-emerald-400 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.8)] transition-all"
+                ></div>
+                <span
+                    class="text-xs font-bold text-slate-400 group-hover:text-white transition-colors uppercase tracking-widest hidden lg:block pr-2"
+                    >Gaming RNG</span
+                >
+            </a>
+        </nav>
 
-                    <!-- Metric Overlay (A* time vs Lineum time) -->
+        <!-- Mobile/Tablet Top Navigation (Hidden on Large Screens) -->
+        <div
+            class="w-full max-w-6xl mx-auto px-4 mb-24 sticky top-[100px] z-[110] xl:hidden"
+        >
+            <div
+                class="flex items-center gap-3 bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-3 rounded-2xl shadow-xl overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
+            >
+                <a
+                    href="#routing"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Routing</a
+                >
+                <a
+                    href="#fast_trng"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Fast TRNG</a
+                >
+                <a
+                    href="#zeta"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Zeta</a
+                >
+                <a
+                    href="#web3"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Web3</a
+                >
+                <a
+                    href="#hash"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Hash</a
+                >
+                <a
+                    href="#gaming"
+                    class="snap-start px-5 py-3 rounded-full text-base font-bold transition-all !text-slate-300 hover:!text-white hover:bg-slate-800 whitespace-nowrap !no-underline flex-shrink-0"
+                    >Gaming</a
+                >
+            </div>
+        </div>
+
+        <!-- content wrapped -->
+        <div
+            id="routing"
+            class="w-full flex-col flex items-center scroll-mt-48"
+        >
+            <!-- Use Case 1: Urban Traffic & Logistics -->
+            <div
+                class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32"
+            >
+                <!-- Text Left -->
+                <div class="flex flex-col gap-6">
                     <div
-                        class="absolute bottom-6 right-6 flex flex-col gap-3 z-10 transition-transform duration-500 transform {isSimulating
-                            ? 'translate-y-4 opacity-0 pointer-events-none'
-                            : 'translate-y-0 opacity-100'}"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold font-mono w-fit"
                     >
-                        <div
-                            class="px-4 py-2 bg-slate-900/90 border border-slate-700/50 rounded-xl text-[11px] font-mono backdrop-blur-md shadow-2xl flex items-center justify-between gap-6"
-                        >
-                            <span class="text-slate-400">A* Search:</span>
-                            <span
-                                class="text-red-400 font-bold opacity-60 line-through"
-                                >{aStarCostThisStepMs.toFixed(0)} ms</span
-                            >
-                        </div>
-                        <div
-                            class="px-4 py-2 bg-slate-900/95 border border-sky-500/50 rounded-xl text-sm font-mono backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.15)] flex items-center justify-between gap-6"
-                        >
-                            <span class="text-sky-100">Lineum Field:</span>
-                            <span
-                                class="text-sky-400 font-bold drop-shadow-[0_0_5px_rgba(56,189,248,0.8)]"
-                                >4 ms</span
-                            >
-                        </div>
+                        <span
+                            class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"
+                        ></span>
+                        USE CASE 01
                     </div>
+                    <h2
+                        class="text-3xl md:text-5xl font-bold text-white leading-tight"
+                    >
+                        {@html m.api_solutions_scenarios_urban_title()}
+                    </h2>
+                    <p class="text-slate-400 text-lg leading-relaxed">
+                        {m.api_solutions_scenarios_urban_description()}
+                    </p>
 
-                    <!-- Instruction Overlay -->
-                    {#if isCompilingAPI}
-                        <div
-                            class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 bg-black/40 backdrop-blur-sm transition-all"
-                        >
-                            <div class="w-12 h-12 mb-4 relative">
-                                <div
-                                    class="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"
-                                ></div>
-                                <div
-                                    class="absolute inset-1 border-r-2 border-sky-400 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"
-                                ></div>
-                                <div
-                                    class="absolute inset-0 flex items-center justify-center text-[10px] font-mono font-bold text-white drop-shadow-md"
-                                >
-                                    {apiProgress}%
-                                </div>
-                            </div>
+                    <ul class="flex flex-col gap-4 mt-4">
+                        <li class="flex items-start gap-4">
                             <div
-                                class="px-6 py-2 bg-slate-900/80 border border-emerald-500/30 rounded-full text-emerald-400 font-mono text-sm tracking-widest uppercase shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-                            >
-                                {#if apiProgress < 99}
-                                    GENERATING {exponentialScale >= 1000
-                                        ? (exponentialScale / 1000).toFixed(0) +
-                                          "k"
-                                        : exponentialScale} AGENTS...
-                                {:else}
-                                    EXTRACTING ROUTES...
-                                {/if}
-                            </div>
-                        </div>
-                    {:else if !isSimulating && currentStep === 0}
-                        <div
-                            class="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-                        >
-                            <div
-                                class="px-4 py-2 bg-black/60 backdrop-blur border border-white/10 rounded-full text-white/50 text-sm animate-pulse flex items-center gap-2"
+                                class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
                             >
                                 <svg
-                                    class="w-4 h-4"
+                                    class="w-3.5 h-3.5 text-sky-400"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
                                     ><path
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                                    /><path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        stroke-width="2.5"
+                                        d="M5 13l4 4L19 7"
                                     /></svg
                                 >
-                                Click "Run Live" above
+                            </div>
+                            <div>
+                                <strong class="text-white block">Problem</strong
+                                >
+                                <span class="text-slate-500 text-sm"
+                                    >{m.api_solutions_scenarios_urban_problem()}</span
+                                >
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5 text-sky-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2.5"
+                                        d="M5 13l4 4L19 7"
+                                    /></svg
+                                >
+                            </div>
+                            <div>
+                                <strong class="text-white block"
+                                    >Solution</strong
+                                >
+                                <span class="text-slate-500 text-sm"
+                                    >{m.api_solutions_scenarios_urban_solution()}</span
+                                >
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div
+                        class="mt-8 p-6 bg-slate-900/50 border border-slate-800 rounded-xl relative overflow-hidden group/scale"
+                    >
+                        <div
+                            class="absolute inset-0 bg-sky-500/5 opacity-0 group-hover/scale:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <h4
+                                        class="text-white font-bold text-sm tracking-wider uppercase mb-1"
+                                    >
+                                        Fleet Scale Validation
+                                    </h4>
+                                    <p class="text-slate-500 text-xs">
+                                        A* Server Cost vs Lineum O(1)
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <span
+                                        class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400"
+                                        >{exponentialScale.toLocaleString()}</span
+                                    >
+                                    <span
+                                        class="text-slate-500 text-sm font-bold ml-1"
+                                        >AGENTS</span
+                                    >
+                                </div>
+                            </div>
+
+                            <input
+                                type="range"
+                                min="1"
+                                max="100"
+                                step="1"
+                                bind:value={agentScale}
+                                on:change={generateMapForPreset}
+                                class="w-full accent-sky-500 bg-slate-800 rounded-full h-2 appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-sky-500/50"
+                            />
+                            <div
+                                class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono font-bold"
+                            >
+                                <span>1 TRUCK</span>
+                                <span>100K LOGISTICS SWARM</span>
+                            </div>
+
+                            <div
+                                class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between"
+                            >
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-slate-300 text-xs font-bold leading-tight"
+                                        >Request Individual Vector Paths
+                                        (Browser Only)</span
+                                    >
+                                    <span
+                                        class="text-slate-500 text-[10px] mt-0.5"
+                                        >Toggle off to bench raw O(1)
+                                        mathematical throughput.</span
+                                    >
+                                </div>
+                                <label
+                                    class="relative inline-flex items-center cursor-pointer ml-4"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        bind:checked={returnPaths}
+                                        class="sr-only peer"
+                                    />
+                                    <div
+                                        class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"
+                                    ></div>
+                                </label>
                             </div>
                         </div>
-                    {/if}
+                    </div>
                 </div>
 
-                <!-- Bottom Scrubber & Cost Panel -->
+                <!-- Visual Right (Live WebGL Simulation) -->
                 <div
-                    class="bg-slate-900/80 backdrop-blur-md border-t border-slate-800 p-5 shrink-0 flex flex-col gap-4 z-20"
+                    class="border border-sky-500/30 rounded-2xl bg-slate-900/50 flex flex-col overflow-hidden relative shadow-[0_0_40px_rgba(56,189,248,0.1)] group"
                 >
-                    <!-- Ticking Cost display -->
-                    <div class="flex justify-between items-center px-1">
-                        <span
-                            class="text-[10px] text-red-500/70 uppercase tracking-widest font-bold"
-                            >Latency Waste Cost (A*)</span
-                        >
-                        <span class="text-red-400 font-mono font-bold text-sm"
-                            >-${aStarCost.toFixed(4)}
-                            <span class="text-slate-500 text-[10px] font-mono"
-                                >/ batch</span
-                            ></span
-                        >
+                    <!-- Top Header: Status & Controls -->
+                    <div
+                        class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center z-20"
+                    >
+                        <div class="flex items-center gap-3">
+                            <span class="relative flex h-2 w-2">
+                                {#if isSimulating}
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                                    ></span>
+                                {/if}
+                                <span
+                                    class="relative inline-flex rounded-full h-2 w-2 {isSimulating
+                                        ? 'bg-emerald-500'
+                                        : 'bg-slate-600'}"
+                                ></span>
+                            </span>
+                            <span
+                                class="text-xs font-mono font-bold {isSimulating
+                                    ? 'text-emerald-400'
+                                    : 'text-slate-400'}"
+                            >
+                                {isSimulating
+                                    ? `LIVE: ${currentStep} hz`
+                                    : "SYSTEM READY"}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <select
+                                class="bg-slate-950 border border-slate-700 text-sky-400 text-xs font-mono rounded px-2 py-1 outline-none focus:border-sky-500 transition-colors shadow-inner"
+                                bind:value={activePreset}
+                                on:change={handlePresetChange}
+                            >
+                                {#each Object.entries(PRESETS) as [key, p]}
+                                    <option value={key}
+                                        >SCENARIO: {p.name}</option
+                                    >
+                                {/each}
+                            </select>
+                            {#if isSimulating}
+                                <button
+                                    class="whitespace-nowrap px-4 py-1.5 bg-red-500/10 border border-red-500/30 text-red-500 rounded-lg text-[10px] font-bold tracking-wider hover:bg-red-500/20 transition-all font-mono shadow-lg"
+                                    on:click={stopSimulation}
+                                >
+                                    ■ ABORT
+                                </button>
+                            {:else}
+                                <button
+                                    class="whitespace-nowrap px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-[10px] font-bold tracking-wider hover:bg-emerald-500/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all font-mono shadow-lg group-hover:bg-emerald-500/20"
+                                    on:click={() => {
+                                        generateMapForPreset();
+                                        startSimulation();
+                                    }}
+                                >
+                                    ▶ RUN LIVE CALCULATION
+                                </button>
+                            {/if}
+                        </div>
                     </div>
 
-                    <!-- Scrubber Track -->
+                    <!-- WebGL Canvas Area -->
                     <div
-                        class="w-full relative flex items-center group/scrub cursor-pointer h-6"
+                        use:intersect={handleIntersect}
+                        class="relative w-full aspect-square bg-black overflow-hidden flex items-center justify-center"
                     >
-                        <input
-                            type="range"
-                            min="0"
-                            max="1000"
-                            bind:value={currentStep}
-                            on:input={handleScrubberInteraction}
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 p-0 m-0"
-                        />
+                        <canvas
+                            bind:this={canvas}
+                            class="w-full h-full object-cover mix-blend-screen opacity-90 transition-opacity max-w-full group-hover:opacity-100"
+                        ></canvas>
                         <div
-                            class="w-full h-2 bg-slate-950 border border-slate-800 rounded-full relative overflow-hidden pointer-events-none"
+                            class="absolute inset-0 pointer-events-none"
+                            style="background: radial-gradient(circle at center, transparent 20%, #000 120%); opacity: 0.8;"
+                        ></div>
+
+                        <!-- Metric Overlay (A* time vs Lineum time) -->
+                        <div
+                            class="absolute bottom-6 right-6 flex flex-col gap-3 z-10 transition-transform duration-500 transform {isSimulating
+                                ? 'translate-y-4 opacity-0 pointer-events-none'
+                                : 'translate-y-0 opacity-100'}"
                         >
                             <div
-                                class="absolute top-0 left-0 bottom-0 bg-slate-700 transition-all duration-75 group-hover/scrub:bg-slate-600"
-                                style="width: {progressWidth}%"
-                            ></div>
+                                class="px-4 py-2 bg-slate-900/90 border border-slate-700/50 rounded-xl text-[11px] font-mono backdrop-blur-md shadow-2xl flex items-center justify-between gap-6"
+                            >
+                                <span class="text-slate-400">A* Search:</span>
+                                <span
+                                    class="text-red-400 font-bold opacity-60 line-through"
+                                    >{aStarCostThisStepMs.toFixed(0)} ms</span
+                                >
+                            </div>
                             <div
-                                class="absolute top-0 bottom-0 w-1.5 bg-sky-500 left-[0.4%] shadow-[0_0_10px_rgba(56,189,248,1)] z-10"
-                                title="Lineum Complete (4ms)"
-                            ></div>
+                                class="px-4 py-2 bg-slate-900/95 border border-sky-500/50 rounded-xl text-sm font-mono backdrop-blur-md shadow-[0_0_30px_rgba(56,189,248,0.15)] flex items-center justify-between gap-6"
+                            >
+                                <span class="text-sky-100">Lineum Field:</span>
+                                <span
+                                    class="text-sky-400 font-bold drop-shadow-[0_0_5px_rgba(56,189,248,0.8)]"
+                                    >4 ms</span
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Instruction Overlay -->
+                        {#if isCompilingAPI}
+                            <div
+                                class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 bg-black/40 backdrop-blur-sm transition-all"
+                            >
+                                <div class="w-12 h-12 mb-4 relative">
+                                    <div
+                                        class="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"
+                                    ></div>
+                                    <div
+                                        class="absolute inset-1 border-r-2 border-sky-400 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"
+                                    ></div>
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center text-[10px] font-mono font-bold text-white drop-shadow-md"
+                                    >
+                                        {apiProgress}%
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-6 py-2 bg-slate-900/80 border border-emerald-500/30 rounded-full text-emerald-400 font-mono text-sm tracking-widest uppercase shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                                >
+                                    {#if apiProgress < 99}
+                                        GENERATING {exponentialScale >= 1000
+                                            ? (exponentialScale / 1000).toFixed(
+                                                  0,
+                                              ) + "k"
+                                            : exponentialScale} AGENTS...
+                                    {:else}
+                                        EXTRACTING ROUTES...
+                                    {/if}
+                                </div>
+                            </div>
+                        {:else if !isSimulating && currentStep === 0}
+                            <div
+                                class="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+                            >
+                                <div
+                                    class="px-4 py-2 bg-black/60 backdrop-blur border border-white/10 rounded-full text-white/50 text-sm animate-pulse flex items-center gap-2"
+                                >
+                                    <svg
+                                        class="w-4 h-4"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                        /><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        /></svg
+                                    >
+                                    Click "Run Live" above
+                                </div>
+                            </div>
+                        {/if}
+                    </div>
+
+                    <!-- Bottom Scrubber & Cost Panel -->
+                    <div
+                        class="bg-slate-900/80 backdrop-blur-md border-t border-slate-800 p-5 shrink-0 flex flex-col gap-4 z-20"
+                    >
+                        <!-- Ticking Cost display -->
+                        <div class="flex justify-between items-center px-1">
+                            <span
+                                class="text-[10px] text-red-500/70 uppercase tracking-widest font-bold"
+                                >Latency Waste Cost (A*)</span
+                            >
+                            <span
+                                class="text-red-400 font-mono font-bold text-sm"
+                                >-${aStarCost.toFixed(4)}
+                                <span
+                                    class="text-slate-500 text-[10px] font-mono"
+                                    >/ batch</span
+                                ></span
+                            >
+                        </div>
+
+                        <!-- Scrubber Track -->
+                        <div
+                            class="w-full relative flex items-center group/scrub cursor-pointer h-6"
+                        >
+                            <input
+                                type="range"
+                                min="0"
+                                max="1000"
+                                bind:value={currentStep}
+                                on:input={handleScrubberInteraction}
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 p-0 m-0"
+                            />
+                            <div
+                                class="w-full h-2 bg-slate-950 border border-slate-800 rounded-full relative overflow-hidden pointer-events-none"
+                            >
+                                <div
+                                    class="absolute top-0 left-0 bottom-0 bg-slate-700 transition-all duration-75 group-hover/scrub:bg-slate-600"
+                                    style="width: {progressWidth}%"
+                                ></div>
+                                <div
+                                    class="absolute top-0 bottom-0 w-1.5 bg-sky-500 left-[0.4%] shadow-[0_0_10px_rgba(56,189,248,1)] z-10"
+                                    title="Lineum Complete (4ms)"
+                                ></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Scroll Anchor -->
+            <!-- Scroll Anchor -->
+            <div
+                class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-24 max-w-4xl mx-auto"
+            ></div>
+
+            <!-- Use Case 2: Crowd Panic & Evacuation (Mirrored Layout) -->
+            <div
+                class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32"
+            >
+                <!-- Visual Left (Pre-rendered Demo Placeholder) -->
+                <div
+                    class="order-2 lg:order-1 border border-rose-500/30 rounded-2xl bg-slate-900/50 flex flex-col overflow-hidden relative shadow-[0_0_40px_rgba(244,63,94,0.05)] group"
+                >
+                    <div
+                        class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center z-20"
+                    >
+                        <div class="flex items-center gap-3">
+                            <span class="relative flex h-2 w-2">
+                                <span
+                                    class="relative inline-flex rounded-full h-2 w-2 bg-slate-600"
+                                ></span>
+                            </span>
+                            <span
+                                class="text-xs font-mono font-bold text-slate-400"
+                            >
+                                PRE-RENDERED SCENARIO
+                            </span>
+                        </div>
+                        <div>
+                            <button
+                                class="px-4 py-1.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-[10px] font-bold tracking-wider hover:bg-slate-700 transition-all font-mono"
+                                on:click={() => {
+                                    activePreset = "evacuation";
+                                    generateMapForPreset();
+                                    window.scrollTo({
+                                        top: 400,
+                                        behavior: "smooth",
+                                    });
+                                }}
+                            >
+                                LOAD INTO MAIN CANVAS ↑
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Static Visual Area (Using CSS gradients to simulate the evacuation field) -->
+                    <div
+                        class="relative w-full aspect-square bg-slate-950 overflow-hidden flex items-center justify-center"
+                    >
+                        <!-- Fake Crowd Heatmap -->
+                        <div
+                            class="absolute inset-0 opacity-40 mix-blend-screen"
+                            style="background: radial-gradient(circle at 40% 60%, rgba(225,29,72,0.4) 0%, transparent 50%), radial-gradient(circle at 60% 30%, rgba(225,29,72,0.6) 0%, transparent 60%); filter: contrast(1.5) saturate(1.5);"
+                        ></div>
+                        <!-- Fake Level Geometry -->
+                        <div
+                            class="absolute inset-x-0 bottom-1/4 h-8 bg-slate-900 border-y border-slate-800 z-10"
+                        ></div>
+                        <div
+                            class="absolute top-1/4 right-1/4 w-8 h-32 bg-slate-900 border border-slate-800 z-10"
+                        ></div>
+
+                        <!-- Agents rendering -->
+                        <div
+                            class="absolute inset-0 z-20"
+                            style="background-image: radial-gradient(circle at center, rgba(244,63,94,0.8) 1.5px, transparent 2px); background-size: 16px 16px; opacity: 0.3; mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);"
+                        ></div>
+
+                        <!-- Target Exit -->
+                        <div
+                            class="absolute top-8 left-1/2 -translate-x-1/2 w-16 h-4 bg-emerald-500/20 border border-emerald-500/50 rounded flex items-center justify-center z-30"
+                        >
+                            <span
+                                class="text-[8px] text-emerald-400 font-mono font-bold tracking-widest"
+                                >EXIT</span
+                            >
+                        </div>
+
+                        <div
+                            class="absolute inset-0 pointer-events-none z-40"
+                            style="background: radial-gradient(circle at center, transparent 30%, #000 120%); opacity: 0.8;"
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- Text Right -->
+                <div
+                    class="order-1 lg:order-2 flex flex-col gap-6 pl-0 lg:pl-8"
+                >
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold font-mono w-fit"
+                    >
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                        USE CASE 02
+                    </div>
+                    <h2
+                        class="text-3xl md:text-5xl font-bold text-white leading-tight"
+                    >
+                        {@html m.api_solutions_scenarios_evac_title()}
+                    </h2>
+                    <p class="text-slate-400 text-lg leading-relaxed">
+                        {m.api_solutions_scenarios_evac_description()}
+                    </p>
+
+                    <ul class="flex flex-col gap-4 mt-4">
+                        <li class="flex items-start gap-4">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5 text-rose-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2.5"
+                                        d="M5 13l4 4L19 7"
+                                    /></svg
+                                >
+                            </div>
+                            <div>
+                                <strong class="text-white block">Problem</strong
+                                >
+                                <span class="text-slate-500 text-sm"
+                                    >{m.api_solutions_scenarios_evac_problem()}</span
+                                >
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5 text-rose-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2.5"
+                                        d="M5 13l4 4L19 7"
+                                    /></svg
+                                >
+                            </div>
+                            <div>
+                                <strong class="text-white block"
+                                    >Solution</strong
+                                >
+                                <span class="text-slate-500 text-sm"
+                                    >{m.api_solutions_scenarios_evac_solution()}</span
+                                >
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Developer Snippets Section -->
+            <ApiSnippet />
+        </div>
+        <!-- End of routing section div -->
+
         <div
-            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-24 max-w-4xl mx-auto"
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 max-w-4xl mx-auto"
         ></div>
 
-        <!-- Use Case 2: Crowd Panic & Evacuation (Mirrored Layout) -->
+        <div id="fast_trng" class="scroll-mt-48 w-full">
+            <FastTrngApp />
+        </div>
+
         <div
-            class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32"
-        >
-            <!-- Visual Left (Pre-rendered Demo Placeholder) -->
-            <div
-                class="order-2 lg:order-1 border border-rose-500/30 rounded-2xl bg-slate-900/50 flex flex-col overflow-hidden relative shadow-[0_0_40px_rgba(244,63,94,0.05)] group"
-            >
-                <div
-                    class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center z-20"
-                >
-                    <div class="flex items-center gap-3">
-                        <span class="relative flex h-2 w-2">
-                            <span
-                                class="relative inline-flex rounded-full h-2 w-2 bg-slate-600"
-                            ></span>
-                        </span>
-                        <span
-                            class="text-xs font-mono font-bold text-slate-400"
-                        >
-                            PRE-RENDERED SCENARIO
-                        </span>
-                    </div>
-                    <div>
-                        <button
-                            class="px-4 py-1.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-[10px] font-bold tracking-wider hover:bg-slate-700 transition-all font-mono"
-                            on:click={() => {
-                                activePreset = "evacuation";
-                                generateMapForPreset();
-                                window.scrollTo({
-                                    top: 400,
-                                    behavior: "smooth",
-                                });
-                            }}
-                        >
-                            LOAD INTO MAIN CANVAS ↑
-                        </button>
-                    </div>
-                </div>
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 max-w-4xl mx-auto"
+        ></div>
 
-                <!-- Static Visual Area (Using CSS gradients to simulate the evacuation field) -->
-                <div
-                    class="relative w-full aspect-square bg-slate-950 overflow-hidden flex items-center justify-center"
-                >
-                    <!-- Fake Crowd Heatmap -->
-                    <div
-                        class="absolute inset-0 opacity-40 mix-blend-screen"
-                        style="background: radial-gradient(circle at 40% 60%, rgba(225,29,72,0.4) 0%, transparent 50%), radial-gradient(circle at 60% 30%, rgba(225,29,72,0.6) 0%, transparent 60%); filter: contrast(1.5) saturate(1.5);"
-                    ></div>
-                    <!-- Fake Level Geometry -->
-                    <div
-                        class="absolute inset-x-0 bottom-1/4 h-8 bg-slate-900 border-y border-slate-800 z-10"
-                    ></div>
-                    <div
-                        class="absolute top-1/4 right-1/4 w-8 h-32 bg-slate-900 border border-slate-800 z-10"
-                    ></div>
-
-                    <!-- Agents rendering -->
-                    <div
-                        class="absolute inset-0 z-20"
-                        style="background-image: radial-gradient(circle at center, rgba(244,63,94,0.8) 1.5px, transparent 2px); background-size: 16px 16px; opacity: 0.3; mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);"
-                    ></div>
-
-                    <!-- Target Exit -->
-                    <div
-                        class="absolute top-8 left-1/2 -translate-x-1/2 w-16 h-4 bg-emerald-500/20 border border-emerald-500/50 rounded flex items-center justify-center z-30"
-                    >
-                        <span
-                            class="text-[8px] text-emerald-400 font-mono font-bold tracking-widest"
-                            >EXIT</span
-                        >
-                    </div>
-
-                    <div
-                        class="absolute inset-0 pointer-events-none z-40"
-                        style="background: radial-gradient(circle at center, transparent 30%, #000 120%); opacity: 0.8;"
-                    ></div>
-                </div>
-            </div>
-
-            <!-- Text Right -->
-            <div class="order-1 lg:order-2 flex flex-col gap-6 pl-0 lg:pl-8">
-                <div
-                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold font-mono w-fit"
-                >
-                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                    USE CASE 02
-                </div>
-                <h2
-                    class="text-3xl md:text-5xl font-bold text-white leading-tight"
-                >
-                    {@html m.api_solutions_scenarios_evac_title()}
-                </h2>
-                <p class="text-slate-400 text-lg leading-relaxed">
-                    {m.api_solutions_scenarios_evac_description()}
-                </p>
-
-                <ul class="flex flex-col gap-4 mt-4">
-                    <li class="flex items-start gap-4">
-                        <div
-                            class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 text-rose-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                ><path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2.5"
-                                    d="M5 13l4 4L19 7"
-                                /></svg
-                            >
-                        </div>
-                        <div>
-                            <strong class="text-white block">Problem</strong>
-                            <span class="text-slate-500 text-sm"
-                                >{m.api_solutions_scenarios_evac_problem()}</span
-                            >
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-4">
-                        <div
-                            class="mt-1 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 text-rose-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                ><path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2.5"
-                                    d="M5 13l4 4L19 7"
-                                /></svg
-                            >
-                        </div>
-                        <div>
-                            <strong class="text-white block">Solution</strong>
-                            <span class="text-slate-500 text-sm"
-                                >{m.api_solutions_scenarios_evac_solution()}</span
-                            >
-                        </div>
-                    </li>
-                </ul>
-            </div>
+        <div id="zeta" class="scroll-mt-48 w-full">
+            <ZetaEntropyApp />
         </div>
 
-        <!-- Live Technical Previews -->
-        <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col gap-8">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl md:text-5xl font-bold text-white mb-4">
-                    {m.api_solutions_demos_title() ||
-                        "Live Interactive Prototypes"}
-                </h3>
-                <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                    {m.api_solutions_demos_desc() ||
-                        "Experiment with the Lineum Core tensor engine directly in your browser."}
-                </p>
-            </div>
+        <div
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 max-w-4xl mx-auto"
+        ></div>
 
-            <!-- Previews Stack -->
-            <div class="flex flex-col gap-24">
-                <div id="demo-rng" class="scroll-mt-32">
-                    <TrueRng />
-                </div>
-                <div id="demo-hashing" class="scroll-mt-32">
-                    <HashingDemo />
-                </div>
-                <div id="demo-compression" class="scroll-mt-32">
-                    <CompressionDemo />
-                </div>
-            </div>
+        <div id="web3" class="scroll-mt-48 w-full">
+            <Web3OracleApp />
         </div>
 
-        <!-- Developer Snippets Section -->
-        <ApiSnippet />
+        <div
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 max-w-4xl mx-auto"
+        ></div>
+
+        <div id="hash" class="scroll-mt-48 w-full">
+            <LineumHashApp />
+        </div>
+
+        <div
+            class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-32 max-w-4xl mx-auto"
+        ></div>
+
+        <div id="gaming" class="scroll-mt-48 w-full">
+            <GamingRngApp />
+        </div>
 
         <!-- Explore Specialized Domains (Grid to Subpages) -->
         <div class="w-full max-w-7xl mx-auto mb-32 flex flex-col items-center">

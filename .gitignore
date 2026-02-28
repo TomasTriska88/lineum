@@ -2,8 +2,8 @@ __pycache__/
 /.vscode
 
 # Temporary helper scripts (Antigravity scratch convention)
-.scratch/*
-!.scratch/README.md
+**/.scratch/
+!**/.scratch/README.md
 
 # Simulation output (generated, not versioned)
 # Simulation output (generated, not versioned)
