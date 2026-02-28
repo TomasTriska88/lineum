@@ -157,6 +157,7 @@
             <!-- Wigner Surmise Overlay Curve (Theoretical) -->
             <svg
                 class="absolute inset-0 w-full h-full pointer-events-none"
+                viewBox="0 0 100 100"
                 preserveAspectRatio="none"
             >
                 <path
@@ -164,7 +165,7 @@
                         targetHeights
                             .map(
                                 (h, i) =>
-                                    `L ${(i / 39) * 100}%,${100 - (h / 1.1) * 100}%`,
+                                    `L ${(i / 39) * 100},${100 - (h / 1.1) * 100}`,
                             )
                             .join(" ")}
                     class="stroke-white/10"
