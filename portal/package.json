@@ -1,7 +1,7 @@
 {
 	"name": "portal",
 	"private": true,
-	"version": "2026.02.28-1836",
+	"version": "2026.02.28-1840",
 	"type": "module",
 	"scripts": {
 		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",

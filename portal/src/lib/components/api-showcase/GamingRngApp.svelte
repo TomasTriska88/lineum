@@ -95,9 +95,8 @@ for points in simulation:
         // Generate batch of 20 points
         for (let i = 0; i < 20; i++) {
             if (points.length >= TOTAL_POINTS_MAX) {
-                points.shift(); // Remove oldest
-            } else {
-                // Only update stats if we haven't reached max capacity (keeps Pi stable after fill)
+                const removed = points.shift(); // Remove oldest visual point
+                if (removed && removed.inside) pointsInside--; // Decrement running total
             }
 
             // Native JS Math.random used here for visual purposes only.
@@ -108,10 +107,8 @@ for points in simulation:
 
             points.push({ x, y, inside });
 
-            if (points.length <= TOTAL_POINTS_MAX) {
-                if (inside) pointsInside++;
-                currentPi = 4 * (pointsInside / points.length);
-            }
+            if (inside) pointsInside++;
+            currentPi = 4 * (pointsInside / points.length);
         }
 
         drawSimulation();
