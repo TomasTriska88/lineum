@@ -1,4 +1,5 @@
 <script lang="ts">
+    import pkg from "../../package.json";
     import { ParaglideJS } from "@inlang/paraglide-sveltekit";
     import { i18n } from "$lib/i18n";
 
@@ -48,9 +49,21 @@
 
     <ResonanceDeck active={$hudActive} />
     <CookieBanner />
+    <div class="version-hud">v{pkg.version}</div>
 </ParaglideJS>
 
 <style>
+    .version-hud {
+        position: fixed;
+        bottom: 8px;
+        right: 12px;
+        font-family: monospace;
+        font-size: 0.65rem;
+        color: rgba(255, 255, 255, 0.25);
+        z-index: 1000;
+        pointer-events: none;
+    }
+
     main {
         position: relative;
         z-index: 1;

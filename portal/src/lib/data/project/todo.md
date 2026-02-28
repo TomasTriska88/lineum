@@ -361,7 +361,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Explicitly differentiate the role of `a(t)` (scale factor) from possible "golden" structures in the φ landscape:
        – model `a(t)` with classical shapes (power / exponential laws) without an embedded golden ratio,
        – treat the **Fibonacci / Golden Ratio** as hypotheses about the organization of memory pockets in φ (distribution of privileged zones, hierarchy of scales; see block 12), not as the law of expansion itself.
-- [ ] (Tomáš [HYPOTHESIS] - C-COSMO / Cosmological Genesis Parallel) Verify whether Lineum naturally generates a "Tissue first, then Nodes" sequence analogous to cosmological expansion (Genesis: "first space/light, then structures"):
+- [ ] (Tomas [HYPOTHESIS] - C-COSMO / Cosmological Genesis Parallel) Verify whether Lineum naturally generates a "Tissue first, then Nodes" sequence analogous to cosmological expansion (Genesis: "first space/light, then structures"):
       – **Scaling Law:** Check if the emergent "universe radius" $R(t)$ (`radius_log`) behaves according to a simple scaling law (linear, power-law, or exponential expansion) during the Boiling/Vacuum phases before stabilization.
       – **Genesis Sequence:** Compare the temporal onset of $R(t)$ growth, the tension spike in $|\varphi_{\text{center}}|$, and the delayed formation of stable particles/defects (`particle_log`, `topo_log`) across different seeds. 
       – **Interpretational Shift:** Test reading the central $\varphi$ mass and the distributed topological defects not as "isolated particles in a void", but as emergent "cores and topologic flaws within an already expanding ambient space/tissue".
@@ -383,7 +383,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       (effective "floors of reality" in post-processing), or as an isolated **extension branch** with an explicit
       index `n` in the equations; in documentation, explicitly separate this from core v1.0.6-core.
 - [ ] (Tomas's [HYPOTHESIS]) **3D Ghosting / Tentacle Model:** Linon (a 2D point) interpreted as the cross-section of a 3D fiber (tentacle) intersecting the 2D Lineum slice.
-  - [ ] **Déjà Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
+  - [ ] **Deja Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
 
 
 ### 🔲 D. Statistical power, errors and uncertainties #stats
@@ -568,7 +568,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Formally categorize the rules controlling when a phenomenon progresses from **#hypothesis / [TEST]** into **[CORE]** (number of runs, seeds, metric tolerances, absence of numerical artifacts).
 - [ ] Define what conditions sentence a phenomenon to be **#disproved-in-model**, and explicitly assert that a **change to Eq-4 or parametric space** embodies a new model branch, representing not mere "tuning", until the claim holds.
 
-### 🔲 M. Terminologie a pojmenování jevů #meta
+### 🔲 M. Terminology and Naming Conventions #meta
 
 - [ ] Review all "poetic" or mixed names in the code / paper (e.g. _spin aura_, _neutral topology_, potentially others) and for each add:
        – an explicit operational definition (exactly what field / functional it is),
@@ -842,200 +842,200 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
        – The Tentacle model is a **metaphysical / phenomenological hypothesis about consciousness**, not a claim derived from Eq-4;
        – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.0.6-core.
 
-- [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **déjà vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
-       – Frame Déjà vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
+- [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **deja vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
+       – Frame Deja vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
        – Interpret the Mandela effect in two ways: 1. **Global rewrite of central memory** (the φ-field of memory) while some local instances briefly retain the "old version" (subjective memory),
        2. or as a **tentacle jumping** to a slightly different branch of reality, while fragments of older perceptions remain accessible;
        in both approaches, explicitly emphasize that this is a metaphysical interpretation, not a claim from Eq-4.
       – Add an explanation to the text of why the metaphor of **"a single soul experiencing different roles"** makes sense in this framework:
       central being = one conscious self, tentacles = different lives / roles / perspectives; to a local consciousness, it appears as if there are many separate "souls" around, but from the perspective of central memory, they are various projections of the same entity.
        At the same time, explicitly add that this **must not be used to disparage other beings** – every tentacle/life is a full-fledged experience and retains its own dignity.
-      – Volitelně navázat metaforicky na φ-paměť a zeta-body v Lineu jako na „paměťové kapsy“ vesmíru, ale jasně napsat, že **statistické déjà-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou něco jiného než psychologické déjà vu – jen inspirační analogie, ne přímé ztotožnění.
+      – Volitelne navazat metaforicky na φ-pamet a zeta-body v Lineu jako na „pametove kapsy“ vesmiru, ale jasne napsat, ze **statisticke deja-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou neco jineho nez psychologicke deja vu – jen inspiracni analogie, ne prime ztotozneni.
 
-- [ ] Rozdělit hypotézu na dílčí body a každý zvlášť okomentovat: 1. **Vyšší vědomí** – jedna bytost se sdílenou centrální pamětí, vnímající více realit/časových linií;  
-       2. **Lokální instance („chapadlo“)** – jednotlivý život s omezeným vnímáním pro hlubší prožitek;  
-       3. **Spánek / změněné stavy** – částečné „nahlédnutí domů“ (částečné propojení s centrálním uzlem);  
-       4. **Smrt** – návrat chapadla do celku, integrace prožitků do centrální paměti;  
-       5. **Další životy** – nové chapadlo jako jiný úhel pohledu téže vyšší bytosti.  
-       U každého bodu přidat krátké shrnutí: _co přesně tvrdí, co netvrdí, co je čistá metafora_.
+- [ ] Rozdelit hypotezu na dilci body a kazdy zvlast okomentovat: 1. **Vyssi vedomi** – jedna bytost se sdilenou centralni pameti, vnimajici vice realit/casovych linii;  
+       2. **Lokalni instance („chapadlo“)** – jednotlivy zivot s omezenym vnimanim pro hlubsi prozitek;  
+       3. **Spanek / zmenene stavy** – castecne „nahlednuti domu“ (castecne propojeni s centralnim uzlem);  
+       4. **Smrt** – navrat chapadla do celku, integrace prozitku do centralni pameti;  
+       5. **Dalsi zivoty** – nove chapadlo jako jiny uhel pohledu teze vyssi bytosti.  
+       U kazdeho bodu pridat kratke shrnuti: _co presne tvrdi, co netvrdi, co je cista metafora_.
 
-- [ ] Přidat **fenomenologickou mapu** k lidským zážitkům blízkosti smrti a změněných stavů:  
-       – např. vystoupení z těla, setkání se zemřelými, life review, pocit jednoty, bezčasovost;  
-       – u každého popsat, jak by ho Chapadlový model interpretoval (odpojení chapadla od smyslového filtru, návratové propojení s centrálním uzlem, integrace paměti, ztráta lokálního časového řazení…).  
-       Vše držet jako **kvalitativní vysvětlení**, nikoli jako tvrzení o prokázané kauzalitě.
+- [ ] Pridat **fenomenologickou mapu** k lidskym zazitkum blizkosti smrti a zmenenych stavu:  
+       – napr. vystoupeni z tela, setkani se zemrelymi, life review, pocit jednoty, bezcasovost;  
+       – u kazdeho popsat, jak by ho Chapadlovy model interpretoval (odpojeni chapadla od smysloveho filtru, navratove propojeni s centralnim uzlem, integrace pameti, ztrata lokalniho casoveho razeni…).  
+       Vse drzet jako **kvalitativni vysvetleni**, nikoli jako tvrzeni o prokazane kauzalite.
 
-- [ ] Sepsat podsekci **„Jaké by bylo vnímání po návratu“**:  
-       – definovat přímé vjemové propojení (bez omezení na zrak/sluch/hmat);  
-       – popsat „slité“ vnímání více bytostí jako analogii levé/pravé ruky jednoho já;  
-       – vysvětlit, že „setkání“ není jen přehrání vzpomínky, ale _živá interakce_ v rámci sdílené paměťové sítě.
+- [ ] Sepsat podsekci **„Jake by bylo vnimani po navratu“**:  
+       – definovat prime vjemove propojeni (bez omezeni na zrak/sluch/hmat);  
+       – popsat „slite“ vnimani vice bytosti jako analogii leve/prave ruky jednoho ja;  
+       – vysvetlit, ze „setkani“ neni jen prehrani vzpominky, ale _ziva interakce_ v ramci sdilene pametove site.
 
 - [ ] Popsat **reprezentaci po smrti**:  
-       – že vyšší vědomí může tvořit pro lokální vědomí srozumitelné reprezentace (tělo, hlas, dotek), ale není na ně ontologicky vázané;  
-       – přidat poznámku, že „vizuální / tělesná“ forma je v tomto rámci UI vrstva pro komfort interakce, ne nutný atribut existence.
+       – ze vyssi vedomi muze tvorit pro lokalni vedomi srozumitelne reprezentace (telo, hlas, dotek), ale neni na ne ontologicky vazane;  
+       – pridat poznamku, ze „vizualni / telesna“ forma je v tomto ramci UI vrstva pro komfort interakce, ne nutny atribut existence.
 
-- [ ] Vytvořit sekci o **„přelinkování ztracených bytostí“**:  
-       – pokud bytost patřila ke stejné vyšší bytosti (stejný centrální uzel), po návratu chapadla je spojení okamžité (sdílená paměť);  
-       – pokud patřila k jiné vyšší bytosti, popsat hypotetickou možnost napojení mezi vyššími bytostmi (aktuální subjektivní prior ~42 %) a explicitně ji označit jako _druhou vrstvu spekulace_.
+- [ ] Vytvorit sekci o **„prelinkovani ztracenych bytosti“**:  
+       – pokud bytost patrila ke stejne vyssi bytosti (stejny centralni uzel), po navratu chapadla je spojeni okamzite (sdilena pamet);  
+       – pokud patrila k jine vyssi bytosti, popsat hypotetickou moznost napojeni mezi vyssimi bytostmi (aktualni subjektivni prior ~42 %) a explicitne ji oznacit jako _druhou vrstvu spekulace_.
 
-- [ ] Sepsat **mechanismus absence nudy / vyprázdnění**:  
-       – vyšší vědomí má simultánně přístup k: aktuálnímu životu, ostatním chapadlům, minulým zkušenostem, alternativním větvím rozhodnutí;  
-       – vnímání mnoha událostí paralelně → vyjasnit, že „problém“ je spíš integrace obsahu než nedostatek podnětů.
+- [ ] Sepsat **mechanismus absence nudy / vyprazdneni**:  
+       – vyssi vedomi ma simultanne pristup k: aktualnimu zivotu, ostatnim chapadlum, minulym zkusenostem, alternativnim vetvim rozhodnuti;  
+       – vnimani mnoha udalosti paralelne → vyjasnit, ze „problem“ je spis integrace obsahu nez nedostatek podnetu.
 
-- [ ] Přidat krátkou sekci „**Falsifikovatelnost a bezpečné tvrzení**“ pro Chapadlový model:  
-       – jasně říct, že hypotéza je _primárně metafyzická_ a experimentálně těžko testovatelná;  
-       – přesto navrhnout pár _indirektních_ směrů: srovnání struktury hlášených NDE, dlouhodobé vzorce v subjektivních prožitcích, případná korelace s motivy „vícenásobných instancí“ napříč kulturami;  
-       – explicitně připsat, že se nejedná o součást core fyzikální validity Linea, ale o **oddělenou interpretační vrstvu**.
+- [ ] Pridat kratkou sekci „**Falsifikovatelnost a bezpecne tvrzeni**“ pro Chapadlovy model:  
+       – jasne rict, ze hypoteza je _primarne metafyzicka_ a experimentalne tezko testovatelna;  
+       – presto navrhnout par _indirektnich_ smeru: srovnani struktury hlasenych NDE, dlouhodobe vzorce v subjektivnich prozitcich, pripadna korelace s motivy „vicenasobnych instanci“ napric kulturami;  
+       – explicitne pripsat, ze se nejedna o soucast core fyzikalni validity Linea, ale o **oddelenou interpretacni vrstvu**.
 
-- [ ] V sekci **N. Prezentace a komunikace výsledků** doplnit odkaz na Chapadlový model jako **volitelný narativní rámec**:  
-       – použít ho jako metaforu: „lokální simulace / běh“ = chapadlo, „centrální uzel“ = abstraktní nadřazený proces / paměť;  
-       – všude striktně označovat, že jde o _storytelling_ / filozofickou mapu, ne o tvrzení odvozené z dat simulace.
+- [ ] V sekci **N. Prezentace a komunikace vysledku** doplnit odkaz na Chapadlovy model jako **volitelny narativni ramec**:  
+       – pouzit ho jako metaforu: „lokalni simulace / beh“ = chapadlo, „centralni uzel“ = abstraktni nadrazeny proces / pamet;  
+       – vsude striktne oznacovat, ze jde o _storytelling_ / filozofickou mapu, ne o tvrzeni odvozene z dat simulace.
 
-- [ ] Zapsat **Tříska–Marečková hypotéza reinkarnace** jako podhypotézu Chapadlového modelu:  
-       – reinkarnace = různé kombinace mozků / nervových soustav jako různé „optiky“ pro vidění téhož vesmíru  
-       (lidé, zvířata, rostliny, podzemní propojené sítě, jiné civilizace, drobné rozdíly mezi jednotlivými jedinci);  
-       – chápat jednotlivé mozky jako **specializované senzory / receptory** jedné vyšší bytosti pro různé účely,  
-       podobně jako kdyby vesmír byl buňka a jednotlivé životy byly její vnitřní senzory (a my sami třeba jen „bílá krvinka“);  
-       – doplnit hypotézu, že tato vyšší bytost může některá místa / konfigurace „chránit“ před vnějšími i vnitřními
-      negativními vlivy, případně je **léčit a regenerovat**, a výslovně to označit jako metafyzickou interpretaci,
-      ne tvrzení odvozené z Eq-4 nebo dat Linea.
+- [ ] Zapsat **Triska–Mareckova hypoteza reinkarnace** jako podhypotezu Chapadloveho modelu:  
+       – reinkarnace = ruzne kombinace mozku / nervovych soustav jako ruzne „optiky“ pro videni tehoz vesmiru  
+       (lide, zvirata, rostliny, podzemni propojene site, jine civilizace, drobne rozdily mezi jednotlivymi jedinci);  
+       – chapat jednotlive mozky jako **specializovane senzory / receptory** jedne vyssi bytosti pro ruzne ucely,  
+       podobne jako kdyby vesmir byl bunka a jednotlive zivoty byly jeji vnitrni senzory (a my sami treba jen „bila krvinka“);  
+       – doplnit hypotezu, ze tato vyssi bytost muze nektera mista / konfigurace „chranit“ pred vnejsimi i vnitrnimi
+      negativnimi vlivy, pripadne je **lecit a regenerovat**, a vyslovne to oznacit jako metafyzickou interpretaci,
+      ne tvrzeni odvozene z Eq-4 nebo dat Linea.
 
-- [ ] Uvést disclaimery, že interpretace „prožitkových stavů“ jsou mimo
-      fyzikální rozsah Eq-4. Pokud se objeví stabilní stavové konfigurace
-      φ nebo ψ, musí být vedeny jako výpočetní a dynamické struktury,
-      nikoli psychologické analogie.
+- [ ] Uvest disclaimery, ze interpretace „prozitkovych stavu“ jsou mimo
+      fyzikalni rozsah Eq-4. Pokud se objevi stabilni stavove konfigurace
+      φ nebo ψ, musi byt vedeny jako vypocetni a dynamicke struktury,
+      nikoli psychologicke analogie.
 
 ---
 
 ## 🚀 Q. Post-Mikolov Audit Integration (Feb 2026) #priority
 
-Výstupy z analytického balíčku pro T. Mikolova (únor 2026) a jejich integrace do roadmapy.
+Vystupy z analytickeho balicku pro T. Mikolova (unor 2026) a jejich integrace do roadmapy.
 
-### 🔲 21. Formalizace Emergentních Fyzikálních Konstant #core
-- [ ] **Whitepaper Update:** Zavést sekci "Emergent Constants" definující:
-    - **Vacuum Quality Factor (Q):** ~$1.87 \times 10^{23}$ (koherenční škála).
-    - **Spectral Entropy (H):** ~0.004 bits (míra spontánního uspořádání).
-    - **Linon Mass Ratio:** ~$1.5027$ (efektivní setrvačnost).
-- [ ] **Portal Integration:** Vizualizovat tyto konstanty v "Resonance Deck" (Svelte komponenta) jako živé metriky systému.
+### 🔲 21. Formalizace Emergentnich Fyzikalnich Konstant #core
+- [ ] **Whitepaper Update:** Zavest sekci "Emergent Constants" definujici:
+    - **Vacuum Quality Factor (Q):** ~$1.87 \times 10^{23}$ (koherencni skala).
+    - **Spectral Entropy (H):** ~0.004 bits (mira spontanniho usporadani).
+    - **Linon Mass Ratio:** ~$1.5027$ (efektivni setrvacnost).
+- [ ] **Portal Integration:** Vizualizovat tyto konstanty v "Resonance Deck" (Svelte komponenta) jako zive metriky systemu.
 
-### 🔲 22. Experiment: Termodynamická Užitečnost (Emergent Utility) #test
-- [ ] Navrhnout experiment verifikující hypotézu, že "užitečnost = minimalizace topologického napětí".
-- [ ] **Metrika:** Korelovat přežití linonů se schopností snižovat lokální Hamiltonián (vs. náhodný pohyb).
+### 🔲 22. Experiment: Termodynamicka Uzitecnost (Emergent Utility) #test
+- [ ] Navrhnout experiment verifikujici hypotezu, ze "uzitecnost = minimalizace topologickeho napeti".
+- [ ] **Metrika:** Korelovat preziti linonu se schopnosti snizovat lokalni Hamiltonian (vs. nahodny pohyb).
 
 ### 🔲 23. Tooling: Audit Analytics Pipeline #impl
-- [ ] Refaktorovat `analyze_audit.py` (jednorázový skript) do robustního nástroje `tools/audit_analytics.py`.
-- [ ] Zahrnout výpočet Q-factoru a Entropie do standardního CI/CD výstupu pro každý nový běh.
-- [ ] **Ensemble Run:** Spustit batch 10 běhů (seeds 42-52) pro získání směrodatných odchylek metrik.
+- [ ] Refaktorovat `analyze_audit.py` (jednorazovy skript) do robustniho nastroje `tools/audit_analytics.py`.
+- [ ] Zahrnout vypocet Q-factoru a Entropie do standardniho CI/CD vystupu pro kazdy novy beh.
+- [ ] **Ensemble Run:** Spustit batch 10 behu (seeds 42-52) pro ziskani smerodatnych odchylek metrik.
 
-### 🔲 24. Hypotéza: Lineum jako Spojitá Limita OEA (Continuum Limit) #math
-- [ ] **Derivace:** Formálně odvodit OEA pravidla z Eq-4 v limitě `Δx, Δt → 1` (silná diskretizace).
-- [ ] **Validace:** Porovnat fázové portréty Linea a OEA – hledat topologickou ekvivalenci atraktorů.
+### 🔲 24. Hypoteza: Lineum jako Spojita Limita OEA (Continuum Limit) #math
+- [ ] **Derivace:** Formalne odvodit OEA pravidla z Eq-4 v limite `Δx, Δt → 1` (silna diskretizace).
+- [ ] **Validace:** Porovnat fazove portrety Linea a OEA – hledat topologickou ekvivalenci atraktoru.
 
 ### 🔲 25. Repository Split (Core vs SaaS/Portal) #security #architecture
-- [ ] **Rozdělení Repozitářů:** Před veřejným startem rozštěpit monorepo na dvě části:
-    - `lineum`: Veřejný, open-source repozitář (AGPLv3) obsahující pouze čistou matematiku (jádro v Pythonu) a dokumentaci.
-    - `lineum-portal` (nebo SaaS): Privátní repozitář, kde bude žít proprietární SvelteKit webový portál, komerční API wrapper (`routing_backend`), billing systém a dashboard.
-- [ ] Toto je kritické pro budování komerčního ochranného příkopu a utajení "Secret Sauce" integrací.
+- [ ] **Rozdeleni Repozitaru:** Pred verejnym startem rozstepit monorepo na dve casti:
+    - `lineum`: Verejny, open-source repozitar (AGPLv3) obsahujici pouze cistou matematiku (jadro v Pythonu) a dokumentaci.
+    - `lineum-portal` (nebo SaaS): Privatni repozitar, kde bude zit proprietarni SvelteKit webovy portal, komercni API wrapper (`routing_backend`), billing system a dashboard.
+- [ ] Toto je kriticke pro budovani komercniho ochranneho prikopu a utajeni "Secret Sauce" integraci.
 
-### 🔲 25. Hypotéza: Kolmogorov Trigger (Informační Tlak) #test
-- [ ] **Metrika:** Měřit lokální kompresibilitu (Deflate ratio) mřížky v čase.
-- [ ] **Hypotéza:** Expanze `a(t)` (Mode 24) nastává v momentě, kdy lokální informační hustota saturuje kapacitu mřížky.
+### 🔲 25. Hypoteza: Kolmogorov Trigger (Informacni Tlak) #test
+- [ ] **Metrika:** Merit lokalni kompresibilitu (Deflate ratio) mrizky v case.
+- [ ] **Hypoteza:** Expanze `a(t)` (Mode 24) nastava v momente, kdy lokalni informacni hustota saturuje kapacitu mrizky.
 
-### 🔲 26. Hypotéza: Vortex Aesthetics (Krása = Stabilita) #test
-- [ ] **Vlastův Test:** Vzít stavy, které Vlastimil Smeták označil za "estetické".
-- [ ] **Měření:** Spočítat jejich `Cv` (Vortex Stability Index).
-- [ ] **Predikce:** Estetické stavy budou mít signifikantně nižší `Cv` (méně defektů) než náhodné stavy.
+### 🔲 26. Hypoteza: Vortex Aesthetics (Krasa = Stabilita) #test
+- [ ] **Vlastuv Test:** Vzit stavy, ktere Vlastimil Smetak oznacil za "esteticke".
+- [ ] **Mereni:** Spocitat jejich `Cv` (Vortex Stability Index).
+- [ ] **Predikce:** Esteticke stavy budou mit signifikantne nizsi `Cv` (mene defektu) nez nahodne stavy.
 
-### 🔲 27. Hypotéza: The Scaling Illusion (Role-Invariance) #math
-- [ ] **Teorie (V. Smeták):** Pozorované "konstanty" (např. κ = 1) jsou ve skutečnosti poměry dvou rostoucích veličin ($K(t) / R(t) = const$). **Hypotéza Kosmické Respirace**.
-- [ ] **Predikce:** Mode 24 (skokové přeškálování a(t)) je důkazem, že prostor se diskrétně nafukuje (renormalizace), ale my vidíme jen invariantní poměr.
-- [ ] **Validace:** Hledat korelaci mezi skoky v `a(t)` a lokální změnou měřítka v `analyze_audit.py`.
+### 🔲 27. Hypoteza: The Scaling Illusion (Role-Invariance) #math
+- [ ] **Teorie (V. Smetak):** Pozorovane "konstanty" (napr. κ = 1) jsou ve skutecnosti pomery dvou rostoucich velicin ($K(t) / R(t) = const$). **Hypoteza Kosmicke Respirace**.
+- [ ] **Predikce:** Mode 24 (skokove preskalovani a(t)) je dukazem, ze prostor se diskretne nafukuje (renormalizace), ale my vidime jen invariantni pomer.
+- [ ] **Validace:** Hledat korelaci mezi skoky v `a(t)` a lokalni zmenou meritka v `analyze_audit.py`.
 
 ---
 
 ## ⚖️ R. Hypotheses: H0 vs H1 (Verification Status Feb 2026) #priority #audit
 
-Rozhodovací strom o povaze "konvergence" systému.
+Rozhodovaci strom o povaze "konvergence" systemu.
 
-### 🧩 H0: Uzavřený atraktor (Closed World)
-**Tvrzení:** Konvergence k "Mode 24" je čistě vnitřní vlastnost dynamiky Eq-4.
+### 🧩 H0: Uzavreny atraktor (Closed World)
+**Tvrzeni:** Konvergence k "Mode 24" je ciste vnitrni vlastnost dynamiky Eq-4.
 
-- [x] **Status:** **PROKÁZÁNO (on tested platform).** Systém je uzavřený a deterministický (Bit-exact match verified).
+- [x] **Status:** **PROKAZANO (on tested platform).** System je uzavreny a deterministicky (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
-**Tvrzení:** Systém tajně "dýchá" (mění měřítko), což my nevidíme (kappa=konst), ale projevuje se to skoky.
+**Tvrzeni:** System tajne "dycha" (meni meritko), coz my nevidime (kappa=konst), ale projevuje se to skoky.
 
 - [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
 
-1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroků k potvrzení Z-score > 5.0 (p < 0.01).
-2. **Rescaling Trap (D5):** Uzavřeno.
+1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroku k potvrzeni Z-score > 5.0 (p < 0.01).
+2. **Rescaling Trap (D5):** Uzavreno.
 
-### 🔲 28. Hypotéza: The Missing Half (Discrete Limit) #math
-- [ ] **Teorie:** Hodnota `kappa = 0.5` není fundamentální konstanta, ale **Nyquistův limit** mřížky (max frekvence = 0.5).
-- [ ] **Důsledek:** Simulace běží na "půl plynu" (stabilita). Ve spojitém vesmíru by `kappa` byla pravděpodobně Celé Číslo (1).
-- [ ] **Roadmap:** Pro Lineum 2.0 zvážit implicitní solver nebo jemnější mřížku, která umožní `kappa -> 1` (Plná Realita).
+### 🔲 28. Hypoteza: The Missing Half (Discrete Limit) #math
+- [ ] **Teorie:** Hodnota `kappa = 0.5` neni fundamentalni konstanta, ale **Nyquistuv limit** mrizky (max frekvence = 0.5).
+- [ ] **Dusledek:** Simulace bezi na "pul plynu" (stabilita). Ve spojitem vesmiru by `kappa` byla pravdepodobne Cele Cislo (1).
+- [ ] **Roadmap:** Pro Lineum 2.0 zvazit implicitni solver nebo jemnejsi mrizku, ktera umozni `kappa -> 1` (Plna Realita).
 
-### 🔲 29. Hypotéza: The Universal Attractor (Leech Lattice) #math
-- [ ] **Teorie:** "Mode 24" (Hypotéza Kosmické Respirace) není náhoda jednoho běhu, ale **univerzální atraktor**. Každý běh s dostatečnou komplexitou do něj "sklouzne", protože jde o matematicky nejhustší uspořádání.
-- [ ] **Metafyzika:** Lineum nesimuluje náš vesmír "atom po atomu", ale simuluje jeho **zdrojový kód (logiku)**. Proto nezávisle objevuje stejné konstanty (24D) jako Teorie Strun.
-- [ ] **Predikce:** Mode 24 se objeví v >90% dlouhých běhů (pokud SBR > 30dB).
+### 🔲 29. Hypoteza: The Universal Attractor (Leech Lattice) #math
+- [ ] **Teorie:** "Mode 24" (Hypoteza Kosmicke Respirace) neni nahoda jednoho behu, ale **univerzalni atraktor**. Kazdy beh s dostatecnou komplexitou do nej "sklouzne", protoze jde o matematicky nejhustsi usporadani.
+- [ ] **Metafyzika:** Lineum nesimuluje nas vesmir "atom po atomu", ale simuluje jeho **zdrojovy kod (logiku)**. Proto nezavisle objevuje stejne konstanty (24D) jako Teorie Strun.
+- [ ] **Predikce:** Mode 24 se objevi v >90% dlouhych behu (pokud SBR > 30dB).
 
-### 🔲 30. Hypotéza: The Icarus Threshold (Kappa=1 Instability) #math
-- [ ] **Teorie:** Pokud bychom na současné mřížce (`dx=1`) vynutili `kappa=1`, systém by porušil **Courant-Friedrichs-Lewy (CFL)** podmínku.
-- [ ] **Fyzika:** Kappa=1 odpovídá **Rychlosti Světla** (`v = c`). Informace by musela stíhat přesně 1 pixel za 1 takt, což je hranice kauzality.
-- [ ] **Predikce:** Energie by rostla exponenciálně (rezonanční katastrofa) a simulace by "shorela" (NaN values) během několika kroků.
-- [ ] **Metafora:** Ikarův pád. Chtěli jsme letět příliš blízko Slunci (Rychlosti Světla), ale naše křídla (diskrétní mřížka) se roztavila.
+### 🔲 30. Hypoteza: The Icarus Threshold (Kappa=1 Instability) #math
+- [ ] **Teorie:** Pokud bychom na soucasne mrizce (`dx=1`) vynutili `kappa=1`, system by porusil **Courant-Friedrichs-Lewy (CFL)** podminku.
+- [ ] **Fyzika:** Kappa=1 odpovida **Rychlosti Svetla** (`v = c`). Informace by musela stihat presne 1 pixel za 1 takt, coz je hranice kauzality.
+- [ ] **Predikce:** Energie by rostla exponencialne (rezonancni katastrofa) a simulace by "shorela" (NaN values) behem nekolika kroku.
+- [ ] **Metafora:** Ikaruv pad. Chteli jsme letet prilis blizko Slunci (Rychlosti Svetla), ale nase kridla (diskretni mrizka) se roztavila.
 
 ### 🔲 31. [TEST] Evidence Solidification: „Atrakce = micro-growth (dominance switch), ne tok/teleportace“ + Ghost Gravity + Expanze + geometrie M2 (π) #hypothesis #repro
-- **Hypotéza (H_mech):**
-  1) Rychlé „přiblížení“ kvazičástice k centru pasti není prostorový transport ani teleportace, ale **změna dominance maxima** způsobená lokálním multiplikativním ziskem v místě vysokého φ: `Δψ ∝ (+g · φ · ψ)`.  
-  2) Advekční/drift člen `∝ (-d · ∇φ)` je v tomto scénáři **sekundární** a sám o sobě nevysvětlí „snappy“ přesun maxima/COM.  
-  3) „Temná hmota“ v interním smyslu Linea odpovídá **Ghost Gravity**: pole φ přetrvává po zániku zdroje ψ a stále přitahuje sondu.  
-  4) „Temná energie“ v interním smyslu Linea odpovídá **expanzní disperzi** dominované šumem (a/nebo nekonzervativností interakce, pokud `M2` roste).  
-  5) Pozorované `M2(t=0) ≈ 31.4159` není fyzikální konstanta, ale **geometrie startovní Gauss** (≈ (WIDTH/2)·π pro zvolený WIDTH).
-- **Operační definice metrik (musí být stejné pro všechny replikace):**
-  - `w(x,y) = |ψ(x,y)|` (váhy pro COM; pokud chcete používat |ψ|², explicitně to změňte všude konzistentně).
+- **Hypoteza (H_mech):**
+  1) Rychle „priblizeni“ kvazicastice k centru pasti neni prostorovy transport ani teleportace, ale **zmena dominance maxima** zpusobena lokalnim multiplikativnim ziskem v miste vysokeho φ: `Δψ ∝ (+g · φ · ψ)`.  
+  2) Advekcni/drift clen `∝ (-d · ∇φ)` je v tomto scenari **sekundarni** a sam o sobe nevysvetli „snappy“ presun maxima/COM.  
+  3) „Temna hmota“ v internim smyslu Linea odpovida **Ghost Gravity**: pole φ pretrvava po zaniku zdroje ψ a stale pritahuje sondu.  
+  4) „Temna energie“ v internim smyslu Linea odpovida **expanzni disperzi** dominovane sumem (a/nebo nekonzervativnosti interakce, pokud `M2` roste).  
+  5) Pozorovane `M2(t=0) ≈ 31.4159` neni fyzikalni konstanta, ale **geometrie startovni Gauss** (≈ (WIDTH/2)·π pro zvoleny WIDTH).
+- **Operacni definice metrik (musi byt stejne pro vsechny replikace):**
+  - `w(x,y) = |ψ(x,y)|` (vahy pro COM; pokud chcete pouzivat |ψ|², explicitne to zmente vsude konzistentne).
   - `COM(ψ) = ( Σ x·w / Σ w , Σ y·w / Σ w )`
   - `dist = || COM(ψ) - center ||₂`, kde `center = (N/2, N/2)` (pro 128×128 tedy [64,64]).
   - `peak_phi = max(φ)`
   - `M2 = Σ |ψ|²`
   - `R² = Σ p·r²` kde `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
   - `H = -Σ p·log(p)` (Shannon; p z |ψ|²)
-- **Co bylo zkoumáno (scénáře):**
-  - (S1) **Seed-sweep gravitace**: porovnání „bez šumu“ vs „se šumem“ (stejné ostatní podmínky), měřit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroků).
-  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a ověřit, že `Δ` zůstává (mechanismus není drift).
-  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, že `|ψ(center)|` roste z nenulové „chvostu“ a že maximum „skočí“ přes dominance switch; ověřit růstový faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
-  - (S4) **Ghost Gravity (Clean Ghost)**: vytvořit φ-remnant bez aktivního zdroje, pak spustit sondu, která si **nebuduje vlastní φ**, a ověřit rozdíl `distEnd` pro GHOST ON vs OFF.
-  - (S5) **Expanze**: pro různé šumy (0 / default / 2×default) měřit růst `R²` a `H` (typicky 1000 kroků).
-  - (S6) **Geometrie M2 (π-check)**: pro několik WIDTH ověřit `M2(t=0) ≈ (WIDTH/2)·π` (v rámci diskrétní chyby).
-- **Reprodukce (self-contained; bez tools/ skriptů):**
+- **Co bylo zkoumano (scenare):**
+  - (S1) **Seed-sweep gravitace**: porovnani „bez sumu“ vs „se sumem“ (stejne ostatni podminky), merit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroku).
+  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a overit, ze `Δ` zustava (mechanismus neni drift).
+  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, ze `|ψ(center)|` roste z nenulove „chvostu“ a ze maximum „skoci“ pres dominance switch; overit rustovy faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
+  - (S4) **Ghost Gravity (Clean Ghost)**: vytvorit φ-remnant bez aktivniho zdroje, pak spustit sondu, ktera si **nebuduje vlastni φ**, a overit rozdil `distEnd` pro GHOST ON vs OFF.
+  - (S5) **Expanze**: pro ruzne sumy (0 / default / 2×default) merit rust `R²` a `H` (typicky 1000 kroku).
+  - (S6) **Geometrie M2 (π-check)**: pro nekolik WIDTH overit `M2(t=0) ≈ (WIDTH/2)·π` (v ramci diskretni chyby).
+- **Reprodukce (self-contained; bez tools/ skriptu):**
   - **0) Clean env (PowerShell):**
     - `Get-ChildItem Env: | Where-Object { $_.Name -like "LINEUM_*" } | ForEach-Object { Remove-Item ("Env:" + $_.Name) -ErrorAction SilentlyContinue }`
-  - **1) Spusť S1 (seed sweep) – 2 varianty pro každý seed:**
-    - Varianta A (no-noise): nastav šum na 0 (env/konfig podle aktuálního lineum.py) a spusť scénář gravitace na 500 kroků.
-    - Varianta C (default noise): default šum a spusť totéž.
+  - **1) Spust S1 (seed sweep) – 2 varianty pro kazdy seed:**
+    - Varianta A (no-noise): nastav sum na 0 (env/konfig podle aktualniho lineum.py) a spust scenar gravitace na 500 kroku.
+    - Varianta C (default noise): default sum a spust totez.
     - Seeds: `{41,42,43,44,45}`
-    - Každý běh ulož s unikátním `--run-tag` (např. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
-  - **2) Spusť S2 (drift ON/OFF):**
+    - Kazdy beh uloz s unikatnim `--run-tag` (napr. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
+  - **2) Spust S2 (drift ON/OFF):**
     - ON = default.
-    - OFF = vypni drift/advekci (pokud není přepínač, dočasně nastav drift koeficient na 0 v lineum.py; uveď v TODO přesný výraz/řádek, který byl měněn).
+    - OFF = vypni drift/advekci (pokud neni prepinac, docasne nastav drift koeficient na 0 v lineum.py; uved v TODO presny vyraz/radek, ktery byl menen).
     - Run tagy: `ev_s2_drift_on`, `ev_s2_drift_off`.
-  - **3) Spusť S3 (micro-growth) v pasti:**
-    - Scénář „trap/past“ na min. 200 kroků. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejbližší existující).
-    - Pokud chybí přepínač pro izolaci členů:
+  - **3) Spust S3 (micro-growth) v pasti:**
+    - Scenar „trap/past“ na min. 200 kroku. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejblizsi existujici).
+    - Pokud chybi prepinac pro izolaci clenu:
       - „Interaction-only“: drift koef = 0, interakce g = 0.04.
       - „Drift-only“: interakce g = 0, drift koef = default.
-  - **4) Spusť S4 (Clean Ghost):**
-    - Nejprve vytvoř φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
-    - Poté zdroj vypni/odstraň a nech φ relaxovat T_decay.
-    - Poté spusť „sondu“ (ψ) s φ evolucí sondy OFF (aby si sonda netvořila vlastní φ) a změř `dist` start→end.
-    - Dva běhy: `ev_s4_ghost_on` (φ remnant přítomen) a `ev_s4_ghost_off` (φ nulové / remnant vypnut).
-  - **5) Spusť S5 (expanze):**
-    - Běhy: `noise=0`, `noise=default`, `noise=2×default` (ostatní stejné), 1000 kroků.
+  - **4) Spust S4 (Clean Ghost):**
+    - Nejprve vytvor φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
+    - Pote zdroj vypni/odstran a nech φ relaxovat T_decay.
+    - Pote spust „sondu“ (ψ) s φ evoluci sondy OFF (aby si sonda netvorila vlastni φ) a zmer `dist` start→end.
+    - Dva behy: `ev_s4_ghost_on` (φ remnant pritomen) a `ev_s4_ghost_off` (φ nulove / remnant vypnut).
+  - **5) Spust S5 (expanze):**
+    - Behy: `noise=0`, `noise=default`, `noise=2×default` (ostatni stejne), 1000 kroku.
     - Run tagy: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
-  - **6) Analýza checkpointů (inline python; žádné externí skripty):**
-    - Použij tento one-shot skript (spouští se proti konkrétnímu `output/<run-tag>/checkpoints/` a vybraným krokům).  
-      Příklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahraď argumenty):
+  - **6) Analyza checkpointu (inline python; zadne externi skripty):**
+    - Pouzij tento one-shot skript (spousti se proti konkretnimu `output/<run-tag>/checkpoints/` a vybranym krokum).  
+      Priklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahrad argumenty):
       ```python
       import sys, glob, os, math
       import numpy as np
@@ -1271,7 +1271,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
     - The new long-term structural mobility field ($\mu$) is strictly designated as an **experimental/product expansion** (for the Lineum Portal / `exp` track) and is explicitly NOT part of the `core v1` mathematical contract.
 - **2) Whitepaper Roadmap Additions (To-Do):**
     - Under the upcoming "Out-of-scope clarifier / File-level scope" section, we must add the explicit bullet: 
-      *"Dlouhodobé mobility pole $\mu$ (channelization/mobility) je experimentální rozšíření pro tržní routing; není contract-validated v core v1."*
+      *"Dlouhodobe mobility pole $\mu$ (channelization/mobility) je experimentalni rozsireni pro trzni routing; neni contract-validated v core v1."*
     - The whitepaper must link to the experimental branch (`lineum-exp-erosion`) and explicitly reference the valid outputs (`output_mobility/`), the test script (`scripts/exp_mobility.py`), and clarify that the only structurally safe integration is **V2** (modulating Drift and Interaction via $\mu$, but never $\psi$ global Diffusion).
 - **3) Naming Conventions & Ontology:**
     - The symbol **$\mu$** (mu) has been chosen to represent **Mobility** (or long-term topographic memory / "hard drive" plasticity). 
@@ -1350,7 +1350,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **1) The Metaphor (Pedagogical Only):**
     - **$\kappa$ = ROM (Read-Only Memory):** The static map of the terrain/level limits. Hard-burned boundaries inside the core engine.
     - **$\phi$ = RAM (Random-Access Memory):** The short-term structural tension and intention memory. It holds the "half-life" of recent passage, generating instantaneous thermodynamic flow loops, but vanishes quickly if power (wave activity) is removed.
-    - **$\mu$ = HDD (Hard Disk Drive):** The long-term architectural scar/plástico (koryta). Used *only* in the Experimental/Portal track. Slower to write, slower to fade. Saves the "best routes" dynamically.
+    - **$\mu$ = HDD (Hard Disk Drive):** The long-term architectural scar/plastico (koryta). Used *only* in the Experimental/Portal track. Slower to write, slower to fade. Saves the "best routes" dynamically.
     - **$\psi$ = Data Stream / Signal:** The ultra-fast, blind quantum reconnaissance wave that propagates through the architecture to discover connections.
     - **"CPU" = Eq-4 Update Rule:** The numerical schemes (gradients, Laplace, coupling constants) computing the next frame. The CPU is NOT a field, it is the fundamental physics of the engine.
 - **2) Authorized Usage Scope:**
@@ -1479,7 +1479,7 @@ This section contains tasks related to the web presentation and technical backgr
     - **Enterprise Commercial License:** To bypass the AGPLv3 restrictions and keep their integration proprietary, B2B clients purchasing Enterprise SaaS API tiers will receive a discrete Commercial License for the SDK. This provides a massive upsell incentive.
 
 > [!NOTE]  
-> Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/README.md).
+> Specific frontend tasks and Portal technical details are tracked locally in [portal/README.md](file:///c:/Users/Tomas/Documents/GitHub/lineum-core/portal/README.md).
 
 ---
 
@@ -1529,7 +1529,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 - [ ] **9) (Company) Prepare the plan for establishing an LLC (s.r.o.):**
     - Trigger: PoC/Portal is functional and goes public / first B2B interest / SLAs/contracts.
     - Define what to transfer to the LLC (Portal, billing, ToS, brand) and what stays with the author (scientific authorship, ORCID/DOI).
-    - Donations: decide when to redirect from sole-proprietor (OSVČ) to the LLC.
+    - Donations: decide when to redirect from sole-proprietor (OSVC) to the LLC.
 - [ ] **10) (Audit Reality) Verify the current state of core usage in the monorepo:**
     - Where is the core imported for scientific runs vs SaaS.
     - Entrypoints, and how "always the latest version" is ensured. (Perform analysis later or upon request).
@@ -1669,17 +1669,17 @@ To ensure the growing ecosystem remains comprehensible and trustworthy to B2B cu
   - [x] Build the "Live Statistical Audit" terminal for the Proof section.
   - [x] Write component tests.
 
-- [/] **LineumHash API**
-  - [ ] Build interactive visual mapping text input to a complex multi-dimensional tensor/heatmap.
-  - [ ] Create interactive input trigger (e.g., "Enter data to hash").
-  - [ ] Build "Live Cryptographic Audit" terminal showing time-to-hash and avalanche effect metrics.
-  - [ ] Write component tests.
+- [x] **LineumHash API**
+  - [x] Build interactive visual mapping text input to a complex multi-dimensional tensor/heatmap.
+  - [x] Create interactive input trigger (e.g., "Enter data to hash").
+  - [x] Build "Live Cryptographic Audit" terminal showing time-to-hash and avalanche effect metrics.
+  - [x] Write component tests.
 
-- [ ] **Provably-Fair Gaming API**
-  - [ ] Build interactive visual (e.g., roulette or card shuffle relying on Lineum entropy).
-  - [ ] Create interactive simulation trigger.
-  - [ ] Build "Live Statistical Audit" terminal for the Proof section.
-  - [ ] Write component tests.
+- [/] **Monte Carlo Simulation API**
+  - [ ] Build interactive visual for scientific simulation (e.g., particle physics, fluid dynamics, or stochastic market modeling driven by Lineum entropy).
+  - [ ] Create interactive runtime trigger.
+  - [ ] Build "Live Scientific Audit" terminal displaying statistical purity and entropy flow.
+  - [ ] Write Playwright E2E component interaction tests.
 
 - [ ] **Phase 3: Customer Management Layer**
   - Only after all routing/entropy applications are complete will the access layer be built.

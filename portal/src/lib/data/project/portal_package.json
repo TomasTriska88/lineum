@@ -1,7 +1,7 @@
 {
 	"name": "portal",
 	"private": true,
-	"version": "0.0.1",
+	"version": "2026.02.28-1110",
 	"type": "module",
 	"scripts": {
 		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",
@@ -21,7 +21,7 @@
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
 		"stage": "node scripts/stage-railway.js",
-		"prebuild": "npm run sync",
+		"prebuild": "node scripts/auto-version.js && npm run sync",
 		"safe-merge": "node scripts/safe-merge.cjs"
 	},
 	"devDependencies": {

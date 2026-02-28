@@ -15,6 +15,9 @@ pytest tests/ -v
 
 ## 2. Portal (Frontend/Wiki)
 Located in the `portal/` directory. Tests cover Wiki loaders, metadata extraction, and asset routing.
+
+**CRITICAL COMPONENT TESTING POLICY**: For testing Svelte UI components (especially interactive ones with DOM changes, Canvas, or complex `bind:value` reactivity), **always use Playwright over Vitest/JSDOM**. JSDOM has severe limitations with Svelte lifecycle rendering and `IntersectionObserver`. You should run end-to-end tests via Playwright instead of struggling with mocked unit tests.
+
 // turbo
 ```bash
 cd portal

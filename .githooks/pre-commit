@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Lineum Core - Pre-commit Hook
+# Ensures the portal's CalVer UTC version naturally advances on every commit.
+
+echo ">>> [Lineum Git Hook] Auto-bumping Portal Version (CalVer)..."
+
+cd portal || exit 0
+
+# Run the versioning script
+node scripts/auto-version.js
+
+# Stage the modified package.json back into the commit payload
+git add package.json
+
+echo ">>> [Lineum Git Hook] Version bumped and staged."
+exit 0

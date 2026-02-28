@@ -1,133 +1,133 @@
-# Lineum Kodex — Etický postoj (v1)
+# Lineum Codex — Ethical Stance (v1)
 
-> **Smysl:** Lineum je dar světu jako vědecký objev. Tento kodex není přehrada, která zastaví tok. Je to **koryto**: nastavuje nejmenší nutný odpor tam, kde by jinak tok vedl k nevratné škodě.
-
----
-
-## 0) Definice a rozsah
-
-### Lineum (vědecký artefakt)
-Lineum je metoda/dynamika a její formální popis. Má být:
-- ověřitelná, reprodukovatelná, citovatelná,
-- spustitelná lokálně pro vědce bez nutnosti API,
-- publikovaná transparentně.
-
-### Lineum Portal (ekosystém a služba)
-Lineum Portal je provozovaná služba (SaaS/Enterprise), která Lineum zpřístupňuje jako pohodlí: integrace, SLA, bezpečnost, workflow.  
-**Etická pravidla jsou vymahatelná především zde**, protože zde máme kontrolu.
+> **Purpose:** Lineum is a gift to the world as a scientific discovery. This codex is not a dam to stop the flow. It is a **riverbed**: setting the minimum necessary resistance where the flow would otherwise lead to irreversible harm.
 
 ---
 
-## 1) První princip: věda před marketingem
-Lineum je primárně vědecký objev. Aplikace (API, demo, Portal) jsou **důkaz a most do praxe**, ne náhrada za pravdu.
+## 0) Definition and Scope
 
-- Transparentnost místo marketingu.
-- Reprodukovatelnost místo dojmů.
-- Vysvětlení je vítězné tehdy, když je krátké a ověřitelné.
+### Lineum (Scientific Artifact)
+Lineum is a method/dynamic and its formal description. It must be:
+- verifiable, reproducible, citable,
+- executable locally for scientists without the need for an API,
+- published transparently.
 
----
-
-## 2) Neutralita Linea: “nejmenší odpor” není lhostejnost
-Lineum popisuje tok a odpor. Naše etika z toho bere disciplínu:
-
-- **Nezvyšujeme rychlost toku do míst, kde by cena byla utrpení a nevratná škoda.**
-- Odpor přidáváme pouze tam, kde chrání životaschopnost systému: lidi, zvířata, ekosystémy, základní infrastrukturu.
-
-Jinými slovy: **otupujeme hrany**. Ne dusíme evoluci, ale bráníme zlomu.
+### Lineum Portal (Ecosystem and Service)
+Lineum Portal is an operated service (SaaS/Enterprise) that makes Lineum accessible as a convenience: integration, SLA, security, workflow.
+**Ethical rules are primarily enforceable here**, because this is where we have control.
 
 ---
 
-## 3) Kredit jako součást etiky (autorství a původ)
-Kredit není ego. Je to integrita původu.
+## 1) First Principle: Science over Marketing
+Lineum is primarily a scientific discovery. Applications (API, demo, Portal) are **proof and a bridge to practice**, not a substitute for the truth.
 
-Každý, kdo publikuje výsledky založené na Lineu, má citovat Lineum a autora:
-- **Autor:** Tomáš Tříska  
-- **ORCID:** 0009-0003-4026-7164  
-- **DOI:** (verzovaný + “concept DOI” pro všechny verze; uvádí se v doporučené citaci)
-
-Cílem je, aby pravda o původu byla nejlehčí cesta (nejmenší odpor): jasná citace, copy-paste blok, jednotné jméno **Lineum™**.
+- Transparency instead of marketing.
+- Reproducibility instead of impressions.
+- An explanation is victorious when it is short and verifiable.
 
 ---
 
-## 4) Otevřenost: dar světu, který zůstává spustitelný lokálně
-Lineum má zůstat spustitelné pro vědce a výzkumníky lokálně bez API.
+## 2) Lineum's Neutrality: "Path of Least Resistance" is not Indifference
+Lineum describes flow and resistance. Our ethics draw discipline from this:
 
-Zároveň platí:
-- Open-source nevynutí chování světa.
-- Proto je zodpovědnost hlavně v tom, co **my provozujeme** (Lineum Portal).
+- **We do not increase the speed of the flow into places where the price would be suffering and irreversible harm.**
+- We add resistance only where it protects the viability of the system: people, animals, ecosystems, core infrastructure.
 
----
-
-## 5) Lineum Portal: tři režimy použití
-
-### A) Zelený režim (volně povolené)
-Použití, jehož účelem je prokazatelně:
-- zvýšit bezpečnost, efektivitu a užitek bez přesouvání nákladů do utrpení či destrukce,
-- snížit plýtvání, emise, zlepšit udržitelnost,
-- zlepšit welfare (tam, kde relevantní),
-- pomoci ve zdravotnictví, krizové logistice, evakuacích a ochraně života.
-
-### B) Restricted Use (citlivé – schvalované případ od případu)
-Dual-use případy, které mohou být legitimní, ale vyžadují kontrolu:
-- obranné bezpečnostní aplikace, které nejsou weapon-targeting,
-- autorizované penetrační testy / bezpečnostní testování infrastruktury,
-- citlivé státní/bezpečnostní projekty,
-- výzkum s reálným rizikem zneužití.
-
-**Schválení vyžaduje:**
-1) prokazatelné oprávnění a zákonnost (scope, mandát),
-2) proporcionalitu a minimalizaci škody,
-3) lidskou odpovědnost a dohled,
-4) auditovatelnost (logy, dohledatelnost použití),
-5) možnost okamžitého vypnutí přístupu (kill switch),
-6) jasné odmítnutí podpory pro lethal/weapon targeting.
-
-### C) Hard stop (zakázané pro Lineum Portal)
-Lineum Portal nepodporuje použití, jehož primární účel je:
-1) **lethal/weapon targeting a “kill chain”**  
-   (autonomní nebo poloautonomní optimalizace útoku na lidi)
-2) **represivní dohled a hon na osoby**  
-   (tracking/containment pro útlak, pronásledování, masové zadržování)
-3) **útoky na infrastrukturu mimo autorizovaný test**  
-   (včetně optimalizace DDoS/botnetů, průniků a škod mimo scope)
-4) **optimalizace škody na civilní populaci**  
-   (sabotáže evakuací, “stampede engineering”, zvyšování rizika zranění)
-5) **primárně destruktivní nebo kruté použití vůči přírodě a zvířatům**, zejména:
-   - maximalizace extrakce s ignorováním udržitelnosti (ilegální logging, obcházení ochrany území),
-   - optimalizace průmyslových systémů založených na masovém utrpení zvířat “na throughput”
-     bez welfare a bez cíle snížení škod.
-
-Poznámka: legitimní případy s environmentální/animal složkou mohou spadat do **Restricted Use**, pokud je cílem prokazatelně snížení škod (welfare, emise, plýtvání, udržitelnost) a existuje auditovatelnost.
+In other words: **we blunt the edges**. We do not suffocate evolution, but we prevent collapse.
 
 ---
 
-## 6) Praktické páky (jak se kodex uplatňuje v Portalu)
-Aby to nebyla jen poezie, Lineum Portal může uplatnit:
-- screening enterprise zákazníků (minimálně u vyšších tierů),
-- auditní logy a monitoring zneužití,
-- rate limits a bezpečnostní limity,
-- právo okamžité deaktivace klíče při porušení pravidel,
-- vyžádání “scope/mandátu” u Restricted Use (zejména u pentestů a obranných projektů).
+## 3) Credit as Part of Ethics (Authorship and Origin)
+Credit is not ego. It is the integrity of origin.
+
+Anyone who publishes results based on Lineum must cite Lineum and the author:
+- **Author:** Tomáš Tříska
+- **ORCID:** 0009-0003-4026-7164
+- **DOI:** (versioned + "concept DOI" for all versions; to be included in the recommended citation)
+
+The goal is that the truth about the origin is the path of least resistance: clear citation, copy-paste block, unified name **Lineum™**.
 
 ---
 
-## 7) Chaos, klid a evoluce
-Pokrok vyžaduje mutaci. Kodex nemá udusit chaos, ale zabránit zlomu:
-- Necháváme prostor pro výzkum a inovaci.
-- Přidáváme odpor tam, kde by optimalizace vedla k nevratné škodě.
-- Nejsme soudci světa, ale neseme odpovědnost za vlastní infrastrukturu.
+## 4) Openness: A Gift to the World that Remains Locally Executable
+Lineum must remain executable for scientists and researchers locally without an API.
+
+At the same time:
+- Open-source cannot enforce the behavior of the world.
+- Therefore, the responsibility lies mainly in what **we operate** (Lineum Portal).
 
 ---
 
-## 8) Transparentnost a změny kodexu
-Tento kodex je živý dokument. Budeme ho aktualizovat na základě:
-- reálných use-case,
-- nových poznatků,
-- zkušeností se zneužitím a riziky.
+## 5) Lineum Portal: Three Modes of Use
 
-Cíl zůstává stejný: **dar světu bez zkázy**, nejmenší odpor, největší jasnost.
+### A) Green Mode (Freely Permitted)
+Use whose purpose is demonstrably to:
+- increase safety, efficiency, and utility without shifting costs to suffering or destruction,
+- reduce waste, emissions, improve sustainability,
+- improve welfare (where relevant),
+- assist in healthcare, crisis logistics, evacuations, and the protection of life.
+
+### B) Restricted Use (Sensitive – Approved Case by Case)
+Dual-use cases that may be legitimate but require control:
+- defensive security applications that are not weapon-targeting,
+- authorized penetration tests / security testing of infrastructure,
+- sensitive state/security projects,
+- research with a real risk of misuse.
+
+**Approval requires:**
+1) demonstrable authorization and legality (scope, mandate),
+2) proportionality and minimization of harm,
+3) human responsibility and oversight,
+4) auditability (logs, traceability of use),
+5) ability to immediately revoke access (kill switch),
+6) clear rejection of support for lethal/weapon targeting.
+
+### C) Hard Stop (Prohibited for Lineum Portal)
+Lineum Portal does not support use whose primary purpose is:
+1) **lethal/weapon targeting and the "kill chain"**
+   (autonomous or semi-autonomous optimization of attacks on humans)
+2) **repressive surveillance and manhunts**
+   (tracking/containment for oppression, persecution, mass detention)
+3) **attacks on infrastructure outside an authorized test**
+   (including optimization of DDoS/botnets, intrusions, and damage outside scope)
+4) **optimization of harm to the civilian population**
+   (sabotage of evacuations, "stampede engineering", increasing the risk of injury)
+5) **primarily destructive or cruel use towards nature and animals**, specifically:
+   - maximization of extraction ignoring sustainability (illegal logging, bypassing territorial protection),
+   - optimization of industrial systems based on mass animal suffering "for throughput"
+     without welfare and without the goal of reducing harm.
+
+Note: Legitimate cases with an environmental/animal component may fall under **Restricted Use** if the goal is demonstrably harm reduction (welfare, emissions, waste, sustainability) and auditability exists.
 
 ---
 
-## 9) Jednovětá verze (pro hlavu)
-**Lineum necháváme téct, ale v Portalu upravujeme gradient tak, aby nejlehčí cesta nevedla k utrpení a nevratné škodě.**
+## 6) Practical Levers (How the Codex is Enforced in the Portal)
+So that this is not just poetry, Lineum Portal can enforce:
+- screening of enterprise customers (at least at higher tiers),
+- audit logs and misuse monitoring,
+- rate limits and security limits,
+- the right of immediate key deactivation upon rule violation,
+- requesting a "scope/mandate" for Restricted Use (especially for pentests and defense projects).
+
+---
+
+## 7) Chaos, Calm, and Evolution
+Progress requires mutation. The codex is not meant to suffocate chaos, but to prevent collapse:
+- We leave room for research and innovation.
+- We add resistance where optimization would lead to irreversible harm.
+- We are not the judges of the world, but we bear responsibility for our own infrastructure.
+
+---
+
+## 8) Transparency and Codex Modifications
+This codex is a living document. We will update it based on:
+- real-world use-cases,
+- new findings,
+- experiences with misuse and risks.
+
+The goal remains the same: **a gift to the world without destruction**, the path of least resistance, the greatest clarity.
+
+---
+
+## 9) One-Sentence Version (For the Mind)
+**We let Lineum flow, but in the Portal, we adjust the gradient so that the path of least resistance does not lead to suffering and irreversible harm.**
