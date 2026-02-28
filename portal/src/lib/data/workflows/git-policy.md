@@ -19,8 +19,9 @@ description: How to manage git branches and commits
     (Create it if it doesn't exist: `git checkout -b dev`)
 
 3.  **Commit & Push:** Only when you are safely on `dev` (or a feature branch), you may proceed with `git add`, `git commit`, and `git push origin dev`.
-4.  **No Chaining on Windows:** DO NOT use the `&&` operator to chain Git commands together (e.g. `git add . && git commit`). Older versions of PowerShell (v5.1 and below) do not support `&&` and will throw syntax errors. ALWAYS execute commands on separate lines:
+4.  **Watcher Sync Delay:** ALWAYS wait 2 seconds before running `git add` to allow the Svelte/Vite dev server watcher to sync generated JSON files (e.g., `ai_index.json` or `portal-structure`). DO NOT use the `&&` operator to chain Git commands together on Windows. ALWAYS execute commands on separate lines:
     ```bash
+    Start-Sleep -Seconds 2
     git add .
     git commit -m "..."
     git push origin dev
