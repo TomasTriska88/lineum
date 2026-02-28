@@ -1663,12 +1663,24 @@ To ensure the growing ecosystem remains comprehensible and trustworthy to B2B cu
     - [x] animated hex stream terminal (Matrix code drop) with NIST validations.
     - [x] Write component tests.
 
-- [/] **Phase 3: Customer Management Layer**
-  - Only after all routing/entropy applications are complete will the access layer be built.
-  - API key generation, customer accounts, rate-limiting, and billing dashboards.
-
 - [x] **Web3 VRF API**
   - [x] Build high-performance interactive visual (e.g., smart contract validation flow or cryptographically secure random number simulation).
   - [x] Create interactive simulation trigger (e.g., "Request VRF Randomness").
   - [x] Build the "Live Statistical Audit" terminal for the Proof section.
   - [x] Write component tests.
+
+- [/] **LineumHash API**
+  - [ ] Build interactive visual mapping text input to a complex multi-dimensional tensor/heatmap.
+  - [ ] Create interactive input trigger (e.g., "Enter data to hash").
+  - [ ] Build "Live Cryptographic Audit" terminal showing time-to-hash and avalanche effect metrics.
+  - [ ] Write component tests.
+
+- [ ] **Provably-Fair Gaming API**
+  - [ ] Build interactive visual (e.g., roulette or card shuffle relying on Lineum entropy).
+  - [ ] Create interactive simulation trigger.
+  - [ ] Build "Live Statistical Audit" terminal for the Proof section.
+  - [ ] Write component tests.
+
+- [ ] **Phase 3: Customer Management Layer**
+  - Only after all routing/entropy applications are complete will the access layer be built.
+  - API key generation, customer accounts, rate-limiting, and billing dashboards.
