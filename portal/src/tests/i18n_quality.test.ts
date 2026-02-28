@@ -165,4 +165,36 @@ describe('Heuristic Linguistic Quality Assurance', () => {
 
         expect(offenders.length, `Found data-sveltekit-reload used alongside hash (#) links in: ${offenders.join(', ')}. This breaks SPA translation reactivity!`).toBe(0);
     });
+
+    it('should strictly forbid hardcoded i18n logic (languageTag() ===) in Svelte components', () => {
+        const srcDir = path.resolve(__dirname, '../../src');
+
+        function findSvelteFiles(dir: string, fileList: string[] = []) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const stat = fs.statSync(path.join(dir, file));
+                if (stat.isDirectory()) {
+                    findSvelteFiles(path.join(dir, file), fileList);
+                } else if (file.endsWith('.svelte')) {
+                    fileList.push(path.join(dir, file));
+                }
+            }
+            return fileList;
+        }
+
+        const svelteFiles = findSvelteFiles(srcDir);
+        let offenders: string[] = [];
+
+        // Catch `languageTag() === 'cs'` or `languageTag() == "en"`
+        const antiPattern = /languageTag\(\)\s*={2,3}/;
+
+        for (const sf of svelteFiles) {
+            const content = fs.readFileSync(sf, 'utf-8');
+            if (antiPattern.test(content)) {
+                offenders.push(path.basename(sf));
+            }
+        }
+
+        expect(offenders.length, `ANTI-PATTERN DETECTED: Files ${offenders.join(', ')} use 'languageTag() ===' to conditionally render text. All static UI text must use Paraglide dictionaries (m.key) so multiple languages can be generated at build time without shipping language-switching logic to the client.`).toBe(0);
+    });
 });
