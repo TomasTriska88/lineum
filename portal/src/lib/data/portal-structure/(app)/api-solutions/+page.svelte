@@ -8,7 +8,7 @@
     import CompressionDemo from "$lib/components/CompressionDemo.svelte";
     import FastTrngApp from "$lib/components/api-showcase/FastTrngApp.svelte";
     import ZetaEntropyApp from "$lib/components/api-showcase/ZetaEntropyApp.svelte";
-    import Web3OracleApp from "$lib/components/api-showcase/Web3OracleApp.svelte";
+    import Web3VrfApp from "$lib/components/api-showcase/Web3VrfApp.svelte";
     import LineumHashApp from "$lib/components/api-showcase/LineumHashApp.svelte";
     import GamingRngApp from "$lib/components/api-showcase/GamingRngApp.svelte";
 
@@ -1700,7 +1700,7 @@ logic_result = solver.compile_lpl(
         ></div>
 
         <div id="web3" class="scroll-mt-48 w-full">
-            <Web3OracleApp />
+            <Web3VrfApp />
         </div>
 
         <div
