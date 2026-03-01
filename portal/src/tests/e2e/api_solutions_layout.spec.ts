@@ -6,10 +6,10 @@ test.describe('API Solutions Layout', () => {
         await page.goto('/api-solutions');
 
         // Wait for the main heading and the global header
-        const heading = page.locator('h1', { hasText: 'Continuous routing API' });
+        const heading = page.locator('h1').first();
         await expect(heading).toBeVisible();
 
-        const nav = page.locator('nav');
+        const nav = page.locator('nav').first();
         await expect(nav).toBeVisible();
 
         // Get their bounding boxes

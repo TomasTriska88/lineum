@@ -64,7 +64,7 @@ result = solver.route(
         <!-- VERCEL-STYLE HERO SECTION (Centered, Clean, Massive) -->
         <div
             class="w-full flex flex-col items-center justify-center text-center px-4 pt-16 pb-16 max-w-5xl mx-auto"
-            style="margin-top: 120px;"
+            style="margin-top: 180px;"
         >
             <div class="flex items-center gap-3 mb-8">
                 <span

@@ -21,10 +21,10 @@ test.describe('Routing Pulse Lab - Advanced Holo UI & WebGL Lifecycle', () => {
         });
 
         // Step 1: Direct navigation to Routing Lab
-        await page.goto('/routing');
+        await page.goto('/api-solutions');
 
         // Monitor the visibility of the canvas element
-        const webglCanvas = page.locator('canvas.w-full.h-full.object-cover');
+        const webglCanvas = page.locator('#routing canvas').first();
         await expect(webglCanvas).toBeVisible({ timeout: 10000 });
 
         // Test the existence of the main B2B UI elements
@@ -72,7 +72,7 @@ test.describe('Routing Pulse Lab - Advanced Holo UI & WebGL Lifecycle', () => {
         // And back to routing to initialize another WebGL Context
         // If cleanup is missing, a "Too many contexts" warning will definitely appear.
         await page.goto('/api-solutions');
-        await expect(page.locator('canvas.w-full.h-full.object-cover')).toBeVisible();
+        await expect(page.locator('#routing canvas').first()).toBeVisible();
 
         // Evaluate if any WebGL limit errors were caught in the console.
         expect(consoleErrors).toEqual([]);
