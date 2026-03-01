@@ -44,6 +44,11 @@ def main():
         # Checkpoint pattern: *_ckpt_{padded}.npz
         matches = list(ckpt_dir.glob(f"*_ckpt_{padded}.npz"))
         if len(matches) == 0:
+            # Fallback pre koncový stav, kde loop končí na indexe (step - 1) a generátor udělá state_step*
+            fallback_step = step_int - 1
+            matches = list(ckpt_dir.glob(f"*_state_step{fallback_step}.npz"))
+            
+        if len(matches) == 0:
             print(f"[FAIL] Found 0 checkpoints matching step '{padded}' for snapshot '{key}'. Run failed to produce artifact.")
             sys.exit(1)
         elif len(matches) > 1:

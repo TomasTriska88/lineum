@@ -7,7 +7,7 @@ import glob
 
 def main():
     parser = argparse.ArgumentParser(description="Spustí kanonický běh spec6_false_s41 (Lineum).")
-    parser.add_argument("--steps", type=str, default="2001", help="Počet kroků simulace (default: 2001 pro dosažení kroku 2000)")
+    parser.add_argument("--steps", type=str, default="2000", help="Počet kroků simulace")
     parser.add_argument("--quick", action="store_true", help="Rychlý režim: 200 kroků, vypnuté ukládání artefaktů.")
     args = parser.parse_args()
 
