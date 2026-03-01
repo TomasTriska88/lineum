@@ -8,7 +8,7 @@ def test_contract_version_matches_whitepaper_header(project_root):
     Extracts the contract ID and version from lineum-core.md and ensures
     it matches the suite output.
     """
-    wp_path = Path(project_root) / "whitepapers" / "lineum-core.md"
+    wp_path = Path(project_root) / "whitepapers" / "1-core" / "01-core-lineum.md"
     suite_json_path = Path(project_root) / "output_wp" / "runs" / "_whitepaper_contract" / "whitepaper_contract_suite.json"
     
     # 1. Parse whitepaper for contract info
