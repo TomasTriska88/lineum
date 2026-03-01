@@ -15,10 +15,10 @@ const FORBIDDEN_LICENSES = [
     // 3. Source-Available / Non-Commercial Traps
     'SSPL-1.0', 'BSL-1.1', 'Commons-Clause',
 
-    // 4. Weak Copyleft / File-level (Often rejected by corporate legal)
+    // 4. Weak Copyleft / File-level (Often rejected by corporate legal, but MPL-2.0 is allowed as it's required by Vite/Tailwind build tools like lightningcss)
     'CDDL-1.0', 'CDDL-1.1',
     'EPL-1.0', 'EPL-2.0',
-    'MPL-1.1', 'MPL-2.0',
+    'MPL-1.1',
 
     // 5. Legal Grey Areas & "Joke" Licenses (Massive liability risk)
     'WTFPL', 'Beerware', 'Public Domain', 'Unlicense',
