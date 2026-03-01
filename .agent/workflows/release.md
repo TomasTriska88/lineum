@@ -16,10 +16,29 @@ When the user asks `/release [version]` or just `/release`, follow these steps:
 4. Stage the modified files:
    `git add CITATION.cff todo.md tools/sync_version.py`
 // turbo
-5. Commit the version bump:
-   `git commit -m "chore: bump version to [version]"`
 // turbo
-6. Create the Git tag with an annotation for the release:
+5. Commit the version bump and push `dev`:
+   ```bash
+   git commit -m "chore: bump version to [version]"
+   git push origin dev
+   ```
+// turbo
+6. Checkout `main` and merge `dev` into it:
+   ```bash
+   git checkout main
+   git merge dev
+   ```
+// turbo
+7. Create the Git tag on `main` with an annotation for the release:
    `git tag [version] -m "Release [version]"`
+// turbo
+8. Push the merged `main` branch and the release tags to the remote:
+   ```bash
+   git push origin main
+   git push --tags
+   ```
+// turbo
+9. Finally, checkout back to `dev` to ensure future work conforms to the Git Policy:
+   `git checkout dev`
 
-Finally, inform the user that the release tag has been created, versions synced, and they can push the tags using `git push --tags`.
+Finally, inform the user that the release has been successfully merged to `main`, tagged, and pushed to the remote repository, and that we are safely back on the `dev` branch.
