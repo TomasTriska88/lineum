@@ -1,4 +1,4 @@
-import checker from 'license-checker-rseidelsohn';
+import * as checker from 'license-checker-rseidelsohn';
 import path from 'path';
 
 const FORBIDDEN_LICENSES = [
