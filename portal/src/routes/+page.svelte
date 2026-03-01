@@ -6,6 +6,8 @@
     import * as m from "$lib/paraglide/messages.js";
     import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
 
+    export let data: import("./$types").PageData;
+
     $: legendItems = [
         {
             id: "psi",
@@ -163,9 +165,8 @@
             <div class="card">
                 <h3>{m.sections_scientist_zenodo_title()}</h3>
                 <p>{m.sections_scientist_zenodo_desc()}</p>
-                <a
-                    href="https://doi.org/10.5281/zenodo.16934359"
-                    target="_blank">{m.sections_scientist_zenodo_link()}</a
+                <a href="https://doi.org/{data.doi}" target="_blank"
+                    >{m.sections_scientist_zenodo_link()}</a
                 >
             </div>
             <div class="card">
