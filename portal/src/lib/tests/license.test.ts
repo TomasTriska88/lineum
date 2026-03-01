@@ -81,7 +81,9 @@ describe('Automated License Compliance Engine', () => {
                 `If a new dependency introduces a forbidden license, the correct approach is:\n` +
                 `1. Try to find an alternative MIT/Apache licensed package.\n` +
                 `2. If absolutely necessary (like a build tool), add it to the 'excludePackages' whitelist in 'check-licenses.js'—DO NEVER REMOVE the license from the main FORBIDDEN_LICENSES array.\n` +
-                `3. Only after explicit human (Tomáš) approval can this hash be updated in this test file.\n\n`
+                `3. Only after explicit human (Tomáš) approval can this hash be updated in this test file.\n` +
+                `4. To generate a new hash, run:\n` +
+                `   node -e "const crypto = require('crypto'); const fs = require('fs'); const match = fs.readFileSync('scripts/check-licenses.js', 'utf8').match(/const FORBIDDEN_LICENSES\\\\s*=\\\\s*\\\\[([\\\\s\\\\S]*?)\\\\];/); console.log(crypto.createHash('sha256').update(match[1].replace(/\\\\s+/g, '')).digest('hex'));"\n\n`
             );
         }
 
