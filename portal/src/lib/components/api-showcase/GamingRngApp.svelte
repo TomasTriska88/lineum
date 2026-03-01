@@ -1,11 +1,13 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
     import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
+    import ShowcaseButton from "./ShowcaseButton.svelte";
+    import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
     import { intersect } from "$lib/actions/intersect";
 
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D | null = null;
-    let isRunning = false;
+    let state: "idle" | "running" | "done" = "idle";
     let isVisible = false;
     let animationFrameId: number;
     let isHovered = false;
@@ -84,7 +86,7 @@ for points in simulation:
     };
 
     const updateSimulation = () => {
-        if (!isRunning) return;
+        if (state !== "running") return;
 
         if (!isVisible) {
             // Wait for it to become visible again
@@ -116,8 +118,8 @@ for points in simulation:
     };
 
     const startSimulation = () => {
-        if (isRunning) return;
-        isRunning = true;
+        if (state === "running") return;
+        state = "running";
         points = [];
         pointsInside = 0;
         currentPi = 0;
@@ -129,7 +131,7 @@ for points in simulation:
         );
 
         setTimeout(() => {
-            if (!isRunning) return;
+            if (state !== "running") return;
             addLog("AUTH: Enterprise token verified.", "text-emerald-400");
             addLog(
                 "STREAM: Requesting 2D topological mapping...",
@@ -139,7 +141,7 @@ for points in simulation:
         }, 400);
 
         logInterval = setInterval(() => {
-            if (!isRunning) return;
+            if (state !== "running") return;
             const metrics = [
                 `TENSOR_SYNC: Batch received [variance: ${(Math.random() * 0.0001).toFixed(7)}]`,
                 `Q-STATE: Verified zero geometric correlation in sample subset.`,
@@ -154,10 +156,20 @@ for points in simulation:
     };
 
     const stopSimulation = () => {
-        isRunning = false;
-        cancelAnimationFrame(animationFrameId);
+        state = "done";
+        if (typeof window !== "undefined")
+            cancelAnimationFrame(animationFrameId);
         clearInterval(logInterval);
         addLog("STREAM: Connection terminated by client.", "text-rose-400");
+    };
+
+    const resetSimulation = () => {
+        state = "idle";
+        points = [];
+        pointsInside = 0;
+        currentPi = 0;
+        logs = [];
+        drawSimulation();
     };
 
     onMount(() => {
@@ -179,7 +191,7 @@ for points in simulation:
 </script>
 
 <ShowcaseTemplate
-    badge="5 / 5 API SUITE"
+    badge="7 / 7 API SUITE"
     title="Monte Carlo & Scientific RNG"
     description="High-throughput, un-patterned entropy streams derived from topological structure collapse. Crucial for unbiased stochastic modeling, particle physics, and provably-fair state lotteries."
     traditionalTitle="Algorithmic Pseudo-Randomness"
@@ -196,6 +208,7 @@ for points in simulation:
         class="relative w-full h-[400px] rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl"
         on:mouseenter={() => (isHovered = true)}
         on:mouseleave={() => (isHovered = false)}
+        role="presentation"
     >
         <!-- Background Grid -->
         <div
@@ -221,7 +234,7 @@ for points in simulation:
                     >
                     <span
                         class="text-3xl font-mono text-white transition-colors duration-300"
-                        class:text-emerald-400={isRunning}
+                        class:text-emerald-400={state === "running"}
                     >
                         {currentPi === 0 ? "0.000000" : currentPi.toFixed(6)}
                     </span>
@@ -231,88 +244,30 @@ for points in simulation:
                 </div>
 
                 <!-- Controls -->
-                <button
-                    on:click={isRunning ? stopSimulation : startSimulation}
-                    class="px-5 py-2.5 rounded-full font-mono text-sm font-semibold transition-all duration-300 flex items-center gap-2 border"
-                    class:bg-emerald-500={!isRunning}
-                    class:text-white={!isRunning}
-                    class:border-emerald-400={!isRunning}
-                    class:shadow-[0_0_20px_rgba(16,185,129,0.3)]={!isRunning &&
-                        isHovered}
-                    class:bg-transparent={isRunning}
-                    class:text-rose-400={isRunning}
-                    class:border-rose-400={isRunning}
-                    class:hover:bg-rose-500={isRunning}
-                    class:hover:text-white={isRunning}
-                >
-                    <div
-                        class="w-2 h-2 rounded-full"
-                        class:bg-white={!isRunning}
-                        class:bg-rose-400={isRunning}
-                        class:animate-pulse={isRunning}
-                    ></div>
-                    {isRunning ? "HALT STREAM" : "START SIMULATION"}
-                </button>
+                <ShowcaseButton
+                    status={state}
+                    theme="emerald"
+                    idleText="Generate Game Seed"
+                    runningText="Stop Stream"
+                    doneText="New Seed"
+                    on:click={() => {
+                        if (state === "idle") startSimulation();
+                        else if (state === "running") stopSimulation();
+                        else if (state === "done") resetSimulation();
+                    }}
+                />
             </div>
         </div>
     </div>
 
     <!-- Proof Terminal Slot -->
-    <div
+    <ShowcaseTerminal
         slot="proof"
-        class="w-full h-full bg-[#0a0a0a] rounded-2xl border border-slate-800 p-4 font-mono text-xs overflow-hidden flex flex-col relative group"
-    >
-        <div
-            class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3"
-        >
-            <div class="flex items-center gap-2 text-slate-500">
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8 9l3 3-3 3m5 0h3M4 17h16a2 2 0 002-2V5a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                </svg>
-                <span>LIVE SCIENTIFIC AUDIT /// TRNG STREAM</span>
-            </div>
-            <div class="flex gap-1.5">
-                <div class="w-2 h-2 rounded-full bg-slate-700"></div>
-                <div class="w-2 h-2 rounded-full bg-slate-700"></div>
-                <div
-                    class="w-2 h-2 rounded-full"
-                    class:bg-emerald-500={isRunning}
-                    class:bg-slate-700={!isRunning}
-                    class:animate-pulse={isRunning}
-                ></div>
-            </div>
-        </div>
-
-        <!-- Terminal Lines -->
-        <div class="flex flex-col gap-1.5 flex-1 justify-end h-[160px]">
-            {#if logs.length === 0}
-                <div class="text-slate-600 animate-pulse">
-                    Waiting for simulation trigger...
-                </div>
-            {:else}
-                {#each [...logs].reverse() as log}
-                    <div class="flex gap-3">
-                        <span class="text-slate-600 shrink-0">[{log.time}]</span
-                        >
-                        <span class="{log.color} break-all">{log.msg}</span>
-                    </div>
-                {/each}
-            {/if}
-        </div>
-
-        <!-- Absolute overlay gradient so it fades nicely at top -->
-        <div
-            class="absolute inset-x-0 top-12 h-8 bg-gradient-to-b from-[#0a0a0a] to-transparent pointer-events-none"
-        ></div>
-    </div>
+        title="LIVE SCIENTIFIC AUDIT"
+        badge="TRNG STREAM"
+        badgeColorClass="text-slate-500"
+        primaryColorClass="text-emerald-400"
+        {logs}
+        status={state}
+    />
 </ShowcaseTemplate>

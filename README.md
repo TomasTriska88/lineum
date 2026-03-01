@@ -95,6 +95,13 @@ npx vite dev --host 127.0.0.1 --port 5174
 
 ---
 
+## 👥 Team & Acknowledgements
+* **Tomáš Tříska**: Primary author, lead researcher, and creator of the Lineum Core engine.
+* **Kateřina Marečková**: Contributor. Provided foundational critical opposition, hypothesis testing, and conceptual clarity for the ontological frameworks.
+* **Vlastimil Smeták**: Contributor. Contributed key insights and correlations with the external OEA (Obecně Evoluční Algoritmus) model, influencing structural hypotheses.
+
+---
+
 ## 📜 License
 *   **Core Engine & Lab**: GNU AGPLv3 License.
 *   **Portal (SaaS Interface)**: Proprietary (All Rights Reserved). The code in the `/portal` directory is strictly for internal commercial use and is fundamentally excluded from the AGPLv3 license.

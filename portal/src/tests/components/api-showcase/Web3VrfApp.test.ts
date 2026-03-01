@@ -20,7 +20,7 @@ describe('Web3VrfApp Showcase Component', () => {
     it('renders the interactive random payload trigger', () => {
         const { getByText, getByRole } = render(Web3VrfApp);
         const button = getByRole('button');
-        expect(button.textContent).toContain('Request VRF Randomness');
+        expect(button.textContent).toContain('Generate VRF Proof');
     });
 
     it('starts broadcasting transaction upon first click', async () => {

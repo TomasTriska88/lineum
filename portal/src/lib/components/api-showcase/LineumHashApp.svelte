@@ -1,5 +1,6 @@
 <script lang="ts">
     import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
+    import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
     import { onMount, onDestroy } from "svelte";
     import { intersect } from "$lib/actions/intersect";
 
@@ -86,7 +87,8 @@
     });
 
     onDestroy(() => {
-        if (animationId) cancelAnimationFrame(animationId);
+        if (typeof window !== "undefined" && animationId)
+            cancelAnimationFrame(animationId);
     });
 
     function drawCanvas() {
@@ -217,7 +219,7 @@
 </script>
 
 <ShowcaseTemplate
-    badge="4 / 5 API SUITE"
+    badge="6 / 7 API SUITE"
     title="LineumHash API"
     description="Drop-in replacement for SHA-256 and Keccak. Extremely collision-resistant cryptographic hash function utilizing fluid dynamics topology to achieve mathematically verified Quantum Resistance."
     traditionalTitle="Traditional Cryptographic Hashing"
@@ -286,66 +288,49 @@ print(secure_hash.hex())`}
     </div>
 
     <!-- Proof (Live Cryptographic Audit) -->
-    <div
+    <ShowcaseTerminal
         slot="proof"
-        class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-start gap-4 h-full min-h-[150px] font-mono"
+        title="Live Cryptographic Audit"
+        badge="LINEUM-256"
+        badgeColorClass="text-purple-500"
+        primaryColorClass="text-emerald-400"
+        logs={inputText.length > 0
+            ? [
+                  {
+                      msg: "> mapping text tensor...",
+                      color: "text-slate-500 opacity-70",
+                  },
+                  {
+                      msg: `> ${hashOutput}`,
+                      color: "text-emerald-400 font-bold",
+                  },
+              ]
+            : []}
+        emptyText="Waiting for data payload..."
+        status={inputText.length > 0 ? "done" : "idle"}
     >
-        <div
-            class="text-xs text-slate-500 border-b border-slate-800 pb-2 uppercase tracking-widest font-bold flex justify-between"
-        >
-            <span>Live Cryptographic Audit</span>
-            <span class="text-purple-500">LINEUM-256</span>
-        </div>
-
-        <div class="flex flex-col gap-3">
-            <!-- Metrics Grid -->
-            <div
-                class="grid grid-cols-2 gap-4 pb-3 border-b border-slate-800/50"
-            >
-                <div class="flex flex-col">
-                    <span
-                        class="text-[10px] text-slate-500 uppercase tracking-widest"
-                        >Time-to-Hash</span
-                    >
-                    <span class="text-sm font-bold text-sky-400"
-                        >{timeToHash > 0 ? timeToHash.toFixed(2) : "0.00"}
-                        <span class="text-[10px] text-slate-600">ns</span></span
-                    >
-                </div>
-                <div class="flex flex-col">
-                    <span
-                        class="text-[10px] text-slate-500 uppercase tracking-widest"
-                        >Avalanche Effect</span
-                    >
-                    <span class="text-sm font-bold text-purple-400"
-                        >{avalancheEffect > 0
-                            ? avalancheEffect.toFixed(2)
-                            : "0.00"}%</span
-                    >
-                </div>
+        <div slot="metrics" class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col">
+                <span
+                    class="text-[10px] text-slate-500 uppercase tracking-widest"
+                    >Time-to-Hash</span
+                >
+                <span class="text-sm font-bold text-sky-400"
+                    >{timeToHash > 0 ? timeToHash.toFixed(2) : "0.00"}
+                    <span class="text-[10px] text-slate-600">ns</span></span
+                >
             </div>
-
-            <!-- Streaming Hash Log -->
-            <div
-                class="flex flex-col text-xs text-emerald-400 gap-1 overflow-hidden h-full"
-            >
-                {#if inputText.length === 0}
-                    <div class="text-slate-600 opacity-50">
-                        Waiting for data payload...
-                    </div>
-                {:else}
-                    <div
-                        class="text-slate-500 mb-1 opacity-70 break-all text-[10px]"
-                    >
-                        &gt; mapping text tensor...
-                    </div>
-                    <div
-                        class="break-words break-all font-bold text-emerald-400 leading-relaxed max-w-full"
-                    >
-                        &gt; {hashOutput}
-                    </div>
-                {/if}
+            <div class="flex flex-col">
+                <span
+                    class="text-[10px] text-slate-500 uppercase tracking-widest"
+                    >Avalanche Effect</span
+                >
+                <span class="text-sm font-bold text-purple-400"
+                    >{avalancheEffect > 0
+                        ? avalancheEffect.toFixed(2)
+                        : "0.00"}%</span
+                >
             </div>
         </div>
-    </div>
+    </ShowcaseTerminal>
 </ShowcaseTemplate>

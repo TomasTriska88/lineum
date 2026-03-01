@@ -821,7 +821,7 @@ Statuses such as `#disproved` for the points below reflect the **current state i
 
 This section contains hypotheses extracted from the analysis of Vlasta's "Open-Ended Algorithm" (OEA) and Mikolov's requirements for OE systems.
 
-### 🔲 18. Lineum as a continuous limit of OEA (V. Smeták) #hypothesis
+### 🔲 18. Lineum as a continuous limit of OEA (V. Smetak) #hypothesis
 
 - **Context:** Vlasta's discrete model defines the "environment" as a prime number mask that filters the visibility of states.
 - **Hypothesis:** Lineum Core (Eq-4) is the continuous hydrodynamic limit of this model, where the discrete prime mask turns into a continuous $\zeta$-function potential.

@@ -50,37 +50,42 @@ describe('GamingRngApp Component', () => {
     });
 
     it('toggles simulation state on button click', async () => {
-        render(GamingRngApp);
+        const { getByText } = render(GamingRngApp);
 
-        const button = screen.getByRole('button', { name: /START SIMULATION/i });
-        expect(button).toBeTruthy();
+        const button = getByText(/Generate Game Seed/i).closest('button');
+        expect(button).not.toBeNull();
+        if (!button) return;
 
         // Click to start
         await fireEvent.click(button);
         await tick();
 
-        // Button should now text-toggle to HALT
-        const haltButton = screen.getByRole('button', { name: /HALT STREAM/i });
-        expect(haltButton).toBeTruthy();
+        // Button should now text-toggle to Stop
+        const haltText = getByText(/Stop Stream/i);
+        expect(haltText).toBeTruthy();
 
         // Click to halt
-        await fireEvent.click(haltButton);
+        const haltBtn = haltText.closest('button');
+        expect(haltBtn).not.toBeNull();
+        if (haltBtn) await fireEvent.click(haltBtn);
         await tick();
 
-        // Should revert back to START SIMULATION
-        expect(screen.getByRole('button', { name: /START SIMULATION/i })).toBeTruthy();
+        // Should revert back to Done (which requires reset) or Start if it loops
+        // Actually, gaming RNG goes to "New Seed" or "done" after stopping depending on logic
+        expect(getByText(/New Seed/i)).toBeTruthy();
     });
 
     it('updates terminal logs when simulation is running', async () => {
-        render(GamingRngApp);
+        const { getByText } = render(GamingRngApp);
 
-        const button = screen.getByRole('button', { name: /START SIMULATION/i });
-        await fireEvent.click(button);
+        const button = getByText(/Generate Game Seed/i).closest('button');
+        expect(button).not.toBeNull();
+        if (button) await fireEvent.click(button);
         await tick();
 
         // Fast forward timers if we are using vitest fake timers
-        // For now, let's just check if the terminal container exists
-        const terminalHeader = screen.getByText('LIVE SCIENTIFIC AUDIT /// TRNG STREAM');
+        // For now, let's just check if the terminal component or a log exists
+        const terminalHeader = screen.getByText(/LIVE SCIENTIFIC AUDIT/i);
         expect(terminalHeader).toBeTruthy();
     });
 });

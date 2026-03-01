@@ -1,9 +1,11 @@
 <script lang="ts">
-    import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
     import { onMount, onDestroy } from "svelte";
+    import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
+    import ShowcaseButton from "./ShowcaseButton.svelte";
+    import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
     import { intersect } from "$lib/actions/intersect";
 
-    let state: "idle" | "requesting" | "delivering" | "done" = "idle";
+    let state: "idle" | "running" | "delivering" | "done" = "idle";
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D | null = null;
     let animationId: number;
@@ -46,7 +48,8 @@
     });
 
     onDestroy(() => {
-        if (animationId) cancelAnimationFrame(animationId);
+        if (typeof window !== "undefined" && animationId)
+            cancelAnimationFrame(animationId);
     });
 
     function drawCanvas() {
@@ -94,7 +97,7 @@
         if (state === "done") {
             ctx.strokeStyle = "rgba(16, 185, 129, 0.8)"; // emerald-500
             ctx.fillStyle = "rgba(16, 185, 129, 0.1)";
-        } else if (state === "requesting") {
+        } else if (state === "running") {
             ctx.strokeStyle = "rgba(56, 189, 248, 0.8)"; // sky-500
             ctx.fillStyle = "rgba(56, 189, 248, 0.1)";
         } else {
@@ -137,7 +140,7 @@
         ctx.shadowBlur = 0; // reset
 
         // The Tunnel / Payload
-        if (state === "requesting") {
+        if (state === "running") {
             // Signal going right to left
             const progress = (time % 2) / 2;
             ctx.fillStyle = "rgba(56, 189, 248, 0.8)";
@@ -219,10 +222,22 @@
     }
 
     function runSimulation() {
-        if (state !== "idle" && state !== "done") return;
+        if (state === "done") {
+            // Manual Reset
+            state = "idle";
+            validationSteps = validationSteps.map((s) => ({
+                ...s,
+                status: "pending",
+            }));
+            logs = [];
+            time = 0;
+            return;
+        }
 
-        // Reset
-        state = "requesting";
+        if (state !== "idle") return;
+
+        // Start
+        state = "running";
         time = 0;
         validationSteps = validationSteps.map((s) => ({
             ...s,
@@ -270,7 +285,7 @@
 </script>
 
 <ShowcaseTemplate
-    badge="1 / 5 API SUITE"
+    badge="5 / 7 API SUITE"
     title="Web3 VRF API"
     description="Deliver cryptographically verifiable, truly unpredictable quantum randomness directly to your smart contracts. Un-gameable on-chain entropy powered by Lineum's fluid vacuum simulation."
     traditionalTitle="Traditional On-Chain Randomness"
@@ -328,97 +343,60 @@ contract LootBox is LineumVRFConsumer {
         <div
             class="absolute bottom-6 left-8 right-8 h-[30%] flex items-end justify-center"
         >
-            <button
+            <ShowcaseButton
+                status={state === "delivering" ? "running" : state}
+                theme="purple"
+                disabled={state === "delivering" || state === "running"}
+                idleText="Generate VRF Proof"
+                runningText={state === "running"
+                    ? "Broadcasting TXN..."
+                    : "VRF Payload Incoming..."}
+                doneText="New VRF Hash"
                 on:click={runSimulation}
-                disabled={state === "requesting" || state === "delivering"}
-                class="px-6 py-3 bg-sky-500/10 hover:bg-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed text-sky-400 border border-sky-500/30 rounded-full font-bold text-xs sm:text-sm tracking-widest uppercase transition-all flex items-center gap-3"
-            >
-                {#if state === "idle" || state === "done"}
-                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"
-                    ></span>
-                    Request VRF Randomness
-                {:else if state === "requesting"}
-                    <span
-                        class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"
-                    ></span>
-                    Broadcasting TXN...
-                {:else if state === "delivering"}
-                    <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"
-                    ></span>
-                    VRF Payload Incoming...
-                {/if}
-            </button>
+            />
         </div>
     </div>
 
     <!-- Proof (Cryptographic Verification) -->
-    <div
+    <ShowcaseTerminal
         slot="proof"
-        class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-start gap-4 h-full min-h-[150px] font-mono"
+        title="Live Cryptographic Audit"
+        badge="ZK-SNARK"
+        badgeColorClass="text-sky-500"
+        primaryColorClass="text-sky-400"
+        {logs}
+        status={state === "delivering" ? "running" : state}
     >
-        <div
-            class="text-xs text-slate-500 border-b border-slate-800 pb-2 uppercase tracking-widest font-bold flex justify-between"
-        >
-            <span>Live Cryptographic Audit</span>
-            <span class="text-sky-500">ZK-SNARK</span>
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-6 w-full h-full">
-            <!-- Terminal Logs -->
+        <div slot="side-panel">
             <div
-                class="flex-1 flex flex-col justify-end text-xs text-sky-400 gap-1.5 overflow-hidden"
+                class="text-[10px] text-slate-500 uppercase tracking-wider mb-2"
             >
-                {#if logs.length === 0}
-                    <div class="text-slate-600 opacity-50">
-                        Waiting for contract interaction...
-                    </div>
-                {/if}
-                {#each logs as log}
-                    <div class="animate-fade-in">&gt; {log}</div>
-                {/each}
-                {#if state === "requesting" || state === "delivering"}
-                    <div class="animate-pulse opacity-50 text-slate-500">
-                        &gt; _
-                    </div>
-                {/if}
+                On-Chain Consensus
             </div>
-
-            <!-- Validation Flow -->
-            <div
-                class="w-full md:w-56 flex flex-col gap-2 justify-end pb-1 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6"
-            >
-                <div
-                    class="text-[10px] text-slate-500 uppercase tracking-wider mb-1"
-                >
-                    On-Chain Consensus
-                </div>
-                {#each validationSteps as step}
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span
-                            class={step.status === "pass"
-                                ? "text-slate-300"
-                                : "text-slate-600"}>{step.name}</span
+            {#each validationSteps as step}
+                <div class="flex items-center justify-between text-[10px] mb-2">
+                    <span
+                        class={step.status === "pass"
+                            ? "text-slate-300"
+                            : "text-slate-600"}>{step.name}</span
+                    >
+                    {#if step.status === "pass"}
+                        <span class="text-emerald-400 font-bold ml-2">PASS</span
                         >
-                        {#if step.status === "pass"}
-                            <span class="text-emerald-400 font-bold ml-2"
-                                >PASS</span
-                            >
-                        {:else if step.status === "running"}
-                            <span
-                                class="text-sky-400 animate-pulse ml-2 text-[8px] tracking-widest"
-                                >AWAIT</span
-                            >
-                        {:else}
-                            <span
-                                class="text-slate-700 ml-2 text-[8px] uppercase"
-                                >PEND</span
-                            >
-                        {/if}
-                    </div>
-                {/each}
-            </div>
+                    {:else if step.status === "running"}
+                        <span
+                            class="text-sky-400 animate-pulse ml-2 text-[8px] tracking-widest"
+                            >AWAIT</span
+                        >
+                    {:else}
+                        <span class="text-slate-700 ml-2 text-[8px] uppercase"
+                            >PEND</span
+                        >
+                    {/if}
+                </div>
+            {/each}
         </div>
-    </div>
+    </ShowcaseTerminal>
 </ShowcaseTemplate>
 
 <style>
@@ -431,8 +409,5 @@ contract LootBox is LineumVRFConsumer {
             opacity: 1;
             transform: translateY(0);
         }
-    }
-    .animate-fade-in {
-        animation: fade-in 0.15s ease-out forwards;
     }
 </style>

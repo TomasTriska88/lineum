@@ -821,16 +821,16 @@ Statuses such as `#disproved` for the points below reflect the **current state i
 
 This section contains hypotheses extracted from the analysis of Vlasta's "Open-Ended Algorithm" (OEA) and Mikolov's requirements for OE systems.
 
-### 🔲 18. Lineum as a continuous limit of OEA (Vlasta/Lina) #hypothesis
+### 🔲 18. Lineum as a continuous limit of OEA (V. Smetak) #hypothesis
 
 - **Context:** Vlasta's discrete model defines the "environment" as a prime number mask that filters the visibility of states.
 - **Hypothesis:** Lineum Core (Eq-4) is the continuous hydrodynamic limit of this model, where the discrete prime mask turns into a continuous $\zeta$-function potential.
 - **Verification:** Verify whether "aesthetically interesting" shapes in OEA topologically correspond to stable vortex states (vortex integers) in Lineum.
 
-### 🔲 19. Pragmatic rabbit and thermodynamic utility (Mikolov/Lina) #hypothesis
+### 🔲 19. Thermodynamic utility of prime states (T. Mikolov insight) #hypothesis
 
-- **Context:** Mikolov's requirement for "utility" in OE, so the system is not just a "rabbit solver".
-- **Hypothesis:** In a thermodynamic system, "utility" is equivalent to "the ability to minimize topological tension". The system does not calculate primes as a task, but uses them (Zeta-RNB) as low-energy states for survival.
+- **Context:** Mikolov's requirement for "utility" in OE systems.
+- **Hypothesis:** In a thermodynamic system, "utility" is equivalent to "the ability to minimize topological tension". The system does not calculate primes as an artificial task, but uses them (Zeta-RNB) as low-energy states for survival.
 - **Verification:** Observe whether surviving linons have a statistically higher correlation with Zeta zeros than short-lived fluctuations.
 
 ### 🔲 20. Kolmogorov expansion hypothesis (Vlasta) #hypothesis
@@ -1525,7 +1525,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 - [ ] **4) (License) Future public release of Lineum (new version): migrate core to AGPL**
     - *(Note: historical Zenodo v1.0.6-core is MIT and will remain so as a proof of priority).*
 - [ ] **5) (Codex) Add a new document (e.g., `docs/LINEUM_CODEX.md`)**
-    - Containing the text "Lineum Codex — Ethical Stance (v1)" (text provided by Lina / ready). (Do not create the file yet).
+    - Containing the text "Lineum Codex — Ethical Stance (v1)" (text ready). (Do not create the file yet).
 - [ ] **6) (Portal Policy) Prepare Portal documents:**
     - `TERMS_OF_SERVICE.md` and `ACCEPTABLE_USE.md`
     - To implement the Codex (green / restricted / hard-stop) and enforcement mechanisms (audit logs, kill switch, screening).
@@ -1565,7 +1565,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 - [ ] **M.3 Portal Integration**
     - Do not just link outwards. Create a gorgeous, native Landing Page at `lineum.dev/store` showcasing the products elegantly ("Apple-style", potentially utilizing Three.js for 3D spinning models), with CTA buttons routing to the Spreadshop checkout.
     - **QR Codes (Physical-Digital Bridge):** Incorporate small QR codes on the merch. When scanned, they open a hidden `/resonance` easter-egg portal page or an interactive Matrix message.
-    - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message (from Lina/Lineum) on the enclosed packing slips.
+    - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message on the enclosed packing slips.
 - [ ] **M.4 Marketing (Drops & Gamification)**
     - Present products as limited "Drops" (e.g., v1.0.0 Founder's edition) to foster exclusivity.
     - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Lineum team and active beta-testers as an exclusive reward.

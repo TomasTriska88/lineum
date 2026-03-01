@@ -70,6 +70,7 @@
                 >{m.nav_api()}</a
             >
             <a href="/#scientist">{m.sections_scientist_label()}</a>
+            <a href="/about">About</a>
             <a href="/codex">Codex</a>
             <a href="/wiki#faq">FAQ</a>
             <a href="/support" class="nav-cta">{m.nav_support()}</a>

@@ -76,7 +76,7 @@ Infrastructure is defined as code in [railway.json](file:///c:/Users/Tomáš/Doc
 The alpha phase is strictly protected. Access requires an email address whitelisted in the Cloudflare Access dashboard. Unauthorized traffic is blocked at the edge before reaching Railway servers.
 
 ## 🎨 Design & Experience
-All future portal development must adhere to the [Design & Experience Guide](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/DESIGN_GUIDE.md). This ensures visual consistency (glassmorphism), maintenance of the "Lineum Explorer" AI persona, and layperson-first communication standards.
+All future portal development must adhere to the [Design & Experience Guide](file:///c:/Users/Tomáš/Documents/GitHub/lineum-core/portal/docs/DESIGN_GUIDE.md). This ensures visual consistency (glassmorphism), maintenance of the "Lineum Explorer" AI persona, and layperson-first communication standards.
 
 ## 📖 Living Document Policy
 This document is a **Living Document**. To ensure the AI assistant (Antigravity) and the User are always aligned, this file MUST be updated manually or automatically whenever infrastructure components change. **Antigravity is authorized to update this file proactively as changes are executed.**

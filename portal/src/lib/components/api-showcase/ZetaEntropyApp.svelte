@@ -1,8 +1,10 @@
 <script lang="ts">
-    import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
     import { onMount } from "svelte";
+    import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
+    import ShowcaseButton from "./ShowcaseButton.svelte";
+    import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
 
-    let state: "idle" | "collapsing" | "done" = "idle";
+    let state: "idle" | "running" | "done" = "idle";
     let histogramBins = new Array(40).fill(0);
     let targetHeights = new Array(40).fill(0);
     let logs: string[] = [];
@@ -29,12 +31,10 @@
             state = "idle";
             histogramBins = new Array(40).fill(0);
             logs = [];
-            // Small visual reset delay
-            setTimeout(() => startSimulation(), 100);
             return;
         }
 
-        state = "collapsing";
+        state = "running";
         addLog("> INITIATING MASSIVE TOPOLOGICAL COLLAPSE...");
         addLog("> SEEDING SIMULACRUM GEOMETRY...");
 
@@ -97,7 +97,7 @@
 </script>
 
 <ShowcaseTemplate
-    badge="2 / 5 API SUITE"
+    badge="4 / 7 API SUITE"
     title="Extreme Zeta Entropy API"
     description="A premium B2B endpoint that artificially generates mathematically perfect Riemann Zeta points by colliding massive structures. The Quantum Chaos."
     traditionalTitle="Odlyzko Analytical Algorithms"
@@ -119,7 +119,7 @@
             class="absolute inset-0 top-0 h-[60%] perspective-[1000px] flex items-center justify-center overflow-hidden"
         >
             <div
-                class={`relative w-full h-full transform-style-3d transition-transform duration-1000 ${state === "collapsing" ? "scale-150 rotate-x-60 rotate-z-45 opacity-0" : "scale-100 rotate-x-60 rotate-z-45"}`}
+                class={`relative w-full h-full transform-style-3d transition-transform duration-1000 ${state === "running" ? "scale-150 rotate-x-60 rotate-z-45 opacity-0" : "scale-100 rotate-x-60 rotate-z-45"}`}
             >
                 {#each nodes as node (node.id)}
                     <div
@@ -188,24 +188,14 @@
 
         <!-- Start Button -->
         <div class="absolute top-6 left-6 z-10">
-            <button
+            <ShowcaseButton
+                status={state}
+                theme="rose"
+                idleText="Stream Entropy"
+                runningText="Streaming..."
+                doneText="New Stream"
                 on:click={startSimulation}
-                class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-full font-bold text-xs tracking-widest uppercase transition-all flex items-center gap-2"
-            >
-                {#if state === "idle"}
-                    <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"
-                    ></span>
-                    Run Structural Collapse
-                {:else if state === "collapsing"}
-                    <span
-                        class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
-                    ></span>
-                    Simulating Chaos...
-                {:else}
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    Reset Experiment
-                {/if}
-            </button>
+            />
         </div>
 
         <div
@@ -216,33 +206,16 @@
     </div>
 
     <!-- Proof (Live Terminal) -->
-    <div
+    <ShowcaseTerminal
         slot="proof"
-        class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-start gap-2 h-full min-h-[150px] font-mono"
-    >
-        <div
-            class="text-xs text-slate-500 border-b border-slate-800 pb-2 mb-2 uppercase tracking-widest font-bold flex justify-between"
-        >
-            <span>Live Audit Terminal</span>
-            <span class="text-emerald-500">SECURE SHELL</span>
-        </div>
-
-        <div
-            class="flex-1 flex flex-col justify-end text-xs text-emerald-400 gap-1.5 overflow-hidden"
-        >
-            {#if logs.length === 0}
-                <div class="text-slate-600 opacity-50">
-                    Waiting for simulation input...
-                </div>
-            {/if}
-            {#each logs as log}
-                <div class="animate-fade-in">&gt; {log}</div>
-            {/each}
-            {#if state === "collapsing"}
-                <div class="animate-pulse opacity-50">&gt; _</div>
-            {/if}
-        </div>
-    </div>
+        title="Live Audit Terminal"
+        badge="SECURE SHELL"
+        badgeColorClass="text-emerald-500"
+        primaryColorClass="text-emerald-400"
+        {logs}
+        status={state}
+        emptyText="Waiting for simulation input..."
+    />
 </ShowcaseTemplate>
 
 <style>

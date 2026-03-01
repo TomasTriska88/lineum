@@ -13,6 +13,32 @@
     // Integration
     export let codeSnippet = "";
     export let language = "typescript";
+
+    function highlightSnippet(code: string) {
+        if (!code) return "";
+        let highlighted = code;
+        highlighted = highlighted.replace(
+            /\b(import|from|const|let|var|function|return|if|else|contract|public|internal|override|for|break)\b/g,
+            '<span class="text-rose-400">$1</span>',
+        );
+        highlighted = highlighted.replace(
+            /\b(lineum|solver|simulation|client|API|Client)\b/g,
+            '<span class="text-sky-300">$1</span>',
+        );
+        highlighted = highlighted.replace(
+            /(["'`].*?["'`])/g,
+            '<span class="text-emerald-400">$1</span>',
+        );
+        highlighted = highlighted.replace(
+            /\b(true|false|null|undefined|[0-9]+(\.[0-9]+)?(e-?[0-9]+)?)\b/g,
+            '<span class="text-purple-400">$1</span>',
+        );
+        highlighted = highlighted.replace(
+            /(\/\/.*|#.*)/gi,
+            '<span class="text-slate-500 italic">$1</span>',
+        );
+        return highlighted;
+    }
 </script>
 
 <div class="w-full flex flex-col gap-16 items-center mb-32">
@@ -39,23 +65,29 @@
 
     <!-- B) Visual Immediacy -->
     <div class="w-full max-w-6xl px-4">
-        <slot name="visual">
-            <div
-                class="w-full aspect-video md:aspect-[21/9] bg-slate-900/50 border border-slate-800 rounded-3xl flex items-center justify-center shadow-xl overflow-hidden relative group"
-            >
+        <div
+            class="w-full transition-shadow duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,246,0.15)] rounded-3xl"
+        >
+            <slot name="visual">
                 <div
-                    class="absolute inset-0 bg-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity"
-                ></div>
-                <!-- Visual Component Placeholder -->
-                <span class="text-slate-600 font-mono text-sm"
-                    >[Interactive Visualization Placeholder]</span
+                    class="w-full h-[450px] bg-slate-900/50 border border-slate-800 rounded-3xl flex items-center justify-center shadow-xl overflow-hidden relative group"
                 >
-            </div>
-        </slot>
+                    <div
+                        class="absolute inset-0 bg-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    ></div>
+                    <!-- Visual Component Placeholder -->
+                    <span class="text-slate-600 font-mono text-sm"
+                        >[Interactive Visualization Placeholder]</span
+                    >
+                </div>
+            </slot>
+        </div>
     </div>
 
     <!-- Details Grid -->
-    <div class="w-full max-w-6xl px-4 grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <div
+        class="w-full max-w-6xl px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 mt-4"
+    >
         <!-- C) Head-to-Head Comparison -->
         <div class="flex flex-col gap-6">
             <h3 class="text-2xl font-bold text-white">Head-to-Head</h3>
@@ -128,8 +160,9 @@
                 <div
                     class="bg-[#0d1117] border border-slate-800 rounded-2xl p-6 overflow-x-auto shadow-inner"
                 >
-                    <pre class="text-sm text-sky-400 font-mono"><code
-                            >{codeSnippet}</code
+                    <pre
+                        class="text-sm font-mono whitespace-pre-wrap break-all text-sky-200"><code
+                            >{@html highlightSnippet(codeSnippet)}</code
                         ></pre>
                 </div>
             </div>

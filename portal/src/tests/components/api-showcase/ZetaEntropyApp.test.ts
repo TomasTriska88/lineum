@@ -18,7 +18,7 @@ describe('ZetaEntropyApp Showcase Component', () => {
     it('renders the interactive trigger button', () => {
         const { getByText, getByRole } = render(ZetaEntropyApp);
         const button = getByRole('button');
-        expect(button.textContent).toContain('Run Structural Collapse');
+        expect(button.textContent).toContain('Stream Entropy');
     });
 
     it('changes button state upon interaction', async () => {
@@ -27,6 +27,6 @@ describe('ZetaEntropyApp Showcase Component', () => {
         const triggerBtn = getByRole('button');
         await fireEvent.click(triggerBtn);
 
-        expect(triggerBtn.textContent).toContain('Simulating Chaos...');
+        expect(triggerBtn.textContent).toContain('Streaming...');
     });
 });

@@ -1,9 +1,11 @@
 <script lang="ts">
     import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
+    import ShowcaseButton from "./ShowcaseButton.svelte";
+    import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
     import { onMount, onDestroy } from "svelte";
     import { intersect } from "$lib/actions/intersect";
 
-    let state: "idle" | "sampling" | "done" = "idle";
+    let state: "idle" | "running" | "done" = "idle";
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D | null = null;
     let animationId: number;
@@ -29,7 +31,8 @@
     });
 
     onDestroy(() => {
-        if (animationId) cancelAnimationFrame(animationId);
+        if (typeof window !== "undefined" && animationId)
+            cancelAnimationFrame(animationId);
     });
 
     function drawIdleState() {
@@ -98,7 +101,8 @@
     function triggerSampling() {
         if (state !== "idle") {
             // Reset
-            if (animationId) cancelAnimationFrame(animationId);
+            if (typeof window !== "undefined" && animationId)
+                cancelAnimationFrame(animationId);
             state = "idle";
             logs = [];
             hexStream = [];
@@ -107,7 +111,7 @@
             return;
         }
 
-        state = "sampling";
+        state = "running";
         logs = ["> ALLOCATING VACUUM BUFFER...", "> OPENING SENSOR GATE..."];
         hexStream = [];
 
@@ -149,7 +153,7 @@
 </script>
 
 <ShowcaseTemplate
-    badge="1 / 5 API SUITE"
+    badge="3 / 7 API SUITE"
     title="Fast Edge-of-Chaos TRNG API"
     description="Harvest mathematically pure, highly volatile entropy from the vacuum noise of simulated chaotic fields. Ideal for low-latency session keys and web cryptography."
     traditionalTitle="Traditional PRNGs / Hardware Sources"
@@ -194,7 +198,7 @@
                 <div
                     class="absolute inset-0 flex items-center justify-center text-sky-500/30 tracking-[0.5em] text-sm uppercase pointer-events-none z-30"
                 >
-                    Vacuum Oscillator Standby
+                    TRNG Cryptography Standby
                 </div>
             {/if}
         </div>
@@ -209,7 +213,7 @@
             >
                 {#if hexStream.length === 0}
                     <div class="text-slate-600 opacity-50">
-                        Awaiting vacuum sampling...
+                        Awaiting TRNG request...
                     </div>
                 {/if}
                 {#each hexStream as line}
@@ -223,96 +227,58 @@
 
             <!-- Start Button -->
             <div class="ml-4 flex-shrink-0">
-                <button
+                <ShowcaseButton
+                    status={state}
+                    theme="sky"
+                    idleText="Generate Session Key"
+                    runningText="Generating Key..."
+                    doneText="New Key"
                     on:click={triggerSampling}
-                    class="px-5 py-2.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-full font-bold text-xs tracking-widest uppercase transition-all flex items-center gap-2"
-                >
-                    {#if state === "idle"}
-                        <span
-                            class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"
-                        ></span>
-                        Sample Vacuum
-                    {:else if state === "sampling"}
-                        <span
-                            class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"
-                        ></span>
-                        Sampling...
-                    {:else}
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"
-                        ></span>
-                        Reset Sensor
-                    {/if}
-                </button>
+                />
             </div>
         </div>
     </div>
 
     <!-- Proof (Live Terminal & Validations) -->
-    <div
+    <ShowcaseTerminal
         slot="proof"
-        class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-start gap-4 h-full min-h-[150px] font-mono"
+        title="Live Audit Terminal"
+        badge="SECURE SHELL"
+        badgeColorClass="text-emerald-500"
+        primaryColorClass="text-emerald-400"
+        {logs}
+        status={state}
     >
-        <div
-            class="text-xs text-slate-500 border-b border-slate-800 pb-2 uppercase tracking-widest font-bold flex justify-between"
-        >
-            <span>Live Audit Terminal</span>
-            <span class="text-emerald-500">SECURE SHELL</span>
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-6 w-full h-full">
-            <!-- Terminal Logs -->
+        <div slot="side-panel">
             <div
-                class="flex-1 flex flex-col justify-end text-xs text-emerald-400 gap-1.5 overflow-hidden"
+                class="text-[10px] text-slate-500 uppercase tracking-wider mb-2"
             >
-                {#if logs.length === 0}
-                    <div class="text-slate-600 opacity-50">
-                        Waiting for sensor input...
-                    </div>
-                {/if}
-                {#each logs as log}
-                    <div class="animate-fade-in">&gt; {log}</div>
-                {/each}
-                {#if state === "sampling"}
-                    <div class="animate-pulse opacity-50">&gt; _</div>
-                {/if}
+                NIST SP 800-22 Suite
             </div>
-
-            <!-- NIST Validations -->
-            <div
-                class="w-full md:w-48 flex flex-col gap-2 justify-end pb-1 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6"
-            >
-                <div
-                    class="text-[10px] text-slate-500 uppercase tracking-wider mb-1"
-                >
-                    NIST SP 800-22 Suite
-                </div>
-                {#each nistTests as test}
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span
-                            class={test.passed
-                                ? "text-slate-300"
-                                : "text-slate-600"}>{test.name}</span
+            {#each nistTests as test}
+                <div class="flex items-center justify-between text-[10px] mb-2">
+                    <span
+                        class={test.passed
+                            ? "text-slate-300"
+                            : "text-slate-600"}>{test.name}</span
+                    >
+                    {#if test.passed}
+                        <span class="text-emerald-400 font-bold ml-2">PASS</span
                         >
-                        {#if test.passed}
-                            <span class="text-emerald-400 font-bold ml-2"
-                                >PASS</span
-                            >
-                        {:else if state === "sampling"}
-                            <span
-                                class="text-sky-400 animate-pulse ml-2 text-[8px] tracking-widest"
-                                >RUNNING</span
-                            >
-                        {:else}
-                            <span
-                                class="text-slate-700 ml-2 text-[8px] uppercase"
-                                >PENDING</span
-                            >
-                        {/if}
-                    </div>
-                {/each}
-            </div>
+                    {:else if state === "running"}
+                        <span
+                            class="text-sky-400 animate-pulse ml-2 text-[8px] tracking-widest"
+                            >RUNNING</span
+                        >
+                    {:else}
+                        <span class="text-slate-700 ml-2 text-[8px] uppercase"
+                            >PENDING</span
+                        >
+                    {/if}
+                </div>
+            {/each}
         </div>
-    </div>
+    </ShowcaseTerminal>
 </ShowcaseTemplate>
 
 <style>

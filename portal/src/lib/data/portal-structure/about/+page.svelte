@@ -36,6 +36,25 @@
                 >
             </p>
 
+            <h2>Core Team</h2>
+            <p>
+                <strong>Tomáš Tříska</strong><br />
+                <em>Founder, Lead Researcher</em><br />
+                Creator of the Lineum Core simulation engine and primary architecture.
+            </p>
+            <p>
+                <strong>Kateřina Marečková</strong><br />
+                <em>Contributor & Scientific Opposition</em><br />
+                Provided foundational critical opposition, framework design, and
+                hypothesis testing.
+            </p>
+            <p>
+                <strong>Vlastimil Smeták</strong><br />
+                <em>Mathematical & Structural Formulations</em><br />
+                Contributed structural insights and correlations with the external
+                OEA (Obecně Evoluční Algoritmus) model.
+            </p>
+
             <h2>Connect With Us</h2>
             <p>
                 For technical discussions, API integrations, and research

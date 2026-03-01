@@ -10,6 +10,7 @@ These rules govern agent behavior and documentation standards for the Lineum pro
 - **English-Only Whitepapers**: All content in the `whitepapers/` directory must be strictly in **English**. 
 - **Reasoning**: To maintain international auditability and academic consistency.
 - **Naming Consistency**: Use canonical file names as referenced in the documentation (e.g., `tools/whitepaper_contract.py`).
+- **Core Boundary (Math vs. Philosophy)**: The `whitepapers/1-core/` track (especially `01-core-lineum.md` and `02-core-equation.md`) must remain strictly mathematical, procedural, and focused on the Eq-4 mechanics. ALL macro-ontological, cosmological, or philosophical interpretive parallels (e.g., Schrödinger, Amplituhedron, Consciousness) MUST be externalized to the `2-cosmology/` or `3-ontology/` hypothesis tracks. Core documents must not be polluted with philosophical text.
 
 ## 3. Audit Integrity
 - **Frozen Core**: The canonical simulation settings (RUN_ID=6, etc.) are frozen for v1.0.x. Any changes to the audit gate logic must be reflected in both `lineum.py` and the whitepapers.
@@ -59,12 +60,16 @@ These rules govern agent behavior and documentation standards for the Lineum pro
 ## 12. Content & Copywriting Audiences
 The portal seamlessly integrates three distinct worlds, and the copy must reflect the target audience for each:
 1. **Homepage / Main Portal:** Targeted at **laymen**. The text must be simple, clear, and self-explanatory. Focus on the core concepts (like "fields that breathe") without overwhelming jargon or heavy B2B marketing.
-2. **API / Routing Services (Pro):** Targeted at **clients/business**. This is where premium B2B marketing language is used to attract customers and explain the value proposition (ROI, milliseconds, logistics).
+2. **API / Routing Services (Pro & Enterprise):** Targeted at **clients/business**. The API is our primary source of income and the ultimate, undeniable proof of Lineum's functionality (stronger proof than any whitepaper). Therefore, the API presentation MUST:
+   - Command a **WOW factor**: It must look premium, incredibly performant, and instantly impressive.
+   - Provide **Clear ROI**: Do not "cook water" (vaření z vody). Show hard numbers (e.g., latency saved, agents processed). Offer immediate, practical business value so the user thinks, "I will pay for this right now to build X".
+   - Differentiate **Public API vs Turnkey Solutions**: For massive-scale integrations (like city traffic or 100k crowd evacuation), explicitly offer custom Enterprise solutions on key, reserving the public API for more standard, self-serve integrations.
 3. **Whitepapers / Science / Wiki:** Targeted at the **scientific community**. The language must be rigorous, cautious, precise, and scientifically accurate.
 
 ## 13. Diagnostic & Temporary Logs
-- **No Root Clutter:** NEVER create temporary files, error logs (`error.log`), `check.txt`, or any diagnostic output in the root directory of the repository (`/`).
+- **No Root Clutter:** NEVER create temporary files, error logs (`error.log`), `check.txt`, or any diagnostic output in the root directory of the repository (`/`) or `portal/`. 
 - **Use Scratch Directory:** ALL temporary outputs from agent debugging, script tests, or log dumping MUST be written solely to the `.scratch/` directory. If `.scratch/` does not exist, create it. It is `.gitignore`d to prevent polluting the codebase.
+- **Forbid Alternative Temp Folders:** Do NOT use `temp/`, `test_out/`, or any other generic temporary folder name. Always consolidate temporary diagnostic output under `.scratch/`.
 
 ## 14. Synced Data Mirrors (CRITICAL)
 - **Do Not Edit Mirrored Data:** The folder `portal/src/lib/data/` contains auto-syncing mirrored copies of documentation (like `.md` files) used for the Lina AI memory and website context. NEVER edit markdown files directly inside this folder.

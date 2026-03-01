@@ -17,16 +17,16 @@ describe('FastTrngApp Showcase Component', () => {
 
     it('renders the interactive sample trigger', () => {
         const { getByText } = render(FastTrngApp);
-        expect(getByText('Sample Vacuum')).toBeTruthy();
+        expect(getByText('Generate Session Key')).toBeTruthy();
     });
 
     it('changes button text and starts sampling upon interaction', async () => {
         const { getByText } = render(FastTrngApp);
 
-        const triggerBtn = getByText('Sample Vacuum');
+        const triggerBtn = getByText('Generate Session Key');
         await fireEvent.click(triggerBtn);
 
         // button enters sampling state
-        expect(getByText('Sampling...')).toBeTruthy();
+        expect(getByText('Generating Key...')).toBeTruthy();
     });
 });
