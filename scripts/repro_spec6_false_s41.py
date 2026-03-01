@@ -7,7 +7,7 @@ import glob
 
 def main():
     parser = argparse.ArgumentParser(description="Spustí kanonický běh spec6_false_s41 (Lineum).")
-    parser.add_argument("--steps", type=str, default="2000", help="Počet kroků simulace (default: 2000)")
+    parser.add_argument("--steps", type=str, default="2001", help="Počet kroků simulace (default: 2001 pro dosažení kroku 2000)")
     parser.add_argument("--quick", action="store_true", help="Rychlý režim: 200 kroků, vypnuté ukládání artefaktů.")
     args = parser.parse_args()
 
@@ -53,6 +53,7 @@ def main():
         # pokud CONFIGS neřekne jinak. Pro run_id 6 false je config definován.
         # Explicitně zapneme ukládání stavu pro checkpointy referenčního exportu
         env["LINEUM_SAVE_STATE"] = "1"
+        env["LINEUM_CHECKPOINT_EVERY"] = "200" # Optimize output specifically for manifest requirements
 
     # Sestavení příkazu
     cmd = [sys.executable, str(lineum_py)]
