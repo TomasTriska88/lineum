@@ -475,6 +475,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       - Sets canonical references: `RUN_ID=6`, `RUN_MODE=false`, `SEED=41`, `PARAM_TAG=dt05_w256_steps2500`
       - Minimizes output payload to prevent OOM/disk-thrashing: `STORE_EVERY=50`, disables all `.gif`, `.png`, and `frames` exports.
       - Ensure this script is documented as the recommended starting point for deep, multi-thousand step analyses without crashing generic hardware.
+- [ ] **Technical Debt (v1.2.0):** Refactor the core simulation loop in `lineum.py` to natively ensure the final state of the simulation is *always* saved as a checkpoint upon completion or exit, regardless of the `i % CHECKPOINT_EVERY == 0` modulo logic. This will allow audit pipeline scripts (like `repro_spec6_false_s41.py`) to use the exact specified number of `--steps 2000` instead of relying on the `+1` (2001) step workaround to capture the final boundary state.
 
 ### 🔲 G. Implementation details and stability against "engineering" choices #impl
 
