@@ -1,3 +1,5 @@
+import { config } from './config';
+
 export const palette = {
     psi: '#00d2ff',  // ψ Phase — cyan
     kappa: '#1a3a5a',  // κ Stability — deep blue
@@ -11,12 +13,12 @@ export const palette = {
 };
 
 export const content = {
-    contactEmail: 'tomas.triska.iver@gmail.com',
+    contactEmail: config.contact.primary,
     operator: {
-        name: 'Tomáš Tříska',
-        address: 'Mírová 40, 356 04 Habartov, Czech Republic',
-        phone: '+420 721 026 189',
-        ico: '87577101'
+        name: config.brand.legalName,
+        address: config.brand.address,
+        phone: config.brand.phone || '+420 721 026 189',
+        ico: config.brand.ic
     },
     hero: {
         symbol: 'Λ',

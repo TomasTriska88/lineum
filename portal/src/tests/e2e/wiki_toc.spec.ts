@@ -3,7 +3,7 @@ import { test, expect } from './base';
 test.describe('Wiki Table of Contents (TOC)', () => {
     test.beforeEach(async ({ page }) => {
         // Clear sessionStorage to handle modal uniformly
-        await page.goto('/wiki/lineum-core');
+        await page.goto('/wiki/01-core-lineum');
         await page.evaluate(() => sessionStorage.clear());
         await page.reload();
 

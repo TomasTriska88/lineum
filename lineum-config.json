@@ -1,0 +1,22 @@
+{
+    "brand": {
+        "name": "Lineum",
+        "legalName": "Tomáš Tříska",
+        "ic": "87577101",
+        "address": "Mírová 40, 356 04 Habartov, Czech Republic",
+        "phone": "+420 721 026 189",
+        "trademark": "Lineum™",
+        "domain": "lineum.io",
+        "url": "https://lineum.io"
+    },
+    "contact": {
+        "primary": "tomas.triska.iver@gmail.com",
+        "noreply": "noreply@lineum.io"
+    },
+    "academic": {
+        "orcid": "0009-0003-4026-7164",
+        "orcidUrl": "https://orcid.org/0009-0003-4026-7164",
+        "zenodoDoi": "10.5281/zenodo.16934359",
+        "zenodoUrl": "https://doi.org/10.5281/zenodo.16934359"
+    }
+}

@@ -107,7 +107,8 @@ const projectFilesToSync = [
     { source: '.zenodo.json', target: 'src/lib/data/project/zenodo.json' },
     { source: 'railway.json', target: 'src/lib/data/project/railway_config.json' },
     { source: 'requirements.txt', target: 'src/lib/data/project/requirements.txt' },
-    { source: 'portal/package.json', target: 'src/lib/data/project/portal_package.json' }
+    { source: 'portal/package.json', target: 'src/lib/data/project/portal_package.json' },
+    { source: 'lineum-config.json', target: 'src/lib/data/project/lineum-config.json' }
 ];
 
 function copyRecursiveSync(src, dest) {

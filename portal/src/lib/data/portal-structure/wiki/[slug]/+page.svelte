@@ -2,7 +2,7 @@
     import * as m from "$lib/paraglide/messages.js";
     import { marked } from "marked";
     export let data;
-    const { content, title, slug } = data;
+    const { content, title, slug, status } = data;
 
     let displayContent = "";
     let toc: { level: number; text: string; id: string }[] = [];

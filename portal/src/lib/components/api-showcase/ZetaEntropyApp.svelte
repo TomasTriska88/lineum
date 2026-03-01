@@ -24,10 +24,11 @@
         }
     });
 
-    let simulationInterval: ReturnType<typeof setInterval>;
+    let animationFrameId: number;
+    let lastTime = 0;
     function startSimulation() {
         if (state !== "idle") {
-            clearInterval(simulationInterval);
+            cancelAnimationFrame(animationFrameId);
             state = "idle";
             histogramBins = new Array(40).fill(0);
             logs = [];
@@ -39,19 +40,29 @@
         addLog("> SEEDING SIMULACRUM GEOMETRY...");
 
         let samples = 0;
-        const totalSamples = 2500;
+        const isTest = typeof navigator !== "undefined" && navigator.webdriver;
+        const totalSamples = isTest ? 50 : 2500;
         let pValue = 0.5;
+        lastTime = performance.now();
 
-        // Start filling the histogram with simulated data points
-        simulationInterval = setInterval(() => {
-            // Rejection sampling for GUE
-            for (let i = 0; i < 40; i++) {
+        function tick(time: number) {
+            if (state !== "running") return;
+
+            const dt = time - lastTime;
+            const targetDt = isTest ? 10 : 16;
+
+            if (dt < targetDt) {
+                animationFrameId = requestAnimationFrame(tick);
+                return;
+            }
+            lastTime = time;
+
+            for (let i = 0; i < (isTest ? 50 : 40); i++) {
                 if (samples >= totalSamples) {
-                    clearInterval(simulationInterval);
                     state = "done";
                     addLog(`> RUN COMPLETE. KS P-VALUE: >0.999`);
                     addLog("> GUE (RIEMANN ZETA) DISTRIBUTION CONFIRMED.");
-                    break;
+                    return; // Exit loop and don't request next frame
                 }
                 const randomS = Math.random() * 3;
                 const randomP = Math.random() * 1.5;
@@ -62,13 +73,17 @@
                     }
                     samples++;
 
-                    if (samples === 500) addLog("> EXTRACTING EIGENVALUES...");
-                    if (samples === 1500)
+                    if (samples === (isTest ? 10 : 500))
+                        addLog("> EXTRACTING EIGENVALUES...");
+                    if (samples === (isTest ? 30 : 1500))
                         addLog("> PERFORMING KOLMOGOROV-SMIRNOV TEST...");
                 }
             }
             histogramBins = [...histogramBins]; // Trigger reactivity
-        }, 16);
+            animationFrameId = requestAnimationFrame(tick);
+        }
+
+        animationFrameId = requestAnimationFrame(tick);
     }
 
     function addLog(msg: string) {

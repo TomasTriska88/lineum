@@ -35,7 +35,8 @@ export default defineConfig({
         timeout: 120000,
         env: {
             GEMINI_API_KEY: 'INVALID_TEST_KEY',
-            NODE_ENV: 'test'
+            NODE_ENV: 'test',
+            PUBLIC_ENABLE_API_SOLUTIONS: 'true'
         }
     },
 });

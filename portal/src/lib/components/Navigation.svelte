@@ -4,7 +4,10 @@
     import * as m from "$lib/paraglide/messages.js";
     import { languageTag } from "$lib/paraglide/runtime.js";
     import { i18n, pathnames } from "$lib/i18n";
-    import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
+    import {
+        PUBLIC_SIMULACRUM_URL,
+        PUBLIC_ENABLE_API_SOLUTIONS,
+    } from "$env/static/public";
 
     let menuOpen = false;
     let currentLang = languageTag();
@@ -66,9 +69,12 @@
             <a href="/">{m.nav_portal()}</a>
             <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a
             >
-            <a href="/api-solutions" style="color: #38bdf8; font-weight: bold;"
-                >{m.nav_api()}</a
-            >
+            {#if PUBLIC_ENABLE_API_SOLUTIONS === "true"}
+                <a
+                    href="/api-solutions"
+                    style="color: #38bdf8; font-weight: bold;">{m.nav_api()}</a
+                >
+            {/if}
             <a href="/#scientist">{m.sections_scientist_label()}</a>
             <a href="/about">About</a>
             <a href="/codex">Codex</a>

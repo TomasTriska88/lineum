@@ -1,4 +1,8 @@
 [
   "File ResonanceDeck.svelte uses unapproved key 'lina_session_id': localStorage.getItem(\"lina_session_id\"",
-  "File ResonanceDeck.svelte uses unapproved key 'lina_session_id': localStorage.setItem(\"lina_session_id\""
+  "File ResonanceDeck.svelte uses unapproved key 'lina_session_id': localStorage.setItem(\"lina_session_id\"",
+  "File WikiWarning.svelte uses storage but is not whitelisted: sessionStorage.getItem(\"wiki_warning_ack\"",
+  "File WikiWarning.svelte uses storage but is not whitelisted: sessionStorage.setItem(\"wiki_warning_ack\"",
+  "File WikiWarning.svelte uses storage but is not whitelisted: sessionStorage.setItem(\"wiki_warning_ack\"",
+  "File api_solutions_interactions.spec.ts uses storage but is not whitelisted: localStorage.setItem('cookie_consent'"
 ]

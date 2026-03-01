@@ -249,38 +249,42 @@
         ];
 
         let sequence = 0;
+        const isTest = typeof navigator !== "undefined" && navigator.webdriver;
 
-        const simInterval = setInterval(() => {
-            sequence++;
+        const simInterval = setInterval(
+            () => {
+                sequence++;
 
-            if (sequence === 1) {
-                validationSteps[0].status = "pass";
-                validationSteps[1].status = "running";
-                logs = [...logs, `> PRE-PAYING GAS ESTIMATE... OK`];
-            } else if (sequence === 3) {
-                state = "delivering";
-                validationSteps[1].status = "pass";
-                validationSteps[2].status = "running";
-                logs = [...logs, `> VACUUM ENTROPY HARVESTED`];
-                if (logs.length > 5) logs.shift();
-            } else if (sequence === 5) {
-                validationSteps[2].status = "pass";
-                validationSteps[3].status = "running";
-                logs = [...logs, `> GENERATING ZK-SNARK PROOF...`];
-                if (logs.length > 5) logs.shift();
-            } else if (sequence === 7) {
-                state = "done";
-                time = 0; // reset for ripple
-                validationSteps[3].status = "pass";
-                logs = [
-                    ...logs,
-                    `> ON-CHAIN VERIFICATION PASSED`,
-                    `> [SUCCESS] RANDOMNESS INJECTED`,
-                ];
-                if (logs.length > 5) logs.shift();
-                clearInterval(simInterval);
-            }
-        }, 600);
+                if (sequence === 1) {
+                    validationSteps[0].status = "pass";
+                    validationSteps[1].status = "running";
+                    logs = [...logs, `> PRE-PAYING GAS ESTIMATE... OK`];
+                } else if (sequence === 3) {
+                    state = "delivering";
+                    validationSteps[1].status = "pass";
+                    validationSteps[2].status = "running";
+                    logs = [...logs, `> VACUUM ENTROPY HARVESTED`];
+                    if (logs.length > 5) logs.shift();
+                } else if (sequence === 5) {
+                    validationSteps[2].status = "pass";
+                    validationSteps[3].status = "running";
+                    logs = [...logs, `> GENERATING ZK-SNARK PROOF...`];
+                    if (logs.length > 5) logs.shift();
+                } else if (sequence === 7) {
+                    state = "done";
+                    time = 0; // reset for ripple
+                    validationSteps[3].status = "pass";
+                    logs = [
+                        ...logs,
+                        `> ON-CHAIN VERIFICATION PASSED`,
+                        `> [SUCCESS] RANDOMNESS INJECTED`,
+                    ];
+                    if (logs.length > 5) logs.shift();
+                    clearInterval(simInterval);
+                }
+            },
+            isTest ? 10 : 600,
+        );
     }
 </script>
 

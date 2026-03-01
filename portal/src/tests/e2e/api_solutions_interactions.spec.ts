@@ -2,8 +2,18 @@ import { test, expect } from './base';
 
 test.describe('API Solutions Applications Interactions', () => {
 
+    test.beforeEach(async ({ page }) => {
+        // Prevent cookie banner from blocking clicks at the bottom of the viewport
+        await page.addInitScript(() => {
+            window.localStorage.setItem('cookie_consent', 'accepted');
+        });
+    });
+
     test('Should successfully interact with Zeta Entropy API', async ({ page }) => {
-        await page.goto('/api-solutions', { waitUntil: 'networkidle' });
+        page.on('console', msg => console.log('BROWSER:', msg.text()));
+        page.on('pageerror', err => console.log('BROWSER ERROR:', err.message));
+        await page.goto('/api-solutions');
+        await page.waitForSelector('div[data-hydrated="true"]', { timeout: 15000 }); // Wait for SvelteKit hydration
         const section = page.locator('#zeta');
         await section.scrollIntoViewIfNeeded();
         await page.waitForTimeout(500);
@@ -17,7 +27,8 @@ test.describe('API Solutions Applications Interactions', () => {
     });
 
     test('Should successfully interact with Fast TRNG API', async ({ page }) => {
-        await page.goto('/api-solutions', { waitUntil: 'networkidle' });
+        await page.goto('/api-solutions');
+        await page.waitForSelector('div[data-hydrated="true"]', { timeout: 15000 }); // Wait for SvelteKit hydration
         // Original ID was fast_trng
         const section = page.locator('#fast_trng');
         await section.scrollIntoViewIfNeeded();
@@ -32,7 +43,8 @@ test.describe('API Solutions Applications Interactions', () => {
     });
 
     test('Should successfully interact with Web3 VRF API', async ({ page }) => {
-        await page.goto('/api-solutions', { waitUntil: 'networkidle' });
+        await page.goto('/api-solutions');
+        await page.waitForSelector('div[data-hydrated="true"]', { timeout: 15000 }); // Wait for SvelteKit hydration
         const section = page.locator('#web3');
         await section.scrollIntoViewIfNeeded();
         await page.waitForTimeout(500);
@@ -46,7 +58,8 @@ test.describe('API Solutions Applications Interactions', () => {
     });
 
     test('Should successfully interact with LineumHash API', async ({ page }) => {
-        await page.goto('/api-solutions', { waitUntil: 'networkidle' });
+        await page.goto('/api-solutions');
+        await page.waitForSelector('div[data-hydrated="true"]', { timeout: 15000 }); // Wait for SvelteKit hydration
         const section = page.locator('#hash');
         await section.scrollIntoViewIfNeeded();
         await page.waitForTimeout(500);
@@ -61,6 +74,7 @@ test.describe('API Solutions Applications Interactions', () => {
 
     test('Should successfully interact with Gaming RNG API', async ({ page }) => {
         await page.goto('/api-solutions');
+        await page.waitForSelector('div[data-hydrated="true"]', { timeout: 15000 });
         const section = page.locator('#gaming');
         await section.scrollIntoViewIfNeeded();
         await page.waitForTimeout(500);

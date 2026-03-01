@@ -1,6 +1,7 @@
 <script lang="ts">
     import * as m from "$lib/paraglide/messages.js";
     import { config } from "$lib/config";
+    import { PUBLIC_ENABLE_API_SOLUTIONS } from "$env/static/public";
 </script>
 
 <svelte:head>
@@ -29,6 +30,10 @@
             <p>
                 <strong>Official Name:</strong>
                 {config.brand.legalName}<br />
+                <strong>IČ:</strong>
+                {config.brand.ic}<br />
+                <strong>Address:</strong>
+                {config.brand.address}<br />
                 <strong>Founded:</strong> February 2026<br />
                 <strong>Contact:</strong>
                 <a href="mailto:{config.contact.primary}"
@@ -63,11 +68,13 @@
             </p>
         </div>
 
-        <div class="cta-section">
-            <a href="/api-solutions" class="btn btn-primary btn-large">
-                Explore The API Solutions
-            </a>
-        </div>
+        {#if PUBLIC_ENABLE_API_SOLUTIONS === "true"}
+            <div class="cta-section">
+                <a href="/api-solutions" class="btn btn-primary btn-large">
+                    Explore The API Solutions
+                </a>
+            </div>
+        {/if}
     </div>
 </div>
 

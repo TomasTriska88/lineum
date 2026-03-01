@@ -1,6 +1,11 @@
 import { error } from '@sveltejs/kit';
+import { PUBLIC_ENABLE_API_SOLUTIONS } from '$env/static/public';
 
 export const load = ({ params }: { params: { slug: string } }) => {
+  if (PUBLIC_ENABLE_API_SOLUTIONS !== 'true') {
+    throw error(404, 'Not Found');
+  }
+
   const slug = params.slug;
 
   const data = {

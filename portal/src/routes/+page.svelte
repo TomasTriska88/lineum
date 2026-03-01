@@ -4,7 +4,10 @@
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import * as m from "$lib/paraglide/messages.js";
-    import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
+    import {
+        PUBLIC_SIMULACRUM_URL,
+        PUBLIC_ENABLE_API_SOLUTIONS,
+    } from "$env/static/public";
 
     export let data: import("./$types").PageData;
 
@@ -87,11 +90,14 @@
         </p>
         <div class="cta-group">
             <a href="/wiki" class="btn btn-primary">{m.hero_cta_wiki()}</a>
-            <a
-                href="/api-solutions"
-                class="btn btn-outline"
-                style="border-color: #38bdf8; color: #38bdf8;">{m.nav_api()}</a
-            >
+            {#if PUBLIC_ENABLE_API_SOLUTIONS === "true"}
+                <a
+                    href="/api-solutions"
+                    class="btn btn-outline"
+                    style="border-color: #38bdf8; color: #38bdf8;"
+                    >{m.nav_api()}</a
+                >
+            {/if}
             <a href="#scientist" class="btn btn-outline">{m.hero_cta_audit()}</a
             >
         </div>

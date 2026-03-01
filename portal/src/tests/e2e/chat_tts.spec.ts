@@ -105,8 +105,8 @@ test.describe('Chat & TTS Flow', () => {
         await page.goto('/', { timeout: 60000 });
 
         // 1. Open Chat (if closed)
-        const toggleBtn = page.getByRole('button', { name: /toggle chat/i });
-        // Wait for hydration/rendering to complete
+        // Look for the deck main container instead of text-matching the aria-label
+        const toggleBtn = page.locator('.deck-main');
         try {
             await toggleBtn.waitFor({ state: 'visible', timeout: 15000 });
             await toggleBtn.click();
@@ -115,8 +115,7 @@ test.describe('Chat & TTS Flow', () => {
         }
 
         // 2. Type Message
-        // 2. Type Message
-        const input = page.getByPlaceholder(/Ask Lina/i);
+        const input = page.locator('input[type="text"]');
         await input.waitFor({ state: 'visible', timeout: 15000 });
         await input.fill('Hello AI');
         await page.waitForTimeout(500); // Wait for state to settle
@@ -127,7 +126,7 @@ test.describe('Chat & TTS Flow', () => {
 
         // 4. Verify TTS Button
         // The TTS button should appear because we mocked voices.
-        // It has aria-label="Read aloud" (case insensitive check)
+        // The aria-label is still 'Read aloud' unlocalized right now in the svelte file.
         const ttsBtn = page.getByLabel(/Read aloud/i).first();
         await expect(ttsBtn).toBeVisible();
 

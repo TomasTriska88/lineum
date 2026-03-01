@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import * as m from '$lib/paraglide/messages.js';
+    import * as m from "$lib/paraglide/messages.js";
     import { content } from "$lib/content";
+    import { config } from "$lib/config";
     import MarginShards from "$lib/components/MarginShards.svelte";
     let { data }: { data: any } = $props();
     let papers = $derived(data.papers as any[]);
@@ -116,6 +117,31 @@
                     The conceptual foundations and technical documentation of
                     the Lineum project.
                 </p>
+                <div class="mt-4 mb-8">
+                    <a
+                        href={config.academic.zenodoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-mono rounded transition-colors"
+                        title="View on Zenodo"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                            ></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        DOI: {config.academic.zenodoDoi}
+                    </a>
+                </div>
 
                 {#each groupedPapers as group}
                     <div class="category-group">

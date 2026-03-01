@@ -7,7 +7,7 @@
 **Date:** 2026-02-15
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.18-core)._ 2026. DOI: 10.5281/zenodo.16934359.
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.18-core)._ 2026. DOI: 10.5281/zenodo.16934359. ORCID: [0009-0003-4026-7164](https://orcid.org/0009-0003-4026-7164).
 _This manuscript corresponds to Git tag **v1.0.18-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 **Contract evidence (core v1.0.18-core).** All numeric claims in this manuscript that are presented as *validated* are limited
@@ -874,8 +874,7 @@ I also thank **Vlastimil Smeták** for mathematically minded conversations and g
 
 These are **not** claims of this v1 core paper. They remain preliminary and are deferred to the **experimental/extension track** for future, falsifiable testing; no quantitative alignment is asserted here.
 
-I am grateful to the open-source community for tools and libraries that made this work possible, and to my family, friends, and the animals who shared life with me—**Moulík, Jůlinka, Vikinka, Eliška, and others**—for quiet lessons in patience and care.
-
+I am grateful to the open-source community for tools and libraries that made this work possible, and to my family, friends, and the animals who shared life with me—**Moulík, Jůlinka, Vikinka, Eliška, Houska and others**—for quiet lessons in patience and care.
 _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based assistant) was used as a tool for experiment orchestration, stress-testing arguments, and documentation hygiene. All results reported in this core paper are derived from the published scripts and the HTML reports in `output/` and were independently verified by the author.
 
 # 9. Versioning & Changelog

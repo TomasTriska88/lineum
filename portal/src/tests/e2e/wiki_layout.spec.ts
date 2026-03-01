@@ -3,7 +3,7 @@ import { test, expect } from './base';
 test.describe('Wiki Layout', () => {
     test.beforeEach(async ({ page }) => {
         // Clear sessionStorage to avoid modal interference
-        await page.goto('/wiki/lineum-core');
+        await page.goto('/wiki/01-core-lineum');
         await page.evaluate(() => sessionStorage.clear());
         await page.reload();
 
