@@ -15,10 +15,10 @@ const FORBIDDEN_LICENSES = [
     // 3. Source-Available / Non-Commercial Traps
     'SSPL-1.0', 'BSL-1.1', 'Commons-Clause',
 
-    // 4. Weak Copyleft / File-level (Often rejected by corporate legal, but MPL-2.0 is allowed as it's required by Vite/Tailwind build tools like lightningcss)
+    // 4. Weak Copyleft / File-level (Often rejected by corporate legal)
     'CDDL-1.0', 'CDDL-1.1',
     'EPL-1.0', 'EPL-2.0',
-    'MPL-1.1',
+    'MPL-1.1', 'MPL-2.0',
 
     // 5. Legal Grey Areas & "Joke" Licenses (Massive liability risk)
     'WTFPL', 'Beerware', 'Public Domain', 'Unlicense',
@@ -30,6 +30,7 @@ const FORBIDDEN_LICENSES = [
 checker.init({
     start: path.resolve('./'),
     excludePrivatePackages: true,
+    excludePackages: 'lightningcss@1.31.1;lightningcss-win32-x64-msvc@1.31.1',
     failOn: FORBIDDEN_LICENSES.join(';')
 }, function (err, packages) {
     if (err) {

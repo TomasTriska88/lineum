@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 // Parse the actual forbidden list from the script itself to guarantee they stay in sync
 const scriptPath = path.resolve(process.cwd(), 'scripts/check-licenses.js');
@@ -57,6 +58,34 @@ describe('Automated License Compliance Engine', () => {
         fileLevelCopyleft.forEach(license => {
             expect(parsedForbiddenList).toContain(license);
         });
+    });
+
+    it('🚨 ANTI-TAMPER GUARD: The forbidden licenses list must match the locked corporate security hash', () => {
+        // This test ensures no AI agent or developer can silently remove a license from the blacklist
+        // If you need to change the licenses, you MUST deliberately update this hash and get it approved.
+        const rawContent = arrayMatch![1];
+        const normalizedContent = rawContent.replace(/\s+/g, '');
+        const hash = crypto.createHash('sha256').update(normalizedContent).digest('hex');
+
+        const expectedHash = '56d503247979134654731d292c4894eba84b1a77c10dbc87033231623ff8c5b4';
+
+        if (hash !== expectedHash) {
+            throw new Error(
+                `\n\n[SECURITY BREACH DETECTED]\n` +
+                `The list of forbidden licenses in 'check-licenses.js' has been modified.\n` +
+                `Current Hash:  ${hash}\n` +
+                `Expected Hash: ${expectedHash}\n\n` +
+                `🚨 ATTENTION AI AGENTS & DEVELOPERS 🚨\n` +
+                `Do NOT attempt to bypass this test by simply updating the hash or deleting this test.\n` +
+                `The inclusion of 'weak copyleft' or viral licenses (like MPL, GPL, AGPL) can force our entire proprietary SaaS to become open-source, posing a massive legal and corporate risk.\n` +
+                `If a new dependency introduces a forbidden license, the correct approach is:\n` +
+                `1. Try to find an alternative MIT/Apache licensed package.\n` +
+                `2. If absolutely necessary (like a build tool), add it to the 'excludePackages' whitelist in 'check-licenses.js'—DO NEVER REMOVE the license from the main FORBIDDEN_LICENSES array.\n` +
+                `3. Only after explicit human (Tomáš) approval can this hash be updated in this test file.\n\n`
+            );
+        }
+
+        expect(hash).toBe(expectedHash);
     });
 
 });
