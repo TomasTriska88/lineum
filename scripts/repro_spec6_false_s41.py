@@ -51,6 +51,8 @@ def main():
         # Defaultní chování lineum.py (ukládá artefakty) necháme být, 
         # případně můžeme explicitně zapnout, ale lineum.py má v defaultu zapnuto, 
         # pokud CONFIGS neřekne jinak. Pro run_id 6 false je config definován.
+        # Explicitně zapneme ukládání stavu pro checkpointy referenčního exportu
+        env["LINEUM_SAVE_STATE"] = "1"
 
     # Sestavení příkazu
     cmd = [sys.executable, str(lineum_py)]
