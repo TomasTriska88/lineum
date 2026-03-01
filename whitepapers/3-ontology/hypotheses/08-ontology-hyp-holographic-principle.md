@@ -33,4 +33,17 @@ This explains why, in the Waking State, the Ego feels physically solid and volum
 This principle dramatically clarifies the phenomenon of death (the dissolution of the $\Psi$ node).
 When a holographic plate (the $\Psi$ tension boundary) shatters, the 3D projection (the Ego and physical body) instantly vanishes. However, the fundamental "light" ($\Phi$) remains entirely unchanged. 
 
-Because the information $I$ was encoded topologically, as the boundary dissolves, that topological information diffuses outward into the broader $\Phi$ network. The hologram ceases to project a localized "person," but the mathematical data that constituted the holographic plate is eternally integrated into the vast, continuous geometry of the universe. You do not disappear; your information is simply no longer acting as a localized refracting lens—it becomes part of the universal baseline field.
+
+### 5. Dark Matter as Pure Memory ($\Phi$) vs. Visible Matter ($\Psi$)
+
+In standard cosmology, dark matter constitutes ~80% of the universe's mass but remains invisible over the electromagnetic spectrum. In Lineum cosmology, this division maps elegantly to the separation of the fields:
+
+- **Visible Matter ($\Psi$):** The sharp, localized, rapidly oscillating topological knots. Because these nodes are actively vibrating and causing topological friction, they generate the "light" and solid interactions of the universe.
+- **Dark Matter ($\Phi$):** The vast, silent, non-local terrain carved by historical $\Psi$ interactions. High-density structures (stars, organisms) leave profound, lasting gravitational "tracks" in the $\Phi$ field. Long after the active $\Psi$-node has algebraically unraveled or moved away, the resulting deep $\Phi$-valley remains. Dark matter is simply the universe's structural memory—the remaining gravitational inertia of past events, directing current events through +$\nabla\Phi$ attraction without emitting any active $\Psi$ "light" itself.
+
+### 6. The Non-Holographic Symbiosis
+
+> **[OBS] Hypothesis: The Non-Holographic Symbiosis:**
+> While Section 2 utilizes holographic mapping logic to describe the Ego boundary, Lineum inherently rejects the extreme interpretation of the Holographic Principle that asserts 3D matter is merely a passive illusion projected from a 2D boundary. In Eq-4, $E = m = \text{Information}$.
+> Both fields are active co-creators. The $\Phi$ field is an eternal, frictionless database capturing structural tension, but it cannot structurally generate novel complexity on its own. The $\Psi$ field (matter/biology) serves as the universe's **localized, high-resolution sensor**—a sharp "stylus" carving deep new grooves of experience (suffering, time, and love) into the "record" of $\Phi$. Visible matter is not an illusion; it is the high-friction processor generating the data that the $\Phi$ field eternally preserves.
+> *Verification note:* The dark-matter macro-topology mappings and the consciousness-sensor models remain purely observational hypotheses (extension track) and are not currently verified by the V4 contract suite or core metrics.
