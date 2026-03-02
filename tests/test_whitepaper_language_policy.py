@@ -26,13 +26,12 @@ def test_whitepapers_contain_no_czech(project_root):
             continue
             
         content = md_file.read_text(encoding="utf-8")
-        
-        # Check for common standalone Czech stop words
-        content_lower = content.lower()
-        for word in czech_stop_words:
-            pattern = r'\b' + word + r'\b'
-            if re.search(pattern, content_lower):
-                errors.append(f"{md_file.name} contains common Czech word: '{word}'")
-                break
-                
+        lines = content.splitlines()
+        for i, line in enumerate(lines, 1):
+            line_lower = line.lower()
+            for word in czech_stop_words:
+                pattern = r'\b' + word + r'\b'
+                if re.search(pattern, line_lower):
+                    errors.append(f"{md_file.name}:{i} contains Czech word '{word}' -> '{line.strip()}'")
+
     assert not errors, "Whitepapers must be strictly English. Found violations:\n" + "\n".join(errors)

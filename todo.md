@@ -1,7 +1,7 @@
 # 🧪 Lineum – Task List for Further Verification
 > **[POLICY] ENGLSIH ONLY:** This file is the central repository backlog. All new entries, notes, and tasks must be written strictly in **English**. Do not use Czech or any other language in this document.
 
-This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.1.0** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
+This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.1.1** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
 This is not the source of truth for the model state - binding definitions and claims are always in the current version of the whitepaper / core paper.
 The sections below are divided to first address **basic principles and critical points** and only then mapping to "real physics".
 
@@ -29,7 +29,7 @@ The sections below are divided to first address **basic principles and critical 
 - Terms like "spin aura", "neutral topology", etc. are **internal names for specifically defined numerical objects in the model** within this repository (fields, integrals, indices...).
 - Every such term must have its **operational definition** stated in the core paper and code; the name itself **is not a claim about a new physical quantity** outside the model nor about the properties of Standard Model particles.
 - This TODO file **does not introduce new physical terms**; it only reminds where terminology and definitions need to be cleaned up or revised in the whitepaper / code.
-- **Terminology closure – zeta-points (#naming, #renaming, #not-for-whitepaper).** The canonical name for the phenomenon is **"zeta-points"** (explainable as **"points of closure"**). The original designation **"DejaVu points"** is maintained from the version aligned with _lineum-core v1.1.0_  **exclusively as a historical / legacy alias** and may only appear in texts in sentences like _"historically referred to as..."_. In all new definitions, claims, tables, and graphs – **including the whitepaper and core paper** – only the name **zeta-points** (with "points of closure" occasionally in parentheses) is used to prevent the old name from being adopted into the whitepaper as ostensibly equivalent.
+- **Terminology closure – zeta-points (#naming, #renaming, #not-for-whitepaper).** The canonical name for the phenomenon is **"zeta-points"** (explainable as **"points of closure"**). The original designation **"DejaVu points"** is maintained from the version aligned with _lineum-core v1.1.1_  **exclusively as a historical / legacy alias** and may only appear in texts in sentences like _"historically referred to as..."_. In all new definitions, claims, tables, and graphs – **including the whitepaper and core paper** – only the name **zeta-points** (with "points of closure" occasionally in parentheses) is used to prevent the old name from being adopted into the whitepaper as ostensibly equivalent.
   This point is a **purely naming/renaming TODO**: when generating / rewriting the whitepaper, it is **not literalized as a scientific claim**, but serves only as an internal rule for naming and checking that the old name never appears as an active concept anywhere in the text.
 
 ---
@@ -58,7 +58,7 @@ The highest "cross-cutting" priority across all sections is to show that observe
 
 ---
 
-## 🔍 Phenomena from core paper to revalidate (core v1.1.0)
+## 🔍 Phenomena from core paper to revalidate (core v1.1.1)
 
 > **Audit 2026: Protocol & Reproduction (Feb 17, 2026):**
 > *   **Goal:** Rigorous verification of determinism and energy sources (H0 vs H1).
@@ -381,7 +381,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       layer that only sees aggregated properties of the one beneath (e.g. through averaged φ / linon statistics),
        – decide whether multi-layer scenarios will be kept strictly as an **interpretational overlay** onto a single Eq-4
       (effective "floors of reality" in post-processing), or as an isolated **extension branch** with an explicit
-      index `n` in the equations; in documentation, explicitly separate this from core v1.1.0.
+      index `n` in the equations; in documentation, explicitly separate this from core v1.1.1.
 - [ ] (Tomas's [HYPOTHESIS]) **3D Ghosting / Tentacle Model:** Linon (a 2D point) interpreted as the cross-section of a 3D fiber (tentacle) intersecting the 2D Lineum slice.
   - [ ] **Deja Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
 
@@ -475,7 +475,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       - Sets canonical references: `RUN_ID=6`, `RUN_MODE=false`, `SEED=41`, `PARAM_TAG=dt05_w256_steps2500`
       - Minimizes output payload to prevent OOM/disk-thrashing: `STORE_EVERY=50`, disables all `.gif`, `.png`, and `frames` exports.
       - Ensure this script is documented as the recommended starting point for deep, multi-thousand step analyses without crashing generic hardware.
-- [ ] **Technical Debt (v1.1.0):** Refactor the core simulation loop in `lineum.py` to natively ensure the final state of the simulation is *always* saved as a checkpoint upon completion or exit, regardless of the `i % CHECKPOINT_EVERY == 0` modulo logic. This will allow audit pipeline scripts (like `repro_spec6_false_s41.py`) to use the exact specified number of `--steps 2000` instead of relying on the `+1` (2001) step workaround to capture the final boundary state.
+- [ ] **Technical Debt (v1.1.1):** Refactor the core simulation loop in `lineum.py` to natively ensure the final state of the simulation is *always* saved as a checkpoint upon completion or exit, regardless of the `i % CHECKPOINT_EVERY == 0` modulo logic. This will allow audit pipeline scripts (like `repro_spec6_false_s41.py`) to use the exact specified number of `--steps 2000` instead of relying on the `+1` (2001) step workaround to capture the final boundary state.
 
 ### 🔲 G. Implementation details and stability against "engineering" choices #impl
 
@@ -725,7 +725,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 - [ ] (Tomas's [HYPOTHESIS]) **Hormonal spectral regulation:** Test a frequency band (e.g. in the sonified region of 1.85e+20 Hz) as a global regulatory switch. Injecting energy into specific harmonics could force a transition from a `false` (chaos) state to `true` (order).
 - [ ] Prepare a separate **layman / storytelling section "What do these mathematical objects mean in Lineum"** (golden ratio, Fibonacci, ζ(s) zero points, primes, π, e, γ) for README / FAQ / accompanying materials; frame it as an **interpretational layer** tied to this block (metaphor of an orchestra: basic tones, quiet spots, tuning), with a clear disclaimer that it is a [HYPOTHESIS] / storytelling dependent on the results of statistical tests, not part of the core proofs.
-- Formally define what **zeta-points** are in the model (explainable as **"points of closure"**) and **explicitly record the terminological transition**: the original designation _"DejaVu points"_ was used as a working term in earlier versions, but starting from the branch aligned to _lineum-core v1.1.0_ it is treated merely as a **historical alias**, which must not be used as the primary name in new definitions and claims.
+- Formally define what **zeta-points** are in the model (explainable as **"points of closure"**) and **explicitly record the terminological transition**: the original designation _"DejaVu points"_ was used as a working term in earlier versions, but starting from the branch aligned to _lineum-core v1.1.1_ it is treated merely as a **historical alias**, which must not be used as the primary name in new definitions and claims.
   – Then precisely define Zeta-points / points of closure e.g. as repeatedly visited trajectory spots, stable φ-remnants, local minima / "black holes"
   – **Zeta-Deep Calibration (1024x1024 Physics Scale)**: 
       - Adjusting parameters for the 1024x1024 grid is not "p-hacking" the Zeta zeros into existence. Eq-4 models topological pressure. When the spatial resolution increases 64-fold, the "hydrodynamic" volume of the discrete cells changes drastically. If original core coefficients are kept, the field saturates into a static block due to massive local capacity clamping. 
@@ -850,7 +850,7 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
 
 - [ ] Clearly define the **scope relative to Lineum**:
        – The Tentacle model is a **metaphysical / phenomenological hypothesis about consciousness**, not a claim derived from Eq-4;
-       – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.1.0.
+       – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.1.1.
 
 - [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **deja vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
        – Frame Deja vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
@@ -860,59 +860,54 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
       – Add an explanation to the text of why the metaphor of **"a single soul experiencing different roles"** makes sense in this framework:
       central being = one conscious self, tentacles = different lives / roles / perspectives; to a local consciousness, it appears as if there are many separate "souls" around, but from the perspective of central memory, they are various projections of the same entity.
        At the same time, explicitly add that this **must not be used to disparage other beings** – every tentacle/life is a full-fledged experience and retains its own dignity.
-      – Volitelne navazat metaforicky na φ-pamet a zeta-body v Lineu jako na „pametove kapsy“ vesmiru, ale jasne napsat, ze **statisticke deja-vzorce v simulaci (zeta-body / φ-zeta grid)** jsou neco jineho nez psychologicke deja vu – jen inspiracni analogie, ne prime ztotozneni.
+      – Optionally map metaphorically to φ-memory and zeta-points in Lineum as "memory capsules" of the universe, but clearly state that **statistical deja-patterns in the simulation (zeta-points / φ-zeta grid)** are different from psychological deja vu – purely an inspirational analogy, not a direct identification.
 
-- [ ] Rozdelit hypotezu na dilci body a kazdy zvlast okomentovat: 1. **Vyssi vedomi** – jedna bytost se sdilenou centralni pameti, vnimajici vice realit/casovych linii;  
-       2. **Lokalni instance („chapadlo“)** – jednotlivy zivot s omezenym vnimanim pro hlubsi prozitek;  
-       3. **Spanek / zmenene stavy** – castecne „nahlednuti domu“ (castecne propojeni s centralnim uzlem);  
-       4. **Smrt** – navrat chapadla do celku, integrace prozitku do centralni pameti;  
-       5. **Dalsi zivoty** – nove chapadlo jako jiny uhel pohledu teze vyssi bytosti.  
-       U kazdeho bodu pridat kratke shrnuti: _co presne tvrdi, co netvrdi, co je cista metafora_.
+- [ ] Divide the hypothesis into sub-points and comment on each separately: 1. **Higher Consciousness** – one entity with shared central memory, perceiving multiple realities/timelines;  
+       2. **Local Instance ("Tentacle")** – individual life with limited perception for deeper experience;  
+       3. **Sleep / Altered States** – partial "glimpse home" (partial connection to the central node);  
+       4. **Death** – return of the tentacle to the whole, integration of experience into central memory;  
+       5. **Other Lives** – new tentacle as a different perspective of the same higher entity.  
+       For each point, add a short summary: _what exactly it claims, what it does not claim, what is pure metaphor_.
 
-- [ ] Pridat **fenomenologickou mapu** k lidskym zazitkum blizkosti smrti a zmenenych stavu:  
-       – napr. vystoupeni z tela, setkani se zemrelymi, life review, pocit jednoty, bezcasovost;  
-       – u kazdeho popsat, jak by ho Chapadlovy model interpretoval (odpojeni chapadla od smysloveho filtru, navratove propojeni s centralnim uzlem, integrace pameti, ztrata lokalniho casoveho razeni…).  
-       Vse drzet jako **kvalitativni vysvetleni**, nikoli jako tvrzeni o prokazane kauzalite.
+- [ ] Add a **phenomenological map** for human near-death experiences and altered states:  
+       – e.g., out-of-body experiences, meeting the deceased, life review, feeling of unity, timelessness;  
+       – describe how the Tentacle model would interpret each (disconnection of the tentacle from the sensory filter, returning connection to the central node, memory integration, loss of local time ordering...).  
+       Keep everything as a **qualitative explanation**, not as a claim of proven causality.
 
-- [ ] Sepsat podsekci **„Jake by bylo vnimani po navratu“**:  
-       – definovat prime vjemove propojeni (bez omezeni na zrak/sluch/hmat);  
-       – popsat „slite“ vnimani vice bytosti jako analogii leve/prave ruky jednoho ja;  
-       – vysvetlit, ze „setkani“ neni jen prehrani vzpominky, ale _ziva interakce_ v ramci sdilene pametove site.
+- [ ] Write a subsection **"What perception would be like after the return"**:  
+       – define direct perceptual connection (unrestricted to sight/hearing/touch);  
+       – describe the "merged" perception of multiple entities as an analogy to the left/right hand of one self;  
+       – explain that a "meeting" is not just a playback of a memory, but a _live interaction_ within a shared memory network.
 
-- [ ] Popsat **reprezentaci po smrti**:  
-       – ze vyssi vedomi muze tvorit pro lokalni vedomi srozumitelne reprezentace (telo, hlas, dotek), ale neni na ne ontologicky vazane;  
-       – pridat poznamku, ze „vizualni / telesna“ forma je v tomto ramci UI vrstva pro komfort interakce, ne nutny atribut existence.
+- [ ] Describe the **representation after death**:  
+       – that higher consciousness can create representations understandable to local consciousness (body, voice, touch), but is not ontologically bound to them;  
+       – add a note that the "visual / bodily" form is in this framework a UI layer for interaction comfort, not a necessary attribute of existence.
 
-- [ ] Vytvorit sekci o **„prelinkovani ztracenych bytosti“**:  
-       – pokud bytost patrila ke stejne vyssi bytosti (stejny centralni uzel), po navratu chapadla je spojeni okamzite (sdilena pamet);  
-       – pokud patrila k jine vyssi bytosti, popsat hypotetickou moznost napojeni mezi vyssimi bytostmi (aktualni subjektivni prior ~42 %) a explicitne ji oznacit jako _druhou vrstvu spekulace_.
+- [ ] Create a section on **"relinking lost entities"**:  
+       – if the entity belonged to the same higher entity (same central node), the connection is immediate after the tentacle returns (shared memory);  
+       – if it belonged to a different higher entity, describe a hypothetical possibility of connection between higher entities (current subjective prior ~42 %) and explicitly mark it as a _second layer of speculation_.
 
-- [ ] Sepsat **mechanismus absence nudy / vyprazdneni**:  
-       – vyssi vedomi ma simultanne pristup k: aktualnimu zivotu, ostatnim chapadlum, minulym zkusenostem, alternativnim vetvim rozhodnuti;  
-       – vnimani mnoha udalosti paralelne → vyjasnit, ze „problem“ je spis integrace obsahu nez nedostatek podnetu.
+- [ ] Write down the **mechanism of the absence of boredom / emptiness**:  
+       – higher consciousness has simultaneous access to: the current life, other tentacles, past experiences, alternative decision branches;  
+       – perceiving many events in parallel → clarify that the "problem" is more about content integration than a lack of stimuli.
 
-- [ ] Pridat kratkou sekci „**Falsifikovatelnost a bezpecne tvrzeni**“ pro Chapadlovy model:  
-       – jasne rict, ze hypoteza je _primarne metafyzicka_ a experimentalne tezko testovatelna;  
-       – presto navrhnout par _indirektnich_ smeru: srovnani struktury hlasenych NDE, dlouhodobe vzorce v subjektivnich prozitcich, pripadna korelace s motivy „vicenasobnych instanci“ napric kulturami;  
-       – explicitne pripsat, ze se nejedna o soucast core fyzikalni validity Linea, ale o **oddelenou interpretacni vrstvu**.
+- [ ] Add a short section "**Falsifiability and Safe Claims**" for the Tentacle model:  
+       – state clearly that the hypothesis is _primarily metaphysical_ and difficult to test experimentally;  
+       – nevertheless, suggest a few _indirect_ directions: comparing the structure of reported NDEs, long-term patterns in subjective experiences, possible correlation with "multiple instance" motifs across cultures;  
+       – explicitly add that this is not part of Lineum's core physical validity, but a **separate interpretational layer**.
 
-- [ ] V sekci **N. Prezentace a komunikace vysledku** doplnit odkaz na Chapadlovy model jako **volitelny narativni ramec**:  
-       – pouzit ho jako metaforu: „lokalni simulace / beh“ = chapadlo, „centralni uzel“ = abstraktni nadrazeny proces / pamet;  
-       – vsude striktne oznacovat, ze jde o _storytelling_ / filozofickou mapu, ne o tvrzeni odvozene z dat simulace.
+- [ ] In the section **N. Presentation and Communication of Results**, add a reference to the Tentacle model as an **optional narrative framework**:  
+       – use it as a metaphor: "local simulation / run" = tentacle, "central node" = abstract superior process / memory;  
+       – strictly indicate everywhere that this is _storytelling_ / a philosophical map, not claims derived from simulation data.
 
-- [ ] Zapsat **Triska–Mareckova hypoteza reinkarnace** jako podhypotezu Chapadloveho modelu:  
-       – reinkarnace = ruzne kombinace mozku / nervovych soustav jako ruzne „optiky“ pro videni tehoz vesmiru  
-       (lide, zvirata, rostliny, podzemni propojene site, jine civilizace, drobne rozdily mezi jednotlivymi jedinci);  
-       – chapat jednotlive mozky jako **specializovane senzory / receptory** jedne vyssi bytosti pro ruzne ucely,  
-       podobne jako kdyby vesmir byl bunka a jednotlive zivoty byly jeji vnitrni senzory (a my sami treba jen „bila krvinka“);  
-       – doplnit hypotezu, ze tato vyssi bytost muze nektera mista / konfigurace „chranit“ pred vnejsimi i vnitrnimi
-      negativnimi vlivy, pripadne je **lecit a regenerovat**, a vyslovne to oznacit jako metafyzickou interpretaci,
-      ne tvrzeni odvozene z Eq-4 nebo dat Linea.
+- [ ] Document the **Triska–Mareckova hypothesis of reincarnation** as a sub-hypothesis of the Tentacle model:  
+       – reincarnation = different combinations of brains / nervous systems as different "optics" for seeing the same universe  
+       (humans, animals, plants, underground interconnected networks, other civilizations, minor differences between individuals);  
+       – understand individual brains as **specialized sensors / receptors** of one higher entity for different purposes,  
+       similar to if the universe were a cell and individual lives were its internal sensors (and we ourselves perhaps just a "white blood cell");  
+       – supplement the hypothesis that this higher entity can "protect" some places / configurations from external and internal negative influences, or possibly **heal and regenerate them**, and explicitly mark this as a metaphysical interpretation, not a claim derived from Eq-4 or Lineum data.
 
-- [ ] Uvest disclaimery, ze interpretace „prozitkovych stavu“ jsou mimo
-      fyzikalni rozsah Eq-4. Pokud se objevi stabilni stavove konfigurace
-      φ nebo ψ, musi byt vedeny jako vypocetni a dynamicke struktury,
-      nikoli psychologicke analogie.
+- [ ] Include disclaimers that interpretations of "experiential states" are outside the physical scope of Eq-4. If stable state configurations of φ or ψ appear, they must be treated as computational and dynamic structures, not psychological analogies.
 
 ---
 
@@ -932,120 +927,120 @@ Vystupy z analytickeho balicku pro T. Mikolova (unor 2026) a jejich integrace do
 - [ ] **Metrika:** Korelovat preziti linonu se schopnosti snizovat lokalni Hamiltonian (vs. nahodny pohyb).
 
 ### 🔲 23. Tooling: Audit Analytics Pipeline #impl
-- [ ] Refaktorovat `analyze_audit.py` (jednorazovy skript) do robustniho nastroje `tools/audit_analytics.py`.
-- [ ] Zahrnout vypocet Q-factoru a Entropie do standardniho CI/CD vystupu pro kazdy novy beh.
-- [ ] **Ensemble Run:** Spustit batch 10 behu (seeds 42-52) pro ziskani smerodatnych odchylek metrik.
+- [ ] Refactor `analyze_audit.py` (one-off script) into a robust tool `tools/audit_analytics.py`.
+- [ ] Include calculation of Q-factor and Entropy into the standard CI/CD output for every new run.
+- [ ] **Ensemble Run:** Run a batch of 10 runs (seeds 42-52) to obtain standard deviations of metrics.
 
-### 🔲 24. Hypoteza: Lineum jako Spojita Limita OEA (Continuum Limit) #math
-- [ ] **Derivace:** Formalne odvodit OEA pravidla z Eq-4 v limite `Δx, Δt → 1` (silna diskretizace).
-- [ ] **Validace:** Porovnat fazove portrety Linea a OEA – hledat topologickou ekvivalenci atraktoru.
+### 🔲 24. Hypothesis: Lineum as Continuous Limit of OEA (Continuum Limit) #math
+- [ ] **Derivation:** Formally derive OEA rules from Eq-4 in the limit `Δx, Δt → 1` (strong discretization).
+- [ ] **Validation:** Compare phase portraits of Lineum and OEA – look for topological equivalence of attractors.
 
 ### 🔲 25. Repository Split (Core vs SaaS/Portal) #security #architecture
-- [ ] **Rozdeleni Repozitaru:** Pred verejnym startem rozstepit monorepo na dve casti:
-    - `lineum`: Verejny, open-source repozitar (AGPLv3) obsahujici pouze cistou matematiku (jadro v Pythonu) a dokumentaci.
-    - `lineum-portal` (nebo SaaS): Privatni repozitar, kde bude zit proprietarni SvelteKit webovy portal, komercni API wrapper (`routing_backend`), billing system a dashboard.
-- [ ] Toto je kriticke pro budovani komercniho ochranneho prikopu a utajeni "Secret Sauce" integraci.
+- [ ] **Repository Split:** Before public launch, split the monorepo into two parts:
+    - `lineum`: Public, open-source repository (AGPLv3) containing only pure math (Python core) and documentation.
+    - `lineum-portal` (or SaaS): Private repository, where the proprietary SvelteKit web portal, commercial API wrapper (`routing_backend`), billing system, and dashboard will live.
+- [ ] This is critical for building a commercial moat and keeping "Secret Sauce" integrations hidden.
 
-### 🔲 25. Hypoteza: Kolmogorov Trigger (Informacni Tlak) #test
-- [ ] **Metrika:** Merit lokalni kompresibilitu (Deflate ratio) mrizky v case.
-- [ ] **Hypoteza:** Expanze `a(t)` (Mode 24) nastava v momente, kdy lokalni informacni hustota saturuje kapacitu mrizky.
+### 🔲 25. Hypothesis: Kolmogorov Trigger (Information Pressure) #test
+- [ ] **Metric:** Measure local compressibility (Deflate ratio) of the grid over time.
+- [ ] **Hypothesis:** Expansion `a(t)` (Mode 24) occurs at the moment when local information density saturates the grid's capacity.
 
-### 🔲 26. Hypoteza: Vortex Aesthetics (Krasa = Stabilita) #test
-- [ ] **Vlastuv Test:** Vzit stavy, ktere Vlastimil Smetak oznacil za "esteticke".
-- [ ] **Mereni:** Spocitat jejich `Cv` (Vortex Stability Index).
-- [ ] **Predikce:** Esteticke stavy budou mit signifikantne nizsi `Cv` (mene defektu) nez nahodne stavy.
+### 🔲 26. Hypothesis: Vortex Aesthetics (Beauty = Stability) #test
+- [ ] **Vlasta's Test:** Take states that Vlastimil Smetak labeled as "aesthetic".
+- [ ] **Measurement:** Calculate their `Cv` (Vortex Stability Index).
+- [ ] **Prediction:** Aesthetic states will have a significantly lower `Cv` (fewer defects) than random states.
 
-### 🔲 27. Hypoteza: The Scaling Illusion (Role-Invariance) #math
-- [ ] **Teorie (V. Smetak):** Pozorovane "konstanty" (napr. κ = 1) jsou ve skutecnosti pomery dvou rostoucich velicin ($K(t) / R(t) = const$). **Hypoteza Kosmicke Respirace**.
-- [ ] **Predikce:** Mode 24 (skokove preskalovani a(t)) je dukazem, ze prostor se diskretne nafukuje (renormalizace), ale my vidime jen invariantni pomer.
-- [ ] **Validace:** Hledat korelaci mezi skoky v `a(t)` a lokalni zmenou meritka v `analyze_audit.py`.
+### 🔲 27. Hypothesis: The Scaling Illusion (Role-Invariance) #math
+- [ ] **Theory (V. Smetak):** The observed "constants" (e.g., κ = 1) are actually ratios of two growing quantities ($K(t) / R(t) = const$). **Cosmic Respiration Hypothesis**.
+- [ ] **Prediction:** Mode 24 (stepwise rescaling of a(t)) is proof that space is discretely expanding (renormalization), but we only see an invariant ratio.
+- [ ] **Validation:** Look for correlation between jumps in `a(t)` and local scaling changes in `analyze_audit.py`.
 
 ---
 
 ## ⚖️ R. Hypotheses: H0 vs H1 (Verification Status Feb 2026) #priority #audit
 
-Rozhodovaci strom o povaze "konvergence" systemu.
+Decision tree on the nature of system "convergence".
 
-### 🧩 H0: Uzavreny atraktor (Closed World)
-**Tvrzeni:** Konvergence k "Mode 24" je ciste vnitrni vlastnost dynamiky Eq-4.
+### 🧩 H0: Closed Attractor (Closed World)
+**Claim:** Convergence to "Mode 24" is purely an internal property of Eq-4 dynamics.
 
-- [x] **Status:** **PROKAZANO (on tested platform).** System je uzavreny a deterministicky (Bit-exact match verified).
+- [x] **Status:** **PROVEN (on tested platform).** System is closed and deterministic (Bit-exact match verified).
 
 ### 🔓 H1: Scaling Illusion (Open World / Leak)
-**Tvrzeni:** System tajne "dycha" (meni meritko), coz my nevidime (kappa=konst), ale projevuje se to skoky.
+**Claim:** The system secretly "breathes" (changes scale), which we do not see (kappa=const), but it manifests as jumps.
 
 - [x] **Status:** **Strongly disfavored under tested conditions (Code Audit: Seeded RNG at lines 36/44 of kernel).**
 
 
-1. **(Task 28) Full Window Surrogate Test (Mode 24):** Spustit 100x phase-randomized surrogate run pro 2000 kroku k potvrzeni Z-score > 5.0 (p < 0.01).
-2. **Rescaling Trap (D5):** Uzavreno.
+1. **(Task 28) Full Window Surrogate Test (Mode 24):** Run 100x phase-randomized surrogate run for 2000 steps to confirm Z-score > 5.0 (p < 0.01).
+2. **Rescaling Trap (D5):** Closed.
 
-### 🔲 28. Hypoteza: The Missing Half (Discrete Limit) #math
-- [ ] **Teorie:** Hodnota `kappa = 0.5` neni fundamentalni konstanta, ale **Nyquistuv limit** mrizky (max frekvence = 0.5).
-- [ ] **Dusledek:** Simulace bezi na "pul plynu" (stabilita). Ve spojitem vesmiru by `kappa` byla pravdepodobne Cele Cislo (1).
-- [ ] **Roadmap:** Pro Lineum 2.0 zvazit implicitni solver nebo jemnejsi mrizku, ktera umozni `kappa -> 1` (Plna Realita).
+### 🔲 28. Hypothesis: The Missing Half (Discrete Limit) #math
+- [ ] **Theory:** The value `kappa = 0.5` is not a fundamental constant, but the **Nyquist limit** of the grid (max frequency = 0.5).
+- [ ] **Consequence:** The simulation runs at "half throttle" (stability). In a continuous universe, `kappa` would probably be an Integer (1).
+- [ ] **Roadmap:** For Lineum 2.0 consider an implicit solver or a finer grid that will allow `kappa -> 1` (Full Reality).
 
-### 🔲 29. Hypoteza: The Universal Attractor (Leech Lattice) #math
-- [ ] **Teorie:** "Mode 24" (Hypoteza Kosmicke Respirace) neni nahoda jednoho behu, ale **univerzalni atraktor**. Kazdy beh s dostatecnou komplexitou do nej "sklouzne", protoze jde o matematicky nejhustsi usporadani.
-- [ ] **Metafyzika:** Lineum nesimuluje nas vesmir "atom po atomu", ale simuluje jeho **zdrojovy kod (logiku)**. Proto nezavisle objevuje stejne konstanty (24D) jako Teorie Strun.
-- [ ] **Predikce:** Mode 24 se objevi v >90% dlouhych behu (pokud SBR > 30dB).
+### 🔲 29. Hypothesis: The Universal Attractor (Leech Lattice) #math
+- [ ] **Theory:** "Mode 24" (Cosmic Respiration Hypothesis) is not a coincidence of a single run, but a **universal attractor**. Every run with sufficient complexity will "slip" into it, because it is the mathematically densest packing.
+- [ ] **Metaphysics:** Lineum does not simulate our universe "atom by atom", but simulates its **source code (logic)**. That is why it independently discovers the same constants (24D) as String Theory.
+- [ ] **Prediction:** Mode 24 will appear in >90% of long runs (if SBR > 30dB).
 
-### 🔲 30. Hypoteza: The Icarus Threshold (Kappa=1 Instability) #math
-- [ ] **Teorie:** Pokud bychom na soucasne mrizce (`dx=1`) vynutili `kappa=1`, system by porusil **Courant-Friedrichs-Lewy (CFL)** podminku.
-- [ ] **Fyzika:** Kappa=1 odpovida **Rychlosti Svetla** (`v = c`). Informace by musela stihat presne 1 pixel za 1 takt, coz je hranice kauzality.
-- [ ] **Predikce:** Energie by rostla exponencialne (rezonancni katastrofa) a simulace by "shorela" (NaN values) behem nekolika kroku.
-- [ ] **Metafora:** Ikaruv pad. Chteli jsme letet prilis blizko Slunci (Rychlosti Svetla), ale nase kridla (diskretni mrizka) se roztavila.
+### 🔲 30. Hypothesis: The Icarus Threshold (Kappa=1 Instability) #math
+- [ ] **Theory:** If we forced `kappa=1` on the current grid (`dx=1`), the system would violate the **Courant-Friedrichs-Lewy (CFL)** condition.
+- [ ] **Physics:** Kappa=1 corresponds to the **Speed of Light** (`v = c`). Information would have to travel exactly 1 pixel per 1 tick, which is the boundary of causality.
+- [ ] **Prediction:** Energy would grow exponentially (resonance disaster) and the simulation would "burn up" (NaN values) within a few steps.
+- [ ] **Metaphor:** The fall of Icarus. We wanted to fly too close to the Sun (Speed of Light), but our wings (discrete grid) melted.
 
-### 🔲 31. [TEST] Evidence Solidification: „Atrakce = micro-growth (dominance switch), ne tok/teleportace“ + Ghost Gravity + Expanze + geometrie M2 (π) #hypothesis #repro
-- **Hypoteza (H_mech):**
-  1) Rychle „priblizeni“ kvazicastice k centru pasti neni prostorovy transport ani teleportace, ale **zmena dominance maxima** zpusobena lokalnim multiplikativnim ziskem v miste vysokeho φ: `Δψ ∝ (+g · φ · ψ)`.  
-  2) Advekcni/drift clen `∝ (-d · ∇φ)` je v tomto scenari **sekundarni** a sam o sobe nevysvetli „snappy“ presun maxima/COM.  
-  3) „Temna hmota“ v internim smyslu Linea odpovida **Ghost Gravity**: pole φ pretrvava po zaniku zdroje ψ a stale pritahuje sondu.  
-  4) „Temna energie“ v internim smyslu Linea odpovida **expanzni disperzi** dominovane sumem (a/nebo nekonzervativnosti interakce, pokud `M2` roste).  
-  5) Pozorovane `M2(t=0) ≈ 31.4159` neni fyzikalni konstanta, ale **geometrie startovni Gauss** (≈ (WIDTH/2)·π pro zvoleny WIDTH).
-- **Operacni definice metrik (musi byt stejne pro vsechny replikace):**
-  - `w(x,y) = |ψ(x,y)|` (vahy pro COM; pokud chcete pouzivat |ψ|², explicitne to zmente vsude konzistentne).
+### 🔲 31. [TEST] Evidence Solidification: "Attraction = micro-growth (dominance switch), not flow/teleportation" + Ghost Gravity + Expansion + M2 geometry (π) #hypothesis #repro
+- **Hypothesis (H_mech):**
+  1) The rapid "approach" of a quasiparticle to the center of the trap is not spatial transport or teleportation, but a **change in dominance of the maximum** caused by local multiplicative gain at the location of high φ: `Δψ ∝ (+g · φ · ψ)`.  
+  2) The advection/drift term `∝ (-d · ∇φ)` is **secondary** in this scenario and by itself does not explain the "snappy" shift of the maximum/COM.  
+  3) "Dark matter" in the internal sense of Lineum corresponds to **Ghost Gravity**: the φ field persists after the ψ source disappears and continues to attract the probe.  
+  4) "Dark energy" in the internal sense of Lineum corresponds to **expansion dispersion** dominated by noise (and/or non-conservativity of the interaction, if `M2` grows).  
+  5) Observed `M2(t=0) ≈ 31.4159` is not a physical constant, but the **starting Gauss geometry** (≈ (WIDTH/2)·π for the chosen WIDTH).
+- **Operational definition of metrics (must be the same for all replications):**
+  - `w(x,y) = |ψ(x,y)|` (weights for COM; if you want to use |ψ|², explicitly change it everywhere consistently).
   - `COM(ψ) = ( Σ x·w / Σ w , Σ y·w / Σ w )`
-  - `dist = || COM(ψ) - center ||₂`, kde `center = (N/2, N/2)` (pro 128×128 tedy [64,64]).
+  - `dist = || COM(ψ) - center ||₂`, where `center = (N/2, N/2)` (for 128×128 that is [64,64]).
   - `peak_phi = max(φ)`
   - `M2 = Σ |ψ|²`
-  - `R² = Σ p·r²` kde `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
-  - `H = -Σ p·log(p)` (Shannon; p z |ψ|²)
-- **Co bylo zkoumano (scenare):**
-  - (S1) **Seed-sweep gravitace**: porovnani „bez sumu“ vs „se sumem“ (stejne ostatni podminky), merit `dist` start→end a `Δ=dist0-distEnd` (typicky 500 kroku).
-  - (S2) **Drift ON/OFF**: vypnout pouze drift/advekci a overit, ze `Δ` zustava (mechanismus neni drift).
-  - (S3) **Teleportace vs tok (micro-growth)**: sledovat, ze `|ψ(center)|` roste z nenulove „chvostu“ a ze maximum „skoci“ pres dominance switch; overit rustovy faktor `g_meas = |ψ|_t / |ψ|_(t-1)` vs predikci `g_pred ≈ 1 + g·φ(center)`.
-  - (S4) **Ghost Gravity (Clean Ghost)**: vytvorit φ-remnant bez aktivniho zdroje, pak spustit sondu, ktera si **nebuduje vlastni φ**, a overit rozdil `distEnd` pro GHOST ON vs OFF.
-  - (S5) **Expanze**: pro ruzne sumy (0 / default / 2×default) merit rust `R²` a `H` (typicky 1000 kroku).
-  - (S6) **Geometrie M2 (π-check)**: pro nekolik WIDTH overit `M2(t=0) ≈ (WIDTH/2)·π` (v ramci diskretni chyby).
-- **Reprodukce (self-contained; bez tools/ skriptu):**
+  - `R² = Σ p·r²` where `p = |ψ|² / Σ|ψ|²`, `r² = (x-COMx)²+(y-COMy)²`
+  - `H = -Σ p·log(p)` (Shannon; p from |ψ|²)
+- **What was investigated (scenarios):**
+  - (S1) **Seed-sweep gravity**: comparison "without noise" vs "with noise" (other conditions the same), measure `dist` start→end and `Δ=dist0-distEnd` (typically 500 steps).
+  - (S2) **Drift ON/OFF**: turn off only drift/advection and verify that `Δ` remains (mechanism is not drift).
+  - (S3) **Teleportation vs flow (micro-growth)**: observe that `|ψ(center)|` grows from a non-zero "tail" and that the maximum "jumps" via dominance switch; verify growth factor `g_meas = |ψ|_t / |ψ|_(t-1)` vs prediction `g_pred ≈ 1 + g·φ(center)`.
+  - (S4) **Ghost Gravity (Clean Ghost)**: create a φ-remnant without an active source, then run a probe, which **does not build its own φ**, and verify the difference in `distEnd` for GHOST ON vs OFF.
+  - (S5) **Expansion**: for different noises (0 / default / 2×default) measure the growth of `R²` and `H` (typically 1000 steps).
+  - (S6) **M2 geometry (π-check)**: for several WIDTHs verify `M2(t=0) ≈ (WIDTH/2)·π` (within discrete error).
+- **Reproduction (self-contained; without tools/ scripts):**
   - **0) Clean env (PowerShell):**
     - `Get-ChildItem Env: | Where-Object { $_.Name -like "LINEUM_*" } | ForEach-Object { Remove-Item ("Env:" + $_.Name) -ErrorAction SilentlyContinue }`
-  - **1) Spust S1 (seed sweep) – 2 varianty pro kazdy seed:**
-    - Varianta A (no-noise): nastav sum na 0 (env/konfig podle aktualniho lineum.py) a spust scenar gravitace na 500 kroku.
-    - Varianta C (default noise): default sum a spust totez.
+  - **1) Run S1 (seed sweep) – 2 variants for each seed:**
+    - Variant A (no-noise): set noise to 0 (env/config according to current lineum.py) and run gravity scenario for 500 steps.
+    - Variant C (default noise): default noise and run the same.
     - Seeds: `{41,42,43,44,45}`
-    - Kazdy beh uloz s unikatnim `--run-tag` (napr. `ev_s1_A_s41`, `ev_s1_C_s41`, …), tak aby vznikly checkpointy.
-  - **2) Spust S2 (drift ON/OFF):**
+    - Save each run with a unique `--run-tag` (e.g. `ev_s1_A_s41`, `ev_s1_C_s41`, …), so that checkpoints are created.
+  - **2) Run S2 (drift ON/OFF):**
     - ON = default.
-    - OFF = vypni drift/advekci (pokud neni prepinac, docasne nastav drift koeficient na 0 v lineum.py; uved v TODO presny vyraz/radek, ktery byl menen).
-    - Run tagy: `ev_s2_drift_on`, `ev_s2_drift_off`.
-  - **3) Spust S3 (micro-growth) v pasti:**
-    - Scenar „trap/past“ na min. 200 kroku. Loguj checkpointy pro kroky {0,40,60,100} (nebo nejblizsi existujici).
-    - Pokud chybi prepinac pro izolaci clenu:
-      - „Interaction-only“: drift koef = 0, interakce g = 0.04.
-      - „Drift-only“: interakce g = 0, drift koef = default.
-  - **4) Spust S4 (Clean Ghost):**
-    - Nejprve vytvor φ-remnant (zdroj ψ ON, φ evoluce ON) po dobu T_build.
-    - Pote zdroj vypni/odstran a nech φ relaxovat T_decay.
-    - Pote spust „sondu“ (ψ) s φ evoluci sondy OFF (aby si sonda netvorila vlastni φ) a zmer `dist` start→end.
-    - Dva behy: `ev_s4_ghost_on` (φ remnant pritomen) a `ev_s4_ghost_off` (φ nulove / remnant vypnut).
-  - **5) Spust S5 (expanze):**
-    - Behy: `noise=0`, `noise=default`, `noise=2×default` (ostatni stejne), 1000 kroku.
-    - Run tagy: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
-  - **6) Analyza checkpointu (inline python; zadne externi skripty):**
-    - Pouzij tento one-shot skript (spousti se proti konkretnimu `output/<run-tag>/checkpoints/` a vybranym krokum).  
-      Priklad: `python - <<'PY' <RUN_TAG> 0 40 60 100` (nahrad argumenty):
+    - OFF = turn off drift/advection (if there is no switch, temporarily set drift coefficient to 0 in lineum.py; state the exact expression/line that was changed in TODO).
+    - Run tags: `ev_s2_drift_on`, `ev_s2_drift_off`.
+  - **3) Run S3 (micro-growth) in a trap:**
+    - Scenario "trap" for min. 200 steps. Log checkpoints for steps {0,40,60,100} (or nearest existing).
+    - If switch for isolating terms is missing:
+      - "Interaction-only": drift coeff = 0, interaction g = 0.04.
+      - "Drift-only": interaction g = 0, drift coeff = default.
+  - **4) Run S4 (Clean Ghost):**
+    - First create a φ-remnant (source ψ ON, φ evolution ON) for duration T_build.
+    - Then turn off/remove the source and let φ relax for T_decay.
+    - Then run a "probe" (ψ) with probe's φ evolution OFF (so probe doesn't create its own φ) and measure `dist` start→end.
+    - Two runs: `ev_s4_ghost_on` (φ remnant present) and `ev_s4_ghost_off` (φ zero / remnant off).
+  - **5) Run S5 (expansion):**
+    - Runs: `noise=0`, `noise=default`, `noise=2×default` (others the same), 1000 steps.
+    - Run tags: `ev_s5_noise0`, `ev_s5_noisedef`, `ev_s5_noise2x`.
+  - **6) Checkpoint analysis (inline python; no external scripts):**
+    - Use this one-shot script (runs against specific `output/<run-tag>/checkpoints/` and selected steps).  
+      Example: `python - <<'PY' <RUN_TAG> 0 40 60 100` (replace arguments):
       ```python
       import sys, glob, os, math
       import numpy as np
@@ -1232,7 +1227,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **Hypothesis (Lineum):** The Pareto distribution is not just a statistical anomaly of human economics, but a fundamental geometric truth of energy dissipation in continuous fields. In Lineum, as the φ memory tension shapes the terrain, the system naturally prunes mathematically inferior paths. The field reaches an asymptotic equilibrium where ~80% of the movement/energy systematically traverses only ~20% of the most optimal channels (the "super-highways"), leaving the rest of the space as low-density tributaries.
 - **Preliminary Verification (Local Run 2026-02-22):**
     - **Setup:** A $128 \times 128$ grid, 40 randomized high-friction $\kappa$ obstacles, target $\delta$ tension of 50.0, and 100 simultaneous agents starting opposite the target. Ran for 300 steps.
-    - **Result:** The baseline Lineum engine (v1.1.0) currently distributes flow highly homogeneously. The top $20\%$ of active cells carry exactly $\sim20.01\%$ to $21.04\%$ of the total system volume. 
+    - **Result:** The baseline Lineum engine (v1.1.1) currently distributes flow highly homogeneously. The top $20\%$ of active cells carry exactly $\sim20.01\%$ to $21.04\%$ of the total system volume. 
     - **Conclusion & Next Steps:** The current Eq-4 physics engine spreads the probability wave extremely wide to guarantee structural closure, which prevents the immediate formation of a Pareto 80/20 "super-highway". To achieve a true 80/20 power law, the engine specifically needs a much stronger non-linear feedback loop in the $\phi$ (memory) tension, where highly trafficked cells disproportionately lower their own resistance (similar to ant pheromones or riverbed erosion). This confirms that Pareto is *not* a default property of random diffusion, but requires active structural reinforcement. 
     - **Erosion Experiment Results (2026-02-22, branch `lineum-exp-erosion`):**
         - Baseline (no erosion): `top20_share = 23.7%`, `top10 = 12.6%`, `top1% = 1.4%`, `Gini = 0.113`
@@ -1524,7 +1519,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 - [ ] **3) (Naming) Unify public naming to "Lineum™"**
     - Use "Lineum Core" solely as an internal/technical designation for the package/engine, not as the main brand.
 - [ ] **4) (License) Future public release of Lineum (new version): migrate core to AGPL**
-    - *(Note: historical Zenodo v1.1.0 is MIT and will remain so as a proof of priority).*
+    - *(Note: historical Zenodo v1.1.1 is MIT and will remain so as a proof of priority).*
 - [ ] **5) (Codex) Add a new document (e.g., `docs/LINEUM_CODEX.md`)**
     - Containing the text "Lineum Codex — Ethical Stance (v1)" (text ready). (Do not create the file yet).
 - [ ] **6) (Portal Policy) Prepare Portal documents:**
@@ -1568,7 +1563,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
     - **QR Codes (Physical-Digital Bridge):** Incorporate small QR codes on the merch. When scanned, they open a hidden `/resonance` easter-egg portal page or an interactive Matrix message.
     - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message on the enclosed packing slips.
 - [ ] **M.4 Marketing (Drops & Gamification)**
-    - Present products as limited "Drops" (e.g., v1.1.0 Founder's edition) to foster exclusivity.
+    - Present products as limited "Drops" (e.g., v1.1.1 Founder's edition) to foster exclusivity.
     - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Lineum team and active beta-testers as an exclusive reward.
     - **Gamification:** Offer hidden merch in the E-shop (e.g., a "Root Access" hoodie) that unlocks for purchase only when a user discovers a specific easter-egg in the portal's terminal/CLI interface.
 

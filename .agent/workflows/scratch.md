@@ -16,6 +16,10 @@ description: Convention for temporary/diagnostic scripts — always use .scratch
 
 5. `.scratch/` is in `.gitignore`, so even if cleanup is forgotten, nothing leaks to the repo.
 
+6. **Terminal Logs**: When running diagnostic terminal commands (e.g. `pytest > fail.log` or `vitest --reporter=json > out.json`), NEVER output the result into the project root. Always route it to the scratch directory:
+   - ✅ Correct: `pytest > .scratch/fail_log.txt`
+   - ❌ Wrong: `pytest > fail_log.txt`
+
 ## How to use
 
 ```python

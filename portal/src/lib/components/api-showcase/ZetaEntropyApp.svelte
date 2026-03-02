@@ -3,6 +3,7 @@
     import ShowcaseTemplate from "./ShowcaseTemplate.svelte";
     import ShowcaseButton from "./ShowcaseButton.svelte";
     import ShowcaseTerminal from "./ShowcaseTerminal.svelte";
+    import { intersect } from "$lib/actions/intersect";
 
     let state: "idle" | "running" | "done" = "idle";
     let histogramBins = new Array(40).fill(0);
@@ -24,11 +25,15 @@
         }
     });
 
-    let animationFrameId: number;
+    let animationFrameId: number = 0;
     let lastTime = 0;
+    let isVisible = false;
     function startSimulation() {
         if (state !== "idle") {
-            cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = 0;
+            }
             state = "idle";
             histogramBins = new Array(40).fill(0);
             logs = [];
@@ -46,7 +51,10 @@
         lastTime = performance.now();
 
         function tick(time: number) {
-            if (state !== "running") return;
+            if (state !== "running") {
+                animationFrameId = 0;
+                return;
+            }
 
             const dt = time - lastTime;
             const targetDt = isTest ? 10 : 16;
@@ -80,9 +88,20 @@
                 }
             }
             histogramBins = [...histogramBins]; // Trigger reactivity
-            animationFrameId = requestAnimationFrame(tick);
+            if (isVisible) {
+                animationFrameId = requestAnimationFrame(tick);
+            } else {
+                animationFrameId = 0;
+            }
         }
 
+        if (isVisible) {
+            animationFrameId = requestAnimationFrame(tick);
+        }
+    }
+
+    $: if (isVisible && state === "running" && !animationFrameId) {
+        lastTime = performance.now();
         animationFrameId = requestAnimationFrame(tick);
     }
 
@@ -127,6 +146,7 @@
     <!-- Visual -->
     <div
         slot="visual"
+        use:intersect={(inView) => (isVisible = inView)}
         class="w-full flex items-center justify-center bg-slate-950/80 rounded-3xl border border-rose-500/20 shadow-[0_0_80px_rgba(244,63,94,0.05)] overflow-hidden h-[450px] relative font-mono"
     >
         <!-- The Geometry Canvas (Top) -->

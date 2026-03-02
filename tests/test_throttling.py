@@ -30,12 +30,22 @@ def test_simulation_step_consistency(track_every):
     delta = np.zeros_like(psi)
     kappa = np.ones((sz, sz))
     
+    def seed_everything():
+        np.random.seed(42)
+        try:
+            import torch
+            torch.manual_seed(42)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(42)
+        except ImportError:
+            pass
+
     # Scene A
-    np.random.seed(42)
+    seed_everything()
     psi_a, phi_a = lineum.evolve(psi.copy(), delta.copy(), phi.copy(), kappa.copy())
     
     # Scene B
-    np.random.seed(42)
+    seed_everything()
     psi_b, phi_b = lineum.evolve(psi.copy(), delta.copy(), phi.copy(), kappa.copy())
     
     assert np.allclose(psi_a, psi_b)

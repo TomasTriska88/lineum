@@ -141,6 +141,13 @@ def test_physics_isolation(monkeypatch):
     
     def simulate_step(mode_fast):
         np.random.seed(1337) # Deterministic steps
+        try:
+            import torch
+            torch.manual_seed(1337)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(1337)
+        except ImportError:
+            pass
         p = psi_orig.copy()
         f = phi_orig.copy()
         tr = []

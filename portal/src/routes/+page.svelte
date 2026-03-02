@@ -4,10 +4,8 @@
     import MarginShards from "$lib/components/MarginShards.svelte";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import * as m from "$lib/paraglide/messages.js";
-    import {
-        PUBLIC_SIMULACRUM_URL,
-        PUBLIC_ENABLE_API_SOLUTIONS,
-    } from "$env/static/public";
+    import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
+    import { PUBLIC_ENABLE_API_SOLUTIONS } from "$env/static/public";
 
     export let data: import("./$types").PageData;
 

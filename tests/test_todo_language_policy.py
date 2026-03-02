@@ -11,21 +11,24 @@ def test_todo_contains_no_czech(project_root):
     assert todo_path.exists(), "todo.md not found"
     
     content = todo_path.read_text(encoding="utf-8")
-    
-    # Check for diacritics (lowercase and uppercase representation).
-    # Allowed symbols: standard overlapping characters are removed or checked specifically.
+    # Check for diacritics and words line by line for better error reporting
     czech_chars = set("áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ")
-    
-    found_chars = set(c for c in content if c in czech_chars)
-    assert not found_chars, f"todo.md must be English only, found Czech diacritics: {found_chars}"
-    
-    # Check for common Czech words - surrounded by boundaries
-    # Avoid words that overlap with English like "to", "ten", "ne"
     czech_words = ["že", "ať", "prosím", "přečteno", "výstup", "ano", "proč", "jak", "co", "kde", "kdy", "kdo", "tento"]
     
-    content_lower = content.lower()
-    for word in czech_words:
-        # Use regex border to avoid matching substrings like "to" inside "today"
-        pattern = r'\b' + word + r'\b'
-        matches = re.findall(pattern, content_lower)
-        assert not matches, f"todo.md must be English only, found common Czech word '{word}'"
+    errors = []
+    lines = content.splitlines()
+    
+    for i, line in enumerate(lines, 1):
+        # 1. Check diacritics
+        found_chars = set(c for c in line if c in czech_chars)
+        if found_chars:
+            errors.append(f"Line {i}: Found Czech diacritics {found_chars} -> '{line.strip()}'")
+            
+        # 2. Check complete words
+        line_lower = line.lower()
+        for word in czech_words:
+            pattern = r'\b' + word + r'\b'
+            if re.search(pattern, line_lower):
+                errors.append(f"Line {i}: Found common Czech word '{word}' -> '{line.strip()}'")
+                
+    assert not errors, "todo.md must be English only. Found violations:\n" + "\n".join(errors)
