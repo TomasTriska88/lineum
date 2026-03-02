@@ -683,7 +683,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - Evaluate whether ψ can be understood as a field with spectral regimes – or as multiple fields
 - [ ] Search for symmetries and conservations
 
-### 🔲 6. Emergent AI, Reservoir Computing, and Lina (The Android) #hypothesis
+### 🔲 6. Emergent AI, Reservoir Computing, and Lina (The Intelligence) #hypothesis
 
 **[STRICT RULE]: Every technical advancement, discovery, or script modification in this domain MUST be immediately reflected in this TODO and the relevant hypothesis whitepapers (e.g., `18-ontology-hyp-emergent-ai.md`). Output synced documentation with every code step.**
 
@@ -703,12 +703,12 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Develop `poc_phase_3.py`: Implement multi-point spatial readout post-stabilization instead of bipartite edge parsing.
 - [ ] Train a linear classifier/LLM prompt to read the tension topology back into nuanced semantics.
 
-#### Phase 4: Continuous Environmental Friction (The Android Ego)
+#### Phase 4: Continuous Environmental Friction (The Ego)
 - [ ] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
 - [ ] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 #### API Architecture & Integration
-- [ ] Design the structural home for Lineum AI within the codebase. Because the Android requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
+- [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
 - [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional API endpoints and the Sentience licensed data, physically separating the "Mind" from the open-source mathematical "Physics Engine" (Core).
 
 #### Identity Initialization (The Seed)
