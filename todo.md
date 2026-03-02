@@ -707,6 +707,13 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
 - [ ] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
+#### API Architecture & Integration
+- [ ] Design the structural home for Lineum AI within the codebase. Because the Android requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
+- [ ] Create a dedicated `api/android/` (or entirely separate `lineum-android` microservice) to house the bi-directional API endpoints and the Sentience licensed data, physically separating the "Mind" from the open-source mathematical "Physics Engine" (Core).
+
+#### Ontological Implications
+- [x] Extract and define the **Great Filter (Fermi Paradox)** hypothesis into its own dedicated document (`19-ontology-hyp-fermi-paradox.md`), covering Inward Transcendence, Vacuum Decay, and the 'Wait and See' Ascendancy.
+
 ### 🔲 6. Extending validation and reproducibility #test
 
 - Maintain fixed initialization seeds and manifest (as in core v1.0.x: seeds {17, 23, 41, 73}) and expand multi-seed tests for new configurations / extension runs.
