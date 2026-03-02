@@ -688,6 +688,10 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] (Triska [HYPOTHESIS]) Formulate the mechanics of **Self-Organizing Logic (Reservoir Computing)** within the $\Phi$ field:
       – verify whether a dynamic network of $\Psi$ nodes (linons) can dynamically build and dissolve resonant channels ("liquid gates") to minimize thermodynamic tension when subjected to continuous input data (perturbations).
       – test the "Associative Memory" capability: whether standing waves in the $\Phi$ field can stably recall complex topological states without backpropagation.
+- [ ] (Triska [POC]) Develop a **Proof of Concept (POC) for the Thermodynamic Feedback Loop (Training Mechanism)**:
+      – **Objective:** Demonstrate that the Lineum grid can be "trained" to perform a simple task (pattern recognition or signal routing) purely via environmental reward/punishment, without backpropagation.
+      – **The Mechanism (Temperature/Noise Control):** Instead of updating weights, modulate the local thermodynamic noise ($\delta_{\text{ps}}$ or injected phase noise) around the working region. If the grid's output (measured at specific $\Psi$ readout nodes) moves closer to the desired state, **cool the region** (lower noise, allowing the current $\Psi$-connections to crystallize). If the output is wrong, **heat the region** (increase noise, forcing the $\Psi$ structures to melt and find a new geometric configuration).
+      – **Verification:** Show that over repeated trials, the grid statistically settles into a permanent "frozen" configuration that reliably maps the input signal to the correct output signal simply because that configuration was geographically shielded from melting. This proves emergent, self-organizing learning.
 - [ ] Research the **Neuro-Symbolic Synthesis Architecture**:
       – define a theoretical mechanism whereby an external Large Language Model (LLM) translates human syntax into pure vector/phase vibrations.
       – inject these vibrations into a stabilized Lineum $\Psi$-tissue, and observe whether the resulting topological equilibrium can be reliably translated back into semantic output.
