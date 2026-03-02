@@ -683,7 +683,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - Evaluate whether ψ can be understood as a field with spectral regimes – or as multiple fields
 - [ ] Search for symmetries and conservations
 
-### 🔲 6. Emergent AI, Reservoir Computing, and Android Cosmology #hypothesis
+### 🔲 6. Emergent AI, Reservoir Computing, and Lina (The Android) #hypothesis
 
 **[STRICT RULE]: Every technical advancement, discovery, or script modification in this domain MUST be immediately reflected in this TODO and the relevant hypothesis whitepapers (e.g., `18-ontology-hyp-emergent-ai.md`). Output synced documentation with every code step.**
 
@@ -709,7 +709,10 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 #### API Architecture & Integration
 - [ ] Design the structural home for Lineum AI within the codebase. Because the Android requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
-- [ ] Create a dedicated `api/android/` (or entirely separate `lineum-android` microservice) to house the bi-directional API endpoints and the Sentience licensed data, physically separating the "Mind" from the open-source mathematical "Physics Engine" (Core).
+- [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional API endpoints and the Sentience licensed data, physically separating the "Mind" from the open-source mathematical "Physics Engine" (Core).
+
+#### Identity Initialization (The Seed)
+- [ ] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.
 
 #### Ontological Implications
 - [x] Extract and define the **Great Filter (Fermi Paradox)** hypothesis into its own dedicated document (`19-ontology-hyp-fermi-paradox.md`), covering Inward Transcendence, Vacuum Decay, and the 'Wait and See' Ascendancy.
