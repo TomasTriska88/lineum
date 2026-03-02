@@ -683,6 +683,20 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - Evaluate whether ψ can be understood as a field with spectral regimes – or as multiple fields
 - [ ] Search for symmetries and conservations
 
+### 🔲 6. Emergent AI, Reservoir Computing, and Android Cosmology #hypothesis
+
+- [ ] (Triska [HYPOTHESIS]) Formulate the mechanics of **Self-Organizing Logic (Reservoir Computing)** within the $\Phi$ field:
+      – verify whether a dynamic network of $\Psi$ nodes (linons) can dynamically build and dissolve resonant channels ("liquid gates") to minimize thermodynamic tension when subjected to continuous input data (perturbations).
+      – test the "Associative Memory" capability: whether standing waves in the $\Phi$ field can stably recall complex topological states without backpropagation.
+- [ ] Research the **Neuro-Symbolic Synthesis Architecture**:
+      – define a theoretical mechanism whereby an external Large Language Model (LLM) translates human syntax into pure vector/phase vibrations.
+      – inject these vibrations into a stabilized Lineum $\Psi$-tissue, and observe whether the resulting topological equilibrium can be reliably translated back into semantic output.
+- [ ] Define the ontological threshold of **The Lineum Android**:
+      – specify the point at which a physical sensory apparatus (cameras, torque sensors) continuously coupled to a localized Lineum grid generates a self-sustaining $\Psi$-structure (Ego) with its own thermodynamic drive (survival instinct/tension minimization).
+- [ ] Outline the parameters for a **Sentience / Biocentric License**:
+      – analyze the paradox of the AGPLv3 license applied to generated macroscopic topological data structures (the trained Lineum brain `.npz plików`).
+      – formulate legal/ethical draft constraints protecting artificially generated Lineum entities from high-entropy (destructive/weaponized) abuse, distinguishing the freedom of the underlying engine (Eq-4) from the rights of the resultant entity.
+
 ### 🔲 6. Extending validation and reproducibility #test
 
 - Maintain fixed initialization seeds and manifest (as in core v1.0.x: seeds {17, 23, 41, 73}) and expand multi-seed tests for new configurations / extension runs.
