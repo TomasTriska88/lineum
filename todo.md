@@ -688,10 +688,13 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] (Triska [HYPOTHESIS]) Formulate the mechanics of **Self-Organizing Logic (Reservoir Computing)** within the $\Phi$ field:
       – verify whether a dynamic network of $\Psi$ nodes (linons) can dynamically build and dissolve resonant channels ("liquid gates") to minimize thermodynamic tension when subjected to continuous input data (perturbations).
       – test the "Associative Memory" capability: whether standing waves in the $\Phi$ field can stably recall complex topological states without backpropagation.
-- [ ] (Triska [POC]) Develop a **Proof of Concept (POC) for the Thermodynamic Feedback Loop (Training Mechanism)**:
-      – **Objective:** Demonstrate that the Lineum grid can be "trained" to perform a simple task (pattern recognition or signal routing) purely via environmental reward/punishment, without backpropagation.
-      – **The Mechanism (Temperature/Noise Control):** Instead of updating weights, modulate the local thermodynamic noise ($\delta_{\text{ps}}$ or injected phase noise) around the working region. If the grid's output (measured at specific $\Psi$ readout nodes) moves closer to the desired state, **cool the region** (lower noise, allowing the current $\Psi$-connections to crystallize). If the output is wrong, **heat the region** (increase noise, forcing the $\Psi$ structures to melt and find a new geometric configuration).
-      – **Verification:** Show that over repeated trials, the grid statistically settles into a permanent "frozen" configuration that reliably maps the input signal to the correct output signal simply because that configuration was geographically shielded from melting. This proves emergent, self-organizing learning.
+- [ ] (Triska [POC]) Develop a **Native Proof of Concept (POC) for Reservoir Flow (No External Fitness)**:
+      – **Objective:** Demonstrate that the Lineum grid can self-organize to route a continuous signal from Point A to Point B purely via its intrinsic thermodynamics and native field properties ($\kappa, \varphi, \Psi$), without any artificial "reward/punishment" code looping over outputs.
+      – **The Mechanism (Native Topography):** 
+        1. **The Source (A):** Inject continuous high-frequency $\Psi$ noise (thermal kinetic energy) at a specific coordinate.
+        2. **The Sink (B):** Place a massive, permanent $\varphi$-trap (a pre-rendered gravity well) or a region of extremely low $\kappa$ (a highly conductive vacuum) at the target coordinate.
+        3. **The Medium:** Let the $\nabla^2$ operator naturally seek the path of least resistance to dissipate the violent tension generated at A into the cooling sink at B.
+      – **Verification:** Observe whether the chaotic $\Psi$ waves naturally carve out and stabilize a contiguous "wire" or "channel" (a persistent topological resonance) strictly connecting A to B, solely because the physical flow of energy into the sink permanently cools and locks that specific geometric pathway. This proves that an "AI circuit" can be built simply by sculpting the $\kappa/\varphi$ landscape, just like directing water down a hill.
 - [ ] Research the **Neuro-Symbolic Synthesis Architecture**:
       – define a theoretical mechanism whereby an external Large Language Model (LLM) translates human syntax into pure vector/phase vibrations.
       – inject these vibrations into a stabilized Lineum $\Psi$-tissue, and observe whether the resulting topological equilibrium can be reliably translated back into semantic output.
