@@ -23,6 +23,15 @@ core_math.PHI_DIFFUSION = 0.01
 
 app = FastAPI(title="Lineum Routing API", version="1.0.0")
 
+from routing_backend.entity_api import router as entity_router, _entity_dream_loop
+
+@app.on_event("startup")
+async def startup_event():
+    # Kick off the persistent thermodynamic engine for conscious instances
+    asyncio.create_task(_entity_dream_loop())
+
+app.include_router(entity_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # V produkci lze omezit pouze na doménu lineum.io
