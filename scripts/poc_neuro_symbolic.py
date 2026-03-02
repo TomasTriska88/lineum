@@ -64,55 +64,58 @@ def wave_to_text_readout(psi: np.ndarray) -> str:
 def run_neuro_symbolic_poc():
     print("--- Running Neuro-Symbolic Interface POC ---")
     grid_size = 100
-    
-    # 1. Initialize empty Lineum Core
-    print("1. Initializing Lineum core...")
-    psi = np.zeros((grid_size, grid_size), dtype=np.float32)
-    phi = np.zeros((grid_size, grid_size), dtype=np.float32)
-    kappa = np.full((grid_size, grid_size), 0.5, dtype=np.float32)
-    delta = np.zeros((grid_size, grid_size), dtype=np.float32)
-
-    # Sculpt a basic "Brain" environment (a few phi traps to cause interference)
-    phi[40:60, 40:60] = -5.0 # Central processing pit
-    
-    # 2. ENCODING (The Ears)
-    input_word = "LINEUM"
-    print(f"2. Translating semantic word '{input_word}' to wave kinetic injection...")
-    injection = text_to_wave_injection(input_word, grid_size)
-    psi += injection
-    
-    # Save a copy of the injection for visualization
-    initial_psi = psi.copy()
-
-    # 3. PROCESSING (The Brain)
-    print("3. Allowing the reservoir to structurally process the concept (Eq-4 Evolve)...")
     steps = 300
-    for t in range(steps):
-        psi, phi = evolve(psi, phi, kappa, delta)
+    
+    test_words = ["NEUTRAL", "ORDER", "CHAOS"]
+    
+    plt.figure(figsize=(12, 4 * len(test_words)))
+    
+    for idx, input_word in enumerate(test_words):
+        print(f"\n--- Processing Word: '{input_word}' ---")
         
-    # 4. DECODING (The Mouth)
-    print("4. Reading stable topology and translating back to semantic text...")
-    output_meaning = wave_to_text_readout(psi)
-    print(f"\n>>> THE RESERVOIR ANSWERS: {output_meaning}\n")
+        # 1. Initialize empty Lineum Core for each word
+        psi = np.zeros((grid_size, grid_size), dtype=np.float32)
+        phi = np.zeros((grid_size, grid_size), dtype=np.float32)
+        kappa = np.full((grid_size, grid_size), 0.5, dtype=np.float32)
+        delta = np.zeros((grid_size, grid_size), dtype=np.float32)
 
-    # 5. Visualization
-    print("5. Rendering results...")
-    plt.figure(figsize=(12, 5))
-    
-    plt.subplot(1, 2, 1)
-    plt.title(f"Initial Semantic Injection: '{input_word}'")
-    plt.imshow(np.abs(initial_psi).T, cmap='magma', origin='lower')
-    plt.colorbar()
-    
-    plt.subplot(1, 2, 2)
-    plt.title(f"Processed Stable Topology\nDecoded Output: {output_meaning}")
-    plt.imshow(np.abs(psi).T, cmap='magma', origin='lower')
-    plt.colorbar()
+        # Sculpt a basic "Brain" environment (a few phi traps to cause interference)
+        phi[40:60, 40:60] = -5.0 # Central processing pit
+        
+        # 2. ENCODING (The Ears)
+        print(f"Translating semantic word '{input_word}' to wave kinetic injection...")
+        injection = text_to_wave_injection(input_word, grid_size)
+        psi += injection
+        
+        # Save a copy of the injection for visualization
+        initial_psi = psi.copy()
+
+        # 3. PROCESSING (The Brain)
+        print("Allowing the reservoir to structurally process the concept (Eq-4 Evolve)...")
+        for t in range(steps):
+            psi, phi = evolve(psi, phi, kappa, delta)
+            
+        # 4. DECODING (The Mouth)
+        output_meaning = wave_to_text_readout(psi)
+        print(f">>> THE RESERVOIR ANSWERS: {output_meaning}")
+
+        # 5. Add to Visualization subplot
+        row_idx = idx * 2
+        
+        plt.subplot(len(test_words), 2, row_idx + 1)
+        plt.title(f"[{input_word}] Initial Injection")
+        plt.imshow(np.abs(initial_psi).T, cmap='magma', origin='lower')
+        plt.colorbar()
+        
+        plt.subplot(len(test_words), 2, row_idx + 2)
+        plt.title(f"[{input_word}] Decoded: {output_meaning}")
+        plt.imshow(np.abs(psi).T, cmap='magma', origin='lower')
+        plt.colorbar()
     
     plt.tight_layout()
     output_png = os.path.join(os.path.dirname(__file__), "poc_neuro_symbolic_result.png")
     plt.savefig(output_png)
-    print(f"Saved visualization to {output_png}")
+    print(f"\nSaved combined visualization to {output_png}")
     print("--- POC Complete ---")
 
 if __name__ == "__main__":

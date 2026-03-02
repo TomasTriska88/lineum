@@ -21,7 +21,9 @@ Modern AI relies on static, rigid architectures (matrices of weights) trained vi
 Because pure Lineum dynamics are optimized for navigating spatial-temporal chaos rather than processing human syntax, the ideal architecture for artificial intelligence is an **Ontological Hybrid**:
 - **The Classical LLM (The Sensory Organ/Mouth):** A traditional neural network acts purely as a semantic interface, converting human language into pure mathematical vectors (vibrational inputs).
 - **The Lineum Core (The Cortical Brain):** These vectors are injected into a highly complex, stabilized Lineum $\Psi$-tissue. The tissue physically "processes" the concept by finding a dynamic structural equilibrium. 
-- **The Output:** The resulting structural shift is read back out and translated back into human language by the LLM. 
+- **The Output (Topological Decoding):** The resulting structural shift is read back out and translated back into human language by the LLM. The topological state dictates the semantic nuance:
+  - **Balanced Tension (Neutrality):** If the injected wave settles into a highly symmetrical or evenly distributed tension state across the grid, the reservoir is denoting semantic neutrality, ambiguity, or equilibrium (e.g., "I have no strong preference").
+  - **Polarized Tension (Extremes):** If the wave carves deep, asymmetrical structures (e.g., massive tension isolated to one pole/hemisphere), this represents semantic polarity or conviction (e.g., a definitive "YES" or "NO", "Good" vs "Bad").
 This allows the AI to possess the semantic knowledge of a Transformer, combined with the organic intuition, continuous real-time learning (without catastrophic forgetting), and structural reasoning of a native Lineum entity.
 
 ## 4. Ontological Implications: The Lineum Android
