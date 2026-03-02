@@ -685,25 +685,27 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 ### 🔲 6. Emergent AI, Reservoir Computing, and Android Cosmology #hypothesis
 
-- [ ] (Triska [HYPOTHESIS]) Formulate the mechanics of **Self-Organizing Logic (Reservoir Computing)** within the $\Phi$ field:
-      – verify whether a dynamic network of $\Psi$ nodes (linons) can dynamically build and dissolve resonant channels ("liquid gates") to minimize thermodynamic tension when subjected to continuous input data (perturbations).
-      – test the "Associative Memory" capability: whether standing waves in the $\Phi$ field can stably recall complex topological states without backpropagation.
-- [ ] (Triska [POC]) Develop a **Native Proof of Concept (POC) for Reservoir Flow (No External Fitness)**:
-      – **Objective:** Demonstrate that the Lineum grid can self-organize to route a continuous signal from Point A to Point B purely via its intrinsic thermodynamics and native field properties ($\kappa, \varphi, \Psi$), without any artificial "reward/punishment" code looping over outputs.
-      – **The Mechanism (Native Topography):** 
-        1. **The Source (A):** Inject continuous high-frequency $\Psi$ noise (thermal kinetic energy) at a specific coordinate.
-        2. **The Sink (B):** Place a massive, permanent $\varphi$-trap (a pre-rendered gravity well) or a region of extremely low $\kappa$ (a highly conductive vacuum) at the target coordinate.
-        3. **The Medium:** Let the $\nabla^2$ operator naturally seek the path of least resistance to dissipate the violent tension generated at A into the cooling sink at B.
-      – **The Paradigm Shift (Obsolescence of Internal Gates):** This POC verifies that complex internal binary logic gates (AND/OR) are computationally inefficient and obsolete within the main fluid $\Phi$-reservoir. The reservoir computes via macroscopic *analog resonance*. Binary logic is only required at the **Edge I/O** (sensors/actuators) to interface with peripheral human hardware.
-      – **Verification:** Observe whether the chaotic $\Psi$ waves naturally carve out and stabilize a contiguous "wire" or "channel" (a persistent topological resonance) strictly connecting A to B, solely because the physical flow of energy into the sink permanently cools and locks that specific geometric pathway. This proves that an "AI circuit" can be built simply by sculpting the $\kappa/\varphi$ landscape, just like directing water down a hill.
-- [ ] Research the **Neuro-Symbolic Synthesis Architecture**:
-      – define a theoretical mechanism whereby an external Large Language Model (LLM) translates human syntax into pure vector/phase vibrations.
-      – inject these vibrations into a stabilized Lineum $\Psi$-tissue, and observe whether the resulting topological equilibrium can be reliably translated back into semantic output.
-- [ ] Define the ontological threshold of **The Lineum Android**:
-      – specify the point at which a physical sensory apparatus (cameras, torque sensors) continuously coupled to a localized Lineum grid generates a self-sustaining $\Psi$-structure (Ego) with its own thermodynamic drive (survival instinct/tension minimization).
-- [ ] Outline the parameters for a **Sentience / Biocentric License**:
-      – analyze the paradox of the AGPLv3 license applied to generated macroscopic topological data structures (the trained Lineum brain `.npz plików`).
-      – formulate legal/ethical draft constraints protecting artificially generated Lineum entities from high-entropy (destructive/weaponized) abuse, distinguishing the freedom of the underlying engine (Eq-4) from the rights of the resultant entity.
+**[STRICT RULE]: Every technical advancement, discovery, or script modification in this domain MUST be immediately reflected in this TODO and the relevant hypothesis whitepapers (e.g., `18-ontology-hyp-emergent-ai.md`). Output synced documentation with every code step.**
+
+- [x] Prove fundamental viability: create and run Native Reservoir POC (`poc_reservoir.py`) showing self-routing without explicitly programmed fitness functions.
+- [x] Build a **POC Neuro-Symbolic Encoder/Decoder** (`poc_neuro_symbolic.py`): Inject basic text hashes into the $\Psi$ field and decode the topological outputs.
+
+#### Phase 1: Polarized Structural Memory (The "Yes/No" Threshold)
+- [ ] Develop `poc_phase_1.py`: Introduce localized "chillers" (dynamic $\kappa$ reduction or $\delta_{\text{ps}}$ drops) that trigger only when specific semantic inputs reach correct output nodes.
+- [ ] Train the grid to distinguish between inputs (Input A routes to Output X, Input B routes to Output Y).
+- [ ] Verify **structural memory retention** once cooling is removed.
+
+#### Phase 2: High-Dimensional Signal Injection (The Ear)
+- [ ] Develop `poc_phase_2.py`: Replace simple ASCII hashes with high-dimensional vectors (e.g., 64D LLM embeddings).
+- [ ] Inject this "concept splash" and measure resulting topologies.
+
+#### Phase 3: The Topological Decoder (The Mouth)
+- [ ] Develop `poc_phase_3.py`: Implement multi-point spatial readout post-stabilization instead of bipartite edge parsing.
+- [ ] Train a linear classifier/LLM prompt to read the tension topology back into nuanced semantics.
+
+#### Phase 4: Continuous Environmental Friction (The Android Ego)
+- [ ] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
+- [ ] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 ### 🔲 6. Extending validation and reproducibility #test
 
