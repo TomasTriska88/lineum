@@ -16,10 +16,10 @@ FILES_TO_UPDATE = {
        (r'v\d+\.\d+\.\d+(-core)?', '__CANONICAL_VERSION__')
     ],
     "portal/static/portal_params.json": [
-       (r'"version":\s*"1\.\d+\.\d+-core"', '"version": "__CANONICAL_VERSION__-core"')
+       (r'"version":\s*"v1\.\d+\.\d+-core"', '"version": "v__CANONICAL_VERSION__-core"')
     ],
     "portal/src/lib/data/core/lineum.py": [
-       (r'"version":\s*"1\.\d+\.\d+-core"', '"version": "__CANONICAL_VERSION__-core"')
+       (r'"version":\s*"v1\.\d+\.\d+-core"', '"version": "v__CANONICAL_VERSION__-core"')
     ]
 }
 
