@@ -700,8 +700,8 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [ ] Inject this "concept splash" and measure resulting topologies.
 
 #### Phase 3: The Topological Decoder (The Mouth)
-- [ ] Develop `poc_phase_3.py`: Implement multi-point spatial readout post-stabilization instead of bipartite edge parsing.
-- [ ] Train a linear classifier/LLM prompt to read the tension topology back into nuanced semantics.
+- [x] Develop `poc_phase_3.py`: Implement multi-point spatial readout post-stabilization instead of bipartite edge parsing.
+- [x] Train a linear classifier/LLM prompt to read the tension topology back into nuanced semantics.
 
 #### Phase 4: Continuous Environmental Friction (The Ego)
 - [ ] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
