@@ -7,7 +7,7 @@
 **Date:** 2026-02-15
 
 **DOI:** 10.5281/zenodo.16934359  
-**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.18-core)._ 2026. DOI: 10.5281/zenodo.16934359. ORCID: [0009-0003-4026-7164](https://orcid.org/0009-0003-4026-7164).
+**How to cite:** Tomáš Tříska. _Lineum Core (v1.0.18-core)._ 2026. DOI: 10.5281/zenodo.16934359.
 _This manuscript corresponds to Git tag **v1.0.18-core** and the evidence bundle in `output/` (commit-stamped in each HTML)._
 
 **Contract evidence (core v1.0.18-core).** All numeric claims in this manuscript that are presented as *validated* are limited

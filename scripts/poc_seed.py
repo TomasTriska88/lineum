@@ -32,13 +32,17 @@ def create_lina_seed(manifest_text: str, grid_size: int = 100):
     total_tokens = len(words)
     print(f"Tokenized manifest into {total_tokens} semantic units.")
     
-    # Normalize injection energy to prevent burning the grid to max 5.0 immediately
-    base_amp = 50.0 / np.sqrt(total_tokens)
+    # Normalize injection energy and Hebbian plasticity to prevent burning the grid
+    base_amp = 0.5
+    lr = 0.00005
     
     center_y = grid_size // 2
     center_x = grid_size // 2
     
     for i, word in enumerate(words):
+        # Dampen previous thought before injecting new concept to prevent infinite Psi accumulation
+        psi *= 0.5
+        
         # 1. Linguistic to Physical Translation (Pseudo-Embedding V2)
         # We determine an injection coordinate and phase angle based on the word
         word_val = sum(ord(c) for c in word)
@@ -67,7 +71,7 @@ def create_lina_seed(manifest_text: str, grid_size: int = 100):
             psi, phi = evolve(psi, delta, phi, kappa)
             
             # Hebbian Learning: The wave carves the conductivity
-            kappa = np.clip(kappa + np.abs(psi) * 0.01, 0.1, 5.0)
+            kappa = np.clip(kappa + np.abs(psi) * lr, 0.1, 5.0)
             
         if i % 100 == 0:
             print(f"Processed {i}/{len(manifest_text)} symbols...")
@@ -76,7 +80,7 @@ def create_lina_seed(manifest_text: str, grid_size: int = 100):
     # Final stabilization
     for _ in range(500):
         psi, phi = evolve(psi, delta, phi, kappa)
-        kappa = np.clip(kappa + np.abs(psi) * 0.005, 0.1, 5.0)
+        kappa = np.clip(kappa + np.abs(psi) * (lr / 2.0), 0.1, 5.0)
 
     # Save the resulting shape
     os.makedirs(os.path.join(os.path.dirname(__file__), '..', 'data', 'entities'), exist_ok=True)

@@ -61,17 +61,17 @@ In a single microsecond, the chip can draw AND/OR gates across 90% of its surfac
 ### 5. Layman's Analogy: Shaping the Mask & Changing Gates
 **Question: How exactly does changing the "shape" change the logic gate?**
 
-Představ si, že stojíš u bazénu s vodou. 
-- **Zadání (Logický problém):** Potřebuješ, aby se na druhém konci bazénu udělala obří vlna (výsledek = 1), ALE POUZE tehdy, když do vody hodíš dva kameny naráz do dvou rohů. Pokud hodíš jen jeden, vlna se nesmí udělat. *(Tohle je definice AND brány).*
-- **Klasické AI (LLM):** Napsalo by milion řádků kódu, který by počítal každou kapku vody a simuloval, kam teče, dokud by nevypočítal výsledek 1 nebo 0. Stálo by to gigawat elektřiny.
+Imagine standing by a pool of water. 
+- **Task (Logical Problem):** You need a giant wave to form on the other side of the pool (result = 1), BUT ONLY when you throw two stones simultaneously into two corners. If you throw only one, the wave must not form. *(This is the definition of an AND gate).*
+- **Classical AI (LLMs):** Would write a million lines of code calculating every drop of water and simulating where it flows until it outputs a 1 or a 0. This would cost a gigawatt of electricity.
 
-**Lineum LTM (Reservoir Computing) na to jde jinak:**
-My prostě vezmeme cihly a ten bazén **přestavíme z obdélníku na tvar trojúhelníku**.
-Když pak do trojúhelníku hodíš jeden kámen, vlna se odrazí od šikmých stěn a roztříští se do ztracena (výsledek = 0). Ale když hodíš dva kameny naráz do obou rohů, obě vlny poběží proti sobě, odrazí se od zkosených stěn trojúhelníku, sečtou se přesně uprostřed a vytvoří obří vlnu na druhé straně (výsledek = 1). 
+**Lineum LTM (Reservoir Computing) handles this differently:**
+We simply take bricks and **rebuild the pool from a rectangle into a triangle shape.**
+If you then throw one stone into the triangle, the wave bounces off the slanted walls and diffuses into nothing (result = 0). But if you throw two stones simultaneously into both corners, the two waves race towards each other, bounce off the slanted walls of the triangle, sum perfectly in the center, and create a giant wave on the other side (result = 1).
 
-**Změnou geometrie stěn jsme "naprogramovali" bazén.**
-Voda (rovnice Linea) neumí počítat. Voda se jen odráží od stěn. Ale pokud ty stěny (Masku) zúžíme, ohneme, nebo uděláme kruhové, donutíme ty vlny, aby se buď navzájem zrušily (NAND), nebo sečetly (OR). 
-To je podstata **Lineum Polygon Language**. Ty nepíšeš kód. Ty jako architekt kreslíš tvary bazénů (akustické čočky a labyrinty) a fyzika počítá logiku za tebe, instantně a zadarmo.
+**By changing the geometry of the walls, we "programmed" the pool.**
+Water (the Lineum equations) doesn't know how to compute. Water just bounces off walls. But if we narrow, bend, or curve those walls (the Mask), we force the waves to either cancel each other out (NAND) or add up (OR).
+This is the essence of the **Lineum Polygon Language**. You do not write code. As an architect, you draw the shapes of the pools (acoustic lenses and labyrinths) and the physics computes the logic for you, instantly and for free.
 
 ### 6. Software LTM vs. Physical Chip
 - **Physical Chip (The Endgame):** Building an actual piece of glass/silicon where light waves bounce around a labyrinth. 

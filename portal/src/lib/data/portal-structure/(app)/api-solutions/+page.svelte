@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import * as m from "$lib/paraglide/messages.js";
     import LogoCloud from "$lib/components/LogoCloud.svelte";
     import { portal } from "$lib/actions/portal";
@@ -9,6 +10,12 @@
     import Web3VrfApp from "$lib/components/api-showcase/Web3VrfApp.svelte";
     import LineumHashApp from "$lib/components/api-showcase/LineumHashApp.svelte";
     import GamingRngApp from "$lib/components/api-showcase/GamingRngApp.svelte";
+
+    // ... hydration tracking for Playwright tests ...
+    let pageHydrated = false;
+    onMount(() => {
+        pageHydrated = true;
+    });
 
     // --- ROI Calculator Logic ---
     let fleetSize = 500;
@@ -58,7 +65,10 @@ result = solver.route(
     <title>{m.common_brand()} API Solutions | Swarm Routing Showcase</title>
 </svelte:head>
 
-<div class="min-h-screen text-slate-50 font-sans flex flex-col pt-[104px]">
+<div
+    data-hydrated={pageHydrated}
+    class="min-h-screen text-slate-50 font-sans flex flex-col pt-[104px]"
+>
     <!-- Main Content -->
     <main class="flex-1 w-full flex flex-col items-center">
         <!-- VERCEL-STYLE HERO SECTION (Centered, Clean, Massive) -->

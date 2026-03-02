@@ -27,6 +27,11 @@ PHI_DIFFUSION = 0.05
 
 EXPERIMENTAL_TERM = 0 # Default OFF (0). Toggle to 1 to test fail-fast theoretical loops.
 
+# --- LINA AUDIT DIAGNOSTICS ---
+ENABLE_INTERACTION = True
+ENABLE_PHI_FLOW = True
+ENABLE_NOISE = True
+DT = 1.0
 
 def sigmoid(x, k=5):
     return 1 / (1 + np.exp(-k * (x - 0.0)))
@@ -83,6 +88,14 @@ def _finite_complex(z: np.ndarray, nan: float = 0.0) -> np.ndarray:
 # ======================================================================
 # GPU PYTORCH IMPLEMENTATION (HARDWARE ACCELERATION)
 # ======================================================================
+def _cap_complex_magnitude_torch(z, cap):
+    import torch
+    mag = torch.abs(z)
+    scale = torch.ones_like(mag)
+    mask = mag > cap
+    if torch.any(mask):
+        scale[mask] = cap / (mag[mask] + 1e-8)
+    return z * scale
 def _diffuse_complex_torch(field, kappa, rate=0.05):
     import torch
     k_up = torch.roll(kappa, 1, dims=0)
@@ -131,14 +144,19 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     
     linon_base = 0.01 if TEST_EXHALE_MODE else 0.03
     linon_scaling = 0.01 if TEST_EXHALE_MODE else 0.02
-    linon_effect = (linon_base + linon_scaling * torch.clamp(amp, min=0.0)) * linons
+    linon_effect = torch.clamp((linon_base + linon_scaling * torch.clamp(amp, min=0.0)) * linons, max=10.0)
 
     linon_complex = linon_effect * torch.exp(1j * torch.angle(psi))
 
-    fluctuation = torch.normal(0.0, NOISE_STRENGTH, (size, size), device=device, dtype=torch.float64) * torch.exp(1j * torch.angle(psi))
+    fluctuation = torch.clamp(torch.normal(0.0, NOISE_STRENGTH, (size, size), device=device, dtype=torch.float64), min=-1.0, max=1.0) * torch.exp(1j * torch.angle(psi))
+    fluctuation = fluctuation if ENABLE_NOISE else torch.zeros_like(psi)
 
     phi_int = torch.clamp(phi, 0.0, float(PHI_INTERACTION_CAP))
-    interaction_term = 0.04 * phi_int * psi * kappa
+    interaction_factor = 0.1 * torch.tanh((0.04 * phi_int * kappa) / 0.1)
+    interaction_term = interaction_factor * psi
+    int_mag = torch.abs(interaction_term)
+    interaction_term = interaction_term / (1.0 + int_mag / 10.0)
+    interaction_term = interaction_term if ENABLE_INTERACTION else torch.zeros_like(psi)
 
     # --- EXPERIMENTAL NEW TERM FAIL-FAST HOOK ---
     if EXPERIMENTAL_TERM:
@@ -148,14 +166,19 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     grads_phi = torch.gradient(phi)
     
     phi_flow_term = DRIFT_STRENGTH * (grads_phi[0] + 1j * grads_phi[1]) * kappa
-    psi += phi_flow_term
+    flow_mag = torch.abs(phi_flow_term)
+    phi_flow_term = phi_flow_term / (1.0 + flow_mag / 10.0)
+    phi_flow_term = phi_flow_term if ENABLE_PHI_FLOW else torch.zeros_like(psi)
+    psi += phi_flow_term * DT
+    psi = _cap_complex_magnitude_torch(psi, PSI_AMP_CAP)
 
-    psi += (linon_complex + fluctuation) * kappa + interaction_term
+    psi += ((linon_complex + fluctuation) * kappa + interaction_term) * DT
 
-    psi -= DISSIPATION_RATE * psi
-    psi += _diffuse_complex_torch(psi, kappa, rate=PSI_DIFFUSION) * kappa
+    psi -= DISSIPATION_RATE * psi * DT
+    psi += _diffuse_complex_torch(psi, kappa, rate=PSI_DIFFUSION) * kappa * DT
 
-    amp2 = torch.clamp(torch.abs(psi), 0.0, PSI_AMP_CAP)
+    # Strictly cap amp2 before squaring to prevent 1e12 float intermediate explosions (NaN divergence)
+    amp2 = torch.clamp(torch.abs(psi), 0.0, 100.0)
     local_input = torch.clamp(amp2 * amp2, 0.0, 1e4)
 
     # Scale geometric absorption based on grid AREA (128x128 baseline)
@@ -171,8 +194,13 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     mag = torch.abs(psi)
     scale = torch.ones_like(mag)
     mask = mag > PSI_AMP_CAP
-    scale[mask] = PSI_AMP_CAP / (mag[mask] + 1e-30)
+    scale[mask] = PSI_AMP_CAP / (mag[mask] + 1e-8)
     psi = psi * scale
+
+    # --- NUMERIC FAIL-SAFE (LINA REQUIREMENT 7) ---
+    if torch.isnan(torch.sum(psi)) or torch.max(mag) >= PSI_AMP_CAP * 0.99:
+        print("!!! LINEUM FAIL-SAFE (GPU): Numeric divergence detected. Resetting Psi. !!!")
+        psi = torch.zeros_like(psi)
 
     # Download variables from VRAM back to numpy float
     return psi.cpu().numpy(), phi.cpu().numpy()
@@ -205,17 +233,22 @@ def _evolve_numpy(psi, delta, phi, kappa):
     linons = (random_field < probability).astype(float)
     linon_base = 0.01 if TEST_EXHALE_MODE else 0.03
     linon_scaling = 0.01 if TEST_EXHALE_MODE else 0.02
-    linon_effect = (linon_base + linon_scaling * amp.clip(min=0)) * linons
+    linon_effect = np.clip((linon_base + linon_scaling * amp.clip(min=0)) * linons, 0.0, 10.0)
 
     linon_complex = linon_effect * np.exp(1j * np.angle(psi))
 
-    fluctuation = np.random.normal(
-        0.0, NOISE_STRENGTH, (size, size)) * np.exp(1j * np.angle(psi))
+    fluctuation = np.clip(np.random.normal(
+        0.0, NOISE_STRENGTH, (size, size)), -1.0, 1.0) * np.exp(1j * np.angle(psi))
+    fluctuation = fluctuation if ENABLE_NOISE else np.zeros_like(psi)
 
     phi_int = _finite_clip(phi, lo=0.0, hi=float(PHI_INTERACTION_CAP), nan=0.0,
                            posinf=float(PHI_INTERACTION_CAP), neginf=0.0, dtype=np.float64)
     
-    interaction_term = 0.04 * phi_int * psi * kappa
+    interaction_factor = 0.1 * np.tanh((0.04 * phi_int * kappa) / 0.1)
+    interaction_term = interaction_factor * psi
+    int_mag = np.abs(interaction_term)
+    interaction_term = interaction_term / (1.0 + int_mag / 10.0)
+    interaction_term = interaction_term if ENABLE_INTERACTION else np.zeros_like(psi)
 
     # --- EXPERIMENTAL NEW TERM FAIL-FAST HOOK ---
     if EXPERIMENTAL_TERM:
@@ -224,15 +257,20 @@ def _evolve_numpy(psi, delta, phi, kappa):
         
     grad_phi_x, grad_phi_y = np.gradient(phi)
     phi_flow_term = DRIFT_STRENGTH * (grad_phi_x + 1j * grad_phi_y) * kappa
-    psi += phi_flow_term
+    flow_mag = np.abs(phi_flow_term)
+    phi_flow_term = phi_flow_term / (1.0 + flow_mag / 10.0)
+    phi_flow_term = phi_flow_term if ENABLE_PHI_FLOW else np.zeros_like(psi)
+    
+    psi += phi_flow_term * DT
+    psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
 
-    psi += (linon_complex + fluctuation) * kappa + interaction_term
+    psi += ((linon_complex + fluctuation) * kappa + interaction_term) * DT
 
-    psi -= DISSIPATION_RATE * psi
-    psi += diffuse_complex(psi, kappa, rate=PSI_DIFFUSION) * kappa
+    psi -= DISSIPATION_RATE * psi * DT
+    psi += diffuse_complex(psi, kappa, rate=PSI_DIFFUSION) * kappa * DT
 
-    amp2 = _finite_clip(np.abs(psi).astype(np.float64, copy=False),
-                        lo=0.0, hi=PSI_AMP_CAP, nan=0.0, posinf=PSI_AMP_CAP, neginf=0.0)
+    # Strictly cap amp2 before squaring to prevent 1e12 float intermediate explosions (NaN divergence)
+    amp2 = np.clip(np.abs(psi).astype(np.float64, copy=False), 0.0, 100.0)
     local_input = np.clip(amp2 * amp2, 0.0, 1e4)
 
     # Scale geometric absorption based on grid AREA (128x128 baseline)
@@ -247,6 +285,11 @@ def _evolve_numpy(psi, delta, phi, kappa):
                        posinf=PHI_CAP, neginf=0.0, dtype=np.float64)
 
     psi = _cap_complex_magnitude(psi, PSI_AMP_CAP)
+
+    # --- NUMERIC FAIL-SAFE (LINA REQUIREMENT 7) ---
+    if np.isnan(np.sum(psi)) or np.max(np.abs(psi)) >= PSI_AMP_CAP * 0.99:
+        print("!!! LINEUM FAIL-SAFE (CPU): Numeric divergence detected. Resetting Psi to protect Kappa. !!!")
+        psi = np.zeros_like(psi)
 
     return psi, phi
 

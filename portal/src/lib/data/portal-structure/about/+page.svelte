@@ -34,6 +34,8 @@
                 {config.brand.ic}<br />
                 <strong>Address:</strong>
                 {config.brand.address}<br />
+                <strong>Phone:</strong>
+                {config.brand.phone}<br />
                 <strong>Founded:</strong> February 2026<br />
                 <strong>Contact:</strong>
                 <a href="mailto:{config.contact.primary}"
@@ -43,7 +45,33 @@
 
             <h2>Core Team</h2>
             <p>
-                <strong>Tomáš Tříska</strong><br />
+                <strong>Tomáš Tříska</strong>
+                <a
+                    href={config.academic.orcidUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="ml-2 inline-flex items-center text-[#A6CE39] hover:text-[#c0e655] transition-colors"
+                    title="ORCID Profile"
+                >
+                    <svg
+                        class="w-4 h-4 mr-1"
+                        viewBox="0 0 256 256"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fill="currentColor"
+                            d="M256,128c0,70.7-57.3,128-128,128C57.3,256,0,198.7,0,128C0,57.3,57.3,0,128,0C198.7,0,256,57.3,256,128z"
+                        />
+                        <path
+                            fill="#fff"
+                            d="M86.3,186.2H70.9V79.1h15.4V186.2z M108.9,79.1h41.6c39.6,0,57,28.3,57,53.6c0,27.5-21.5,53.6-56.8,53.6h-41.8V79.1z M124.3,172.4h24.5c34.9,0,41.2-26.5,41.2-41.2c0-19.7-10.7-38.2-41.2-38.2h-24.5V172.4z M88.7,56.8c0,5.5-4.5,10.1-10.1,10.1c-5.6,0-10.1-4.5-10.1-10.1c0-5.6,4.5-10.1,10.1-10.1C84.2,46.7,88.7,51.3,88.7,56.8z"
+                        />
+                    </svg>
+                    <span class="text-xs font-mono"
+                        >{config.academic.orcid}</span
+                    >
+                </a>
+                <br />
                 <em>Founder, Lead Researcher</em><br />
                 Creator of the Lineum Core simulation engine and primary architecture.
             </p>
@@ -65,6 +93,37 @@
                 For technical discussions, API integrations, and research
                 inquiries, please reach out via our primary contact endpoint. We
                 do not use third-party tracking or host non-essential telemetry.
+            </p>
+
+            <h2>Academic References</h2>
+            <p>
+                The Lineum methodology is built on transparent, auditable
+                research. Our primary mathematical proofs and theoretical
+                foundations are registered and independently citable via Zenodo.
+            </p>
+            <div
+                class="mt-4 p-4 bg-slate-900 border border-slate-800 rounded-lg font-mono text-sm leading-relaxed"
+            >
+                <span class="text-slate-500">Title:</span>
+                <span class="text-white"
+                    >Lineum: reference implementation & evidence bundle</span
+                ><br />
+                <span class="text-slate-500">DOI:</span>
+                <a
+                    href={config.academic.zenodoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sky-400 hover:text-sky-300"
+                    >10.5281/zenodo.16934359</a
+                ><br />
+                <span class="text-slate-500">License:</span>
+                <span class="text-white">AGPL-3.0</span>
+            </div>
+
+            <p class="mt-4 text-xs text-slate-500">
+                To cite the Lineum architecture in published papers, please
+                reference the DOI above. ORCID profiles are linked in the Team
+                section.
             </p>
         </div>
 

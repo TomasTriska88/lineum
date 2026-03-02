@@ -4,8 +4,6 @@
 **Version:** 1.1.0
 **Status:** Draft
 **Date:** 2025-11-14
-**DOI:** 10.5281/zenodo.16934359
-**Author ORCID:** [0009-0003-4026-7164](https://orcid.org/0009-0003-4026-7164)
 
 **Relates to:** `lineum-core.md` §3  
 **Equation versions:** V1–V4 (canonical: V4)  

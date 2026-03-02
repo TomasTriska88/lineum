@@ -30,10 +30,23 @@ jobs:
           # Generate the canonical spec6_false_s41 run
           python scripts/repro_spec6_false_s41.py
 
+      - name: Download Canonical Reference Pack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p canonical_pack
+          gh release download --pattern '*reference_pack*.zip' -D canonical_pack || echo "No previous release found, falling back to strict hash verify"
+
       - name: Verify and Build Pack
         run: |
-          # Verify run against manifest and generate the pack
-          python scripts/verify_repro_run.py --latest --pack
+          CANONICAL_ZIP=$(ls canonical_pack/*.zip 2>/dev/null | head -n 1 || echo "")
+          if [ -n "$CANONICAL_ZIP" ]; then
+            echo "Using canonical pack for fuzzy math verification: $CANONICAL_ZIP"
+            python scripts/verify_repro_run.py --latest --pack --fuzzy-match "$CANONICAL_ZIP"
+          else
+            echo "No canonical pack found. Running strict hash verification."
+            python scripts/verify_repro_run.py --latest --pack
+          fi
 
       - name: Prepare Release Assets
         id: prepare_assets

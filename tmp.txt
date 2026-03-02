@@ -1,0 +1,64 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.7, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\Tom�\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Tom�\Documents\GitHub\lineum-core
+configfile: pytest.ini
+plugins: anyio-4.8.0
+collecting ... collected 1 item
+
+tests/test_scripts_language_policy.py::test_no_czech_in_scripts_directory FAILED [100%]
+
+================================== FAILURES ===================================
+_____________________ test_no_czech_in_scripts_directory ______________________
+
+    def test_no_czech_in_scripts_directory():
+        """
+        Ensures that no Python scripts in the 'scripts' directory contain Czech words or characters.
+        This enforces the English-only codebase policy for user-facing utility scripts.
+        """
+        root_dir = pathlib.Path(__file__).parent.parent
+        scripts_dir = root_dir / 'scripts'
+    
+        all_violations = {}
+    
+        for py_file in scripts_dir.rglob('*.py'):
+            violations = check_file_for_czech(py_file)
+            if violations:
+                all_violations[py_file.name] = violations
+    
+        if all_violations:
+            error_msg = "Discovered Czech language violations in the following scripts:\n"
+            for fname, lines in all_violations.items():
+                error_msg += f"\nFile: {fname}\n"
+                for line in lines:
+                    error_msg += f"  - {line}\n"
+>           pytest.fail(error_msg)
+E           Failed: Discovered Czech language violations in the following scripts:
+E           
+E           File: poc_advanced.py
+E             - Line 83: ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="C�l")
+E             - Line 162: ax.set_title(f"Vizualizace Lineum: Dva zdroje, Ba�ina a Zapom�n�n� (Krok {frame_idx * 4})")
+E           
+E           File: poc_fading_routes.py
+E             - Line 70: ax.plot(target_x, target_y, 'ro', markersize=12, zorder=20, label="C�l")
+E           
+E           File: poc_routing_engine.py
+E             - Line 67: ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="C�l")
+E             - Line 130: ax.set_title(f"In�en�rsk� anal�za Eq-4: Zp�es�ov�n� Trasy (Krok {frame_idx * 4})")
+E           
+E           File: poc_terrain.py
+E             - Line 95: ax.plot(target_x, target_y, 'ro', markersize=15, zorder=20, label="Spole�n� C�l")
+E             - Line 181: ax.set_title(f"Velk� Topografie & Fading Swarms (Krok {frame_idx * 5})")
+E           
+E           File: poc_terrain_fast.py
+E             - Line 159: ax.set_title(f"Velk� Topografie (Krok {frame_idx * 15})")
+E           
+E           File: scan_seed_limit.py
+E             - Line 50: Rychl� headless simulace Eq-4 pro jeden seed.
+E             - Line 51: Vrac� pouze fin�ln� po�et topologick�ch defekt� a net charge v kroku 2000.
+E             - Line 104: parser.add_argument("--seeds", type=int, default=10, help="Po�et seed� ke skenov�n�")
+
+tests\test_scripts_language_policy.py:39: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_scripts_language_policy.py::test_no_czech_in_scripts_directory
+============================== 1 failed in 0.06s ==============================

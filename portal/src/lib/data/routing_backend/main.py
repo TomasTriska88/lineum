@@ -14,18 +14,21 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lineum_core.math import evolve
 from lineum_core import math as core_math
 
-# Tuning Lineum for web environment
-core_math.TEST_EXHALE_MODE = False
-core_math.NOISE_STRENGTH = 0.0
-core_math.PSI_DIFFUSION = 0.15
-core_math.REACTION_STRENGTH = 0.1
-core_math.PHI_DIFFUSION = 0.01
-
+# Using canonical Eq-4' (v0.1) constants as verified in Phase 7 audit.
 app = FastAPI(title="Lineum Routing API", version="1.0.0")
+
+from routing_backend.entity_api import router as entity_router, _entity_dream_loop
+
+@app.on_event("startup")
+async def startup_event():
+    # Kick off the persistent thermodynamic engine for conscious instances
+    asyncio.create_task(_entity_dream_loop())
+
+app.include_router(entity_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # V produkci lze omezit pouze na doménu lineum.io
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],  # Explicit origins needed for allow_credentials=True in some browsers
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

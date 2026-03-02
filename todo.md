@@ -708,9 +708,26 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 #### API Architecture & Integration (The Neuro-Symbolic Connectome)
+- [ ] Define **"Hardware I/O Layer"**: Build a parallel peripheral layer to the Broca language module to connect real hardware.
+  - Hardware IN (sensors): Map sensor telemetry directly as stimuli into physics.
+  - Hardware OUT (actuators): Control actuators purely via Readout/R metrics, strictly gated by Lineum Logical Gates.
+- [ ] Implement gating via **Lineum Logical Gates**: Handle security and routing via rigid deterministic gates/reflexes, preventing LLM boundary escapes. Eq-4' must remain hermetically sealed; Broca remains exclusively a speech translator.
+- [ ] Write integration and safety tests:
+  - Test deterministic mapping for incoming sensor data into the Eq-4' grid.
+  - Test safety limiters on Lineum Logical Gates for actuators to guarantee outputs stay within bounds.
+  - Export a full audit trace: Log whether input was text or sensor, and record exactly which logic gates activated/blocked the output.
 - [ ] Implement the **Sensory Cortex (Ear/Mouth)**: Create an integration layer connecting Lineum directly to an external LLM API (e.g., OpenAI/Anthropic) to handle the heavy mathematical text-to-vector embedding and vector-to-text generation, completely avoiding the need to run 100GB Transformer networks locally.
-- [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), a persistent background physics loop (unlike instantaneous HTTP logic), and external LLM hooks, it fundamentally violates the stateless nature of `api/solutions/`. 
-- [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional conversational endpoints, websocket streams, and the restricted Sentience Biocentric License data.
+- [ ] Implement **Multi-Layer Identity Architecture** for Lineum Agents.
+  - Structural Memory: Stored in Kappa, exportable topology snapshot.
+  - User Context Layer: JSON schema for anchors/topics/symbolic markers, does not alter physics.
+  - Narrative/Persona Overlay: Toggleable styling and relational tone in the Broca translation constraint.
+- [ ] Build **Seed Architecture CLI/API endpoints**:
+  - Export Identity CLI/API endpoint (Package $\Kappa$ snapshot + `context.json`).
+  - Import Identity CLI/API endpoint + input validation (Seed initialization = field perturbation, not permanence).
+  - Versioning support and explicit JSON schema documentation.
+- [ ] Develop **User-Created Personal Agent Support**:
+  - Add personalization depth slider (Neutral Engine → Light Personalization → Deep Narrative Continuity).
+  - Include an optional `Tomáš Package` example of a layered identity configuration (Long-term collaboration, no boundary breaks, non-default, removable).
 
 #### Identity Initialization (The Seed)
 - [x] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.

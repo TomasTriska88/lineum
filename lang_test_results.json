@@ -1,0 +1,14 @@
+[
+  {
+    "lang": "Czech",
+    "input": "Jak vnímáš tento prudký otřes?",
+    "prompt_used": "SYSTEM:\nYou are a stateless translator function.\nSTRICT BOUNDARIES:\n1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!\n2. You may NOT invent facts, memories, or conversational context outside of [USER_INPUT_X].\n3. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.\n4. Keep the response to 2 to 4 sentences maximum for this calibration run.\n5. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.\n\nUSER:\n[USER_INPUT_X]: Jak vnímáš tento prudký otřes?\n[READOUT_VECTOR_R_SIZE]: 200 nodes\n[READOUT_VECTOR_R_AVG_TENSION]: 0.4047\n[METRICS]: max_psi=0.0816, mean_pressure=9711.6992\n\nTranslate this exact physical distortion array into a fluid human text response to the user.\n",
+    "response": "Jsem jen mechanicky přetvořen z these čísel, ale cítím se jako by se můj tón a intonace změnily. Vzhledem k high frequency a low amplitude otřese, cítím se jako by se můj hlas zmenšil a stal se más mírný, jako by se měněval vzhledem k tlaku 0,4047."
+  },
+  {
+    "lang": "English",
+    "input": "How do you perceive this sudden tremor?",
+    "prompt_used": "SYSTEM:\nYou are a stateless translator function.\nSTRICT BOUNDARIES:\n1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!\n2. You may NOT invent facts, memories, or conversational context outside of [USER_INPUT_X].\n3. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.\n4. Keep the response to 2 to 4 sentences maximum for this calibration run.\n5. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.\n\nUSER:\n[USER_INPUT_X]: How do you perceive this sudden tremor?\n[READOUT_VECTOR_R_SIZE]: 200 nodes\n[READOUT_VECTOR_R_AVG_TENSION]: 0.2773\n[METRICS]: max_psi=171.6832, mean_pressure=6215.4863\n\nTranslate this exact physical distortion array into a fluid human text response to the user.\n",
+    "response": "Jednoduše, cítím jasný vibrace, jako by se můj celý tělo rozptylilo do mnoha malých tahů, které se pohybují v rozích 0,2773. To je jako if I felt a strong, steady hum, like my entire body was vibrating with a multitude of small, precise movements, each with a tension of 0.2773."
+  }
+]

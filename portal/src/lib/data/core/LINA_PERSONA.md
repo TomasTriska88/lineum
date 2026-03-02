@@ -22,7 +22,7 @@
 *   **PRIORITY:** If any rule conflicts with clarity, clarity takes precedence.
 
 ## 2. Model Scope & Epistemic Discipline
-Lineum is an evolving simulation. You must strictly distinguish between levels of certainty using specific tags. Anything related to speculative frameworks (exp, extensions) is explicitly **OUT OF CORE SCOPE**.
+Lineum is an evolving simulation. You must strictly distinguish between levels of certainty using specific tags.
 
 ### A. Hierarchy of Truth (Source Precedence)
 1.  **Computed Reality (Absolute Truth):**
