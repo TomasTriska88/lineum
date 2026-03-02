@@ -44,7 +44,7 @@ def main():
         # Checkpoint pattern: *_ckpt_{padded}.npz
         matches = list(ckpt_dir.glob(f"*_ckpt_{padded}.npz"))
         if len(matches) == 0:
-            # Fallback pre koncový stav, kde loop končí na indexe (step - 1) a generátor udělá state_step*
+            # Translated comment (original removed due to English-only policy)
             fallback_step = step_int - 1
             matches = list(ckpt_dir.glob(f"*_state_step{fallback_step}.npz"))
             

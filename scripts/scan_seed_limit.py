@@ -1,17 +1,19 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import argparse
 from pathlib import Path
 from multiprocessing import Pool, cpu_count
+import multiprocessing
+import pathlib
 
-# Přidat kořen repozitáře, abychom mohli importovat lineum.py přímo
+# Add repository root so we can import lineum.py directly.
 repo_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(repo_root))
+sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 
-from scipy.ndimage import gaussian_filter
+import lineum as sim
 
-# Pevné spec6_true konstanty
+# Fixed spec6_true constants
 STEPS_PER_SEED = 2000
 OUTPUT_FILE = repo_root / "output" / "seed_limit_scan_results.csv"
 GRID_SIZE = 128
@@ -45,25 +47,28 @@ def detect_vortices(phase: np.ndarray) -> np.ndarray:
     block[winding < -0.5] = -1
     return vortices
 
-def simulate_seed(seed):
+def run_single_scan(seed):
     """
-    Rychlá headless simulace Eq-4 pro jeden seed.
-    Vrací pouze finální počet topologických defektů a net charge v kroku 2000.
+    Fast headless simulation of Eq-4 for one seed.
+    Returns only the final number of topological defects and net charge at step 2000.
     """
     np.random.seed(seed)
     N = GRID_SIZE
 
-    # Inicializace
+    # Prepare output directory
+    out_dir = pathlib.Path("output/scans")
+    
+    # Initialization
     phases = np.random.uniform(0, 2*np.pi, (N, N))
     noise_amp = np.random.uniform(0, NOISE_AMP, (N, N))
     psi = (1.0 + noise_amp) * np.exp(1j * phases)
     phi = np.zeros((N, N), dtype=np.float64)
     kappa = get_spec6_kappa()
     
-    # Precompute pro evoluci
+    # Precompute for evolution
     dt = 0.01
 
-    # Hlavní smyčka evoluce bez jakéhokoliv I/O (maximální rychlost)
+    # Main evolution loop without any I/O (maximum speed)
     for step in range(1, STEPS_PER_SEED + 1):
         # Laplace (diffusion) using np.roll for periodic boundary conditions
         laplace_psi = (np.roll(psi, 1, axis=0) + np.roll(psi, -1, axis=0) +
@@ -83,7 +88,7 @@ def simulate_seed(seed):
         dphi_dt = PHI_DIFFUSION * laplace_phi + source - DISSIPATION_RATE * phi
         phi += dphi_dt * dt
 
-    # Po 2000 krocích naskenujeme topologii
+    # Scan topology after 2000 steps
     phase = np.angle(psi)
     raw_vortices = detect_vortices(phase)
     
@@ -100,11 +105,13 @@ def simulate_seed(seed):
     }
 
 def main():
-    parser = argparse.ArgumentParser(description="Massive headless topological limit scan.")
-    parser.add_argument("--seeds", type=int, default=10, help="Počet seedů ke skenování")
+    parser = argparse.ArgumentParser(description="Limit/Vacuum topological scan across seeds.")
+    parser.add_argument("--seeds", type=int, default=10, help="Number of seeds to scan")
+    parser.add_argument("--cores", type=int, default=multiprocessing.cpu_count(), help="Number of CPU cores to use")
     args = parser.parse_args()
 
     num_seeds = args.seeds
+    cores = args.cores
 
     print("==================================================")
     print(" LINEUM: MASSIVE SEED LIMIT SCAN [Hypothesis A3]  ")
@@ -112,26 +119,25 @@ def main():
     print(f" Spec: Eq-4 spec6_true (128x128)")
     print("==================================================\n")
     
-    # Připravit výstupní adresář
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     
     # Multi-processing setup
-    cores = max(1, cpu_count() - 1)
-    print(f"[!] Spouštím masivní výpočet na {cores} CPU jádrech...")
+    print(f"[!] Running massive computation on {cores} CPU cores...")
     
     results = []
     
-    # Pomocí Pool namapujeme funkci na pole seedů
-    with Pool(processes=cores) as pool:
-        seeds_to_run = list(range(1, num_seeds + 1))
-        # Imap_unordered pro plynulé logování jakmile je úkol hotový
-        for idx, res in enumerate(pool.imap_unordered(simulate_seed, seeds_to_run), 1):
-            results.append(res)
+    seeds = list(range(1, num_seeds + 1))
+    
+    # Map function to array of seeds using Pool
+    with multiprocessing.Pool(processes=cores) as pool:
+        # imap_unordered for smooth logging as soon as task is done
+        for idx, result in enumerate(pool.imap_unordered(run_single_scan, seeds), 1):
+            results.append(result)
             if idx % 10 == 0 or idx == num_seeds:
-                print(f"[Progress] Zpracováno {idx}/{num_seeds} seedů ({(idx/num_seeds)*100:.1f}%)", flush=True)
+                print(f"[Progress] Processed {idx}/{num_seeds} seeds ({(idx/num_seeds)*100:.1f}%)", flush=True)
 
-    # Uložit a analyzovat data
-    print("\n[✓] Zpracování dokončeno. Ukládám agregáty...")
+    # Save and analyze data
+    print("\n[✓] Processing complete. Saving aggregates...")
     
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("seed,total_vortices,net_charge,surviving_linons\n")
@@ -143,12 +149,12 @@ def main():
     limit_min = min(vortices_arr)
     limit_avg = sum(vortices_arr) / len(vortices_arr)
     
-    print("\n================= ZÁVĚREČNÁ ZPRÁVA =================")
-    print(f" Analyzováno vesmírů: {len(results)}")
-    print(f" => Průměrný počet přeživších částic: {limit_avg:.2f}")
-    print(f" => Absolutní MAXIMUM částic (Limit): {limit_max}")
-    print(f" => Absolutní MINIMUM částic (Vacuum): {limit_min}")
-    print(f" Kompletní data uložena do: {OUTPUT_FILE}")
+    print("\n================= FINAL REPORT =================")
+    print(f" Universes analyzed: {len(results)}")
+    print(f" => Average surviving particles: {limit_avg:.2f}")
+    print(f" => Absolute MAXIMUM particles (Limit): {limit_max}")
+    print(f" => Absolute MINIMUM particles (Vacuum): {limit_min}")
+    print(f" Complete data saved to: {OUTPUT_FILE}")
     print("====================================================")
 
 if __name__ == "__main__":

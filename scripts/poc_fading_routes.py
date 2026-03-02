@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,11 +31,11 @@ def run_fading_poc():
     phi = np.zeros((size, size), dtype=np.float64)
     kappa = np.ones((size, size), dtype=np.float64)
     
-    # Úvodní rozložení (brána uprostřed je otevřená)
+    # Translated comment (original removed due to English-only policy)
     kappa[10:50, 20:25] = 0.0
     kappa[45:50, 25:40] = 0.0
-    kappa[10:20, 40:45] = 0.0 # Horní čelist
-    kappa[30:50, 40:45] = 0.0 # Spodní čelist
+    kappa[10:20, 40:45] = 0.0 # Translated comment (original removed due to English-only policy)
+    kappa[30:50, 40:45] = 0.0 # Translated comment (original removed due to English-only policy)
     # Mezera je mezi Y=20 a Y=30 (x=40:45)
     
     start_y, start_x = 32, 10
@@ -47,7 +47,7 @@ def run_fading_poc():
     print("Running Weather & Ghost Trails simulation...")
     for step in tqdm(range(steps)):
         
-        # Dynamické "Počasí" - V kroku 700 se s rachotem zavře rychlá brána!
+        # Translated comment (original removed due to English-only policy)
         if step == 700:
             kappa[20:30, 40:45] = 0.0
             
@@ -67,7 +67,7 @@ def run_fading_poc():
     kappa_plot = ax.imshow(kappa_frames[0], cmap='gray_r', origin='upper', interpolation='nearest', vmin=0, vmax=1)
     
     ax.plot(start_x, start_y, 'go', markersize=12, zorder=20, label="Agent")
-    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=20, label="Cíl")
+    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=20, label="Target")
     ax.legend(loc="upper left")
     
     def extract_path(phi_field, k_field):
@@ -113,20 +113,20 @@ def run_fading_poc():
                         heapq.heappush(pq, (f_score, nx, ny))
         return [], []
 
-    # Seznam historických tras pro "fading" efekt
+    # Translated comment (original removed due to English-only policy)
     history_lines = [] # Format: [(path_x, path_y, age), ...]
-    MAX_AGE = 50 # Po kolika snímcích stopa úplně vybledne
+    MAX_AGE = 50 # Translated comment (original removed due to English-only policy)
 
     def update(frame_idx):
         f = phi_frames[frame_idx]
         k = kappa_frames[frame_idx]
         
-        # Aktualizujeme vykreslování překážek (mutující terén)
+        # Translated comment (original removed due to English-only policy)
         kappa_plot.set_data(k)
         
         px, py = extract_path(f, k)
         
-        # Uložení aktuální trasy s počátečním věkem 0
+        # Translated comment (original removed due to English-only policy)
         if len(px) >= 2:
             history_lines.append((px, py, 0))
             
@@ -134,18 +134,18 @@ def run_fading_poc():
         for line in ax.lines[2:]:
             line.remove()
             
-        # Vykreslení historie (Ghost Trails)
+        # Translated comment (original removed due to English-only policy)
         alive_history = []
         for hx, hy, age in history_lines:
             alpha = max(0.0, 1.0 - (age / MAX_AGE))
             if alpha > 0.01:
-                # Kreslení poloprůhledné fialové opuštěné stopy
+                # Translated comment (original removed due to English-only policy)
                 ax.plot(hx, hy, color=(0.5, 0.0, 0.5, alpha), linewidth=6.0, zorder=5 + (alpha*5))
-                alive_history.append((hx, hy, age + 1)) # Zestaři
+                alive_history.append((hx, hy, age + 1)) # Translated comment (original removed due to English-only policy)
                 
         history_lines[:] = alive_history
         
-        # Vykreslení té úplně aktuální The Best Route ostře azurově
+        # Translated comment (original removed due to English-only policy)
         if len(px) >= 2:
             ax.plot(px, py, 'c-', linewidth=4.0, zorder=12)
         

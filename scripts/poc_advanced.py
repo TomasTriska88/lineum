@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,12 +31,12 @@ def run_routing_poc():
     phi = np.zeros((size, size), dtype=np.float64)
     kappa = np.ones((size, size), dtype=np.float64)
     
-    # 0.0 = neprůchodná zeď (černá)
+    # Translated comment (original removed due to English-only policy)
     kappa[10:50, 20:25] = 0.0
     kappa[45:50, 25:40] = 0.0
     kappa[10:35, 40:45] = 0.0
     
-    # NOVINKA: "Bažina" - obtížný terén (propustnost 0.2, tmavě šedá barva)
+    # Translated comment (original removed due to English-only policy)
     kappa[15:35, 27:38] = 0.2
     
     np.random.seed(42)
@@ -46,9 +46,9 @@ def run_routing_poc():
         if rx < 15 or rx > 48: continue
         kappa[ry:ry+4, rx:rx+4] = 0.0
     
-    # První start (Zelený - Agent A)
+    # Translated comment (original removed due to English-only policy)
     start_y, start_x = 32, 10
-    # Druhý start (Žlutý - Agent B)
+    # Translated comment (original removed due to English-only policy)
     start2_y, start2_x = 55, 30
     
     target_y, target_x = 32, 54
@@ -57,7 +57,7 @@ def run_routing_poc():
     
     print("Running Mathematical Route Refinement...")
     for step in tqdm(range(steps)):
-        # Vstřikování cílů a obou startů
+        # Translated comment (original removed due to English-only policy)
         psi[start_y-1:start_y+2, start_x-1:start_x+2] = 10.0
         psi[start2_y-1:start2_y+2, start2_x-1:start2_x+2] = 10.0
         
@@ -75,12 +75,12 @@ def run_routing_poc():
     # Rastr mapy
     ax.imshow(kappa, cmap='gray_r', origin='upper', interpolation='nearest', vmin=0, vmax=1)
     
-    # Heatmapa paměti
+    # Translated comment (original removed due to English-only policy)
     phi_plot = ax.imshow(np.zeros((size, size)), cmap='plasma', origin='upper', alpha=0.5, interpolation='bilinear', vmin=0, vmax=25)
     
     ax.plot(start_x, start_y, 'go', markersize=12, zorder=12, label="Agent A")
     ax.plot(start2_x, start2_y, 'yo', markersize=12, zorder=12, label="Agent B")
-    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="Cíl")
+    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="Target")
     ax.legend(loc="upper left")
     
     def extract_path(phi_field, s_x, s_y):
@@ -94,8 +94,8 @@ def run_routing_poc():
                 if kappa[y, x] <= 0.01:
                     cost_map[y, x] = np.inf
                 else:
-                    # Penalizace zohledňuje propustnost KAPPA (např. bažinu) 
-                    # Čím nižší kappa, tím víc pohyblivost stojí na grafu
+                    # Translated comment (original removed due to English-only policy)
+                    # Translated comment (original removed due to English-only policy)
                     cost_map[y, x] = (1.0 / (phi_field[y, x] + 1e-6)) * (1.0 / kappa[y, x])
                     
         pq = [(0, target_x, target_y)]
@@ -121,10 +121,10 @@ def run_routing_poc():
                     if dx == 0 and dy == 0: continue
                     nx, ny = cx + dx, cy + dy
                     if 0 <= nx < size and 0 <= ny < size and kappa[ny, nx] > 0.0:
-                        # Corner-clipping protection pro diagonály!
+                        # Translated comment (original removed due to English-only policy)
                         if dx != 0 and dy != 0:
-                            # Nesmíš proklouznout diagonálně přes nekonečně tenký "mrtvý bod", pokud jsou OBA dotýkající se rohy absolutní betonová zeď (kappa = 0)
-                            # Bažinu a kopec ale diagonálně projet povolí!
+                            # Translated comment (original removed due to English-only policy)
+                            # Translated comment (original removed due to English-only policy)
                             if kappa[cy, nx] == 0.0 and kappa[ny, cx] == 0.0:
                                 continue
                         
@@ -142,7 +142,7 @@ def run_routing_poc():
     def update(frame_idx):
         f = phi_frames[frame_idx]
         
-        # Oživení paměťové vrstvy (PHI) pro zrak uživatele
+        # Translated comment (original removed due to English-only policy)
         max_f = np.max(f)
         if max_f > 0:
             phi_plot.set_data(f / max_f * 25) # Normalizace pro barvy
@@ -159,7 +159,7 @@ def run_routing_poc():
         if len(px2) >= 2:
             ax.plot(px2, py2, 'm-', linewidth=4.0, zorder=10) # Magenta pro B
         
-        ax.set_title(f"Vizualizace Lineum: Dva zdroje, Bažina a Zapomínání (Krok {frame_idx * 4})")
+        ax.set_title(f"Lineum Visualization: Two Sources, Swamp and Forgetting (Krok {frame_idx * 4})")
 
     ani = FuncAnimation(fig, update, frames=len(phi_frames), blit=False)
     import time

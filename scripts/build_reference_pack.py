@@ -56,20 +56,20 @@ def main():
     if args.latest:
         run_dir = get_latest_run_dir("output/repro", args.tag)
         if not run_dir:
-            print(f"[ERROR] Nenalezen žádný běh pro tag '{args.tag}'")
+            print(f"[ERROR] No run found matching tag '{args.tag}'")
             sys.exit(1)
     elif args.run_dir:
         run_dir = pathlib.Path(args.run_dir).resolve()
     else:
-        print("[ERROR] Musíte specifikovat buď --latest nebo --run_dir")
+        print("[ERROR] You must specify either --latest or --run_dir")
         sys.exit(1)
         
     run_dir = pathlib.Path(run_dir)
     if not run_dir.exists() or not run_dir.is_dir():
-        print(f"[ERROR] Run directory neexistuje: {run_dir}")
+        print(f"[ERROR] Run directory does not exist: {run_dir}")
         sys.exit(1)
         
-    print(f"[INFO] Budování packu z: {run_dir}")
+    print(f"[INFO] Building pack from: {run_dir}")
     
     out_dir = pathlib.Path(args.out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -82,7 +82,7 @@ def main():
         # 1. Reference snapshots
         ref_dir = run_dir / "reference"
         if not ref_dir.exists():
-             print(f"[ERROR] Adresář s referenčními snapshoty neexistuje: {ref_dir}")
+             print(f"[ERROR] Reference snapshots directory does not exist: {ref_dir}")
              sys.exit(1)
              
         for ref_file in ["step_200.npz", "step_1000.npz", "final.npz"]:
@@ -93,7 +93,7 @@ def main():
                 shutil.copy2(src, dst)
                 files_for_pack.append((dst, f"reference/{ref_file}"))
             else:
-                 print(f"[WARN] Chybí snapshot: {src}")
+                 print(f"[WARN] Missing snapshot: {src}")
                  
         # 2. run_summary.csv
         summary = run_dir / "run_summary.csv"
@@ -158,19 +158,19 @@ Run ID: {manifest_data.get('run_id', 'Unknown')}
 Source Dir: {run_dir.name}
 Created At: {manifest_data.get('created_at', '')}
 
-Tento balíček obsahuje kanonické referenční snapshoty a metadata pro nezávislou verifikaci Lineum Core.
+This package contains canonical reference snapshots and metadata for independent verification of Lineum Core.
 
-## Jak verifikovat
-Pro ověření integrity a shody použijte validátor z repozitáře `lineum-core`:
+## How to Verify
+To verify integrity and match, use the validator script in the `lineum-core` repository:
 
 ```bash
-python scripts/verify_reference_pack.py --pack <cesta_k_tomuto_zipu>
+python scripts/verify_reference_pack.py --pack <path_to_this_zip>
 ```
 
-Tím se provede:
-1. Kontrola přítomnosti všech povinných souborů.
-2. Validace hashů proti `SHA256SUMS.txt`.
-3. Validace schématu uvnitř `.npz` snapshotů.
+This will perform:
+1. Verification that all mandatory files are present.
+2. Validation of hashes against `SHA256SUMS.txt`.
+3. Validation of internal schema within the `.npz` snapshots.
 """
         with open(readme_dst, "w", encoding="utf-8") as f:
             f.write(readme_content)
@@ -185,8 +185,8 @@ Tím se provede:
         
         deterministic_zip(out_zip, files_for_pack)
         
-        print(f"[OK] Reference pack úspěšně sestaven: {out_zip}")
-        print(f"[OK] Velikost: {out_zip.stat().st_size / (1024*1024):.2f} MB")
+        print(f"[OK] Reference pack successfully built: {out_zip}")
+        print(f"[OK] Size: {out_zip.stat().st_size / (1024*1024):.2f} MB")
 
 if __name__ == "__main__":
     main()

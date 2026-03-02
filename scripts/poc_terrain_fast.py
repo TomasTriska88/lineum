@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -156,7 +156,7 @@ def run_terrain_poc():
         if len(px2) >= 2: ax.plot(px2, py2, color='lime', linewidth=4.0, zorder=25)
         if len(px3) >= 2: ax.plot(px3, py3, 'm-', linewidth=4.0, zorder=25)
         
-        ax.set_title(f"Velká Topografie (Krok {frame_idx * 15})")
+        ax.set_title(f"Large Topography (Krok {frame_idx * 15})")
         if frame_idx % 10 == 0:
             print(f"Rendered frame {frame_idx}/{len(phi_frames)}")
 

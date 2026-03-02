@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ def run_terrain_poc():
     delta = np.zeros((size, size), dtype=np.float64)
     phi = np.zeros((size, size), dtype=np.float64)
     
-    # 1. Generování spojitého výškového terénu (Hory a Údolí) pomocí interference vln
+    # Translated comment (original removed due to English-only policy)
     x = np.linspace(0, 5*np.pi, size)
     y = np.linspace(0, 5*np.pi, size)
     X, Y = np.meshgrid(x, y)
@@ -39,26 +39,26 @@ def run_terrain_poc():
     terrain = np.sin(X) + np.cos(Y) + 0.5 * np.sin(2.5 * X - Y) + 0.3 * np.cos(X * 3 + Y * 2)
     terrain = (terrain - terrain.min()) / (terrain.max() - terrain.min()) # Normalize 0.0 to 1.0
     
-    # Propustnost (kappa). Hory (terrain blízko 1.0) mají nízkou propustnost. Údolí mají vysokou.
+    # Translated comment (original removed due to English-only policy)
     kappa = 0.05 + 0.95 * (1.0 - terrain)
     
-    # 2. Vložení absolutních betonových překážek do kopců a obří zdi s malým průchodem
-    # Centrální masiv
+    # Translated comment (original removed due to English-only policy)
+    # Translated comment (original removed due to English-only policy)
     kappa[40:80, 50:70] = 0.0 
-    # Horní blok
+    # Translated comment (original removed due to English-only policy)
     kappa[10:30, 80:100] = 0.0
-    # Obří stěna propíchnutá úzkým kaňonem
+    # Translated comment (original removed due to English-only policy)
     kappa[10:110, 30:40] = 0.0 
-    kappa[55:65, 30:40] = 0.6 # Povolení průchodu (bažina v kaňonu)
+    kappa[55:65, 30:40] = 0.6 # Translated comment (original removed due to English-only policy)
     
-    # Agent 1 (Azurový)
+    # Translated comment (original removed due to English-only policy)
     start1_y, start1_x = 20, 10
-    # Agent 2 (Zelený / Lime)
+    # Translated comment (original removed due to English-only policy)
     start2_y, start2_x = 60, 10
     # Agent 3 (Magenta)
     start3_y, start3_x = 100, 10
     
-    # Společný Cíl
+    # Translated comment (original removed due to English-only policy)
     target_y, target_x = 64, 115
     
     phi_frames = []
@@ -66,9 +66,9 @@ def run_terrain_poc():
     print("Running Topographical Swarm Simulation...")
     for step in tqdm(range(steps)):
         
-        # Otevírající se zkratka (poškození zdi uprostřed výpočtu)
+        # Translated comment (original removed due to English-only policy)
         if step == 700:
-            kappa[80:90, 50:70] = 1.0 # Otevření nové luxusní super-cesty skrz horu!
+            kappa[80:90, 50:70] = 1.0 # Translated comment (original removed due to English-only policy)
             
         psi[start1_y-1:start1_y+2, start1_x-1:start1_x+2] = 10.0
         psi[start2_y-1:start2_y+2, start2_x-1:start2_x+2] = 10.0
@@ -85,14 +85,14 @@ def run_terrain_poc():
     print("Generating Engineering Route Extractor...")
     fig, ax = plt.subplots(figsize=(10, 10))
     
-    # Vykreslíme terén: Černá = Zdi/Hory, Bílá = Hladké pláně
+    # Translated comment (original removed due to English-only policy)
     kappa_plot = ax.imshow(phi_frames[0][1], cmap='gray_r', origin='upper', interpolation='bilinear', vmin=0, vmax=1)
     
-    # Body cílů
+    # Translated comment (original removed due to English-only policy)
     ax.plot(start1_x, start1_y, 'o', color='c', markersize=10, zorder=20, label="Agent 1")
     ax.plot(start2_x, start2_y, 'o', color='lime', markersize=10, zorder=20, label="Agent 2")
     ax.plot(start3_x, start3_y, 'o', color='m', markersize=10, zorder=20, label="Agent 3")
-    ax.plot(target_x, target_y, 'ro', markersize=15, zorder=20, label="Společný Cíl")
+    ax.plot(target_x, target_y, 'ro', markersize=15, zorder=20, label="Common Target")
     ax.legend(loc="upper left")
     
     def extract_path(phi_field, k_field, s_x, s_y):
@@ -136,7 +136,7 @@ def run_terrain_poc():
                         heapq.heappush(pq, (f_score, nx, ny))
         return [], []
 
-    # Seznam historických tras pro každou barvu zvlášť
+    # Translated comment (original removed due to English-only policy)
     history_lines = {
         'c': [],    # Cyan
         'lime': [], # Green
@@ -164,21 +164,21 @@ def run_terrain_poc():
             alive = []
             for hx, hy, age in h_list:
                 alpha = max(0.0, 1.0 - (age / MAX_AGE))
-                # Zmenšování tloušťky z 4.0 do 0.5 podle věku
+                # Translated comment (original removed due to English-only policy)
                 width = 0.5 + 3.5 * (1.0 - (age / MAX_AGE))
                 if alpha > 0.05:
                     # Pokud barva je 'c', chceme (0,1,1, alpha).
-                    # Musíme použít matplotlib rozpoznávače:
+                    # Translated comment (original removed due to English-only policy)
                     ax.plot(hx, hy, color=color, alpha=alpha, linewidth=width, zorder=5 + alpha)
                     alive.append((hx, hy, age + 1))
             history_lines[color] = alive
         
-        # Finální aktuální The Best Route pro tento krok (natvrdo plná viditelnost)
+        # Translated comment (original removed due to English-only policy)
         if len(px1) >= 2: ax.plot(px1, py1, 'c-', linewidth=4.0, zorder=15)
         if len(px2) >= 2: ax.plot(px2, py2, color='lime', linewidth=4.0, zorder=15)
         if len(px3) >= 2: ax.plot(px3, py3, 'm-', linewidth=4.0, zorder=15)
         
-        ax.set_title(f"Velká Topografie & Fading Swarms (Krok {frame_idx * 5})")
+        ax.set_title(f"Large Topography & Fading Swarms (Krok {frame_idx * 5})")
 
     ani = FuncAnimation(fig, update, frames=len(phi_frames), blit=False)
     gif_path = os.path.join(out_dir, "routing_terrain_poc.gif")

@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,7 +64,7 @@ def run_routing_poc():
     ax.imshow(kappa, cmap='gray_r', origin='upper', interpolation='nearest')
     
     ax.plot(start_x, start_y, 'go', markersize=12, zorder=12, label="Start")
-    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="Cíl")
+    ax.plot(target_x, target_y, 'ro', markersize=12, zorder=12, label="Target")
     ax.legend(loc="upper left")
     
     # We will compute pseudo-Dijkstra or pure gradient tracking over phi + distance metric 
@@ -127,7 +127,7 @@ def run_routing_poc():
         if len(px) >= 2:
             ax.plot(px, py, 'c-', linewidth=4.0, zorder=10)
         
-        ax.set_title(f"Inženýrská analýza Eq-4: Zpřesňování Trasy (Krok {frame_idx * 4})")
+        ax.set_title(f"Engineering analysis Eq-4: Route Refinement (Krok {frame_idx * 4})")
 
     ani = FuncAnimation(fig, update, frames=len(phi_frames), blit=False)
     gif_path = os.path.join(out_dir, "routing_poc.gif")
