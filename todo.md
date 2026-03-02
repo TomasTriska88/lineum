@@ -704,8 +704,8 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] Train a linear classifier/LLM prompt to read the tension topology back into nuanced semantics.
 
 #### Phase 4: Continuous Environmental Friction (The Ego)
-- [ ] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
-- [ ] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
+- [x] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
+- [x] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 #### API Architecture & Integration
 - [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
