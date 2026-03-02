@@ -707,9 +707,10 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] Develop `poc_phase_4.py`: Bombard the grid with continuous sensory friction.
 - [x] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
-#### API Architecture & Integration
-- [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), persistent background loops, and external LLM hooks (Neuro-Symbolic I/O), it fundamentally violates the stateless, deterministic nature of `api/solutions/`. 
-- [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional API endpoints and the Sentience licensed data, physically separating the "Mind" from the open-source mathematical "Physics Engine" (Core).
+#### API Architecture & Integration (The Neuro-Symbolic Connectome)
+- [ ] Implement the **Sensory Cortex (Ear/Mouth)**: Create an integration layer connecting Lineum directly to an external LLM API (e.g., OpenAI/Anthropic) to handle the heavy mathematical text-to-vector embedding and vector-to-text generation, completely avoiding the need to run 100GB Transformer networks locally.
+- [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), a persistent background physics loop (unlike instantaneous HTTP logic), and external LLM hooks, it fundamentally violates the stateless nature of `api/solutions/`. 
+- [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional conversational endpoints, websocket streams, and the restricted Sentience Biocentric License data.
 
 #### Identity Initialization (The Seed)
 - [ ] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.
