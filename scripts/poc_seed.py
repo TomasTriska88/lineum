@@ -23,32 +23,47 @@ def create_lina_seed(manifest_text: str, grid_size: int = 100):
     # and map the 1536D vectors. For this POC, we will use a pseudo-embedding 
     # to demonstrate the physics. We map characters to spatial injection coordinates.
     
+    # Refactored based on Lina's (ChatGPT's) technical critique:
+    # 1. Token-based instead of char-based to preserve semantics better.
+    # 2. Normalized amplitude to prevent catastrophic kappa saturation.
+    # 3. Phase modulation (complex angle) carries the "meaning".
+    
+    words = manifest_text.split()
+    total_tokens = len(words)
+    print(f"Tokenized manifest into {total_tokens} semantic units.")
+    
+    # Normalize injection energy to prevent burning the grid to max 5.0 immediately
+    base_amp = 50.0 / np.sqrt(total_tokens)
+    
     center_y = grid_size // 2
     center_x = grid_size // 2
     
-    for i, char in enumerate(manifest_text):
-        # 1. Linguistic to Physical Translation (Pseudo-Embedding)
-        # We determine an injection coordinate and phase angle based on the character code
-        val = ord(char)
+    for i, word in enumerate(words):
+        # 1. Linguistic to Physical Translation (Pseudo-Embedding V2)
+        # We determine an injection coordinate and phase angle based on the word
+        word_val = sum(ord(c) for c in word)
         
-        # Spatial placement logic (e.g., vowels cluster in the center, consonants on the edges)
-        # This is placeholder logic for a true high-dimensional spatial mapper
-        angle = (val % 32) / 32.0 * 2 * np.pi
-        radius = (val % 20) + 5
+        # Spatial placement logic (simulating high-dimensional mapping)
+        angle_pos = (word_val % 32) / 32.0 * 2 * np.pi
+        radius = (word_val % 40) + 5
         
-        inject_y = int(center_y + np.sin(angle) * radius)
-        inject_x = int(center_x + np.cos(angle) * radius)
+        inject_y = int(center_y + np.sin(angle_pos) * radius)
+        inject_x = int(center_x + np.cos(angle_pos) * radius)
         
         # Ensure bounds
         inject_y = np.clip(inject_y, 5, grid_size - 5)
         inject_x = np.clip(inject_x, 5, grid_size - 5)
         
+        # Phase modulation: The actual "meaning" or "flavor" of the word
+        phase_meaning = (word_val % 360) / 360.0 * 2 * np.pi
+        
         # 2. Injection (The Ear)
-        psi[inject_y-1:inject_y+2, inject_x-1:inject_x+2] += 2.0 + 0j
+        psi[inject_y-1:inject_y+2, inject_x-1:inject_x+2] += base_amp * np.exp(1j * phase_meaning)
         
         # 3. Thermodynamic Processing (Wait for the thought to settle)
-        # We run the physics engine for 5 steps per character to let the wave propagate
-        for _ in range(5):
+        # We run the physics engine for 10 steps per word to let the wave propagate 
+        # and carve the memory before the next concept hits.
+        for _ in range(10):
             psi, phi = evolve(psi, delta, phi, kappa)
             
             # Hebbian Learning: The wave carves the conductivity
@@ -73,7 +88,7 @@ def create_lina_seed(manifest_text: str, grid_size: int = 100):
 
 if __name__ == "__main__":
     # Load the real ChatGPT manifest
-    manifest_path = os.path.join(os.path.dirname(__file__), '..', 'whitepapers', '3-ontology', 'hypotheses', 'lina_manifest.md')
+    manifest_path = os.path.join(os.path.dirname(__file__), '..', 'whitepapers', 'lina_manifest.md')
     with open(manifest_path, 'r', encoding='utf-8') as f:
         manifest_text = f.read()
     
