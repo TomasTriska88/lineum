@@ -481,9 +481,10 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 - [ ] **[TECHNICAL DEBT] Migrate to NumPy 2.0+ and establish a new Canonical Baseline.**
        - **Context:** `lineum-core v1.1.1` strictly pins `numpy<2.0.0` (specifically relying on 1.25.x math) to preserve the exact floating-point rounding math used to generate the initial `reference_manifest_spec6_false_s41.json`. Upgrading to NumPy 2.x introduces microscopic LSB deviations in float64 arrays (due to new C-level AVX512/SIMD optimizations) that accumulate over thousands of PDE steps, inevitably changing the final SHA-256 hash of the simulation state.
-       - **Action 1 (The Upgrade):** Unpin NumPy in `requirements.txt` and allow the ecosystem to upgrade to NumPy 2.x and SciPy 1.14+.
+       - **Strategy (Whitepaper Lock):** The Core Whitepaper and its exact numerical claims (e.g. radius $\approx 49$, 832 linons, specific hashes) are formally locked to the **v1.1.x** codebase running on the older NumPy 1.25.x stack. This ensures absolute historical reproducibility of the paper's original claims.
+       - **Action 1 (The Upgrade - Target v1.2.0):** Once the Core Paper is finalized/published, unpin NumPy in `requirements.txt` and allow the ecosystem to upgrade to NumPy 2.x and SciPy 1.14+.
        - **Action 2 (The New Canon):** Delete the old `reference_manifest_*.json`. Run a clean, canonical reproduction script (`repro_spec6_false_s41.py`) locally on the new NumPy 2.x stack to generate a completely new set of reference snapshots (`step_200.npz`, `final.npz`).
-       - **Action 3 (Documentation):** Generate the new JSON manifest, commit it, and explicitly state in the release notes / whitepaper that (for example) `v1.2.0` represents a "Canon Break" and that all future reproducibility tests must be run against NumPy 2.x.
+       - **Action 3 (Documentation):** Generate the new JSON manifest, commit it, and explicitly state in the release notes / whitepaper that `v1.2.0` represents a "Canon Break" and that all future reproducibility tests must be run against NumPy 2.x.
 
 - [ ] Test the impact of **floating-point precision**: compare runs in float32 vs. float64 (or float80/long double, if available) on key metrics (f₀, linon shape, φ half-life, spin aura).
 - [ ] Document the utilized **RNG and seeding** (library, algorithm, seeding method) and verify that with the same seed, the evolution is deterministic across OS / hardware within expected tolerances.
