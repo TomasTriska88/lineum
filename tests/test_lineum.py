@@ -133,3 +133,57 @@ def test_save_state_checkpoint_forces_checkpoints_subdir(tmp_path):
     # No leftover .tmp files
     tmp_files = glob.glob(os.path.join(run_dir, "checkpoints", "*.tmp*"))
     assert tmp_files == [], f"Leftover tmp files: {tmp_files}"
+
+    # Verify _meta is injected
+    with np.load(full_path) as data:
+        assert "_meta" in data, "Failed to embed _meta in save_state_checkpoint"
+        import json
+        meta_data = json.loads(data["_meta"].item())
+        assert meta_data["step"] == 42
+
+
+# ---------------------------------------------------------------------------
+# 5) save_checkpoint includes _meta
+# ---------------------------------------------------------------------------
+
+def test_save_checkpoint_includes_meta(tmp_path, monkeypatch):
+    """save_checkpoint correctly embeds _meta property for verification."""
+    run_dir = str(tmp_path / "my_run")
+    os.makedirs(run_dir, exist_ok=True)
+    monkeypatch.setattr(lineum, "RUN_TAG", "test_meta")
+    monkeypatch.setattr(lineum, "output_dir", run_dir)
+    
+    def mock_checkpoint_paths(step_idx):
+        npz = os.path.join(run_dir, f"test_meta_{step_idx}.npz")
+        json_path = os.path.join(run_dir, f"test_meta_{step_idx}.json")
+        return npz, json_path
+
+    monkeypatch.setattr(lineum, "_checkpoint_paths", mock_checkpoint_paths)
+
+    N = 10
+    psi = np.zeros((N, N))
+    phi = np.zeros((N, N))
+    kappa = np.full((N, N), 0.5)
+    delta = np.zeros((N, N))
+    
+    lineum.save_checkpoint(
+        step_idx=200,
+        psi=psi,
+        phi=phi,
+        delta=delta,
+        kappa=kappa,
+        next_id=2,
+        active_tracks={},
+        trajectories=[],
+        logs={}
+    )
+    
+    npz_file = os.path.join(run_dir, "test_meta_200.npz")
+    assert os.path.exists(npz_file)
+    
+    with np.load(npz_file) as data:
+        assert "_meta" in data
+        import json
+        meta_data = json.loads(data["_meta"].item())
+        assert meta_data["step"] == 200
+        assert "origin" in meta_data

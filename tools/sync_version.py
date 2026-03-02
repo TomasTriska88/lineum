@@ -14,8 +14,13 @@ FILES_TO_UPDATE = {
     ],
     "todo.md": [
        (r'v\d+\.\d+\.\d+(-core)?', '__CANONICAL_VERSION__')
+    ],
+    "portal/static/portal_params.json": [
+       (r'"version":\s*"1\.\d+\.\d+-core"', '"version": "__CANONICAL_VERSION__-core"')
+    ],
+    "portal/src/lib/data/core/lineum.py": [
+       (r'"version":\s*"1\.\d+\.\d+-core"', '"version": "__CANONICAL_VERSION__-core"')
     ]
-    # Add other whitepaper paths if they have strict versions
 }
 
 

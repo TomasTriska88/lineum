@@ -1284,7 +1284,8 @@ def save_state_checkpoint(run_dir: str, run_prefix: str, step_idx: int,
             rng_keys=rng_keys,
             rng_pos=rng_pos,
             rng_has_gauss=rng_has_gauss,
-            rng_cached_gauss=rng_cached_gauss
+            rng_cached_gauss=rng_cached_gauss,
+            _meta=json.dumps({"step": step_idx, "origin": "lineum.py"}),
         )
         # Flush
         try:
@@ -1335,6 +1336,7 @@ def save_checkpoint(step_idx: int, psi: np.ndarray, phi: np.ndarray, delta: np.n
             kappa=kappa,
             next_id=np.array([next_id], dtype=np.int64),
             # NOTE: active_tracks / trajectories / logs go to JSON (smaller, flexible)
+            _meta=json.dumps({"step": step_idx, "origin": "lineum.py"}),
         )
         # best-effort flush to disk before rename (Windows/Linux safe)
         try:
@@ -1491,7 +1493,7 @@ def export_portal_params():
     """
     path = os.path.join(output_dir, "portal_params.json")
     params = {
-        "version": "1.0.17-core",
+        "version": "v1.0.18-core",
         "updated_utc": datetime.datetime.utcnow().isoformat() + "Z",
         "dissipation_rate": float(DISSIPATION_RATE),
         "reaction_strength": float(REACTION_STRENGTH),
@@ -1885,12 +1887,12 @@ if __name__ == "__main__":
     # - infinite: run forever (until killed), relying on checkpoint + rolling export
     def _iter_steps():
         if INFINITE_MODE:
-            i = step_start
+            i = step_start + 1
             while True:
                 yield i
                 i += 1
         else:
-            for i in range(step_start, steps):
+            for i in range(step_start + 1, steps + 1):
                 yield i
 
     def _build_logs_tail():
@@ -1936,12 +1938,12 @@ if __name__ == "__main__":
 
     pbar = tqdm(_iter_steps(), desc="Processing steps",
                 unit="step") if not INFINITE_MODE else _iter_steps()
-    i = step_start - 1
+    i = step_start
     try:
         for i in pbar:
 
             if KAPPA_MODE == "island_to_constant":
-                kappa = generate_kappa(i)
+                kappa = generate_kappa(i, total_steps=steps)
                 
             # Track kappa spatial mean for temporal metrics
             kappa_spatial_means.append(float(np.mean(kappa)))
