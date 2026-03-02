@@ -1,7 +1,7 @@
 {
-  "title": "Lineum: reference implementation & evidence bundle",
+  "title": "Lineum: A Continuous Emergent Simulation (reference implementation & evidence bundle)",
   "upload_type": "software",
-  "description": "Reference implementation of the Lineum with canonical HTML reports and CSV/PNG/GIF artifacts. The core paper (whitepaper/lineum-core.md) is the methodological spine: it fixes the canonical tone f0, SI conversions (E, λ, display-only m/m_e), Structural Closure as an in-scope consequence of the φ center-trace half-life, and falsifiable checks (C1/C2/C3). Evidence lives in output/; each HTML report is ground truth, commit-stamped, and tied to a specific RUN_TAG.",
+  "description": "<p><strong>Lineum</strong> is a deterministic, continuous simulation governed by a coupled non-linear partial differential equation (PDE) system. This simulation demonstrates how complex, physics-like phenomena—including dynamic quasiparticle formation, interference patterns, orbital mechanics, and apparent gravitational attraction—can spontaneously emerge from purely local, low-level interactions without the imposition of any predefined spatial metric or fundamental forces.</p>\n<p>This repository provides the reference implementation of the Lineum computational engine, alongside canonical HTML reports and visual artifacts (CSV/PNG/GIF). The core methodological principles, including the definition of the central variables, SI conversions (e.g., energy, wavelength, and scale-relative effective mass constraints), and the criteria for <em>Structural Closure</em> governed by center-trace half-life dynamics, are rigorously documented in the accompanying core whitepaper (<code>whitepaper/01-core-principles.md</code>). The operational evidence and falsifiable audits (C1/C2/C3 checks) are located in the <code>output/</code> directory, providing a robust, commit-anchored foundation for independent reproducibility.</p>",
   "creators": [
     {
       "name": "Tomáš Tříska",
@@ -21,18 +21,18 @@
   ],
   "keywords": [
     "Lineum",
-    "emergence",
-    "quasiparticle",
-    "spectral stability",
-    "bootstrap CI",
-    "bin-centered frequency",
-    "ψ φ κ triad",
+    "Continuous Simulation",
+    "Complex Systems",
+    "Emergent Physics",
+    "Partial Differential Equations",
+    "Quasiparticles",
+    "Computational Simulation",
     "Structural Closure"
   ],
   "license": "AGPL-3.0-only",
   "language": "eng",
   "access_right": "open",
-  "notes": "Core paper is included as whitepaper/lineum-core.md (manuscript text and figures intended under CC BY-NC-ND 4.0). Software and scripts are AGPL-3.0-licensed. The display-only effective mass is a pure unit conversion from the canonical tone f0 (m = h f0 / c^2, m/m_e as a scale cue) and is explicitly not a rest-mass claim. Structural Closure is in scope for the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Phenomena such as Return Echo, Dimensional Transparency (time-varying κ), and other extensions live in the experimental/extension track (lineum-exp-*, lineum-extension-*) and are out of scope for this core bundle. Acknowledgements: Kateřina Marečková provided critical opposition and hypothesis testing. Vlastimil Smeták contributed insights correlating with his OEA model.",
+  "notes": "The core methodology is detailed in `whitepaper/01-core-principles.md` (manuscript text and figures are provided under CC BY-NC-ND 4.0). All software and accompanying scripts are released under the AGPL-3.0 license. Please note: The display-only effective mass is provided strictly as a unit conversion derived from the canonical tone f0 (m = h f0 / c^2, using m/m_e as a scale reference) and does not constitute a rest-mass claim. The property of Structural Closure is defined within the scope of the v1.0.x core as an operational consequence of the φ center-trace half-life metric. Advanced phenomena, such as the Return Echo or Dimensional Transparency (time-varying κ dynamics), are the subject of ongoing research tracks (lineum-exp-*, lineum-extension-*) and fall outside the scope of this foundational core bundle. Acknowledgements: Kateřina Marečková provided critical opposition and falsification testing. Vlastimil Smeták contributed structural insights correlating with his OEA model.",
   "related_identifiers": [
     {
       "relation": "isSupplementTo",
