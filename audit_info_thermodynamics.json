@@ -1,0 +1,82 @@
+{
+  "horizon_3000": {
+    "B": {
+      "integral_energy": 39000473638272.14,
+      "energy_per_tick": 13000157879.424047,
+      "rtb_score": 881898.8814868139,
+      "final_topo_phi": 4094345643.1538734,
+      "final_topo_mu": 0.0,
+      "energy_curve_start": 19571153276.420776,
+      "energy_curve_end": 16740634178.214558
+    },
+    "C_sweeps": {
+      "std": {
+        "integral_energy": 38600878692270.914,
+        "energy_per_tick": 12866959564.090305,
+        "rtb_score": 879823.1374838528,
+        "final_topo_phi": 4094756671.322714,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19340132204.793472,
+        "energy_curve_end": 16576871625.440338
+      },
+      "high_eta": {
+        "integral_energy": 38468493554156.35,
+        "energy_per_tick": 12822831184.718784,
+        "rtb_score": 876228.9039172191,
+        "final_topo_phi": 4092923935.218375,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19297404854.03562,
+        "energy_curve_end": 16490256153.72533
+      },
+      "high_rho": {
+        "integral_energy": 38362069908761.53,
+        "energy_per_tick": 12787356636.253843,
+        "rtb_score": 876710.2127036109,
+        "final_topo_phi": 4093458717.6778536,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19290017068.171,
+        "energy_curve_end": 16408437243.529339
+      }
+    }
+  },
+  "horizon_10000": {
+    "B": {
+      "integral_energy": 153238197211718.44,
+      "energy_per_tick": 15323819721.171844,
+      "rtb_score": 682.6544158489613,
+      "final_topo_phi": 4096000000.0,
+      "final_topo_mu": 0.0,
+      "energy_curve_start": 19396730990.53129,
+      "energy_curve_end": 16574808070.158855
+    },
+    "C_sweeps": {
+      "std": {
+        "integral_energy": 154873309920803.03,
+        "energy_per_tick": 15487330992.080303,
+        "rtb_score": 724.0380173648665,
+        "final_topo_phi": 4096000000.0,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19399246256.282,
+        "energy_curve_end": 16600921583.094372
+      },
+      "high_eta": {
+        "integral_energy": 153446468077351.8,
+        "energy_per_tick": 15344646807.735182,
+        "rtb_score": 740.4644644752962,
+        "final_topo_phi": 4096000000.0,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19542510268.51591,
+        "energy_curve_end": 16587600189.707714
+      },
+      "high_rho": {
+        "integral_energy": 153307335579206.75,
+        "energy_per_tick": 15330733557.920675,
+        "rtb_score": 437.7251820846815,
+        "final_topo_phi": 4096000000.0,
+        "final_topo_mu": 40960.0,
+        "energy_curve_start": 19302704514.144478,
+        "energy_curve_end": 16571756070.896526
+      }
+    }
+  }
+}
