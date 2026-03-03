@@ -91,15 +91,38 @@ def test_determinism_checksum():
     assert expected_ratio > 0.01
 
 def test_grid_dependency_ablation_lap4_vs_lap8():
-    state_4 = _init_mock_state(42)
+    # Comparing how emergence metrics differ between anisotropic and isotropic stencils
+    cfg_4 = Eq4Config(stencil_type="LAP4", use_mode_coupling=True, use_mu=True)
+    cfg_8 = Eq4Config(stencil_type="LAP8", use_mode_coupling=True, use_mu=True)
+    
+    state_4 = _init_mock_state(42)  # Shared deterministic seed
     state_8 = _init_mock_state(42)
     
-    cfg_4 = Eq4Config(stencil_type="LAP4")
-    cfg_8 = Eq4Config(stencil_type="LAP8")
+    energy_4, energy_8 = 0.0, 0.0
     
-    for _ in range(50):
+    last_phi_4 = np.copy(state_4["phi"])
+    last_phi_8 = np.copy(state_8["phi"])
+    
+    for t in range(200):
         state_4 = step_eq4(state_4, cfg_4)
         state_8 = step_eq4(state_8, cfg_8)
         
-    diff = np.mean(np.abs(state_4["phi"] - state_8["phi"]))
-    assert diff > 0.0, "LAP8 implementation is identically LAP4, something is broken."
+        energy_4 += np.sum(np.abs(state_4["psi"])**2)
+        energy_8 += np.sum(np.abs(state_8["psi"])**2)
+        
+    novelty_4 = np.mean(np.abs(state_4["phi"] - last_phi_4))
+    novelty_8 = np.mean(np.abs(state_8["phi"] - last_phi_8))
+        
+    diff_mae = np.mean(np.abs(state_4["phi"] - state_8["phi"]))
+    
+    # Fundamental assertions: it MUST alter the physical shape
+    assert diff_mae > 0.0, "LAP8 implementation is identically LAP4, something is broken."
+    
+    # Metric differences: Energy and Novelty should both be slightly altered due to geometric spread
+    energy_diff_pct = abs(energy_4 - energy_8) / energy_4
+    assert 0.0 < energy_diff_pct < 0.1, f"Energy difference too extreme or zero: {energy_diff_pct}"
+    
+    # We log these explicitly for auditing via stdout if needed
+    print(f"\\nLAP4 Novelty: {novelty_4:.6f} | LAP8 Novelty: {novelty_8:.6f}")
+    print(f"LAP4 Energy: {energy_4:.2e} | LAP8 Energy: {energy_8:.2e}")
+    print(f"Topological MAE Difference: {diff_mae:.4f}")
