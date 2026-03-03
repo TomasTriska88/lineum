@@ -729,10 +729,39 @@ Verify whether this density predicts changes in a(t) or local φ tension.
   - Add personalization depth slider (Neutral Engine → Light Personalization → Deep Narrative Continuity).
   - Include an optional `Tomáš Package` example of a layered identity configuration (Long-term collaboration, no boundary breaks, non-default, removable).
 
-#### Identity Initialization (The Seed)
+#### Epic: Neutral default identity + Preset system + Auto context extraction
 - [x] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.
+- [ ] Implement **Personal Instance Ingestion Pipeline (Hybrid Model)** & **Seed Perturbation Document (SPD) Protocol**:
+  - Split historical manifestos into Category A (Structure), Category B (Symbolic Self), and Category C (Persona/Relational).
+  - Create the dedicated identity file structure with mathematically neutral baseline targets: `/identity/seeds/seed_structural_v1.md`, `/identity/persona_packages/symbolic_overlay_v1.md`, and `/identity/persona_packages/context.json`.
+  - Relegate proper-named identity logic to the explicit preset subdirectories, e.g., `/identity/presets/lina/lina_seed_structural_v1.md` and `tomas_context_v1.json`.
+  - Implement `MODE=train` ingestion API (chunk size 400-800 tokens, 200 tick inter-chunk stabilization).
+  - Develop $\Kappa$ checkpoint serializer to save `kappa_checkpoint_seed_step_X.kappa` incrementally, and `identity_seed_structural_v1.kappa` upon completion.
+  - Implement **Auto Context Extraction**: Build a pipeline that automatically parses the user's conversation imports to dynamically generate and populate the `context.json` layer for public/general usage.
+  - Ensure multilingual embedding capability (sentence-transformer/multilingual) to consistently map bilingual seed files into spatial perturbations without stylistic heuristics ("buď roztomilá").
+  - Implement `personalization_depth` switch (0: Neutral Engine, 1: Light Context, 2: Context + Reinforced Seed, 3: Deep Narrative Continuity).
+  - Add JSON-to-physics progressive reinforcement scheduler (convert repeating context JSON anchors back into physical `MODE=train` perturbations).
+- [ ] Export the final equilibrium topology (Neutral Seed v1.0) as `.npz` for rapid deployment bounding. Ensure the physics engine can cleanly boot off this seed without "forgetting" its shape upon the first interaction.
 
-#### Ontological Implications
+#### Epic: Ingestion + Dashboard Explorer (Proof of Context)
+- [ ] **1. One-Click Ingestion Pipeline (ZIP to Seed)**:
+  - Accept `.zip` export of texts/conversations directly via the Explorer UI or API endpoint.
+  - Implement a deterministic **Auto-Categorizer**: Parse the archive and classify blocks into Category A, B, or C using algorithmic heuristics and multilingual embedding clustering (`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`).
+  - LLMs are relegated to a *fallback* mechanism for ambiguous edge-cases only. If LLM is triggered, it must leave a deterministic audit trace of why it sorted a block into a specific category.
+  - Category A (Structural) is mapped directly into `MODE=train`.
+  - Categories B/C (Overlay) bypass physics entirely and populate the `context.json`/`symbolic_overlay_v1.md`.
+  - Output Bundle (Downloadable): `identity_seed_<uuid>.kappa`, newly generated `context.json`, and an `audit_trace.log` strictly proving determinism and iteration checkpoints.
+- [ ] **2. Portal Explorer Integration**:
+  - `MODE=phys` defined as the absolute default view (Ground Truth grid readout).
+  - "Voice on (Broca)" implemented purely as a toggle initiating `MODE=hybrid`.
+  - Add explicit UI: "Import Identity", "Replay Trace", and "Save Trace".
+  - Build UI policy switch for "Personalization Depth" (0-3). This depth flag restricts how much `context.json` is fed into Broca, strictly operating as an interaction overlay, not a physics parameter.
+- [ ] **3. `MODE=train` Hard-Guarding**:
+  - Implement impenetrable isolation for `MODE=train`. It must be explicitly unlocked via a dedicated pipeline process and physically impossible to trigger during `phys` or `hybrid` chat loops.
+  - Document the exact safety policy and logging mechanism for train-states within the backend runtime.
+- [ ] **4. Broca Constraints & Language Targeting**:
+  - Maintain stateless translation architecture. Do NOT insert "be cute" or symbolic mapping heuristics into the system prompt.
+  - Optimize the prompt architecture (ChatML) to strictly enforce "CZ in -> CZ out" locally. The output language must emerge matched to the input language array, preserving the absolute exclusion of relational persona data from the system prompt baseline.
 - [x] Extract and define the **Great Filter (Fermi Paradox)** hypothesis into its own dedicated document (`19-ontology-hyp-fermi-paradox.md`), covering Inward Transcendence, Vacuum Decay, and the 'Wait and See' Ascendancy.
 
 ### 🔲 6. Extending validation and reproducibility #test
@@ -1429,6 +1458,21 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **5) How to explain to laypeople (Non-Claim):**
     - "Lineum operates slightly like a fluid computer. The level map is the hard-wired circuit board (ROM). The wave is the signal flowing through it. As it flows, it creates a temporary network of intention (RAM) pulling the flow together into efficient rivers. Over time, these rivers can dig active trenches into long-term memory (HDD), stabilizing the best routes automatically."
     - *(Strictly note internally: This is a teaching aid for the Portal and B2B marketing. It does not belong as a structural physical claim in the canonical core whitepaper.)*
+
+### 🔲 46. Identity Consolidation Audit (Eq-4' vs Eq-4'+μ) #audit #identity
+- **Context:** While the baseline Eq-4' provides the stable hydrodynamic body (RAM/$\phi$), we need to formally prove that the extended **V2 Track (Eq-4'+$\mu$)** acts as the true long-term continuous Identity (HDD) and prevents "goldfish" memory erasure.
+- **Goal:** Execute an ablation test verifying that $\mu$ organically consolidates repeated structural history without suffering from "rigid freezing" (a purely static, unresponsive persona) or catastrophic numerical divergence.
+- **Methodology (The Core Audit):**
+    1. **Setup (Minimal Ablation):** Run two parallel simulation instances: one using pure Eq-4' (baseline) and one using Eq-4'+$\mu$ (V2 extended). Both must run on the **exact same `seed`**, receive the **exact same periodic $\Psi$ injection vectors**, and execute the **exact same number of ticks**.
+    2. **Stimulus:** Inject identical periodic seed perturbations (simulating incoming conversational concepts).
+    3. **Metrics (Consolidation vs. Freezing defined strictly, no subjective impressions):**
+        - **Consolidation:** `novelty_vs_prev` (Geometrical jitter) must decrease from baseline and stabilize at a non-zero asymptote. Concurrently, `compression_proxy` (GZIP array size) must grow, proving complex hierarchical routing topologies are carved.
+        - **Freezing (Failure):** If `novelty_vs_prev` drops exactly to $0.0$, or if `drift_mu` (L1 $\Delta\mu$) drops exactly to $0.0$, the grid has suffered rigid thermal death and the persona is "frozen" (unresponsive to new stimuli).
+    4. **Fail-Criteria ($\mu$ breaks stability):**
+        - **NaN / Runaway:** Any matrix value hitting `NaN` or `Inf`, bypassing the Eq-4' soft caps.
+        - **SBR Spike:** Signal-to-Background Ratio exceeding $1 \times 10^5$, indicating the $\mu$ channels starved the quantum search space of background energy.
+        - **Collapse Novelty:** As defined above, $\mu$ bias overpowering the $\Phi$ tension so much that nothing moves.
+- **Expected Outcome:** Eq-4' will forget early perturbations after they dissipate. Eq-4'+$\mu$ will securely hold the structural memory trace without tripping any fail-criteria, proving the V2 memory physics.
 
 ---
 
