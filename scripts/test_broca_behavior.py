@@ -51,7 +51,7 @@ def run_behavior_validation():
     }
     
     # Base dummy metrics
-    user_msg = "Jak se cítíš uvnitř své struktury?"
+    user_msg = "How do you feel inside your structure?"
     dummy_r = np.full(200, 0.5)
     
     # 1. OBEDIENCE TEST (3x Identical)

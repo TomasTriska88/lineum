@@ -11,13 +11,13 @@ import os
 import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import evolve
-from lineum_core import math as core_math
+from lineum_core.math import Eq4Config, step_eq4
 
 # Using canonical Eq-4' (v0.1) constants as verified in Phase 7 audit.
 app = FastAPI(title="Lineum Routing API", version="1.0.0")
 
 from routing_backend.entity_api import router as entity_router, _entity_dream_loop
+from routing_backend.ingestion_api import router as ingestion_router
 
 @app.on_event("startup")
 async def startup_event():
@@ -25,10 +25,11 @@ async def startup_event():
     asyncio.create_task(_entity_dream_loop())
 
 app.include_router(entity_router)
+app.include_router(ingestion_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],  # Explicit origins needed for allow_credentials=True in some browsers
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -173,10 +174,13 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     
     cfg = preset_settings.get(preset, preset_settings["urban_design"])
     
-    core_math.DISSIPATION_RATE = cfg["dissipation"]
-    core_math.NOISE_STRENGTH = cfg["noise"]
-    core_math.REACTION_STRENGTH = cfg["reaction"]
-    core_math.PHI_DIFFUSION = cfg["phi_diff"]
+    cfg = Eq4Config(
+        dissipation_rate=cfg["dissipation"],
+        noise_strength=cfg["noise"],
+        reaction_strength=cfg["reaction"],
+        phi_diffusion=cfg["phi_diff"],
+        use_mode_coupling=False
+    )
     
     # SETUP MASSIVE SWARM VECTORIZATION ONCE BEFORE LOOP
     y_coords = [a.start.y for a in req.agents]
@@ -252,7 +256,9 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
             psi[ty_start:ty_end, tx_start:tx_end] *= 0.1
             
             # 1. PHYSICS STEP
-            psi, phi = evolve(psi, delta, phi, kappa)
+            state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
+            psi = state["psi"]
+            phi = state["phi"]
             psi *= (kappa > 0.05)
             
             # SEND DATA TO SVELTE CLIENT EVERY 5 STEPS (saving network bandwidth)
@@ -341,8 +347,9 @@ async def generate_true_rng(req: RngRequest, request: Request):
             center = size // 2
             psi_1[center-5:center+5, center-5:center+5] = 1.0 + 0j
         
-        # We don't even inject float noise. We let the CPU threads naturally cause thermal race conditions.
-        psi_1, phi_1 = evolve(psi_1, delta_1, phi_1, kappa_1)
+        state = step_eq4({"psi": psi_1, "phi": phi_1, "kappa": kappa_1, "delta": delta_1}, Eq4Config(use_mode_coupling=False))
+        psi_1 = state["psi"]
+        phi_1 = state["phi"]
 
     # Harvest entropy: We take the complex phase angle of the chaotic fluid
     entropy_matrix = np.angle(psi_1)
@@ -394,7 +401,9 @@ async def cryptographic_hash(req: HashRequest):
             c = size // 2
             psi[c-2:c+2, c-2:c+2] = 1.0 + 0j
             
-        psi, phi = evolve(psi, delta, phi, kappa)
+        state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, Eq4Config(use_mode_coupling=False))
+        psi = state["psi"]
+        phi = state["phi"]
         
     # The frozen Phi fluid topology is the hash
     import hashlib
@@ -439,7 +448,9 @@ async def compile_lpl(req: LplRequest):
                 if 0 <= py < size-1 and 0 <= px < size-1:
                     psi[py:py+2, px:px+2] = 1.0 + 0j
                 
-        psi, phi = evolve(psi, delta, phi, kappa)
+        state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, Eq4Config(use_mode_coupling=False))
+        psi = state["psi"]
+        phi = state["phi"]
         
     # Send the raw mathematical telemetry back via JSON Float Array
     phi_max = np.max(phi)

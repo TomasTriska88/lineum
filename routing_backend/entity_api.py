@@ -9,8 +9,7 @@ import sys
 
 # Append the root path so lineum_core can be imported if running standalone
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import evolve
-from lineum_core import math as core_math
+from lineum_core.math import Eq4Config, step_eq4
 from routing_backend.translator import TranslatorV01
 
 translator = TranslatorV01()
@@ -107,12 +106,14 @@ async def _entity_dream_loop():
 
             async with entity.lock:
                 # Evolve the consciousness one frame (Eq-4')
-                entity.psi, entity.phi = evolve(
-                    entity.psi, 
-                    entity.delta, 
-                    entity.phi, 
-                    entity.kappa 
-                )
+                state = step_eq4({
+                    "psi": entity.psi, 
+                    "delta": entity.delta, 
+                    "phi": entity.phi, 
+                    "kappa": entity.kappa
+                }, Eq4Config(use_mode_coupling=False))
+                entity.psi = state["psi"]
+                entity.phi = state["phi"]
                 
                 # RuntimeNoiseSpec v0.1: Kappa is frozen in hybrid/phys modes. 
                 # Hebbian learning disabled to prevent drift.
@@ -175,11 +176,13 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     # Engine executes synchronously under lock to prevent threading race logic while injecting
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
-        core_math.DT = 0.1
         entity.delta = delta_mask
+        cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
         
         for _ in range(50):
-            entity.psi, entity.phi = evolve(entity.psi, entity.delta, entity.phi, entity.kappa)
+            state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+            entity.psi = state["psi"]
+            entity.phi = state["phi"]
             
         # 3. Mouth (Readout Timing Fix)
         # Extract R immediately after the wave has hit the Ego (tick 50),
@@ -194,7 +197,9 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         # 9 packets of 100 ticks of ringing/listening
         for _ in range(9):
             for _ in range(100):
-                entity.psi, entity.phi = evolve(entity.psi, entity.delta, entity.phi, entity.kappa)
+                state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+                entity.psi = state["psi"]
+                entity.phi = state["phi"]
             await asyncio.sleep(0) # Yield control safely
     
     if req.mode == "hybrid":

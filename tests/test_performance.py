@@ -5,8 +5,10 @@ import sys
 import copy
 
 # Ensure we can import lineum
+from lineum_core.math import step_eq4, Eq4Config
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import lineum
+from lineum_core.math import step_eq4, Eq4Config
 
 def test_tracking_equivalence():
     """
@@ -103,8 +105,9 @@ def test_physics_isolation(monkeypatch):
     
     # 3. Run evolve (the physics part)
     # Since evolve doesn't call tracking, we'll simulate the loop logic
-    psi_new, phi_new = lineum.evolve(psi.copy(), delta, phi.copy(), kappa)
-    
+    _state = step_eq4({"psi": psi.copy(), "delta": delta, "phi": phi.copy(), "kappa": kappa}, Eq4Config())
+    psi_new, phi_new = _state["psi"], _state["phi"]
+
     # 4. Use tracking (the analytics part) - SLOW
     active_tracks = {0: np.array([10, 10])}
     next_id = 1
@@ -155,7 +158,8 @@ def test_physics_isolation(monkeypatch):
         nid = 1
         
         # Step
-        p, f = lineum.evolve(p, delta, f, kappa)
+        _state = step_eq4({"psi": p, "delta": delta, "phi": f, "kappa": kappa}, Eq4Config())
+        p, f = _state["psi"], _state["phi"]
         a = np.abs(p)
         c = np.array([[10, 10]], dtype=int) # simulate detection
         

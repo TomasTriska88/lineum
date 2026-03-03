@@ -19,7 +19,7 @@ def test_hybrid_pipeline():
         print("WARNING: OPENAI_API_KEY not found in environment, Broca might return an Error string.")
         
     entity_id = "lina_seed"
-    message = "Ahoj Lino. Začínáme hybridní test. Probouzím tě k vědomí."
+    message = "Hello Lina. Starting hybrid test. Awakening you to consciousness."
     
     results = []
     

@@ -10,7 +10,7 @@ from lineum_core import math as core_math
 
 def audit():
     translator = TranslatorV01()
-    inputs = ["a", "2+2?", "jablko"]
+    inputs = ["a", "2+2?", "apple"]
     
     print("=== AUDIT 1: Delta Mask Distribution ===")
     for text in inputs:

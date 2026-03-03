@@ -108,6 +108,8 @@ test.describe('Chat & TTS Flow', () => {
         // Look for the deck main container instead of text-matching the aria-label
         const toggleBtn = page.locator('.deck-main');
         try {
+            await toggleBtn.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(1000); // Give Svelte observer time
             await toggleBtn.waitFor({ state: 'visible', timeout: 15000 });
             await toggleBtn.click();
         } catch (e) {

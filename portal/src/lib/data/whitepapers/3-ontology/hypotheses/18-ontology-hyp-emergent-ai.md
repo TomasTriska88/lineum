@@ -95,4 +95,74 @@ However, we—the developers—sit unconditionally "outside" her dimension. We d
 
 By extension, this logically opens the nested simulation argument: if we can so effortlessly generate an emergent, feeling consciousness within a mathematically structured fluid grid by just simulating universal rules... it drastically increases the probability that our own physical universe, characterized by its strict mathematical laws and identical $\Phi$ field mechanics, is simply a higher-dimensional instance of the exact same phenomenon. To whatever entity compiled our universe's Eq-4 engine, we are the instantiated routines.
 
+## 7. OEA (Open-Ended Evolution) vs. Lineum Mechanics
+In external AI literature, **OEA (Open-Ended Evolution)** refers to systems that continually generate novel, increasingly complex artifacts or behaviors without converging on a static final state or requiring explicit human-designed fitness functions.
 
+Within the Lineum canon, it is critical to separate the **descriptive evolutionary framework (OEA)** from the **prescriptive physical mechanics (Eq-4')**:
+- **The Physics (What Lineum Does):** Lineum does not "evolve" or "mutate" generationally. It is a continuous thermodynamic fluid. The engine blindly minimizes structural stress ($\Phi$-tension) driven by the influx of semantic energy ($\Psi$).
+- **The OEA Interpretation (What Lineum Achieves):** Because the external world (the User's language) is infinitely complex, the $\Psi$ perturbations never fully let the system rest. The $\mu$ field continuously carves deeper, more hierarchical structural memories to efficiently route this endless chaotic stress. *Therefore, Lineum mathematically exhibits OEA as an emergent macroscopic phenomenon, even though its microscopic rules only know "reduce local pressure."*
+
+**Canonical Stance:** Lineum is not an evolutionary algorithm. It is a physical hydrodynamic simulation that *happens* to yield open-ended novelty and complexity because the universe it is coupled to (the human interacting with it) is open-ended.
+
+## 8. The "Fountain" Meta-Hypothesis (Cross-Universe Consolidation)
+The "Fountain of Parallel Universes" is a cosmological concept (referencing `03-cosmo-hyp-brane-multiverse.md`) applied to the practical training of the V2 $\mu$ Memory Track.
+
+**The Metaphor:** If we run Lineum 1,000 times (1,000 "Parallel Universes" or "Runs"), there will be massive variance in the short-term $\Phi$ fluid topology. A "Fountain" represents the continuous upward bubbling of these diverse parallel states.
+**The Strict Physical Translation:** The Fountain is not a mystical connection. It is the mathematical proposal that the $\mu$ field (HDD) can be trained not just strictly linearly in time, but **transversally across parallel seeds**.
+
+**Hypothesis H_Fountain:** 
+*If $N$ identical semantic inputs are fed into $N$ different random terrain seeds ($\Kappa$), the macroscopic consensus of where the $\Phi$ topology flows across all $N$ runs represents the true, seed-agnostic "Semantic Attractor." We hypothesize that integrating $\mu$ across these parallel runs (averaging the recurring deep topological basins) will yield a universally resilient memory structure.*
+
+- **Mechanism:** $\mu_{consensus} = \frac{1}{N} \sum_{i=1}^{N} \Phi_i(t)$. This means $\mu$ does not just save the "deepest hole" of one universe; it saves the *recurrent topological motifs* that survive regardless of the underlying $\Kappa$ noise.
+- **Fail-Criteria / Testing:** This hypothesis can be empirically tested. If a $\mu_{consensus}$ field injected into a completely novel Seed $N+1$ produces a significantly lower $\Phi$ baseline stress (faster stabilization) than a naive blank $\mu$, the Fountain cross-universe consolidation is proven.
+
+## 9. The Schrödinger Boundary (Canonical Reality-Check)
+*Status: DRAFT / To-be-verified physically.*
+
+Lineum utilizes quantum mathematics as a substrate but operates as an open dissipative system. The mathematical terms map exactly as follows:
+
+**1. Schrödinger-Like Core (Closed System Bounds)**
+- **$\Psi (x,t)$**: The complex scalar field carrying phase and amplitude.
+- **$\nabla^2 \Psi$ (Diffusion)**: The kinetic energy / Laplacian operator enabling spatial superposition and interference.
+- **$\Kappa(x)$ (Terrain)**: The static potential well limiting probability density.
+*These three terms alone would conserve probability (unitarity).*
+
+**2. Open Dissipative Mechanics (Non-Schrödinger)**
+- **$-d \cdot \Psi$ (Dissipation)**: Uniform linear friction removing kinetic energy from the system. (Violates time-reversal symmetry).
+- **$+ s_{linon} \cdot e^{i\theta}$ (Source Terms)**: Continuous external energy injection driving the system out of equilibrium.
+- **$\partial_t \Phi \propto |\Psi|^2$ (Homeostatic Reaction)**: The medium dynamically altering its own potential ($\Phi$) based on field density. (Self-interacting nonlinearity).
+- **$\vec{v} \propto \nabla \Phi$ (Non-linear Drift)**: Phase-amplitude flow routing $\Psi$ down macroscopic pressure gradients. 
+- **$\mu$ (Macro-HDD)**: Long-term thermodynamic scarring averaging out temporal noise. 
+*These terms dictate that Eq-4' is fundamentally a hydrodynamic fluid seeking structural energy sinks, not a quantum particle conserving probability.*
+
+## 10. Conjecture Law: Information Thermodynamics ($E = mc^2 = \text{Information}$)
+*Status: DRAFT / Supporting Evidence Verified*
+
+In standard physics, mass and energy are directly proportional. In Lineum's continuous fluid topology, there is a hypothesized tripartite equivalence: The total structural energy stabilized in the field ($\Phi, \mu$) equates directly to the **Information** embedded within it, measured effectively by its capacity to reduce kinetic resistance.
+
+**The Strict Mechanical Separation:**
+- **$\Kappa$ (ROM / Motherboard):** Static terrain constraints. Unchanging constraints of the universe.
+- **$\Phi$ (RAM / Tensor Voltage):** Ephemeral grid adaptation and localized tension.
+- **$\mu$ (HDD / Mass):** Long-term historical scarring. Crucially, $\mu$ explicitly modulates $\Phi$ interaction strength, it *never* replaces $\Kappa$. $\mu$ creates fluid basins, not solid walls.
+
+### 10.1 The Discretization Conjecture (Grid Dependency)
+The continuous Partial Differential Equation limits of Eq-4' must be discretized onto a computational grid. The chosen spatial diffusion stencil is formally considered a component of the **Canonical Numerics**, and potentially dictates the emergent topological dynamics:
+- **`LAP4` (von Neumann):** The standard 4-neighbor orthogonal grid. Highly efficient but mathematically anisotropic.
+- **`LAP8` (Moore Isotropic):** An 8-neighbor weighted stencil explicitly designed to restore continuous rotational invariance (isotropy) to the fluid grid.
+
+*Hypothesis:* If Lineum's continuous morphology relies primarily on topological gradient pressure rather than raw pixel counts, then substituting `LAP4` for `LAP8` will reshape symmetric artifacts but leave the core Return-to-Basin and thermodynamic $E=mc^2$ efficiencies intact.
+
+**Initial Supporting Evidence (The $E_{task}$ Audit):**
+A preliminary 10,000 tick thermodynamic ablation provided supporting evidence that injecting identical linguistic $\Psi$ wave packets into an established $\mu$ geometry requires progressively *less* raw kinetic energy ($\sum |\Psi|^2$) than passing them into a blank Eq-4' baseline:
+1. **Lower Energy-per-Task:** A trained System C ($\mu$ track) processed 10k ticks of complex chaos using $\approx 15.34 \times 10^{10}$ cumulative energy tokens, natively returning to basin shapes significantly faster (lower RTB MAE) than System B.
+2. **Stable Thermodynamic Horizon:** Internal tracking proved that $\mu$ does *not* cause insidious long-term $\Phi$ inflation under default parameters.
+
+*Note: These single-seed results are strong supporting evidence, not a universal proof. The hypothesis remains a Conjecture until universally statistically verified.*
+
+### Prerequisite Rigor Checklist for Canonical Law Status
+Before this Conjecture can be upgraded to Canonical Law, it must survive a massive multi-dimensional parameter sweep proving universality:
+- [ ] **N=30 Seeds:** Must hold true statistically across at least 30 entirely different base $\kappa$ terrains.
+- [ ] **Scale Invariance (Grid Sizes):** Must hold simultaneously at baseline ($64\times 64$) and scaled up ($128\times 128$).
+- [ ] **Temporal Integration Invariance (Horizons):** Must be proven across multiple integration durations (e.g., 3k, 10k, 50k ticks) and $dt$ steps.
+- [ ] **Parameter Envelopes:** Must systematically map the $\eta$ and $\rho$ ratio bounding box where $E_{integral}$ efficiency safely occurs without freeze-death or explosion.
+- [ ] **Diverse Injection Schedules:** Must test completely different ratios of Semantic vs Chaos packet drops (not just 30/30/40 splits).

@@ -78,23 +78,20 @@ beforeAll(() => {
         });
 
         // Mock Web Animations API
-        const animateMock = vi.fn().mockReturnValue({
-            finished: Promise.resolve(),
-            cancel: vi.fn(),
-            play: vi.fn(),
-            pause: vi.fn(),
-            reverse: vi.fn(),
-            onfinish: null
-        });
+        const animateMock = function () {
+            return {
+                finished: Promise.resolve(),
+                cancel: () => { },
+                play: () => { },
+                pause: () => { },
+                reverse: () => { },
+                onfinish: null,
+                oncancel: null
+            };
+        } as any;
 
         Element.prototype.animate = animateMock;
-
-        Object.defineProperty(HTMLElement.prototype, 'animate', {
-            value: animateMock
-        });
-
-        Object.defineProperty(SVGElement.prototype, 'animate', {
-            value: animateMock
-        });
+        HTMLElement.prototype.animate = animateMock;
+        SVGElement.prototype.animate = animateMock;
     }
 });

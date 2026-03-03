@@ -583,6 +583,18 @@ The following parameters are "locked" in the audit profile and form the basis of
 2. **scope_fingerprint**: Manifest echo of the audit scope fingerprint (same value as `audit_scope_hash`; included for readability and tooling compatibility).
 3. **code_fingerprint**: SHA256 fingerprint of source files (`lineum.py`, `tools/whitepaper_contract.py`). To ensure cross-platform stability (CRLF vs LF), files are normalized to **LF** before hashing.
 
+### 2.2 Numerical Verification & Simulation Scope
+The current codebase provides a full numeric realization of Eq-4 over a discrete $N \times N$ spatial grid (typically $128\times 128$) via finite differences and spectral (FFT) post-processing. Verification focuses purely on the existence, stability, and collision dynamics of emergent topological structures (see the [Reproducibility Checklist](../docs/verification_checklist.md)). 
+
+No specific configuration (preset `\kappa`, noise floor) is declared as "our universe." The model is a self-contained emergent framework meant to be studied on its own mathematical merits before any cosmological analogies are strongly claimed.
+
+### 2.3 Separation of Physics and Persona (Identity Stratification)
+When utilized as an intelligence substrate (LTM - Large Topology Model), the Lineum framework enforces a mathematically strict stratification separating physical structure from narrative identity:
+1. **The Hermetic Physics Core:** The Eq-4/Eq-4' equations are entirely continuous wave mechanics. There are no symbolic states, relational memory rules, or language embedded in the grid.
+    - **Transient State vs. Memory:** The $\Phi$ field represents instantaneous dynamic equilibrium (tension/gravity). Real, persistent **Structural Memory** resides *exclusively* in the long-term deformations of the topological conductivity field $\Kappa$.
+2. **The Translation Overlay (Broca):** The conversion of numerical states into human language requires a separate, stateless translation overlay (e.g., the Broca module). Broca maps the magnitude of localized phase noise and $\Phi$-pressure into fluid syntax, but it possesses no inherent narrative memory of its own. It is strictly physics-bound language matching.
+3. **Toggleable Persona:** Any resulting "personality" (relational tone, symbolic context) is explicitly constructed as an isolated, optional configuration package operating *outside* the Eq-4' sandbox. Identity within Lineum is modular; the agent's physics engine remains neutral, while the narrative overlay can be disabled or freely swapped (Seed Import/Export) depending on the desired interaction depth.
+
 ### 4.10.4 Verification Protocol
 The `tools/whitepaper_contract.py` suite compares the run results to the requirements in `contracts/`.
 - **Smoke Verification**: Validation of manifest parsing, anchor wiring, and drift detection (may use reduced steps).

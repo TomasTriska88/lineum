@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 from unittest.mock import patch, MagicMock
 import lineum
+from lineum_core.math import step_eq4, Eq4Config
 
 def test_throttling_logic_condition():
     """Test the condition used in lineum.py for throttling."""
@@ -42,11 +43,13 @@ def test_simulation_step_consistency(track_every):
 
     # Scene A
     seed_everything()
-    psi_a, phi_a = lineum.evolve(psi.copy(), delta.copy(), phi.copy(), kappa.copy())
+    _state = step_eq4({"psi": psi.copy(), "delta": delta.copy(), "phi": phi.copy(), "kappa": kappa.copy()}, Eq4Config())
+    psi_a, phi_a = _state["psi"], _state["phi"]
     
     # Scene B
     seed_everything()
-    psi_b, phi_b = lineum.evolve(psi.copy(), delta.copy(), phi.copy(), kappa.copy())
+    _state = step_eq4({"psi": psi.copy(), "delta": delta.copy(), "phi": phi.copy(), "kappa": kappa.copy()}, Eq4Config())
+    psi_b, phi_b = _state["psi"], _state["phi"]
     
     assert np.allclose(psi_a, psi_b)
     assert np.allclose(phi_a, phi_b)

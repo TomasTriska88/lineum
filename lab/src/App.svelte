@@ -107,6 +107,7 @@
             console.error("Failed to load run:", runId, e);
             error = e.message || "Failed to load data";
         } finally {
+            console.log("DEBUG: Setting loading to false in finally block");
             loading = false;
         }
     }

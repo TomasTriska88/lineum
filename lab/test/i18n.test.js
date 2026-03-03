@@ -17,9 +17,10 @@ describe('i18n Translation System', () => {
     });
 
     it('falls back to English when a key is missing in Czech', () => {
+        translations.en.test_ns.dynamic_missing = 'English Only';
         locale.set('cs');
         const translate = get(t);
-        expect(translate('test_ns.only_english')).toBe('English Only');
+        expect(translate('test_ns.dynamic_missing')).toBe('English Only');
     });
 
     it('returns a placeholder with [MISSING] prefix when the key is not found in any locale', () => {

@@ -11,7 +11,7 @@ def test_language_responses():
     time.sleep(1)
     
     inputs = [
-        {"lang": "Czech", "text": "Jak vnímáš tento prudký otřes?"},
+        {"lang": "Czech", "text": "How do you perceive this sudden shock?"},
         {"lang": "English", "text": "How do you perceive this sudden tremor?"}
     ]
     

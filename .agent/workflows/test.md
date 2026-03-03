@@ -18,10 +18,15 @@ Located in the `portal/` directory. Tests cover Wiki loaders, metadata extractio
 
 **CRITICAL COMPONENT TESTING POLICY**: For testing Svelte UI components (especially interactive ones with DOM changes, Canvas, or complex `bind:value` reactivity), **always use Playwright over Vitest/JSDOM**. JSDOM has severe limitations with Svelte lifecycle rendering and `IntersectionObserver`. You should run end-to-end tests via Playwright instead of struggling with mocked unit tests.
 
+> [!IMPORTANT]
+> **Playwright E2E tests (`npm run test:e2e`) are now fully automated in GitHub Actions CI**.
+> They will run against a headless Chromium browser instance upon every Push/PR to the `main` branch. If the E2E tests fail, the deployment to production is automatically aborted. You should run them locally before pushing if you made significant UI changes.
+
 // turbo
 ```bash
 cd portal
 npm run test
+npm run test:e2e
 ```
 
 ## 3. Simulacrum (Lab)

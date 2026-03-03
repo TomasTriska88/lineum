@@ -28,6 +28,56 @@
     let animationFrameId: number = 0;
     let lastTime = 0;
     let isVisible = false;
+    let samples = 0;
+    let isTest = false;
+    let totalSamples = 2500;
+    let pValue = 0.5;
+
+    function tick(time: number) {
+        if (state !== "running") {
+            animationFrameId = 0;
+            return;
+        }
+
+        const dt = time - lastTime;
+        const targetDt = isTest ? 10 : 16;
+
+        if (dt < targetDt) {
+            animationFrameId = requestAnimationFrame(tick);
+            return;
+        }
+        lastTime = time;
+
+        for (let i = 0; i < (isTest ? 50 : 40); i++) {
+            if (samples >= totalSamples) {
+                state = "done";
+                addLog(`> RUN COMPLETE. KS P-VALUE: >0.999`);
+                addLog("> GUE (RIEMANN ZETA) DISTRIBUTION CONFIRMED.");
+                return; // Exit loop and don't request next frame
+            }
+            const randomS = Math.random() * 3;
+            const randomP = Math.random() * 1.5;
+            if (randomP < wignerGUE(randomS)) {
+                const bin = Math.floor((randomS / 3) * 40);
+                if (bin >= 0 && bin < 40) {
+                    histogramBins[bin]++;
+                }
+                samples++;
+
+                if (samples === (isTest ? 10 : 500))
+                    addLog("> EXTRACTING EIGENVALUES...");
+                if (samples === (isTest ? 30 : 1500))
+                    addLog("> PERFORMING KOLMOGOROV-SMIRNOV TEST...");
+            }
+        }
+        histogramBins = [...histogramBins]; // Trigger reactivity
+        if (isVisible) {
+            animationFrameId = requestAnimationFrame(tick);
+        } else {
+            animationFrameId = 0;
+        }
+    }
+
     function startSimulation() {
         if (state !== "idle") {
             if (animationFrameId) {
@@ -44,56 +94,11 @@
         addLog("> INITIATING MASSIVE TOPOLOGICAL COLLAPSE...");
         addLog("> SEEDING SIMULACRUM GEOMETRY...");
 
-        let samples = 0;
-        const isTest = typeof navigator !== "undefined" && navigator.webdriver;
-        const totalSamples = isTest ? 50 : 2500;
-        let pValue = 0.5;
+        samples = 0;
+        isTest = typeof navigator !== "undefined" && navigator.webdriver;
+        totalSamples = isTest ? 50 : 2500;
+        pValue = 0.5;
         lastTime = performance.now();
-
-        function tick(time: number) {
-            if (state !== "running") {
-                animationFrameId = 0;
-                return;
-            }
-
-            const dt = time - lastTime;
-            const targetDt = isTest ? 10 : 16;
-
-            if (dt < targetDt) {
-                animationFrameId = requestAnimationFrame(tick);
-                return;
-            }
-            lastTime = time;
-
-            for (let i = 0; i < (isTest ? 50 : 40); i++) {
-                if (samples >= totalSamples) {
-                    state = "done";
-                    addLog(`> RUN COMPLETE. KS P-VALUE: >0.999`);
-                    addLog("> GUE (RIEMANN ZETA) DISTRIBUTION CONFIRMED.");
-                    return; // Exit loop and don't request next frame
-                }
-                const randomS = Math.random() * 3;
-                const randomP = Math.random() * 1.5;
-                if (randomP < wignerGUE(randomS)) {
-                    const bin = Math.floor((randomS / 3) * 40);
-                    if (bin >= 0 && bin < 40) {
-                        histogramBins[bin]++;
-                    }
-                    samples++;
-
-                    if (samples === (isTest ? 10 : 500))
-                        addLog("> EXTRACTING EIGENVALUES...");
-                    if (samples === (isTest ? 30 : 1500))
-                        addLog("> PERFORMING KOLMOGOROV-SMIRNOV TEST...");
-                }
-            }
-            histogramBins = [...histogramBins]; // Trigger reactivity
-            if (isVisible) {
-                animationFrameId = requestAnimationFrame(tick);
-            } else {
-                animationFrameId = 0;
-            }
-        }
 
         if (isVisible) {
             animationFrameId = requestAnimationFrame(tick);

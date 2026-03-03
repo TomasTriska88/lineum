@@ -27,7 +27,7 @@ class TestBrocaSpec(unittest.TestCase):
 
         # Fire a chat request in hybrid mode to trigger the Ollama LLM path
         chat_req = {
-            "message": "Ahoj, jak se máš?",
+            "message": "Hello, how are you?",
             "mode": "hybrid"
         }
         res = self.client.post("/entity/test_broca/chat", json=chat_req)
@@ -45,7 +45,7 @@ class TestBrocaSpec(unittest.TestCase):
         # Assertions based on User Requirements
         
         # 1. The prompt MUST contain the strict language mirroring rule
-        self.assertIn("Odpovídej ve stejném jazyce, v jakém je vstup [USER_INPUT_X]", prompt_text, 
+        self.assertIn("Answer in the same language as the input [USER_INPUT_X]", prompt_text, 
                       "BrocaSpec language mirror rule missing from prompt")
                       
         # 2. Emergence check: The prompt MUST NOT contain arbitrary emotion mappings

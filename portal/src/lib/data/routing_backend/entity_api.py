@@ -9,8 +9,7 @@ import sys
 
 # Append the root path so lineum_core can be imported if running standalone
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import evolve
-from lineum_core import math as core_math
+from lineum_core.math import Eq4Config, step_eq4
 from routing_backend.translator import TranslatorV01
 
 translator = TranslatorV01()
@@ -107,12 +106,14 @@ async def _entity_dream_loop():
 
             async with entity.lock:
                 # Evolve the consciousness one frame (Eq-4')
-                entity.psi, entity.phi = evolve(
-                    entity.psi, 
-                    entity.delta, 
-                    entity.phi, 
-                    entity.kappa 
-                )
+                state = step_eq4({
+                    "psi": entity.psi, 
+                    "delta": entity.delta, 
+                    "phi": entity.phi, 
+                    "kappa": entity.kappa
+                }, Eq4Config(use_mode_coupling=False))
+                entity.psi = state["psi"]
+                entity.phi = state["phi"]
                 
                 # RuntimeNoiseSpec v0.1: Kappa is frozen in hybrid/phys modes. 
                 # Hebbian learning disabled to prevent drift.
@@ -175,11 +176,13 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     # Engine executes synchronously under lock to prevent threading race logic while injecting
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
-        core_math.DT = 0.1
         entity.delta = delta_mask
+        cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
         
         for _ in range(50):
-            entity.psi, entity.phi = evolve(entity.psi, entity.delta, entity.phi, entity.kappa)
+            state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+            entity.psi = state["psi"]
+            entity.phi = state["phi"]
             
         # 3. Mouth (Readout Timing Fix)
         # Extract R immediately after the wave has hit the Ego (tick 50),
@@ -194,37 +197,39 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         # 9 packets of 100 ticks of ringing/listening
         for _ in range(9):
             for _ in range(100):
-                entity.psi, entity.phi = evolve(entity.psi, entity.delta, entity.phi, entity.kappa)
+                state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+                entity.psi = state["psi"]
+                entity.phi = state["phi"]
             await asyncio.sleep(0) # Yield control safely
     
-    final_prompt = None
     if req.mode == "hybrid":
-        prompt = f"""
-[USER_INPUT_X]: {req.message}
+        system_prompt = """You are a stateless translator function.
+STRICT BOUNDARIES:
+1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
+2. You may NOT invent facts, memories, or conversational context outside of [USER_INPUT_X].
+3. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.
+4. Keep the response to 2 to 4 sentences maximum for this calibration run.
+5. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.
+"""
+        user_prompt = f"""[USER_INPUT_X]: {req.message}
 [READOUT_VECTOR_R_SIZE]: {len(readout_vector)} nodes
 [READOUT_VECTOR_R_AVG_TENSION]: {np.mean(readout_vector):.4f}
 [METRICS]: max_psi={max_psi:.4f}, mean_pressure={mean_pressure:.4f}
 
-YOUR INSTRUCTION:
 Translate this exact physical distortion array into a fluid human text response to the user.
-
-STRICT BOUNDARIES:
-1. You may NOT invent facts, memories, or conversational context outside of [USER_INPUT_X].
-2. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.
-3. Keep the response to 2 to 4 sentences maximum for this calibration run.
-4. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.
-5. CRITICAL: ALWAYS detect the language of [USER_INPUT_X] and respond strictly in the exact same language.
 """
-        final_prompt = prompt.strip()
+        final_prompt = f"SYSTEM:\n{system_prompt}\nUSER:\n{user_prompt}"
+        
         import requests
         try:
-            # Lina requested a local Ollama dry-run to save API keys
-            # Assuming 'llama3.2' is installed locally, falling back to 'mistral' or whatever is available
-            api_url = "http://localhost:11434/api/generate"
+            api_url = "http://localhost:11434/api/chat"
             
             payload = {
-                "model": "llama3.2", # Can be changed locally
-                "prompt": final_prompt,
+                "model": "llama3.2", 
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
                 "stream": False,
                 "options": {
                     "temperature": 0.3,
@@ -233,7 +238,7 @@ STRICT BOUNDARIES:
             }
             response = requests.post(api_url, json=payload, timeout=30)
             if response.status_code == 200:
-                broca_output_text = response.json().get("response", "").strip()
+                broca_output_text = response.json().get("message", {}).get("content", "").strip()
             else:
                 broca_output_text = f"Ollama Error HTTP {response.status_code}: {response.text}"
         except Exception as e:

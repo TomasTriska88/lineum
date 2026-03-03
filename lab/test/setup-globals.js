@@ -28,3 +28,14 @@ global.fetch = vi.fn();
 if (typeof window !== 'undefined') {
     window.fetch = global.fetch;
 }
+
+// Mock ResizeObserver for JSDOM
+class ResizeObserver {
+    observe() { }
+    unobserve() { }
+    disconnect() { }
+}
+global.ResizeObserver = ResizeObserver;
+if (typeof window !== 'undefined') {
+    window.ResizeObserver = ResizeObserver;
+}

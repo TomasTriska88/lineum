@@ -16,7 +16,7 @@ def measure_r(psi, phi, translator):
 
 def audit_timing():
     translator = TranslatorV01()
-    inputs = ["a", "Tato delší věta by měla demonstrovat, jak masivní text začíná plnit kapacitu vektoru."]
+    inputs = ["a", "This longer sentence should demonstrate how massive text begins filling the vector capacity."]
     
     with open("timing_audit.txt", "w", encoding="utf-8") as f:
         f.write("=== AUDIT 3: R Vector Temporal Dissipation ===\n\n")

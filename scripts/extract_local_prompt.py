@@ -17,7 +17,7 @@ STRICT BOUNDARIES:
 2. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.
 3. Keep the response to 2 to 4 sentences maximum for this calibration run.
 4. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.
-5. Odpovídej ve stejném jazyce, v jakém je vstup [USER_INPUT_X].
+5. Answer in the same language as the input [USER_INPUT_X].
 """
     final_prompt = prompt.strip()
     return final_prompt

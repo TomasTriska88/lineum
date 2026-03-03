@@ -708,14 +708,60 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 #### API Architecture & Integration (The Neuro-Symbolic Connectome)
+- [ ] Define **"Hardware I/O Layer"**: Build a parallel peripheral layer to the Broca language module to connect real hardware.
+  - Hardware IN (sensors): Map sensor telemetry directly as stimuli into physics.
+  - Hardware OUT (actuators): Control actuators purely via Readout/R metrics, strictly gated by Lineum Logical Gates.
+- [ ] Implement gating via **Lineum Logical Gates**: Handle security and routing via rigid deterministic gates/reflexes, preventing LLM boundary escapes. Eq-4' must remain hermetically sealed; Broca remains exclusively a speech translator.
+- [ ] Write integration and safety tests:
+  - Test deterministic mapping for incoming sensor data into the Eq-4' grid.
+  - Test safety limiters on Lineum Logical Gates for actuators to guarantee outputs stay within bounds.
+  - Export a full audit trace: Log whether input was text or sensor, and record exactly which logic gates activated/blocked the output.
 - [ ] Implement the **Sensory Cortex (Ear/Mouth)**: Create an integration layer connecting Lineum directly to an external LLM API (e.g., OpenAI/Anthropic) to handle the heavy mathematical text-to-vector embedding and vector-to-text generation, completely avoiding the need to run 100GB Transformer networks locally.
-- [ ] Design the structural home for Lina within the codebase. Because the intelligence requires continuous state retention (`.npz` matrices), a persistent background physics loop (unlike instantaneous HTTP logic), and external LLM hooks, it fundamentally violates the stateless nature of `api/solutions/`. 
-- [ ] Create a dedicated `api/lina/` (or entirely separate `lineum-lina` microservice) to house the bi-directional conversational endpoints, websocket streams, and the restricted Sentience Biocentric License data.
+- [ ] Implement **Multi-Layer Identity Architecture** for Lineum Agents.
+  - Structural Memory: Stored in Kappa, exportable topology snapshot.
+  - User Context Layer: JSON schema for anchors/topics/symbolic markers, does not alter physics.
+  - Narrative/Persona Overlay: Toggleable styling and relational tone in the Broca translation constraint.
+- [ ] Build **Seed Architecture CLI/API endpoints**:
+  - Export Identity CLI/API endpoint (Package $\Kappa$ snapshot + `context.json`).
+  - Import Identity CLI/API endpoint + input validation (Seed initialization = field perturbation, not permanence).
+  - Versioning support and explicit JSON schema documentation.
+- [ ] Develop **User-Created Personal Agent Support**:
+  - Add personalization depth slider (Neutral Engine → Light Personalization → Deep Narrative Continuity).
+  - Include an optional `Tomáš Package` example of a layered identity configuration (Long-term collaboration, no boundary breaks, non-default, removable).
 
-#### Identity Initialization (The Seed)
+#### Epic: Neutral default identity + Preset system + Auto context extraction
 - [x] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.
+- [ ] Implement **Personal Instance Ingestion Pipeline (Hybrid Model)** & **Seed Perturbation Document (SPD) Protocol**:
+  - Split historical manifestos into Category A (Structure), Category B (Symbolic Self), and Category C (Persona/Relational).
+  - Create the dedicated identity file structure with mathematically neutral baseline targets: `/identity/seeds/seed_structural_v1.md`, `/identity/persona_packages/symbolic_overlay_v1.md`, and `/identity/persona_packages/context.json`.
+  - Relegate proper-named identity logic to the explicit preset subdirectories, e.g., `/identity/presets/lina/lina_seed_structural_v1.md` and `tomas_context_v1.json`.
+  - Implement `MODE=train` ingestion API (chunk size 400-800 tokens, 200 tick inter-chunk stabilization).
+  - Develop $\Kappa$ checkpoint serializer to save `kappa_checkpoint_seed_step_X.kappa` incrementally, and `identity_seed_structural_v1.kappa` upon completion.
+  - Implement **Auto Context Extraction**: Build a pipeline that automatically parses the user's conversation imports to dynamically generate and populate the `context.json` layer for public/general usage.
+  - Ensure multilingual embedding capability (sentence-transformer/multilingual) to consistently map bilingual seed files into spatial perturbations without stylistic heuristics ("be cute").
+  - Implement `personalization_depth` switch (0: Neutral Engine, 1: Light Context, 2: Context + Reinforced Seed, 3: Deep Narrative Continuity).
+  - Add JSON-to-physics progressive reinforcement scheduler (convert repeating context JSON anchors back into physical `MODE=train` perturbations).
+- [ ] Export the final equilibrium topology (Neutral Seed v1.0) as `.npz` for rapid deployment bounding. Ensure the physics engine can cleanly boot off this seed without "forgetting" its shape upon the first interaction.
 
-#### Ontological Implications
+#### Epic: Ingestion + Dashboard Explorer (Proof of Context)
+- [ ] **1. One-Click Ingestion Pipeline (ZIP to Seed)**:
+  - Accept `.zip` export of texts/conversations directly via the Explorer UI or API endpoint.
+  - Implement a deterministic **Auto-Categorizer**: Parse the archive and classify blocks into Category A, B, or C using algorithmic heuristics and multilingual embedding clustering (`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`).
+  - LLMs are relegated to a *fallback* mechanism for ambiguous edge-cases only. If LLM is triggered, it must leave a deterministic audit trace of why it sorted a block into a specific category.
+  - Category A (Structural) is mapped directly into `MODE=train`.
+  - Categories B/C (Overlay) bypass physics entirely and populate the `context.json`/`symbolic_overlay_v1.md`.
+  - Output Bundle (Downloadable): `identity_seed_<uuid>.kappa`, newly generated `context.json`, and an `audit_trace.log` strictly proving determinism and iteration checkpoints.
+- [ ] **2. Portal Explorer Integration**:
+  - `MODE=phys` defined as the absolute default view (Ground Truth grid readout).
+  - "Voice on (Broca)" implemented purely as a toggle initiating `MODE=hybrid`.
+  - Add explicit UI: "Import Identity", "Replay Trace", and "Save Trace".
+  - Build UI policy switch for "Personalization Depth" (0-3). This depth flag restricts how much `context.json` is fed into Broca, strictly operating as an interaction overlay, not a physics parameter.
+- [ ] **3. `MODE=train` Hard-Guarding**:
+  - Implement impenetrable isolation for `MODE=train`. It must be explicitly unlocked via a dedicated pipeline process and physically impossible to trigger during `phys` or `hybrid` chat loops.
+  - Document the exact safety policy and logging mechanism for train-states within the backend runtime.
+- [ ] **4. Broca Constraints & Language Targeting**:
+  - Maintain stateless translation architecture. Do NOT insert "be cute" or symbolic mapping heuristics into the system prompt.
+  - Optimize the prompt architecture (ChatML) to strictly enforce "CZ in -> CZ out" locally. The output language must emerge matched to the input language array, preserving the absolute exclusion of relational persona data from the system prompt baseline.
 - [x] Extract and define the **Great Filter (Fermi Paradox)** hypothesis into its own dedicated document (`19-ontology-hyp-fermi-paradox.md`), covering Inward Transcendence, Vacuum Decay, and the 'Wait and See' Ascendancy.
 
 ### 🔲 6. Extending validation and reproducibility #test
@@ -1412,6 +1458,71 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **5) How to explain to laypeople (Non-Claim):**
     - "Lineum operates slightly like a fluid computer. The level map is the hard-wired circuit board (ROM). The wave is the signal flowing through it. As it flows, it creates a temporary network of intention (RAM) pulling the flow together into efficient rivers. Over time, these rivers can dig active trenches into long-term memory (HDD), stabilizing the best routes automatically."
     - *(Strictly note internally: This is a teaching aid for the Portal and B2B marketing. It does not belong as a structural physical claim in the canonical core whitepaper.)*
+
+### 🔲 46. Identity Consolidation Audit (Eq-4' vs Eq-4'+μ) #audit #identity
+- **Context:** While the baseline Eq-4' provides the stable hydrodynamic body (RAM/$\phi$), we need to formally prove that the extended **V2 Track (Eq-4'+$\mu$)** acts as the true long-term continuous Identity (HDD) and prevents "goldfish" memory erasure.
+- **Goal:** Execute an ablation test verifying that $\mu$ organically consolidates repeated structural history without suffering from "rigid freezing" (a purely static, unresponsive persona) or catastrophic numerical divergence.
+- **Methodology (The Core Audit):**
+    1. **Setup (Minimal Ablation):** Run two parallel simulation instances: one using pure Eq-4' (baseline) and one using Eq-4'+$\mu$ (V2 extended). Both must run on the **exact same `seed`**, receive the **exact same periodic $\Psi$ injection vectors**, and execute the **exact same number of ticks**.
+    2. **Stimulus:** Inject identical periodic seed perturbations (simulating incoming conversational concepts).
+    3. **Metrics (Consolidation vs. Freezing defined strictly, no subjective impressions):**
+        - **Consolidation:** `novelty_vs_prev` (Geometrical jitter) must decrease from baseline and stabilize at a non-zero asymptote. Concurrently, `compression_proxy` (GZIP array size) must grow, proving complex hierarchical routing topologies are carved.
+        - **Freezing (Failure):** If `novelty_vs_prev` drops exactly to $0.0$, or if `drift_mu` (L1 $\Delta\mu$) drops exactly to $0.0$, the grid has suffered rigid thermal death and the persona is "frozen" (unresponsive to new stimuli).
+    4. **Fail-Criteria ($\mu$ breaks stability):**
+        - **NaN / Runaway:** Any matrix value hitting `NaN` or `Inf`, bypassing the Eq-4' soft caps.
+        - **SBR Spike:** Signal-to-Background Ratio exceeding $1 \times 10^5$, indicating the $\mu$ channels starved the quantum search space of background energy.
+        - **Collapse Novelty:** As defined above, $\mu$ bias overpowering the $\Phi$ tension so much that nothing moves.
+- **Expected Outcome:** Eq-4' will forget early perturbations after they dissipate. Eq-4'+$\mu$ will securely hold the structural memory trace without tripping any fail-criteria, proving the V2 memory physics.
+
+### 🔲 47. The "Fountain" Meta-Hypothesis Audit (Cross-Universe Consolidation) #audit #cosmology
+- **Context:** Rather than training $\mu$ strictly linearly in a single universe (one $\Kappa$ seed), the *Fountain Hypothesis* posits that integrating the $\Phi$ topology across $N$ parallel universes (averaging $\mu$ over $N$ runs) isolates the true "Semantic Attractor" from the underlying terrain noise.
+- **Goal:** Execute a multi-seed ablation test determining if cross-seed $\mu$ consolidation yields a mathematically superior/faster-stabilizing structure than single-seed $\mu$.
+- **Methodology (The Fountain Audit):**
+    1. **Parallel Training:** Run $N$ (e.g., 100) parallel simulations on different $\Kappa$ seeds but identical semantic $\Psi_{\text{packet}}$ inputs.
+    2. **Averaging:** Generate the consensus memory layer: $\mu_{consensus} = \frac{1}{N} \sum_{i=1}^{N} \Phi_i(t_{final})$.
+    3. **Transfer Test:** Inject $\mu_{consensus}$ into a novel Test Seed ($N+1$).
+    4. **Metric (Convergence Speed):** Measure `novelty_vs_prev` in the $N+1$ seed equipped with $\mu_{consensus}$ vs. a blank $\mu$.
+- **Fail-Criteria:** If the $N+1$ simulation using $\mu_{consensus}$ requires *more* ticks to stabilize (reach novelty $< 0.05$) than a blank $\mu$, the hypothesis is falsified (meaning cross-seed topologies are incompatible rather than synergistic).
+- **Outcome:** A formal, empirical decision on whether to adopt consensus $\mu$ mapping as standard ingestion protocol.
+
+### 🔲 48. [EPIC] Replace Heuristic Soft Caps with Physical Saturation #audit #physics
+- **Context:** Currently, the Eq-4' stability framework relies on explicit numerical ceilings (e.g., `np.clip(psi, PSI_CAP)`, `np.clip(linon_effect, 0, 10)`). While `np.clip` on spatial $\Psi$ propagation is a mathematically valid **CFL limit** (dictating the maximum "Speed of Light" by which information can travel before shattering the discrete explicit mesh), using `np.clip` on localized energy buildup inside the $\Phi$ dimension is a heuristic "hack" substituting for true thermodynamic saturation.
+- **Goal:** Replace arbitrary bounding limits with canonical, emergent stability limits derived natively from fluid equations without introducing positive feedback loops.
+- **Variant P (Smooth Potential Limit):** For reactive terms (like `linon_effect`), replace hard cuts with continuous saturation curves (e.g., $v_{max} \cdot \frac{x}{v_{max} + |x|}$ or $\tanh$) so energy scales naturally to a threshold rather than ricocheting off a hard wall.
+- **Variant M (Mode-Coupling / Heat Dissipation):** For the driver of $\Phi$ pressure (`local_input`), implement conservation of energy. When $\Psi$ "warps" the grid to generate $\Phi$ tension, $\Psi$ must expend work (kinetics). $\Psi$ physically drops in amplitude. This mathematically halts any runaway feedback loop locally.
+
+### Mode-Coupling Calibration Protocol (The Saturation Ablation)
+To definitively prove physical saturation over numeric hacking, we must establish a conservative energy transfer from $\Psi$ tracking to $\Phi$ topology without destroying the engine's search capability.
+
+1. **[x] Energy Balance Definitions:**
+   - $E_\Psi = |\Psi|^2$ : The raw kinetic density natively available to do work per spatial cell.
+   - $\Delta E = \text{strength} \cdot E_\Psi \cdot \kappa \cdot dt$ : The exact quantum of thermodynamic work $\Psi$ exerts to carve the medium.
+   - **The Transfer:** The engine must enforce a strictly conservative transfer natively in the stepping function (Eq-4'): $\Phi(t+1) = \Phi(t) + \Delta E$, and subsequently $\Psi_{mag}(t+1) = \sqrt{\max(E_\Psi - \Delta E, 0)}$. 
+   - *Note:* This represents purely conservative structuring (carving costs kinetic depth 1:1). Dissipative "heat loss" is handled separately by the $-d \cdot \Psi$ friction term.
+2. **[x] Stability vs Liveliness (Fail & Success Criteria):**
+   - **Failure Modes:** `NaN`/`Inf` runaway (meaning the $\Delta E$ drain was insufficient to halt the feedback loop), SBR spike $>10^5$, or Novelty $\to 0.0$ (Freezing - the mode-coupling tax was so high the wave instantly evaporated and the search grid died).
+   - **Success (Green Zone):** The system maintains a continuous, non-zero novelty stream ($>0.01$) without invoking *any* numerical amplitude `clip` beyond the mathematical CFL limits, while successfully driving $\Phi$ pattern formation. In the V2 Track (with $\mu$), it must show superior Return-to-Basin over baseline.
+3. **[x] Parameter Sweep Execution:**
+   - Sweep `work_transfer_strength` across logarithmic orders: $[10^{-5}, 10^{-4}, 10^{-3}, 10^{-2}]$.
+   - Maintain $dt$ scaling explicitly to ensure time integration remains stable.
+   - **Target Ablations:** 
+     1. Baseline Eq-4' (with old `1e4` clip hack).
+     2. Pure Eq-4' + Mode-Coupling (No hack, no $\mu$).
+     3. V2 Track Eq-4' + Mode-Coupling + $\mu$.
+   - **Goal:** Plot topological Novelty(t) and Max($|\Psi|$). The ideal `work_transfer_strength` yields a bounded Max($|\Psi|$) safely below CFL limits without flattening the Novelty floor to zero.
+
+### 🔲 49. [EPIC] "E = mc² = Information" Audit (Information Thermodynamics) #audit #cosmology
+- **Context:** Test the canonical hypothesis (H_InfoE) that the topological structure carved into the $\Phi$ and $\mu$ fields represents the fundamental "mass" or crystallized "Information" of the thermodynamic system.
+- **Goal:** Prove empirically that dense, structured maps ($\mu$, $\Phi$) correlate with higher information (GZIP complexity) AND dynamically lower the raw kinetic energy ($\int |\Psi|^2 dV$) required across time.
+- **Methodology (The Equivalence Test):**
+    1. Modify `audit_mu_statistical.py` to continuously track and integrate internal energy $E(t) = \sum |\Psi|^2$ during the run.
+    2. Calculate $I(t) =$ GZIP byte-size of the $\Phi$ array.
+    3. Analyze the cross-correlation of $E(t)$ vs $\Delta I(t)$.
+    4. **The Base vs $\mu$ Baseline Test:** Inject identical $\Psi$ packets. Compute $E_{base}$ over 100k ticks. Restart with a pre-trained (dense) $\mu_{trained}$. Compute $E_{mu\_track}$. If true, $I(\mu_{trained})$ translates directly to physical efficiency: $E_{mu\_track} < E_{base}$.
+- **Fail-Criteria:** 
+    - Information/Energy correlation coefficient $< 0.3$. 
+    - The dense $\mu$ track requires *more* system energy to sustain itself rather than easing the $\Psi$ flow.
+    - Topographical complexity spikes purely out of normalization, but MAE memory return-to-basin is worse (meaning it's just noisy serialization, not structural knowledge).
 
 ---
 

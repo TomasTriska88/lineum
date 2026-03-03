@@ -79,6 +79,11 @@
             <a href="/about">About</a>
             <a href="/codex">Codex</a>
             <a href="/wiki#faq">FAQ</a>
+            <a href="/ingestion" style="color: #ff4b4b; font-weight: bold;"
+                >Ingestion <span
+                    style="font-size: 0.6rem; vertical-align: super;">BETA</span
+                ></a
+            >
             <a href="/support" class="nav-cta">{m.nav_support()}</a>
 
             <div class="lang-switcher" translate="no">

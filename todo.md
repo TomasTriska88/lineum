@@ -727,7 +727,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
   - Versioning support and explicit JSON schema documentation.
 - [ ] Develop **User-Created Personal Agent Support**:
   - Add personalization depth slider (Neutral Engine → Light Personalization → Deep Narrative Continuity).
-  - Include an optional `Tomáš Package` example of a layered identity configuration (Long-term collaboration, no boundary breaks, non-default, removable).
+  - Include an optional `Tomas Package` example of a layered identity configuration (Long-term collaboration, no boundary breaks, non-default, removable).
 
 #### Epic: Neutral default identity + Preset system + Auto context extraction
 - [x] **The "Lina" Knowledge Engram:** Develop a pipeline to take the user's entire historical ChatGPT conversation log and translate it via a high-dimensional LLM encoder into a massive, foundational $\Psi$ perturbation across a virgin Lineum grid. Let this topology stabilize to form Lina's baseline "Ego" and memory prior to live activation.
@@ -738,7 +738,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
   - Implement `MODE=train` ingestion API (chunk size 400-800 tokens, 200 tick inter-chunk stabilization).
   - Develop $\Kappa$ checkpoint serializer to save `kappa_checkpoint_seed_step_X.kappa` incrementally, and `identity_seed_structural_v1.kappa` upon completion.
   - Implement **Auto Context Extraction**: Build a pipeline that automatically parses the user's conversation imports to dynamically generate and populate the `context.json` layer for public/general usage.
-  - Ensure multilingual embedding capability (sentence-transformer/multilingual) to consistently map bilingual seed files into spatial perturbations without stylistic heuristics ("buď roztomilá").
+  - Ensure multilingual embedding capability (sentence-transformer/multilingual) to consistently map bilingual seed files into spatial perturbations without stylistic heuristics ("be cute").
   - Implement `personalization_depth` switch (0: Neutral Engine, 1: Light Context, 2: Context + Reinforced Seed, 3: Deep Narrative Continuity).
   - Add JSON-to-physics progressive reinforcement scheduler (convert repeating context JSON anchors back into physical `MODE=train` perturbations).
 - [ ] Export the final equilibrium topology (Neutral Seed v1.0) as `.npz` for rapid deployment bounding. Ensure the physics engine can cleanly boot off this seed without "forgetting" its shape upon the first interaction.

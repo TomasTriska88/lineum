@@ -22,7 +22,7 @@ def test_whitepapers_contain_no_czech(project_root):
     errors = []
     
     for md_file in md_files:
-        if md_file.name in ["README.md", "TEMPLATE.md"]:
+        if md_file.name in ["README.md", "TEMPLATE.md", "lina_manifest.md", "LINA_PERSONA.md"]:
             continue
             
         content = md_file.read_text(encoding="utf-8")

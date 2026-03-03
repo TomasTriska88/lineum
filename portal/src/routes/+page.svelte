@@ -63,6 +63,10 @@
                     >
                     + ∇<span style="color: var(--accent-violet)">φ</span></span
                 >
+                <span class="math-symbol" style="margin-left: 1rem; color: #888;">|</span>
+                <span class="math-symbol" style="margin-left: 1rem;"
+                    >ΔE = λ|<span style="color: var(--accent-cyan)">ψ</span>|²<span style="color: var(--accent-color)">κ</span></span
+                >
             </div>
             <Legend
                 title={m.legend_title()}
@@ -148,15 +152,21 @@
 
         <div class="equation-system-block">
             <div class="eq-line">
-                <span class="math-term">∂<sub>t</sub>ψ</span> = ∇²ψ + φψ + ∇φ
+                <span class="math-term">∂<sub>t</sub>ψ</span> = ∇²ψ + φψ + ∇φ - dψ
             </div>
             <div class="eq-line">
-                <span class="math-term">∂<sub>t</sub>φ</span> = α(|ψ|² - φ) + β∇²φ
+                <span class="math-term">ΔE</span> = λ|ψ|²κdt
+            </div>
+            <div class="eq-line">
+                <span class="math-term">∂<sub>t</sub>φ</span> = ΔE + D<sub>φ</sub>∇²φ
+            </div>
+            <div class="eq-line">
+                <span class="math-term">∂<sub>t</sub>μ</span> = η|ψ|² - ρ(μ - μ₀)
             </div>
             <div class="eq-caption">
-                The Continuous PDE Limit. A fully deterministic, coupled
-                oscillator network with emergent gravity and memory. No
-                predefined metric. No background spacetime.
+                The Continuous PDE Limit representing Information Thermodynamics. 
+                A fully deterministic, coupled oscillator network with emergent gravity (φ) 
+                and long-term structural mass (μ). Mode-Coupling explicitly enforces conservative energy transfer (ΔE).
             </div>
         </div>
 

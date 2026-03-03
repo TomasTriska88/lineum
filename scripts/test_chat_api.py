@@ -24,7 +24,7 @@ def test_api_pipeline():
     # 3. Chat (MODE=phys)
     print(f"\n2. Sending Chat Request (MODE=phys) as user...")
     chat_payload = {
-        "message": "Ahoj, slyšíš mě? Tohle je test fyzikálního propojení.",
+        "message": "Hello, can you hear me? This is a physical connection test.",
         "mode": "phys"
     }
     

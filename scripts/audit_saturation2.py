@@ -10,7 +10,7 @@ from lineum_core import math as core_math
 
 def audit():
     translator = TranslatorV01()
-    inputs = ["a", "jablko", "Tato delší věta by měla demonstrovat, jak masivní text začíná plnit kapacitu vektoru."]
+    inputs = ["a", "apple", "This longer sentence should demonstrate how massive text begins filling the vector capacity."]
     
     with open("clean_audit.txt", "w", encoding="utf-8") as f:
         f.write("=== TranslatorSpec v0.2 Calibration Report ===\n\n")

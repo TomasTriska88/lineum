@@ -4,7 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import evolve
+from lineum_core.math import step_eq4, Eq4Config
+
+PSI_AMP_CAP = Eq4Config().psi_amp_cap
+PHI_CAP = Eq4Config().phi_cap
+GRAD_CAP = Eq4Config().grad_cap
 
 # ---------------------------------------------------------------------------
 # TEST: LINEUM DYNAMIC TOPOLOGY (THE "SHIFTING BOARD")
@@ -51,8 +55,10 @@ def test_dynamic_topology_reconfiguration():
             psi_1[32, 10] = 1.0 + 0j
             psi_2[32, 10] = 1.0 + 0j
             
-        psi_1, phi_1 = evolve(psi_1, delta_1, phi_1, kappa_1)
-        psi_2, phi_2 = evolve(psi_2, delta_2, phi_2, kappa_2)
+        _state = step_eq4({"psi": psi_1, "delta": delta_1, "phi": phi_1, "kappa": kappa_1}, Eq4Config())
+        psi_1, phi_1 = _state["psi"], _state["phi"]
+        _state = step_eq4({"psi": psi_2, "delta": delta_2, "phi": phi_2, "kappa": kappa_2}, Eq4Config())
+        psi_2, phi_2 = _state["psi"], _state["phi"]
         
     print("Simulating Phase 2 (Dynamic Reconfiguration)...")
     
@@ -74,8 +80,10 @@ def test_dynamic_topology_reconfiguration():
             psi_1[32, 10] = 1.0 + 0j
             psi_2[32, 10] = 1.0 + 0j
             
-        psi_1, phi_1 = evolve(psi_1, delta_1, phi_1, kappa_1)
-        psi_2, phi_2 = evolve(psi_2, delta_2, phi_2, kappa_2)
+        _state = step_eq4({"psi": psi_1, "delta": delta_1, "phi": phi_1, "kappa": kappa_1}, Eq4Config())
+        psi_1, phi_1 = _state["psi"], _state["phi"]
+        _state = step_eq4({"psi": psi_2, "delta": delta_2, "phi": phi_2, "kappa": kappa_2}, Eq4Config())
+        psi_2, phi_2 = _state["psi"], _state["phi"]
         
     # In Run 2, the wave could not pass the dynamic wall, whereas Run 1 flooded the right side.
     # We measure specifically the right side of the chamber.

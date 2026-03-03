@@ -7,7 +7,7 @@ vi.mock('@google/generative-ai', () => {
         getGenerativeModel() {
             return {
                 startChat: () => ({
-                    sendMessage: vi.fn().mockRejectedValue(new Error('Simulated API Failure'))
+                    sendMessage: vi.fn().mockImplementation(() => Promise.reject(new Error('Simulated API Failure')))
                 })
             };
         }
