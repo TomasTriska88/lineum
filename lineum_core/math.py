@@ -27,6 +27,10 @@ PHI_DIFFUSION = 0.05
 
 EXPERIMENTAL_TERM = 0 # Default OFF (0). Toggle to 1 to test fail-fast theoretical loops.
 
+# --- MODE COUPLING (PHYSICAL SATURATION) ---
+USE_MODE_COUPLING = True
+MODE_COUPLING_STRENGTH = 0.001
+
 # --- LINA AUDIT DIAGNOSTICS ---
 ENABLE_INTERACTION = True
 ENABLE_PHI_FLOW = True
@@ -177,15 +181,25 @@ def _evolve_pytorch(psi_np, delta_np, phi_np, kappa_np):
     psi -= DISSIPATION_RATE * psi * DT
     psi += _diffuse_complex_torch(psi, kappa, rate=PSI_DIFFUSION) * kappa * DT
 
-    # Strictly cap amp2 before squaring to prevent 1e12 float intermediate explosions (NaN divergence)
-    amp2 = torch.clamp(torch.abs(psi), 0.0, 100.0)
-    local_input = torch.clamp(amp2 * amp2, 0.0, 1e4)
-
     # Scale geometric absorption based on grid AREA (128x128 baseline)
     scale_ratio = (128.0 / size) ** 2
     dynamic_reaction = REACTION_STRENGTH * scale_ratio
 
-    phi += kappa * dynamic_reaction * (local_input - phi)
+    if USE_MODE_COUPLING:
+        # Variant M (Conservative Mode-Coupling)
+        e_psi = torch.abs(psi)**2
+        delta_e = MODE_COUPLING_STRENGTH * e_psi * kappa * DT
+        phi += delta_e
+        
+        # Psi loses the kinetic energy spent warping Phi
+        psi_mag_new = torch.sqrt(torch.clamp(e_psi - delta_e, min=0.0))
+        psi = (psi / (torch.sqrt(e_psi) + 1e-12)) * psi_mag_new
+    else:
+        # Old Heuristic Hack: strictly cap amp2 before squaring 
+        amp2 = torch.clamp(torch.abs(psi), 0.0, 100.0)
+        local_input = torch.clamp(amp2 * amp2, 0.0, 1e4)
+        phi += kappa * dynamic_reaction * (local_input - phi)
+
     phi += kappa * PHI_DIFFUSION * _diffuse_complex_torch(phi, kappa, rate=0.05)
 
     phi = torch.clamp(phi, 0.0, PHI_CAP)
@@ -269,15 +283,25 @@ def _evolve_numpy(psi, delta, phi, kappa):
     psi -= DISSIPATION_RATE * psi * DT
     psi += diffuse_complex(psi, kappa, rate=PSI_DIFFUSION) * kappa * DT
 
-    # Strictly cap amp2 before squaring to prevent 1e12 float intermediate explosions (NaN divergence)
-    amp2 = np.clip(np.abs(psi).astype(np.float64, copy=False), 0.0, 100.0)
-    local_input = np.clip(amp2 * amp2, 0.0, 1e4)
-
     # Scale geometric absorption based on grid AREA (128x128 baseline)
     scale_ratio = (128.0 / size) ** 2
     dynamic_reaction = REACTION_STRENGTH * scale_ratio
 
-    phi += kappa * dynamic_reaction * (local_input - phi)
+    if USE_MODE_COUPLING:
+        # Variant M (Conservative Mode-Coupling)
+        e_psi = np.abs(psi)**2
+        delta_e = MODE_COUPLING_STRENGTH * e_psi * kappa * DT
+        phi += delta_e
+        
+        # Psi loses the kinetic energy spent warping Phi
+        psi_mag_new = np.sqrt(np.maximum(e_psi - delta_e, 0.0))
+        psi = (psi / (np.sqrt(e_psi) + 1e-12)) * psi_mag_new
+    else:
+        # Old Heuristic Hack: strictly cap amp2 before squaring
+        amp2 = np.clip(np.abs(psi).astype(np.float64, copy=False), 0.0, 100.0)
+        local_input = np.clip(amp2 * amp2, 0.0, 1e4)
+        phi += kappa * dynamic_reaction * (local_input - phi)
+
     phi += kappa * PHI_DIFFUSION * diffuse_real(phi, kappa, rate=0.05)
 
     psi = _finite_complex(psi, nan=0.0)
