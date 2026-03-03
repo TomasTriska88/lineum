@@ -145,6 +145,13 @@ In standard physics, mass and energy are directly proportional. In Lineum's cont
 - **$\Phi$ (RAM / Tensor Voltage):** Ephemeral grid adaptation and localized tension.
 - **$\mu$ (HDD / Mass):** Long-term historical scarring. Crucially, $\mu$ explicitly modulates $\Phi$ interaction strength, it *never* replaces $\Kappa$. $\mu$ creates fluid basins, not solid walls.
 
+### 10.1 The Discretization Conjecture (Grid Dependency)
+The continuous Partial Differential Equation limits of Eq-4' must be discretized onto a computational grid. The chosen spatial diffusion stencil is formally considered a component of the **Canonical Numerics**, and potentially dictates the emergent topological dynamics:
+- **`LAP4` (von Neumann):** The standard 4-neighbor orthogonal grid. Highly efficient but mathematically anisotropic.
+- **`LAP8` (Moore Isotropic):** An 8-neighbor weighted stencil explicitly designed to restore continuous rotational invariance (isotropy) to the fluid grid.
+
+*Hypothesis:* If Lineum's continuous morphology relies primarily on topological gradient pressure rather than raw pixel counts, then substituting `LAP4` for `LAP8` will reshape symmetric artifacts but leave the core Return-to-Basin and thermodynamic $E=mc^2$ efficiencies intact.
+
 **Initial Supporting Evidence (The $E_{task}$ Audit):**
 A preliminary 10,000 tick thermodynamic ablation provided supporting evidence that injecting identical linguistic $\Psi$ wave packets into an established $\mu$ geometry requires progressively *less* raw kinetic energy ($\sum |\Psi|^2$) than passing them into a blank Eq-4' baseline:
 1. **Lower Energy-per-Task:** A trained System C ($\mu$ track) processed 10k ticks of complex chaos using $\approx 15.34 \times 10^{10}$ cumulative energy tokens, natively returning to basin shapes significantly faster (lower RTB MAE) than System B.
