@@ -41,8 +41,12 @@ All primary UI components (cards, modules) must utilize transparency and blur ef
 - **The Lineum Palette (Canonical Colors)**:
   - **Lineum Wave/Light ($\psi$)**: Cyber-Cyan (`#06b6d4` / `var(--accent-cyan)`). Cyan represents high-frequency kinetic energy and unhindered propagation. It visually embodies the fast, glowing nature of a dynamic wave.
   - **Lineum Memory/Gravity ($\phi$)**: Fuchsia/Purple (`#c026d3` / `var(--accent-violet)`). Purple represents a heavier, more mysterious and persistent substance ("gravilon" fields). It visually embodies the slower, sticky, network-like memory that bends the light and binds the universe together.
-  - *Rule*: Never mix these meanings. Cyan is strictly for dynamic wave functions; Purple is strictly for persistent memory fields. From this visual contrast stems the core duality of the simulation.
-  - *Gradients (The Flow of Time)*: When creating gradients (e.g., the `lineum.io` link or loading bars), the transition must always go from **Cyan to Purple** (Left to Right). This represents the canonical flow of cause and effect in the simulation: The fast kinetic energy (Cyan $\psi$) initiates the action, which ultimately creates and leaves behind the persistent memory structure (Purple $\phi$).
+  - **Lineum Deep Identity ($\mu$)**: Amber/Orange (`#ffaa00`). Amber represents the intense thermodynamics, physical heat, and energy cost required to engrave memory permanently into the structural backbone (HDD). It signifies permanence and resistance to fluid change.
+  - *Rule*: Never mix these meanings. Cyan is strictly for dynamic wave functions; Purple is strictly for persistent RAM fields; Amber is strictly for deep, permanent structural changes.
+  - *Gradients & Loading Animations (The Flow of Time)*: Any time-based sequence or conceptual gradient MUST flow from **Cyan -> Purple -> Amber**. This defines the canonical lifespan of information in the simulation engine:
+    1. **Start (Cyan $\psi$)**: High-velocity kinetic energy (Pure Wave/Light) enters the system.
+    2. **Middle (Purple $\phi$)**: The wave slows down, hits resistance, and forms context/memory webs (RAM).
+    3. **End (Amber $\mu$)**: The kinetic energy is fully spent and converts into intense thermodynamic heat, burning a permanent structural scar (HDD).
 - **General Accents**: Vibrant gradients spanning Cyan, Blue, Violet, and Magenta.
 - **Typography**: 
   - **UI & Narrative**: `Inter` (Sans-serif) for all main portal text, ensuring clean, modern readability.
@@ -65,7 +69,21 @@ While the Portal focuses on accessible glassmorphism, the **Lab** (Simulacrum) i
 
 ---
 
-## AI-First Orientation
+## 🧭 Navigation & Information Hierarchy
+
+To prevent overcrowding on both Desktop and Mobile viewports while maintaining focus on monetization, all navigation elements must adhere to the following hierarchy:
+
+1. **Primary Navigation (Root visibility, High Visual Weight)**:
+   - Actionable Commercial Endpoints: **API Solutions** and **Memory Engraving**. These must draw the eye and use canonical brand colors (Cyan, Amber) to drive monetization. They should appear first (left-most) in the hierarchy.
+   - Core Scientific Pillars: **Lab (Simulacrum)** and **For Scientists**. These serve the technical community and must remain distinctly visible at the root level. They should **not** use distinct coloring to avoid competing with monetization links, and should be positioned right of the commercial endpoints.
+2. **Secondary Navigation (Grouped Documentation)**:
+   - Explanatory links (`About`, `Codex`, `FAQ`, `Changelog`) must be grouped into a single **Docs** dropdown or relegated strictly to the Footer. They should never compete for eye-level space with Primary elements.
+3. **Implicit Home Routing**:
+   - The Lineum Logo always serves as the `Portal` Home button. Do not create redundant text links for "Home" or "Portal".
+
+---
+
+## 🧠 AI-First Orientation
 Lineum isn't just a website with an AI chatbot; it is an AI-augmented research portal. All future features must be designed with the **Lineum Explorer** in mind as a primary UI actor.
 
 ### Principles:
@@ -81,6 +99,17 @@ Lineum isn't just a website with an AI chatbot; it is an AI-augmented research p
 - **Resonance Deck**: A permanent anchor at the bottom for deep querying.
 - **Margin Shards**: Permanent "insight gems" that act as the interface between the text and the AI guide.
 - **Design Requirement**: Every research document **must** weave shards into its margins by default.
+
+---
+
+## 🌐 Localization (i18n) Rules
+
+Lineum is a global project. The Portal must fully support the established Paraglide JS (`@inlang/paraglide-js`) infrastructure. 
+
+### Hardcoded Text Prohibition
+- **Never** hardcode English text directly into `.svelte` components (e.g., `<button>Submit</button>`).
+- **Always** create a descriptive key in `messages/en.json` (and provide a logical translation in `messages/cs.json`) and call it via the generated module: `<button>{m.btn_submit()}</button>`.
+- This applies to all UI elements, including navigation links, badges (like `BETA` or `EARLY ACCESS`), and ARIA labels.
 
 ### Feature Extension Checklist
 When adding a new feature or page to the Lineum Portal, you MUST:
@@ -102,4 +131,4 @@ The AI agent is not just a "chatbot," but a **Scientific Guide**.
    - Information from **Whitepapers** is treated as simulation fact.
 
 ---
-*Last update: February 17, 2026*
+*Last update: March 03, 2026*

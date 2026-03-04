@@ -7,17 +7,17 @@ import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from routing_backend.main import app
-from routing_backend.ingestion_api import active_jobs
+from routing_backend.engraving_api import active_jobs
 
 client = TestClient(app)
 
-def test_ingestion_sse_headers_and_stream():
+def test_engraving_sse_headers_and_stream():
     """
     Ensure the SSE endpoint returns correct Content-Type and CORS headers,
     and handles missing jobs correctly without crashing.
     """
     # 1. Test missing job
-    response = client.get("/api/ingestion/stream/nonexistent_job")
+    response = client.get("/api/engraving/stream/nonexistent_job")
     assert response.status_code == 404
     assert response.json() == {"detail": "Job not found"}
 
@@ -31,7 +31,7 @@ def test_ingestion_sse_headers_and_stream():
     }
 
     # Test the stream returns SSE headers
-    response = client.get(f"/api/ingestion/stream/{job_id}")
+    response = client.get(f"/api/engraving/stream/{job_id}")
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
     assert response.headers["cache-control"] == "no-cache"
@@ -50,7 +50,7 @@ def test_ingestion_sse_headers_and_stream():
     # Clean up
     del active_jobs[job_id]
 
-def test_ingestion_cancel_job():
+def test_engraving_cancel_job():
     """
     Ensure a running job can be cancelled, updating its dictionary state.
     """
@@ -62,7 +62,7 @@ def test_ingestion_cancel_job():
         "cancel_requested": False
     }
 
-    res = client.post(f"/api/ingestion/cancel/{job_id}")
+    res = client.post(f"/api/engraving/cancel/{job_id}")
     assert res.status_code == 200
     assert res.json() == {"status": "cancelling"}
     assert active_jobs[job_id]["cancel_requested"] is True

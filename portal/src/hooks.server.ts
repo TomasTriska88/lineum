@@ -22,5 +22,5 @@ const sessionHandle: Handle = async ({ event, resolve }) => {
     return response;
 };
 
-// Důležité pro Paraglide i18n routing: i18n.handle() musí běžet jako první!
+// Important for Paraglide i18n routing: i18n.handle() must run first!
 export const handle = sequence(i18n.handle(), sessionHandle);

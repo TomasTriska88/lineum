@@ -17,7 +17,7 @@ describe('Global English-Only Enforcement', () => {
             if (existsSync(tracker)) {
                 const content = readFileSync(tracker, 'utf-8');
                 // Prose documents should have English structure
-                assertEnglishOnly(content, ['Tomáš Tříska', 'Tomáš', 'Tomas', 'Triska', 'Déjà', 'déjà'], true, tracker);
+                assertEnglishOnly(content, ['Tomas Triska', 'Déjà', 'déjà'], true, tracker);
             }
         }
     });
@@ -30,7 +30,7 @@ describe('Global English-Only Enforcement', () => {
             if (existsSync(file)) {
                 const content = readFileSync(file, 'utf-8');
                 // Code files don't guarantee exact prose, so structure check is false
-                assertEnglishOnly(content, ['Tomáš Tříska', 'cs-CZ', 'Čeština', 'ř', 'ě', 'ů', 'ň', 'ť', 'ď', 'á', 'é', 'í', 'ý', 'ž', 'š', 'č', 'ú', 'Řeřich', 'Řeicha', 'Ř', 'ó', 'však'], false, file);
+                assertEnglishOnly(content, ['Tomas Triska', 'cs-CZ', 'Czech', 'Recha'], false, file);
             }
         }
     });
@@ -42,7 +42,7 @@ describe('Global English-Only Enforcement', () => {
             if (existsSync(file)) {
                 const content = readFileSync(file, 'utf-8');
                 // We allow exact language name strings because language switchers often use them
-                assertEnglishOnly(content, ['Čeština', 'Věda o polích', 'Dýchej'], false, file);
+                assertEnglishOnly(content, ['Czech', 'Field Science', 'Breathe'], false, file);
             }
         }
     });

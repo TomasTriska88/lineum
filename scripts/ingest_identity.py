@@ -11,6 +11,7 @@ import re
 # Add core to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from lineum_core.math import Eq4Config, step_eq4
+from routing_backend.text_to_wave_encoder import TextToWaveEncoder
 
 GRID_SIZE = 64
 
@@ -78,6 +79,8 @@ def build_identity_pipeline(zip_path, identifier=None):
         stencil_type="LAP4"  # Default deterministic kernel
     )
     
+    encoder = TextToWaveEncoder(grid_size=GRID_SIZE, plasticity_tau=200)
+    
     # Virgin state
     state = {
         "psi": np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.complex128),
@@ -113,23 +116,21 @@ def build_identity_pipeline(zip_path, identifier=None):
                 # 3. Routing
                 if cat == "A":
                     # --- Core Physics Injection ---
-                    # In a real app, this calls the Text-to-Wave semantic encoder.
-                    # For skeletal routing, we inject a deterministic random seed derived from text length
-                    rng = np.random.RandomState(len(chunk) % 10000)
-                    delta = np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.float64)
-                    cx, cy = rng.randint(10, GRID_SIZE-10, size=2)
-                    delta[cx-3:cx+4, cy-3:cy+4] = 10.0
-                    state["delta"] = delta
-                    
-                    # Consolidate into HDD over N ticks
-                    energy_start = np.sum(np.abs(state["psi"])**2)
-                    for _ in range(50):
-                        state = step_eq4(state, cfg)
-                    energy_end = np.sum(np.abs(state["psi"])**2)
+                    # Use the new Hybrid Text-to-Wave Encoder
+                    state, metrics = encoder.encode(
+                        text=chunk,
+                        state=state,
+                        cfg=cfg,
+                        step_fn=step_eq4,
+                        mode="identity_burn",
+                        personalization_depth=1.0
+                    )
                     
                     # Log physical cost
-                    entry["hdd_cost_kj"] = float(energy_end - energy_start)
-                    print(f"   [Category A] Baked into Mu grid. (Cost: {entry['hdd_cost_kj']:.2f})")
+                    entry["hdd_cost_kj"] = metrics.get("hdd_cost_kj", 0.0)
+                    entry["rtb_stability"] = metrics.get("rtb_stability_score", 0.0)
+                    entry["drift_index"] = metrics.get("identity_drift_index", 0.0)
+                    print(f"   [Category A] Baked into Mu grid. (Cost: {entry['hdd_cost_kj']:.2f}, RTB: {entry['rtb_stability']:.4f})")
                 
                 else:
                     # --- Context Overhead ---
@@ -168,14 +169,14 @@ def build_identity_pipeline(zip_path, identifier=None):
     with open(audit_path, 'w', encoding='utf-8') as  f:
         json.dump(audit_log, f, indent=2)
 
-    print(f"\\n=== INGESTION COMLETE ===")
+    print(f"\\n=== MEMORY ENGRAVING COMLETE ===")
     print(f"Generated {npz_path}")
     print(f"Generated {json_path}")
     print(f"Target Mu Mass Engraved: {np.sum(state['mu']):.2f}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="LINEUM MODE=train Ingestion Pipeline")
+    parser = argparse.ArgumentParser(description="LINEUM MODE=train Memory Engraving Pipeline")
     parser.add_argument("zip_path", type=str, help="Path to the user's .zip chat export.")
     parser.add_argument("--id", type=str, default=None, help="Optional identity label.")
     

@@ -29,6 +29,12 @@
             description: m.legend_items_phi_description(),
         },
         {
+            id: "mu",
+            color: "#ffaa00",
+            label: "μ (Mu)",
+            description: "Deep Identity Backbone (HDD)",
+        },
+        {
             id: "warp",
             color: "#ff00ff",
             colorAlt: "#8a2be2",
@@ -61,11 +67,24 @@
                     <span style="color: var(--accent-violet)">φ</span><span
                         style="color: var(--accent-cyan)">ψ</span
                     >
-                    + ∇<span style="color: var(--accent-violet)">φ</span></span
+                    + ∇(<span style="color: var(--accent-violet)">φ</span>) (1 +
+                    <span style="color: #ffaa00">μ</span>)</span
                 >
-                <span class="math-symbol" style="margin-left: 1rem; color: #888;">|</span>
+                <span
+                    class="math-symbol"
+                    style="margin-left: 1rem; color: #888;">|</span
+                >
                 <span class="math-symbol" style="margin-left: 1rem;"
-                    >ΔE = λ|<span style="color: var(--accent-cyan)">ψ</span>|²<span style="color: var(--accent-color)">κ</span></span
+                    >ΔE = λ|<span style="color: var(--accent-cyan)">ψ</span
+                    >|²<span style="color: var(--accent-color)">κ</span></span
+                >
+                <span
+                    class="math-symbol"
+                    style="margin-left: 1rem; color: #888;">|</span
+                >
+                <span class="math-symbol" style="margin-left: 1rem;"
+                    >E = mc² ≡ <span style="color: var(--accent-color)">I</span
+                    ></span
                 >
             </div>
             <Legend
@@ -152,21 +171,50 @@
 
         <div class="equation-system-block">
             <div class="eq-line">
-                <span class="math-term">∂<sub>t</sub>ψ</span> = ∇²ψ + φψ + ∇φ - dψ
+                <span class="math-term"
+                    >∂<sub>t</sub><span style="color: var(--accent-cyan)"
+                        >ψ</span
+                    ></span
+                >
+                = ∇²<span style="color: var(--accent-cyan)">ψ</span> +
+                <span style="color: var(--accent-violet)">φ</span><span
+                    style="color: var(--accent-cyan)">ψ</span
+                >
+                + ∇(<span style="color: var(--accent-violet)">φ</span>)(1 +
+                <span style="color: #ffaa00">μ</span>) - d<span
+                    style="color: var(--accent-cyan)">ψ</span
+                >
             </div>
             <div class="eq-line">
-                <span class="math-term">ΔE</span> = λ|ψ|²κdt
+                <span class="math-term">ΔE</span> = λ|<span
+                    style="color: var(--accent-cyan)">ψ</span
+                >|²<span style="color: var(--accent-color)">κ</span>dt
             </div>
             <div class="eq-line">
-                <span class="math-term">∂<sub>t</sub>φ</span> = ΔE + D<sub>φ</sub>∇²φ
+                <span class="math-term"
+                    >∂<sub>t</sub><span style="color: var(--accent-violet)"
+                        >φ</span
+                    ></span
+                >
+                = ΔE + D<sub
+                    ><span style="color: var(--accent-violet)">φ</span></sub
+                >∇²<span style="color: var(--accent-violet)">φ</span>
             </div>
             <div class="eq-line">
-                <span class="math-term">∂<sub>t</sub>μ</span> = η|ψ|² - ρ(μ - μ₀)
+                <span class="math-term"
+                    >∂<sub>t</sub><span style="color: #ffaa00">μ</span></span
+                >
+                = η|<span style="color: var(--accent-cyan)">ψ</span>|²<span
+                    style="color: #ffaa00">μ</span
+                >
+                - ρ(<span style="color: #ffaa00">μ</span> - μ₀)
             </div>
             <div class="eq-caption">
-                The Continuous PDE Limit representing Information Thermodynamics. 
-                A fully deterministic, coupled oscillator network with emergent gravity (φ) 
-                and long-term structural mass (μ). Mode-Coupling explicitly enforces conservative energy transfer (ΔE).
+                The Continuous PDE Limit representing Information
+                Thermodynamics. A fully deterministic, coupled oscillator
+                network with emergent gravity (φ) and long-term structural mass
+                (μ). Mode-Coupling explicitly enforces conservative energy
+                transfer (ΔE).
             </div>
         </div>
 

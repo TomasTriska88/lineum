@@ -14,6 +14,7 @@ import shutil
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lineum_core.math import Eq4Config, step_eq4
+from routing_backend.text_to_wave_encoder import TextToWaveEncoder
 
 router = APIRouter()
 
@@ -78,8 +79,8 @@ def _classify_chunk(text: str) -> Dict:
     else:
         return {"category": "B", "why": {"score": score, "hits": hits}}
 
-@router.post("/api/ingestion/preview")
-async def ingest_preview(file: UploadFile = File(...)):
+@router.post("/api/engraving/preview")
+async def engrave_preview(file: UploadFile = File(...)):
     staging_id = str(uuid.uuid4())
     stage_path = os.path.join(STAGING_DIR, staging_id)
     os.makedirs(stage_path, exist_ok=True)
@@ -163,6 +164,8 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
             "kappa": np.ones((GRID_SIZE, GRID_SIZE), dtype=np.float64),
             "mu": np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.float64),
         }
+        
+        encoder = TextToWaveEncoder(grid_size=GRID_SIZE, plasticity_tau=200)
 
         total_blocks = len(blocks)
         for i, block in enumerate(blocks):
@@ -190,19 +193,18 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
             }
             
             if final_cat == "A":
-                rng = np.random.RandomState(int(block["sha256"][:8], 16))
-                delta = np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.float64)
-                cx, cy = rng.randint(10, GRID_SIZE-10, size=2)
-                delta[cx-3:cx+4, cy-3:cy+4] = 10.0 * req.config.personalization_depth
-                state["delta"] = delta
+                state, metrics = encoder.encode(
+                    text=block["text"],
+                    state=state,
+                    cfg=cfg,
+                    step_fn=step_eq4,
+                    mode="identity_burn",
+                    personalization_depth=req.config.personalization_depth
+                )
                 
-                e_start = np.sum(np.abs(state["psi"])**2)
-                for _ in range(50):
-                    state = step_eq4(state, cfg)
-                e_end = np.sum(np.abs(state["psi"])**2)
-                
-                entry["hdd_cost_kj"] = float(e_end - e_start)
-                active_jobs[job_id]["logs"].append(f"Block {block['block_id'][:8]} baked into Mu. Cost: {entry['hdd_cost_kj']:.2f}")
+                entry["hdd_cost_kj"] = metrics.get("hdd_cost_kj", 0.0)
+                entry["rtb_stability"] = metrics.get("rtb_stability_score", 0.0)
+                active_jobs[job_id]["logs"].append(f"Block {block['block_id'][:8]} baked into Mu. Cost: {entry['hdd_cost_kj']:.2f}, RTB: {entry['rtb_stability']:.4f}")
                 
             else:
                 context_chunks.append({
@@ -252,7 +254,7 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         active_jobs[job_id]["progress"] = 100
         active_jobs[job_id]["status"] = "completed"
         active_jobs[job_id]["output_dir"] = out_dir
-        active_jobs[job_id]["logs"].append("Ingestion Complete.")
+        active_jobs[job_id]["logs"].append("Memory Engraving Complete.")
         
     except Exception as e:
         import traceback
@@ -273,8 +275,8 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
         active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
 
-@router.post("/api/ingestion/run")
-async def ingest_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
+@router.post("/api/engraving/run")
+async def engrave_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
     try:
         job_id = f"job_{uuid.uuid4().hex[:8]}"
         active_jobs[job_id] = {
@@ -291,8 +293,8 @@ async def ingest_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
         traceback.print_exc()
         raise e
 
-@router.get("/api/ingestion/stream/{job_id}")
-async def stream_ingestion(job_id: str):
+@router.get("/api/engraving/stream/{job_id}")
+async def stream_engraving(job_id: str):
     if job_id not in active_jobs:
         raise HTTPException(status_code=404, detail="Job not found")
         
@@ -333,14 +335,14 @@ async def stream_ingestion(job_id: str):
         }
     )
 
-@router.post("/api/ingestion/cancel/{job_id}")
+@router.post("/api/engraving/cancel/{job_id}")
 async def cancel_job(job_id: str):
     if job_id in active_jobs:
         active_jobs[job_id]["cancel_requested"] = True
         return {"status": "cancelling"}
     raise HTTPException(status_code=404, detail="Job not found")
 
-@router.delete("/api/ingestion/job/{job_id}")
+@router.delete("/api/engraving/job/{job_id}")
 async def delete_job(job_id: str):
     if job_id in active_jobs:
         del active_jobs[job_id]

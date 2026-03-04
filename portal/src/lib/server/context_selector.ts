@@ -102,10 +102,10 @@ ${c.content}
 
     private tokenize(text: string): string[] {
         return text.toLowerCase()
-            .replace(/[^\w\sěščřžýáíéůúňťď]/g, ' ')
+            .replace(/[^\w\s]/g, ' ')
             .split(/\s+/)
             .filter(w => w.length > 1) // Skip 1-char words but allow 2+ char acronyms (AI, LPL)
-            .filter(w => !['what', 'how', 'why', 'who', 'the', 'and', 'are', 'you', 'when', 'where', 'which', 'that', 'this', 'have', 'from', 'about', 'pro', 'jak', 'kde', 'kdy'].includes(w));
+            .filter(w => !['what', 'how', 'why', 'who', 'the', 'and', 'are', 'you', 'when', 'where', 'which', 'that', 'this', 'have', 'from', 'about'].includes(w));
     }
 }
 

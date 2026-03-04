@@ -106,3 +106,7 @@ npx vite dev --host 127.0.0.1 --port 5174
 *   **Core Engine & Lab**: GNU AGPLv3 License.
 *   **Portal (SaaS Interface)**: Proprietary (All Rights Reserved). The code in the `/portal` directory is strictly for internal commercial use and is fundamentally excluded from the AGPLv3 license.
 *   **Whitepapers**: CC BY-NC-ND 4.0.
+
+### 🛡️ Trademarks
+"Lineum™" and "Lina™" are trademarks of Tomáš Tříska.
+Explicit permission is granted to contributors and users of the AGPLv3 Core Engine to use the "Lineum" and "Lina" names in connection with the project, including the Portal and Lab interfaces, as long as such use is non-commercial (in accordance with the Codex) and accurately refers to this original repository.

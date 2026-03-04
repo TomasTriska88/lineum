@@ -79,8 +79,8 @@ def _classify_chunk(text: str) -> Dict:
     else:
         return {"category": "B", "why": {"score": score, "hits": hits}}
 
-@router.post("/api/ingestion/preview")
-async def ingest_preview(file: UploadFile = File(...)):
+@router.post("/api/engraving/preview")
+async def engrave_preview(file: UploadFile = File(...)):
     staging_id = str(uuid.uuid4())
     stage_path = os.path.join(STAGING_DIR, staging_id)
     os.makedirs(stage_path, exist_ok=True)
@@ -254,7 +254,7 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         active_jobs[job_id]["progress"] = 100
         active_jobs[job_id]["status"] = "completed"
         active_jobs[job_id]["output_dir"] = out_dir
-        active_jobs[job_id]["logs"].append("Ingestion Complete.")
+        active_jobs[job_id]["logs"].append("Memory Engraving Complete.")
         
     except Exception as e:
         import traceback
@@ -275,8 +275,8 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
         active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
 
-@router.post("/api/ingestion/run")
-async def ingest_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
+@router.post("/api/engraving/run")
+async def engrave_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
     try:
         job_id = f"job_{uuid.uuid4().hex[:8]}"
         active_jobs[job_id] = {
@@ -293,8 +293,8 @@ async def ingest_run(req: RunProcessRequest, background_tasks: BackgroundTasks):
         traceback.print_exc()
         raise e
 
-@router.get("/api/ingestion/stream/{job_id}")
-async def stream_ingestion(job_id: str):
+@router.get("/api/engraving/stream/{job_id}")
+async def stream_engraving(job_id: str):
     if job_id not in active_jobs:
         raise HTTPException(status_code=404, detail="Job not found")
         
@@ -335,14 +335,14 @@ async def stream_ingestion(job_id: str):
         }
     )
 
-@router.post("/api/ingestion/cancel/{job_id}")
+@router.post("/api/engraving/cancel/{job_id}")
 async def cancel_job(job_id: str):
     if job_id in active_jobs:
         active_jobs[job_id]["cancel_requested"] = True
         return {"status": "cancelling"}
     raise HTTPException(status_code=404, detail="Job not found")
 
-@router.delete("/api/ingestion/job/{job_id}")
+@router.delete("/api/engraving/job/{job_id}")
 async def delete_job(job_id: str):
     if job_id in active_jobs:
         del active_jobs[job_id]

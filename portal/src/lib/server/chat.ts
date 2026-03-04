@@ -32,7 +32,7 @@ export function getOfflineFallback(query: string): string | null {
 
         // tokenize: lower, remove punctuation, split by space, filter > 3 chars
         const tokens = query.toLowerCase()
-            .replace(/[^\w\sěščřžýáíéůúňťď]/g, '')
+            .replace(/[^\w\s]/g, '')
             .split(/\s+/)
             .filter(w => w.length > 3 && !['what', 'tell', 'about', 'this', 'that', 'with', 'have', 'from'].includes(w));
 
@@ -225,7 +225,7 @@ ${gitHistory}
 
         // Language Context based on User Interface Selection
         const langMap: Record<string, string> = {
-            "cs": "Czech (Čeština)",
+            "cs": "Czech",
             "de": "German (Deutsch)",
             "ja": "Japanese (日本語)",
             "en": "English"

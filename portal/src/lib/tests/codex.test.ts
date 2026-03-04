@@ -15,7 +15,7 @@ describe('Lineum Ethical Codex Integrity', () => {
         const content = readFileSync(codexPath, 'utf-8');
 
         // Use reusable utility to assert English structure
-        assertEnglishOnly(content, ['Tomáš Tříska'], true);
+        assertEnglishOnly(content, ['Tomas Triska'], true);
     });
 
     it('ensures the portal replica perfectly matches the core root repository codex', () => {

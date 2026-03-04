@@ -59,7 +59,7 @@
 
         try {
             const res = await fetch(
-                "http://localhost:8000/api/ingestion/preview",
+                "http://localhost:8000/api/engraving/preview",
                 {
                     method: "POST",
                     body: formData,
@@ -107,7 +107,7 @@
         return block.category;
     }
 
-    async function runIngestion() {
+    async function runEngraving() {
         if (!allResolved) return;
 
         isRunning = true;
@@ -126,7 +126,7 @@
                 identity_name: identityName,
             };
 
-            const res = await fetch("http://localhost:8000/api/ingestion/run", {
+            const res = await fetch("http://localhost:8000/api/engraving/run", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -145,7 +145,7 @@
 
     function connectSSE() {
         const eventSource = new EventSource(
-            `http://localhost:8000/api/ingestion/stream/${jobId}`,
+            `http://localhost:8000/api/engraving/stream/${jobId}`,
         );
 
         eventSource.onmessage = (event) => {
@@ -206,7 +206,7 @@
     async function cancelJob() {
         if (!jobId) return;
         try {
-            await fetch(`http://localhost:8000/api/ingestion/cancel/${jobId}`, {
+            await fetch(`http://localhost:8000/api/engraving/cancel/${jobId}`, {
                 method: "POST",
             });
         } catch (e) {}
@@ -214,13 +214,13 @@
 </script>
 
 <svelte:head>
-    <title>Lineum Edge | Identity Ingestion</title>
+    <title>Lineum Edge | Memory Engraving</title>
 </svelte:head>
 
 <main class="dashboard-container">
     <header class="header">
         <h1>
-            <span class="gradient-text">MODE=train</span> Identity Ingestion
+            <span class="gradient-text">MODE=train</span> Memory Engraving
         </h1>
         <p class="subtitle">
             Compile chat histories into native thermodynamic Lineum `.npz`
@@ -389,7 +389,7 @@
                     <button
                         class="burn-btn"
                         disabled={!allResolved}
-                        on:click={runIngestion}
+                        on:click={runEngraving}
                     >
                         Burn Identity &rarr;
                     </button>

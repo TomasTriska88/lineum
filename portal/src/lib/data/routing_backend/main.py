@@ -17,7 +17,7 @@ from lineum_core.math import Eq4Config, step_eq4
 app = FastAPI(title="Lineum Routing API", version="1.0.0")
 
 from routing_backend.entity_api import router as entity_router, _entity_dream_loop
-from routing_backend.ingestion_api import router as ingestion_router
+from routing_backend.engraving_api import router as engraving_router
 
 @app.on_event("startup")
 async def startup_event():
@@ -25,7 +25,7 @@ async def startup_event():
     asyncio.create_task(_entity_dream_loop())
 
 app.include_router(entity_router)
-app.include_router(ingestion_router)
+app.include_router(engraving_router)
 
 app.add_middleware(
     CORSMiddleware,

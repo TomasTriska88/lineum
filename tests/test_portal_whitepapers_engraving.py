@@ -7,7 +7,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 AI_INDEX_PATH = PROJECT_ROOT / "portal" / "src" / "lib" / "data" / "ai_index.json"
 
-def test_portal_whitepapers_ingestion():
+def test_portal_whitepapers_engraving():
     if not AI_INDEX_PATH.exists():
         pytest.skip("ai_index.json does not exist. Please run 'npm run stage' or ensure sync-data.js has executed.")
         

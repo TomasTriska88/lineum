@@ -3,9 +3,9 @@
  * Detects whether the text should be spoken in Czech or English.
  * 
  * Heuristic Refined:
- * 1. Strong Czech Chars (Almost never in English): ř, ě, ů, ň, ť, ď -> Always Czech.
+ * 1. Strong Czech Chars (Almost never in English): (r, e, u, n, t, d with carons) -> Always Czech.
  * 2. Safe English Words (Strictly not Czech): the, this, that, ... -> Always English (overrides Czech chars).
- * 3. Weak Czech Chars (Could be names in English): á, é, í, ý, š, ž, č, ú -> Czech only if no Safe English.
+ * 3. Weak Czech Chars (Could be names in English): (a, e, i, y, u with accutes, s, z, c with carons) -> Czech only if no Safe English.
  * 
  * @param text The text to analyze
  * @returns 'cs-CZ' or 'en-US'
@@ -20,7 +20,7 @@ export function detectLanguage(text: string): 'cs-CZ' | 'en-US' {
     const hasSafeEnglish = safeEnglishPattern.test(text);
 
     // Logic:
-    // - Safe English -> English (Overrides even strong Czech chars like "Hello Mr. Řeřich")
+    // - Safe English -> English (Overrides even strong Czech chars like "Hello Mr. Rerich")
     // - Otherwise -> Czech (if ANY Czech char found)
     // - Default -> English (if no Czech chars found)
 

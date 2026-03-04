@@ -18,8 +18,11 @@ import glob
 import hashlib
 import subprocess
 
-from lineum_core import math as core_math
-from lineum_core.math import evolve, PSI_AMP_CAP, PHI_CAP, GRAD_CAP
+from lineum_core.math import step_eq4, Eq4Config
+
+PSI_AMP_CAP = Eq4Config().psi_amp_cap
+PHI_CAP = Eq4Config().phi_cap
+GRAD_CAP = Eq4Config().grad_cap
 
 # --- Fingerprinting ---
 def _compute_code_fingerprint(files, normalized_newlines=True):
@@ -1948,17 +1951,20 @@ if __name__ == "__main__":
             # Track kappa spatial mean for temporal metrics
             kappa_spatial_means.append(float(np.mean(kappa)))
 
-            # Sync dynamic configuration into lineum_core.math before evolving
-            core_math.TEST_EXHALE_MODE = TEST_EXHALE_MODE
-            core_math.NOISE_STRENGTH = NOISE_STRENGTH
-            core_math.PHI_INTERACTION_CAP = float(PHI_INTERACTION_CAP)
-            core_math.DRIFT_STRENGTH = float(DRIFT_STRENGTH)
-            core_math.DISSIPATION_RATE = float(DISSIPATION_RATE)
-            core_math.PSI_DIFFUSION = float(PSI_DIFFUSION)
-            core_math.REACTION_STRENGTH = float(REACTION_STRENGTH)
-            core_math.PHI_DIFFUSION = float(PHI_DIFFUSION)
+            cfg = Eq4Config(
+                noise_strength=NOISE_STRENGTH,
+                drift_strength=float(DRIFT_STRENGTH),
+                dissipation_rate=float(DISSIPATION_RATE),
+                psi_diffusion=float(PSI_DIFFUSION),
+                reaction_strength=float(REACTION_STRENGTH),
+                phi_diffusion=float(PHI_DIFFUSION),
+                use_mode_coupling=TEST_EXHALE_MODE
+            )
 
-            psi, phi = evolve(psi, delta, phi, kappa)
+            state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
+            psi = state["psi"]
+            phi = state["phi"]
+            
             amp = np.abs(psi)
 
             phase = np.angle(psi)

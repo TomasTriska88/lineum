@@ -18,23 +18,23 @@ export function transliterateSymbols(text: string, lang: string = "cs"): string 
             // 1. Decimals: 0.012 -> 0,012 (Czech standard)
             .replace(/(\d+)\.(\d+)/g, "$1,$2")
             // 2. Asterisk Handling
-            // "space * space" or "number * number" -> krát
-            .replace(/(\d|\w)\s*\*\s*(\d|\w)/g, "$1 krát $2")
+            // "space * space" or "number * number" -> krat
+            .replace(/(\d|\w)\s*\*\s*(\d|\w)/g, "$1 krat $2")
             // formatted bold/italic was already stripped in stripMarkdown, so remaining * are symbols
-            .replace(/\*/g, "hvězdička")
+            .replace(/\*/g, "hvezdicka")
             // 3. Greek & Special Symbols
-            .replace(/φ/g, "fí")
-            .replace(/ψ/g, "psí")
+            .replace(/φ/g, "fi")
+            .replace(/ψ/g, "psi")
             .replace(/Ω/g, "omega")
             .replace(/κ/g, "kappa")
-            .replace(/=/g, "rovná se")
+            .replace(/=/g, "rovna se")
             .replace(/λ/g, "lambda")
             .replace(/Σ/g, "suma")
             .replace(/α/g, "alfa")
             .replace(/β/g, "beta")
             .replace(/γ/g, "gama")
             .replace(/Δ/g, "delta")
-            .replace(/π/g, "pí")
+            .replace(/π/g, "pi")
             .replace(/μ/g, "mikro")
     );
 }

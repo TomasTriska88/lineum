@@ -10,15 +10,22 @@
     } from "$env/static/public";
 
     let menuOpen = false;
+    let docsOpen = false;
     let currentLang = languageTag();
 
     function toggleMenu() {
         menuOpen = !menuOpen;
     }
 
+    function toggleDocs(e: Event) {
+        e.preventDefault();
+        docsOpen = !docsOpen;
+    }
+
     // Close menu when navigating and reactively update language
     $: if ($page.url.pathname) {
         menuOpen = false;
+        docsOpen = false;
         currentLang = languageTag();
     }
 
@@ -66,24 +73,46 @@
         </button>
 
         <div class="nav-links" class:mobile-open={menuOpen}>
-            <a href="/">{m.nav_portal()}</a>
-            <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a
-            >
             {#if PUBLIC_ENABLE_API_SOLUTIONS === "true"}
                 <a
                     href="/api-solutions"
-                    style="color: #38bdf8; font-weight: bold;">{m.nav_api()}</a
+                    style="color: #38bdf8; font-weight: bold;"
+                    >{m.nav_api()}
+                    <span
+                        style="font-size: 0.6rem; vertical-align: super; opacity: 0.8;"
+                        >{m.badge_early_access()}</span
+                    ></a
+                >
+                <a href="/engraving" style="color: #ffaa00; font-weight: bold;"
+                    >{m.nav_engraving()}
+                    <span style="font-size: 0.6rem; vertical-align: super;"
+                        >{m.badge_beta()}</span
+                    ></a
                 >
             {/if}
-            <a href="/#scientist">{m.sections_scientist_label()}</a>
-            <a href="/about">About</a>
-            <a href="/codex">Codex</a>
-            <a href="/wiki#faq">FAQ</a>
-            <a href="/ingestion" style="color: #ff4b4b; font-weight: bold;"
-                >Ingestion <span
-                    style="font-size: 0.6rem; vertical-align: super;">BETA</span
-                ></a
+            <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a
             >
+            <a href="/#scientist">{m.sections_scientist_label()}</a>
+
+            <div
+                class="dropdown"
+                on:mouseenter={() => (docsOpen = true)}
+                on:mouseleave={() => (docsOpen = false)}
+                role="menu"
+                tabindex="0"
+            >
+                <button class="dropdown-toggle" on:click={toggleDocs}>
+                    {m.nav_docs()} <span class="caret">▼</span>
+                </button>
+                {#if docsOpen}
+                    <div class="dropdown-menu">
+                        <a href="/about">{m.nav_about()}</a>
+                        <a href="/codex">{m.nav_codex()}</a>
+                        <a href="/wiki#faq">{m.nav_faq()}</a>
+                    </div>
+                {/if}
+            </div>
+
             <a href="/support" class="nav-cta">{m.nav_support()}</a>
 
             <div class="lang-switcher" translate="no">
@@ -146,6 +175,51 @@
 
     .nav-links a:hover {
         color: white;
+    }
+
+    /* Dropdown CSS */
+    :global(.dropdown) {
+        position: relative;
+    }
+    :global(.dropdown-toggle) {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0.5rem 0;
+    }
+    :global(.caret) {
+        font-size: 0.6rem;
+        transition: transform 0.2s;
+    }
+    :global(.dropdown:hover .caret) {
+        transform: rotate(180deg);
+    }
+    :global(.dropdown-menu) {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 150px;
+        background: rgba(10, 10, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+    }
+    :global(.dropdown-menu a) {
+        padding: 0.75rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    :global(.dropdown-menu a:hover) {
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .nav-cta {
@@ -223,21 +297,34 @@
             background: #0a0a0f;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 2rem;
-            gap: 2rem;
+            padding: 1.5rem 2rem 4rem;
+            gap: 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             align-items: center;
+            overflow-y: auto;
         }
 
         .nav-links.mobile-open {
             display: flex;
         }
 
-        .nav-links a {
+        .nav-links a,
+        :global(.dropdown-toggle) {
             font-size: 1.2rem; /* Balanced size */
             padding: 0.5rem 0; /* Maintain touch target height */
             width: 100%; /* Full width for easier clicking */
             text-align: center;
+            justify-content: center;
+        }
+
+        :global(.dropdown-menu) {
+            position: relative;
+            background: transparent;
+            border: none;
+            padding: 0;
+            box-shadow: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .mobile-toggle {

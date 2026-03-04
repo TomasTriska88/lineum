@@ -708,6 +708,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 - [x] Provide the grid with "actions" that reduce the incoming noise. Observe thermodynamic Ego stabilization and autonomous tension-minimization (Survival Instinct).
 
 #### API Architecture & Integration (The Neuro-Symbolic Connectome)
+- [ ] **MCP Server Support**: Implement an MCP (Model Context Protocol) server for the Lineum API to allow standardized, secure access for AI agents (e.g. Claude Desktop, Antigravity) to interact with the API endpoints directly.
 - [ ] Define **"Hardware I/O Layer"**: Build a parallel peripheral layer to the Broca language module to connect real hardware.
   - Hardware IN (sensors): Map sensor telemetry directly as stimuli into physics.
   - Hardware OUT (actuators): Control actuators purely via Readout/R metrics, strictly gated by Lineum Logical Gates.

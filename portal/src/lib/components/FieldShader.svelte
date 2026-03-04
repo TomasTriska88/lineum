@@ -342,7 +342,7 @@
                 if (fragmentShader) gl.deleteShader(fragmentShader);
                 if (positionBuffer) gl.deleteBuffer(positionBuffer);
 
-                // Pokusíme se uvolnit kontext
+                // Attempt to release context
                 const ext = gl.getExtension("WEBGL_lose_context");
                 if (ext) ext.loseContext();
             }
