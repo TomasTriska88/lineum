@@ -13,3 +13,8 @@ Lineum is a rigorous scientific project. All contributions must adhere to the fo
 1.  **Fork & Branch:** Create feature branches.
 2.  **Test:** Run `pytest tests/` before pushing.
 3.  **PR:** Describe your changes and the hypothesis being tested.
+
+## Legal & IP Protection (DCO / CLA)
+Lineum is currently under strict intellectual property control. **At this time, we do NOT accept any external Pull Requests that fail to include a valid Developer Certificate of Origin (DCO) or Contributor License Agreement (CLA).**
+
+While technical enforcement (e.g., automated CI blocks) is not yet universally active on this repository, this rule applies legally to all code, documentation, and assets submitted. If you plan to submit a contribution, you must be prepared to assert that you have the right to submit the work and agree to license it under the inbound terms required by the project.

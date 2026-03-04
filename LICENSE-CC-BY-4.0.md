@@ -9,7 +9,7 @@ Full license text: https://creativecommons.org/licenses/by/4.0/
 **Scope**
 
 - Applies to: `whitepapers/` (including all cosmological and ontological hypotheses and figures).
-- Does **not** apply to: source code, scripts, and portal architecture (see `LICENSE`, which is **GNU AGPLv3**, and the proprietary `/portal` directory).
+- Does **not** apply to: source code, scripts, and portal architecture (see `LICENSE`, which is **GNU AGPLv3**, and the `/portal` directory).
 
 **Attribution suggestion**
 
