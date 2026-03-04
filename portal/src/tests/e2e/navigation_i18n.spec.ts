@@ -9,77 +9,63 @@ test.describe('Navigation i18n Localization', () => {
     // Let's test by setting the `Accept-Language` header if routing is header-based,
     // or we will just check the text content directly if it's based on path.
 
-    test('Should display English navigation when English locale is forced via UI switcher', async ({ page }) => {
-        await page.setViewportSize({ width: 1280, height: 720 });
+    test('Should display English navigation on the root path', async ({ page }) => {
+        // According to our i18n file, English is the default language tag mapped to '/'
+        await page.goto('http://127.0.0.1:5173/');
+        await expect(page.locator('.nav-logo').first()).toBeVisible();
 
-        // Force English by navigating directly to the English root (mimics what the button does)
-        await page.goto('http://localhost:5173/en/');
-
-        // Wait for page reload from sveltekit data-sveltekit-reload
-        // Avoid networkidle because WebGL/SSE might keep network active
-        await page.waitForTimeout(1000);
-
-        // Open mobile menu if we are on a narrow viewport
         const mobileToggle = page.locator('.mobile-toggle').first();
-        if (await mobileToggle.isVisible()) {
-            await mobileToggle.click();
-            await page.waitForTimeout(300); // Wait for menu open animation/render
-        }
+        if (await mobileToggle.isVisible()) await mobileToggle.click();
 
-        // Check the Lab link text (identified by target)
-        const labLink = page.getByRole('link', { name: /Laboratory/i, exact: false }).first();
+        const labLink = page.locator('.nav-links a:has-text("Laboratory")').first();
         await expect(labLink).toBeVisible();
 
-        // Check 'For Scientists' link text (identified by href)
-        const scientistLink = page.getByRole('link', { name: /For Researchers/i, exact: false }).first();
+        const scientistLink = page.locator('.nav-links a:has-text("For Researchers")').first();
         await expect(scientistLink).toBeVisible();
 
-        // Click the Docs dropdown and verify 'About' is English
-        // Try forcing the click and checking DOM content instead of visual visibility
-        await page.$eval('.dropdown-toggle', (el: HTMLElement) => el.click());
+        // Check Docs Dropdown
+        const docsToggle = page.locator('.dropdown-toggle').first();
+        await docsToggle.click();
 
-        const aboutLink = page.getByRole('link', { name: /About Us/i, exact: false }).first();
+        const aboutLink = page.locator('.dropdown-menu a:has-text("About Us")').first();
         await expect(aboutLink).toBeVisible();
     });
 
-    test('Should display Czech navigation when Czech locale is forced via UI switcher', async ({ page }) => {
-        await page.setViewportSize({ width: 1280, height: 720 });
-
-        // Force Czech by navigating directly to the Czech root
-        await page.goto('http://localhost:5173/cs/');
-        await page.waitForLoadState('networkidle');
-
-        // Wait for hydration
+    test('Should display Czech navigation on the /cs/ path', async ({ page }) => {
+        // According to our i18n file, Czech localized paths are prefixed normally with /cs
+        await page.goto('http://127.0.0.1:5173/cs/');
         await expect(page.locator('.nav-logo').first()).toBeVisible();
 
-        // Open mobile menu if we are on a narrow viewport
         const mobileToggle = page.locator('.mobile-toggle').first();
-        if (await mobileToggle.isVisible()) {
-            await mobileToggle.click();
-            await page.waitForTimeout(300); // Wait for menu open animation/render
-        }
+        if (await mobileToggle.isVisible()) await mobileToggle.click();
 
-        // Check the Lab link text
-        const labLink = page.getByRole('link', { name: /Laboratoř/i, exact: false }).first();
+        // Check if the Lab link text is Czech
+        const labLink = page.locator('.nav-links a:has-text("Laboratoř")').first();
         await expect(labLink).toBeVisible();
 
-        // Check 'For Scientists' link text
-        const scientistLink = page.getByRole('link', { name: /Pro výzkumníky/i, exact: false }).first();
+        const scientistLink = page.locator('.nav-links a:has-text("Pro výzkumníky")').first();
         await expect(scientistLink).toBeVisible();
 
-        // Click the Docs dropdown and verify 'About' is Czech
-        await page.$eval('.dropdown-toggle', (el: HTMLElement) => el.click());
+        // Check Docs Dropdown
+        const docsToggle = page.locator('.dropdown-toggle').first();
+        await docsToggle.click();
 
-        const aboutLink = page.getByRole('link', { name: /O Nás/i, exact: false }).first();
+        const aboutLink = page.locator('.dropdown-menu a:has-text("O Nás")').first();
         await expect(aboutLink).toBeVisible();
     });
 
     test('Should display language names in their native localized form (Čeština, Deutsch, etc) regardless of current UI language', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
-        await page.goto('http://localhost:5173/');
+        await page.goto('http://127.0.0.1:5173/');
 
         // Wait for hydration
         await expect(page.locator('.nav-logo').first()).toBeVisible();
+
+        // 0. Handle mobile viewport if necessary (ensures lang-switcher is visible)
+        const mobileToggle = page.locator('.mobile-toggle').first();
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click();
+        }
 
         // Check language tooltip labels are native
         const csButton = page.locator('a[hreflang="cs"]').first();

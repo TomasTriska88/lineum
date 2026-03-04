@@ -168,7 +168,9 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         encoder = TextToWaveEncoder(grid_size=GRID_SIZE, plasticity_tau=200)
 
         total_blocks = len(blocks)
+        current_block = None
         for i, block in enumerate(blocks):
+            current_block = block
             if active_jobs[job_id]["cancel_requested"]:
                 active_jobs[job_id]["status"] = "cancelled"
                 return
@@ -202,9 +204,9 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
                     personalization_depth=req.config.personalization_depth
                 )
                 
-                entry["hdd_cost_kj"] = metrics.get("hdd_cost_kj", 0.0)
-                entry["rtb_stability"] = metrics.get("rtb_stability_score", 0.0)
-                active_jobs[job_id]["logs"].append(f"Block {block['block_id'][:8]} baked into Mu. Cost: {entry['hdd_cost_kj']:.2f}, RTB: {entry['rtb_stability']:.4f}")
+                entry["auc_phi"] = metrics.get("auc_phi", 0.0)
+                entry["auc_psi"] = metrics.get("auc_psi", 0.0)
+                active_jobs[job_id]["logs"].append(f"Block {block['block_id'][:8]} baked into Mu. AUC(phi): {entry['auc_phi']:.2f}, AUC(psi): {entry['auc_psi']:.4f}")
                 
             else:
                 context_chunks.append({
@@ -260,19 +262,44 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         import traceback
         err_str = traceback.format_exc()
         try:
-            job_dbg = os.path.join(JOBS_DIR, job_id, "crash_debug.log")
-            if not os.path.exists(os.path.dirname(job_dbg)):
-                os.makedirs(os.path.dirname(job_dbg), exist_ok=True)
-            with open(job_dbg, "w") as dbg:
-                dbg.write(err_str)
-        except:
-            pass
+            # Deterministic Crash Bundling
+            crash_dir = os.path.join(JOBS_DIR, job_id, "crash_bundle")
+            os.makedirs(crash_dir, exist_ok=True)
+            
+            with open(os.path.join(crash_dir, "crash_debug.log"), "w") as f:
+                f.write(err_str)
+                
+            # 1. input_id + failing chunk
+            with open(os.path.join(crash_dir, "failing_block.json"), "w") as f:
+                json.dump(current_block if current_block else {"error": "Failed before block processing start"}, f, indent=2)
+                
+            # 2. cfg snapshot
+            with open(os.path.join(crash_dir, "cfg_snapshot.json"), "w") as f:
+                try:
+                    from dataclasses import asdict
+                    json.dump(asdict(cfg), f, indent=2)
+                except Exception:
+                    f.write(str(cfg))
+                    
+            # 3. Last 200 logs
+            with open(os.path.join(crash_dir, "last_200_logs.log"), "w") as f:
+                f.write("\\n".join(active_jobs[job_id]["logs"][-200:]))
+                
+            # 4. mu/phi SHAs
+            with open(os.path.join(crash_dir, "physics_fingerprint.json"), "w") as f:
+                json.dump({
+                    "mu_sha": encoder._hash_array(state.get("mu", np.zeros_like(state["phi"]))),
+                    "phi_sha": encoder._hash_array(state.get("phi")),
+                    "psi_sha": encoder._hash_array(state.get("psi")),
+                    "kappa_sha": encoder._hash_array(state.get("kappa"))
+                }, f, indent=2)
+        except Exception as bundle_err:
+            print(f"Failed to create crash bundle: {bundle_err}")
             
         print("BACKGROUND JOB ERROR:")
         print(err_str)
         
         active_jobs[job_id]["status"] = "error"
-        active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
         active_jobs[job_id]["logs"].append(f"Error: {str(e)}")
 
 @router.post("/api/engraving/run")

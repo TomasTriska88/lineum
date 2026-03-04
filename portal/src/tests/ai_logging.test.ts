@@ -7,7 +7,7 @@ describe('AI Logging Endpoint Completeness', () => {
     it('Should successfully write a 10,000 character conversation without truncation', async () => {
         const largeString = 'A'.repeat(10000);
 
-        const mockRequest = new Request('http://localhost:5173/api/v1/ai/log', {
+        const mockRequest = new Request('http://127.0.0.1:5173/api/v1/ai/log', {
             method: 'POST',
             body: JSON.stringify({
                 sessionId: 'test-session-huge',

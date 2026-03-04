@@ -46,7 +46,7 @@ describe('Global Token Limit Guard Integration', () => {
         // Force limit reached
         vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0 });
 
-        const request = new Request('http://localhost/api/chat', {
+        const request = new Request('http://127.0.0.1/api/chat', {
             method: 'POST',
             body: JSON.stringify({ messages: [{ role: 'user', parts: [{ text: 'Hello' }] }] })
         });
@@ -78,7 +78,7 @@ describe('Global Token Limit Guard Integration', () => {
         // Force limit reached
         vi.spyOn(usageGuard, 'checkLimit').mockReturnValue({ allowed: false, remainingBudget: 0 });
 
-        const request = new Request('http://localhost/api/tts', {
+        const request = new Request('http://127.0.0.1/api/tts', {
             method: 'POST',
             body: JSON.stringify({ text: 'Hello' })
         });

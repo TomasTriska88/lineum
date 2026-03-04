@@ -6,8 +6,8 @@ export const test = base.extend({
         await page.route('**/*', async (route) => {
             const url = route.request().url();
 
-            // Allow localhost (vite server) and data URIs (inline assets)
-            if (url.includes('localhost') || url.includes('127.0.0.1') || url.startsWith('data:')) {
+            // Allow 127.0.0.1 (vite server) and data URIs (inline assets)
+            if (url.includes('127.0.0.1') || url.startsWith('data:')) {
                 await route.continue();
                 return;
             }

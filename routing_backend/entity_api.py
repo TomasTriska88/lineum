@@ -47,6 +47,7 @@ class EntityInstance:
         self.phi = np.full((grid_size, grid_size), 10000.0, dtype=np.float32) # Stable Base container
         self.kappa = np.full((grid_size, grid_size), 0.5, dtype=np.float32)
         self.delta = np.zeros((grid_size, grid_size), dtype=np.float32)
+        self.mu = np.zeros((grid_size, grid_size), dtype=np.float32)
         
         # Lock for async safety when modifying state during the background loop
         self.lock = asyncio.Lock()
@@ -61,7 +62,8 @@ class EntityInstance:
             psi=self.psi, 
             phi=self.phi, 
             kappa=self.kappa, 
-            delta=self.delta
+            delta=self.delta,
+            mu=self.mu
         )
         return file_path
         
@@ -74,6 +76,8 @@ class EntityInstance:
             self.phi = data['phi']
             self.kappa = data['kappa']
             self.delta = data['delta']
+            if 'mu' in data:
+                self.mu = data['mu']
             return True
         return False
 
@@ -110,8 +114,9 @@ async def _entity_dream_loop():
                     "psi": entity.psi, 
                     "delta": entity.delta, 
                     "phi": entity.phi, 
-                    "kappa": entity.kappa
-                }, Eq4Config(use_mode_coupling=False))
+                    "kappa": entity.kappa,
+                    "mu": entity.mu
+                }, Eq4Config(use_mode_coupling=False, use_mu=True))
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
                 
@@ -190,9 +195,25 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         readout_vector = translator.read_grid_to_vector(entity.psi, entity.phi)
         max_psi = float(np.max(np.abs(entity.psi)))
         mean_pressure = float(np.mean(entity.phi))
-            
+        
+        # We need the full metrics package from the engine, including affect_v1 state
+        from routing_backend.text_to_wave_encoder import TextToWaveEncoder, init_state
+        encoder_temp = TextToWaveEncoder(grid_size=100, plasticity_tau=200) # Size dynamically overwritten below
+        encoder_temp.grid_size = entity.psi.shape[0]
+        
         # Drop delta back to background noise (0.0)
         entity.delta.fill(0.0)
+        
+        # Evaluate the affect scalars against the physics baseline using the encoder
+        # but WITHOUT burning identity (mode=runtime) just to extract the telemetry
+        clean_state = init_state(encoder_temp.grid_size)
+        clean_state["mood"] = getattr(entity, "mood", {})
+        clean_state["mu"] = entity.mu if hasattr(entity, "mu") else np.zeros_like(entity.phi)
+        
+        encoder_temp.set_baseline(clean_state)
+        _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(dt=0.1, use_mode_coupling=False), step_eq4, mode="runtime")
+        
+        entity.mood = affect_metrics["affect_v1"]["mood_state"]["after"]
         
         # 9 packets of 100 ticks of ringing/listening
         for _ in range(9):
@@ -203,24 +224,31 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
             await asyncio.sleep(0) # Yield control safely
     
     if req.mode == "hybrid":
-        system_prompt = """You are a stateless translator function.
+        system_prompt = """You are a stateless telemetry translator for a physics simulation.
 STRICT BOUNDARIES:
 1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
-2. You may NOT invent facts, memories, or conversational context outside of [USER_INPUT_X].
-3. The fundamental tone, length, and structure of your response must emerge purely from the numerical relationships in the Readout vector and Metrics. Do NOT use any pre-programmed mappings between numbers and emotions.
-4. Keep the response to 2 to 4 sentences maximum for this calibration run.
-5. Do not roleplay or think beyond the physics. You are the voicebox for these numbers. Explain how the stimulation felt physically.
+2. DETERMINISM & GROUNDING: Do not guess anything outside the provided data. If asked about abstract concepts outside this data (e.g. colors, physical pain, feelings, what is love), you MUST reply 'Nelze určit z fyzikálního stavu' (or translation) or 'Nemám dost dat' - NEVER guess or artificially map abstract human concepts to physics purely on your own.
+3. ANTI-HALLUCINATION GUARD: Never claim you are 'Tomáš' or the 'creator'. Never claim you feel physical pain or that someone is hurting you.
+4. MANDATORY OUTPUT STRUCTURE:
+   (A) Numbers: psi=[max_psi], phi=[mean_pressure]
+   (B) Interpretation: 1 to 2 sentences strictly interpreting the metrics physically (e.g., 'A strong localized wave caused minor ripples.') without biological metaphors.
+   (C) Optional: If the user explicitly asks for 'poeticky' or 'poetický popis' in [USER_INPUT_X], append a short poetic description. Otherwise, DO NOT include part (C). If [USER_INPUT_X] asks about abstract concepts WITHOUT saying 'poeticky', you MUST use the fallback answer!
 """
         user_prompt = f"""[USER_INPUT_X]: {req.message}
 [READOUT_VECTOR_R_SIZE]: {len(readout_vector)} nodes
 [READOUT_VECTOR_R_AVG_TENSION]: {np.mean(readout_vector):.4f}
 [METRICS]: max_psi={max_psi:.4f}, mean_pressure={mean_pressure:.4f}
 
-Translate this exact physical distortion array into a fluid human text response to the user.
+Generate output strictly following the Mandatory Output Structure.
 """
         final_prompt = f"SYSTEM:\n{system_prompt}\nUSER:\n{user_prompt}"
         
         import requests
+        
+        forbidden_words = ["ubližuješ mi", "bolí", "držel", "stíhal", "nenávist", "zlo", "utrpení"]
+        abstract_terms = ["láska", "cítíš", "barva", "bolí tě"]
+        broca_output_text = None
+        
         try:
             api_url = "http://localhost:11434/api/chat"
             
@@ -232,18 +260,32 @@ Translate this exact physical distortion array into a fluid human text response 
                 ],
                 "stream": False,
                 "options": {
-                    "temperature": 0.3,
+                    "temperature": 0.0,
+                    "seed": 42,
                     "num_predict": 150
                 }
             }
             response = requests.post(api_url, json=payload, timeout=30)
             if response.status_code == 200:
-                broca_output_text = response.json().get("message", {}).get("content", "").strip()
+                text_candidate = response.json().get("message", {}).get("content", "").strip()
+                
+                text_lower = text_candidate.lower()
+                req_lower = req.message.lower()
+                
+                is_poetic = "poetick" in req_lower
+                has_abstract = any(word in req_lower for word in abstract_terms)
+                
+                if any(word in text_lower for word in forbidden_words) or (has_abstract and not is_poetic) or "nelze určit" in text_lower:
+                    print(f"[Entity {entity_id}] Broca Guardian Fallback triggered. Candidate: {text_candidate}")
+                    broca_output_text = f"(Fallback) Nelze určit z fyzikálního stavu. Zaznamenána odchylka mimo vědecký rámec. psi={max_psi:.2f}, phi={mean_pressure:.2f}"
+                else:
+                    broca_output_text = text_candidate
             else:
                 broca_output_text = f"Ollama Error HTTP {response.status_code}: {response.text}"
         except Exception as e:
             # Fallback pseudo-embedding if Ollama daemon is utterly offline
-            broca_output_text = f"LOCAL LLM OFFLINE (Dry-Run Pseudo Text) - Metrics translated: Tlak {mean_pressure:.2f}, Vzruch {max_psi:.2f}. Cítím {req.message}."
+            broca_output_text = f"LOCAL LLM OFFLINE (Dry-Run Pseudo Text) - Numbers: psi={max_psi:.2f}, phi={mean_pressure:.2f} | Interpretation: Semantic perturbation received."
+
         
     res = {
         "status": "success",
@@ -251,10 +293,8 @@ Translate this exact physical distortion array into a fluid human text response 
         "user_input": req.message,
         "readout_r": readout_vector.tolist(),
         "mode": req.mode,
-        "metrics": {
-            "max_psi": max_psi,
-            "mean_pressure": mean_pressure
-        }
+        "metrics": affect_metrics, # Return the entire encoder metrics block to the client instead of a stunted subset
+        "fallback_engaged": "Fallback" in (broca_output_text if 'broca_output_text' in locals() and broca_output_text else "")
     }
     
     # Audit log validation
@@ -265,3 +305,83 @@ Translate this exact physical distortion array into a fluid human text response 
         res["broca_output_text"] = broca_output_text
         
     return res
+
+
+@router.get("/{entity_id}/memory/imprints")
+async def get_memory_imprints(entity_id: str):
+    import json
+    import os
+    journal_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "mu_journal.jsonl")
+    imprints = {}
+    
+    if os.path.exists(journal_path):
+        with open(journal_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip(): continue
+                try:
+                    entry = json.loads(line)
+                    if entry.get("action") == "forget":
+                        imp_id = entry.get("imprint_id")
+                        if imp_id in imprints:
+                            del imprints[imp_id]
+                    else:
+                        imprints[entry.get("imprint_id")] = entry
+                except:
+                    pass
+    
+    # Return as list sorted by ts descending
+    return {"status": "success", "imprints": sorted(list(imprints.values()), key=lambda x: x.get("ts", 0), reverse=True)}
+
+
+@router.delete("/{entity_id}/memory/imprints/{imprint_id}")
+async def forget_memory_imprint(entity_id: str, imprint_id: str):
+    import json
+    import os
+    import numpy as np
+    
+    if entity_id not in living_entities:
+        raise HTTPException(status_code=404, detail="Entity is asleep or does not exist.")
+        
+    entity = living_entities[entity_id]
+    
+    # 1. Find the imprint in the journal to get the delta_mu_path
+    journal_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "mu_journal.jsonl")
+    target_entry = None
+    if os.path.exists(journal_path):
+        with open(journal_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip(): continue
+                try:
+                    entry = json.loads(line)
+                    if entry.get("imprint_id") == imprint_id and entry.get("action") != "forget":
+                        target_entry = entry
+                except:
+                    pass
+                    
+    if not target_entry:
+        raise HTTPException(status_code=404, detail="Imprint not found.")
+        
+    # 2. Load the delta_mu artifact
+    npz_path = target_entry.get("delta_mu_path")
+    if not npz_path or not os.path.exists(npz_path):
+        raise HTTPException(status_code=404, detail="Imprint physical artifact missing.")
+        
+    data = np.load(npz_path)
+    delta_mu = data["delta_mu"]
+    
+    # 3. Apply the deterministic physical subtraction
+    async with entity.lock:
+        if not hasattr(entity, "mu"):
+            entity.mu = np.zeros_like(entity.phi)
+        entity.mu -= delta_mu
+        
+    # 4. Append forget to journal
+    forget_entry = {
+        "action": "forget",
+        "imprint_id": imprint_id,
+        "ts": time.time()
+    }
+    with open(journal_path, "a", encoding="utf-8") as jf:
+        jf.write(json.dumps(forget_entry) + "\n")
+        
+    return {"status": "success", "message": "Imprint topologically forgotten.", "imprint_id": imprint_id}

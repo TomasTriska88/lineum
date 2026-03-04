@@ -22,7 +22,7 @@ beforeAll(() => {
     global.fetch = async (input, init) => {
         const url = input.toString();
         // Allow local API calls (mocked by SvelteKit usually, but good to be safe)
-        if (url.startsWith('/') || url.includes('localhost')) {
+        if (url.startsWith('/') || url.includes('127.0.0.1')) {
             // Let it pass, but it should fail if server tries to call out
             return originalFetch(input, init);
         }
