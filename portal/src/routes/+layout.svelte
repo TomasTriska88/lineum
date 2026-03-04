@@ -67,7 +67,7 @@
     main {
         position: relative;
         z-index: 1;
-        padding-top: var(--nav-height, 80px);
+        padding-top: var(--nav-height, 100px);
         transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
@@ -79,7 +79,7 @@
         main {
             padding-top: var(
                 --nav-height,
-                80px
+                100px
             ); /* Standard padding is enough now */
         }
     }

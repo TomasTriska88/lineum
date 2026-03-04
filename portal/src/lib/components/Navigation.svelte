@@ -11,6 +11,7 @@
 
     let menuOpen = false;
     let docsOpen = false;
+    let devToolsOpen = false;
     let currentLang = languageTag();
 
     function toggleMenu() {
@@ -22,10 +23,16 @@
         docsOpen = !docsOpen;
     }
 
+    function toggleDevTools(e: Event) {
+        e.preventDefault();
+        devToolsOpen = !devToolsOpen;
+    }
+
     // Close menu when navigating and reactively update language
     $: if ($page.url.pathname) {
         menuOpen = false;
         docsOpen = false;
+        devToolsOpen = false;
         currentLang = languageTag();
     }
 
@@ -94,23 +101,28 @@
             >
             <a href="/#scientist">{m.sections_scientist_label()}</a>
 
-            <div
-                class="dropdown"
-                on:mouseenter={() => (docsOpen = true)}
-                on:mouseleave={() => (docsOpen = false)}
-                role="menu"
-                tabindex="0"
-            >
+            <div class="dropdown" role="menu" tabindex="0">
                 <button class="dropdown-toggle" on:click={toggleDocs}>
                     {m.nav_docs()} <span class="caret">▼</span>
                 </button>
-                {#if docsOpen}
-                    <div class="dropdown-menu">
-                        <a href="/about">{m.nav_about()}</a>
-                        <a href="/codex">{m.nav_codex()}</a>
-                        <a href="/wiki#faq">{m.nav_faq()}</a>
-                    </div>
-                {/if}
+                <div class="dropdown-menu" class:mobile-open={docsOpen}>
+                    <a href="/about">{m.nav_about()}</a>
+                    <a href="/codex">{m.nav_codex()}</a>
+                    <a href="/wiki#faq">{m.nav_faq()}</a>
+                </div>
+            </div>
+
+            <div class="dropdown" role="menu" tabindex="0">
+                <button class="dropdown-toggle" on:click={toggleDevTools}>
+                    Dev Tools <span class="caret">▼</span>
+                </button>
+                <div class="dropdown-menu" class:mobile-open={devToolsOpen}>
+                    <a href="/explorer">Explorer</a>
+                    <a href="/journal">Memory Journal</a>
+                    <a href="http://127.0.0.1:8000/redoc" target="_blank"
+                        >API Redoc</a
+                    >
+                </div>
             </div>
 
             <a href="/support" class="nav-cta">{m.nav_support()}</a>
@@ -141,7 +153,7 @@
         left: 0;
         width: 100%;
         padding: 1.5rem 0;
-        z-index: 100;
+        z-index: 9999;
         background: rgba(5, 5, 5, 0.8);
         backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -200,6 +212,7 @@
         transform: rotate(180deg);
     }
     :global(.dropdown-menu) {
+        display: none; /* Hidden by default, driven by JS on mobile or hover on desktop */
         position: absolute;
         top: 100%;
         left: 0;
@@ -208,10 +221,15 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 8px;
         padding: 0.5rem 0;
-        display: flex;
         flex-direction: column;
         backdrop-filter: blur(10px);
         z-index: 1000;
+    }
+    :global(.dropdown:hover .dropdown-menu) {
+        display: flex;
+    }
+    :global(.dropdown-menu.mobile-open) {
+        display: flex;
     }
     :global(.dropdown-menu a) {
         padding: 0.75rem 1rem;

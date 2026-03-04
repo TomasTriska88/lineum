@@ -3,10 +3,10 @@
     import { slide } from "svelte/transition";
 
     // The frontend retains state, isolating the LLM from conversational history.
-    let sessionId = "";
-    let currentMode: "phys" | "hybrid" = "phys";
-    let currentText = "";
-    let isInjecting = false;
+    let sessionId = $state("");
+    let currentMode: "phys" | "hybrid" = $state("phys");
+    let currentText = $state("");
+    let isInjecting = $state(false);
 
     interface InteractionTurn {
         turnId: string;
@@ -22,9 +22,9 @@
         broca_text: string | null;
     }
 
-    let auditFeed: InteractionTurn[] = [];
+    let auditFeed: InteractionTurn[] = $state([]);
 
-    let isInitializing = true;
+    let isInitializing = $state(true);
 
     onMount(async () => {
         // Generate an isolated session ID for this window instance.
@@ -124,7 +124,7 @@
 </script>
 
 <div
-    class="flex h-[calc(100vh-80px)] w-full bg-slate-950 text-slate-300 font-mono overflow-hidden"
+    class="flex h-[calc(100vh-100px)] w-full bg-slate-950 text-slate-300 font-mono overflow-hidden"
 >
     <!-- LEFT COLUMN: Action & Real-time State -->
     <section class="w-1/2 flex flex-col border-r border-slate-700/50 p-4">
@@ -184,7 +184,7 @@
                     'hybrid'
                         ? 'bg-indigo-600'
                         : 'bg-slate-700'}"
-                    on:click={() =>
+                    onclick={() =>
                         (currentMode =
                             currentMode === "hybrid" ? "phys" : "hybrid")}
                 >
@@ -217,12 +217,12 @@
                     class="flex-grow bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-sans disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Inject semantic perturbation (X)..."
                     bind:value={currentText}
-                    on:keydown={(e) => e.key === "Enter" && handleInject()}
+                    onkeydown={(e) => e.key === "Enter" && handleInject()}
                     disabled={isInjecting || isInitializing}
                 />
                 <button
                     class="px-4 py-1.5 bg-slate-200 text-slate-900 font-bold uppercase tracking-wider text-xs rounded hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[90px]"
-                    on:click={handleInject}
+                    onclick={handleInject}
                     disabled={isInjecting || isInitializing}
                 >
                     {isInitializing
@@ -423,7 +423,7 @@
                     >
                         <button
                             class="text-[10px] text-slate-500 hover:text-white uppercase tracking-widest flex items-center gap-1 transition-colors"
-                            on:click={() => replayTurn(turn)}
+                            onclick={() => replayTurn(turn)}
                         >
                             <svg
                                 class="w-2.5 h-2.5"
@@ -441,7 +441,7 @@
                         </button>
                         <button
                             class="text-[10px] text-emerald-500/60 hover:text-emerald-400 uppercase tracking-widest flex items-center gap-1 transition-colors"
-                            on:click={() => saveTrace(turn)}
+                            onclick={() => saveTrace(turn)}
                         >
                             <svg
                                 class="w-2.5 h-2.5"
