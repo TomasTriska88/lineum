@@ -18,3 +18,8 @@ Lineum is a rigorous scientific project. All contributions must adhere to the fo
 Lineum is currently under strict intellectual property control. **At this time, we do NOT accept any external Pull Requests that fail to include a valid Developer Certificate of Origin (DCO) or Contributor License Agreement (CLA).**
 
 While technical enforcement (e.g., automated CI blocks) is not yet universally active on this repository, this rule applies legally to all code, documentation, and assets submitted. If you plan to submit a contribution, you must be prepared to assert that you have the right to submit the work and agree to license it under the inbound terms required by the project.
+
+To comply with the DCO, simply use the `-s` flag when committing your code via git:
+```bash
+git commit -s -m "feat: added emergent memory bounds"
+```

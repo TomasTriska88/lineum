@@ -7,6 +7,20 @@ on:
     branches: [ main ]
 
 jobs:
+  dco-check:
+    name: DCO Check (Warn Only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify DCO Signatures
+        run: |
+          # Warn-only check for Signed-off-by
+          if ! git log -1 --pretty=%B | grep -q "Signed-off-by:"; then
+            echo "::warning title=Missing DCO::We currently require a Developer Certificate of Origin (DCO) for external contributions. Please use 'git commit -s' in the future."
+          fi
+
   test-core:
     name: Core (Python)
     runs-on: ubuntu-latest

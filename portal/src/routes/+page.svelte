@@ -7,6 +7,9 @@
     import { PUBLIC_SIMULACRUM_URL } from "$env/static/public";
     import { PUBLIC_ENABLE_API_SOLUTIONS } from "$env/static/public";
 
+    // @ts-ignore
+    const commitHash = __GIT_HASH__;
+
     export let data: import("./$types").PageData;
 
     $: legendItems = [
@@ -262,6 +265,12 @@
         <div class="footer-links">
             <a href="/support">{m.footer_support()}</a>
             <a href="/privacy">{m.footer_privacy()}</a>
+            <a
+                href="https://github.com/TomasTriska88/lineum-core/tree/{commitHash}"
+                target="_blank"
+                style="color: var(--accent-cyan);"
+                >Source (AGPLv3) - Commit: {commitHash}</a
+            >
             <a
                 href="https://github.com/TomasTriska88/lineum-private"
                 target="_blank">{m.footer_github()}</a
