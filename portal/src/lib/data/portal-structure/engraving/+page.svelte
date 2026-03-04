@@ -59,7 +59,7 @@
 
         try {
             const res = await fetch(
-                "http://localhost:8000/api/engraving/preview",
+                "http://127.0.0.1:8000/api/engraving/preview",
                 {
                     method: "POST",
                     body: formData,
@@ -126,7 +126,7 @@
                 identity_name: identityName,
             };
 
-            const res = await fetch("http://localhost:8000/api/engraving/run", {
+            const res = await fetch("http://127.0.0.1:8000/api/engraving/run", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -145,7 +145,7 @@
 
     function connectSSE() {
         const eventSource = new EventSource(
-            `http://localhost:8000/api/engraving/stream/${jobId}`,
+            `http://127.0.0.1:8000/api/engraving/stream/${jobId}`,
         );
 
         eventSource.onmessage = (event) => {
@@ -206,7 +206,7 @@
     async function cancelJob() {
         if (!jobId) return;
         try {
-            await fetch(`http://localhost:8000/api/engraving/cancel/${jobId}`, {
+            await fetch(`http://127.0.0.1:8000/api/engraving/cancel/${jobId}`, {
                 method: "POST",
             });
         } catch (e) {}

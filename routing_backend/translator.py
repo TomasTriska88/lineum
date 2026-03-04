@@ -46,15 +46,16 @@ class TranslatorV01:
     def read_grid_to_vector(self, psi: np.ndarray, phi: np.ndarray) -> np.ndarray:
         """
         Implements ReadoutSpec v0.1.
-        Scans a 10x10 sparse physical grid (100 probes) over the 100x100 space.
+        Scans a 10x10 sparse physical grid (100 probes) over the dynamically sized physical space.
         Extracts absolute Psi and Phi, normalizes them, and returns a flat 200D vector.
         """
-        assert psi.shape == (self.size, self.size)
-        assert phi.shape == (self.size, self.size)
+        grid_size = psi.shape[0]
+        assert psi.shape == (grid_size, grid_size)
+        assert phi.shape == (grid_size, grid_size)
         
         # 10x10 probe grid: step every 10 cells
-        step = self.size // 10
-        probe_indices = np.arange(step // 2, self.size, step) # Center the probes
+        step = grid_size // 10
+        probe_indices = np.arange(step // 2, grid_size, step)[:10] # Ensure exactly 10 probes across
         
         psi_mag = np.abs(psi)
         phi_abs = np.abs(phi)

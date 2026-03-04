@@ -16,6 +16,7 @@
         metrics: {
             max_psi: number;
             mean_pressure: number;
+            phi_cap_hit_ratio?: number;
         };
         readout_r: number[]; // Length: 200
         broca_model: string | null;
@@ -341,12 +342,14 @@
                                 <div
                                     class="text-[8px] text-slate-500 uppercase"
                                 >
-                                    Mean Pressure (Phi)
+                                    Phi Cap Saturation
                                 </div>
                                 <div
                                     class="text-sm text-emerald-400 font-light"
                                 >
-                                    {turn.metrics.mean_pressure.toFixed(4)}
+                                    {(
+                                        turn.metrics.phi_cap_hit_ratio || 0.0
+                                    ).toFixed(4)}x Cap
                                 </div>
                             </div>
                             <div

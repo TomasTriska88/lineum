@@ -32,6 +32,7 @@ class Eq4Config:
     mu_eta: float = 0.005
     mu_rho: float = 0.0001
     mu_cap: float = 10.0
+    mu_peak_cutoff_ratio: float = 0.1
     
     # --- Safe Numerical CFL Guards (NOT Physics) ---
     psi_amp_cap: float = 1e6
@@ -155,10 +156,8 @@ def _step_numpy(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
 
     fluctuation = np.clip(np.random.normal(0.0, cfg.noise_strength, (size, size)), -1.0, 1.0) * np.exp(1j * np.angle(psi))
 
-    # Calculate mu-modulated drift multiplier
-    drift_multiplier = 1.0
-    if cfg.use_mu:
-        drift_multiplier = 1.0 + mu
+    # Calculate mu-modulated drift multiplier (ALWAYS READ)
+    drift_multiplier = 1.0 + mu
 
     phi_int = np.clip(phi, 0.0, 10.0)
     interaction_factor = 0.1 * np.tanh((0.04 * phi_int * kappa * drift_multiplier) / 0.1)
@@ -201,7 +200,13 @@ def _step_numpy(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
 
     # 3. Mu update (The HDD track)
     if cfg.use_mu:
-        mu += cfg.mu_eta * e_psi * kappa * drift_multiplier * cfg.dt
+        # Dynamic relative sparsity: Isolate absolute structural peaks
+        dynamic_floor = cfg.mu_peak_cutoff_ratio
+        if dynamic_floor > 0 and dynamic_floor < 1.0:
+            dynamic_floor = dynamic_floor * np.max(e_psi)
+            
+        active_e_psi = np.maximum(e_psi - dynamic_floor, 0.0)
+        mu += cfg.mu_eta * active_e_psi * kappa * drift_multiplier * cfg.dt
         mu -= cfg.mu_rho * mu * cfg.dt
         mu = np.clip(mu, 0.0, cfg.mu_cap)
 
@@ -210,9 +215,7 @@ def _step_numpy(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
         print("!!! LINEUM FAIL-SAFE (CPU): Numeric divergence detected. Resetting Psi. !!!")
         psi = np.zeros_like(psi)
 
-    out_state = {"psi": psi, "phi": phi, "kappa": kappa}
-    if cfg.use_mu:
-        out_state["mu"] = mu
+    out_state = {"psi": psi, "phi": phi, "kappa": kappa, "mu": mu}
     return out_state
 
 
@@ -243,9 +246,8 @@ def _step_pytorch(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
 
     fluctuation = torch.clamp(torch.normal(0.0, cfg.noise_strength, (size, size), device=device, dtype=torch.float64), min=-1.0, max=1.0) * torch.exp(1j * torch.angle(psi))
 
-    drift_multiplier = 1.0
-    if cfg.use_mu:
-        drift_multiplier = 1.0 + mu
+    # Calculate mu-modulated drift multiplier (ALWAYS READ)
+    drift_multiplier = 1.0 + mu
 
     phi_int = torch.clamp(phi, 0.0, 10.0)
     interaction_factor = 0.1 * torch.tanh((0.04 * phi_int * kappa * drift_multiplier) / 0.1)
@@ -286,7 +288,13 @@ def _step_pytorch(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
 
     # 3. Mu update (The HDD track)
     if cfg.use_mu:
-        mu += cfg.mu_eta * e_psi * kappa * drift_multiplier * cfg.dt
+        # Dynamic relative sparsity: Isolate absolute structural peaks
+        dynamic_floor = cfg.mu_peak_cutoff_ratio
+        if dynamic_floor > 0 and dynamic_floor < 1.0:
+            dynamic_floor = dynamic_floor * torch.max(e_psi)
+            
+        active_e_psi = torch.clamp(e_psi - dynamic_floor, min=0.0)
+        mu += cfg.mu_eta * active_e_psi * kappa * drift_multiplier * cfg.dt
         mu -= cfg.mu_rho * mu * cfg.dt
         mu = torch.clamp(mu, 0.0, cfg.mu_cap)
 
@@ -294,9 +302,7 @@ def _step_pytorch(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
         print("!!! LINEUM FAIL-SAFE (GPU): Numeric divergence detected. Resetting Psi. !!!")
         psi = torch.zeros_like(psi)
 
-    out_state = {"psi": psi.cpu().numpy(), "phi": phi.cpu().numpy(), "kappa": kappa.cpu().numpy()}
-    if cfg.use_mu:
-        out_state["mu"] = mu.cpu().numpy()
+    out_state = {"psi": psi.cpu().numpy(), "phi": phi.cpu().numpy(), "kappa": kappa.cpu().numpy(), "mu": mu.cpu().numpy()}
     return out_state
 
 

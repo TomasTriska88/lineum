@@ -1769,8 +1769,7 @@
         width: 100%;
         max-width: 600px;
         padding: 0 1rem;
-        padding: 0 1rem;
-        pointer-events: auto;
+        pointer-events: none; /* Allow clicks to pass through to underlying UI */
         transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth transition for all props */
     }
 
@@ -1802,6 +1801,12 @@
         pointer-events: auto;
         position: relative;
         z-index: 2;
+        width: max-content;
+        margin: 0 auto;
+    }
+
+    .deck-container.expanded {
+        width: 100%;
     }
 
     /* Orb Styles */

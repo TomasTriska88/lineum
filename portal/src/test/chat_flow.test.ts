@@ -53,7 +53,7 @@ vi.stubGlobal('fetch', vi.fn().mockImplementation((url, options) => {
     });
 }));
 Element.prototype.scrollTo = vi.fn();
-global.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/mock-audio');
+global.URL.createObjectURL = vi.fn(() => 'blob:http://127.0.0.1/mock-audio');
 
 // Mock Audio
 // Mock Audio
