@@ -38,7 +38,7 @@ class TextToWaveEncoder:
             
 
 
-    def encode(self, text: str, state: dict, cfg, step_fn, mode="runtime", personalization_depth=1.0):
+    def encode(self, text: str, state: dict, cfg, step_fn, mode="runtime", personalization_depth=1.0, entity_id: str = None, imprint_mode="confirm", safety_score=1.0, was_fallback=False, imprints_this_session=0):
         """
         Injects a semantic text block into the Lineum physics grid.
         - mode='identity_burn': Engraves heavily into Mu. Uses frequency reinforcement.
@@ -83,12 +83,26 @@ class TextToWaveEncoder:
         phi_cap = getattr(cfg, "phi_cap", 1e6)
         tiny = 1e-6
         
+        nan_count = 0
+        inf_count = 0
+        
+        def _check_nonfinite(arr):
+            import numpy as np
+            if hasattr(arr, "device"): # PyTorch tensor
+                import torch
+                return int(torch.isnan(arr).sum().item()), int(torch.isinf(arr).sum().item())
+            return int(np.isnan(arr).sum()), int(np.isinf(arr).sum())
+
         attachment_resonance = 0.0
         
         # Active injection ticks
         for _ in range(ticks):
             state = step_fn(state, cfg)
             attachment_resonance += float(np.sum(np.abs(state["psi"])**2 * mu_ref)) * dt
+            n_n, i_n = _check_nonfinite(state["phi"])
+            nan_count += n_n; inf_count += i_n
+            n_n, i_n = _check_nonfinite(state["psi"])
+            nan_count += n_n; inf_count += i_n
             
         # Clear external pulse and let plasticity settle
         state["delta"] = np.zeros_like(state["phi"])
@@ -108,6 +122,11 @@ class TextToWaveEncoder:
             
             phi_t = state["phi"]
             psi_t = state["psi"]
+            
+            n_n, i_n = _check_nonfinite(phi_t)
+            nan_count += n_n; inf_count += i_n
+            n_n, i_n = _check_nonfinite(psi_t)
+            nan_count += n_n; inf_count += i_n
             
             dphi_t = float(np.mean(np.abs(phi_t - phi_ref)))
             dpsi_t = float(np.mean(np.abs(psi_t - psi_ref)))
@@ -183,7 +202,8 @@ class TextToWaveEncoder:
         # --- Emergent Affect Protocol v1 ---
         # 1. Base Scalars (Normalized)
         arousal = float(auc_psi_norm)
-        certainty = float(1.0 / (auc_psi_norm + 1.0)) # Bounded 0 to 1
+        # Certainty: High when stable (< 10000 arousal), drops to 0 during chaos (> 10000)
+        certainty = float(1.0 - np.clip(auc_psi_norm / 10000.0, 0.0, 1.0))
         valence_proxy = float((dpsi0 - dpsi_t) / (dpsi0 + 1e-12)) # Bounded roughly -1 to 1
         attachment_resonance_norm = float(attachment_resonance / (T_total * N + 1e-12))
 
@@ -211,6 +231,9 @@ class TextToWaveEncoder:
             "grid": self.grid_size,
             "dt": dt,
             "steps": ticks + cooling_steps,
+            "had_nonfinite": bool(nan_count > 0 or inf_count > 0),
+            "nan_count": nan_count,
+            "inf_count": inf_count,
             "mu_delta_l1": mu_delta_l1,
             "mu_delta_mean": mu_delta_mean,
             "mu_delta_l1_norm": mu_delta_mean,
@@ -301,9 +324,11 @@ class TextToWaveEncoder:
             imprint_id = self._hash_array(delta_mu)
             delta_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "memory_imprints", f"imprint_{imprint_id}.npz")
             
+            # Save the physical tensor to disk either way
             np.savez_compressed(delta_path, delta_mu=delta_mu)
             
             journal_entry = {
+                "entity_id": entity_id,
                 "imprint_id": imprint_id,
                 "ts": ts,
                 "grid": self.grid_size,
@@ -326,10 +351,31 @@ class TextToWaveEncoder:
                 }
             }
             
-            journal_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "mu_journal.jsonl")
-            with open(journal_path, "a", encoding="utf-8") as jf:
-                jf.write(json.dumps(journal_entry) + "\n")
+            will_auto_write = False
+            if imprint_mode == "auto":
+                if safety_score >= 0.8 and not was_fallback and imprints_this_session < 5:
+                    will_auto_write = True
+                    
+            if will_auto_write:
+                journal_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "mu_journal.jsonl")
+                with open(journal_path, "a", encoding="utf-8") as jf:
+                    jf.write(json.dumps(journal_entry) + "\n")
+                    
+                metrics["memory_imprint"] = imprint_id
+                metrics["imprint_status"] = "auto_saved"
                 
-            metrics["memory_imprint"] = imprint_id
+                # Topologically commit to RAM instance inside engine explicitly if engine manages it,
+                # but typically the engine caller updates state["mu"] natively from the delta.
+                if "mu" not in state:
+                    state["mu"] = np.zeros_like(state["phi"])
+                state["mu"] += delta_mu
+                
+            else:
+                metrics["pending_imprint_id"] = imprint_id
+                metrics["pending_journal_entry"] = journal_entry
+                metrics["imprint_status"] = "pending_confirm"
+                
+                if imprint_mode == "auto":
+                    metrics["auto_fail_reason"] = f"safety={safety_score:.3f}, fallback={was_fallback}, session_count={imprints_this_session}"
         
         return state, metrics

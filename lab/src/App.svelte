@@ -7,6 +7,8 @@
     import ExtremeSpikes from "./lib/components/ExtremeSpikes.svelte";
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import LplCompiler from "./lib/components/LplCompiler.svelte";
+    import LplCompiler from "./lib/components/LplCompiler.svelte";
+    import ValidationDashboard from "./lib/components/ValidationDashboard.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -134,7 +136,10 @@
         class:dimmed={activeTab === "lpl"}
         bind:this={container}
     ></div>
-    <div class="overlay" class:lpl-mode={activeTab === "lpl"}>
+    <div
+        class="overlay"
+        class:lpl-mode={activeTab === "lpl" || activeTab === "validation"}
+    >
         <div class="header-section">
             <div class="header-top">
                 <h1>{$t("simulakrum")}</h1>
@@ -227,6 +232,13 @@
                 >
                     {$t("tab_lpl")}
                 </button>
+                <button
+                    class="tab-btn"
+                    class:active={activeTab === "validation"}
+                    on:click={() => (activeTab = "validation")}
+                >
+                    Golden Validation ⚙️
+                </button>
             </div>
 
             <div class="tab-content">
@@ -313,11 +325,13 @@
                     <ExtremeSpikes {engine} {frame} />
                 {:else if activeTab === "lpl"}
                     <LplCompiler />
+                {:else if activeTab === "validation"}
+                    <ValidationDashboard />
                 {/if}
             </div>
         </div>
 
-        {#if activeTab !== "lpl" && activeTab !== "rng"}
+        {#if activeTab !== "lpl" && activeTab !== "rng" && activeTab !== "validation"}
             <div class="side-panel side-panel-right">
                 <div class="guide-panel">
                     <h3>{$t("guide_title")}</h3>

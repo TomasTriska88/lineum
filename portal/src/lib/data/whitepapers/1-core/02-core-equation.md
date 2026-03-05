@@ -132,5 +132,5 @@ This progression shows a shift from a minimalistic ψ–φ interaction model to 
 
 **1.0.0 — 2025-08-10 (initial)**
 
-- Establishes the V1→V4 chronology aligned with the canonical Eq-4 in the core.
+- Establishes the V1→V4 chronology aligned with the canonical Eq-7 in the core.
 - Notes that κ is a static spatial map in the canonical core; earlier multiplicative κ forms are retained here as historical snapshots.

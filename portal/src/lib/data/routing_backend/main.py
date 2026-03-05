@@ -18,6 +18,7 @@ app = FastAPI(title="Lineum Routing API", version="1.0.0")
 
 from routing_backend.entity_api import router as entity_router, _entity_dream_loop
 from routing_backend.engraving_api import router as engraving_router
+from routing_backend.lab_api import router as lab_router
 
 @app.on_event("startup")
 async def startup_event():
@@ -26,6 +27,7 @@ async def startup_event():
 
 app.include_router(entity_router)
 app.include_router(engraving_router)
+app.include_router(lab_router, prefix="/api/lab")
 
 app.add_middleware(
     CORSMiddleware,

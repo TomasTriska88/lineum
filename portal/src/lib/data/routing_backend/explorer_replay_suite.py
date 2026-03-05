@@ -34,14 +34,18 @@ def run_suite():
     os.makedirs(out_dir, exist_ok=True)
     out_file = os.path.join(out_dir, "explorer_replay.jsonl")
     
+    print("Waking entity 'lina' for evaluation...")
+    requests.post("http://localhost:8000/entity/wake", json={"entity_id": "lina", "grid_size": 64})
+    time.sleep(4)
+    
     for p in PROMPTS:
         payload = {
             "entity_id": "lina",
             "message": p,
-            "mode": "runtime"
+            "mode": "hybrid"
         }
         try:
-            resp = requests.post("http://localhost:8000/entity/chat", json=payload, timeout=60)
+            resp = requests.post("http://localhost:8000/entity/lina/chat", json=payload, timeout=60)
             data = resp.json()
             metric = data.get("metrics", {})
             text = data.get("text", "")
@@ -51,6 +55,7 @@ def run_suite():
             affect = metric.get("affect_v1", {})
             base_scalars = affect.get("base_scalars", {})
             mood_state = affect.get("mood_state", {})
+            affect_v2 = metric.get("affect_v2", {})
             
             res_dict = {
                 "prompt": p,
@@ -58,12 +63,17 @@ def run_suite():
                 "grid": metric.get("grid"),
                 "dt": metric.get("dt"),
                 "seed": metric.get("seed", 42),
+                "had_nonfinite": metric.get("had_nonfinite", False),
+                "nan_count": metric.get("nan_count", 0),
+                "inf_count": metric.get("inf_count", 0),
                 "psi_l1": metric.get("auc_psi_norm", 0), # Using actual psi norm 
                 "phi_cap_hit": metric.get("phi_cap_hit_ratio", 0),
                 "affect_arousal": base_scalars.get("arousal", 0.0),
                 "affect_certainty": base_scalars.get("certainty", 0.0),
                 "affect_valence": base_scalars.get("valence_proxy", 0.0),
                 "affect_resonance": base_scalars.get("attachment_resonance", 0.0),
+                "novelty_score": affect_v2.get("novelty_score", 0.0),
+                "safety_score": affect_v2.get("safety_score", 1.0),
                 "mood_state_before": mood_state.get("before", {}),
                 "mood_state_after": mood_state.get("after", {}),
                 "mood_decay_params": mood_state.get("decay_params", {}),

@@ -37,7 +37,7 @@ onMount(() => {
 ```
 
 ### 2. Fragment Shader Complexity
-When modeling mathematically complex rendering waves (e.g., `Eq-4` tensor fields):
+When modeling mathematically complex rendering waves (e.g., `Eq-7` tensor fields):
 * Whenever possible and pixel-perfect accuracy to the micrometer is not needed (i.e., for pure visual animation), always use `precision mediump float;` instead of `precision highp float;`. This significantly increases the frame rate on mobile devices (Android/iOS) and reduces GPU heat.
 * Eliminate `for(...)` loops where possible. The Fragment Shader executes for **every single rendered pixel on the screen**, 60 times a second! Avoid nesting loops and reduce the number of "Glow" shadow iterations to the absolute minimum without sacrificing visual quality.
 

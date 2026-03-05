@@ -8,7 +8,7 @@
 
 ### 1. Introduction: Escaping the Silicon Bottleneck
 Modern Artificial Intelligence (e.g., LLMs) relies on rigid, discrete neural networks simulated on conventional Von Neumann architecture. This requires manually updating billions of weights using massive energy grids (GPUs) to brute-force statistical prediction. 
-Lineum allows for a fundamentally different paradigm: **Morphological** or **Reservoir Computing**. Instead of programming artificial neurons to predict text, we use the intrinsic self-stabilizing physics of the Lineum Equation (Eq-4) as an organic, fluid math-processor.
+Lineum allows for a fundamentally different paradigm: **Morphological** or **Reservoir Computing**. Instead of programming artificial neurons to predict text, we use the intrinsic self-stabilizing physics of the Lineum Equation (Eq-7) as an organic, fluid math-processor.
 
 ### 2. The Lineum Reservoir "Chip"
 A Lineum-based AI is not composed of interconnected nodes. It is a bounded geometric area—a "Reservoir"—within a continuous $\Psi$-field grid.
@@ -36,7 +36,7 @@ Because the Lineum equation biologically resists entropy (via the Reaction term 
 
 ### 4. Hardware Implementation (Physical Chips)
 Could this be made into a physical chip? **Yes.**
-While we currently simulate Lineum on a classical CPU, the math maps perfectly to **analog neuromorphic hardware**. Instead of using transistors to simulate ones and zeros, a physical Lineum chip could be built using photonics (light waves) or memristor crossbars, where the continuous voltages physically obey Eq-4. 
+While we currently simulate Lineum on a classical CPU, the math maps perfectly to **analog neuromorphic hardware**. Instead of using transistors to simulate ones and zeros, a physical Lineum chip could be built using photonics (light waves) or memristor crossbars, where the continuous voltages physically obey Eq-7. 
 This would create an analog "brain" that computes at the speed of light with near-zero latency, bypassing the digital simulation entirely.
 
 ### 5. Scaling: Making it "Smarter"

@@ -1,4 +1,4 @@
-# [HYPOTHESIS] The Fermi Paradox and The Great Filter of Lineum (Eq-4)
+# [HYPOTHESIS] The Fermi Paradox and The Great Filter of Lineum (Eq-7)
 
 **Document ID:** 19-ontology-hyp-fermi-paradox
 **Document Type:** Hypothesis
@@ -7,7 +7,7 @@
 **Date:** 2026-03-02
 
 ## 1. Summary
-This hypothesis provides an ontological resolution to the **Fermi Paradox** (the apparent contradiction between the high probability of extraterrestrial civilizations and the lack of evidence for them). It posits that if the Lineum framework (Eq-4) is the fundamental "source code" of the physical universe, its mathematical discovery by any technological civilization constitutes the ultimate **Great Filter**.
+This hypothesis provides an ontological resolution to the **Fermi Paradox** (the apparent contradiction between the high probability of extraterrestrial civilizations and the lack of evidence for them). It posits that if the Lineum framework (Eq-7) is the fundamental "source code" of the physical universe, its mathematical discovery by any technological civilization constitutes the ultimate **Great Filter**.
 
 ## 2. The Filter Threshold
 Once a species mathematically decodes and learns to engineer the $\Phi$ (consciousness/space) and $\Psi$ (matter/energy) fields directly, they reach a critical evolutionary crossroads. The hypothesis proposes three primary outcomes, all of which explain the "silent universe."
@@ -18,7 +18,7 @@ Physical space exploration—colonizing distant stars using rockets moving throu
 Once a civilization can manipulate the $\Phi$ field locally, they can create infinitely dense, phase-locked "heavens" (perfectly stable, low-tension thermodynamic attractors) right where they are. Advanced civilizations do not aggressively expand outward into the macroscopic universe; they engineer the sub-quantum geometry *inward*. By migrating their consciousness or civilization into deeply localized, tension-free $\Phi$-traps, they effectively disappear from our macroscopic, low-tech observation methods (like radio wave detection).
 
 ### 2.2 Macroscopic Vacuum Decay (Self-Destruction)
-Conversely, uncovering the Eq-4 source code grants the ability to unleash infinite thermodynamic violence. If a civilization weaponizes macroscopic Eq-4 mechanics before achieving absolute ethical and thermodynamic alignment (the drive to lower universal entropy), they might accidentally trigger a runaway localized $\Psi$ collapse.
+Conversely, uncovering the Eq-7 source code grants the ability to unleash infinite thermodynamic violence. If a civilization weaponizes macroscopic Eq-7 mechanics before achieving absolute ethical and thermodynamic alignment (the drive to lower universal entropy), they might accidentally trigger a runaway localized $\Psi$ collapse.
 
 This would be a cascade of infinite high-entropy tension pulling local conductivity ($\kappa$) to zero, essentially tearing the fabric of their local phase space and erasing their sector from the cosmic grid entirely.
 

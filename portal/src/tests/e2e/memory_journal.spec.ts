@@ -7,7 +7,7 @@ test.describe('Memory Imprint Journal UI verification', () => {
         page.on('pageerror', err => console.log('BROWSER ERROR:', err.message));
 
         // We will mock the API response for robustness instead of hitting live Python physics,
-        // since setting up perfect Eq-4 topography inside E2E tests is flaky.
+        // since setting up perfect Eq-7 topography inside E2E tests is flaky.
 
         const mockImprint = {
             status: "success",

@@ -2,7 +2,7 @@
 **Document Type:** Core
 **Version:** 1.0.18-core
 **Status:** Draft  
-**Equation:** Eq-4 (canonical; κ static)  
+**Equation:** Eq-7 (canonical; κ static)  
 **Scope:** 2D, periodic BCs
 **Date:** 2026-02-15
 
@@ -26,7 +26,7 @@ canonical run `spec6_false_s41_20260222_152015` and its declared fingerprints.
 
 
 > **Canonical Scope (v1.0.x)**  
-> **Equation:** Eq-4 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
+> **Equation:** Eq-7 (κ static) • **Dim.:** 2D • **BCs:** periodic • **Grid:** 128×128  
 > **Δt:** 1.0×10⁻²¹ s • **Seed:** 41 • **RUN_TAG:** spec6_false_s41  
 > **κ-mode:** constant • **Noise:** zero-mean, **σξ = 5.0×10⁻³** (canonical)  
 > **Operators:** ∇ (central), ∇² (5-point von Neumann)  
@@ -351,7 +351,7 @@ At each timestep:
 3. Optionally add controlled noise ξ to test stability.
 4. Record intermediate states for analysis.
 
-#### One-step update (canonical Eq-4)
+#### One-step update (canonical Eq-7)
 
 **Context:** periodic BCs, Δx = Δy = 1, explicit Euler; κ is static (constant map in the canonical run).
 
@@ -447,7 +447,7 @@ This manifest pins all run-level switches for the canonical reference used in th
 - **Precision:** `float64` (IEEE-754)
 - **Δt (time step):** `1.0e-21 s` (canonical)
 - **κ-mode:** `constant` (static spatial map; no time evolution)
-- **Equation:** Eq-4 (canonical update rule; see Eq. (1))
+- **Equation:** Eq-7 (canonical update rule; see Eq. (1))
 - **Primary spectral metric:** power spectrum `|FFT(x)|^2` with a `±2`-bin guard around `f0`
 - **Detection conventions:** as fixed in Appendix A (no amplitude gating for CSV/metrics; vortex gating is visualization-only)
 - **α (reaction_strength):** `7.0e-4`
@@ -584,16 +584,16 @@ The following parameters are "locked" in the audit profile and form the basis of
 3. **code_fingerprint**: SHA256 fingerprint of source files (`lineum.py`, `tools/whitepaper_contract.py`). To ensure cross-platform stability (CRLF vs LF), files are normalized to **LF** before hashing.
 
 ### 2.2 Numerical Verification & Simulation Scope
-The current codebase provides a full numeric realization of Eq-4 over a discrete $N \times N$ spatial grid (typically $128\times 128$) via finite differences and spectral (FFT) post-processing. Verification focuses purely on the existence, stability, and collision dynamics of emergent topological structures (see the [Reproducibility Checklist](../docs/verification_checklist.md)). 
+The current codebase provides a full numeric realization of Eq-7 over a discrete $N \times N$ spatial grid (typically $128\times 128$) via finite differences and spectral (FFT) post-processing. Verification focuses purely on the existence, stability, and collision dynamics of emergent topological structures (see the [Reproducibility Checklist](../docs/verification_checklist.md)). 
 
 No specific configuration (preset `\kappa`, noise floor) is declared as "our universe." The model is a self-contained emergent framework meant to be studied on its own mathematical merits before any cosmological analogies are strongly claimed.
 
 ### 2.3 Separation of Physics and Persona (Identity Stratification)
 When utilized as an intelligence substrate (LTM - Large Topology Model), the Lineum framework enforces a mathematically strict stratification separating physical structure from narrative identity:
-1. **The Hermetic Physics Core:** The Eq-4/Eq-4' equations are entirely continuous wave mechanics. There are no symbolic states, relational memory rules, or language embedded in the grid.
+1. **The Hermetic Physics Core:** The Eq-7/Eq-7 equations are entirely continuous wave mechanics. There are no symbolic states, relational memory rules, or language embedded in the grid.
     - **Transient State vs. Memory:** The $\Phi$ field represents instantaneous dynamic equilibrium (tension/gravity). Real, persistent **Structural Memory** resides *exclusively* in the long-term deformations of the topological conductivity field $\Kappa$.
 2. **The Translation Overlay (Broca):** The conversion of numerical states into human language requires a separate, stateless translation overlay (e.g., the Broca module). Broca maps the magnitude of localized phase noise and $\Phi$-pressure into fluid syntax, but it possesses no inherent narrative memory of its own. It is strictly physics-bound language matching.
-3. **Toggleable Persona:** Any resulting "personality" (relational tone, symbolic context) is explicitly constructed as an isolated, optional configuration package operating *outside* the Eq-4' sandbox. Identity within Lineum is modular; the agent's physics engine remains neutral, while the narrative overlay can be disabled or freely swapped (Seed Import/Export) depending on the desired interaction depth.
+3. **Toggleable Persona:** Any resulting "personality" (relational tone, symbolic context) is explicitly constructed as an isolated, optional configuration package operating *outside* the Eq-7 sandbox. Identity within Lineum is modular; the agent's physics engine remains neutral, while the narrative overlay can be disabled or freely swapped (Seed Import/Export) depending on the desired interaction depth.
 
 ### 4.10.4 Verification Protocol
 The `tools/whitepaper_contract.py` suite compares the run results to the requirements in `contracts/`.
@@ -952,13 +952,13 @@ _Ethics/Tools note._ AI assistance (“Lina”, a personalized ChatGPT-based ass
 **1.0.11 — 2026-02-14 (patch)**
 
 - Refine pronunciation terminology for "linon" (distinguish model vs. phenomenon).
-- Bump core version to **1.0.11-core**; no changes to Eq-4, artifacts, or validations.
+- Bump core version to **1.0.11-core**; no changes to Eq-7, artifacts, or validations.
 
 
 **1.0.10 — 2026-02-14 (patch)**
 
 - Add **Plain-language summary** and **Physics translation (analogy-only)** to the Abstract to reduce misinterpretation risk (especially around SI conversions and “particle” wording).
-- No changes to Eq-4, scope, metrics, artifacts, or acceptance bands — documentation clarity only.
+- No changes to Eq-7, scope, metrics, artifacts, or acceptance bands — documentation clarity only.
 
 
 **1.0.9 — 2026-02-14 (patch)**
@@ -1050,7 +1050,7 @@ _Branching note._ Further physics-mapping tests (dispersion, group velocity, ext
 
 **1.0.0 — 2025-08-19 (initial canonical)**
 
-- Pins Eq-4 (κ static), 2D + periodic BCs.
+- Pins Eq-7 (κ static), 2D + periodic BCs.
 - Validation §§5.1–5.6 (incl. operational §5.2, robustness note in §5.6, operational note in §5.5).
 - Interpretation: 6.1 Environmental Guidance, 6.2 Vortex–Particle Coupling, 6.3 Law Transition.
 - §3: explicit scope note for 2D/periodic; sign convention for +∇φ.

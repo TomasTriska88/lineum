@@ -1,18 +1,27 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { slide } from "svelte/transition";
 
     // The frontend retains state, isolating the LLM from conversational history.
     let sessionId = $state("");
-    let currentMode: "phys" | "hybrid" = $state("phys");
+    let currentMode: "phys" | "scientific" | "poetic" = $state("phys");
     let currentText = $state("");
     let isInjecting = $state(false);
+
+    // WebSocket topology mount variables
+    let ws: WebSocket | null = null;
+    let wsStatus = $state("disconnected");
+    let wsUrl = "ws://127.0.0.1:8000/entity/lina/stream";
+    let lastFrameTs = $state(0);
+    let framesRcv = $state(0);
+    let canvasEl: HTMLCanvasElement;
+    let loadedEntityId = $state("lina");
 
     interface InteractionTurn {
         turnId: string;
         timestamp: string;
         input_x: string;
-        mode: "phys" | "hybrid";
+        mode: "phys" | "scientific" | "poetic";
         metrics: {
             max_psi: number;
             mean_pressure: number;
@@ -33,17 +42,102 @@
 
         try {
             // Wake up Lina so the physical engine loop begins
-            await fetch("http://127.0.0.1:8000/entity/wake", {
+            const wakeRes = await fetch("http://127.0.0.1:8000/entity/wake", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ entity_id: "lina", grid_size: 100 }),
+                body: JSON.stringify({ entity_id: "lina", grid_size: 64 }),
             });
+
+            if (!wakeRes.ok) {
+                throw new Error(
+                    `Failed to wake entity: ${wakeRes.status} ${wakeRes.statusText}`,
+                );
+            }
+
+            // Establish the live topology mount (WebSocket)
+            connectWebSocket();
         } catch (e) {
-            console.error("Failed to wake entity:", e);
+            console.error("Topology Mount Error:", e);
+            wsStatus = "fetch error";
+            alert(
+                "API Error: Unable to wake entity or connect to engine. Is Uvicorn running?",
+            );
         } finally {
             isInitializing = false;
         }
     });
+
+    onDestroy(() => {
+        if (ws) ws.close();
+    });
+
+    function connectWebSocket() {
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+            wsStatus = "connected";
+            console.log("Topological mount established.");
+        };
+
+        ws.onclose = () => {
+            wsStatus = "disconnected";
+        };
+
+        ws.onerror = (e) => {
+            console.error("WebSocket connection failure:", e);
+            wsStatus = "ws error";
+            alert(
+                "WebSocket connection failed. The engine might have terminated the entity.",
+            );
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.error) {
+                    console.error("WS Engine Error:", data.error);
+                    wsStatus = "error: " + data.error;
+                    return;
+                }
+                lastFrameTs = data.ts;
+                framesRcv++;
+                drawTopology(data.phi_flat, data.grid_size);
+            } catch (e) {
+                /* ignore parse errors during high freq */
+            }
+        };
+    }
+
+    function drawTopology(phi_flat: number[], size: number) {
+        if (!canvasEl) return;
+        const ctx = canvasEl.getContext("2d");
+        if (!ctx) return;
+
+        const w = canvasEl.width;
+        const h = canvasEl.height;
+        const cellW = w / size;
+        const cellH = h / size;
+
+        // Clear previous frame
+        ctx.clearRect(0, 0, w, h);
+
+        for (let y = 0; y < size; y++) {
+            for (let x = 0; x < size; x++) {
+                const val = phi_flat[y * size + x];
+                if (val > 0.005) {
+                    // Signal spikes add indigo flare
+                    const opacity = Math.min(1.0, val * 1.5 + 0.1);
+                    ctx.fillStyle = `rgba(99, 102, 241, ${opacity})`;
+                } else {
+                    // Base resting state is a faint grid cell boundary
+                    ctx.fillStyle = `rgba(30, 41, 59, 0.5)`;
+                }
+
+                // Draw cell with a tiny 0.5px gap for grid aesthetic
+                ctx.fillRect(x * cellW, y * cellH, cellW - 0.5, cellH - 0.5);
+            }
+        }
+    }
 
     async function handleInject() {
         if (!currentText.trim() || isInjecting) return;
@@ -96,7 +190,7 @@
         } catch (e) {
             console.error("Injection failed:", e);
             alert(
-                "Failed to inject semantics into Eq-4'. Is the backend running?",
+                "Failed to inject semantics into Eq-7. Is the backend running?",
             );
         } finally {
             isInjecting = false;
@@ -138,7 +232,7 @@
             <div
                 class="text-[10px] text-slate-500 uppercase tracking-widest flex items-center justify-between"
             >
-                <span>Eq-4' Stabilized Runtime</span>
+                <span>Eq-7 Stabilized Runtime</span>
                 <span
                     class="bg-indigo-900/40 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20"
                     >Session: {sessionId.slice(0, 8)}</span
@@ -151,15 +245,51 @@
             class="flex-grow bg-slate-900 rounded border border-slate-800 mb-4 flex items-center justify-center overflow-hidden relative min-h-[150px]"
         >
             <div
-                class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800/20 via-slate-900/0 to-transparent"
+                class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800/20 via-slate-900/0 to-transparent z-0"
             ></div>
-            <!-- TODO: Integrate WebGL/FieldShader.svelte here -->
-            <div class="text-center">
-                <div class="text-4xl mb-2 opacity-10 font-light">R</div>
-                <div class="text-xs text-slate-600 uppercase tracking-widest">
-                    Awaiting topological mount
+
+            <!-- DEBUG UI OVERLAY -->
+            <div
+                class="absolute top-2 left-2 flex flex-col gap-1 text-[9px] font-mono text-slate-500 z-10 pointer-events-none text-left"
+            >
+                <div>WS URL: {wsUrl}</div>
+                <div>Entity ID: {loadedEntityId}</div>
+                <div>
+                    Status: <span
+                        class={wsStatus === "connected"
+                            ? "text-emerald-500 font-bold"
+                            : "text-rose-500 font-bold"}>{wsStatus}</span
+                    >
+                </div>
+                <div>
+                    Frame TS: {lastFrameTs
+                        ? lastFrameTs.toFixed(2)
+                        : "Awaiting..."} (Count: {framesRcv})
                 </div>
             </div>
+
+            <canvas
+                bind:this={canvasEl}
+                width="400"
+                height="400"
+                class="absolute inset-0 w-full h-full object-contain mix-blend-screen opacity-90 z-0 transition-opacity {wsStatus ===
+                'connected'
+                    ? 'opacity-100'
+                    : 'opacity-20'}"
+            ></canvas>
+
+            {#if wsStatus !== "connected"}
+                <div class="text-center z-10">
+                    <div class="text-4xl mb-2 opacity-10 font-light">R</div>
+                    <div
+                        class="text-[10px] text-slate-500 uppercase tracking-widest bg-slate-900/80 px-2 py-1 rounded"
+                    >
+                        {wsStatus === "disconnected"
+                            ? "Awaiting topological mount"
+                            : "Mount attempt failed"}
+                    </div>
+                </div>
+            {/if}
         </div>
 
         <!-- Input Console -->
@@ -179,37 +309,40 @@
                 </div>
 
                 <!-- Mode Switch (Guardrail) -->
-                <button
-                    type="button"
-                    class="relative inline-flex h-6 w-40 shrink-0 cursor-pointer rounded-full border border-slate-600 transition-colors duration-200 ease-in-out focus:outline-none {currentMode ===
-                    'hybrid'
-                        ? 'bg-indigo-600'
-                        : 'bg-slate-700'}"
-                    onclick={() =>
-                        (currentMode =
-                            currentMode === "hybrid" ? "phys" : "hybrid")}
+                <div
+                    class="flex bg-slate-800 rounded-md p-0.5 border border-slate-700 shrink-0"
                 >
-                    <span class="sr-only">Toggle translation mode</span>
-                    <span
-                        class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                    <button
+                        type="button"
+                        class="px-3 py-1 text-[9px] font-bold rounded uppercase transition-colors {currentMode ===
+                        'phys'
+                            ? 'bg-indigo-600 text-white shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200'}"
+                        onclick={() => (currentMode = "phys")}
                     >
-                        <span
-                            class="text-[10px] font-bold {currentMode === 'phys'
-                                ? 'text-slate-300 ml-5'
-                                : 'text-indigo-100 mr-5'}"
-                        >
-                            {currentMode === "phys"
-                                ? "RAW PHYSICS"
-                                : "VOICE ON"}
-                        </span>
-                    </span>
-                    <span
-                        class="pointer-events-none absolute left-[1px] top-[1px] inline-block h-[20px] w-[20px] transform rounded-full bg-slate-200 shadow ring-0 transition duration-200 ease-in-out {currentMode ===
-                        'hybrid'
-                            ? 'translate-x-[134px]'
-                            : 'translate-x-0'}"
-                    ></span>
-                </button>
+                        Voice: OFF
+                    </button>
+                    <button
+                        type="button"
+                        class="px-3 py-1 text-[9px] font-bold rounded uppercase transition-colors {currentMode ===
+                        'scientific'
+                            ? 'bg-indigo-600 text-white shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200'}"
+                        onclick={() => (currentMode = "scientific")}
+                    >
+                        Scientific
+                    </button>
+                    <button
+                        type="button"
+                        class="px-3 py-1 text-[9px] font-bold rounded uppercase transition-colors {currentMode ===
+                        'poetic'
+                            ? 'bg-indigo-600 text-white shadow-sm'
+                            : 'text-slate-400 hover:text-slate-200'}"
+                        onclick={() => (currentMode = "poetic")}
+                    >
+                        Poetic
+                    </button>
+                </div>
             </div>
 
             <div class="flex gap-2">
@@ -319,7 +452,7 @@
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                                 ></path></svg
                             >
-                            Eq-4' Physical State
+                            Eq-7 Physical State
                         </div>
                         <div class="grid grid-cols-3 gap-2 mb-3">
                             <div
@@ -349,7 +482,7 @@
                                 >
                                     {(
                                         turn.metrics.phi_cap_hit_ratio || 0.0
-                                    ).toFixed(4)}
+                                    ).toFixed(4)}x Cap
                                 </div>
                             </div>
                             <div

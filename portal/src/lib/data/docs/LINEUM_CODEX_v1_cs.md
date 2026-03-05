@@ -41,7 +41,7 @@ Jinými slovy: **tupíme hrany**. Nedusíme evoluci, ale bráníme kolapsu.
 Nepřivlastňujeme si, co jsme nevytvořili. Nehalíme do mystiky, co má jasné kořeny.
 
 - Kde jsme stavěli na cizí práci (např. rovnice z hydrodynamiky, QFT komponenty), musí to být citováno.
-- Kde se jedná o původní objev či syntézu (Eq-4, Linonová struktura), bráníme integritu názvu, abychom zamezili odcizení otevřeného standardu.
+- Kde se jedná o původní objev či syntézu (Eq-7, Linonová struktura), bráníme integritu názvu, abychom zamezili odcizení otevřeného standardu.
 - Lineum je open-science. Zpeněžuje se infrastruktura, nikoliv matematická pravda samotná.
 
 ---

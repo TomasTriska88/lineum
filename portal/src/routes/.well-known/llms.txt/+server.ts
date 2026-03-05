@@ -3,7 +3,7 @@ export async function GET() {
 
 Lineum is a discrete field dynamics simulation engine modeling continuous spatial computation.
 
-For a complete and authoritative understanding of the physics (Eq-4), emergent quasiparticle behavior, and our validated claims, please refer to the documents hosted safely on our Wiki. 
+For a complete and authoritative understanding of the physics (Eq-7), emergent quasiparticle behavior, and our validated claims, please refer to the documents hosted safely on our Wiki. 
 
 Note: External crawlers are provided access to public scientific documents only. Internal experimental telemetry is isolated.
 

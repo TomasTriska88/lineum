@@ -10,7 +10,7 @@ These rules govern agent behavior and documentation standards for the Lineum pro
 - **English-Only Whitepapers**: All content in the `whitepapers/` directory must be strictly in **English**. 
 - **Reasoning**: To maintain international auditability and academic consistency.
 - **Naming Consistency**: Use canonical file names as referenced in the documentation (e.g., `tools/whitepaper_contract.py`).
-- **Core Boundary (Math vs. Philosophy)**: The `whitepapers/1-core/` track (especially `01-core-lineum.md` and `02-core-equation.md`) must remain strictly mathematical, procedural, and focused on the Eq-4 mechanics. ALL macro-ontological, cosmological, or philosophical interpretive parallels (e.g., Schrödinger, Amplituhedron, Consciousness) MUST be externalized to the `2-cosmology/` or `3-ontology/` hypothesis tracks. Core documents must not be polluted with philosophical text.
+- **Core Boundary (Math vs. Philosophy)**: The `whitepapers/1-core/` track (especially `01-core-lineum.md` and `02-core-equation.md`) must remain strictly mathematical, procedural, and focused on the Eq-7 mechanics. ALL macro-ontological, cosmological, or philosophical interpretive parallels (e.g., Schrödinger, Amplituhedron, Consciousness) MUST be externalized to the `2-cosmology/` or `3-ontology/` hypothesis tracks. Core documents must not be polluted with philosophical text.
 
 ## 3. Audit Integrity
 - **Frozen Core**: The canonical simulation settings (RUN_ID=6, etc.) are frozen for v1.0.x. Any changes to the audit gate logic must be reflected in both `lineum.py` and the whitepapers.

@@ -6,7 +6,7 @@
 **Date:** 2025-11-14
 
 **Relates to:** `lineum-core.md` §3  
-**Equation versions:** V1–V4 (canonical: V4)  
+**Equation versions:** V1–V7 (canonical: V7)  
 
 ---
 # Lineum Appendix – Equation History
@@ -31,7 +31,7 @@ The equation in the core paper represents the current, most refined formulation 
 
 ## 3. Main Content
 
-> **Note:** The latest equation form is **Version 4**. Its canonical expression is given in the core paper: see [Equation section](./lineum-core.md#3-equation).
+> **Note:** The latest equation form is **Version 7**. Its canonical expression is given in the core paper: see [Equation section](./lineum-core.md#3-equation).
 > In the canonical form, **κ** is a **static spatial map** (no time evolution) that _modulates_ parameters locally (e.g., α_eff = κ·α, β_eff = κ·β) rather than directly replacing **α** or **β** in the φ-update.
 
 **Terminology.** Throughout this appendix, we use **linon** to denote a stable, localized |ψ|² excitation (i.e., the quasi-particle of the Lineum model).
@@ -101,9 +101,50 @@ In connection with the current Dimensional Transparency Hypothesis (DTH) test se
 
 ---
 
+### 🔹 Version 5 – Introduction of Numerical Stabilizers & Artificial Damping
+
+As the simulated interactions grew more complex in the continuous PDE solver, the field |ψ| became prone to numerical explosions. To counter this, a suite of stabilizers (soft bounds) were introduced directly into the Euler integration:
+- **Global Linear Dissipation:** `ψ ← ψ - 0.005 ψ` (constantly draining energy to find a stable equilibrium)
+- **Non-Linear Soft Clipping:** `N_term ← N_term / (1 + |N_term| / 10.0)` (soft saturation without hard cutoffs)
+
+- ✅ Prevented numerical infinities and allowed stable visual execution on grids.
+- ❌ Acted as unphysical dampening, destroying natural wave resonance, suppressing true standing waves, and enforcing artificial dissipation.
+
+---
+
+### 🔹 Version 6 – Structural Memory Field μ (HDD)
+
+```text
+μ ← μ + η (|ψ|² - thresh) κ - ρ μ
+ψ_flow_term ← ∇φ_flow * κ * (1 + μ)
+```
+
+The μ field was introduced as a long-term "hard drive" memory to record persistent, structurally stable energetic pathways. By observing regions of consistently high activity, the system slowly etches pathways that further accelerate or route incoming wave energy. Crucially, it featured an extremely slow decay rate (`ρ = 0.0001`).
+- ✅ Allowed the system to remember and reinforce stable macroscopic pathways (routing/structural grooves).
+- ✅ Differentiated the fast reacting φ "RAM" from the deeply etched μ "HDD".
+
+---
+
+### 🔹 Version 7 – The Unitary Wave Core & Removal of Global Damping (Current)
+
+```text
+ψ ← ψ + N(ψ) dt/2
+ψ ← FFT_Unitary(ψ, dt)
+ψ ← ψ + N(ψ) dt/2
+```
+
+*Note: The global linear dissipation (`ψ ← ψ - 0.005 ψ`) from Version 5 was explicitly removed from the wave propagation step.*
+
+By shifting from explicit heat-like diffusion to a mathematically rigorous Strang-split unitary step (via FFT) for spatial propagation, the core dynamics became purely wave-like (Schrödinger analogy). With this exact geometric energy conservation in the linear step, the ubiquitous artificial global damping was no longer needed for stability and was deleted.
+- ✅ Restored true cymatic resonance, standing waves, and quantum-like bound states without arbitrary energetic strangulation.
+- ✅ Stability is now maintained naturally through the interplay of unitary propagation and localized environmental interaction.
+- ✅ Emulates an Open Quantum System: $\psi$ acts as the unitary core, while $\phi$, $\mu$, and $\kappa$ act as the open coupled environment.
+
+---
+
 ### 🔹 The Continuous PDE Limit (Symbolic Form)
 
-> **Note:** This is not a new chronological version, but the **theoretical continuous limit** of the canonical discrete update rule (V4).
+> **Note:** This is not a new chronological version, but the **theoretical continuous limit** of the canonical discrete update rule (V7).
 
 ```text
 ∂ₜψ = ∇²ψ + φψ + ∇φ
@@ -119,11 +160,15 @@ This progression shows a shift from a minimalistic ψ–φ interaction model to 
 
 ## 5. Versioning & Changelog
 
-**Policy.** Semantic Versioning applies to this **document**; equation variants are labeled V1…V4 separately.
+**Policy.** Semantic Versioning applies to this **document**; equation variants are labeled V1…V7 separately.
 
 - **MAJOR**: structural changes that alter interpretation of historical entries.
 - **MINOR**: new archival variants, added rationale, artifacts.
 - **PATCH**: wording/formatting fixes.
+
+**1.2.0 — 2026-03-05**
+
+- Updates the chronological progression to include Version 5 (Soft bounds), Version 6 (Mu field), and Version 7 (Unitary wave core & soft bounds removal).
 
 **1.1.0 — 2025-11-14**
 
@@ -132,5 +177,5 @@ This progression shows a shift from a minimalistic ψ–φ interaction model to 
 
 **1.0.0 — 2025-08-10 (initial)**
 
-- Establishes the V1→V4 chronology aligned with the canonical Eq-4 in the core.
+- Establishes the V1→V7 chronology aligned with the canonical Eq-7 in the core.
 - Notes that κ is a static spatial map in the canonical core; earlier multiplicative κ forms are retained here as historical snapshots.

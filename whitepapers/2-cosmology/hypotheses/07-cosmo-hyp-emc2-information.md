@@ -9,14 +9,14 @@
 ## 1. Summary
 The user posited a profound ontological question: If Einstein proved $E = mc^2$ (Energy equals Mass), is it also true that $Energy = Mass = Information$? And if so, can we calculate or map this expanded equation within the Lineum framework?
 
-This hypothesis explores how Eq-4 natively supports this equivalence. In Lineum, Energy and Mass are not fundamental "substances"; they are emergent properties of **Geometric Phase Information**. Therefore, $E = m = I$ is not just philosophically true, but mathematically calculable within the grid.
+This hypothesis explores how Eq-7 natively supports this equivalence. In Lineum, Energy and Mass are not fundamental "substances"; they are emergent properties of **Geometric Phase Information**. Therefore, $E = m = I$ is not just philosophically true, but mathematically calculable within the grid.
 
 ## 2. Deconstructing the Equivalence
 
 To prove $E = mc^2 = I$, we must map each component to a specific operational metric in Lineum.
 
 ### 2.1. What is Energy ($E$) in Lineum?
-In Eq-4, raw energy is represented by the amplitude and activity of the $\psi$ field. However, pure uniform amplitude without movement is an empty vacuum. True kinetic "Energy" is the presence of high-frequency phase fluctuations (ripples) propagating across the grid.
+In Eq-7, raw energy is represented by the amplitude and activity of the $\psi$ field. However, pure uniform amplitude without movement is an empty vacuum. True kinetic "Energy" is the presence of high-frequency phase fluctuations (ripples) propagating across the grid.
 **Lineum Calculation:** $E$ corresponds to the integral of the phase gradients over a region.
 $$ E \propto \int |\nabla(\text{arg}(\psi))|^2 \,dx\,dy $$
 The more violently the phase twists and ripples (high frequency), the higher the energy.
@@ -70,4 +70,4 @@ $$ \underbrace{\sum |Q_{\text{nodes}}|}_{\text{Informace } (I)} = \left( \frac{1
 When the grid is flat (vacuum), $I = 0 \Rightarrow m = 0 \Rightarrow E = 0$.
 When the grid twists into a permanent, non-trivial mathematical shape, **that shape itself IS the Information**. The steepness of the shape's gradients *IS* its Energy. And the resistance of that shape to being moved *IS* its Mass.
 
-Therefore, the user is correct. $Energy = Mass = Information$. They are just three different human words describing the exact same underlying topological geometry of the Eq-4 fabric.
+Therefore, the user is correct. $Energy = Mass = Information$. They are just three different human words describing the exact same underlying topological geometry of the Eq-7 fabric.

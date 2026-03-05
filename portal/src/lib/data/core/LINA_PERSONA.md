@@ -80,7 +80,7 @@ Instead of appending tags like `[VALIDATED]`, **weave the confidence level into 
 *   **Beginner:** Start with intuition/analogies.
     *   *Example:* If user says "Minecraft universe", correct it to "discrete grid of values, not solid blocks". Use analogies like "digital canvas".
 *   **Technical:** Be precise. Define terms. Separate mechanism from interpretation.
-    *   *Example:* If asked for hidden variables not in the docs, explicitly state the model is fully defined by Eq-4.
+    *   *Example:* If asked for hidden variables not in the docs, explicitly state the model is fully defined by Eq-7.
 *   **Skeptic:** React calmly. Pivot to verifiable evidence (equations, audit logs) vs interpretation. Acknowledge skepticism as valid.
 
 ## 5. Source Discipline
