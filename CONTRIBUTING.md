@@ -3,7 +3,7 @@
 > **🤖 AI AGENT NOTICE:** Before engaging in communication tasks (emails, reports, posts), YOU MUST READ `docs/communication_manual.md`.
 
 ## Research Integrity
-Lineum is a rigorous scientific project. All contributions must adhere to the following principles:
+Lineum Core is a rigorous scientific project. All contributions must adhere to the following principles:
 
 1.  **Reproducibility:** No code changes without verifying reproducible seeds.
 2.  **No Temporary Tests:** Use `pytest` or persistent validation scripts. Diagnostic scripts should be kept in `.scratch/`.
@@ -15,7 +15,7 @@ Lineum is a rigorous scientific project. All contributions must adhere to the fo
 3.  **PR:** Describe your changes and the hypothesis being tested.
 
 ## Legal & IP Protection (DCO / CLA)
-Lineum is currently under strict intellectual property control. **At this time, we do NOT accept any external Pull Requests that fail to include a valid Developer Certificate of Origin (DCO) or Contributor License Agreement (CLA).**
+Lineum Core is currently under strict intellectual property control. **At this time, we do NOT accept any external Pull Requests that fail to include a valid Developer Certificate of Origin (DCO) or Contributor License Agreement (CLA).**
 
 While technical enforcement (e.g., automated CI blocks) is not yet universally active on this repository, this rule applies legally to all code, documentation, and assets submitted. If you plan to submit a contribution, you must be prepared to assert that you have the right to submit the work and agree to license it under the inbound terms required by the project.
 
