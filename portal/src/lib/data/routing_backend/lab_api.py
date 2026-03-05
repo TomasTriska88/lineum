@@ -13,7 +13,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..')))
 from lineum_core.math import Eq4Config, step_eq4
-from lineum_core.validation import run_hydrogen_sweep, run_mu_regression_snapshot
+from scripts.validation_core import run_hydrogen_sweep, run_mu_regression_snapshot
 
 router = APIRouter()
 

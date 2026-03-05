@@ -7,7 +7,6 @@
     import ExtremeSpikes from "./lib/components/ExtremeSpikes.svelte";
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import LplCompiler from "./lib/components/LplCompiler.svelte";
-    import LplCompiler from "./lib/components/LplCompiler.svelte";
     import ValidationDashboard from "./lib/components/ValidationDashboard.svelte";
     import { t, locale } from "./lib/i18n";
 

@@ -8,7 +8,7 @@ except ImportError:
     HAS_TORCH = False
 
 from lineum_core.math import Eq4Config, step_eq4
-from lineum_core.validation import run_hydrogen_sweep, run_mu_regression_snapshot
+from scripts.validation_core import run_hydrogen_sweep, run_mu_regression_snapshot
 
 @pytest.mark.skipif(not HAS_TORCH, reason="Wave core requires PyTorch")
 def test_wave_unitarity_T0():
