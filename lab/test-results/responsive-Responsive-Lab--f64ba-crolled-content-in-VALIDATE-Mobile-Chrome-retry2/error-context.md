@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "SIMULACRUM" [level=1] [ref=e6]
+      - generic [ref=e7]: Lineum Lab | Hypothesis Sandbox
+    - generic [ref=e8]:
+      - button "3D Simulator" [ref=e9] [cursor=pointer]
+      - button "Validation Core" [ref=e10] [cursor=pointer]
+      - button "LPL Compiler" [ref=e11] [cursor=pointer]
+    - combobox [ref=e13] [cursor=pointer]:
+      - option "spec6_false_s41 (20260222_152015)" [selected]
+      - option "spec6_false_s41 (20260227_200927)"
+  - generic [ref=e14]:
+    - generic [ref=e18]: "SYSTEM STATUS: BREAKTHROUGH DETECTED: STOCHASTIC NOISE (CHAOS)"
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - button "STATISTICS" [ref=e21] [cursor=pointer]
+        - button "SCANNER" [ref=e22] [cursor=pointer]
+        - button "Tidal" [ref=e23] [cursor=pointer]
+        - button "HYPOTHESIS DISCOVERY" [ref=e24] [cursor=pointer]
+        - button "Phenomena" [ref=e25] [cursor=pointer]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: "MODE:"
+          - generic [ref=e30]: FIELD Φ TOPOGRAPHY (3D)
+        - generic [ref=e31]:
+          - generic [ref=e32]: "METRIC:"
+          - generic [ref=e33]: z = field Φ height [AUDIT]
+        - generic [ref=e34]:
+          - generic [ref=e35]: "FRAME:"
+          - generic [ref=e36]: 291 / 400
+        - generic [ref=e37]:
+          - generic [ref=e38]: "SOURCE:"
+          - generic [ref=e39]: spec6_false_s41
+        - generic [ref=e40]:
+          - generic [ref=e41]: "STATUS:"
+          - generic [ref=e42]: FIELD Φ INITIALIZATION
+          - button "JUMP TO BIRTH [389]" [ref=e43] [cursor=pointer]
+        - generic [ref=e44]:
+          - generic [ref=e45]: "SPEED:"
+          - generic [ref=e46]: 1.0x
+          - slider [ref=e47] [cursor=pointer]: "1"
+        - generic [ref=e48]:
+          - generic [ref=e49]: "GOLDEN RATIO:"
+          - button "OFF" [ref=e50] [cursor=pointer]
+  - generic [ref=e51]:
+    - generic [ref=e52]:
+      - generic [ref=e53]: "!"
+      - strong [ref=e54]: "PROCEDURAL WARNING: SANDBOX"
+    - paragraph [ref=e55]: The Laboratory is a sandbox for visualizing preliminary results of partially verified hypotheses (running on real audit data). It is for exploratory verification of phenomena that must be subsequently confirmed via official whitepaper outputs.
+```

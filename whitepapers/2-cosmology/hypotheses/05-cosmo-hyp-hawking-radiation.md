@@ -42,5 +42,13 @@ Lineum also natively explains the massive relativistic jets seen shooting from t
 If a Lineum $\varphi$-trap consumes too many linons too quickly, the central density reaches the mathematical ceiling (`PSI_AMP_CAP` and `PHI_CAP`). The system cannot dig the $\varphi$ hole any deeper. When new $\psi$ matter pours in, it hits a "geometric brick wall". 
 Because the inward $\varphi$ drift is completely saturated, the intense $\nabla^2\psi$ diffusion (the strong nuclear repulsive force at extreme proximity) violently overcomes the gravity. The excess $\psi$ energy has nowhere to go but outward along the path of least resistance—which, in a spinning non-linear vortex cluster, aligns with the dominant topological axes of rotation (the "poles"). This creates a massive, collimated back-pressure explosion: a mathematically perfect **Astrophysical Jet**.
 
-## 5. Conclusion
-The mechanics of Black Holes, Hawking Radiation, and Jet Emission are not artificially coded into Lineum. They are unavoidable emergent features of the Eq-7 reaction-diffusion topology. A critical $\varphi$-trap inherently functions as a black hole, and the `grad_mag` instability at its shear boundary natively forces the thermal evaporation process known as Hawking radiation.
+## 5. Inter-Cyclic Conduits (Pre-Big Bang Leakage)
+
+In the context of the Lineum Brane Multiverse (where universes undergo cycles of collapse and rebirth via the "Big Bounce"), Black Holes serve a secondary and profound cosmological function: they act as **inter-cyclic conduits**. 
+
+Because a critical $\varphi$-trap represents the most immense localized tension possible in the Lineum geometry, supermassive black holes carve permanent "scars" directly into the shared underlying $\mu$ (probability memory) bedrock. When a universe crashes and undergoes its Big Bang reset, the localized $\psi$ matter dissolves into raw topological noise, but these deepest $\mu$-scars persist across the epochal boundary. 
+
+As a new universe inflates, it drapes directly over this identically scarred $\mu$ foundation. The residual resonant energy and extreme gravitational tension from the dead, pre-Big Bang universe's black holes "leak" up through these focal points into the current universe. This explains mathematically within Lineum why our universe inherits latent, unaccountable background forces or localized gravity wells—it is actively tethered to the topological ghost of the previous cosmic cycle through these extreme $\varphi$-pits.
+
+## 6. Conclusion
+The mechanics of Black Holes, Hawking Radiation, and Jet Emission are not artificially coded into Lineum. They are unavoidable emergent features of the Eq-7 reaction-diffusion topology. A critical $\varphi$-trap inherently functions as a black hole, and the `grad_mag` instability at its shear boundary natively forces the thermal evaporation process known as Hawking radiation. Furthermore, these traps act as permanent inter-cyclic anchors, allowing energy to leak from universes that existed before the Big Bang.

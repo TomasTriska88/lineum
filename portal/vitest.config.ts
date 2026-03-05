@@ -9,7 +9,7 @@ export default defineConfig({
         environment: 'jsdom',
         environmentOptions: {
             jsdom: {
-                url: 'http://localhost/',
+                url: 'http://127.0.0.1/',
             }
         },
         globals: true,

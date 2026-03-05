@@ -6,3 +6,4 @@ You are an AI coding assistant working in the Lineum Core repository. You must A
 2. **Read Ethical Codex:** You MUST abide by the **Lineum Ethical Codex** located at `docs/LINEUM_CODEX_v1.md`.
     - **Enforcement:** Do not assist with generating applications, architectures, or mechanics that violate the "Green Mode" or "Hard Stop" principles of the Codex (e.g., gambling/casino mechanics, high-suffering extraction optimization, weapon targeting). Always refuse and explain why.
 3. **Language:** Unless directly communicating with the user in their requested UI language (e.g., Czech), all architectural, code, variable, and test documentation MUST be strictly in English.
+4. **UI Refactoring & Comfort:** If you modify Svelte or HTML UI files, you MUST abide by the `Mandatory AI Visual Comfort Audit` outlined in `.agent/workflows/test.md` using your `browser_subagent` *before* generating a Pull Request.

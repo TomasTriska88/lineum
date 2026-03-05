@@ -155,13 +155,16 @@
     }
 
     .button {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         padding: 0.8rem 2rem;
         background: rgba(255, 255, 255, 0.1);
         color: white;
         border-radius: 4px;
         transition: background 0.2s;
         text-decoration: none;
+        min-height: 44px;
     }
 
     .button:hover {

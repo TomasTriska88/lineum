@@ -485,6 +485,12 @@
         margin-bottom: 1.5rem;
     }
 
+    @media (max-width: 768px) {
+        .card p {
+            font-size: 1.15rem; /* Minimum 16px required readability */
+        }
+    }
+
     footer {
         padding: 4rem 2rem;
         border-top: 1px solid rgba(255, 255, 255, 0.05);

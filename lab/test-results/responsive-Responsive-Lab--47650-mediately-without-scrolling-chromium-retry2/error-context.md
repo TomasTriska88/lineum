@@ -1,0 +1,68 @@
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "SIMULACRUM" [level=1] [ref=e6]
+      - generic [ref=e7]: Lineum Lab | Hypothesis Sandbox
+    - generic [ref=e8]:
+      - button "3D Simulator" [ref=e9] [cursor=pointer]
+      - button "Validation Core" [ref=e10] [cursor=pointer]
+      - button "LPL Compiler" [ref=e11] [cursor=pointer]
+    - combobox [ref=e13] [cursor=pointer]:
+      - option "spec6_false_s41 (20260222_152015)" [selected]
+      - option "spec6_false_s41 (20260227_200927)"
+  - generic:
+    - generic [ref=e17]: "SYSTEM STATUS: BREAKTHROUGH DETECTED: STOCHASTIC NOISE (CHAOS)"
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - button "STATISTICS" [ref=e20] [cursor=pointer]
+        - button "SCANNER" [ref=e21] [cursor=pointer]
+        - button "Tidal" [ref=e22] [cursor=pointer]
+        - button "HYPOTHESIS DISCOVERY" [ref=e23] [cursor=pointer]
+        - button "Phenomena" [ref=e24] [cursor=pointer]
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]: "MODE:"
+          - generic [ref=e29]: FIELD Φ TOPOGRAPHY (3D)
+        - generic [ref=e30]:
+          - generic [ref=e31]: "METRIC:"
+          - generic [ref=e32]: z = field Φ height [AUDIT]
+        - generic [ref=e33]:
+          - generic [ref=e34]: "FRAME:"
+          - generic [ref=e35]: 290 / 400
+        - generic [ref=e36]:
+          - generic [ref=e37]: "SOURCE:"
+          - generic [ref=e38]: spec6_false_s41
+        - generic [ref=e39]:
+          - generic [ref=e40]: "STATUS:"
+          - generic [ref=e41]: FIELD Φ INITIALIZATION
+          - button "JUMP TO BIRTH [389]" [ref=e42] [cursor=pointer]
+        - generic [ref=e43]:
+          - generic [ref=e44]: "SPEED:"
+          - generic [ref=e45]: 1.0x
+          - slider [ref=e46] [cursor=pointer]: "1"
+        - generic [ref=e47]:
+          - generic [ref=e48]: "GOLDEN RATIO:"
+          - button "OFF" [ref=e49] [cursor=pointer]
+    - generic [ref=e51]:
+      - heading "LAB GUIDE" [level=3] [ref=e52]
+      - generic [ref=e53]:
+        - strong [ref=e54]: "What to watch:"
+        - text: Linons are energy cores that actively seek areas with the highest Φ-field intensity. In this 3D visualization, they move towards topography peaks.
+      - generic [ref=e55]:
+        - strong [ref=e56]: "Linons:"
+        - text: Paths and particles in the field. Until they reach critical amplitude, they appear as ghosts. After birth (frame 391), they begin to actively seek Φ-field local maxima.
+      - generic [ref=e57]:
+        - strong [ref=e58]: "Field Φ Topography:"
+        - text: This 3D landscape shows energy density. Linons naturally gravitate towards peaks and ridges.
+      - generic [ref=e59]:
+        - strong [ref=e60]: "Zeta Zeros:"
+        - text: Mathematical nodes of the universe. If the scanner's white needle hits the blue lines, resonance occurs.
+  - generic [ref=e61]:
+    - generic [ref=e62]:
+      - generic [ref=e63]: "!"
+      - strong [ref=e64]: "PROCEDURAL WARNING: SANDBOX"
+    - paragraph [ref=e65]: The Laboratory is a sandbox for visualizing preliminary results of partially verified hypotheses (running on real audit data). It is for exploratory verification of phenomena that must be subsequently confirmed via official whitepaper outputs.
+```

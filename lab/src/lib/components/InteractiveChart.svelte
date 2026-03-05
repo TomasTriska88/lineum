@@ -105,7 +105,7 @@
         <canvas bind:this={canvas}></canvas>
     </div>
     <p class="zoom-help" class:highlighted={highlightZoomTips}>
-        <span class="ctrl-key">CTRL</span> + {$t("zoom_tip_scroll") ||
+        <span class="ctrl-key">CTRL</span> + {"Scroll to ZOOM" ||
             "Scroll to Zoom"}
     </p>
 </div>

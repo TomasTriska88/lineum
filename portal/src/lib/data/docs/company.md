@@ -52,6 +52,6 @@ The crypto space relies on bulletproof TRNGs and Oracle networks. Because the Li
 ### 4. Exotic Hardware & Quantum (Experimental)
 Lineum represents a new way to process information (non-Von Neumann, state-space collapse).
 - **Neuromorphic Startups (e.g., rain.ai):** Supply of physical developer boards (hardware) that mimic brain architecture, as Lineum is the perfect stress-test for analog/asynchronous chips. (*Probability: 70%*)
-- **Quantum Labs (IBM Quantum / D-Wave):** Priority compute-time on quantum computers to map the Eq-7 spatial collapse to qubit arrays. (*Probability: 60%*)
+- **Quantum Labs (IBM Quantum / D-Wave):** Priority compute-time on quantum computers to map the Eq-4 spatial collapse to qubit arrays. (*Probability: 60%*)
 
 *Note on Physical Assets: Corporations do not gift consumer "luxury" items like cars or real estate (which are tax liabilities). They gift **infrastructure, research grants, and compute power** (R&D marketing write-offs), which are often worth millions of dollars in equivalent rental costs.*

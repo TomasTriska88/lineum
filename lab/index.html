@@ -21,6 +21,29 @@
       font-family: sans-serif;
       overflow: hidden;
     }
+
+    /* Global Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.5); 
+      border-left: 1px solid #1a1a1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222; 
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00ffff;
+      border: 1px solid #00aaaa;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+    ::-webkit-scrollbar-corner {
+      background: #050505;
+    }
   </style>
 </head>
 

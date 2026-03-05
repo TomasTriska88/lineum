@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { TopographyEngine } from "./lib/engines/TopographyEngine";
     import ZetaScanner from "./lib/components/ZetaScanner.svelte";
     import TidalAnalyzer from "./lib/components/TidalAnalyzer.svelte";
@@ -23,17 +23,26 @@
     let metadata = null; // 📦 Audit metadata
     let harmonicData = null; // 🌀 Fibonacci & Golden Ratio
     let showSpiral = false;
+    let manifestLoaded = false;
 
     // Global Modal State
     let maximizedChart = null; // { title, config }
     let error = null;
 
-    // Persist active tab across reloads
-    const savedTab = localStorage.getItem("lab_active_tab");
-    let activeTab = savedTab || "stats";
+    const savedMode = localStorage.getItem("lab_main_mode") || "simulator";
+    const savedTab = localStorage.getItem("lab_active_tab") || "stats";
 
-    $: if (activeTab) {
-        localStorage.setItem("lab_active_tab", activeTab);
+    let mainMode = savedMode; // 'simulator' | 'lpl' | 'validation'
+    let activeTab = savedTab;
+
+    $: {
+        localStorage.setItem("lab_main_mode", mainMode);
+        if (activeTab) localStorage.setItem("lab_active_tab", activeTab);
+
+        // 🛑 WebGL Optimization: Pause the 60fps render loop when simulator is hidden
+        if (engine) {
+            engine.isPaused = mainMode !== "simulator";
+        }
     }
 
     $: if (engine && playbackSpeed !== undefined) {
@@ -49,22 +58,37 @@
         locale.set($locale === "cs" ? "en" : "cs");
     };
 
-    onMount(async () => {
-        try {
-            const res = await fetch("/data/manifest.json");
-            if (!res.ok) throw new Error("Manifest not found");
-            manifest = await res.json();
-            if (manifest.length > 0) {
-                // Default to the first (latest) run in manifest
-                await loadRun(manifest[0].run_id);
-            } else {
+    $: if (mainMode === "simulator" && !manifestLoaded && !error) {
+        manifestLoaded = true; // prevent re-fetching
+        loading = true;
+        fetch("/data/manifest.json")
+            .then((res) => {
+                if (!res.ok) throw new Error("Manifest not found");
+                return res.json();
+            })
+            .then((data) => {
+                manifest = data;
+                if (manifest.length > 0) {
+                    return loadRun(manifest[0].run_id);
+                } else {
+                    loading = false;
+                }
+            })
+            .catch((e) => {
+                console.error("Initialization failed:", e);
+                error = e.message;
                 loading = false;
-            }
-        } catch (e) {
-            console.error("Initialization failed:", e);
-            error = e.message;
+            });
+    }
+
+    onMount(() => {
+        if (mainMode !== "simulator") {
             loading = false;
         }
+    });
+
+    onDestroy(() => {
+        if (engine) engine.dispose();
     });
 
     async function loadRun(runId) {
@@ -118,7 +142,7 @@
     {#if loading}
         <div class="loader">
             <div class="spinner"></div>
-            <p>{$t("loading")}</p>
+            <p>LOADING AUDIT DATA (JSON BIN)...</p>
         </div>
     {:else if error}
         <div class="loader">
@@ -132,235 +156,265 @@
 
     <div
         class="canvas-container"
-        class:dimmed={activeTab === "lpl"}
+        style="display: {mainMode === 'simulator' ? 'block' : 'none'};"
         bind:this={container}
     ></div>
-    <div
-        class="overlay"
-        class:lpl-mode={activeTab === "lpl" || activeTab === "validation"}
-    >
-        <div class="header-section">
-            <div class="header-top">
-                <h1>{$t("simulakrum")}</h1>
-                <div class="header-controls">
-                    {#if manifest.length > 0}
-                        <select
-                            class="run-selector"
-                            bind:value={selectedRunId}
-                            on:change={(e) => loadRun(e.target.value)}
-                        >
-                            {#each manifest as run}
-                                <option value={run.run_id}>
-                                    {run.run_tag} ({run.timestamp})
-                                </option>
-                            {/each}
-                        </select>
-                    {/if}
-                    <button class="lang-btn" on:click={toggleLanguage}>
-                        {$locale === "cs" ? "EN" : "CZ"}
+
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>SIMULACRUM</h1>
+            <span class="subtitle">Lineum Lab | Hypothesis Sandbox</span>
+        </div>
+
+        <div class="nav-modes">
+            <button
+                class:active={mainMode === "simulator"}
+                on:click={() => (mainMode = "simulator")}
+            >
+                3D Simulator
+            </button>
+            <button
+                class:active={mainMode === "validation"}
+                on:click={() => (mainMode = "validation")}
+            >
+                Validation Core
+            </button>
+            <button
+                class:active={mainMode === "lpl"}
+                on:click={() => (mainMode = "lpl")}
+            >
+                LPL Compiler
+            </button>
+        </div>
+
+        <div class="header-controls">
+            {#if mainMode === "simulator" && manifest.length > 0}
+                <select
+                    class="run-selector"
+                    bind:value={selectedRunId}
+                    on:change={(e) => loadRun(e.target.value)}
+                >
+                    {#each manifest as run}
+                        <option value={run.run_id}>
+                            {run.run_tag} ({run.timestamp})
+                        </option>
+                    {/each}
+                </select>
+            {/if}
+        </div>
+    </nav>
+
+    {#if mainMode === "validation"}
+        <div class="fullscreen-mode">
+            <ValidationDashboard />
+        </div>
+    {:else if mainMode === "lpl"}
+        <div class="fullscreen-mode">
+            <LplCompiler />
+        </div>
+    {:else if mainMode === "simulator"}
+        <div class="overlay">
+            <div class="header-section">
+                <div
+                    class="discovery-headline"
+                    class:prime={metadata?.pearson_r > 0.9}
+                    class:tuning={metadata?.pearson_r > 0.5 &&
+                        metadata?.pearson_r <= 0.9}
+                >
+                    <span class="status-icon"></span>
+                    <span class="status-msg">
+                        SYSTEM STATUS: BREAKTHROUGH DETECTED:
+                        {metadata?.pearson_r > 0.9
+                            ? "PRIME RESONANCE (1:1 ALIGNMENT)"
+                            : metadata?.pearson_r > 0.5
+                              ? "GEOMETRY TUNING"
+                              : "STOCHASTIC NOISE (CHAOS)"}
+                    </span>
+                </div>
+            </div>
+
+            {#if frame >= 391}
+                <div class="central-alert-system">
+                    <div class="event-marker">
+                        SYSTEM ALERT: LINON DETECTION [birth]
+                    </div>
+                </div>
+            {/if}
+
+            <div class="side-panel side-panel-left">
+                <div class="panel-tabs">
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "stats"}
+                        on:click={() => (activeTab = "stats")}
+                    >
+                        STATISTICS
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "scanner"}
+                        on:click={() => (activeTab = "scanner")}
+                    >
+                        SCANNER
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "tidal"}
+                        on:click={() => (activeTab = "tidal")}
+                    >
+                        Tidal
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "hypothesis"}
+                        on:click={() => (activeTab = "hypothesis")}
+                    >
+                        HYPOTHESIS DISCOVERY
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "spikes"}
+                        on:click={() => (activeTab = "spikes")}
+                    >
+                        Phenomena
                     </button>
                 </div>
-            </div>
-            <p class="subtitle">{$t("sub_title")}</p>
 
-            <div
-                class="discovery-headline"
-                class:prime={metadata?.pearson_r > 0.9}
-                class:tuning={metadata?.pearson_r > 0.5 &&
-                    metadata?.pearson_r <= 0.9}
-            >
-                <span class="status-icon"></span>
-                <span class="status-msg">
-                    {$t("breakthrough_headline")}:
-                    {metadata?.pearson_r > 0.9
-                        ? $t("status_prime_resonance")
-                        : metadata?.pearson_r > 0.5
-                          ? $t("status_tuning")
-                          : $t("status_chaos")}
-                </span>
-            </div>
-        </div>
-
-        {#if frame >= 391}
-            <div class="central-alert-system">
-                <div class="event-marker">{$t("alert_birth")}</div>
-            </div>
-        {/if}
-
-        <div class="side-panel side-panel-left">
-            <div class="panel-tabs">
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "stats"}
-                    on:click={() => (activeTab = "stats")}
-                >
-                    {$t("tab_stats")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "scanner"}
-                    on:click={() => (activeTab = "scanner")}
-                >
-                    {$t("tab_scanner")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "tidal"}
-                    on:click={() => (activeTab = "tidal")}
-                >
-                    Tidal
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "hypothesis"}
-                    on:click={() => (activeTab = "hypothesis")}
-                >
-                    {$t("discovery_analysis")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "spikes"}
-                    on:click={() => (activeTab = "spikes")}
-                >
-                    Phenomena
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "lpl"}
-                    on:click={() => (activeTab = "lpl")}
-                >
-                    {$t("tab_lpl")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "validation"}
-                    on:click={() => (activeTab = "validation")}
-                >
-                    Golden Validation ⚙️
-                </button>
-            </div>
-
-            <div class="tab-content">
-                {#if activeTab === "stats"}
-                    <div class="stats-panel">
-                        <div class="stat">
-                            <span class="label">{$t("label_mode")}</span>
-                            <span class="value">{$t("val_mode")}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_metric")}</span>
-                            <span class="value">{$t("val_metric")}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_frame")}</span>
-                            <span class="value">{frame} / {totalFrames}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_source")}</span>
-                            <span class="value"
-                                >{metadata?.run_tag || "Audit"}</span
-                            >
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_status")}</span>
-                            <span class="value"
-                                >{frame >= (metadata?.birth_frame || 391)
-                                    ? $t("status_born")
-                                    : $t("status_init")}</span
-                            >
-                            {#if metadata && frame < metadata.birth_frame}
-                                <button
-                                    class="jump-btn"
-                                    on:click={() =>
-                                        engine.jumpToFrame(
-                                            metadata.birth_frame,
-                                        )}
+                <div class="tab-content">
+                    {#if activeTab === "stats"}
+                        <div class="stats-panel">
+                            <div class="stat">
+                                <span class="label">MODE:</span>
+                                <span class="value"
+                                    >FIELD Φ TOPOGRAPHY (3D)</span
                                 >
-                                    {$t("btn_jump")} [{metadata.birth_frame}]
+                            </div>
+                            <div class="stat">
+                                <span class="label">METRIC:</span>
+                                <span class="value"
+                                    >z = field Φ height [AUDIT]</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">FRAME:</span>
+                                <span class="value"
+                                    >{frame} / {totalFrames}</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">SOURCE:</span>
+                                <span class="value"
+                                    >{metadata?.run_tag || "Audit"}</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">STATUS:</span>
+                                <span class="value"
+                                    >{frame >= (metadata?.birth_frame || 391)
+                                        ? "LINON DETECTION"
+                                        : "FIELD Φ INITIALIZATION"}</span
+                                >
+                                {#if metadata && frame < metadata.birth_frame}
+                                    <button
+                                        class="jump-btn"
+                                        on:click={() =>
+                                            engine.jumpToFrame(
+                                                metadata.birth_frame,
+                                            )}
+                                    >
+                                        JUMP TO BIRTH [{metadata.birth_frame}]
+                                    </button>
+                                {/if}
+                            </div>
+                            <div class="stat speed-control">
+                                <span class="label">SPEED:</span>
+                                <span class="value"
+                                    >{playbackSpeed.toFixed(1)}x</span
+                                >
+                                <input
+                                    type="range"
+                                    min="0.1"
+                                    max="5.0"
+                                    step="0.1"
+                                    bind:value={playbackSpeed}
+                                />
+                            </div>
+
+                            <div class="stat toggle-control">
+                                <span class="label">GOLDEN RATIO:</span>
+                                <button
+                                    class="toggle-btn {showSpiral
+                                        ? 'active'
+                                        : ''}"
+                                    on:click={() => (showSpiral = !showSpiral)}
+                                >
+                                    {showSpiral ? "ON" : "OFF"}
                                 </button>
-                            {/if}
+                            </div>
                         </div>
-                        <div class="stat speed-control">
-                            <span class="label">{$t("label_speed")}</span>
-                            <span class="value"
-                                >{playbackSpeed.toFixed(1)}x</span
-                            >
-                            <input
-                                type="range"
-                                min="0.1"
-                                max="5.0"
-                                step="0.1"
-                                bind:value={playbackSpeed}
-                            />
-                        </div>
-
-                        <div class="stat toggle-control">
-                            <span class="label">{$t("label_phi")}</span>
-                            <button
-                                class="toggle-btn {showSpiral ? 'active' : ''}"
-                                on:click={() => (showSpiral = !showSpiral)}
-                            >
-                                {showSpiral ? $t("on") : $t("off")}
-                            </button>
-                        </div>
-                    </div>
-                {:else if activeTab === "scanner"}
-                    <ZetaScanner
-                        {frame}
-                        data={resonanceData}
-                        harmonics={harmonicData}
-                    />
-                {:else if activeTab === "tidal"}
-                    <TidalAnalyzer
-                        {dataRoot}
-                        on:maximize={(e) => (maximizedChart = e.detail)}
-                    />
-                {:else if activeTab === "hypothesis"}
-                    <HypothesisTester
-                        {dataRoot}
-                        on:maximize={(e) => (maximizedChart = e.detail)}
-                    />
-                {:else if activeTab === "spikes"}
-                    <ExtremeSpikes {engine} {frame} />
-                {:else if activeTab === "lpl"}
-                    <LplCompiler />
-                {:else if activeTab === "validation"}
-                    <ValidationDashboard />
-                {/if}
+                    {:else if activeTab === "scanner"}
+                        <ZetaScanner
+                            {frame}
+                            data={resonanceData}
+                            harmonics={harmonicData}
+                        />
+                    {:else if activeTab === "tidal"}
+                        <TidalAnalyzer
+                            {dataRoot}
+                            on:maximize={(e) => (maximizedChart = e.detail)}
+                        />
+                    {:else if activeTab === "hypothesis"}
+                        <HypothesisTester
+                            {dataRoot}
+                            on:maximize={(e) => (maximizedChart = e.detail)}
+                        />
+                    {:else if activeTab === "spikes"}
+                        <ExtremeSpikes {engine} {frame} />
+                    {/if}
+                </div>
             </div>
-        </div>
 
-        {#if activeTab !== "lpl" && activeTab !== "rng" && activeTab !== "validation"}
             <div class="side-panel side-panel-right">
                 <div class="guide-panel">
-                    <h3>{$t("guide_title")}</h3>
+                    <h3>LAB GUIDE</h3>
                     <div class="guide-item">
-                        <strong>{$t("guide_watch_title")}</strong>
-                        {$t("guide_watch_desc")}
+                        <strong>What to watch:</strong>
+                        Linons are energy cores that actively seek areas with the
+                        highest Φ-field intensity. In this 3D visualization, they
+                        move towards topography peaks.
                     </div>
                     <div class="guide-item">
-                        <strong>{$t("guide_linons_title")}</strong>
-                        {$t("guide_linons_desc")}
+                        <strong>Linons:</strong>
+                        Paths and particles in the field. Until they reach critical
+                        amplitude, they appear as ghosts. After birth (frame 391),
+                        they begin to actively seek Φ-field local maxima.
                     </div>
                     <div class="guide-item">
-                        <strong>{$t("guide_topo_title")}</strong>
-                        {$t("guide_topo_desc")}
+                        <strong>Field Φ Topography:</strong>
+                        This 3D landscape shows energy density. Linons naturally
+                        gravitate towards peaks and ridges.
                     </div>
                     <div class="guide-item">
-                        <strong>{$t("guide_zeta_title")}</strong>
-                        {$t("guide_zeta_desc")}
+                        <strong>Zeta Zeros:</strong>
+                        Mathematical nodes of the universe. If the scanner's white
+                        needle hits the blue lines, resonance occurs.
                     </div>
                 </div>
             </div>
-        {/if}
-
-        <div class="sandbox-disclaimer">
-            <div class="disclaimer-header">
-                <span class="warning-icon">!</span>
-                <strong>{$t("sandbox_title")}</strong>
-            </div>
-            <p>{$t("sandbox_warning")}</p>
         </div>
+    {/if}
+
+    <div class="sandbox-disclaimer">
+        <div class="disclaimer-header">
+            <span class="warning-icon">!</span>
+            <strong>PROCEDURAL WARNING: SANDBOX</strong>
+        </div>
+        <p>
+            The Laboratory is a sandbox for visualizing preliminary results of
+            partially verified hypotheses (running on real audit data). It is
+            for exploratory verification of phenomena that must be subsequently
+            confirmed via official whitepaper outputs.
+        </p>
     </div>
 
     {#if maximizedChart}
@@ -421,45 +475,119 @@
             filter 0.5s ease;
     }
 
-    .canvas-container.dimmed {
-        opacity: 0.15;
-        filter: blur(8px) grayscale(100%);
+    .top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 10, 15, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+        padding: 12px 30px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 200;
+        pointer-events: auto;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-brand {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-brand h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        letter-spacing: 0.4rem;
+        color: #fff;
+        text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        font-weight: 300;
+    }
+
+    .nav-brand .subtitle {
+        font-size: 0.65rem;
+        color: #00ffff;
+        opacity: 0.6;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
+
+    .nav-modes {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .nav-modes button {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.75rem;
+        font-family: inherit;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        border-radius: 4px 4px 0 0;
+    }
+
+    .nav-modes button:hover {
+        color: #fff;
+        background: rgba(0, 255, 255, 0.05);
+    }
+
+    .nav-modes button.active {
+        color: #00ffff;
+        border-bottom: 2px solid #00ffff;
+        background: radial-gradient(
+            ellipse at bottom,
+            rgba(0, 255, 255, 0.15) 0%,
+            transparent 70%
+        );
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .fullscreen-mode {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 70px);
+        background: #050505;
+        pointer-events: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 100;
+        padding-bottom: 80px; /* Space for the fixed disclaimer footer */
+        box-sizing: border-box;
     }
 
     .overlay {
         position: absolute;
-        top: 32px;
+        top: 70px;
         left: 32px;
         right: 32px;
-        bottom: 32px;
+        bottom: 80px; /* Leave space for footer */
         pointer-events: none;
         z-index: 100;
         display: grid;
         grid-template-columns: 400px 1fr 400px;
-        grid-template-rows: auto 60px 1fr auto;
+        grid-template-rows: auto 60px 1fr;
         grid-template-areas:
             "header header header"
             "alert alert alert"
-            "left . right"
-            "footer footer footer";
+            "left . right";
         gap: 20px;
         box-sizing: border-box;
         overflow: hidden;
         transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .overlay.lpl-mode {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "header"
-            "alert"
-            "left"
-            "footer";
-        background: rgba(0, 5, 15, 0.4);
-        backdrop-filter: blur(5px);
-        border: 1px solid rgba(0, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 8px;
     }
 
     .header-section {
@@ -468,13 +596,6 @@
         flex-direction: column;
         gap: 10px;
         pointer-events: all;
-    }
-
-    .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
     }
 
     .header-controls {
@@ -496,22 +617,6 @@
     .run-selector option {
         background: #050505;
         color: #fff;
-    }
-
-    .lang-btn {
-        background: rgba(0, 255, 255, 0.1);
-        border: 1px solid rgba(0, 255, 255, 0.4);
-        color: #00ffff;
-        padding: 4px 10px;
-        cursor: pointer;
-        font-size: 0.7rem;
-        font-weight: bold;
-        transition: all 0.2s;
-    }
-
-    .lang-btn:hover {
-        background: rgba(0, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .central-alert-system {
@@ -540,17 +645,7 @@
         grid-area: right;
     }
 
-    h1 {
-        margin: 0;
-        font-size: 2.2rem;
-        font-weight: 200;
-        letter-spacing: 0.5rem;
-        color: #fff;
-        text-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    }
-
     .discovery-headline {
-        margin-top: 15px;
         background: rgba(0, 255, 255, 0.05);
         border-left: 4px solid rgba(0, 255, 255, 0.3);
         padding: 10px 15px;
@@ -558,6 +653,7 @@
         align-items: center;
         gap: 12px;
         transition: all 0.5s ease;
+        max-width: 400px;
     }
 
     .discovery-headline.prime {
@@ -622,14 +718,14 @@
         }
     }
 
-    .subtitle {
-        margin: 0;
-        font-size: 0.8rem;
-        letter-spacing: 0.1rem;
-        color: #00ffff;
-        opacity: 0.7;
-        margin-top: 8px;
-        text-transform: uppercase;
+    @keyframes blink {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.3;
+        }
     }
 
     /* Tabs Styling */
@@ -661,14 +757,22 @@
 
     /* Sandbox Disclaimer Styling */
     .sandbox-disclaimer {
-        grid-area: footer;
-        background: rgba(255, 170, 0, 0.08);
-        border: 1px solid rgba(255, 170, 0, 0.4);
-        padding: 15px;
-        margin-top: auto;
-        backdrop-filter: blur(10px);
-        border-radius: 4px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(15, 10, 0, 0.85);
+        border-top: 1px solid rgba(255, 170, 0, 0.4);
+        padding: 8px 30px;
+        backdrop-filter: blur(12px);
+        box-sizing: border-box;
         pointer-events: all;
+        z-index: 300;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
     }
 
     .disclaimer-header {
@@ -688,10 +792,78 @@
     .sandbox-disclaimer p {
         margin: 0;
         font-size: 0.65rem;
-        line-height: 1.5;
+        line-height: 1.2;
         color: #eee;
         opacity: 0.8;
         font-style: italic;
+        max-width: 800px;
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 1024px) {
+        .overlay {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto 1fr auto;
+            grid-template-areas:
+                "header"
+                "alert"
+                "left"
+                "right";
+            left: 10px;
+            right: 10px;
+            bottom: 60px; /* Room for footer */
+            top: 120px; /* Room for wrapped nav */
+            overflow-y: auto;
+            pointer-events: all; /* Needed for scrolling the stacked grid */
+        }
+
+        .side-panel-right {
+            display: none; /* Hide guide on mobile to save space */
+        }
+
+        .top-nav {
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .nav-brand {
+            align-items: center;
+        }
+
+        .nav-brand h1 {
+            font-size: 1.2rem;
+            letter-spacing: 0.2rem;
+        }
+
+        .nav-modes {
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .nav-modes button {
+            padding: 8px 10px;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+        }
+
+        .sandbox-disclaimer {
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px 15px;
+            text-align: center;
+        }
+
+        .sandbox-disclaimer p {
+            font-size: 0.55rem;
+        }
+
+        .fullscreen-mode {
+            top: 120px;
+            height: calc(100vh - 120px);
+            padding-bottom: 110px; /* Taller wrapped footer on mobile */
+            box-sizing: border-box;
+        }
     }
 
     .tab-content {

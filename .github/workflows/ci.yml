@@ -16,10 +16,23 @@ jobs:
           fetch-depth: 0
       - name: Verify DCO Signatures
         run: |
-          # Warn-only check for Signed-off-by
           if ! git log -1 --pretty=%B | grep -q "Signed-off-by:"; then
             echo "::warning title=Missing DCO::We currently require a Developer Certificate of Origin (DCO) for external contributions. Please use 'git commit -s' in the future."
           fi
+
+  ai-audit-check:
+    name: Mandatory AI Visual UI Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Enforce AI Visual Audit Log
+        run: python .github/scripts/enforce_ai_audit.py
 
   test-core:
     name: Core (Python)
@@ -88,3 +101,9 @@ jobs:
       - name: Run Vitest
         working-directory: lab
         run: npm run test
+      - name: Install Playwright Browsers
+        working-directory: lab
+        run: npx playwright install --with-deps chromium
+      - name: Run Playwright E2E Tests
+        working-directory: lab
+        run: npm run test:e2e

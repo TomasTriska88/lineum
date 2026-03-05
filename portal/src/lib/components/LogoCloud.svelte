@@ -51,7 +51,7 @@
                 Be the first to step into the future.
             </h4>
             <p
-                class="text-base md:text-lg text-slate-400 font-light mb-8 max-w-xl mx-auto"
+                class="text-[16px] md:text-lg text-slate-400 font-light mb-8 max-w-xl mx-auto"
             >
                 Become our pioneer partner and secure lifetime access to all our
                 enterprise products at cost.

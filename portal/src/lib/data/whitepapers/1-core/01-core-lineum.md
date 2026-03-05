@@ -2,7 +2,7 @@
 **Document Type:** Core
 **Version:** 1.0.18-core
 **Status:** Draft  
-**Equation:** Eq-7 (canonical; κ static)  
+**Equation:** Eq-7 (Unitary Wave; κ static)  
 **Scope:** 2D, periodic BCs
 **Date:** 2026-02-15
 
@@ -244,13 +244,12 @@ The canonical form is:
 | ψ(x,y,t) | ℂ | primary field; &#124;ψ&#124;² = density, arg ψ = phase • linons = localized &#124;ψ&#124;² maxima |
 | φ(x,y,t) | ℝ | interaction / memory field | accumulates response to &#124;ψ&#124;² |
 | κ(x,y) | ℝ⁺ (static) | spatial tuning map | no time evolution; often normalized to [0,1] |
+| μ(x,y,t) | ℝ⁺ | structural memory | slow-decay field recording stable energetic pathways |
 | 𝛌̃(x,y,t) | ℂ | external stimulus | 0 unless stimulus experiments |
 | ξ(x,y,t) | ℂ | noise (zero-mean) | optional; amplitude set by manifest (canonical: σξ = 5.0×10⁻³) |
-| δ | ℝ₊ | damping in ψ-update | local, ≥ 0 |
-| α | ℝ₊ | coupling | from &#124;ψ&#124;² to φ |
-| β | ℝ₊ | diffusion | φ diffusion strength |
 | ∇ | operator | discrete gradient | central differences |
 | ∇² | operator | discrete Laplacian | 4-neighbour (5-point von Neumann; implemented via `diffuse_complex()` in the reference code) |
+| FFT_Unitary | operator | Exact Unitary Step | Spectral propagation maintaining strict $L_2$ norm |
 | BCs | — | boundary conditions | periodic in x,y |
 | α_eff, β_eff | — | effective params | α_eff = κ·α, β_eff = κ·β (κ modulates α,β) |
 <!-- prettier-ignore-end -->
@@ -351,28 +350,33 @@ At each timestep:
 3. Optionally add controlled noise ξ to test stability.
 4. Record intermediate states for analysis.
 
-#### One-step update (canonical Eq-7)
+#### One-step update (canonical Eq-7 Unitary)
 
 **Context:** periodic BCs, Δx = Δy = 1, explicit Euler; κ is static (constant map in the canonical run).
 
 ```python
-# periodic BCs, Δx=Δy=1, explicit Euler
+# periodic BCs, Δx=Δy=1, unitary Strang split step
 for t in range(T):
-    # spatial derivatives
-    lap_psi  = laplacian(psi)          # 5-point (von Neumann)
-    grad_phi_x, grad_phi_y = gradient(phi)  # central differences
-    grad_phi = grad_phi_x + 1j*grad_phi_y   # inject ∇φ as complex drift field
-    lap_phi  = laplacian(phi)
+    # Calculate non-linear interactions N(ψ)
+    grad_phi_x, grad_phi_y = gradient(phi)
+    grad_phi = grad_phi_x + 1j*grad_phi_y
+    N_psi = lambda_tilde + xi + phi*psi + grad_phi
+    
+    # 1. First half-step (drift/interaction)
+    psi = psi + N_psi * (dt / 2)
+    
+    # 2. Exact linear unitary step in frequency domain
+    psi = fft_unitary_step(psi, dt)
+    
+    # 3. Second half-step (drift/interaction)
+    psi = psi + N_psi * (dt / 2)
 
-    # effective parameters (κ is static)
-    alpha_eff = kappa * alpha
-    beta_eff  = kappa * beta
-
-    # ψ-update
-    psi = psi + lambda_tilde + xi + phi*psi - delta*psi + lap_psi + grad_phi
-
-    # φ-update
-    phi = phi + alpha_eff*(np.abs(psi)**2 - phi) + beta_eff*lap_phi
+    # φ-update (effective parameters)
+    lap_phi = laplacian(phi)
+    phi = phi + (kappa * alpha)*(np.abs(psi)**2 - phi) + (kappa * beta)*lap_phi
+    
+    # μ-update (HDD structural memory)
+    mu = mu + eta * np.maximum(np.abs(psi)**2 - thresh, 0.0) * kappa - rho * mu
 
     # optional logging/detectors
     if t % LOG_EVERY == 0:

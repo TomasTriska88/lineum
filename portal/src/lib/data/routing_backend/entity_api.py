@@ -208,10 +208,6 @@ class ChatRequest(BaseModel):
     dt: float = 1.0
     seed: int = 42
     inject_chaos: bool = False
-    physics_mode_psi: str = "diffusion"
-    wave_lpf_enabled: bool = False
-    wave_lpf_cutoff: float = 0.35
-    kappa_soft_blur_iters: int = 2
 
 @router.post("/{entity_id}/chat")
 async def chat_with_entity(entity_id: str, req: ChatRequest):
@@ -247,14 +243,7 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
         entity.delta = delta_mask.astype(np.float32)
-        cfg = Eq4Config(
-            dt=0.1, 
-            use_mode_coupling=False,
-            physics_mode_psi=req.physics_mode_psi,
-            wave_lpf_enabled=req.wave_lpf_enabled,
-            wave_lpf_cutoff=req.wave_lpf_cutoff,
-            kappa_soft_blur_iters=req.kappa_soft_blur_iters
-        )
+        cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
         
         for step_idx in range(50):
             state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
@@ -294,14 +283,7 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         
         encoder_temp.set_baseline(clean_state)
         # Calculate affect with mode_coupling=True so energy dissipates properly, preventing false chaos states for benign prompts.
-        _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(
-            dt=req.dt, 
-            use_mode_coupling=True,
-            physics_mode_psi=req.physics_mode_psi,
-            wave_lpf_enabled=req.wave_lpf_enabled,
-            wave_lpf_cutoff=req.wave_lpf_cutoff,
-            kappa_soft_blur_iters=req.kappa_soft_blur_iters
-        ), step_eq4, mode="runtime")
+        _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(dt=req.dt, use_mode_coupling=True), step_eq4, mode="runtime")
         
         entity.mood = affect_metrics["affect_v1"]["mood_state"]["after"]
         

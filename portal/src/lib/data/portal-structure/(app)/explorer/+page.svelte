@@ -7,6 +7,10 @@
     let currentMode: "phys" | "scientific" | "poetic" = $state("phys");
     let currentText = $state("");
     let isInjecting = $state(false);
+    
+    // Wave Core Settings
+    let physicsModePsi = $state("diffusion");
+    let waveLpfEnabled = $state(false);
 
     // WebSocket topology mount variables
     let ws: WebSocket | null = null;
@@ -147,6 +151,8 @@
             session_id: sessionId,
             mode: currentMode,
             message: currentText,
+            physics_mode_psi: physicsModePsi,
+            wave_lpf_enabled: waveLpfEnabled
         };
 
         // Keep a local reference to the text before clearing the input box
@@ -341,6 +347,29 @@
                         onclick={() => (currentMode = "poetic")}
                     >
                         Poetic
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Wave Core Config Bar -->
+            <div class="flex items-center gap-4 mb-3 pb-3 border-b border-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Eq-7 Core Mode:</span>
+                    <select class="bg-slate-950 border border-slate-700 text-slate-300 text-xs rounded px-2 py-1 outline-none focus:border-indigo-500" bind:value={physicsModePsi}>
+                        <option value="diffusion">Diffusion (Kanon)</option>
+                        <option value="wave_baseline">Wave (Baseline)</option>
+                        <option value="wave_projected">Wave (Projected)</option>
+                        <option value="wave_projected_soft">Wave (Soft Projected)</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Spectral Anti-Alias (LPF):</span>
+                    <button 
+                        type="button" 
+                        class="px-2 py-0.5 text-[10px] rounded font-bold uppercase transition-colors {waveLpfEnabled ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}"
+                        onclick={() => waveLpfEnabled = !waveLpfEnabled}>
+                        {waveLpfEnabled ? "ON" : "OFF"}
                     </button>
                 </div>
             </div>

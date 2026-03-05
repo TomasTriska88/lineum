@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "SIMULACRUM" [level=1] [ref=e6]
+      - generic [ref=e7]: Lineum Lab | Hypothesis Sandbox
+    - generic [ref=e8]:
+      - button "3D Simulator" [ref=e9] [cursor=pointer]
+      - button "Validation Core" [ref=e10] [cursor=pointer]
+      - button "LPL Compiler" [ref=e11] [cursor=pointer]
+  - generic [ref=e12]:
+    - generic [ref=e16]: "SYSTEM STATUS: BREAKTHROUGH DETECTED: STOCHASTIC NOISE (CHAOS)"
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - button "STATISTICS" [ref=e19] [cursor=pointer]
+        - button "SCANNER" [ref=e20] [cursor=pointer]
+        - button "Tidal" [ref=e21] [cursor=pointer]
+        - button "HYPOTHESIS DISCOVERY" [ref=e22] [cursor=pointer]
+        - button "Phenomena" [ref=e23] [cursor=pointer]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: "MODE:"
+          - generic [ref=e28]: FIELD Φ TOPOGRAPHY (3D)
+        - generic [ref=e29]:
+          - generic [ref=e30]: "METRIC:"
+          - generic [ref=e31]: z = field Φ height [AUDIT]
+        - generic [ref=e32]:
+          - generic [ref=e33]: "FRAME:"
+          - generic [ref=e34]: 0 / 0
+        - generic [ref=e35]:
+          - generic [ref=e36]: "SOURCE:"
+          - generic [ref=e37]: Audit
+        - generic [ref=e38]:
+          - generic [ref=e39]: "STATUS:"
+          - generic [ref=e40]: FIELD Φ INITIALIZATION
+        - generic [ref=e41]:
+          - generic [ref=e42]: "SPEED:"
+          - generic [ref=e43]: 1.0x
+          - slider [ref=e44] [cursor=pointer]: "1"
+        - generic [ref=e45]:
+          - generic [ref=e46]: "GOLDEN RATIO:"
+          - button "OFF" [ref=e47] [cursor=pointer]
+  - generic [ref=e48]:
+    - generic [ref=e49]:
+      - generic [ref=e50]: "!"
+      - strong [ref=e51]: "PROCEDURAL WARNING: SANDBOX"
+    - paragraph [ref=e52]: The Laboratory is a sandbox for visualizing preliminary results of partially verified hypotheses (running on real audit data). It is for exploratory verification of phenomena that must be subsequently confirmed via official whitepaper outputs.
+```
