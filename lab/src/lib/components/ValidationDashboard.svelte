@@ -700,7 +700,8 @@
         display: grid;
         grid-template-columns: 320px 1fr 280px;
         gap: 0;
-        height: 100vh;
+        height: 100%;
+        min-height: calc(100vh - 150px);
         background: #080808;
         color: #ddd;
         font-family: inherit;
@@ -729,6 +730,10 @@
         padding: 0;
         background: #00ffff;
         flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
     }
 
     .sidebar-right {
@@ -1112,6 +1117,39 @@
         background: rgba(255, 0, 0, 0.1);
     }
 
+    .charts-section {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    /* ── Empty State ─────────────────────────────────── */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 400px;
+        text-align: center;
+        gap: 10px;
+        color: #ccc;
+        opacity: 0.5;
+    }
+
+    .empty-state h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: #00ffff;
+        letter-spacing: 0.1rem;
+    }
+
+    .empty-state p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #888;
+    }
     .hist-list {
         display: flex;
         flex-direction: column;
@@ -1121,7 +1159,6 @@
         background: #1a1a1a;
         border: 1px solid #333;
         padding: 10px;
-        font-size: 0.85rem;
     }
     .hist-card.hist-active {
         border-color: #0ff;
