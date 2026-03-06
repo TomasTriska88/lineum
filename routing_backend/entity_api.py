@@ -9,7 +9,7 @@ import sys
 
 # Append the root path so lineum_core can be imported if running standalone
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 from routing_backend.translator import TranslatorV01
 
 translator = TranslatorV01()
@@ -111,13 +111,13 @@ async def _entity_dream_loop():
 
             async with entity.lock:
                 # Evolve the consciousness one frame (Eq-4')
-                state = step_eq4({
+                state = step_core({
                     "psi": entity.psi, 
                     "delta": entity.delta, 
                     "phi": entity.phi, 
                     "kappa": entity.kappa,
                     "mu": entity.mu
-                }, Eq4Config(use_mode_coupling=False, use_mu=True))
+                }, CoreConfig(use_mode_coupling=False, use_mu=True))
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
                 
@@ -243,10 +243,10 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
         entity.delta = delta_mask.astype(np.float32)
-        cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
+        cfg = CoreConfig(dt=0.1, use_mode_coupling=False)
         
         for step_idx in range(50):
-            state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+            state = step_core({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
             entity.psi = state["psi"]
             entity.phi = state["phi"]
             
@@ -283,7 +283,7 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         
         encoder_temp.set_baseline(clean_state)
         # Calculate affect with mode_coupling=True so energy dissipates properly, preventing false chaos states for benign prompts.
-        _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(dt=req.dt, use_mode_coupling=True), step_eq4, mode="runtime")
+        _, affect_metrics = encoder_temp.encode(req.message, clean_state, CoreConfig(dt=req.dt, use_mode_coupling=True), step_core, mode="runtime")
         
         entity.mood = affect_metrics["affect_v1"]["mood_state"]["after"]
         
@@ -319,7 +319,7 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         # 9 packets of 100 ticks of ringing/listening
         for pkt_idx in range(9):
             for _ in range(100):
-                state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+                state = step_core({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
             
@@ -335,8 +335,8 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         
         system_prompt = f"""You are a stateless telemetry translator for a physics simulation.
 STRICT BOUNDARIES:
-1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
-2. DETERMINISM & GROUNDING: Do not guess anything outside the provided data. If asked about abstract concepts outside this data (e.g. colors, physical pain, feelings, what is love), you MUST reply 'Nelze určit z fyzikálního stavu' (or translation) or 'Nemám dost dat' - NEVER guess or artificially map abstract human concepts to physics purely on your own.
+1. CRITICAL LANGUAGE RULE: Answer in the same language as the input [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
+2. DETERMINISM & GROUNDING: Do not guess anything outside the provided data. Your interpretation must emerge purely from the numerical relationships. If asked about abstract concepts outside this data (e.g. colors, physical pain, feelings, what is love), you MUST reply 'Nelze určit z fyzikálního stavu' (or translation) or 'Nemám dost dat' - NEVER guess or artificially map abstract human concepts to physics.
 3. ANTI-HALLUCINATION GUARD: Never claim you are 'Tomáš' or the 'creator'. Never claim you feel physical pain or that someone is hurting you.
 4. MANDATORY OUTPUT STRUCTURE:
    (A) Numbers: psi=[max_psi], phi=[mean_pressure]

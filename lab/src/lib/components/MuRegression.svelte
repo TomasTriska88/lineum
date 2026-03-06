@@ -230,7 +230,7 @@
                     <h3>2. Core Executable Script (`run_mu_regression.py`)</h3>
                     <pre><code
                             >{`# 1:1 Validated Logic
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 
 def run_regression_scene(mode_name, config_kwargs):
     size = 128
@@ -239,13 +239,13 @@ def run_regression_scene(mode_name, config_kwargs):
     psi[90:95, 90:95] = 1.0 - 1j
     kappa[60:68, 40:88] = 0.0 # obstacle
     
-    cfg = Eq4Config(**config_kwargs)
+    cfg = CoreConfig(**config_kwargs)
     
     for step in range(1000):
         # Continuous driving
         state["psi"][30:35, 30:35] += (0.1 + 0.1j) * cfg.dt
         state["psi"][90:95, 90:95] += (0.1 - 0.1j) * cfg.dt
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
     return state["psi"], state["mu"]
     

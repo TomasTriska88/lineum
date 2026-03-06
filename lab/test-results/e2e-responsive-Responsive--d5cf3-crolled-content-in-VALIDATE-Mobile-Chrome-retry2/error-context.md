@@ -1,0 +1,204 @@
+# Page snapshot
+
+```yaml
+- main [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "SIMULACRUM" [level=1] [ref=e6]
+      - generic [ref=e7]: Lineum Lab | Hypothesis Sandbox
+    - generic [ref=e8]:
+      - button "3D Simulator" [ref=e9] [cursor=pointer]
+      - button "Validation Core" [ref=e10] [cursor=pointer]
+      - button "LPL Compiler" [ref=e11] [cursor=pointer]
+  - generic [ref=e13]:
+    - complementary [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - button "🔒 VALIDATE Safe Presets" [ref=e17] [cursor=pointer]:
+            - text: 🔒 VALIDATE
+            - generic [ref=e18]: Safe Presets
+          - button "⚡ EXPLORE Unlocked" [ref=e19] [cursor=pointer]:
+            - text: ⚡ EXPLORE
+            - generic [ref=e20]: Unlocked
+        - generic [ref=e21]:
+          - generic [ref=e22]: Validation-grade
+          - paragraph [ref=e23]:
+            - strong [ref=e24]: Technical check — reproducible results.
+          - paragraph [ref=e25]: Locked presets + manifest + validation-grade.
+        - generic [ref=e26]:
+          - heading "Core Validation" [level=3] [ref=e27]
+          - 'button "Wave Sanity: T0/T1 (Diffusion vs Wave) Check if the Eq7 Wave Core engine is healthy. Unitary/norm conservation sanity vs diffusion. When: After any physics/core change. Expect: Energy stays flat and Edge Mass (8 cells) remains near zero." [ref=e28] [cursor=pointer]':
+            - strong [ref=e29]: "Wave Sanity: T0/T1 (Diffusion vs Wave)"
+            - generic [ref=e30]:
+              - paragraph [ref=e31]: Check if the Eq7 Wave Core engine is healthy.
+              - paragraph [ref=e32]: Unitary/norm conservation sanity vs diffusion.
+              - paragraph [ref=e33]:
+                - emphasis [ref=e34]: "When:"
+                - text: After any physics/core change.
+              - paragraph [ref=e35]:
+                - emphasis [ref=e36]: "Expect:"
+                - text: Energy stays flat and Edge Mass (8 cells) remains near zero.
+          - 'button "Hydrogen Validation Mini Can the Eq7 engine sustain the ''atomic cloud'' around the nucleus? ITP ground state + unitary hold (2D soft Coulomb analog). When: To confirm bound-state capability. Expect: A stable central blob with no major bleeding to the edges." [ref=e37] [cursor=pointer]':
+            - strong [ref=e38]: Hydrogen Validation Mini
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: Can the Eq7 engine sustain the 'atomic cloud' around the nucleus?
+              - paragraph [ref=e41]: ITP ground state + unitary hold (2D soft Coulomb analog).
+              - paragraph [ref=e42]:
+                - emphasis [ref=e43]: "When:"
+                - text: To confirm bound-state capability.
+              - paragraph [ref=e44]:
+                - emphasis [ref=e45]: "Expect:"
+                - text: A stable central blob with no major bleeding to the edges.
+          - 'button "μ Regression Snapshot Does the structure memory (μ) remain stable in wave mode? Compare μ dynamics: diffusion vs wave_projected_soft. When: After any ψ physics change. Expect: Both diffusion and wave modes should deposit structural memory consistently." [ref=e46] [cursor=pointer]':
+            - strong [ref=e47]: μ Regression Snapshot
+            - generic [ref=e48]:
+              - paragraph [ref=e49]: Does the structure memory (μ) remain stable in wave mode?
+              - paragraph [ref=e50]: "Compare μ dynamics: diffusion vs wave_projected_soft."
+              - paragraph [ref=e51]:
+                - emphasis [ref=e52]: "When:"
+                - text: After any ψ physics change.
+              - paragraph [ref=e53]:
+                - emphasis [ref=e54]: "Expect:"
+                - text: Both diffusion and wave modes should deposit structural memory consistently.
+          - 'button "Single-particle Bound-state Analogs Playground for tracing ''single cloud'' shapes in a potential. Single-particle Schr analogs (NOT multi-electron chemistry). When: For exploration and hypothesis testing. Expect: Depends on your parameters; watch the Energy chart for stability." [ref=e55] [cursor=pointer]':
+            - strong [ref=e56]: Single-particle Bound-state Analogs
+            - generic [ref=e57]:
+              - paragraph [ref=e58]: Playground for tracing 'single cloud' shapes in a potential.
+              - paragraph [ref=e59]: Single-particle Schr analogs (NOT multi-electron chemistry).
+              - paragraph [ref=e60]:
+                - emphasis [ref=e61]: "When:"
+                - text: For exploration and hypothesis testing.
+              - paragraph [ref=e62]:
+                - emphasis [ref=e63]: "Expect:"
+                - text: Depends on your parameters; watch the Energy chart for stability.
+          - heading "Reality Alignment Checks" [level=3] [ref=e64]
+          - 'button "RA-1: Wave Unitarity Does the wave keep its total ''mass''? Nothing should appear or vanish. N(t) norm conservation over 50 wave_baseline steps (Eq7). When: After any wave engine change. Expect: Flat N(t) line, unitarity error < 5%." [ref=e65] [cursor=pointer]':
+            - strong [ref=e67]: "RA-1: Wave Unitarity"
+            - generic [ref=e68]:
+              - paragraph [ref=e69]: Does the wave keep its total 'mass'? Nothing should appear or vanish.
+              - paragraph [ref=e70]: N(t) norm conservation over 50 wave_baseline steps (Eq7).
+              - paragraph [ref=e71]:
+                - emphasis [ref=e72]: "When:"
+                - text: After any wave engine change.
+              - paragraph [ref=e73]:
+                - emphasis [ref=e74]: "Expect:"
+                - text: Flat N(t) line, unitarity error < 5%.
+          - 'button "RA-2: Stable Bound State A particle cloud held by a field — does it stay or leak away? ITP ground state + 30-step wave hold. Edge mass + energy drift. When: To verify cloud stability. Expect: Central blob survives, edge mass < 10%, drift < 15%." [ref=e75] [cursor=pointer]':
+            - strong [ref=e77]: "RA-2: Stable Bound State"
+            - generic [ref=e78]:
+              - paragraph [ref=e79]: A particle cloud held by a field — does it stay or leak away?
+              - paragraph [ref=e80]: ITP ground state + 30-step wave hold. Edge mass + energy drift.
+              - paragraph [ref=e81]:
+                - emphasis [ref=e82]: "When:"
+                - text: To verify cloud stability.
+              - paragraph [ref=e83]:
+                - emphasis [ref=e84]: "Expect:"
+                - text: Central blob survives, edge mass < 10%, drift < 15%.
+          - 'button "RA-3: Excited State (Two-Lobe) Can we make a ''butterfly'' shape — genuinely different from the blob? Gram–Schmidt P-state + PCA lobe detection + orthogonality. When: To verify excited-state capability. Expect: Two clear lobes, ortho < 0.05, anisotropy > 0.15." [ref=e85] [cursor=pointer]':
+            - strong [ref=e87]: "RA-3: Excited State (Two-Lobe)"
+            - generic [ref=e88]:
+              - paragraph [ref=e89]: Can we make a 'butterfly' shape — genuinely different from the blob?
+              - paragraph [ref=e90]: Gram–Schmidt P-state + PCA lobe detection + orthogonality.
+              - paragraph [ref=e91]:
+                - emphasis [ref=e92]: "When:"
+                - text: To verify excited-state capability.
+              - paragraph [ref=e93]:
+                - emphasis [ref=e94]: "Expect:"
+                - text: Two clear lobes, ortho < 0.05, anisotropy > 0.15.
+          - 'button "RA-4: μ Memory Imprint LINEUM-ONLY Does the system remember where the particle was? Is the memory stable? μ field growth + boundedness + spatial correlation (Lineum-only). When: After μ parameter changes. Expect: μ grows, stays bounded, verdict: stable/saturating/runaway." [ref=e95] [cursor=pointer]':
+            - generic [ref=e96]:
+              - strong [ref=e97]: "RA-4: μ Memory Imprint"
+              - generic [ref=e98]: LINEUM-ONLY
+            - generic [ref=e99]:
+              - paragraph [ref=e100]: Does the system remember where the particle was? Is the memory stable?
+              - paragraph [ref=e101]: μ field growth + boundedness + spatial correlation (Lineum-only).
+              - paragraph [ref=e102]:
+                - emphasis [ref=e103]: "When:"
+                - text: After μ parameter changes.
+              - paragraph [ref=e104]:
+                - emphasis [ref=e105]: "Expect:"
+                - text: "μ grows, stays bounded, verdict: stable/saturating/runaway."
+          - 'button "RA-5: Driving vs Dephasing LINEUM-ONLY Is the system being actively ''pushed'' or just decaying? Linon forcing ON vs OFF: ΔN comparison (Lineum-only). When: To verify driving mechanism. Expect: Driven mode gains energy, undriven stays flat." [ref=e106] [cursor=pointer]':
+            - generic [ref=e107]:
+              - strong [ref=e108]: "RA-5: Driving vs Dephasing"
+              - generic [ref=e109]: LINEUM-ONLY
+            - generic [ref=e110]:
+              - paragraph [ref=e111]: Is the system being actively 'pushed' or just decaying?
+              - paragraph [ref=e112]: "Linon forcing ON vs OFF: ΔN comparison (Lineum-only)."
+              - paragraph [ref=e113]:
+                - emphasis [ref=e114]: "When:"
+                - text: To verify driving mechanism.
+              - paragraph [ref=e115]:
+                - emphasis [ref=e116]: "Expect:"
+                - text: Driven mode gains energy, undriven stays flat.
+          - 'button "RA-6: LPF Impact LINEUM-ONLY The low-pass filter is a numerical tool — does it change the result? wave_projected_soft LPF ON vs OFF (Lineum-only). When: To understand numerical tool impact. Expect: LPF changes dynamics (expected). Both runs stable." [ref=e117] [cursor=pointer]':
+            - generic [ref=e118]:
+              - strong [ref=e119]: "RA-6: LPF Impact"
+              - generic [ref=e120]: LINEUM-ONLY
+            - generic [ref=e121]:
+              - paragraph [ref=e122]: The low-pass filter is a numerical tool — does it change the result?
+              - paragraph [ref=e123]: wave_projected_soft LPF ON vs OFF (Lineum-only).
+              - paragraph [ref=e124]:
+                - emphasis [ref=e125]: "When:"
+                - text: To understand numerical tool impact.
+              - paragraph [ref=e126]:
+                - emphasis [ref=e127]: "Expect:"
+                - text: LPF changes dynamics (expected). Both runs stable.
+      - button "RUN SCENARIO" [ref=e129] [cursor=pointer]
+    - main [ref=e130]:
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - 'heading "Run Complete: test" [level=2] [ref=e133]'
+          - generic [ref=e134]: undefined
+        - generic [ref=e135]:
+          - button "Hide Details" [active] [ref=e136] [cursor=pointer]
+          - link "📥 Export Data Package (.zip)" [ref=e137] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/api/lab/runs/test/export
+      - generic [ref=e138]:
+        - generic [ref=e139]: ⚠️ Leaking edge
+        - generic [ref=e140]: "Max Edge Mass (8 cells): 0.050 | Final: 0.050"
+      - generic [ref=e142]:
+        - heading "Simulation Output" [level=3] [ref=e143]
+        - img "Validation Mathplot" [ref=e144]
+      - generic [ref=e145]:
+        - button "<E> Energy Conserved Maximize RESET <E> Energy Conserved CTRL + Scroll to ZOOM" [ref=e146] [cursor=pointer]:
+          - generic [ref=e147]:
+            - generic [ref=e148]:
+              - heading "<E> Energy Conserved" [level=3] [ref=e149]
+              - generic [ref=e150]:
+                - button "Maximize" [ref=e151]: MAX
+                - button "RESET" [ref=e152]
+            - img "<E> Energy Conserved" [ref=e153]
+            - paragraph [ref=e155]:
+              - generic [ref=e156]: CTRL
+              - text: + Scroll to ZOOM
+        - button "<r> Distance Spread Maximize RESET <r> Distance Spread CTRL + Scroll to ZOOM" [ref=e157] [cursor=pointer]:
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - heading "<r> Distance Spread" [level=3] [ref=e160]
+              - generic [ref=e161]:
+                - button "Maximize" [ref=e162]: MAX
+                - button "RESET" [ref=e163]
+            - img "<r> Distance Spread" [ref=e164]
+            - paragraph [ref=e166]:
+              - generic [ref=e167]: CTRL
+              - text: + Scroll to ZOOM
+        - button "Edge Mass (8 cells) Maximize RESET Edge Mass (8 cells) CTRL + Scroll to ZOOM" [ref=e168] [cursor=pointer]:
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - heading "Edge Mass (8 cells)" [level=3] [ref=e171]
+              - generic [ref=e172]:
+                - button "Maximize" [ref=e173]: MAX
+                - button "RESET" [ref=e174]
+            - img "Edge Mass (8 cells)" [ref=e175]
+            - paragraph [ref=e177]:
+              - generic [ref=e178]: CTRL
+              - text: + Scroll to ZOOM
+      - generic [ref=e180]: "{ \"run_id\": \"test\", \"timestamp\": 123 }"
+    - button "Help" [ref=e181] [cursor=pointer]: "?"
+  - generic [ref=e182]:
+    - generic [ref=e183]:
+      - generic [ref=e184]: "!"
+      - strong [ref=e185]: "PROCEDURAL WARNING: SANDBOX"
+    - paragraph [ref=e186]: The Laboratory is a sandbox for visualizing preliminary results of partially verified hypotheses (running on real audit data). It is for exploratory verification of phenomena that must be subsequently confirmed via official whitepaper outputs.
+```

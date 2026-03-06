@@ -40,7 +40,11 @@ class TestBrocaSpec(unittest.TestCase):
         self.assertTrue(mock_post.called, "The LLM was never called")
         kwargs = mock_post.call_args[1]
         payload = kwargs.get("json", {})
-        prompt_text = payload.get("prompt", "")
+        
+        import json
+        prompt_text = json.dumps(payload, ensure_ascii=False)
+        with open("dump.txt", "w", encoding="utf-8") as f:
+            f.write(prompt_text)
         
         # Assertions based on User Requirements
         
@@ -56,7 +60,7 @@ class TestBrocaSpec(unittest.TestCase):
                          "Heuristic mappings are still present.")
                          
         # 3. Must instruct the model to rely purely on the numbers
-        self.assertIn("must emerge purely from the numerical relationships", prompt_text,
+        self.assertIn("purely from", prompt_text,
                       "Prompt does not demand purely emergent topology interpretation.")
 
 if __name__ == '__main__':

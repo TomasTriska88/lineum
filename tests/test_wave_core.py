@@ -7,8 +7,8 @@ try:
 except ImportError:
     HAS_TORCH = False
 
-from lineum_core.math import Eq4Config, step_eq4
-from scripts.validation_core import run_hydrogen_sweep, run_mu_regression_snapshot
+from lineum_core.math import CoreConfig, step_core
+from scripts.validation_core import run_hydrogen_sweep, run_mu_regression_snapshot, GOLDEN_HYDRO_SWEEP
 
 @pytest.mark.skipif(not HAS_TORCH, reason="Wave core requires PyTorch")
 def test_wave_unitarity_T0():
@@ -33,7 +33,7 @@ def test_wave_unitarity_T0():
     
     # We test just the exact FFT unitary step. To isolate it, we disable interactions/drift 
     # to avoid numerical drift from explicit Euler half-steps.
-    cfg_fwd = Eq4Config(dt=0.1, physics_mode_psi="wave_baseline", psi_amp_cap=1e6)
+    cfg_fwd = CoreConfig(dt=0.1, physics_mode_psi="wave_baseline", psi_amp_cap=1e6)
     
     # Monkeypatch the compute_N inside _step_pytorch physically impossible here,
     # but we can set drift/interactions close to zero. Actually, even with drift,
@@ -43,14 +43,14 @@ def test_wave_unitarity_T0():
     # Let's just run it with standard config and check if it resembles the original 
     # state better than diffusion.
     
-    cfg_fwd = Eq4Config(
+    cfg_fwd = CoreConfig(
         dt=0.1, 
         physics_mode_psi="wave_baseline", 
         use_mode_coupling=False, 
         drift_strength=0.0, 
         noise_strength=0.0
     )
-    cfg_bwd = Eq4Config(
+    cfg_bwd = CoreConfig(
         dt=-0.1, 
         physics_mode_psi="wave_baseline", 
         use_mode_coupling=False,
@@ -58,8 +58,8 @@ def test_wave_unitarity_T0():
         noise_strength=0.0
     )
     
-    s1 = step_eq4(state, cfg_fwd)
-    s2 = step_eq4(s1, cfg_bwd)
+    s1 = step_core(state, cfg_fwd)
+    s2 = step_core(s1, cfg_bwd)
     
     psi_final = s2["psi"]
     
@@ -90,7 +90,7 @@ def test_wave_norm_T1():
     
     state = {"psi": psi0.copy(), "phi": phi0.copy(), "kappa": kappa0.copy()}
     
-    cfg = Eq4Config(
+    cfg = CoreConfig(
         dt=0.1, 
         physics_mode_psi="wave_baseline", 
         use_mode_coupling=False, 
@@ -101,7 +101,7 @@ def test_wave_norm_T1():
     N0 = np.sum(np.abs(psi0)**2)
     
     for _ in range(50):
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
     N_final = np.sum(np.abs(state["psi"])**2)
     drift = abs(N_final - N0) / N0
@@ -112,24 +112,41 @@ def test_wave_norm_T1():
 @pytest.mark.skipif(not HAS_TORCH, reason="Wave core requires PyTorch")
 def test_hydrogen_mini():
     """
-    Smoke test the ground state of a Hydrogen atom using the exact 
-    shared validation pipeline that powers the Web Laboratory.
+    Golden validation test: Hydrogen ground state using the exact 
+    golden sweep config that powers the Web Laboratory VALIDATE mode.
+    Asserts overall_pass == True (all expectations met).
     """
-    # 1. Run just a single 64x64 Z=2.0 grid to test baseline sanity
-    val_data = run_hydrogen_sweep([64], [2.0], [0.1])
+    grid_sizes = [s[0] for s in GOLDEN_HYDRO_SWEEP]
+    Z_vals = [s[1] for s in GOLDEN_HYDRO_SWEEP]
+    eps_vals = [s[2] for s in GOLDEN_HYDRO_SWEEP]
+    wave_dt = GOLDEN_HYDRO_SWEEP[0][3] if len(GOLDEN_HYDRO_SWEEP[0]) > 3 else 0.01
+    
+    val_data = run_hydrogen_sweep(grid_sizes, Z_vals, eps_vals, wave_dt=wave_dt)
     results = val_data["results"]
-    assert len(results) == 1
+    assert len(results) == len(GOLDEN_HYDRO_SWEEP)
     
-    res = results[0]
-    edge_mass = res["edge_mass_cells"]
+    # P8: Assert the validation verdict
+    assert val_data["overall_pass"] is True, (
+        f"Golden HYDRO validation FAILED!\n"
+        f"expectation_results: {val_data['expectation_results']}"
+    )
     
-    assert edge_mass < 0.1, f"Periodic boundaries breached! Ground state spilled. Edge mass: {edge_mass}"
+    # P8: Assert all individual expectations passed
+    for exp in val_data["expectation_results"]:
+        assert exp["passed"], (
+            f"Expectation FAILED: {exp['label']}\n"
+            f"  Measured: {exp['measured']} {exp['op']} {exp['expected']}"
+        )
+    
+    # Legacy: edge mass sanity check
+    res = results[-1]
+    assert res["edge_mass_cells"] < 0.1, f"Ground state spilled. Edge mass: {res['edge_mass_cells']}"
     
 @pytest.mark.skipif(not HAS_TORCH, reason="Wave core requires PyTorch")
 def test_mu_regression_snapshot_golden():
     """
-    Verifies that the Mu regression snapshot runs successfully without NaN
-    using the shared pipeline in lineum_core.validation
+    Golden validation test: Mu regression snapshot.
+    Asserts overall_pass == True (all expectations met).
     """
     val_data = run_mu_regression_snapshot()
     
@@ -138,6 +155,20 @@ def test_mu_regression_snapshot_golden():
     assert "mu_diff" in val_data
     assert "mu_wave" in val_data
     
+    # P8: Assert the validation verdict
+    assert val_data["overall_pass"] is True, (
+        f"Golden MU REGRESSION validation FAILED!\n"
+        f"expectation_results: {val_data['expectation_results']}"
+    )
+    
+    # P8: Assert all individual expectations passed
+    for exp in val_data["expectation_results"]:
+        assert exp["passed"], (
+            f"Expectation FAILED: {exp['label']}\n"
+            f"  Measured: {exp['measured']} {exp['op']} {exp['expected']}"
+        )
+    
+    # Legacy checks
     assert not np.isnan(np.sum(val_data["mu_wave"]))
     assert np.max(val_data["mu_wave"]) > 0.1 # Some memory must have formed
 
@@ -154,7 +185,7 @@ def test_smoke_wave_projected_soft():
     kappa = np.where(np.random.rand(size, size) > 0.8, 0.0, 1.0)
     
     state = {"psi": psi, "phi": phi, "kappa": kappa}
-    cfg = Eq4Config(
+    cfg = CoreConfig(
         dt=0.1, 
         physics_mode_psi="wave_projected_soft", 
         wave_lpf_enabled=True, 
@@ -162,7 +193,7 @@ def test_smoke_wave_projected_soft():
     )
     
     for _ in range(300):
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
     tele = state["telemetry"]
     

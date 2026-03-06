@@ -15,7 +15,7 @@ def main():
     sys.stdout = c
     sys.stderr = c
     try:
-        pytest.main(["portal/src/lib/data/routing_backend/test_lab_api.py", "-v", "--tb=short"])
+        pytest.main(["routing_backend/test_lab_api.py", "-v", "--tb=short"])
     finally:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__

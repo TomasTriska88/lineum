@@ -238,24 +238,24 @@
                     </h3>
                     <pre><code
                             >{`# 1:1 Validated Logic
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 
 def run_experiment(grid_size, Z, eps):
     size = grid_size
     V = -Z / np.sqrt(R**2 + eps**2)
     phi_pot = np.clip(-V * 100, 0, 1000)
     
-    cfg_itp = Eq4Config(dt=0.1, physics_mode_psi="diffusion", use_mode_coupling=False)
+    cfg_itp = CoreConfig(dt=0.1, physics_mode_psi="diffusion", use_mode_coupling=False)
     # Phase A: Imaginary time cooling
     for _ in range(300):
-        state = step_eq4(state, cfg_itp)
+        state = step_core(state, cfg_itp)
         N_curr = np.sum(np.abs(state["psi"])**2)
         state["psi"] = state["psi"] / np.sqrt(N_curr)
         
-    cfg_wave = Eq4Config(dt=0.1, physics_mode_psi="wave_baseline", use_mode_coupling=False)
+    cfg_wave = CoreConfig(dt=0.1, physics_mode_psi="wave_baseline", use_mode_coupling=False)
     # Phase B: Unitary wave propagation (Sanity check)
     for _ in range(50):
-        state = step_eq4(state, cfg_wave)
+        state = step_core(state, cfg_wave)
         
     return metrics`}</code
                         ></pre>

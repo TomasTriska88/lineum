@@ -10,7 +10,7 @@ import re
 
 # Add core to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 from routing_backend.text_to_wave_encoder import TextToWaveEncoder
 
 GRID_SIZE = 64
@@ -73,7 +73,7 @@ def build_identity_pipeline(zip_path, identifier=None):
     print(f"Source: {zip_path}\\n")
 
     # 1. State Initialization
-    cfg = Eq4Config(
+    cfg = CoreConfig(
         use_mode_coupling=True, 
         use_mu=True,
         stencil_type="LAP4"  # Default deterministic kernel
@@ -121,7 +121,7 @@ def build_identity_pipeline(zip_path, identifier=None):
                         text=chunk,
                         state=state,
                         cfg=cfg,
-                        step_fn=step_eq4,
+                        step_fn=step_core,
                         mode="identity_burn",
                         personalization_depth=1.0
                     )
@@ -147,7 +147,7 @@ def build_identity_pipeline(zip_path, identifier=None):
     print("\\n-> Cooling Phase (Running 200 ticks without input to rest topology)...")
     state["delta"] = np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.float64)
     for _ in range(200):
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
 
     # 5. Export
     npz_path = os.path.join(out_dir, f"identity_seed_{identifier}.npz")

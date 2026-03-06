@@ -1,0 +1,3 @@
+﻿
+Running 12 tests using 1 worker
+├Ś├ŚF┬Ě┬Ě┬Ě┬Ě├Ś

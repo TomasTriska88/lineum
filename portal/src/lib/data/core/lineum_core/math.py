@@ -10,7 +10,7 @@ except ImportError:
     USE_PYTORCH = False
 
 @dataclass(frozen=True)
-class Eq4Config:
+class CoreConfig:
     # --- Physic Constants ---
     dt: float = 1.0
     psi_diffusion: float = 0.05
@@ -135,7 +135,7 @@ def _cap_complex_magnitude_torch(z, cap):
     return z
 
 
-def _step_numpy(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
+def _step_numpy(state: Dict[str, Any], cfg: CoreConfig) -> Dict[str, Any]:
     psi = np.asarray(state.get("psi"), dtype=np.complex128)
     phi = np.asarray(state.get("phi"), dtype=np.float64)
     kappa = np.asarray(state.get("kappa"), dtype=np.float64)
@@ -248,7 +248,7 @@ def _get_fft_symbol(size: int, stencil_type: str, device, dtype):
     _fft_symbol_cache[key] = symbol
     return symbol
 
-def _step_pytorch(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
+def _step_pytorch(state: Dict[str, Any], cfg: CoreConfig) -> Dict[str, Any]:
     import torch
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
@@ -437,7 +437,7 @@ def _step_pytorch(state: Dict[str, Any], cfg: Eq4Config) -> Dict[str, Any]:
     return out_state
 
 
-def step_eq4(state: Dict[str, Any], cfg: Eq4Config = Eq4Config()) -> Dict[str, Any]:
+def step_core(state: Dict[str, Any], cfg: CoreConfig = CoreConfig()) -> Dict[str, Any]:
     """
     The Single Source of Truth for Lineum Canonical Eq-4' Physics.
     Evaluates the continuous topological math across the discretized ROM (\kappa) and RAM (\phi).
@@ -449,3 +449,7 @@ def step_eq4(state: Dict[str, Any], cfg: Eq4Config = Eq4Config()) -> Dict[str, A
         return _step_pytorch(state, cfg)
             
     return _step_numpy(state, cfg)
+
+# --- Legacy Aliases (KROK A - Renaming safely) ---
+CoreConfig = CoreConfig
+step_core = step_core

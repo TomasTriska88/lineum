@@ -283,7 +283,7 @@ class TextToWaveEncoder:
             
         metrics["fingerprint"] = {
             "engine_rev": self.engine_rev,
-            "eq4_config": cfg_dict,
+            "core_config": cfg_dict,
             "mode": mode,
             "checksums": {
                 "before": {

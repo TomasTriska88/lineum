@@ -5,7 +5,7 @@ import sys
 
 # Add core to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 
 GRID_SIZE = 64
 
@@ -22,12 +22,12 @@ def _init_mock_state(seed=42):
 
 def test_no_nan_inf_long_horizon():
     # 5 different seeds, 200 ticks
-    cfg = Eq4Config(use_mode_coupling=True, use_mu=True)
+    cfg = CoreConfig(use_mode_coupling=True, use_mu=True)
     
     for seed in [10, 20, 30, 40, 50]:
         state = _init_mock_state(seed)
         for _ in range(200):
-            state = step_eq4(state, cfg)
+            state = step_core(state, cfg)
         
         assert not np.isnan(np.sum(state["psi"])), f"Found NaN in Psi at seed {seed}"
         assert not np.isnan(np.sum(state["phi"])), f"Found NaN in Phi at seed {seed}"
@@ -36,14 +36,14 @@ def test_no_nan_inf_long_horizon():
 
 def test_cfl_sanity_guards():
     # Run a highly volitile state and ensure it never eclipses the 1e6 guards
-    cfg = Eq4Config(use_mode_coupling=True)
+    cfg = CoreConfig(use_mode_coupling=True)
     state = _init_mock_state(42)
     
     # Inject impossible energy burst
     state["delta"] = np.ones((GRID_SIZE, GRID_SIZE), dtype=np.float64) * 500000.0
     
     for _ in range(50):
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
     p_amp = np.abs(state["psi"])
     g_px, g_py = np.gradient(p_amp)
@@ -58,14 +58,14 @@ def test_cfl_sanity_guards():
 
 def test_mode_coupling_conservation():
     # Ensure that energy injected into Phi is exactly drained from Psi
-    cfg = Eq4Config(use_mode_coupling=True, use_mu=False, dt=1.0)
+    cfg = CoreConfig(use_mode_coupling=True, use_mu=False, dt=1.0)
     state = _init_mock_state(101)
     
     # Store kinematic energy prior to mode coupling
     initial_e_psi = np.sum(np.abs(state["psi"])**2)
     initial_phi = np.sum(state["phi"])
     
-    state = step_eq4(state, cfg)
+    state = step_core(state, cfg)
     
     # Mode coupling ensures Phi gains what Psi loses kinetically (minus diffusion/dissipation which is handled natively)
     phi_gain = np.sum(state["phi"]) - initial_phi
@@ -75,11 +75,11 @@ def test_mode_coupling_conservation():
 
 def test_determinism_checksum():
     # Critical test. Ensures cross-CPU and backwards compat determinism
-    cfg = Eq4Config(use_mode_coupling=True, use_mu=True, stencil_type="LAP4")
+    cfg = CoreConfig(use_mode_coupling=True, use_mu=True, stencil_type="LAP4")
     state = _init_mock_state(888)
     
     for _ in range(100):
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
     phi_sum = np.sum(state["phi"])
     psi_sum_amp = np.sum(np.abs(state["psi"]))
@@ -92,8 +92,8 @@ def test_determinism_checksum():
 
 def test_grid_dependency_ablation_lap4_vs_lap8():
     # Comparing how emergence metrics differ between anisotropic and isotropic stencils
-    cfg_4 = Eq4Config(stencil_type="LAP4", use_mode_coupling=True, use_mu=True)
-    cfg_8 = Eq4Config(stencil_type="LAP8", use_mode_coupling=True, use_mu=True)
+    cfg_4 = CoreConfig(stencil_type="LAP4", use_mode_coupling=True, use_mu=True)
+    cfg_8 = CoreConfig(stencil_type="LAP8", use_mode_coupling=True, use_mu=True)
     
     state_4 = _init_mock_state(42)  # Shared deterministic seed
     state_8 = _init_mock_state(42)
@@ -104,8 +104,8 @@ def test_grid_dependency_ablation_lap4_vs_lap8():
     last_phi_8 = np.copy(state_8["phi"])
     
     for t in range(200):
-        state_4 = step_eq4(state_4, cfg_4)
-        state_8 = step_eq4(state_8, cfg_8)
+        state_4 = step_core(state_4, cfg_4)
+        state_8 = step_core(state_8, cfg_8)
         
         energy_4 += np.sum(np.abs(state_4["psi"])**2)
         energy_8 += np.sum(np.abs(state_8["psi"])**2)

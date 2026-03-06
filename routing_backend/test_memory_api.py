@@ -28,7 +28,7 @@ def test_imprints_api():
     # then test the GET API.
     
     from routing_backend.text_to_wave_encoder import TextToWaveEncoder
-    from lineum_core.math import Eq4Config, step_eq4
+    from lineum_core.math import CoreConfig, step_core
     
     print("2. Burning a test memory imprint natively...")
     encoder = TextToWaveEncoder(grid_size=64, plasticity_tau=200)
@@ -47,8 +47,8 @@ def test_imprints_api():
     state_after, metrics = encoder.encode(
         text="Kritický gradient na pólech! Masivní anomálie, destrukce! Fyzikální zhroucení!", 
         state=state, 
-        cfg=Eq4Config(dt=1.0, use_mu=True, mu_peak_cutoff_ratio=0.1),
-        step_fn=step_eq4, 
+        cfg=CoreConfig(dt=1.0, use_mu=True, mu_peak_cutoff_ratio=0.1),
+        step_fn=step_core, 
         mode="identity_burn",
         entity_id=ENTITY_ID
     )
@@ -217,7 +217,7 @@ def test_affect_v2_determinism():
 
 def _mock_encoder_encode(text, entity_id, imprint_mode, safety_score=1.0, was_fallback=False, session_count=0):
     from routing_backend.text_to_wave_encoder import TextToWaveEncoder
-    from lineum_core.math import Eq4Config, step_eq4
+    from lineum_core.math import CoreConfig, step_core
     import numpy as np
     
     requests.post(f"{BASE_URL}/entity/wake", json={"entity_id": entity_id, "grid_size": 64})
@@ -235,8 +235,8 @@ def _mock_encoder_encode(text, entity_id, imprint_mode, safety_score=1.0, was_fa
     return encoder.encode(
         text=text, 
         state=state.copy(), 
-        cfg=Eq4Config(dt=1.0, use_mu=True, mu_peak_cutoff_ratio=0.1),
-        step_fn=step_eq4, 
+        cfg=CoreConfig(dt=1.0, use_mu=True, mu_peak_cutoff_ratio=0.1),
+        step_fn=step_core, 
         mode="identity_burn",
         entity_id=entity_id,
         imprint_mode=imprint_mode,

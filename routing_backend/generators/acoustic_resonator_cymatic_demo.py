@@ -7,7 +7,7 @@ from matplotlib.animation import PillowWriter
 from tqdm import tqdm
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-from lineum_core.math import Eq4Config, _step_pytorch
+from lineum_core.math import CoreConfig, _step_pytorch
 
 def run_acoustic_resonator_demo(element_name="Carbon", frequency=4.0, radius=0.3, confinement_strength=0.9):
     """
@@ -47,7 +47,7 @@ def run_acoustic_resonator_demo(element_name="Carbon", frequency=4.0, radius=0.3
     speaker_shape = injection_shape.cpu().numpy() * 5.0 # Acoustic force
     
     # 3. Eq-4 Config
-    cfg = Eq4Config(dt=1.0)
+    cfg = CoreConfig(dt=1.0)
     
     state = {
         "psi": psi.cpu().numpy(),
