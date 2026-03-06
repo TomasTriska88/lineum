@@ -8,6 +8,7 @@
     import InteractiveChart from "./lib/components/InteractiveChart.svelte";
     import LplCompiler from "./lib/components/LplCompiler.svelte";
     import ValidationDashboard from "./lib/components/ValidationDashboard.svelte";
+    import WhitepaperClaims from "./lib/components/WhitepaperClaims.svelte";
     import { t, locale } from "./lib/i18n";
 
     let container;
@@ -32,8 +33,12 @@
     const savedMode = localStorage.getItem("lab_main_mode") || "simulator";
     const savedTab = localStorage.getItem("lab_active_tab") || "stats";
 
-    let mainMode = savedMode; // 'simulator' | 'lpl' | 'validation'
+    let mainMode = savedMode; // 'simulator' | 'lpl' | 'validation' | 'whitepaper'
     let activeTab = savedTab;
+
+    // Global Audit State
+    let isGeneratingAudit = false;
+    let globalAuditStatus = "unknown"; // Will be synced when possible
 
     $: {
         localStorage.setItem("lab_main_mode", mainMode);
@@ -136,6 +141,34 @@
             loading = false;
         }
     }
+
+    async function generateAuditContract() {
+        if (isGeneratingAudit) return;
+        isGeneratingAudit = true;
+        try {
+            const res = await fetch("/api/lab/audit/generate", {
+                method: "POST",
+            });
+            const data = await res.json();
+            if (res.ok && data.status === "success") {
+                globalAuditStatus = "done";
+                // Optionally dispatch an event or force reload if complex state syncing is needed
+                // For now, subcomponents poll or fetch on mount:
+                window.dispatchEvent(
+                    new CustomEvent("audit_contract_generated"),
+                );
+            } else {
+                throw new Error(
+                    data.detail || "Failed to generate audit contract",
+                );
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Audit Generation Failed\n\n" + e.message);
+        } finally {
+            isGeneratingAudit = false;
+        }
+    }
 </script>
 
 <main>
@@ -180,10 +213,29 @@
                 Validation Core
             </button>
             <button
+                class:active={mainMode === "whitepaper"}
+                on:click={() => (mainMode = "whitepaper")}
+            >
+                Whitepapers
+            </button>
+            <button
                 class:active={mainMode === "lpl"}
                 on:click={() => (mainMode = "lpl")}
             >
                 LPL Compiler
+            </button>
+            <div class="divider"></div>
+            <button
+                class="btn-generate-audit {isGeneratingAudit ? 'pulse' : ''}"
+                on:click={generateAuditContract}
+                disabled={isGeneratingAudit}
+                title="Generates a local canonical contract in output_wp/"
+            >
+                {#if isGeneratingAudit}
+                    <span class="icon">⏳</span> GENERATING...
+                {:else}
+                    🛡️ GENERATE AUDIT CONTRACT
+                {/if}
             </button>
         </div>
 
@@ -207,6 +259,10 @@
     {#if mainMode === "validation"}
         <div class="fullscreen-mode">
             <ValidationDashboard />
+        </div>
+    {:else if mainMode === "whitepaper"}
+        <div class="fullscreen-mode">
+            <WhitepaperClaims />
         </div>
     {:else if mainMode === "lpl"}
         <div class="fullscreen-mode">
@@ -766,7 +822,7 @@
         padding: 8px 30px;
         backdrop-filter: blur(12px);
         box-sizing: border-box;
-        pointer-events: all;
+        pointer-events: none;
         z-index: 300;
         display: flex;
         justify-content: center;

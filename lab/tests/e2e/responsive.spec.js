@@ -112,7 +112,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.getByRole('button', { name: /Show Scientific Details/i }).click();
 
         // Target the very bottom element inside the results panel
-        const bottomElement = page.locator('.visuals-grid');
+        const bottomElement = page.locator('.export-section');
         await expect(bottomElement).toBeVisible();
 
         // Scroll exactly to the bottom element, bypassing manual container logic which breaks between Desktop and Mobile
@@ -165,7 +165,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // Click Clear All History
-        await page.getByRole('button', { name: '🗑️ Clear' }).click();
+        await page.locator('.clear-db-btn').click();
 
         // Our custom dialog should appear
         const dialog = page.getByRole('dialog');
@@ -177,5 +177,47 @@ test.describe('Responsive Lab Navigation & Layout', () => {
 
         // Dialog should close
         await expect(dialog).toBeHidden();
+    });
+
+    test('Sandbox disclaimer does not block clicks on elements underneath', async ({ page }) => {
+        await page.route('*/api/lab/history', async route => await route.fulfill({ json: [] }));
+        await page.route('/data/manifest.json', async route => await route.fulfill({ json: [] }));
+
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await page.goto('http://127.0.0.1:5174/');
+        await page.getByRole('button', { name: 'Validation Core' }).click();
+
+        // The disclaimer should be visible
+        const disclaimer = page.locator('.sandbox-disclaimer');
+        await expect(disclaimer).toBeVisible();
+
+        // The disclaimer must have pointer-events: none so it doesn't intercept clicks
+        const pointerEvents = await disclaimer.evaluate(el => getComputedStyle(el).pointerEvents);
+        expect(pointerEvents).toBe('none');
+    });
+
+    test('RUN SCENARIO button is above sandbox disclaimer footer', async ({ page }) => {
+        await page.route('*/api/lab/history', async route => await route.fulfill({ json: [] }));
+        await page.route('/data/manifest.json', async route => await route.fulfill({ json: [] }));
+
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await page.goto('http://127.0.0.1:5174/');
+        await page.getByRole('button', { name: 'Validation Core' }).click();
+
+        // Navigate to Explore mode so presets + RUN SCENARIO button are visible
+        await page.getByText('⚡ EXPLORE').click();
+        await page.getByText('Single-particle Bound-state Analogs').click();
+
+        // RUN SCENARIO button should be visible
+        const runBtn = page.getByRole('button', { name: 'RUN SCENARIO' });
+        await expect(runBtn).toBeVisible();
+
+        // Its bottom edge should be above the disclaimer's top edge
+        const runBox = await runBtn.boundingBox();
+        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimerBox = await disclaimer.boundingBox();
+
+        // RUN SCENARIO bottom must be <= disclaimer top (button is above or touching the footer)
+        expect(runBox.y + runBox.height).toBeLessThanOrEqual(disclaimerBox.y + 2); // 2px tolerance
     });
 });

@@ -1,0 +1,54 @@
+{
+  "run_tag": "spec6_false_s41",
+  "step": 1975,
+  "updated_utc": "2026-02-27T19:18:18.185297Z",
+  "data": {
+    "window": 1,
+    "latest": {
+      "center_amp": 1000000.0,
+      "phi_center_abs": 1565.5901872329573,
+      "vortices_total": 13,
+      "net_charge": -1,
+      "particles_count": 3755
+    },
+    "tail": {
+      "amplitude_log": [
+        [
+          1975,
+          1000000.0
+        ]
+      ],
+      "phi_center_log": [
+        [
+          1975,
+          1565.5901872329573
+        ]
+      ],
+      "topo_log": [
+        [
+          1975,
+          6,
+          7,
+          -1,
+          13
+        ]
+      ],
+      "particle_log": [
+        [
+          1975,
+          63.35925432756325,
+          63.82476697736352,
+          3755
+        ]
+      ],
+      "interaction_log": [
+        [
+          1975,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  }
+}

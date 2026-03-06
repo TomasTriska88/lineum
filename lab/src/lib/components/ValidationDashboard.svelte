@@ -2,6 +2,7 @@
     import { onMount, tick } from "svelte";
     import InteractiveChart from "./InteractiveChart.svelte";
     import ConfirmDialog from "./ConfirmDialog.svelte";
+    import Scorecard from "./Scorecard.svelte";
 
     let mode = "validate"; // 'validate' (locked) or 'explore' (unlocked)
     let selectedScenario = "t0";
@@ -213,6 +214,47 @@
     let chartConfigs = [];
 
     let showDeleteConfirm = false;
+    let showGlossary = false;
+    let stabilizeMsg = null;
+
+    const glossaryItems = [
+        {
+            term: "Validate",
+            def: "Locked configuration that MUST pass. Reproducible, citable.",
+        },
+        {
+            term: "Explore",
+            def: "Free-parameter sandbox. Not validation-grade.",
+        },
+        {
+            term: "Cloud / Blob",
+            def: "The probability density of the particle — brighter = more likely to find it.",
+        },
+        {
+            term: "Ground state",
+            def: "The lowest-energy shape the particle settles into (round blob).",
+        },
+        {
+            term: "P-state",
+            def: "An excited shape with two lobes and a node (zero) in the center.",
+        },
+        {
+            term: "Leak",
+            def: "When the particle cloud drifts to the edge of the simulation grid — signals instability.",
+        },
+        {
+            term: "Edge Mass",
+            def: "Fraction of the cloud touching the grid border. Below 5% = stable.",
+        },
+        {
+            term: "Norm N(t)",
+            def: "Total probability mass. Should stay ~1.0 (unitarity).",
+        },
+        {
+            term: "Auto-Fix",
+            def: "One-click stabilization: halves dt, raises eps, or enlarges the grid.",
+        },
+    ];
 
     $: if (currentResult && currentResult.timeseries_data) {
         chartConfigs = [];
@@ -334,7 +376,7 @@
 
     async function fetchHealth() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/lab/health");
+            const res = await fetch("/api/lab/health");
             if (res.ok) systemHealth = await res.json();
         } catch (e) {
             console.error("Health fetch failed:", e);
@@ -343,7 +385,7 @@
 
     async function fetchHistory() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/lab/history");
+            const res = await fetch("/api/lab/history");
             if (res.ok) history = await res.json();
         } catch (e) {
             console.error("History fetch failed:", e);
@@ -357,7 +399,7 @@
     async function executeClearHistory() {
         showDeleteConfirm = false;
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/lab/history", {
+            const res = await fetch("/api/lab/history", {
                 method: "DELETE",
             });
             if (res.ok) {
@@ -371,7 +413,7 @@
     }
 
     async function fetchRunData(run_id) {
-        const res = await fetch(`http://127.0.0.1:8000/api/lab/runs/${run_id}`);
+        const res = await fetch(`/api/lab/runs/${run_id}`);
         if (!res.ok) throw new Error("Could not load run data");
         return await res.json();
     }
@@ -401,7 +443,7 @@
         try {
             let res;
             if (selectedScenario === "play") {
-                res = await fetch("http://127.0.0.1:8000/api/lab/playground", {
+                res = await fetch("/api/lab/playground", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -411,22 +453,22 @@
             } else {
                 let url;
                 if (selectedScenario === "hydro" || selectedScenario === "t0")
-                    url = "http://127.0.0.1:8000/api/lab/hydrogen/sweep";
+                    url = "/api/lab/hydrogen/sweep";
                 else if (selectedScenario === "mu")
-                    url = "http://127.0.0.1:8000/api/lab/regression/snapshot";
+                    url = "/api/lab/regression/snapshot";
                 else if (selectedScenario === "ra1")
-                    url = "http://127.0.0.1:8000/api/lab/ra/unitarity";
+                    url = "/api/lab/ra/unitarity";
                 else if (selectedScenario === "ra2")
-                    url = "http://127.0.0.1:8000/api/lab/ra/bound-state";
+                    url = "/api/lab/ra/bound-state";
                 else if (selectedScenario === "ra3")
-                    url = "http://127.0.0.1:8000/api/lab/ra/excited-state";
+                    url = "/api/lab/ra/excited-state";
                 else if (selectedScenario === "ra4")
-                    url = "http://127.0.0.1:8000/api/lab/ra/mu-memory";
+                    url = "/api/lab/ra/mu-memory";
                 else if (selectedScenario === "ra5")
-                    url = "http://127.0.0.1:8000/api/lab/ra/driving";
+                    url = "/api/lab/ra/driving";
                 else if (selectedScenario === "ra6")
-                    url = "http://127.0.0.1:8000/api/lab/ra/lpf-impact";
-                else url = "http://127.0.0.1:8000/api/lab/regression/snapshot";
+                    url = "/api/lab/ra/lpf-impact";
+                else url = "/api/lab/regression/snapshot";
 
                 if (isGolden) url += "?golden=true";
                 res = await fetch(url);
@@ -438,6 +480,10 @@
             }
             currentResult = await res.json();
             await fetchHistory();
+        } catch (e) {
+            errorMsg =
+                e.message || "Connection failed — is the backend running?";
+            console.error("executeScenario error:", e);
         } finally {
             running = false;
             await tick();
@@ -449,18 +495,67 @@
         }
     }
 
-    function applyFix() {
+    async function makeStable() {
+        stabilizeMsg = null;
         mode = "explore";
         selectedScenario = "play";
-        if (exploreConfig.dt > 0.01) {
-            exploreConfig.dt = Number((exploreConfig.dt / 2).toFixed(4));
-        } else {
-            exploreConfig.grid_size = Math.min(
-                exploreConfig.grid_size * 2,
-                256,
-            );
+
+        // Multi-step stabilization: dt↓ → eps↑ → grid↑
+        const MAX_GRID = 256;
+        const attempts = [
+            () => {
+                if (exploreConfig.dt > 0.005) {
+                    exploreConfig.dt = Number(
+                        (exploreConfig.dt / 2).toFixed(4),
+                    );
+                    return true;
+                }
+                return false;
+            },
+            () => {
+                if (exploreConfig.eps < 0.5) {
+                    exploreConfig.eps = Number(
+                        (exploreConfig.eps * 1.5).toFixed(4),
+                    );
+                    return true;
+                }
+                return false;
+            },
+            () => {
+                if (exploreConfig.grid_size < MAX_GRID) {
+                    exploreConfig.grid_size = Math.min(
+                        exploreConfig.grid_size * 2,
+                        MAX_GRID,
+                    );
+                    return true;
+                }
+                return false;
+            },
+        ];
+
+        for (const attempt of attempts) {
+            attempt();
+            await executeScenario();
+            // Check if stable now
+            if (currentResult?.timeseries_data?.edge_mass) {
+                const maxL = Math.max(
+                    ...currentResult.timeseries_data.edge_mass,
+                );
+                if (maxL < 0.05) {
+                    stabilizeMsg = null;
+                    return; // Stable!
+                }
+            }
         }
-        executeScenario();
+
+        // All attempts exhausted
+        if (exploreConfig.grid_size >= MAX_GRID) {
+            stabilizeMsg =
+                "Needs larger grid (max 256 reached). Consider reducing Z or increasing eps.";
+        } else {
+            stabilizeMsg =
+                "Could not stabilize automatically. Try adjusting parameters manually.";
+        }
     }
 
     async function runGoldenSuite() {
@@ -481,7 +576,7 @@
         running = true;
         errorMsg = null;
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/lab/rerun", {
+            const res = await fetch("/api/lab/rerun", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ run_id: runId }),
@@ -500,10 +595,10 @@
         if (selectedScenario !== "play") return;
         if (
             currentResult &&
-            currentResult.ts_metrics &&
-            currentResult.ts_metrics.edge_mass
+            currentResult.timeseries_data &&
+            currentResult.timeseries_data.edge_mass
         ) {
-            const maxL = Math.max(...currentResult.ts_metrics.edge_mass);
+            const maxL = Math.max(...currentResult.timeseries_data.edge_mass);
             if (maxL > 0.05) {
                 exploreConfig.dt = exploreConfig.dt / 2.0;
                 await executeScenario();
@@ -516,27 +611,54 @@
     }
 </script>
 
-<div class="system-health-bar">
-    <span class="commit"
-        >🛡️ System Health &rsaquo; Build: <strong
-            >{systemHealth.commit_hash}</strong
-        ></span
-    >
-    <span class="status-pass"
-        >Golden tests last run: <strong>{systemHealth.tests}</strong></span
-    >
-    {#if systemHealth.loaded_modules}
+<div
+    class="system-health-bar"
+    style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; padding: 10px 20px; font-size: 13px;"
+>
+    <span class="commit" style="display: flex; flex-direction: column;">
         <span
-            class="loaded-paths"
-            title="routing_backend: {systemHealth.loaded_modules
-                .routing_backend}&#10;validation_core: {systemHealth
-                .loaded_modules.validation_core}"
+            >🛡️ System Health &rsaquo; Build: <strong
+                style="font-family: monospace;"
+                >{systemHealth.commit_hash || "unknown"}</strong
+            ></span
         >
-            Running from: <strong
-                >{systemHealth.loaded_modules.routing_backend}</strong
-            >
-        </span>
-    {/if}
+        <span style="font-size: 11px; color: #8b949e;"
+            >{systemHealth.current_build || ""}</span
+        >
+    </span>
+    <span class="status-pass" style="display: flex; flex-direction: column;">
+        <span
+            >Audit Status: <strong
+                class={systemHealth.audit_status === "AUDITED"
+                    ? "audited"
+                    : "none"}>{systemHealth.audit_status}</strong
+            ></span
+        >
+        <span style="font-size: 11px; color: #8b949e;"
+            >Active Contract: {systemHealth.active_contract_id || "null"}</span
+        >
+    </span>
+    <span
+        class="loaded-paths"
+        style="display: flex; flex-direction: column; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+    >
+        <span
+            >WP Path: <strong
+                style="font-family: monospace;"
+                title={systemHealth.audit_output_wp_abs_path}
+                >{systemHealth.audit_output_wp_abs_path || ""}</strong
+            ></span
+        >
+        <span
+            style="font-size: 11px; color: #8b949e;"
+            title={systemHealth.active_suite_abs_path || "null"}
+            >Suite: {systemHealth.active_suite_abs_path || "null"}</span
+        >
+    </span>
+    <button
+        class="glossary-toggle"
+        on:click={() => (showGlossary = !showGlossary)}>❓ Glossary</button
+    >
 </div>
 
 <div class="dashboard layout">
@@ -718,49 +840,19 @@
         {/if}
 
         {#if !currentResult && !running}
-            <div class="empty-state">
-                <div class="welcome-box">
-                    <h2>Lineum Validation Core</h2>
-                    <p class="human-lead">
-                        Verify that the digital universe is stable and behaves
-                        according to the rules of physics.
-                    </p>
-                    <div class="dual-desc-box">
-                        <div class="desc-row">
-                            <span class="mode-pill validate">VALIDATE Mode</span
-                            >
-                            <div class="text">
-                                <strong
-                                    >Technical check over reproducible results.</strong
-                                >
-                                <span class="sci"
-                                    >Executes locked presets against a
-                                    predefined manifest of wave-dynamics
-                                    expectations.</span
-                                >
-                            </div>
-                        </div>
-                        <div class="desc-row">
-                            <span class="mode-pill explore">EXPLORE Mode</span>
-                            <div class="text">
-                                <strong
-                                    >Sandbox for hunting phenomena — you might
-                                    break stability.</strong
-                                >
-                                <span class="sci"
-                                    >Unlocks parameters for single-particle
-                                    Schrödinger analogs. Not validation-grade.</span
-                                >
-                            </div>
-                        </div>
-                    </div>
-                    <p class="call-to-action">
-                        Select a scenario from the left panel and click <strong
-                            >RUN SCENARIO</strong
-                        >.
-                    </p>
-                </div>
-            </div>
+            <Scorecard
+                auditStatus={systemHealth.audit_status}
+                contractId={systemHealth.contract_id}
+                contractTimestamp={systemHealth.contract_timestamp}
+                contractCommit={systemHealth.contract_commit}
+                equationFingerprint={systemHealth.equation_fingerprint}
+                summaryPass={systemHealth.summary_pass}
+                summaryFail={systemHealth.summary_fail}
+                testsStatus={systemHealth.tests}
+                onRunGoldenSuite={runGoldenSuite}
+                isRunning={running}
+                {errorMsg}
+            />
         {/if}
 
         {#if currentResult}
@@ -789,7 +881,7 @@
                     </button>
                     <a
                         class="export-btn"
-                        href={`http://127.0.0.1:8000/api/lab/runs/${currentResult.manifest.run_id}/export`}
+                        href={`/api/lab/runs/${currentResult.manifest.run_id}/export`}
                         download
                     >
                         📥 Export Data Package (.zip)
@@ -814,11 +906,14 @@
                             <span class="verdict-text"
                                 >FAIL — Some expectations not met</span
                             >
-                            <button class="fix-btn" on:click={applyFix}
-                                >🔨 Auto-Fix Params</button
+                            <button class="fix-btn" on:click={makeStable}
+                                >🔧 Make stable</button
                             >
                         {/if}
-                        <span class="verdict-mode"
+                        <span
+                            class="verdict-mode {mode === 'explore'
+                                ? 'verdict-explore'
+                                : 'verdict-validate'}"
                             >{mode === "validate"
                                 ? "🔒 VALIDATE"
                                 : "⚡ EXPLORE"}</span
@@ -883,10 +978,52 @@
                             3,
                         )}
                     </div>
-                    {#if maxL >= 0.05 && mode === "explore"}
-                        <button class="autofix-btn" on:click={autoFix}
-                            >🔨 Auto FIX (Drop dt)</button
+                    {#if maxL >= 0.05}
+                        <button class="autofix-btn" on:click={makeStable}
+                            >🔧 Make stable</button
                         >
+                    {/if}
+                    {#if stabilizeMsg}
+                        <div class="stabilize-msg">⚠️ {stabilizeMsg}</div>
+                    {/if}
+                </div>
+            {/if}
+
+            {#if currentResult?.explain_pack}
+                <div class="explain-pack" id="explain-pack">
+                    <div class="ep-liner">
+                        {currentResult.explain_pack.one_liner_human}
+                    </div>
+                    <div class="ep-columns">
+                        <div class="ep-col">
+                            <h4>What you're seeing</h4>
+                            <ul>
+                                {#each currentResult.explain_pack.what_you_see || [] as item}
+                                    <li>{item}</li>
+                                {/each}
+                            </ul>
+                        </div>
+                        <div class="ep-col ep-not">
+                            <h4>What this is NOT</h4>
+                            <ul>
+                                {#each currentResult.explain_pack.what_it_is_not || [] as item}
+                                    <li>{item}</li>
+                                {/each}
+                            </ul>
+                        </div>
+                    </div>
+                    {#if currentResult.explain_pack.disclaimers?.length}
+                        <details class="ep-disclaimers">
+                            <summary
+                                >Disclaimers ({currentResult.explain_pack
+                                    .disclaimers.length})</summary
+                            >
+                            <ul>
+                                {#each currentResult.explain_pack.disclaimers as d}
+                                    <li>{d}</li>
+                                {/each}
+                            </ul>
+                        </details>
                     {/if}
                 </div>
             {/if}
@@ -1236,6 +1373,32 @@
         on:confirm={executeClearHistory}
         on:cancel={() => (showDeleteConfirm = false)}
     />
+
+    {#if showGlossary}
+        <div
+            class="glossary-overlay"
+            on:click|self={() => (showGlossary = false)}
+            role="dialog"
+        >
+            <div class="glossary-panel">
+                <div class="glossary-header">
+                    <h3>📖 Lab Glossary</h3>
+                    <button
+                        class="glossary-close"
+                        on:click={() => (showGlossary = false)}>✕</button
+                    >
+                </div>
+                <div class="glossary-body">
+                    {#each glossaryItems as g}
+                        <div class="glossary-item">
+                            <dt>{g.term}</dt>
+                            <dd>{g.def}</dd>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -1243,10 +1406,11 @@
         display: grid;
         grid-template-columns: 320px 1fr 280px;
         gap: 0;
-        height: 100%;
-        min-height: calc(100vh - 150px);
+        height: calc(100vh - 150px);
+        max-height: calc(100vh - 150px);
         background: #080808;
         position: relative;
+        overflow: hidden;
     }
     .help-fab {
         position: fixed;
@@ -1591,10 +1755,14 @@
         display: flex;
         align-items: center;
         gap: 15px;
+        flex-wrap: wrap;
     }
     .results-header h2 {
         margin: 0;
         color: #fff;
+    }
+    .run-id {
+        word-break: break-all;
     }
     .git-badge {
         background: #333;
@@ -1602,6 +1770,9 @@
         border-radius: 4px;
         font-family: monospace;
         font-size: 0.8rem;
+        margin-right: 15px;
+        word-break: break-all;
+        flex-shrink: 0;
     }
     .header-actions {
         display: flex;
@@ -1659,18 +1830,6 @@
         background: rgba(255, 0, 0, 0.1);
         border: 1px solid #f00;
         color: #f00;
-    }
-    .autofix-btn {
-        background: #fc0;
-        color: #000;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    .autofix-btn:hover {
-        background: #fff;
     }
 
     .visuals-grid {
@@ -1924,7 +2083,7 @@
     .verdict-header {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
         margin-bottom: 12px;
         font-size: 1.1rem;
         font-weight: bold;
@@ -1942,11 +2101,26 @@
         color: #f44;
     }
     .verdict-mode {
-        font-size: 0.7rem;
-        padding: 3px 8px;
+        font-size: 0.75rem;
+        padding: 4px 8px;
         border: 1px solid #555;
         background: rgba(255, 255, 255, 0.05);
         color: #aaa;
+        border-radius: 4px;
+        white-space: nowrap;
+        box-sizing: border-box;
+        flex-shrink: 0;
+    }
+    .verdict-mode.verdict-explore {
+        border-color: #f60;
+        color: #fff;
+        background: #f60;
+        font-weight: bold;
+    }
+    .verdict-mode.verdict-validate {
+        border-color: #0f6;
+        color: #0f6;
+        background: rgba(0, 255, 100, 0.1);
     }
     .expectation-checklist {
         display: flex;
@@ -2266,5 +2440,162 @@
         border-radius: 3px;
         font-size: 0.65rem;
         font-weight: bold;
+    }
+
+    /* ═══ Explain Pack ═══ */
+    .explain-pack {
+        background: #0d1117;
+        border: 1px solid #1a3a4a;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+    }
+    .ep-liner {
+        color: #00ffff;
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .ep-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .ep-col h4 {
+        color: #7ad7a0;
+        font-size: 0.85rem;
+        margin: 0 0 6px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .ep-not h4 {
+        color: #ff6b6b;
+    }
+    .ep-col ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #ccc;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    .ep-col li {
+        margin-bottom: 4px;
+    }
+    .ep-disclaimers {
+        margin-top: 10px;
+        color: #888;
+        font-size: 0.78rem;
+    }
+    .ep-disclaimers summary {
+        cursor: pointer;
+        color: #666;
+    }
+    .ep-disclaimers ul {
+        margin-top: 6px;
+        padding-left: 18px;
+    }
+
+    /* ═══ Glossary Toggle ═══ */
+    .glossary-toggle {
+        background: rgba(0, 255, 255, 0.08);
+        border: 1px solid rgba(0, 255, 255, 0.25);
+        color: #0ff;
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.78rem;
+        margin-left: auto;
+    }
+    .glossary-toggle:hover {
+        background: rgba(0, 255, 255, 0.15);
+    }
+
+    /* ═══ Glossary Panel ═══ */
+    .glossary-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: flex;
+        justify-content: flex-end;
+    }
+    .glossary-panel {
+        width: 380px;
+        max-width: 90vw;
+        background: #111;
+        border-left: 2px solid #0ff;
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+    }
+    .glossary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+    .glossary-header h3 {
+        color: #0ff;
+        margin: 0;
+        font-size: 1.2rem;
+    }
+    .glossary-close {
+        background: none;
+        border: 1px solid #555;
+        color: #ccc;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+    .glossary-close:hover {
+        background: #222;
+    }
+    .glossary-item {
+        border-bottom: 1px solid #222;
+        padding: 10px 0;
+    }
+    .glossary-item dt {
+        color: #0ff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+    }
+    .glossary-item dd {
+        color: #aaa;
+        margin: 0;
+        font-size: 0.82rem;
+        line-height: 1.4;
+    }
+
+    /* ═══ Stabilize Message ═══ */
+    .stabilize-msg {
+        background: rgba(255, 165, 0, 0.1);
+        border: 1px solid #ffa500;
+        color: #ffa500;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 0.85rem;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    /* ═══ Auto-Fix Button ═══ */
+    .autofix-btn,
+    .fix-btn {
+        background: rgba(0, 255, 128, 0.1);
+        border: 1px solid #00ff80;
+        color: #00ff80;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .autofix-btn:hover,
+    .fix-btn:hover {
+        background: rgba(0, 255, 128, 0.2);
     }
 </style>

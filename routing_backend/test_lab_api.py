@@ -121,3 +121,32 @@ def test_lab_golden_validation_gate():
         # Also ensure manifest is present and has no Eq4 names
         assert "manifest" in data
         assert "Eq4" not in str(data["manifest"])
+
+def test_audit_path_enforcement():
+    """
+    Ensure the Whitepaper Audit suite paths are strictly bound to the
+    canonical path: output_wp/runs/_whitepaper_contract/whitepaper_contract_suite.json
+    """
+    response = client.get("/api/lab/health")
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert "audit_output_wp_abs_path" in data
+    abs_path = data["audit_output_wp_abs_path"]
+    
+    import os
+    assert os.path.isabs(abs_path), f"Path {abs_path} is not absolute!"
+    assert "routing_backend" not in abs_path, "Path must not be inside routing_backend!"
+    assert abs_path.endswith("output_wp"), f"Path must end with output_wp, got: {abs_path}"
+    
+    # Canonical suite path enforcement
+    suite_path = data.get("active_suite_abs_path")
+    if suite_path:
+        normalized = suite_path.replace("\\", "/")
+        assert "output_wp" in normalized, "Suite path must contain output_wp"
+        assert "_whitepaper_contract" in normalized, "Suite path must contain _whitepaper_contract"
+        # BINDING: must be under runs/_whitepaper_contract, NOT output_wp/_whitepaper_contract
+        assert "/runs/_whitepaper_contract/" in normalized, \
+            f"Suite path must be under runs/_whitepaper_contract/, got: {normalized}"
+        assert normalized.endswith("output_wp/runs/_whitepaper_contract/whitepaper_contract_suite.json"), \
+            f"Suite path must end with canonical suffix, got: {normalized}"

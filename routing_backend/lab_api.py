@@ -57,22 +57,230 @@ async def get_health():
     import os
     import sys
     try:
-        git_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
     except Exception:
         git_hash = "unknown"
         
+    try:
+        branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+    except Exception:
+        branch = "unknown"
+
     vc_path = "Unknown"
     if "scripts.validation_core" in sys.modules:
         vc_path = os.path.abspath(sys.modules["scripts.validation_core"].__file__)
         
+    # Read active contract suite
+    audit_status = "NONE"
+    contract_id = None
+    contract_timestamp = "unknown"
+    contract_commit = "unknown"
+    equation_fingerprint = "unknown"
+    summary_pass = 0
+    summary_fail = 0
+    
+    # Define absolute paths dynamically based on repo root
+    REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    output_wp_dir = os.path.join(REPO_ROOT, 'output_wp')
+    suite_abs_path = os.path.join(output_wp_dir, 'runs', '_whitepaper_contract', 'whitepaper_contract_suite.json')
+    
+    suite_path = Path(suite_abs_path)
+    try:
+        curr_full = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        if suite_path.exists():
+            with open(suite_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+                # Handle both list of audits and single audit dict
+                audits = data if isinstance(data, list) else [data]
+                
+                # Sort by timestamp descending (newest first)
+                audits.sort(key=lambda x: x.get("header", {}).get("timestamp", ""), reverse=True)
+                
+                for audit in audits:
+                    summary = audit.get("summary", {})
+                    # We only consider audits that fully passed
+                    if summary.get("fail", 1) == 0:
+                        header = audit.get("header", {})
+                        fingerprints = audit.get("fingerprints", {})
+                        
+                        contract_id = header.get("contract_id")
+                        contract_timestamp = header.get("timestamp", "unknown")
+                        contract_commit = header.get("git_commit", "")
+                        equation_fingerprint = header.get("equation_fingerprint", "unknown")
+                        summary_pass = summary.get("pass", 0)
+                        summary_fail = summary.get("fail", 0)
+                        
+                        if contract_commit == curr_full:
+                            audit_status = "AUDITED"
+                        else:
+                            audit_status = "OUTDATED"
+                        break
+    except Exception as e:
+        print(f"Contract read error: {e}")
+
     return {
         "commit_hash": git_hash,
+        "current_build": f"{git_hash} ({branch})",
+        "audit_status": audit_status,
+        "contract_id": contract_id,
+        "active_contract_id": contract_id,
+        "audit_output_wp_abs_path": output_wp_dir,
+        "active_suite_abs_path": suite_abs_path if suite_path.exists() else None,
+        "contract_timestamp": contract_timestamp,
+        "contract_commit": contract_commit if contract_commit else "unknown",
+        "equation_fingerprint": equation_fingerprint if equation_fingerprint else "unknown",
+        "summary_pass": summary_pass,
+        "summary_fail": summary_fail,
         "tests": "PASS (Local)",
         "loaded_modules": {
             "routing_backend": os.path.dirname(os.path.abspath(__file__)),
             "validation_core": vc_path
         }
     }
+
+@router.post("/audit/generate")
+async def generate_audit_contract():
+    """
+    Full audit pipeline (blocking):
+      Step 1: lineum.py with LINEUM_BASE_OUTPUT_DIR=output_wp + LINEUM_AUDIT_PROFILE=whitepaper_core
+      Step 2: tools/whitepaper_contract.py (suite generation)
+    Returns proof: new_run_id, latest_run, suite header, audit_status.
+    """
+    import subprocess
+    REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    try:
+        # --- Step 1: Physics run into output_wp/runs/<run_id>/ ---
+        lineum_path = os.path.join(REPO_ROOT, 'lineum.py')
+        env = os.environ.copy()
+        env["LINEUM_BASE_OUTPUT_DIR"] = "output_wp"
+        env["LINEUM_AUDIT_PROFILE"] = "whitepaper_core"
+        env["LINEUM_RUN_ID"] = "6"
+        env["LINEUM_RUN_MODE"] = "false"
+        env["LINEUM_SEED"] = "41"
+        env["LINEUM_STEPS"] = "2000"
+        env["PYTHONUTF8"] = "1"
+
+        step1 = subprocess.run(
+            ["python", lineum_path],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=600  # 10 min max for physics run
+        )
+        if step1.returncode != 0:
+            return {"status": "error", "step": 1, "detail": f"lineum.py failed (exit {step1.returncode})", "stderr": step1.stderr[-2000:] if step1.stderr else ""}
+
+        # Read latest_run.txt to find the new run
+        latest_run_path = os.path.join(REPO_ROOT, 'output_wp', 'latest_run.txt')
+        latest_run_value = None
+        if os.path.isfile(latest_run_path):
+            with open(latest_run_path, 'r', encoding='utf-8') as f:
+                latest_run_value = f.read().strip()
+
+        # --- Step 2: Suite verification + generation ---
+        contract_path = os.path.join(REPO_ROOT, 'tools', 'whitepaper_contract.py')
+        step2 = subprocess.run(
+            ["python", contract_path],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120
+        )
+        if step2.returncode != 0:
+            return {"status": "error", "step": 2, "detail": f"whitepaper_contract.py failed (exit {step2.returncode})", "stderr": step2.stderr[-2000:] if step2.stderr else ""}
+
+        # --- Read suite and build response ---
+        suite_path = Path(os.path.join(REPO_ROOT, 'output_wp', 'runs', '_whitepaper_contract', 'whitepaper_contract_suite.json'))
+        if not suite_path.exists():
+            return {"status": "error", "detail": "Suite file not found after generation at canonical path."}
+
+        with open(suite_path, 'r', encoding='utf-8') as f:
+            suite = json.load(f)
+
+        header = suite.get("header", {})
+        summary = suite.get("summary", {})
+
+        # Determine audit_status
+        try:
+            current_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        except Exception:
+            current_commit = "unknown"
+
+        suite_commit = header.get("git_commit", "")
+        audit_status = "AUDITED" if (suite_commit == current_commit and current_commit != "unknown") else "OUTDATED"
+
+        # Derive new_run_id from latest_run.txt
+        new_run_id = latest_run_value if latest_run_value else "unknown"
+
+        return {
+            "status": "success",
+            "new_run_id": new_run_id,
+            "latest_run_txt": latest_run_value,
+            "active_suite_abs_path": str(suite_path.resolve()),
+            "contract_id": header.get("contract_id"),
+            "git_commit": header.get("git_commit"),
+            "equation_fingerprint": header.get("equation_fingerprint"),
+            "tool_version": header.get("tool_version"),
+            "timestamp": header.get("timestamp"),
+            "summary_pass": summary.get("pass", 0),
+            "summary_fail": summary.get("fail", 0),
+            "audit_status": audit_status,
+            "step1_stdout_tail": step1.stdout[-500:] if step1.stdout else "",
+            "step2_stdout": step2.stdout
+        }
+    except subprocess.TimeoutExpired as e:
+        return {"status": "error", "detail": f"Timeout: {e}"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+class IntegrationEventRequest(BaseModel):
+    event: str
+    claim_id: str
+    applied_commit: str
+    contract_id: str
+    manifest_id: str
+    equation_fingerprint: str
+    whitepaper_file: str
+    whitepaper_anchor: str
+    timestamp_utc: str
+
+@router.get("/integration_log")
+def get_integration_log():
+    log_path = Path(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'output_wp', 'whitepaper_integration_log.json'))
+    if log_path.exists():
+        try:
+            with open(log_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data
+        except json.JSONDecodeError:
+            return {"events": []}
+    return {"events": []}
+
+@router.post("/integration_log")
+def append_integration_event(req: IntegrationEventRequest):
+    log_path = Path(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'output_wp', 'whitepaper_integration_log.json'))
+    
+    data = {"events": []}
+    if log_path.exists():
+        try:
+            with open(log_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if "events" not in data:
+                    data = {"events": []}
+        except json.JSONDecodeError:
+            pass
+            
+    data["events"].append(req.dict())
+    
+    # Ensure directory exists
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(log_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+        
+    return {"status": "success", "event_added": req.dict()}
+
 @router.websocket("/hydrogen")
 async def ws_hydrogen(websocket: WebSocket):
     """
@@ -294,6 +502,7 @@ async def get_hydrogen_sweep(golden: bool = False):
         "expectations": val_data.get("expectations", []),
         "expectation_results": val_data.get("expectation_results", []),
         "overall_pass": val_data.get("overall_pass", None),
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": b64,
         "source_code": source_code
     }
@@ -330,6 +539,7 @@ async def get_regression_snapshot(golden: bool = False):
         "expectations": val_data.get("expectations", []),
         "expectation_results": val_data.get("expectation_results", []),
         "overall_pass": val_data.get("overall_pass", None),
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": b64,
         "source_code": source_code
     }
@@ -442,6 +652,7 @@ async def rerun_from_manifest(req: RerunRequest):
             "expectations": val_data.get("expectations", []),
             "expectation_results": val_data.get("expectation_results", []),
             "overall_pass": val_data.get("overall_pass"),
+            "explain_pack": val_data.get("explain_pack", {}),
             "image_b64": b64,
         }
         save_run(response_data)
@@ -469,6 +680,7 @@ async def rerun_from_manifest(req: RerunRequest):
             "expectations": val_data.get("expectations", []),
             "expectation_results": val_data.get("expectation_results", []),
             "overall_pass": val_data.get("overall_pass"),
+            "explain_pack": val_data.get("explain_pack", {}),
             "image_b64": b64,
         }
         save_run(response_data)
@@ -506,6 +718,7 @@ async def rerun_from_manifest(req: RerunRequest):
             "expectations": val_data.get("expectations", []),
             "expectation_results": val_data.get("expectation_results", []),
             "overall_pass": val_data.get("overall_pass"),
+            "explain_pack": val_data.get("explain_pack", {}),
             "timeseries_data": ts_metrics,
             "image_b64": b64,
             "results": [{"E": ts_metrics["E"][-1], "r": ts_metrics["r"][-1], "edge_mass_cells": ts_metrics["edge_mass"][-1], "max_edge": ts_metrics["max_edge"][-1]}]
@@ -537,17 +750,18 @@ async def export_run(run_id: str):
         zf.writestr("manifest.json", json.dumps(data.get("manifest", {}), indent=2))
         
         # 2. Metrics CSV
-        if "ts_metrics" in data:
+        ts_data = data.get("timeseries_data", data.get("ts_metrics", {}))
+        if ts_data:
             import csv
             csv_buf = io.StringIO()
             writer = csv.writer(csv_buf)
-            keys = list(data["ts_metrics"].keys())
+            keys = list(ts_data.keys())
             writer.writerow(["step"] + keys)
             
             # Assume all metric lists are same length
-            length = len(data["ts_metrics"][keys[0]])
+            length = len(ts_data[keys[0]])
             for i in range(length):
-                row = [i] + [data["ts_metrics"][k][i] for k in keys]
+                row = [i] + [ts_data[k][i] for k in keys]
                 writer.writerow(row)
                 
             zf.writestr("metrics.csv", csv_buf.getvalue())
@@ -621,6 +835,7 @@ async def post_playground(req: PlaygroundRequest):
         "expectations": val_data.get("expectations", []),
         "expectation_results": val_data.get("expectation_results", []),
         "overall_pass": val_data.get("overall_pass", None),
+        "explain_pack": val_data.get("explain_pack", {}),
         "timeseries_data": ts_metrics,
         "image_b64": b64,
         "source_code": source_code,
@@ -674,6 +889,7 @@ async def get_ra1_unitarity(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": _fig_to_b64(fig),
         "timeseries_data": { "N_series": val_data["N_series"] }
     }
@@ -710,6 +926,7 @@ async def get_ra2_bound_state(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": _fig_to_b64(fig),
         "timeseries_data": ts
     }
@@ -760,6 +977,7 @@ async def get_ra3_excited_state(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": _fig_to_b64(fig),
     }
     response_data["manifest"]["is_golden"] = golden
@@ -793,6 +1011,7 @@ async def get_ra4_mu_memory(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "image_b64": _fig_to_b64(fig),
         "timeseries_data": { "mu_max_series": val_data["mu_max_series"] }
     }
@@ -811,6 +1030,7 @@ async def get_ra5_driving(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "timeseries_data": {
             "N_driven": val_data["N_driven"],
             "N_undriven": val_data["N_undriven"]
@@ -831,6 +1051,7 @@ async def get_ra6_lpf_impact(golden: bool = False):
         "expectations": val_data["expectations"],
         "expectation_results": val_data["expectation_results"],
         "overall_pass": val_data["overall_pass"],
+        "explain_pack": val_data.get("explain_pack", {}),
         "timeseries_data": {
             "E_off": val_data["E_off"],
             "E_on": val_data["E_on"],

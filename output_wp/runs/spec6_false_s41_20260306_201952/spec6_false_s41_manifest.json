@@ -1,0 +1,205 @@
+{
+  "run": {
+    "run_id": 6,
+    "run_tag": "spec6_false_s41",
+    "seed": 41,
+    "run_mode": "false",
+    "param_tag": "",
+    "kappa_mode": "constant",
+    "low_noise_mode": false,
+    "test_exhale_mode": true,
+    "grid_size": 128,
+    "steps": 2000,
+    "pixel_size_m": 1e-12,
+    "time_step_s": 1e-21,
+    "window_W": 256,
+    "window_hop": 128,
+    "phi_interaction_cap": 10.0,
+    "phi_cap": 1000000.0,
+    "psi_amp_cap": 1000000.0,
+    "grad_cap": 1000000.0
+  },
+  "spectral_pipeline": {
+    "dt": 1e-21,
+    "sampling_rate_hz": 1.0000000000000001e+21,
+    "df_hz": 3.9062500000000005e+18,
+    "nyquist_hz": 5.0000000000000007e+20,
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "window_function": "Hann",
+    "dc_remove": true,
+    "fft_type": "RFFT",
+    "estimator": "parabolic_3_bin",
+    "estimator_threshold": 1e-12
+  },
+  "analysis_config": {
+    "spectrum_definition": "power |FFT(x)|^2",
+    "window_type": "Hann",
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "estimator": "centroid",
+    "bootstrap_iterations": 1000,
+    "bootstrap_ci_level": 0.95,
+    "sbr_guard_bins": 2
+  },
+  "kappa": {
+    "mode": "constant",
+    "hash": "a6d0d48a7ec74c14b489a6880f21a25e166dcee24554714d28909f8795a58701",
+    "binary_hash": "a6d0d48a7ec74c14b489a6880f21a25e166dcee24554714d28909f8795a58701",
+    "hash_basis": "map_at_init",
+    "is_dynamic": false,
+    "stats": {
+      "spatial_final_mean": 0.5,
+      "spatial_final_std": 0.0,
+      "temporal_mean_of_spatial_means": null,
+      "temporal_std_of_spatial_means": null
+    }
+  },
+  "metrics": {
+    "dominant_freq_Hz": "NaN",
+    "f0_mean_hz": "NaN",
+    "sbr": null,
+    "sbr_mean": null,
+    "f0_ci": [
+      "NaN",
+      "NaN"
+    ],
+    "sbr_ci": [
+      "NaN",
+      "NaN"
+    ],
+    "phi_half_life_steps": null,
+    "phi_half_life_status": "OK",
+    "phi_steady_state": null,
+    "pct_neutral": null,
+    "topology_neutrality_n1": null,
+    "mean_total_vortices": null,
+    "mean_vortices": null,
+    "max_lifespan_steps": 0,
+    "median_lifespan_steps": 0,
+    "phi_mean_near": 0.0,
+    "phi_mean_field": 0.0,
+    "phi_std_near": null,
+    "phi_std_field": 1.0,
+    "low_mass_quasiparticle_count": 49,
+    "low_mass_qp_count": 49
+  },
+  "data_files": {
+    "html_report": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_report.html",
+    "amplitude_log_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_amplitude_log.csv",
+    "phi_center_log_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_phi_center_log.csv",
+    "topo_log_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_topo_log.csv",
+    "trajectories_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_trajectories.csv",
+    "multi_spectrum_summary_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_multi_spectrum_summary.csv",
+    "metrics_summary_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_metrics_summary.csv",
+    "phi_grid_summary_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_phi_grid_summary.csv",
+    "phi_grid_dejavu_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_phi_grid_dejavu.csv",
+    "phi_curl_low_mass_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_phi_curl_low_mass.csv",
+    "spin_aura_profile_csv": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_spin_aura_profile.csv",
+    "spectrum_plot_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_spectrum_plot.png",
+    "phi_center_plot_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_phi_center_plot.png",
+    "topo_charge_plot_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_topo_charge_plot.png",
+    "vortex_count_plot_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_vortex_count_plot.png",
+    "kappa_map_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_kappa_map.png",
+    "figure0_canonical_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_figure0_canonical.png",
+    "spin_aura_avg_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_spin_aura_avg.png",
+    "spin_aura_map_png": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_spin_aura_map.png",
+    "gif_amplitude": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_amplitude.gif",
+    "gif_spin": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_spin.gif",
+    "gif_vortices": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_vortices.gif",
+    "gif_particles": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_particles.gif",
+    "gif_flow": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_flow.gif",
+    "gif_full_overlay": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_lineum_full_overlay.gif",
+    "frames_vortices_npy": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_frames_vortices.npy",
+    "frames_curl_npy": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_frames_curl.npy",
+    "frames_amp_npy": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_frames_amp.npy",
+    "frames_phi_npy": "C:\\Users\\Tomáš\\Documents\\GitHub\\lineum-core\\output_wp\\runs\\spec6_false_s41_20260306_201952\\spec6_false_s41_frames_phi.npy"
+  },
+  "topology": {
+    "computed_over": "logged_frames_only",
+    "includes_step_0": true,
+    "raw_winding_used": true
+  },
+  "invariants": {
+    "dim": "2D",
+    "bcs": "periodic",
+    "precision": "float64",
+    "stencil": "classic_laplace",
+    "grid_size": 128,
+    "dt": 0.01
+  },
+  "run_configuration": {
+    "resolved_config": {
+      "run_id": 6,
+      "run_mode": "false",
+      "seed": 41,
+      "param_tag": "",
+      "low_noise_mode": false,
+      "test_exhale_mode": true,
+      "kappa_mode": "constant",
+      "window_w": 256,
+      "window_hop": 128,
+      "phi_interaction_cap": 0,
+      "steps": 2000,
+      "store_every": 5,
+      "disable_tracking": false
+    },
+    "resolved_config_hash": "799b4f3067aa50ddb324f590ef06706408c4cd8a13b832385882513e61d8231d"
+  },
+  "provenance": {
+    "rng_backend": "MT19937",
+    "seed": 41,
+    "rng_state_hash": "f327ef7db1a7e119541f9fd495ca9c142cf9cd31fa117cf4361debbe6fe6d2d1"
+  },
+  "logging": {
+    "topo_log_stride": 1
+  },
+  "audit_scope": {
+    "profile": "whitepaper_core",
+    "expected": {
+      "test_exhale_mode": true,
+      "low_noise_mode": false,
+      "steps": 2000,
+      "seed": 41,
+      "run_id": 6,
+      "run_mode": false,
+      "resume": false,
+      "base_output_dir": "output_wp",
+      "kappa_mode": "constant",
+      "kappa_hash_basis": "N/A",
+      "kappa_schedule_id": "N/A",
+      "kappa_stride": "N/A"
+    },
+    "actual": {
+      "test_exhale_mode": true,
+      "low_noise_mode": false,
+      "steps": 2000,
+      "seed": 41,
+      "run_id": 6,
+      "run_mode": false,
+      "resume": false,
+      "base_output_dir": "output_wp",
+      "kappa_mode": "constant",
+      "kappa_hash_basis": "N/A",
+      "kappa_schedule_id": "N/A",
+      "kappa_stride": "N/A"
+    },
+    "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+    "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+    "diff_keys": []
+  },
+  "code_fingerprint": {
+    "sha256": "5f70fdd4b5fc2adcf1c6544f0bf7702cdead05c676dcfdabb43e604b93fa0742",
+    "files": [
+      "lineum.py",
+      "tools/whitepaper_contract.py"
+    ],
+    "file_hashes": {
+      "lineum.py": "3db6ff8d36bfeddc7704db69a97f792635886e5089d4455576ee373d1b31be5d",
+      "tools/whitepaper_contract.py": "bb16d89313338d23cb2bf404091f06b5034fac21c30c0b5df2750a562fee765b"
+    },
+    "normalized_newlines": true
+  }
+}

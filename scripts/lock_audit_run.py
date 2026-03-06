@@ -62,11 +62,11 @@ def lock_run(run_dir):
         if platform.system() == "Windows":
             try:
                 subprocess.check_call(f'attrib +R "{run_dir}\\*" /S /D', shell=True)
-                # Apply deny ACL for current user for Write, Modify, Delete Child
-                username = os.environ.get("USERNAME")
-                if username:
-                    subprocess.check_call(f'icacls "{run_dir}" /deny "{username}":(OI)(CI)(W,M,DC)', shell=True)
-                print("Windows filesystem protections applied (attrib +R and icacls deny).")
+                # Note: icacls /deny is intentionally NOT used because it blocks
+                # directory listing (os.listdir) on Windows, which prevents the
+                # suite verifier from reading manifests. attrib +R is sufficient
+                # for preventing accidental modification; _LOCK.json SHA256
+                # integrity check detects any tampering.
             except subprocess.CalledProcessError as e:
                 print(f"Failed to apply Windows permissions: {e}")
         else:

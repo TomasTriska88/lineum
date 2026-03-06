@@ -75,6 +75,83 @@ def evaluate_expectations(expectations, measured_values):
     return results, overall_pass
 
 
+def get_explain_pack(scenario: str, passed: bool) -> dict:
+    """Returns the strict Layman 100% self-explanatory UI texts based on the run's scenario and PASS/FAIL result."""
+    
+    # Common disclaimers
+    disc = [
+        "2D Slice: You are looking at a cross-section. Reality is 3D.",
+        "Single-particle analog: This is one scalar field. It's not multi-electron chemistry.",
+        "Dimensionless units: Grids and times are scaled arbitrary units for stability.",
+        "Periodic boundaries: Things leaving the left side reappear on the right."
+    ]
+
+    base = {
+        "success_criteria_human": "Expectations met: The wave equation behaves according to known physics without exploding or evaporating." if passed else "Expectations failed: The physics engine blew up, broke conservation laws, or the boundaries were too tight.",
+        "next_action_pass": "Compare to History / Export Data",
+        "next_action_fail": "Auto-Fix Stability / Enhance Grid",
+        "disclaimers": disc,
+        "glossary_terms_used": ["Validate", "Explore", "Cloud", "Ground state", "P-state", "Leak"]
+    }
+
+    packs = {
+        "hydro": {
+            "one_liner_human": "Simulating a Hydrogen-like atom's core pulling a particle.",
+            "what_you_see": ["A density map of the particle.", "Bright core = higher probability of finding the particle there."],
+            "what_it_is_not": ["Not actual quantum chemistry.", "Not a full standard model description."],
+        },
+        "mu": {
+            "one_liner_human": "Testing if the system remembers where the particle was.",
+            "what_you_see": ["Particle bouncing off an obstacle.", "Bright 'Mu' map = the memory/damage footprint left behind."],
+            "what_it_is_not": ["Not a physical fluid trace.", "Just an internal stability check for Lineum's coupling."],
+        },
+        "play": {
+            "one_liner_human": "Custom Sandbox for tuning particle environments and shapes.",
+            "what_you_see": ["The resulting wave density mapped to color.", "Brighter = denser particle cloud."],
+            "what_it_is_not": ["Not validation-grade unless locked.", "Free parameters can cause the engine to explode numerically."],
+        },
+        "ra1": {
+            "one_liner_human": "Ensuring the particle doesn't magically appear or vanish (Unitarity).",
+            "what_you_see": ["Total mass (Norm) graphed over time.", "A flat line means mass is perfectly conserved!"],
+            "what_it_is_not": ["Not a plot of physical size.", "Not modeling particle creation/annihilation."],
+        },
+        "ra2": {
+            "one_liner_human": "Ensuring a trapped particle stays trapped (Bound State).",
+            "what_you_see": ["Energy and distance graphed over time.", "Stable flat lines = stable physics."],
+            "what_it_is_not": ["Not a free-floating electron.", "Not affected by outside radiation."],
+        },
+        "ra3": {
+            "one_liner_human": "Making sure excited states look like real shapes (P-State Lobes).",
+            "what_you_see": ["A shape with two distinct lobes instead of one round blob.", "A dark center node where the particle cannot be."],
+            "what_it_is_not": ["Not a chemical bond.", "Not multiple particles (it's one particle split in probability)."],
+        },
+        "ra4": {
+            "one_liner_human": "Confirming the Lineum Memory (Mu) doesn't grow infinitely.",
+            "what_you_see": ["Max memory size graphed over time.", "It should flatten out and stop growing."],
+            "what_it_is_not": ["Not standard Schrödinger physics (this is a Lineum-only feature)."],
+        },
+        "ra5": {
+            "one_liner_human": "Connecting the 'engine' to the particle (Driving Forces).",
+            "what_you_see": ["Two lines comparing active vs inactive pushing.", "The active line should climb indicating energy injection."],
+            "what_it_is_not": ["Not a passive system.", "Not standard quantum mechanics (Lineum active driving)."],
+        },
+        "ra6": {
+            "one_liner_human": "Filtering high-frequency noise numerically.",
+            "what_you_see": ["Two runs: one with the filter ON, one OFF.", "The lines should differ slightly, showing the filter works."],
+            "what_it_is_not": ["Not a physical effect.", "Just a software numerical stabilization tool."],
+        }
+    }
+
+    # Merge base with specific
+    merged = {**base, **packs.get(scenario, packs["play"])}
+    
+    # Provide safe fallbacks if missing
+    if "what_you_see" not in merged: merged["what_you_see"] = ["Data outputs"]
+    if "what_it_is_not" not in merged: merged["what_it_is_not"] = ["Not verified"]
+    if "one_liner_human" not in merged: merged["one_liner_human"] = "Validation execution"
+    
+    return merged
+
 # ── Per-Scenario Expectation Definitions ─────────────────────
 
 HYDRO_EXPECTATIONS = [
@@ -267,7 +344,8 @@ def run_hydrogen_sweep(grid_sizes, Z_vals, eps_vals, wave_dt=0.01):
         "expectation_results": expectation_results,
         "overall_pass": overall_pass,
         "final_dens": final_dens,
-        "final_V": final_V
+        "final_V": final_V,
+        "explain_pack": get_explain_pack("hydro", overall_pass)
     }
 
 def run_mu_regression_snapshot():
@@ -327,7 +405,8 @@ def run_mu_regression_snapshot():
         "expectation_results": expectation_results,
         "overall_pass": overall_pass,
         "psi_diff": psi_diff, "mu_diff": mu_diff,
-        "psi_wave": psi_wave, "mu_wave": mu_wave
+        "psi_wave": psi_wave, "mu_wave": mu_wave,
+        "explain_pack": get_explain_pack("mu", overall_pass)
     }
 
 def run_particle_playground(config_overrides: dict):
@@ -475,7 +554,8 @@ def run_particle_playground(config_overrides: dict):
         "ts_metrics": ts_metrics,
         "final_dens": final_dens,
         "final_phase": final_phase,
-        "final_V": V
+        "final_V": V,
+        "explain_pack": get_explain_pack("play", overall_pass)
     }
 
 
@@ -603,6 +683,7 @@ def run_ra1_unitarity():
         "N_series": N_series,
         "final_dens": final_dens,
         "final_phase": final_phase,
+        "explain_pack": get_explain_pack("ra1", overall_pass)
     }
 
 
@@ -682,6 +763,7 @@ def run_ra2_bound_state():
         "after_dens": after_dens,
         "ts_metrics": ts,
         "final_V": V,
+        "explain_pack": get_explain_pack("ra2", overall_pass)
     }
 
 
@@ -772,6 +854,7 @@ def run_ra3_excited_state():
         "ground_dens": ground_dens,
         "excited_dens": excited_dens,
         "final_V": V,
+        "explain_pack": get_explain_pack("ra3", overall_pass)
     }
 
 
@@ -850,6 +933,7 @@ def run_ra4_mu_memory():
         "psi_dens": psi_dens,
         "mu_max_series": mu_max_series,
         "verdict": verdict,
+        "explain_pack": get_explain_pack("ra4", overall_pass)
     }
 
 
@@ -914,6 +998,7 @@ def run_ra5_driving():
         "overall_pass": overall_pass,
         "N_driven": N_driven,
         "N_undriven": N_undriven,
+        "explain_pack": get_explain_pack("ra5", overall_pass)
     }
 
 
@@ -986,4 +1071,5 @@ def run_ra6_lpf_impact():
         "E_on": E_on,
         "N_off": N_off,
         "N_on": N_on,
+        "explain_pack": get_explain_pack("ra6", overall_pass)
     }
