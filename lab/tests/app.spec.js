@@ -57,4 +57,24 @@ test.describe('App Initialization Smoke Test', () => {
         const modesDisplay = await navModes.evaluate((el) => window.getComputedStyle(el).display);
         expect(modesDisplay).toBe('flex');
     });
+
+    test('Clicking top navigation buttons changes the main view mode', async ({ page }) => {
+        await page.goto('/');
+        await expect(page.locator('.loader')).toBeHidden({ timeout: 10000 });
+
+        // Click the Validation Core button
+        const validationBtn = page.locator('button:has-text("Validation Core")');
+        // Ensure the button isn't covered by retrieving its bounding box or throwing if obstructed
+        await validationBtn.click();
+
+        // The simulator overlay should hide, and the fullscreen-mode should appear containing the ValidationDashboard layout
+        await expect(page.locator('.layout')).toBeVisible({ timeout: 5000 });
+
+        // Click the Claims button
+        const claimsBtn = page.locator('button:has-text("Claims")');
+        await claimsBtn.click();
+
+        // Wait for WhitepaperClaims to load (its container uses layout too, but check a specific header or element inside)
+        await expect(page.locator('.claims-container')).toBeVisible({ timeout: 5000 });
+    });
 });
