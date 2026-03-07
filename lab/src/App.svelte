@@ -31,6 +31,8 @@
     const savedTab = localStorage.getItem("lab_active_tab");
     let activeTab = savedTab || "stats";
 
+    let mainMode = "simulator";
+
     $: if (activeTab) {
         localStorage.setItem("lab_active_tab", activeTab);
     }
@@ -145,6 +147,40 @@
             if (tooltipEl) tooltipEl.remove();
         };
     });
+
+    let isGeneratingAudit = false;
+
+    async function generateAuditContract() {
+        if (isGeneratingAudit) return;
+        isGeneratingAudit = true;
+        try {
+            const res = await fetch(
+                "http://localhost:8000/api/lab/audit/generate",
+                {
+                    method: "POST",
+                },
+            );
+            if (!res.ok) throw new Error("Audit generation failed");
+            const data = await res.json();
+            alert(
+                "Audit Contract Generated!\nStatus: " +
+                    data.audit_status +
+                    "\nRun ID: " +
+                    data.new_run_id,
+            );
+
+            // Reload manifest to show new run
+            try {
+                const mRes = await fetch("/data/manifest.json");
+                if (mRes.ok) manifest = await mRes.json();
+            } catch (e) {}
+        } catch (err) {
+            console.error(err);
+            alert("Failed to generate audit contract: " + err.message);
+        } finally {
+            isGeneratingAudit = false;
+        }
+    }
 
     async function loadRun(runId) {
         loading = true;
@@ -454,38 +490,38 @@
                     </button>
                 </div>
             </div>
-        {#if activeTab !== "lpl" && activeTab !== "rng"}
-            <div class="side-panel side-panel-right">
-                <div class="guide-panel">
-                    <h3>{$t("guide_title")}</h3>
-                    <div class="guide-item">
-                        <strong>{$t("guide_watch_title")}</strong>
-                        {$t("guide_watch_desc")}
-                    </div>
-                    <div class="guide-item">
-                        <strong>{$t("guide_linons_title")}</strong>
-                        {$t("guide_linons_desc")}
-                    </div>
-                    <div class="guide-item">
-                        <strong>{$t("guide_topo_title")}</strong>
-                        {$t("guide_topo_desc")}
-                    </div>
-                    <div class="guide-item">
-                        <strong>{$t("guide_zeta_title")}</strong>
-                        {$t("guide_zeta_desc")}
+            {#if activeTab !== "lpl" && activeTab !== "rng"}
+                <div class="side-panel side-panel-right">
+                    <div class="guide-panel">
+                        <h3>{$t("guide_title")}</h3>
+                        <div class="guide-item">
+                            <strong>{$t("guide_watch_title")}</strong>
+                            {$t("guide_watch_desc")}
+                        </div>
+                        <div class="guide-item">
+                            <strong>{$t("guide_linons_title")}</strong>
+                            {$t("guide_linons_desc")}
+                        </div>
+                        <div class="guide-item">
+                            <strong>{$t("guide_topo_title")}</strong>
+                            {$t("guide_topo_desc")}
+                        </div>
+                        <div class="guide-item">
+                            <strong>{$t("guide_zeta_title")}</strong>
+                            {$t("guide_zeta_desc")}
+                        </div>
                     </div>
                 </div>
-            </div>
-        {/if}
+            {/if}
 
-        <div class="sandbox-disclaimer">
-            <div class="disclaimer-header">
-                <span class="warning-icon">!</span>
-                <strong>{$t("sandbox_title")}</strong>
+            <div class="sandbox-disclaimer">
+                <div class="disclaimer-header">
+                    <span class="warning-icon">!</span>
+                    <strong>{$t("sandbox_title")}</strong>
+                </div>
+                <p>{$t("sandbox_warning")}</p>
             </div>
-            <p>{$t("sandbox_warning")}</p>
         </div>
-    </div>
     {/if}
 
     {#if maximizedChart}
