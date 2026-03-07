@@ -7,6 +7,6 @@ def test_no_untracked_files_in_root():
     
     assert result.returncode == 0, f"Git command failed: {result.stderr}"
     
-    untracked_files = [f for f in result.stdout.splitlines() if f.strip() and not "/" in f and not f.startswith("temp/")]
+    untracked_files = [f for f in result.stdout.splitlines() if f.strip() and not "/" in f and not f.startswith(".scratch/")]
     
-    assert len(untracked_files) == 0, f"Found untracked files in root: {untracked_files}. Please move them to temp/ or add to .gitignore."
+    assert len(untracked_files) == 0, f"Found untracked files in root: {untracked_files}. Please move them to .scratch/ or add to .gitignore."
