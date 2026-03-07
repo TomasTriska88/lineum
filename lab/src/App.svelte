@@ -214,25 +214,6 @@
         class:dimmed={activeTab === "lpl"}
         bind:this={container}
     ></div>
-<<<<<<< Updated upstream
-    <div class="overlay" class:lpl-mode={activeTab === "lpl"}>
-        <div class="header-section">
-            <div class="header-top">
-                <h1>{$t("simulakrum")}</h1>
-                <div class="header-controls">
-                    {#if manifest.length > 0}
-                        <select
-                            class="run-selector"
-                            bind:value={selectedRunId}
-                            on:change={(e) => loadRun(e.target.value)}
-                        >
-                            {#each manifest as run}
-                                <option value={run.run_id}>
-                                    {run.run_tag} ({run.timestamp})
-                                </option>
-                            {/each}
-                        </select>
-=======
 
     <nav class="top-nav">
         <div class="nav-brand">
@@ -467,173 +448,12 @@
                         />
                     {:else if activeTab === "spikes"}
                         <ExtremeSpikes {engine} {frame} />
->>>>>>> Stashed changes
                     {/if}
                     <button class="lang-btn" on:click={toggleLanguage}>
                         {$locale === "cs" ? "EN" : "CZ"}
                     </button>
                 </div>
             </div>
-            <p class="subtitle">{$t("sub_title")}</p>
-
-            <div
-                class="discovery-headline"
-                class:prime={metadata?.pearson_r > 0.9}
-                class:tuning={metadata?.pearson_r > 0.5 &&
-                    metadata?.pearson_r <= 0.9}
-            >
-                <span class="status-icon"></span>
-                <span class="status-msg">
-                    {$t("breakthrough_headline")}:
-                    {metadata?.pearson_r > 0.9
-                        ? $t("status_prime_resonance")
-                        : metadata?.pearson_r > 0.5
-                          ? $t("status_tuning")
-                          : $t("status_chaos")}
-                </span>
-            </div>
-        </div>
-
-        {#if frame >= 391}
-            <div class="central-alert-system">
-                <div class="event-marker">{$t("alert_birth")}</div>
-            </div>
-        {/if}
-
-        <div class="side-panel side-panel-left">
-            <div class="panel-tabs">
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "stats"}
-                    on:click={() => (activeTab = "stats")}
-                >
-                    {$t("tab_stats")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "scanner"}
-                    on:click={() => (activeTab = "scanner")}
-                >
-                    {$t("tab_scanner")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "tidal"}
-                    on:click={() => (activeTab = "tidal")}
-                >
-                    Tidal
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "hypothesis"}
-                    on:click={() => (activeTab = "hypothesis")}
-                >
-                    {$t("discovery_analysis")}
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "spikes"}
-                    on:click={() => (activeTab = "spikes")}
-                >
-                    Phenomena
-                </button>
-                <button
-                    class="tab-btn"
-                    class:active={activeTab === "lpl"}
-                    on:click={() => (activeTab = "lpl")}
-                >
-                    {$t("tab_lpl")}
-                </button>
-            </div>
-
-            <div class="tab-content">
-                {#if activeTab === "stats"}
-                    <div class="stats-panel">
-                        <div class="stat">
-                            <span class="label">{$t("label_mode")}</span>
-                            <span class="value">{$t("val_mode")}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_metric")}</span>
-                            <span class="value">{$t("val_metric")}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_frame")}</span>
-                            <span class="value">{frame} / {totalFrames}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_source")}</span>
-                            <span class="value"
-                                >{metadata?.run_tag || "Audit"}</span
-                            >
-                        </div>
-                        <div class="stat">
-                            <span class="label">{$t("label_status")}</span>
-                            <span class="value"
-                                >{frame >= (metadata?.birth_frame || 391)
-                                    ? $t("status_born")
-                                    : $t("status_init")}</span
-                            >
-                            {#if metadata && frame < metadata.birth_frame}
-                                <button
-                                    class="jump-btn"
-                                    on:click={() =>
-                                        engine.jumpToFrame(
-                                            metadata.birth_frame,
-                                        )}
-                                >
-                                    {$t("btn_jump")} [{metadata.birth_frame}]
-                                </button>
-                            {/if}
-                        </div>
-                        <div class="stat speed-control">
-                            <span class="label">{$t("label_speed")}</span>
-                            <span class="value"
-                                >{playbackSpeed.toFixed(1)}x</span
-                            >
-                            <input
-                                type="range"
-                                min="0.1"
-                                max="5.0"
-                                step="0.1"
-                                bind:value={playbackSpeed}
-                            />
-                        </div>
-
-                        <div class="stat toggle-control">
-                            <span class="label">{$t("label_phi")}</span>
-                            <button
-                                class="toggle-btn {showSpiral ? 'active' : ''}"
-                                on:click={() => (showSpiral = !showSpiral)}
-                            >
-                                {showSpiral ? $t("on") : $t("off")}
-                            </button>
-                        </div>
-                    </div>
-                {:else if activeTab === "scanner"}
-                    <ZetaScanner
-                        {frame}
-                        data={resonanceData}
-                        harmonics={harmonicData}
-                    />
-                {:else if activeTab === "tidal"}
-                    <TidalAnalyzer
-                        {dataRoot}
-                        on:maximize={(e) => (maximizedChart = e.detail)}
-                    />
-                {:else if activeTab === "hypothesis"}
-                    <HypothesisTester
-                        {dataRoot}
-                        on:maximize={(e) => (maximizedChart = e.detail)}
-                    />
-                {:else if activeTab === "spikes"}
-                    <ExtremeSpikes {engine} {frame} />
-                {:else if activeTab === "lpl"}
-                    <LplCompiler />
-                {/if}
-            </div>
-        </div>
-
         {#if activeTab !== "lpl" && activeTab !== "rng"}
             <div class="side-panel side-panel-right">
                 <div class="guide-panel">
@@ -666,6 +486,7 @@
             <p>{$t("sandbox_warning")}</p>
         </div>
     </div>
+    {/if}
 
     {#if maximizedChart}
         <div

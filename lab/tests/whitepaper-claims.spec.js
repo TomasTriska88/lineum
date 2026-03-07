@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { whitepaperClaims } from '../src/lib/data/claims.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 test.describe('Whitepaper Claims MVP', () => {
 
@@ -66,6 +72,57 @@ test.describe('Whitepaper Claims MVP', () => {
         for (const scope of validScopes) {
             expect(whitepaperClaims.filter(c => c.scope === scope).length).toBeGreaterThanOrEqual(1);
         }
+    });
+
+    test('Traceability MVP: Integration Log forensically links claims to whitepapers', () => {
+        const logPath = path.resolve(__dirname, '../src/lib/data/whitepaper_integration_log.json');
+        const integrationLog = JSON.parse(fs.readFileSync(logPath, 'utf8'));
+
+        // 1. Uniqueness check for claim_id
+        const claimIds = integrationLog.map(entry => entry.claim_id);
+        const uniqueIds = new Set(claimIds);
+        expect(uniqueIds.size, 'Duplicate claim_ids found in integration log').toBe(claimIds.length);
+
+        // 2. Validate all records
+        integrationLog.forEach(record => {
+            expect(record).toHaveProperty('source_file');
+            expect(record.source_file).toBeTruthy();
+            expect(record).toHaveProperty('source_section');
+            expect(record.source_section).toBeTruthy();
+            expect(record).toHaveProperty('claim_id');
+            expect(record.claim_id).toBeTruthy();
+            expect(typeof record.applied).toBe('boolean');
+            expect(record).toHaveProperty('applied_at');
+            expect(record).toHaveProperty('rationale');
+            expect(record.rationale).toBeTruthy();
+
+            if (record.applied === true) {
+                // Must have evidence target
+                expect(record.evidence_target, `Applied claim ${record.claim_id} missing evidence_target`).toBeTruthy();
+            } else {
+                // Must have skipped reason
+                expect(record.skipped_reason, `Skipped claim ${record.claim_id} missing skipped_reason`).toBeTruthy();
+            }
+        });
+
+        // 3. Ensure all curated claims in claims.js have a traceability record with applied=true
+        const appliedLogs = integrationLog.filter(l => l.applied === true);
+
+        for (const claim of whitepaperClaims) {
+            const match = appliedLogs.find(l => l.claim_id === claim.id);
+            expect(match, `Claim ${claim.id} is missing an applied=true traceability record`).toBeDefined();
+            // Also cross-check source file matches
+            expect(match.source_file).toBe(claim.source_file);
+        }
+
+        // Summary log
+        console.log(`\n--- TRACEABILITY COVERAGE ---`);
+        console.log(`Total Curated Claims in DB: ${whitepaperClaims.length}`);
+        console.log(`Integration Log Entries: ${integrationLog.length}`);
+        console.log(`Applied YES: ${appliedLogs.length}`);
+        console.log(`Applied NO (Skipped): ${integrationLog.filter(l => !l.applied).length}`);
+        console.log(`Coverage %: ${((appliedLogs.length / whitepaperClaims.length) * 100).toFixed(1)}%`);
+        console.log(`Missing Traceability Records: 0`);
     });
 
     test('UI Test: Lists renders claims and details view shows source links', async ({ page }) => {

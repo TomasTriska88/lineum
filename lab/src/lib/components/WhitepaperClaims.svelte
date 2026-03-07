@@ -1806,9 +1806,6 @@
         font-size: 13px;
         cursor: pointer;
     }
-    .audit-toggle input {
-        cursor: pointer;
-    }
 
     .empty-state {
         display: flex;
