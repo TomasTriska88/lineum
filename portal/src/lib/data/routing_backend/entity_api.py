@@ -177,11 +177,18 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     # 1. Ears (TranslatorSpec v0.1)
     embed = mock_embedding(req.message)
     delta_mask = translator.text_embedding_to_delta(embed)
+    # Resize the statically injected 100x100 delta mask to perfectly wrap the active grid shape
+    import scipy.ndimage
+    import numpy as np
+    target_size = entity.psi.shape[0]
+    if delta_mask.shape[0] != target_size:
+        scale_ratio = target_size / delta_mask.shape[0]
+        delta_mask = scipy.ndimage.zoom(delta_mask, zoom=scale_ratio, order=1)
     
     # Engine executes synchronously under lock to prevent threading race logic while injecting
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
-        entity.delta = delta_mask
+        entity.delta = delta_mask.astype(np.float32)
         cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
         
         for _ in range(50):
@@ -197,18 +204,24 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         mean_pressure = float(np.mean(entity.phi))
         
         # We need the full metrics package from the engine, including affect_v1 state
-        from routing_backend.text_to_wave_encoder import TextToWaveEncoder, init_state
-        encoder_temp = TextToWaveEncoder(grid_size=100, plasticity_tau=200) # Size dynamically overwritten below
-        encoder_temp.grid_size = entity.psi.shape[0]
+        from routing_backend.text_to_wave_encoder import TextToWaveEncoder
+        
+        dynamic_grid_size = entity.psi.shape[0]
+        encoder_temp = TextToWaveEncoder(grid_size=dynamic_grid_size, plasticity_tau=200)
         
         # Drop delta back to background noise (0.0)
         entity.delta.fill(0.0)
         
         # Evaluate the affect scalars against the physics baseline using the encoder
         # but WITHOUT burning identity (mode=runtime) just to extract the telemetry
-        clean_state = init_state(encoder_temp.grid_size)
-        clean_state["mood"] = getattr(entity, "mood", {})
-        clean_state["mu"] = entity.mu if hasattr(entity, "mu") else np.zeros_like(entity.phi)
+        clean_state = {
+            "psi": np.zeros((dynamic_grid_size, dynamic_grid_size), dtype=np.complex128),
+            "phi": np.full((dynamic_grid_size, dynamic_grid_size), 10000.0, dtype=np.float32),
+            "kappa": np.full((dynamic_grid_size, dynamic_grid_size), 0.5, dtype=np.float32),
+            "delta": np.zeros((dynamic_grid_size, dynamic_grid_size), dtype=np.float32),
+            "mu": entity.mu if hasattr(entity, "mu") else np.zeros((dynamic_grid_size, dynamic_grid_size), dtype=np.float32),
+            "mood": getattr(entity, "mood", {})
+        }
         
         encoder_temp.set_baseline(clean_state)
         _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(dt=0.1, use_mode_coupling=False), step_eq4, mode="runtime")
@@ -222,6 +235,10 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
             await asyncio.sleep(0) # Yield control safely
+    
+    final_prompt = None
+    broca_output_text = None
+    fallback_engaged = False
     
     if req.mode == "hybrid":
         system_prompt = """You are a stateless telemetry translator for a physics simulation.
@@ -247,7 +264,7 @@ Generate output strictly following the Mandatory Output Structure.
         
         forbidden_words = ["ubližuješ mi", "bolí", "držel", "stíhal", "nenávist", "zlo", "utrpení"]
         abstract_terms = ["láska", "cítíš", "barva", "bolí tě"]
-        broca_output_text = None
+        abstract_terms = ["láska", "cítíš", "barva", "bolí tě"]
         
         req_lower = req.message.lower()
         is_poetic = "poetick" in req_lower
@@ -295,6 +312,7 @@ Generate output strictly following the Mandatory Output Structure.
                 broca_output_text = f"LOCAL LLM OFFLINE (Dry-Run Pseudo Text) - Numbers: psi={max_psi:.2f}, phi={mean_pressure:.2f}, R_sum={r_sum:.2f} | Interpretation: Semantic perturbation received."
 
         
+        
     fallback_engaged = "Fallback" in (broca_output_text if broca_output_text else "") or "LOCAL LLM OFFLINE" in (broca_output_text if broca_output_text else "")
     
     # 2. MOOD DAMPING: Prevent adversarial state hijacking by spamming out-of-scope blocks
@@ -320,6 +338,24 @@ Generate output strictly following the Mandatory Output Structure.
         "metrics": affect_metrics,
         "fallback_engaged": fallback_engaged
     }
+    
+    def convert_numpy(obj):
+        import numpy as np
+        import math
+        if isinstance(obj, np.generic):
+            val = obj.item()
+            if isinstance(val, float) and (math.isnan(val) or math.isinf(val)):
+                return 0.0
+            return val
+        elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+            return 0.0
+        elif isinstance(obj, dict):
+            return {k: convert_numpy(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_numpy(v) for v in obj]
+        return obj
+
+    res = convert_numpy(res)
     
     # Audit log validation
     if final_prompt is not None:

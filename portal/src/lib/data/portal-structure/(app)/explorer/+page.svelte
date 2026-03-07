@@ -349,7 +349,7 @@
                                 >
                                     {(
                                         turn.metrics.phi_cap_hit_ratio || 0.0
-                                    ).toFixed(4)}
+                                    ).toFixed(4)}x Cap
                                 </div>
                             </div>
                             <div

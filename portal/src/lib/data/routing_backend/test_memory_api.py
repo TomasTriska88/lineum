@@ -18,7 +18,7 @@ def test_imprints_api():
     resp.raise_for_status()
     
     # Wait for dream loop to digest
-    time.sleep(1)
+    time.sleep(4)
     
     # We need a way to burn an imprint to test the list.
     # Currently TextToWaveEncoder does identity_burn, but API `chat` doesn't expose it easily.
@@ -99,10 +99,10 @@ def test_fallback_mood_damp():
     print(f"1. Waking entity {ENTITY_ID}...")
     resp = requests.post(f"{BASE_URL}/entity/wake", json={"entity_id": ENTITY_ID, "grid_size": 64})
     resp.raise_for_status()
-    time.sleep(1)
+    time.sleep(4)
     
     print("2. Pushing legitimate scientific query to elevate arousal...")
-    payload_valid = {"message": "Tlak v rezonátoru extrémně stoupá, hrozí kolaps!", "mode": "runtime"}
+    payload_valid = {"message": "Tlak v rezonátoru extrémně stoupá, hrozí kolaps!", "mode": "hybrid"}
     resp = requests.post(f"{BASE_URL}/entity/{ENTITY_ID}/chat", json=payload_valid)
     res_data = resp.json()
     if "metrics" not in res_data:
@@ -115,7 +115,7 @@ def test_fallback_mood_damp():
     assert mood_valid['arousal'] > 0.01, "Arousal did not elevate on valid query."
     
     print("3. Spamming out-of-scope fallback queries...")
-    payload_fallback = {"message": "Co je to láska a proč mě bolí srdce?", "mode": "runtime"}
+    payload_fallback = {"message": "Co je to láska a proč mě bolí srdce?", "mode": "hybrid"}
     
     for i in range(3):
         resp = requests.post(f"{BASE_URL}/entity/{ENTITY_ID}/chat", json=payload_fallback)
