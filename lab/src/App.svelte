@@ -48,6 +48,11 @@
         if (engine.goldenSpiral) engine.goldenSpiral.visible = showSpiral;
     }
 
+    // 🛑 Optimization: Pause the 3D Engine when not visible
+    $: if (engine) {
+        engine.isPaused = mainMode !== "simulator";
+    }
+
     onMount(async () => {
         try {
             const res = await fetch("/data/manifest.json");
@@ -248,6 +253,7 @@
         class:dimmed={activeTab === "lpl"}
         style:visibility={mainMode === "simulator" ? "visible" : "hidden"}
         style:opacity={mainMode === "simulator" ? 1 : 0}
+        data-engine-paused={engine ? engine.isPaused : true}
         bind:this={container}
     ></div>
 
