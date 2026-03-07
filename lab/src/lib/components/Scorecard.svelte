@@ -5,7 +5,9 @@
     export let contractId = null;
     export let contractTimestamp = null;
     export let contractCommit = null;
+    export let currentBuildCommit = null;
     export let equationFingerprint = null;
+    export let auditCodeFingerprint = null;
     export let summaryPass = 0;
     export let summaryFail = 0;
     export let activeProfile = null;
@@ -24,6 +26,13 @@
                 text: "#4ade80",
                 glow: "0 0 20px rgba(34,197,94,0.15)",
             };
+        if (status === "BUILD_NEWER")
+            return {
+                bg: "rgba(59,130,246,0.12)",
+                border: "rgba(59,130,246,0.4)",
+                text: "#60a5fa",
+                glow: "0 0 20px rgba(59,130,246,0.15)",
+            };
         if (status === "OUTDATED")
             return {
                 bg: "rgba(234,179,8,0.12)",
@@ -41,6 +50,7 @@
 
     const getBadgeIcon = (status) => {
         if (status === "AUDITED") return "✅";
+        if (status === "BUILD_NEWER") return "ℹ️";
         if (status === "OUTDATED") return "⚠️";
         return "❌";
     };
@@ -76,7 +86,12 @@
             <span class="label">Contract ID</span>
             <span class="value mono">{contractId || "N/A"}</span>
 
-            <span class="label">Commit</span>
+            <span class="label">Build Commit</span>
+            <span class="value mono small breakable"
+                >{currentBuildCommit || "unknown"}</span
+            >
+
+            <span class="label">Audit Commit</span>
             <span class="value mono small breakable"
                 >{contractCommit || "unknown"}</span
             >
@@ -84,6 +99,11 @@
             <span class="label">Eq Fingerprint</span>
             <span class="value mono small breakable">
                 {equationFingerprint || "unknown"}
+            </span>
+
+            <span class="label">Code Fingerprint</span>
+            <span class="value mono small breakable">
+                {auditCodeFingerprint || "unknown"}
             </span>
 
             <span class="label">Timestamp</span>
@@ -111,7 +131,7 @@
         </div>
     </div>
 
-    {#if auditStatus !== "AUDITED"}
+    {#if auditStatus !== "AUDITED" && auditStatus !== "BUILD_NEWER"}
         <div class="warning-box">
             <strong>⚠ Warning:</strong> The current build's equation does not have
             an active Audit-Grade contract. Whitepaper claims cannot be verified

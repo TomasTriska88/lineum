@@ -623,7 +623,9 @@
             ></span
         >
         <span style="font-size: 11px; color: #8b949e;"
-            >{systemHealth.current_build || ""}</span
+            >{systemHealth.current_build?.display ||
+                systemHealth.current_build ||
+                ""}</span
         >
     </span>
     <span class="status-pass" style="display: flex; flex-direction: column;">
@@ -845,8 +847,12 @@
                 auditStatus={systemHealth.audit_status}
                 contractId={systemHealth.contract_id}
                 contractTimestamp={systemHealth.contract_timestamp}
-                contractCommit={systemHealth.contract_commit}
+                contractCommit={systemHealth.active_audit?.git_commit ||
+                    systemHealth.contract_commit}
+                currentBuildCommit={systemHealth.current_build?.git_commit ||
+                    systemHealth.git_commit}
                 equationFingerprint={systemHealth.equation_fingerprint}
+                auditCodeFingerprint={systemHealth.audit_relevant_code_fingerprint}
                 summaryPass={systemHealth.summary_pass}
                 summaryFail={systemHealth.summary_fail}
                 activeProfile={systemHealth.active_profile}

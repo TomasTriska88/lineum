@@ -77,7 +77,14 @@ async def get_health():
         "commit_hash": git_hash,
         "git_commit": git_hash,
         "git_branch": branch,
-        "current_build": f"{git_hash} ({branch})",
+        "current_build": {
+            "git_commit": git_hash,
+            "git_branch": branch,
+            "display": f"{git_hash} ({branch})"
+        },
+        "active_audit": {
+            "git_commit": ctx["contract_commit"]
+        },
         "audit_status": ctx["audit_status"],
         "contract_id": ctx["contract_id"],
         "active_contract_id": ctx["contract_id"],
@@ -86,6 +93,8 @@ async def get_health():
         "contract_timestamp": ctx["contract_timestamp"],
         "contract_commit": ctx["contract_commit"],
         "equation_fingerprint": ctx["equation_fingerprint"],
+        "audit_relevant_code_fingerprint": ctx["audit_relevant_code_fingerprint"],
+        "current_audit_relevant_code_fingerprint": ctx["current_audit_relevant_code_fingerprint"],
         "summary_pass": ctx["summary_pass"],
         "summary_fail": ctx["summary_fail"],
         "active_profile": ctx["active_profile"],
@@ -111,6 +120,7 @@ def _get_audit_context():
     contract_timestamp = "unknown"
     contract_commit = ""
     equation_fingerprint = ""
+    suite_audit_fp = "unknown"
     summary_pass = 0
     summary_fail = 0
     active_profile = None
@@ -188,6 +198,8 @@ def _get_audit_context():
         "contract_timestamp": contract_timestamp,
         "contract_commit": contract_commit or "unknown",
         "equation_fingerprint": equation_fingerprint or "unknown",
+        "audit_relevant_code_fingerprint": suite_audit_fp,
+        "current_audit_relevant_code_fingerprint": curr_audit_fp if 'curr_audit_fp' in locals() else "unknown",
         "summary_pass": summary_pass,
         "summary_fail": summary_fail,
         "active_profile": active_profile,

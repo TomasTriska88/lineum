@@ -109,7 +109,22 @@
         const cr = (results || {})[claim.id] || {};
         if (!cr.status) return "UNTESTED";
 
-        // Rule 3: Enforce strict OUTDATED barrier
+        // Rule 3: Enforce real provenance for experimental claims
+        // If it claims to be experimental supported but has no real manifest_id (or has fallback), downgrade it
+        if (
+            cr.status === "EXPERIMENTAL_SUPPORTED" ||
+            cr.status === "EXPERIMENTAL_CONTRADICTED"
+        ) {
+            if (
+                !cr.manifest_id ||
+                cr.manifest_id === "error-fallback" ||
+                !cr.scenario_id
+            ) {
+                return "UNTESTED";
+            }
+        }
+
+        // Rule 4: Enforce strict OUTDATED barrier
         // If the system claims it's outdated or the contract metadata differs, it cannot be canonical SUPPORTED
         if (
             cr.is_stale ||
@@ -119,14 +134,28 @@
             auditStatus === "PROVISIONAL PASS / BASELINE ONLY"
         ) {
             if (cr.passed_internal) {
+                if (
+                    !cr.manifest_id ||
+                    cr.manifest_id === "error-fallback" ||
+                    !cr.scenario_id
+                ) {
+                    return "UNTESTED";
+                }
                 return "EXPERIMENTAL_SUPPORTED";
             } else if (cr.passed_internal === false) {
+                if (
+                    !cr.manifest_id ||
+                    cr.manifest_id === "error-fallback" ||
+                    !cr.scenario_id
+                ) {
+                    return "UNTESTED";
+                }
                 return "EXPERIMENTAL_CONTRADICTED";
             }
             return "OUTDATED";
         }
 
-        // Rule 4: Otherwise, return the strict backend resolved status
+        // Rule 5: Otherwise, return the strict backend resolved status
         return cr.status || "UNTESTED";
     }
 
@@ -386,12 +415,12 @@
         } catch (e) {
             console.warn("Verification error:", e);
             claimResults[claim.id] = {
-                status: "EXPERIMENTAL_SUPPORTED",
-                manifest_id: "error-fallback",
+                status: "ERROR",
+                manifest_id: null,
                 contract_id: null,
                 is_audit_grade: false,
-                passed_internal: true,
-                details: `Fallback: ${e.message}`,
+                passed_internal: false,
+                details: `Execution Failed: ${e.message}`,
             };
             claimResults = { ...claimResults };
         } finally {
