@@ -6,8 +6,13 @@ test.describe('Whitepaper Claims MVP', () => {
     test('Schema Test: Every claim has required fields and valid enums', () => {
         const validStatuses = ['UNTESTED', 'SUPPORTED', 'CONTRADICTED'];
         const validTestabilities = ['TESTABLE_NOW', 'NEEDS_NEW_SCENARIO', 'NOT_TESTABLE_YET'];
+        const validScopes = ['MODEL_INTERNAL', 'ANALOGICAL', 'REAL_WORLD_STRONG'];
+
+        // Must have more than 10 claims (original demo count)
+        expect(whitepaperClaims.length).toBeGreaterThan(10);
 
         for (const claim of whitepaperClaims) {
+            // Original fields
             expect(claim).toHaveProperty('id');
             expect(claim).toHaveProperty('short_claim');
             expect(claim).toHaveProperty('human_claim');
@@ -22,9 +27,28 @@ test.describe('Whitepaper Claims MVP', () => {
             expect(validTestabilities).toContain(claim.testability);
 
             expect(claim).toHaveProperty('test_reason');
+
+            // New fields: scope
+            expect(claim).toHaveProperty('scope');
+            expect(validScopes).toContain(claim.scope);
+
+            // New fields: falsification
+            expect(claim).toHaveProperty('falsification_needed');
+            expect(typeof claim.falsification_needed).toBe('boolean');
+
+            if (claim.falsification_needed && !claim.falsification_plan) {
+                expect(claim.missing_falsification_reason).toBeTruthy();
+            }
+
+            // New fields: disclaimers (string or undefined)
+            expect(claim).toHaveProperty('disclaimers');
+
+            // New fields: source_section, source_quote
+            expect(claim).toHaveProperty('source_section');
+            expect(claim).toHaveProperty('source_quote');
         }
 
-        // Specific Tag Distribution Hard Requirements
+        // Tag distribution checks
         const quarkTags = whitepaperClaims.filter(c => c.tags.some(t => ['quark', 'gluon', 'standard-model'].includes(t)));
         expect(quarkTags.length).toBeGreaterThanOrEqual(3);
 
@@ -33,6 +57,15 @@ test.describe('Whitepaper Claims MVP', () => {
 
         const muTags = whitepaperClaims.filter(c => c.tags.some(t => ['mu', 'memory', 'topology'].includes(t)));
         expect(muTags.length).toBeGreaterThanOrEqual(2);
+
+        // New: multi-source distribution — claims come from more than 1 source file
+        const uniqueSources = new Set(whitepaperClaims.map(c => c.source_file));
+        expect(uniqueSources.size).toBeGreaterThan(1);
+
+        // New: at least 1 claim from each scope
+        for (const scope of validScopes) {
+            expect(whitepaperClaims.filter(c => c.scope === scope).length).toBeGreaterThanOrEqual(1);
+        }
     });
 
     test('UI Test: Lists renders claims and details view shows source links', async ({ page }) => {

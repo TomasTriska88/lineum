@@ -595,6 +595,83 @@
                     </div>
                 </div>
 
+                <!-- Scope & Classification -->
+                {#if selectedClaim.scope}
+                    <div class="scope-section">
+                        <strong>Scope:</strong>
+                        <span
+                            class="scope-badge scope-{selectedClaim.scope
+                                .toLowerCase()
+                                .replace(/_/g, '-')}"
+                        >
+                            {selectedClaim.scope.replace(/_/g, " ")}
+                        </span>
+                        {#if selectedClaim.source_section}
+                            <span class="source-section-tag">
+                                {selectedClaim.source_section}
+                            </span>
+                        {/if}
+                    </div>
+                {/if}
+
+                <!-- Source Quote -->
+                {#if selectedClaim.source_quote}
+                    <div class="source-quote-box">
+                        <div class="sq-label">Source Quote</div>
+                        <blockquote>
+                            {@html renderInlineLatex(
+                                selectedClaim.source_quote,
+                            )}
+                        </blockquote>
+                    </div>
+                {/if}
+
+                <!-- Falsification -->
+                {#if selectedClaim.falsification_needed !== undefined}
+                    <div class="falsification-section">
+                        <h3>Falsification</h3>
+                        <div class="fals-status">
+                            <strong>Falsification needed:</strong>
+                            <span
+                                class="fals-badge {selectedClaim.falsification_needed
+                                    ? 'yes'
+                                    : 'no'}"
+                            >
+                                {selectedClaim.falsification_needed
+                                    ? "YES"
+                                    : "NO"}
+                            </span>
+                        </div>
+                        {#if selectedClaim.falsification_needed}
+                            {#if selectedClaim.falsification_plan}
+                                <div class="fals-plan">
+                                    <strong>Falsification Plan:</strong>
+                                    <p>
+                                        {@html renderInlineLatex(
+                                            selectedClaim.falsification_plan,
+                                        )}
+                                    </p>
+                                </div>
+                            {:else if selectedClaim.missing_falsification_reason}
+                                <div class="fals-missing">
+                                    <strong>Missing Plan — Reason:</strong>
+                                    <p>
+                                        {selectedClaim.missing_falsification_reason}
+                                    </p>
+                                </div>
+                            {/if}
+                        {/if}
+                    </div>
+                {/if}
+
+                <!-- Disclaimers -->
+                {#if selectedClaim.disclaimers}
+                    <div class="disclaimers-box">
+                        <div class="disc-label">⚠ Disclaimers</div>
+                        <p>{selectedClaim.disclaimers}</p>
+                    </div>
+                {/if}
+
                 <div class="testing-section">
                     <h3>Lab Verification Workflow</h3>
 
@@ -1310,6 +1387,137 @@
     }
     .source-link a:hover {
         text-decoration: underline;
+    }
+
+    /* ── Scope Section ── */
+    .scope-section {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+    .scope-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .scope-model-internal {
+        background: rgba(88, 166, 255, 0.15);
+        color: #58a6ff;
+        border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+    .scope-analogical {
+        background: rgba(210, 153, 34, 0.15);
+        color: #d29922;
+        border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+    .scope-real-world-strong {
+        background: rgba(218, 95, 101, 0.15);
+        color: #da5f65;
+        border: 1px solid rgba(218, 95, 101, 0.3);
+    }
+    .source-section-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        background: rgba(139, 148, 158, 0.1);
+        color: #8b949e;
+        border: 1px solid #30363d;
+    }
+
+    /* ── Source Quote ── */
+    .source-quote-box {
+        margin-bottom: 20px;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 15px;
+    }
+    .sq-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #8b949e;
+        margin-bottom: 8px;
+    }
+    .source-quote-box blockquote {
+        margin: 0;
+        padding: 8px 12px;
+        border-left: 3px solid #58a6ff;
+        background: rgba(88, 166, 255, 0.05);
+        color: #c9d1d9;
+        font-style: italic;
+        font-size: 13px;
+    }
+
+    /* ── Falsification Section ── */
+    .falsification-section {
+        margin-bottom: 20px;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 15px;
+    }
+    .falsification-section h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: #f0f6fc;
+    }
+    .fals-status {
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+    .fals-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+    .fals-badge.yes {
+        background: rgba(218, 95, 101, 0.15);
+        color: #da5f65;
+    }
+    .fals-badge.no {
+        background: rgba(63, 185, 80, 0.15);
+        color: #3fb950;
+    }
+    .fals-plan,
+    .fals-missing {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #c9d1d9;
+    }
+    .fals-plan p,
+    .fals-missing p {
+        margin: 4px 0 0 0;
+        color: #8b949e;
+    }
+
+    /* ── Disclaimers ── */
+    .disclaimers-box {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        background: rgba(210, 153, 34, 0.08);
+        border: 1px solid rgba(210, 153, 34, 0.3);
+        border-radius: 6px;
+    }
+    .disc-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #d29922;
+        margin-bottom: 5px;
+    }
+    .disclaimers-box p {
+        margin: 0;
+        font-size: 13px;
+        color: #c9d1d9;
     }
 
     /* Explain Pack Styles - Reused from ValidationDashboard */
