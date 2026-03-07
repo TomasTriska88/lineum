@@ -57,3 +57,7 @@ docs/reports/2026-02-17-audit/audit_report.md
 artifacts/
 routing_backend/artifacts/
 logs/
+
+# Playwright Test Artifacts
+lab/playwright-report/
+lab/test-results/
