@@ -250,6 +250,8 @@
     <div
         class="canvas-container"
         class:dimmed={activeTab === "lpl"}
+        style:visibility={mainMode === "simulator" ? "visible" : "hidden"}
+        style:opacity={mainMode === "simulator" ? 1 : 0}
         bind:this={container}
     ></div>
 

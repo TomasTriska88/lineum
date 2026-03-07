@@ -58,9 +58,14 @@ test.describe('App Initialization Smoke Test', () => {
         expect(modesDisplay).toBe('flex');
     });
 
-    test('Clicking top navigation buttons changes the main view mode', async ({ page }) => {
+    test('Clicking top navigation buttons changes the main view mode and canvas visibility', async ({ page }) => {
         await page.goto('/');
         await expect(page.locator('.loader')).toBeHidden({ timeout: 10000 });
+
+        // Ensure we are initially in 3D Simulator mode and canvas is visible
+        const canvasContainer = page.locator('.canvas-container');
+        await expect(canvasContainer).toBeVisible();
+        await expect(canvasContainer).toHaveCSS('opacity', '1');
 
         // Click the Validation Core button
         const validationBtn = page.locator('button:has-text("Validation Core")');
@@ -70,11 +75,25 @@ test.describe('App Initialization Smoke Test', () => {
         // The simulator overlay should hide, and the fullscreen-mode should appear containing the ValidationDashboard layout
         await expect(page.locator('.layout')).toBeVisible({ timeout: 5000 });
 
+        // The canvas should be hidden
+        await expect(canvasContainer).toBeHidden();
+
         // Click the Claims button
         const claimsBtn = page.locator('button:has-text("Claims")');
         await claimsBtn.click();
 
         // Wait for WhitepaperClaims to load (its container uses layout too, but check a specific header or element inside)
         await expect(page.locator('.claims-container')).toBeVisible({ timeout: 5000 });
+
+        // The canvas should still be hidden
+        await expect(canvasContainer).toBeHidden();
+
+        // Click the 3D Simulator button again to verify it reappears
+        const simBtn = page.locator('button:has-text("3D Simulator")');
+        await simBtn.click();
+
+        // The canvas should be visible again
+        await expect(canvasContainer).toBeVisible();
+        await expect(canvasContainer).toHaveCSS('opacity', '1');
     });
 });
