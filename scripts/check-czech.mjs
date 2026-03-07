@@ -4,6 +4,7 @@ import path from 'path';
 console.log('--- Running Global Czech Character Checks ---');
 
 const scripts = [
+    { name: 'Tests', cmd: 'node scripts/check-czech-tests.js', cwd: path.join(process.cwd()) },
     { name: 'Lab', cmd: 'node lab/scripts/check-czech.js', cwd: path.join(process.cwd()) },
     { name: 'Portal', cmd: 'node portal/scripts/check-czech.js', cwd: path.join(process.cwd()) }
 ];
