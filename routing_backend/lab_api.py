@@ -70,96 +70,25 @@ async def get_health():
     if "scripts.validation_core" in sys.modules:
         vc_path = os.path.abspath(sys.modules["scripts.validation_core"].__file__)
         
-    # Read active contract suite
-    audit_status = "NONE"
-    contract_id = None
-    contract_timestamp = "unknown"
-<<<<<<< HEAD
-    contract_commit = ""
-    equation_fingerprint = ""
-    summary_pass = 0
-    summary_fail = 0
-    active_profile = None
-=======
-    contract_commit = "unknown"
-    equation_fingerprint = "unknown"
-    summary_pass = 0
-    summary_fail = 0
->>>>>>> feature/wave-core-golden-validation
-    
-    # Define absolute paths dynamically based on repo root
-    REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    output_wp_dir = os.path.join(REPO_ROOT, 'output_wp')
-    suite_abs_path = os.path.join(output_wp_dir, 'runs', '_whitepaper_contract', 'whitepaper_contract_suite.json')
-    
-    suite_path = Path(suite_abs_path)
-    try:
-        curr_full = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
-        if suite_path.exists():
-            with open(suite_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                
-                # Handle both list of audits and single audit dict
-                audits = data if isinstance(data, list) else [data]
-                
-                # Sort by timestamp descending (newest first)
-                audits.sort(key=lambda x: x.get("header", {}).get("timestamp", ""), reverse=True)
-                
-                for audit in audits:
-                    summary = audit.get("summary", {})
-                    # We only consider audits that fully passed
-                    if summary.get("fail", 1) == 0:
-                        header = audit.get("header", {})
-                        fingerprints = audit.get("fingerprints", {})
-                        
-                        contract_id = header.get("contract_id")
-                        contract_timestamp = header.get("timestamp", "unknown")
-                        contract_commit = header.get("git_commit", "")
-                        equation_fingerprint = header.get("equation_fingerprint", "unknown")
-                        summary_pass = summary.get("pass", 0)
-                        summary_fail = summary.get("fail", 0)
-                        
-<<<<<<< HEAD
-                        # Extract active_profile from the LATEST matching run
-                        # Runs are chronological, so reverse to prefer newest
-                        for run in reversed(audit.get("runs", [])):
-                            mp = run.get("matched_profile")
-                            if mp and run.get("status") == "PASS" and mp != "baseline":
-                                active_profile = mp
-                                break
-                        if not active_profile:
-                            for run in reversed(audit.get("runs", [])):
-                                if run.get("status") == "PASS":
-                                    active_profile = run.get("matched_profile")
-                                    break
-                        
-=======
->>>>>>> feature/wave-core-golden-validation
-                        if contract_commit == curr_full:
-                            audit_status = "AUDITED"
-                        else:
-                            audit_status = "OUTDATED"
-                        break
-    except Exception as e:
-        print(f"Contract read error: {e}")
+    # Delegate to shared audit context helper
+    ctx = _get_audit_context()
 
     return {
         "commit_hash": git_hash,
+        "git_commit": git_hash,
+        "git_branch": branch,
         "current_build": f"{git_hash} ({branch})",
-        "audit_status": audit_status,
-        "contract_id": contract_id,
-        "active_contract_id": contract_id,
-        "audit_output_wp_abs_path": output_wp_dir,
-        "active_suite_abs_path": suite_abs_path if suite_path.exists() else None,
-        "contract_timestamp": contract_timestamp,
-        "contract_commit": contract_commit if contract_commit else "unknown",
-        "equation_fingerprint": equation_fingerprint if equation_fingerprint else "unknown",
-        "summary_pass": summary_pass,
-        "summary_fail": summary_fail,
-<<<<<<< HEAD
-        "active_profile": active_profile,
-=======
->>>>>>> feature/wave-core-golden-validation
+        "audit_status": ctx["audit_status"],
+        "contract_id": ctx["contract_id"],
+        "active_contract_id": ctx["contract_id"],
+        "audit_output_wp_abs_path": ctx["output_wp_dir"],
+        "active_suite_abs_path": ctx["suite_abs_path"],
+        "contract_timestamp": ctx["contract_timestamp"],
+        "contract_commit": ctx["contract_commit"],
+        "equation_fingerprint": ctx["equation_fingerprint"],
+        "summary_pass": ctx["summary_pass"],
+        "summary_fail": ctx["summary_fail"],
+        "active_profile": ctx["active_profile"],
         "tests": "PASS (Local)",
         "loaded_modules": {
             "routing_backend": os.path.dirname(os.path.abspath(__file__)),
@@ -167,7 +96,6 @@ async def get_health():
         }
     }
 
-<<<<<<< HEAD
 # ══════════════════════════════════════════════════════════════
 # Shared Audit Context Helper
 # ══════════════════════════════════════════════════════════════
@@ -542,8 +470,6 @@ async def verify_all():
     }
 
 
-=======
->>>>>>> feature/wave-core-golden-validation
 @router.post("/audit/generate")
 async def generate_audit_contract():
     """

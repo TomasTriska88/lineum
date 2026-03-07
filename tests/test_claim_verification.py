@@ -178,3 +178,46 @@ def test_run_preset_persists_context_fields():
     assert "git_commit" in data, "git_commit missing"
     assert "equation_fingerprint" in data, "equation_fingerprint missing"
     assert data["checked_at"], "checked_at must not be empty"
+
+
+# ══════════════════════════════════════════════════════════════
+# Health Endpoint Tests
+# ══════════════════════════════════════════════════════════════
+
+def test_health_returns_all_required_fields():
+    """/health must return git_commit, audit_status, active_profile, active_contract_id."""
+    res = client.get("/api/lab/health")
+    assert res.status_code == 200
+    data = res.json()
+
+    # Core identity
+    assert "git_commit" in data, "git_commit missing"
+    assert len(data["git_commit"]) == 40, f"git_commit must be 40-char SHA, got: {data['git_commit']}"
+    assert "git_branch" in data, "git_branch missing"
+    assert data["git_branch"], "git_branch must not be empty"
+
+    # Audit truthfulness
+    assert "audit_status" in data, "audit_status missing"
+    assert data["audit_status"] in ("AUDITED", "OUTDATED", "NONE"), \
+        f"Invalid audit_status: {data['audit_status']}"
+
+    # Contract info
+    assert "active_contract_id" in data, "active_contract_id missing"
+    assert "equation_fingerprint" in data, "equation_fingerprint missing"
+
+    # Active profile
+    assert "active_profile" in data, "active_profile missing"
+
+    # Audit paths
+    assert "audit_output_wp_abs_path" in data, "audit_output_wp_abs_path missing"
+    assert "active_suite_abs_path" in data, "active_suite_abs_path missing"
+
+
+def test_health_no_build_unknown():
+    """/health must not return placeholder 'Build: unknown'."""
+    res = client.get("/api/lab/health")
+    assert res.status_code == 200
+    data = res.json()
+
+    assert data.get("current_build") != "Build: unknown", "current_build must not be placeholder"
+    assert data.get("git_commit") != "unknown", "git_commit must not be 'unknown'"
