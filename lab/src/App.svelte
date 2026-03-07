@@ -1161,4 +1161,102 @@
     :global(.lab-tooltip.visible) {
         opacity: 1;
     }
+
+    .top-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: rgba(0, 5, 15, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        z-index: 200;
+        pointer-events: auto;
+    }
+
+    .nav-brand {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .nav-brand h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 300;
+        letter-spacing: 0.3rem;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+
+    .nav-brand .subtitle {
+        font-size: 0.6rem;
+        color: #00ffff;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.1rem;
+        margin-top: 2px;
+    }
+
+    .nav-modes {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-modes button {
+        background: transparent;
+        border: 1px solid transparent;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 4px;
+    }
+
+    .nav-modes button:hover {
+        color: #00ffff;
+        background: rgba(0, 255, 255, 0.05);
+    }
+
+    .nav-modes button.active {
+        color: #00ffff;
+        background: rgba(0, 255, 255, 0.1);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+
+    .nav-modes .divider {
+        width: 1px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 0 10px;
+    }
+
+    .btn-generate-audit {
+        background: rgba(0, 255, 0, 0.1) !important;
+        color: #00ff00 !important;
+        border: 1px solid rgba(0, 255, 0, 0.3) !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-generate-audit:hover:not(:disabled) {
+        background: rgba(0, 255, 0, 0.2) !important;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.2) !important;
+    }
+
+    .btn-generate-audit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 </style>

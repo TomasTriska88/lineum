@@ -36,4 +36,25 @@ test.describe('App Initialization Smoke Test', () => {
         const brandEl = page.locator('.nav-brand h1');
         await expect(brandEl).toHaveText(/SIMULACRUM/i);
     });
+
+    test('Navigation menu layout avoids vertical regression (Flex layout check)', async ({ page }) => {
+        await page.goto('/');
+
+        // Wait for initial data load overlay to dismiss so menu is fully visible
+        await expect(page.locator('.loader')).toBeHidden({ timeout: 10000 });
+
+        // Wait for nav to mount
+        const nav = page.locator('.top-nav');
+        await expect(nav).toBeVisible();
+
+        // Check computed CSS to assure it is rendering as a flex row, not vertically stacked blocks
+        const navDisplay = await nav.evaluate((el) => window.getComputedStyle(el).display);
+        expect(navDisplay).toBe('flex');
+
+        // Ensure nav-modes (the buttons overlay) is also flexing horizontally
+        const navModes = page.locator('.nav-modes');
+        await expect(navModes).toBeVisible();
+        const modesDisplay = await navModes.evaluate((el) => window.getComputedStyle(el).display);
+        expect(modesDisplay).toBe('flex');
+    });
 });
