@@ -125,6 +125,15 @@ def _get_audit_context():
             ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL
         ).decode("utf-8").strip()
 
+        import sys
+        if os.path.join(REPO_ROOT, "tools") not in sys.path:
+            sys.path.append(os.path.join(REPO_ROOT, "tools"))
+        try:
+            from whitepaper_contract import compute_audit_relevant_fingerprint
+            curr_audit_fp = compute_audit_relevant_fingerprint(REPO_ROOT)
+        except Exception:
+            curr_audit_fp = "unknown"
+
         if suite_path.exists():
             with open(suite_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -140,22 +149,33 @@ def _get_audit_context():
                     contract_timestamp = header.get("timestamp", "unknown")
                     contract_commit = header.get("git_commit", "")
                     equation_fingerprint = header.get("equation_fingerprint", "unknown")
+                    suite_audit_fp = header.get("audit_relevant_code_fingerprint", "unknown")
                     summary_pass = summary.get("pass", 0)
                     summary_fail = summary.get("fail", 0)
 
-                    for run in reversed(audit.get("runs", [])):
+                    active_run_has_metrics = False
+                    for run in audit.get("runs", []):
                         mp = run.get("matched_profile")
                         if mp and run.get("status") == "PASS" and mp != "baseline":
                             active_profile = mp
+                            if run.get("metrics"):
+                                active_run_has_metrics = True
                             break
                     if not active_profile:
-                        for run in reversed(audit.get("runs", [])):
+                        for run in audit.get("runs", []):
                             if run.get("status") == "PASS":
                                 active_profile = run.get("matched_profile")
+                                if run.get("metrics"):
+                                    active_run_has_metrics = True
                                 break
 
-                    if contract_commit == curr_full:
-                        audit_status = "AUDITED"
+                    if curr_audit_fp != "unknown" and suite_audit_fp == curr_audit_fp:
+                        if contract_commit == curr_full:
+                            audit_status = "AUDITED"
+                            if active_profile == "wave_core" and not active_run_has_metrics:
+                                audit_status = "PROVISIONAL PASS / BASELINE ONLY"
+                        else:
+                            audit_status = "BUILD_NEWER"
                     else:
                         audit_status = "OUTDATED"
                     break
@@ -180,20 +200,25 @@ def _get_audit_context():
 # ══════════════════════════════════════════════════════════════
 
 SCENARIO_REGISTRY = {
-    "preset-frequency-sweep": {
-        "claim_id": "CL-001",
-        "description": "Unified Frequency Scale: inject waves, measure Φ tension",
+    "preset-core-001": {
+        "claim_id": "CL-CORE-001",
+        "description": "Dominant spectral tone stability (Unitarity Check)",
         "runner": "run_ra1_unitarity",
     },
-    "preset-defect-genesis": {
-        "claim_id": "CL-002",
-        "description": "Topological Defect Genesis: force bounding freq, observe vortex",
+    "preset-core-002": {
+        "claim_id": "CL-CORE-002",
+        "description": "Topological neutrality maintained (Bound State/Edges)",
         "runner": "run_ra2_bound_state",
     },
-    "preset-absolute-zero": {
-        "claim_id": "CL-010",
-        "description": "Absolute Zero = κ symmetry: symmetric grid, measure entropy",
-        "runner": "run_ra1_unitarity",
+    "preset-core-003": {
+        "claim_id": "CL-CORE-003",
+        "description": "φ center-trace exhibits a measurable half-life (Excited Forms)",
+        "runner": "run_ra3_excited_state",
+    },
+    "preset-core-004": {
+        "claim_id": "CL-CORE-004",
+        "description": "Stable localized excitations (linons) emerge (Mu Memory footprinting)",
+        "runner": "run_ra4_mu_memory",
     },
 }
 
@@ -202,6 +227,7 @@ _RUNNERS = {
     "run_ra1_unitarity": run_ra1_unitarity,
     "run_ra2_bound_state": run_ra2_bound_state,
     "run_ra3_excited_state": run_ra3_excited_state,
+    "run_ra4_mu_memory": run_ra4_mu_memory,
 }
 
 # ══════════════════════════════════════════════════════════════
@@ -374,11 +400,23 @@ async def verify_all():
     git_commit = _get_current_git_commit()
     now = datetime.now(timezone.utc).isoformat()
 
-    # Total claims = 10 (hardcoded from claims.js registry)
-    # TESTABLE_NOW = those in SCENARIO_REGISTRY
-    # NOT_TESTABLE = total - testable
-    total_claims = 10
-    testable_count = len(SCENARIO_REGISTRY)
+    # Canonical claims reading - simple JSON load + Scientific Schema enforcement
+    total_claims = 0
+    testable_count = 0
+    claims_by_id = {}
+    try:
+        claims_path = os.path.join(os.path.dirname(__file__), "..", "lab", "src", "lib", "data", "claims.json")
+        with open(claims_path, 'r', encoding='utf-8') as f:
+            claims_data = json.load(f)
+            total_claims = len(claims_data)
+            for c in claims_data:
+                claims_by_id[c["id"]] = c
+                # Only strictly approved claims may be counted as testable candidates
+                if c.get("testability") == "TESTABLE_NOW" and c.get("verification_spec_status") == "APPROVED":
+                    testable_count += 1
+    except Exception as e:
+        print(f"Total claims JSON parse failed: {e}")
+
     not_testable_count = total_claims - testable_count
 
     results = {}
@@ -391,6 +429,13 @@ async def verify_all():
     errors = []
 
     for preset_name, scenario in SCENARIO_REGISTRY.items():
+        claim_id = scenario["claim_id"]
+        c_entry = claims_by_id.get(claim_id, {})
+        
+        # Enforce scientific approval barrier before running scenario
+        if c_entry.get("testability") != "TESTABLE_NOW" or c_entry.get("verification_spec_status") != "APPROVED":
+            skipped += 1
+            continue
         runner_fn = _RUNNERS.get(scenario["runner"])
         if not runner_fn:
             skipped += 1
@@ -539,8 +584,25 @@ async def generate_audit_contract():
         except Exception:
             current_commit = "unknown"
 
+        import sys
+        if os.path.join(REPO_ROOT, "tools") not in sys.path:
+            sys.path.append(os.path.join(REPO_ROOT, "tools"))
+        try:
+            from whitepaper_contract import compute_audit_relevant_fingerprint
+            curr_audit_fp = compute_audit_relevant_fingerprint(REPO_ROOT)
+        except Exception:
+            curr_audit_fp = "unknown"
+
         suite_commit = header.get("git_commit", "")
-        audit_status = "AUDITED" if (suite_commit == current_commit and current_commit != "unknown") else "OUTDATED"
+        suite_audit_fp = header.get("audit_relevant_code_fingerprint", "unknown")
+        
+        if curr_audit_fp != "unknown" and suite_audit_fp == curr_audit_fp:
+            if suite_commit == current_commit:
+                audit_status = "AUDITED"
+            else:
+                audit_status = "BUILD_NEWER"
+        else:
+            audit_status = "OUTDATED"
 
         # Derive new_run_id from latest_run.txt
         new_run_id = latest_run_value if latest_run_value else "unknown"

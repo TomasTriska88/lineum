@@ -361,5 +361,50 @@ test.describe('Whitepaper Claims MVP', () => {
         // Title should be restored
         await expect(target).toHaveAttribute('title', 'Test Tooltip Content');
     });
+    test('UI Test: Claims Filtering Logic and Combinations', async ({ page }) => {
+        await page.goto('/');
+        await page.click('text=Claims');
+
+        // Wait for list to load
+        const listItems = page.locator('.claim-item');
+        await expect(listItems).toHaveCount(whitepaperClaims.length);
+
+        // 1. Single Filter: Testability
+        const testabilitySelect = page.locator('select.tag-select').nth(2); // index 2 is testabilityFilter
+        await testabilitySelect.selectOption('TESTABLE_NOW');
+
+        let expectedTestableCount = whitepaperClaims.filter(c => c.testability === 'TESTABLE_NOW').length;
+        // Wait for reactivity to process
+        await page.waitForTimeout(500);
+        await expect(listItems).toHaveCount(expectedTestableCount);
+
+        // 2. Clear Filters
+        const clearBtn = page.locator('.clear-filters-btn');
+        await clearBtn.click();
+        await page.waitForTimeout(500);
+        await expect(listItems).toHaveCount(whitepaperClaims.length);
+
+        // 3. Combined Filter (AND semantics)
+        const scopeSelect = page.locator('select.tag-select').nth(3); // index 3 is scopeFilter
+        await testabilitySelect.selectOption('TESTABLE_NOW');
+        await scopeSelect.selectOption('MODEL_INTERNAL');
+
+        let expectedCombinedCount = whitepaperClaims.filter(c => c.testability === 'TESTABLE_NOW' && c.scope === 'MODEL_INTERNAL').length;
+        await page.waitForTimeout(500);
+        await expect(listItems).toHaveCount(expectedCombinedCount);
+
+        // 4. Clear Filters again
+        await clearBtn.click();
+        await page.waitForTimeout(500);
+        await expect(listItems).toHaveCount(whitepaperClaims.length);
+
+        // 5. Falsification needed 
+        const falsificationSelect = page.locator('select.tag-select').nth(4); // index 4 is falsificationFilter
+        await falsificationSelect.selectOption('needed');
+
+        let expectedFalsCount = whitepaperClaims.filter(c => c.falsification_needed === true).length;
+        await page.waitForTimeout(500);
+        await expect(listItems).toHaveCount(expectedFalsCount);
+    });
 
 });

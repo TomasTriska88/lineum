@@ -25,7 +25,19 @@
 
     let searchQuery = "";
     let selectedTag = "all";
-    let appliedFilter = "all";
+    let statusFilter = "all";
+    let testabilityFilter = "all";
+    let scopeFilter = "all";
+    let falsificationFilter = "all";
+
+    function clearFilters() {
+        searchQuery = "";
+        selectedTag = "all";
+        statusFilter = "all";
+        testabilityFilter = "all";
+        scopeFilter = "all";
+        falsificationFilter = "all";
+    }
 
     let integrationLog = [];
     let savingApplied = false;
@@ -46,25 +58,77 @@
         const matchesTag =
             selectedTag === "all" || claim.tags.includes(selectedTag);
 
-        const appliedState = isApplied(claim.id);
+        const appliedState = isApplied(claim.id, integrationLog);
         const status = getActualStatus(claim, claimResults);
-        let matchesApplied = true;
-        if (appliedFilter === "applied") matchesApplied = appliedState;
-        else if (appliedFilter === "not_applied")
-            matchesApplied = !appliedState;
-        else if (appliedFilter === "supported")
-            matchesApplied = status === "SUPPORTED";
-        else if (appliedFilter === "contradicted")
-            matchesApplied = status === "CONTRADICTED";
-        else if (appliedFilter === "untested")
-            matchesApplied = status === "UNTESTED";
-        else if (appliedFilter === "experimental")
-            matchesApplied = status.startsWith("EXPERIMENTAL_");
-        else if (appliedFilter === "outdated")
-            matchesApplied = status === "OUTDATED";
+        let matchesStatus = true;
+        if (statusFilter === "applied") matchesStatus = appliedState;
+        else if (statusFilter === "not_applied") matchesStatus = !appliedState;
+        else if (statusFilter === "supported")
+            matchesStatus = status === "SUPPORTED";
+        else if (statusFilter === "contradicted")
+            matchesStatus = status === "CONTRADICTED";
+        else if (statusFilter === "untested")
+            matchesStatus = status === "UNTESTED";
+        else if (statusFilter === "experimental")
+            matchesStatus = status.startsWith("EXPERIMENTAL_");
+        else if (statusFilter === "outdated")
+            matchesStatus = status === "OUTDATED";
 
-        return matchesSearch && matchesTag && matchesApplied;
+        const matchesTestability =
+            testabilityFilter === "all" ||
+            claim.testability === testabilityFilter;
+        const matchesScope =
+            scopeFilter === "all" || claim.scope === scopeFilter;
+        const matchesFalsification =
+            falsificationFilter === "all" ||
+            (falsificationFilter === "needed"
+                ? claim.falsification_needed === true
+                : true);
+
+        return (
+            matchesSearch &&
+            matchesTag &&
+            matchesStatus &&
+            matchesTestability &&
+            matchesScope &&
+            matchesFalsification
+        );
     });
+
+    // SINGLE SOURCE OF TRUTH for Claim Render Status
+    function getActualStatus(claim, results) {
+        // Rule 1: Not Testable = Never runs
+        if (
+            claim.testability === "NOT_TESTABLE_YET" ||
+            claim.testability === "NEEDS_NEW_SCENARIO"
+        ) {
+            return "UNTESTED";
+        }
+
+        // Rule 2: If we don't have results, it hasn't run
+        const cr = (results || {})[claim.id] || {};
+        if (!cr.status) return "UNTESTED";
+
+        // Rule 3: Enforce strict OUTDATED barrier
+        // If the system claims it's outdated or the contract metadata differs, it cannot be canonical SUPPORTED
+        if (
+            cr.is_stale ||
+            cr.status === "OUTDATED" ||
+            auditStatus === "OUTDATED" ||
+            auditStatus === "BUILD_NEWER" ||
+            auditStatus === "PROVISIONAL PASS / BASELINE ONLY"
+        ) {
+            if (cr.passed_internal) {
+                return "EXPERIMENTAL_SUPPORTED";
+            } else if (cr.passed_internal === false) {
+                return "EXPERIMENTAL_CONTRADICTED";
+            }
+            return "OUTDATED";
+        }
+
+        // Rule 4: Otherwise, return the strict backend resolved status
+        return cr.status || "UNTESTED";
+    }
 
     // Reactivity fix: pass integrationLog explicitly from template to trigger Svelte re-renders
     function isApplied(claimId, logTracker) {
@@ -109,12 +173,14 @@
             if (res.ok) {
                 const data = await res.json();
                 activeContract = data.contract_id || null;
-                currentBuild = data.current_build || "unknown";
+                currentBuild =
+                    data.commit_hash || data.current_build || "unknown";
 
                 auditStatus = data.audit_status || "NONE";
                 contractId = data.contract_id || null;
                 contractTimestamp = data.contract_timestamp || "unknown";
-                contractCommit = data.contract_commit || "unknown";
+                contractCommit =
+                    data.contract_commit || data.commit_hash || "unknown";
                 equationFingerprint = data.equation_fingerprint || "unknown";
                 summaryPass = data.summary_pass || 0;
                 summaryFail = data.summary_fail || 0;
@@ -212,29 +278,44 @@
         if (!cr) return "";
 
         let cStatus = getActualStatus(claim, claimResults);
+
+        // Match audit_status logic to the single source of truth downgrade
         let bAuditStatus = auditStatus;
         if (auditStatus !== "AUDITED") {
             bAuditStatus = auditStatus === "NONE" ? "NONE" : "OUTDATED";
         }
+        if (
+            auditStatus === "PROVISIONAL PASS / BASELINE ONLY" ||
+            auditStatus === "BUILD_NEWER"
+        ) {
+            bAuditStatus = "OUTDATED";
+        }
 
         let cid = cr.contract_id || contractId;
-        if (!cid || cid === "unknown") cid = "EXAMPLE_CONTRACT_ID";
+        if (!cid || cid === "unknown") cid = "none";
 
         let finger = equationFingerprint;
-        if (!finger || finger === "unknown") finger = "EXAMPLE_FINGERPRINT";
+        if (!finger || finger === "unknown") finger = "null";
 
         let com = contractCommit;
-        if (!com || com === "unknown") com = "EXAMPLE_GIT_COMMIT";
+        if (!com || com === "unknown") com = "none";
 
         // Use full currentBuild Git hash string minus branch
-        let fallbackCom = currentBuild
-            ? currentBuild.split(" ")[0]
-            : "EXAMPLE_GIT_COMMIT";
-        if (com === "EXAMPLE_GIT_COMMIT" && fallbackCom.length > 30) {
+        let fallbackCom = currentBuild ? currentBuild.split(" ")[0] : "none";
+        if (com === "none" && fallbackCom.length > 5) {
             com = fallbackCom;
         }
 
-        return `> [!NOTE] \n> **EVIDENCE:**\n> - **claim_id:** ${claim.id}\n> - **contract_id:** ${cid}\n> - **manifest_id:** ${cr.manifest_id || "EXAMPLE_MANIFEST_ID"}\n> - **claim_status:** ${cStatus}\n> - **audit_status:** ${bAuditStatus}\n> - **equation_fingerprint:** ${finger}\n> - **git_commit:** ${com}\n> - **timestamp_utc:** ${new Date().toISOString()}\n> - **lab_section:** Whitepapers/Claims\n> - **whitepaper_target:** ${claim.source_file}#${claim.source_anchor}`;
+        const anchor = claim.source_anchor
+            ? `#${claim.source_anchor.replace(/^#+/, "")}`
+            : "";
+
+        let target = "none (core registry only)";
+        if (claim.source_file && !claim.source_file?.includes("claims.js")) {
+            target = `${claim.source_file}${anchor}`;
+        }
+
+        return `> [!NOTE] \n> **EVIDENCE:**\n> - **claim_id:** ${claim.id}\n> - **contract_id:** ${cid}\n> - **manifest_id:** ${cr.manifest_id || "none"}\n> - **claim_status:** ${cStatus}\n> - **audit_status:** ${bAuditStatus}\n> - **equation_fingerprint:** ${finger}\n> - **git_commit:** ${com}\n> - **timestamp_utc:** ${new Date().toISOString()}\n> - **lab_section:** Claims\n> - **whitepaper_target:** ${target}`;
     }
 
     async function markAsApplied(claim) {
@@ -273,16 +354,6 @@
 
     function selectClaim(id) {
         selectedClaimId = id === selectedClaimId ? null : id;
-    }
-
-    // Status logic: backend-authoritative, with stale detection
-    function getActualStatus(claim, _results) {
-        if (claimResults[claim.id]) {
-            const cr = claimResults[claim.id];
-            if (cr.is_stale) return "OUTDATED";
-            return cr.status;
-        }
-        return claim.status || "UNTESTED";
     }
 
     async function runVerification(claim) {
@@ -368,33 +439,86 @@
 <div class="claims-container">
     <div class="claims-sidebar">
         <div class="filter-section">
-            <input
-                type="text"
-                placeholder="Search claims..."
-                bind:value={searchQuery}
-                class="search-input"
-            />
-            <select bind:value={selectedTag} class="tag-select">
-                {#each allTags as tag}
-                    <option value={tag}
-                        >{tag === "all" ? "All Tags" : tag}</option
-                    >
-                {/each}
-            </select>
-            <select
-                bind:value={appliedFilter}
-                class="tag-select"
-                style="margin-top: 5px;"
+            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <input
+                    type="text"
+                    placeholder="Search claims..."
+                    bind:value={searchQuery}
+                    class="search-input"
+                    style="flex: 1; min-width: 150px;"
+                />
+                <select
+                    bind:value={selectedTag}
+                    class="tag-select"
+                    style="flex: 1;"
+                >
+                    {#each allTags as tag}
+                        <option value={tag}
+                            >{tag === "all" ? "All Tags" : tag}</option
+                        >
+                    {/each}
+                </select>
+                <select
+                    bind:value={statusFilter}
+                    class="tag-select"
+                    style="flex: 1;"
+                >
+                    <option value="all">All States</option>
+                    <option value="supported">✅ Supported</option>
+                    <option value="contradicted">❌ Contradicted</option>
+                    <option value="untested">⬜ Untested</option>
+                    <option value="experimental">🧪 Experimental</option>
+                    <option value="outdated">⚠️ Outdated</option>
+                    <option value="applied">✓ Applied Only</option>
+                    <option value="not_applied">Not Applied</option>
+                </select>
+            </div>
+
+            <div
+                style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;"
             >
-                <option value="all">All States</option>
-                <option value="supported">✅ Supported</option>
-                <option value="contradicted">❌ Contradicted</option>
-                <option value="untested">⬜ Untested</option>
-                <option value="experimental">🧪 Experimental</option>
-                <option value="outdated">⚠️ Outdated</option>
-                <option value="applied">✓ Applied Only</option>
-                <option value="not_applied">Not Applied</option>
-            </select>
+                <select
+                    bind:value={testabilityFilter}
+                    class="tag-select"
+                    style="flex: 1;"
+                >
+                    <option value="all">All Testabilities</option>
+                    <option value="TESTABLE_NOW">Testable Now</option>
+                    <option value="NEEDS_NEW_SCENARIO"
+                        >Needs New Scenario</option
+                    >
+                    <option value="NOT_TESTABLE_YET">Not Testable Yet</option>
+                </select>
+                <select
+                    bind:value={scopeFilter}
+                    class="tag-select"
+                    style="flex: 1;"
+                >
+                    <option value="all">All Scopes</option>
+                    <option value="MODEL_INTERNAL">Model Internal</option>
+                    <option value="ANALOGICAL">Analogical</option>
+                    <option value="REAL_WORLD_STRONG">Real-world Strong</option>
+                </select>
+                <select
+                    bind:value={falsificationFilter}
+                    class="tag-select"
+                    style="flex: 1;"
+                >
+                    <option value="all">All Falsifications</option>
+                    <option value="needed">Falsification Needed</option>
+                </select>
+            </div>
+            <div
+                style="display: flex; justify-content: flex-end; margin-top: 5px;"
+            >
+                <button
+                    class="clear-filters-btn"
+                    on:click={clearFilters}
+                    style="background: transparent; color: #ff7b72; border: 1px solid rgba(255,123,114,0.3); border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.75rem;"
+                >
+                    ✕ Clear Filters
+                </button>
+            </div>
 
             <div class="bulk-actions">
                 <button
@@ -843,6 +967,19 @@
                                     Run an Audit-Grade verification to generate
                                     proposed edit text.
                                 </p>
+                            {:else if getActualStatus(selectedClaim, claimResults).startsWith("EXPERIMENTAL_")}
+                                <p class="preview-placeholder">
+                                    Laboratory simulation completed, but an
+                                    official Audit-Grade run is required to
+                                    propose canonical text edits.
+                                </p>
+                            {:else if getActualStatus(selectedClaim, claimResults) === "OUTDATED"}
+                                <p class="preview-placeholder">
+                                    The previous laboratory simulation is
+                                    outdated. Run a new Audit-Grade verification
+                                    on the current equation to generate proposed
+                                    edit text.
+                                </p>
                             {:else if getActualStatus(selectedClaim, claimResults) === "SUPPORTED"}
                                 <p class="mono-edit add">
                                     + <span class="badge supported"
@@ -875,7 +1012,7 @@
                                 </p>
                             {/if}
                         </div>
-                        {#if getActualStatus(selectedClaim, claimResults).includes("SUPPORTED") || getActualStatus(selectedClaim, claimResults).includes("CONTRADICTED")}
+                        {#if getActualStatus(selectedClaim, claimResults)?.includes("SUPPORTED") || getActualStatus(selectedClaim, claimResults)?.includes("CONTRADICTED")}
                             <div
                                 class="evidence-generator"
                                 style="margin-top: 20px; border-top: 1px solid #30363d; padding-top: 15px;"
@@ -942,6 +1079,8 @@
         {/if}
     </div>
 </div>
+
+<!-- Trigger Hot Module Reload -->
 
 <style>
     .claims-container {

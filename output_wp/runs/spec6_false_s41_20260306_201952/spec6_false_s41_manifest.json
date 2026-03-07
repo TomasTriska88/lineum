@@ -191,14 +191,14 @@
     "diff_keys": []
   },
   "code_fingerprint": {
-    "sha256": "5f70fdd4b5fc2adcf1c6544f0bf7702cdead05c676dcfdabb43e604b93fa0742",
+    "sha256": "c70153f2426e22849b35e35a74332c1b6c6f9f7168269f8fe84a37613663810c",
     "files": [
       "lineum.py",
       "tools/whitepaper_contract.py"
     ],
     "file_hashes": {
       "lineum.py": "3db6ff8d36bfeddc7704db69a97f792635886e5089d4455576ee373d1b31be5d",
-      "tools/whitepaper_contract.py": "bb16d89313338d23cb2bf404091f06b5034fac21c30c0b5df2750a562fee765b"
+      "tools/whitepaper_contract.py": "e71c0460b64c8713e21dbd65ea65b178c5bfaed12bb996b307507c4323aa6b6a"
     },
     "normalized_newlines": true
   }

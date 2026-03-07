@@ -10,6 +10,7 @@
         "test": "vitest run"
     },
     "devDependencies": {
+        "@playwright/test": "^1.58.2",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "jsdom": "^28.1.0",
         "svelte": "^4.2.7",
@@ -17,6 +18,11 @@
         "vitest": "^4.0.18"
     },
     "dependencies": {
+        "chart.js": "^4.5.1",
+        "chartjs-plugin-zoom": "^2.2.0",
+        "katex": "^0.16.37",
+        "marked": "^17.0.4",
+        "playwright": "^1.58.2",
         "three": "^0.160.0"
     }
 }

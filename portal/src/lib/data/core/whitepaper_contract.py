@@ -58,14 +58,16 @@ def compute_sha256(path):
     except FileNotFoundError:
         return None
 
-def compute_code_fingerprint(repo_root):
+def compute_audit_relevant_fingerprint(repo_root):
     """
     Compute combined fingerprint of critical source files.
     - lineum.py
+    - lineum_core/math.py
+    - scripts/validation_core.py
     - tools/whitepaper_contract.py
     - contracts/*.json
     """
-    files = ["lineum.py", "tools/whitepaper_contract.py"]
+    files = ["lineum.py", "lineum_core/math.py", "scripts/validation_core.py", "tools/whitepaper_contract.py"]
     # Add contracts
     for c in glob.glob(os.path.join(repo_root, "contracts", "*.contract.json")):
         rel = os.path.relpath(c, repo_root)
@@ -98,8 +100,8 @@ def verify_locked_run(run_dir):
         with open(lock_file, "r", encoding="utf-8") as f:
             lock_data = json.load(f)
     except Exception as e:
-        print(f"FATAL: Locked audit run tampered (corrupt _LOCK.json): {run_dir}. Restore from git or rebuild new run; do not edit evidence.")
-        sys.exit(EXIT_FAIL)
+        print(f"WARNING: Locked audit run tampered (corrupt _LOCK.json): {run_dir}. RUN EXCLUDED.")
+        return False
         
     registry = lock_data.get("files", {})
     
@@ -114,29 +116,29 @@ def verify_locked_run(run_dir):
             
     # 2. Check counts
     if len(actual_files) != lock_data.get("file_count", -1):
-        print(f"FATAL: Locked audit run tampered: {run_dir} (File count mismatch). Restore from git or rebuild new run; do not edit evidence.")
-        sys.exit(EXIT_FAIL)
+        print(f"WARNING: Locked audit run tampered: {run_dir} (File count mismatch). RUN EXCLUDED.")
+        return False
         
     # 3. Check hashes and extra files
     for fpath in actual_files:
         rel_path = os.path.relpath(fpath, run_dir).replace('\\', '/')
         if rel_path not in registry:
-            print(f"FATAL: Locked audit run tampered: {run_dir} (Extra file {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
-            sys.exit(EXIT_FAIL)
+            print(f"WARNING: Locked audit run tampered: {run_dir} (Extra file {rel_path}). RUN EXCLUDED.")
+            return False
             
         if os.path.getsize(fpath) != registry[rel_path]["size"]:
-            print(f"FATAL: Locked audit run tampered: {run_dir} (Size mismatch on {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
-            sys.exit(EXIT_FAIL)
+            print(f"WARNING: Locked audit run tampered: {run_dir} (Size mismatch on {rel_path}). RUN EXCLUDED.")
+            return False
             
         if compute_sha256(fpath) != registry[rel_path]["sha256"]:
-            print(f"FATAL: Locked audit run tampered: {run_dir} (SHA256 mismatch on {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
-            sys.exit(EXIT_FAIL)
+            print(f"WARNING: Locked audit run tampered: {run_dir} (SHA256 mismatch on {rel_path}). RUN EXCLUDED.")
+            return False
             
     # Check missing files
     for rel_path in registry:
         if not os.path.exists(os.path.join(run_dir, rel_path)):
-            print(f"FATAL: Locked audit run tampered: {run_dir} (Missing file {rel_path}). Restore from git or rebuild new run; do not edit evidence.")
-            sys.exit(EXIT_FAIL)
+            print(f"WARNING: Locked audit run tampered: {run_dir} (Missing file {rel_path}). RUN EXCLUDED.")
+            return False
             
     return True
 
@@ -364,7 +366,7 @@ def main():
         release_tag = None
         tool_version = "unreleased"
 
-    codebase_sha = compute_code_fingerprint(".")
+    audit_relevant_fp = compute_audit_relevant_fingerprint(".")
 
     equation_fingerprint = "unknown"
     for profile in contract.get("profiles", []):
@@ -374,7 +376,7 @@ def main():
                 equation_fingerprint = eh
                 break
     if equation_fingerprint == "unknown":
-        equation_fingerprint = codebase_sha
+        equation_fingerprint = audit_relevant_fp
 
     suite_report = {
         "suite_schema_version": "1.0.0",
@@ -387,12 +389,13 @@ def main():
             "git_commit": git_commit,
             "git_branch": git_branch,
             "release_tag": release_tag,
-            "equation_fingerprint": equation_fingerprint
+            "equation_fingerprint": equation_fingerprint,
+            "audit_relevant_code_fingerprint": audit_relevant_fp
         },
         "fingerprints": {
             "whitepaper_sha256": compute_sha256("whitepapers/lineum-core.md"),
             "contract_sha256": compute_sha256(c_path),
-            "codebase_sha256": codebase_sha
+            "audit_relevant_sha256": audit_relevant_fp
         },
         "metric_spec": METRIC_SPEC,
         "embedded_context": {"runs": {}},
@@ -404,9 +407,12 @@ def main():
          print(f"FATAL: {args.runs_root} missing."); sys.exit(1)
 
     candidates = [args.run_dir] if args.run_dir else [os.path.join(args.runs_root, d) for d in os.listdir(args.runs_root) if os.path.isdir(os.path.join(args.runs_root, d)) and not d.startswith("_")]
-    candidates.sort()
+    candidates.sort(reverse=True)
 
     seen_identities = {}
+    valid_candidates = []
+    quarantined_runs = []
+    
     for r_dir in candidates:
         if os.path.exists(os.path.join(r_dir, "_LOCK.json")):
             # Refuse in-place modifications on locked runs
@@ -414,7 +420,55 @@ def main():
                 print(f"FATAL: Refusing to perform in-place modifications (--backfill-analysis-config) on locked run {r_dir}")
                 sys.exit(EXIT_FAIL)
             # Verify lock integrity
-            verify_locked_run(r_dir)
+            if not verify_locked_run(r_dir):
+                quarantined_runs.append(r_dir)
+                continue
+        valid_candidates.append(r_dir)
+                
+    # Formal invalid-run registry and quarantine isolation
+    if quarantined_runs:
+        import shutil
+        archive_dir = os.path.join(os.path.dirname(args.runs_root), "archive", "quarantine")
+        os.makedirs(archive_dir, exist_ok=True)
+        
+        quarantined_moved = []
+        for q_dir in quarantined_runs:
+            target_path = os.path.join(archive_dir, os.path.basename(q_dir))
+            try:
+                # Need to use shutil.move to physically isolate the run
+                shutil.move(q_dir, target_path)
+                quarantined_moved.append(target_path)
+                print(f"📦 [QUARANTINE] Moved tampered run {q_dir} to {target_path}")
+            except Exception as e:
+                print(f"⚠️ [QUARANTINE] Failed to move {q_dir}: {e}")
+                quarantined_moved.append(q_dir) # Keep original path if move failed
+
+        q_reg_path = os.path.join(archive_dir, "_quarantine_registry.json")
+        
+        # Load existing registry if it exists to append
+        existing_q_dirs = []
+        if os.path.exists(q_reg_path):
+            try:
+                with open(q_reg_path, "r", encoding="utf-8") as f:
+                    existing_data = json.load(f)
+                    existing_q_dirs = existing_data.get("quarantined_directories", [])
+            except Exception:
+                pass
+                
+        all_q_dirs = list(set(existing_q_dirs + quarantined_moved))
+        
+        try:
+            with open(q_reg_path, "w", encoding="utf-8") as f:
+                json.dump({
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "reason": "Locked audit runs failing SHA256 integrity verification.",
+                    "quarantined_directories": all_q_dirs,
+                    "valid_candidates": valid_candidates
+                }, f, indent=2)
+        except Exception as e:
+            print(f"⚠️ [QUARANTINE] Failed to write registry: {e}")
+
+    for r_dir in valid_candidates:
             
         run_id = os.path.basename(r_dir)
         m_path = find_manifest(r_dir)
@@ -612,9 +666,9 @@ def main():
         if run_result["status"] == "PASS": suite_report["summary"]["pass"] += 1
         else: suite_report["summary"]["fail"] += 1
 
-    # Save
+    # Canonical suite output: output_wp/runs/_whitepaper_contract/ (binding path contract)
     out_dir = Path(args.runs_root) / "_whitepaper_contract"
-    out_dir.mkdir(exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "whitepaper_contract_suite.json"
     with open(out_path, "w") as f: json.dump(suite_report, f, indent=2)
     

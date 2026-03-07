@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-03-07T15:28:39.200096+00:00",
+  "reason": "Locked audit runs failing SHA256 integrity verification.",
+  "quarantined_directories": [
+    "output_wp/runs\\spec6_false_s41_20260306_201952"
+  ],
+  "valid_candidates": [
+    "output_wp/runs\\spec6_false_s41_20260307_162450",
+    "output_wp/runs\\spec6_false_s41_20260307_152005",
+    "output_wp/runs\\spec6_false_s41_20260306_201952_corrupted",
+    "output_wp/runs\\spec6_false_s41_20260227_200927",
+    "output_wp/runs\\spec6_false_s41_20260222_152015"
+  ]
+}

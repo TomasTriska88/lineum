@@ -10,6 +10,8 @@ export default defineConfig({
                 changeOrigin: true,
             },
         },
+        port: 5174,
+        strictPort: true,
     },
     test: {
         environment: 'jsdom',

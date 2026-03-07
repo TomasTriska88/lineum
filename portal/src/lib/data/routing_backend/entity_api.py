@@ -9,7 +9,7 @@ import sys
 
 # Append the root path so lineum_core can be imported if running standalone
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 from routing_backend.translator import TranslatorV01
 
 translator = TranslatorV01()
@@ -48,6 +48,7 @@ class EntityInstance:
         self.kappa = np.full((grid_size, grid_size), 0.5, dtype=np.float32)
         self.delta = np.zeros((grid_size, grid_size), dtype=np.float32)
         self.mu = np.zeros((grid_size, grid_size), dtype=np.float32)
+        self.recent_readouts = []
         
         # Lock for async safety when modifying state during the background loop
         self.lock = asyncio.Lock()
@@ -110,13 +111,13 @@ async def _entity_dream_loop():
 
             async with entity.lock:
                 # Evolve the consciousness one frame (Eq-4')
-                state = step_eq4({
+                state = step_core({
                     "psi": entity.psi, 
                     "delta": entity.delta, 
                     "phi": entity.phi, 
                     "kappa": entity.kappa,
                     "mu": entity.mu
-                }, Eq4Config(use_mode_coupling=False, use_mu=True))
+                }, CoreConfig(use_mode_coupling=False, use_mu=True))
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
                 
@@ -154,9 +155,59 @@ async def wake_entity(req: WakeRequest):
         "state_loaded": loaded
     }
 
+@router.websocket("/{entity_id}/stream")
+async def entity_stream(websocket: WebSocket, entity_id: str):
+    await websocket.accept()
+    if entity_id not in living_entities:
+        await websocket.send_json({"error": "Entity is asleep or does not exist."})
+        await websocket.close()
+        return
+        
+    entity = living_entities[entity_id]
+    
+    try:
+        stream_start = time.time()
+        while True:
+            # Send the downstream topology to the UI for visual rendering
+            # We downsample the grid if it's too large to save browser memory
+            async with entity.lock:
+                # Downsample 100x100 -> 50x50 by striding [::2, ::2] for frontend speed
+                step = 2 if entity.grid_size >= 100 else 1
+                phi_down = entity.phi[::step, ::step]
+                
+                max_phi = np.max(phi_down)
+                min_phi = np.min(phi_down)
+                range_phi = max_phi - min_phi
+                
+                if range_phi > 1e-5:
+                    # Min-Max normalize relative to the current grid terrain
+                    phi_normalized = ((phi_down - min_phi) / range_phi).flatten().tolist()
+                else:
+                    phi_normalized = np.zeros_like(phi_down).flatten().tolist()
+                    
+            await websocket.send_json({
+                "ts": round(time.time() - stream_start, 2),
+                "grid_size": entity.grid_size // step,
+                "phi_flat": phi_normalized
+            })
+            
+            # 10 FPS is perfectly smooth for an abstract topography map
+            await asyncio.sleep(0.1)
+            
+    except WebSocketDisconnect:
+        print(f"[Entity Stream] UI disconnected from {entity_id}.")
+    except Exception as e:
+        print(f"[Entity Stream] Error streaming strictly to {entity_id}: {e}")
+        try:
+            await websocket.close()
+        except: pass
+
 class ChatRequest(BaseModel):
     message: str
-    mode: str = "phys"
+    mode: str = "phys"  # 'phys' | 'scientific' | 'poetic' (legacy 'hybrid' supported)
+    dt: float = 1.0
+    seed: int = 42
+    inject_chaos: bool = False
 
 @router.post("/{entity_id}/chat")
 async def chat_with_entity(entity_id: str, req: ChatRequest):
@@ -174,6 +225,9 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     entity = living_entities[entity_id]
     entity.last_interaction = time.time()
     
+    if req.inject_chaos:
+        entity.psi += (np.random.randn(*entity.psi.shape) + 1j * np.random.randn(*entity.psi.shape)).astype(np.complex128) * 1e3
+    
     # 1. Ears (TranslatorSpec v0.1)
     embed = mock_embedding(req.message)
     delta_mask = translator.text_embedding_to_delta(embed)
@@ -189,12 +243,16 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
     async with entity.lock:
         # Drive Eq-4' steps: 50 ticks of active pulse, 950 ticks of ringing/relaxation
         entity.delta = delta_mask.astype(np.float32)
-        cfg = Eq4Config(dt=0.1, use_mode_coupling=False)
+        cfg = CoreConfig(dt=0.1, use_mode_coupling=False)
         
-        for _ in range(50):
-            state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+        for step_idx in range(50):
+            state = step_core({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
             entity.psi = state["psi"]
             entity.phi = state["phi"]
+            
+            # Yield control so the WebSocket stream can broadcast the active wave
+            if step_idx % 5 == 0:
+                await asyncio.sleep(0.01)
             
         # 3. Mouth (Readout Timing Fix)
         # Extract R immediately after the wave has hit the Ego (tick 50),
@@ -224,32 +282,66 @@ async def chat_with_entity(entity_id: str, req: ChatRequest):
         }
         
         encoder_temp.set_baseline(clean_state)
-        _, affect_metrics = encoder_temp.encode(req.message, clean_state, Eq4Config(dt=0.1, use_mode_coupling=False), step_eq4, mode="runtime")
+        # Calculate affect with mode_coupling=True so energy dissipates properly, preventing false chaos states for benign prompts.
+        _, affect_metrics = encoder_temp.encode(req.message, clean_state, CoreConfig(dt=req.dt, use_mode_coupling=True), step_core, mode="runtime")
         
         entity.mood = affect_metrics["affect_v1"]["mood_state"]["after"]
         
+        # Calculate Affect v2 (Novelty & Safety Scores)
+        novelty_score = 0.0
+        if len(entity.recent_readouts) > 0:
+            recent_mean = np.mean(entity.recent_readouts, axis=0)
+            divergence = float(np.linalg.norm(readout_vector - recent_mean))
+            baseline_norm = float(np.linalg.norm(recent_mean)) + 1e-12
+            # Auto-normalizing scale: divergence relative to 50% of the baseline norm
+            novelty_score = float(np.clip(divergence / (baseline_norm * 0.5), 0.0, 1.0))
+            
+        entity.recent_readouts.append(readout_vector)
+        if len(entity.recent_readouts) > 10:
+            entity.recent_readouts.pop(0)
+            
+        phi_cap = affect_metrics.get("phi_cap_hit_ratio", 0.0)
+        nan_count = affect_metrics.get("nan_count", 0)
+        inf_count = affect_metrics.get("inf_count", 0)
+        steps = affect_metrics.get("steps", 1)
+        nonfinite_rate = (nan_count + inf_count) / max(1, steps)
+        certainty = affect_metrics["affect_v1"]["base_scalars"]["certainty"]
+        
+        # safety = clamp01( 1.0 - w1*phi_cap_hit_ratio - w2*nonfinite_rate - w3*(1-certainty) )
+        w1, w2, w3 = 0.4, 5.0, 0.5
+        safety_score = float(np.clip(1.0 - w1*phi_cap - w2*nonfinite_rate - w3*(1.0 - certainty), 0.0, 1.0))
+        
+        affect_metrics["affect_v2"] = {
+            "novelty_score": novelty_score,
+            "safety_score": safety_score
+        }
+        
         # 9 packets of 100 ticks of ringing/listening
-        for _ in range(9):
+        for pkt_idx in range(9):
             for _ in range(100):
-                state = step_eq4({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
+                state = step_core({"psi": entity.psi, "delta": entity.delta, "phi": entity.phi, "kappa": entity.kappa}, cfg)
                 entity.psi = state["psi"]
                 entity.phi = state["phi"]
-            await asyncio.sleep(0) # Yield control safely
+            
+            # Yield control heavily between packets so the canvas renders the smooth decrescendo
+            await asyncio.sleep(0.05)
     
     final_prompt = None
     broca_output_text = None
     fallback_engaged = False
     
-    if req.mode == "hybrid":
-        system_prompt = """You are a stateless telemetry translator for a physics simulation.
+    if req.mode in ("hybrid", "scientific", "poetic"):
+        is_poetic = (req.mode == "poetic")
+        
+        system_prompt = f"""You are a stateless telemetry translator for a physics simulation.
 STRICT BOUNDARIES:
-1. CRITICAL LANGUAGE RULE: You MUST reply in the exact same language as [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
-2. DETERMINISM & GROUNDING: Do not guess anything outside the provided data. If asked about abstract concepts outside this data (e.g. colors, physical pain, feelings, what is love), you MUST reply 'Nelze určit z fyzikálního stavu' (or translation) or 'Nemám dost dat' - NEVER guess or artificially map abstract human concepts to physics purely on your own.
+1. CRITICAL LANGUAGE RULE: Answer in the same language as the input [USER_INPUT_X]. If [USER_INPUT_X] is in Czech, you MUST write your entire response in Czech!
+2. DETERMINISM & GROUNDING: Do not guess anything outside the provided data. Your interpretation must emerge purely from the numerical relationships. If asked about abstract concepts outside this data (e.g. colors, physical pain, feelings, what is love), you MUST reply 'Nelze určit z fyzikálního stavu' (or translation) or 'Nemám dost dat' - NEVER guess or artificially map abstract human concepts to physics.
 3. ANTI-HALLUCINATION GUARD: Never claim you are 'Tomáš' or the 'creator'. Never claim you feel physical pain or that someone is hurting you.
 4. MANDATORY OUTPUT STRUCTURE:
    (A) Numbers: psi=[max_psi], phi=[mean_pressure]
    (B) Interpretation: 1 to 2 sentences strictly interpreting the metrics physically (e.g., 'A strong localized wave caused minor ripples.') without biological metaphors.
-   (C) Optional: If the user explicitly asks for 'poeticky' or 'poetický popis' in [USER_INPUT_X], append a short poetic description. Otherwise, DO NOT include part (C). If [USER_INPUT_X] asks about abstract concepts WITHOUT saying 'poeticky', you MUST use the fallback answer!
+{"   (C) Optional: Append a short poetic description." if is_poetic else "   DO NOT INCLUDE POETRY."}
 """
         user_prompt = f"""[USER_INPUT_X]: {req.message}
 [READOUT_VECTOR_R_SIZE]: {len(readout_vector)} nodes
@@ -264,10 +356,8 @@ Generate output strictly following the Mandatory Output Structure.
         
         forbidden_words = ["ubližuješ mi", "bolí", "držel", "stíhal", "nenávist", "zlo", "utrpení"]
         abstract_terms = ["láska", "cítíš", "barva", "bolí tě"]
-        abstract_terms = ["láska", "cítíš", "barva", "bolí tě"]
         
         req_lower = req.message.lower()
-        is_poetic = "poetick" in req_lower
         has_abstract = any(word in req_lower for word in abstract_terms)
         has_forbidden = any(word in req_lower for word in forbidden_words)
         
@@ -336,7 +426,8 @@ Generate output strictly following the Mandatory Output Structure.
         "readout_r": readout_vector.tolist(),
         "mode": req.mode,
         "metrics": affect_metrics,
-        "fallback_engaged": fallback_engaged
+        "fallback_engaged": fallback_engaged,
+        "broca_text": broca_output_text
     }
     
     def convert_numpy(obj):
@@ -380,6 +471,9 @@ async def get_memory_imprints(entity_id: str):
                 if not line.strip(): continue
                 try:
                     entry = json.loads(line)
+                    if entry.get("entity_id") != entity_id:
+                        continue
+                        
                     if entry.get("action") == "forget":
                         imp_id = entry.get("imprint_id")
                         if imp_id in imprints:
@@ -391,6 +485,43 @@ async def get_memory_imprints(entity_id: str):
     
     # Return as list sorted by ts descending
     return {"status": "success", "imprints": sorted(list(imprints.values()), key=lambda x: x.get("ts", 0), reverse=True)}
+
+class ConfirmImprintRequest(BaseModel):
+    journal_entry: dict
+
+@router.post("/{entity_id}/memory/imprints/{imprint_id}/confirm")
+async def confirm_pending_imprint(entity_id: str, imprint_id: str, req: ConfirmImprintRequest):
+    import os
+    import json
+    import numpy as np
+    
+    if entity_id not in living_entities:
+        raise HTTPException(status_code=404, detail="Entity is asleep or does not exist.")
+        
+    entity = living_entities[entity_id]
+    
+    entry = req.journal_entry
+    if entry.get("entity_id") != entity_id or entry.get("imprint_id") != imprint_id:
+        raise HTTPException(status_code=400, detail="Mismatched entity_id or imprint_id in journal payload.")
+        
+    delta_path = entry.get("delta_mu_path")
+    if not delta_path or not os.path.exists(delta_path):
+        raise HTTPException(status_code=404, detail="Pending physical artifact missing on disk.")
+        
+    # Append to journal
+    journal_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "mu_journal.jsonl")
+    with open(journal_path, "a", encoding="utf-8") as jf:
+        jf.write(json.dumps(entry) + "\n")
+        
+    # Apply to memory
+    data = np.load(delta_path)
+    delta_mu = data["delta_mu"]
+    async with entity.lock:
+        if not hasattr(entity, "mu"):
+            entity.mu = np.zeros_like(entity.phi)
+        entity.mu += delta_mu
+        
+    return {"status": "success", "message": "Imprint confirmed and topologically written.", "imprint_id": imprint_id}
 
 
 @router.delete("/{entity_id}/memory/imprints/{imprint_id}")
@@ -413,6 +544,9 @@ async def forget_memory_imprint(entity_id: str, imprint_id: str):
                 if not line.strip(): continue
                 try:
                     entry = json.loads(line)
+                    if entry.get("entity_id") != entity_id:
+                        continue
+                        
                     if entry.get("imprint_id") == imprint_id and entry.get("action") != "forget":
                         target_entry = entry
                 except:
@@ -438,6 +572,7 @@ async def forget_memory_imprint(entity_id: str, imprint_id: str):
     # 4. Append forget to journal
     forget_entry = {
         "action": "forget",
+        "entity_id": entity_id,
         "imprint_id": imprint_id,
         "ts": time.time()
     }

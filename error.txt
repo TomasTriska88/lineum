@@ -1,0 +1,1 @@
+FATAL: Locked audit run tampered: output_wp/runs\spec6_false_s41_20260306_201952_tampered (SHA256 mismatch on portal_params.json). Restore from git or rebuild new run; do not edit evidence.
