@@ -627,6 +627,18 @@
         border-radius: 8px;
     }
 
+    .fullscreen-mode {
+        position: absolute;
+        top: 60px; /* height of top-nav */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        box-sizing: border-box;
+        z-index: 10;
+        background: transparent;
+    }
+
     .header-section {
         grid-area: header;
         display: flex;

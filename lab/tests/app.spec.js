@@ -96,4 +96,29 @@ test.describe('App Initialization Smoke Test', () => {
         await expect(canvasContainer).toBeVisible();
         await expect(canvasContainer).toHaveCSS('opacity', '1');
     });
+
+    test('Fullscreen mode containers do not overlap with the top navigation bar', async ({ page }) => {
+        await page.goto('/');
+        await expect(page.locator('.loader')).toBeHidden({ timeout: 10000 });
+
+        // Navigate to a mode that uses fullscreen-mode, e.g., Validation Core
+        const validationBtn = page.locator('button:has-text("Validation Core")');
+        await validationBtn.click();
+
+        // Wait for fullscreen-mode to be visible
+        const fullscreenMode = page.locator('.fullscreen-mode');
+        await expect(fullscreenMode).toBeVisible({ timeout: 5000 });
+
+        // Get bounding boxes
+        const nav = page.locator('.top-nav');
+        const navBox = await nav.boundingBox();
+        const fullBox = await fullscreenMode.boundingBox();
+
+        expect(navBox).not.toBeNull();
+        expect(fullBox).not.toBeNull();
+
+        // The top of the fullscreen mode should be greater than or equal to the bottom of the nav bar
+        expect(fullBox.y).toBeGreaterThanOrEqual(navBox.y + navBox.height);
+    });
 });
+
