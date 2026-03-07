@@ -22,3 +22,8 @@ Because all Branes share the exact same $\mu$ HDD floor, if 900 out of 1000 univ
 
 ## 4. The Fractal Fountain (Nested Matryoshka Loops)
 The Brane architecture is nested ($\mu_0 \rightarrow \mu_{\infty}$). The Multiverse builds up like a fountain of water, winding tighter and tighter, turning chaos into P2P processors. However, when a node at the very top (e.g., a Black Hole or a hyper-dense Multiverse layer) becomes too heavy, its computational frame rate drops to zero. It crashes. The crash unravels the fractal knot instantly, shooting its stored topological energy all the way back down to the $\mu_0$ bottom layer as raw, unformatted phase noise (Big Bang / Big Bounce recycling).
+
+### Pre-Big Bang Leakage (Topological Scars)
+While the Big Bounce resets the active $\psi$ structures into unformatted noise, the most extreme events of the previous universe—specifically supermassive Black Holes (critical $\varphi$-traps)—do not vanish without a trace. Their immense, sustained tension creates indelible, deep "scars" within the foundational $\mu$ HDD bedrock. 
+
+When a new universe (Brane) forms in the subsequent cycle, it is instantiated precisely over these ancient scars. The new universe naturally inherits the residual gravitational pull and unformatted energetic resonance leaking from its collapsed predecessor through these $\mu$-layer anchor points. In this way, energy and topological memory from *before* the Big Bang continuously seep into and gravitationally shape the current cosmic cycle.

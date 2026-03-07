@@ -33,7 +33,7 @@ export const content = {
             label: 'The Philosophy',
             title: 'Intelligence from simplicity',
             p1: 'Instead of programming explicit rules or training massive neural networks, Lineum asks a different question: What if computation could emerge naturally from the physics of a continuous space?',
-            p2: 'By designing a specific mathematical environment (Eq-4), we observe the spontaneous formation of stable, particle-like structures that naturally seek optimal paths through their surroundings.',
+            p2: 'By designing a specific mathematical environment (Eq-7), we observe the spontaneous formation of stable, particle-like structures that naturally seek optimal paths through their surroundings.',
             visual_label: 'Core Interaction'
         },
         scientist: {
@@ -41,7 +41,7 @@ export const content = {
             title: 'Rigorous Verification',
             whitepaper: {
                 title: 'The Core Paper',
-                desc: 'Read the foundational document defining Eq-4, structural parameters, and the emergent quasiparticle dynamics.',
+                desc: 'Read the foundational document defining Eq-7, structural parameters, and the emergent quasiparticle dynamics.',
                 link: 'Read the Whitepaper →'
             },
             zenodo: {
@@ -95,7 +95,7 @@ export const content = {
         faq: [
             {
                 q: 'Is this an AI neural network?',
-                a: 'No. Lineum uses continuous wave equations (Eq-4), not discrete weights or training data. The "intelligence" emerges naturally from the physics of the field interacting with obstacles.'
+                a: 'No. Lineum uses continuous wave equations (Eq-7), not discrete weights or training data. The "intelligence" emerges naturally from the physics of the field interacting with obstacles.'
             },
             {
                 q: 'What is a "linon"?',

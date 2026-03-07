@@ -63,7 +63,7 @@ Before full public API launch, the following must be legally drafted by counsel:
 
 5. **Intellectual Property (Trademarks & Patents):**
    - **Trademarks (Lineum™):** The brand name "Lineum", the logo, and the portal design are distinct from the open-source code. We must begin using the ™ symbol (e.g., Lineum™ API Solutions) across the portal to establish "common law" trademark rights. Once revenue begins, a formal registered trademark (®) should be filed in target jurisdictions (EUIPO/USPTO) to prevent competitors from confusing the market.
-   - **Patents:** While abstract mathematical formulas (Eq-4) are generally not patentable, the *specific application* of Continuous Field Dynamics to *scalable network routing* via parallel tensor hardware can be patented as a "Software/Hardware Apparatus". If patenting is a long-term goal, a provisional patent application should be filed *before* making the repository fully public, to secure the priority date.
+   - **Patents:** While abstract mathematical formulas (Eq-7) are generally not patentable, the *specific application* of Continuous Field Dynamics to *scalable network routing* via parallel tensor hardware can be patented as a "Software/Hardware Apparatus". If patenting is a long-term goal, a provisional patent application should be filed *before* making the repository fully public, to secure the priority date.
 
 ## 4. Marketing Tone
 - **Confident, not defensive:** We don't hide that the math is free. We celebrate it. *"The math is open. The millisecond-reliability is guaranteed by our cloud."*

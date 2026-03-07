@@ -7,8 +7,22 @@ import math
 import hashlib
 import os
 import glob
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+
+METRIC_SPEC = {
+    "f0_mean_hz": {"short_definition": "Mean dominant resonant frequency", "computed_in": "scripts/validation_core.py:compute_metrics", "units": "Hz"},
+    "topology_neutrality_n1": {"short_definition": "Percentage of steps where absolute net charge <= 1", "computed_in": "tools/whitepaper_contract.py:load_topo_stats", "units": "%"},
+    "strict_neutrality": {"short_definition": "Percentage of steps where absolute net charge == 0", "computed_in": "tools/whitepaper_contract.py:load_topo_stats", "units": "%"},
+    "mean_vortices": {"short_definition": "Mean number of topological vortices over the run", "computed_in": "scripts/validation_core.py:compute_metrics", "units": "count"},
+    "low_mass_qp_count": {"short_definition": "Number of quasi-particles classified as low mass", "computed_in": "scripts/validation_core.py:analyze_particles", "units": "count"},
+    "max_lifespan_steps": {"short_definition": "Maximum lifespan of any tracked quasi-particle", "computed_in": "scripts/validation_core.py:analyze_particles", "units": "steps"},
+    "phi_half_life_steps": {"short_definition": "Half-life of phi-field energy decay", "computed_in": "scripts/validation_core.py:compute_metrics", "units": "steps"},
+    "sbr_mean": {"short_definition": "Mean Signal-to-Background Ratio", "computed_in": "scripts/validation_core.py:compute_metrics", "units": "ratio"},
+    "df_hz": {"short_definition": "Derived frequency bin width", "computed_in": "tools/whitepaper_contract.py:evaluate_derived", "units": "Hz"},
+    "nyquist_hz": {"short_definition": "Nyquist frequency built from timestep", "computed_in": "tools/whitepaper_contract.py:evaluate_derived", "units": "Hz"}
+}
 
 # --- Configuration & Helpers ---
 
@@ -333,6 +347,35 @@ def main():
     contract = load_json(c_path)
     if not contract: print(f"FATAL: Load error {c_path}"); sys.exit(1)
 
+    try:
+        git_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+    except Exception:
+        git_commit = "unknown"
+
+    try:
+        git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+    except Exception:
+        git_branch = "unknown"
+
+    try:
+        release_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
+        tool_version = f"release:{release_tag}"
+    except Exception:
+        release_tag = None
+        tool_version = "unreleased"
+
+    codebase_sha = compute_code_fingerprint(".")
+
+    equation_fingerprint = "unknown"
+    for profile in contract.get("profiles", []):
+        if profile.get("name") in ["baseline", "canonical"]:
+            eh = profile.get("checks", {}).get("audit_scope", {}).get("expected_hash")
+            if eh:
+                equation_fingerprint = eh
+                break
+    if equation_fingerprint == "unknown":
+        equation_fingerprint = codebase_sha
+
     suite_report = {
         "suite_schema_version": "1.0.0",
         "header": {
@@ -340,13 +383,18 @@ def main():
             "contract_id": contract.get("contract_id"),
             "contract_version": contract.get("contract_version"),
             "tool_id": "lineum_audit_suite_gen",
-            "tool_version": "1.0.14-core"
+            "tool_version": tool_version,
+            "git_commit": git_commit,
+            "git_branch": git_branch,
+            "release_tag": release_tag,
+            "equation_fingerprint": equation_fingerprint
         },
         "fingerprints": {
             "whitepaper_sha256": compute_sha256("whitepapers/lineum-core.md"),
             "contract_sha256": compute_sha256(c_path),
-            "codebase_sha256": compute_code_fingerprint(".")
+            "codebase_sha256": codebase_sha
         },
+        "metric_spec": METRIC_SPEC,
         "embedded_context": {"runs": {}},
         "runs": [],
         "summary": {"pass": 0, "fail": 0, "skip": 0, "matched_canonical": 0}
@@ -564,9 +612,9 @@ def main():
         if run_result["status"] == "PASS": suite_report["summary"]["pass"] += 1
         else: suite_report["summary"]["fail"] += 1
 
-    # Save
+    # Canonical suite output: output_wp/runs/_whitepaper_contract/ (binding path contract)
     out_dir = Path(args.runs_root) / "_whitepaper_contract"
-    out_dir.mkdir(exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "whitepaper_contract_suite.json"
     with open(out_path, "w") as f: json.dump(suite_report, f, indent=2)
     

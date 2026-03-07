@@ -2196,6 +2196,19 @@
         }
 
         /* Adjust for when keyboard is open if possible, though strict vh is safest start */
+
+        /* Ensure 44px touch targets on mobile for all icon buttons */
+        :global(.icon-btn) {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            margin: 2px; /* Prevent stacking overlap */
+        }
+
+        /* Specific overrides for minimized orb on mobile */
+        :global(.icon-btn.minimize-btn) {
+            min-width: 44px !important;
+            min-height: 44px !important;
+        }
     }
 
     /* --- Markdown Styles --- */

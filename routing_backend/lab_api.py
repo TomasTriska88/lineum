@@ -74,11 +74,18 @@ async def get_health():
     audit_status = "NONE"
     contract_id = None
     contract_timestamp = "unknown"
+<<<<<<< HEAD
     contract_commit = ""
     equation_fingerprint = ""
     summary_pass = 0
     summary_fail = 0
     active_profile = None
+=======
+    contract_commit = "unknown"
+    equation_fingerprint = "unknown"
+    summary_pass = 0
+    summary_fail = 0
+>>>>>>> feature/wave-core-golden-validation
     
     # Define absolute paths dynamically based on repo root
     REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -112,6 +119,7 @@ async def get_health():
                         summary_pass = summary.get("pass", 0)
                         summary_fail = summary.get("fail", 0)
                         
+<<<<<<< HEAD
                         # Extract active_profile from the LATEST matching run
                         # Runs are chronological, so reverse to prefer newest
                         for run in reversed(audit.get("runs", [])):
@@ -125,6 +133,8 @@ async def get_health():
                                     active_profile = run.get("matched_profile")
                                     break
                         
+=======
+>>>>>>> feature/wave-core-golden-validation
                         if contract_commit == curr_full:
                             audit_status = "AUDITED"
                         else:
@@ -146,7 +156,10 @@ async def get_health():
         "equation_fingerprint": equation_fingerprint if equation_fingerprint else "unknown",
         "summary_pass": summary_pass,
         "summary_fail": summary_fail,
+<<<<<<< HEAD
         "active_profile": active_profile,
+=======
+>>>>>>> feature/wave-core-golden-validation
         "tests": "PASS (Local)",
         "loaded_modules": {
             "routing_backend": os.path.dirname(os.path.abspath(__file__)),
@@ -154,6 +167,7 @@ async def get_health():
         }
     }
 
+<<<<<<< HEAD
 # ══════════════════════════════════════════════════════════════
 # Shared Audit Context Helper
 # ══════════════════════════════════════════════════════════════
@@ -528,6 +542,8 @@ async def verify_all():
     }
 
 
+=======
+>>>>>>> feature/wave-core-golden-validation
 @router.post("/audit/generate")
 async def generate_audit_contract():
     """

@@ -1,37 +1,9 @@
-import fs from 'fs';
 import path from 'path';
+import { checkFile, walkDir } from '../../helpers/check-czech-lib.js';
 
 const SRC_DIR = 'src';
-const CZECH_CHARS = /[áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]/;
 
-function checkFile(filePath) {
-    const content = fs.readFileSync(filePath, 'utf8');
-    const lines = content.split('\n');
-    let found = false;
-
-    lines.forEach((line, index) => {
-        // Safe words whitelist
-        let sanitizedLine = line.replace(/Čeština/g, '');
-
-        if (CZECH_CHARS.test(sanitizedLine)) {
-            console.error(`Czech character found in ${filePath}:${index + 1}:`);
-            console.error(`  > ${line.trim()}`);
-            found = true;
-        }
-    });
-
-    return found;
-}
-
-function walkDir(dir, callback) {
-    fs.readdirSync(dir).forEach(f => {
-        const dirPath = path.join(dir, f);
-        const isDirectory = fs.statSync(dirPath).isDirectory();
-        isDirectory ? walkDir(dirPath, callback) : callback(dirPath);
-    });
-}
-
-console.log('Checking for Czech characters in src directory...');
+console.log('Checking for Czech characters in Portal src directory...');
 let hasErrors = false;
 
 walkDir(SRC_DIR, (filePath) => {
@@ -75,6 +47,6 @@ if (hasErrors) {
         process.exit(1);
     }
 } else {
-    console.log('\nPASS: No Czech characters found.');
+    console.log('\nPASS: No Czech characters found in the Portal.');
     process.exit(0);
 }

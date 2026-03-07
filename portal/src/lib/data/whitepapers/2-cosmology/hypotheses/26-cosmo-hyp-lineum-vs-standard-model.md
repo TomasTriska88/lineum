@@ -10,7 +10,7 @@
 # Lineum vs. Standard Model: A Computational Ontology
 
 > [!NOTE] 
-> This is a working draft formulating a strictly computational and topological contrast between the philosophy of Lineum (Eq-4) and conventional particle physics methodologies, focusing specifically on how continuous mathematics handles edge cases compared to Lineum's discrete bottom-up approach.
+> This is a working draft formulating a strictly computational and topological contrast between the philosophy of Lineum (Eq-7) and conventional particle physics methodologies, focusing specifically on how continuous mathematics handles edge cases compared to Lineum's discrete bottom-up approach.
 
 ## 1. Abstract
 When evaluating standard continuous physics models (like Quantum Chromodynamics), calculating high-energy limits—such as particle scattering at the speed of light—often forces physicists into complex mathematical workarounds, such as the "half-collinear regime" computed in fictional multi-dimensional spaces. This hypothesis formulates how Lineum natively subverts these infinities via discrete geometry and reinterprets fundamental phenomena like the strong nuclear force as simple topological smoothing (diffusion $\nabla^2$).
@@ -23,7 +23,7 @@ Moreover, because 4D continuum mathematics generates prohibitive infinities in t
 From the perspective of Lineum, this "gymnastics of scale" is a symptom of treating fundamental reality as a continuous field of point-like objects requiring complex top-down scattering matrices, rather than treating particles as emergent properties of an underlying discrete grid.
 
 ## 3. Core Mechanics: Topological Annihilation vs. Particle Scattering
-Lineum provides an alternative, bottom-up framework (Eq-4). In Lineum, there are no predefined point particles or global force vectors. There is only a discrete grid where localized phase rules (vibrations) interact.
+Lineum provides an alternative, bottom-up framework (Eq-7). In Lineum, there are no predefined point particles or global force vectors. There is only a discrete grid where localized phase rules (vibrations) interact.
 
 ### 3.1. Discrete Geometry Prevents Infinities
 In Lineum, a "particle" (a Linon) is purely a topological defect—a localized vortex in the phase field $\psi$ that digs a corresponding gravitational memory-dent in $\varphi$. 

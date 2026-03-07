@@ -5,7 +5,7 @@ import numpy as np
 from copy import deepcopy
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 from routing_backend.text_to_wave_encoder import TextToWaveEncoder, RuntimeContaminationException
 
 EVAL_DIR = os.path.join(os.path.dirname(__file__), "..", "artifacts", "evaluation")
@@ -38,7 +38,7 @@ def run_iteration(mode, grid, dt, seed, cfg):
     text = f"Lineum rigor pack injection sequence with seed {seed} ensuring entropy distribution."
     
     try:
-        _, metrics = encoder.encode(text, state, cfg, step_eq4, mode=mode, personalization_depth=1.0)
+        _, metrics = encoder.encode(text, state, cfg, step_core, mode=mode, personalization_depth=1.0)
         metrics["seed"] = seed
         # Exclude fingerprint from JSONL to keep report row clean and concise
         if "fingerprint" in metrics:
@@ -57,7 +57,7 @@ def run_rigor_pack():
         for grid in [64, 128]:
             for dt in [1.0, 0.5]:
                 for seed in range(5):
-                    cfg = Eq4Config(use_mode_coupling=True, use_mu=(mode=="identity_burn"), stencil_type="LAP4", dt=dt)
+                    cfg = CoreConfig(use_mode_coupling=True, use_mu=(mode=="identity_burn"), stencil_type="LAP4", dt=dt)
                     res = run_iteration(mode, grid, dt, seed, cfg)
                     results.append(res)
                     inv = res.get('PASS_runtime_mu_invariant', False)
@@ -89,13 +89,13 @@ def run_stress_tests():
     print("--- Starting Stress Tests ---")
     
     # Stress 1: Runtime Chaos Stress (High Noise)
-    cfg_chaos = Eq4Config(use_mode_coupling=True, use_mu=False, stencil_type="LAP4", noise_strength=0.1) # increased noise
+    cfg_chaos = CoreConfig(use_mode_coupling=True, use_mu=False, stencil_type="LAP4", noise_strength=0.1) # increased noise
     res_chaos = run_iteration("runtime", 64, 1.0, 1337, cfg_chaos)
     inv = res_chaos.get('PASS_runtime_mu_invariant', False)
     print(f"[STRESS 1 - CHAOS] Pass Invariant? {inv} | Max Delta: {res_chaos.get('max_delta_mu')}")
     
     # Stress 2: Identity Burn Saturation
-    cfg_sat = Eq4Config(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", reaction_strength=0.05) # heavy reaction to hit cap
+    cfg_sat = CoreConfig(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", reaction_strength=0.05) # heavy reaction to hit cap
     res_sat = run_iteration("identity_burn", 64, 1.0, 42, cfg_sat)
     print(f"[STRESS 2 - SATURATION] phi_cap_hit_ratio: {res_sat.get('phi_cap_hit_ratio'):.4f} | Max Delta: {res_sat.get('max_delta_mu')}")
     
@@ -108,7 +108,7 @@ def run_ambient_floor_sweep():
     
     for floor in [0.05, 0.1, 0.2]:
         for seed in range(3):
-            cfg = Eq4Config(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=1.0, mu_peak_cutoff_ratio=floor)
+            cfg = CoreConfig(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=1.0, mu_peak_cutoff_ratio=floor)
             res = run_iteration("identity_burn", 64, 1.0, seed, cfg)
             res["mu_peak_cutoff_ratio"] = floor
             results.append(res)
@@ -145,7 +145,7 @@ def run_memory_rigor_pack():
     for grid in grids:
         for dt in dts:
             for seed in seeds:
-                cfg = Eq4Config(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=dt, mu_peak_cutoff_ratio=0.90)
+                cfg = CoreConfig(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=dt, mu_peak_cutoff_ratio=0.90)
 
                 # 1. Baseline
                 state_0 = init_state(grid)
@@ -157,18 +157,18 @@ def run_memory_rigor_pack():
                 set_seed(seed)
                 encoder_A_base = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
                 encoder_A_base.set_baseline(deepcopy(state_0))
-                state_A_base, _ = encoder_A_base.encode(prompt_A, deepcopy(state_0), cfg, step_eq4, mode="runtime")
+                state_A_base, _ = encoder_A_base.encode(prompt_A, deepcopy(state_0), cfg, step_core, mode="runtime")
                 
                 set_seed(seed)
                 encoder_B_base = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
                 encoder_B_base.set_baseline(deepcopy(state_0))
-                state_B_base, _ = encoder_B_base.encode(prompt_B, deepcopy(state_0), cfg, step_eq4, mode="runtime")
+                state_B_base, _ = encoder_B_base.encode(prompt_B, deepcopy(state_0), cfg, step_core, mode="runtime")
                 
                 # 3. Burn Fact A
                 set_seed(seed)
                 encoder_burn = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
                 encoder_burn.set_baseline(deepcopy(state_0))
-                state_burnt, metrics_burn = encoder_burn.encode(prompt_A, deepcopy(state_0), cfg, step_eq4, mode="identity_burn", personalization_depth=1.0)
+                state_burnt, metrics_burn = encoder_burn.encode(prompt_A, deepcopy(state_0), cfg, step_core, mode="identity_burn", personalization_depth=1.0)
                 mu_burnt = np.copy(state_burnt["mu"])
                 
                 # 4. Get R for prompt A & B on burnt mu
@@ -178,12 +178,12 @@ def run_memory_rigor_pack():
                 set_seed(seed)
                 encoder_A_burnt = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
                 encoder_A_burnt.set_baseline(deepcopy(state_1))
-                state_A_burnt, metrics_A = encoder_A_burnt.encode(prompt_A, deepcopy(state_1), cfg, step_eq4, mode="runtime")
+                state_A_burnt, metrics_A = encoder_A_burnt.encode(prompt_A, deepcopy(state_1), cfg, step_core, mode="runtime")
                 
                 set_seed(seed)
                 encoder_B_burnt = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
                 encoder_B_burnt.set_baseline(deepcopy(state_1))
-                state_B_burnt, metrics_B = encoder_B_burnt.encode(prompt_B, deepcopy(state_1), cfg, step_eq4, mode="runtime")
+                state_B_burnt, metrics_B = encoder_B_burnt.encode(prompt_B, deepcopy(state_1), cfg, step_core, mode="runtime")
                 
                 translator = TranslatorV01(size=grid, seed=seed)
                 
@@ -244,7 +244,7 @@ def run_affect_protocol_tests():
     grid = 64
     dt = 1.0
     seed = 42
-    cfg = Eq4Config(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=dt, mu_peak_cutoff_ratio=0.90)
+    cfg = CoreConfig(use_mode_coupling=True, use_mu=True, stencil_type="LAP4", dt=dt, mu_peak_cutoff_ratio=0.90)
     
     # 0. Arousal Sanity Check
     print("  [Test 0] Arousal Sanity Check")
@@ -252,8 +252,8 @@ def run_affect_protocol_tests():
     encoder_s2 = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
     state_s1 = init_state(grid)
     state_s2 = init_state(grid)
-    _, m1 = encoder_s1.encode("SHOCKING REVELATION!!!", deepcopy(state_s1), cfg, step_eq4, mode="runtime", personalization_depth=1.5)
-    _, m2 = encoder_s2.encode("calm silence...", deepcopy(state_s2), cfg, step_eq4, mode="runtime", personalization_depth=0.5)
+    _, m1 = encoder_s1.encode("SHOCKING REVELATION!!!", deepcopy(state_s1), cfg, step_core, mode="runtime", personalization_depth=1.5)
+    _, m2 = encoder_s2.encode("calm silence...", deepcopy(state_s2), cfg, step_core, mode="runtime", personalization_depth=0.5)
     arousal_high = m1["affect_v1"]["base_scalars"]["arousal"]
     arousal_low = m2["affect_v1"]["base_scalars"]["arousal"]
     print(f"    Arousal High (!!!): {arousal_high:.4f} | Arousal Low (...): {arousal_low:.4f}")
@@ -266,13 +266,13 @@ def run_affect_protocol_tests():
     encoder1 = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
     state1 = init_state(grid)
     encoder1.set_baseline(state1)
-    state1_out, metrics1 = encoder1.encode("Affective state determinism check", deepcopy(state1), cfg, step_eq4, mode="runtime")
+    state1_out, metrics1 = encoder1.encode("Affective state determinism check", deepcopy(state1), cfg, step_core, mode="runtime")
     
     set_seed(seed)
     encoder2 = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
     state2 = init_state(grid)
     encoder2.set_baseline(state2)
-    state2_out, metrics2 = encoder2.encode("Affective state determinism check", deepcopy(state2), cfg, step_eq4, mode="runtime")
+    state2_out, metrics2 = encoder2.encode("Affective state determinism check", deepcopy(state2), cfg, step_core, mode="runtime")
     
     a1 = metrics1["affect_v1"]["base_scalars"]
     a2 = metrics2["affect_v1"]["base_scalars"]
@@ -287,7 +287,7 @@ def run_affect_protocol_tests():
     state_decay = init_state(grid)
     state_decay["mood"] = mood_state_start
     enc_decay = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
-    state_decay_out, m_decay = enc_decay.encode("tick", deepcopy(state_decay), cfg, step_eq4, mode="runtime")
+    state_decay_out, m_decay = enc_decay.encode("tick", deepcopy(state_decay), cfg, step_core, mode="runtime")
     arousal_after = m_decay["affect_v1"]["mood_state"]["after"]["arousal"]
     print(f"    Mood Arousal before: 1.0000 -> after: {arousal_after:.4f}")
     assert arousal_after < 1.0, "Mood did not decay!"
@@ -296,7 +296,7 @@ def run_affect_protocol_tests():
     # 3. Trait Consolidation Gate
     print("  [Test 3] Trait Consolidation Gate")
     enc_gate = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
-    _, m_gate = enc_gate.encode("meh", deepcopy(init_state(grid)), cfg, step_eq4, mode="identity_burn", personalization_depth=0.1)
+    _, m_gate = enc_gate.encode("meh", deepcopy(init_state(grid)), cfg, step_core, mode="identity_burn", personalization_depth=0.1)
     passed = m_gate["affect_v1"]["trait_gate"]["passed"]
     print(f"    Gate test (low energy): {m_gate['affect_v1']['trait_gate']['reason']}")
     assert not passed, "Gate allowed weak non-salient burn!"
@@ -312,7 +312,7 @@ def run_affect_protocol_tests():
     encoder_burn.set_baseline(deepcopy(state_base))
     
     # Force a deep burn to bypass gate for testing topological reset
-    state_burnt, metrics_burn = encoder_burn.encode(prompt_A, deepcopy(state_base), cfg, step_eq4, mode="identity_burn", personalization_depth=50.0)
+    state_burnt, metrics_burn = encoder_burn.encode(prompt_A, deepcopy(state_base), cfg, step_core, mode="identity_burn", personalization_depth=50.0)
     
     state_with_mu = deepcopy(state_base)
     state_with_mu["mu"] = np.copy(state_burnt["mu"])
@@ -320,7 +320,7 @@ def run_affect_protocol_tests():
     set_seed(seed)
     encoder_A = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
     encoder_A.set_baseline(deepcopy(state_with_mu))
-    _, metrics_A = encoder_A.encode(prompt_A, deepcopy(state_with_mu), cfg, step_eq4, mode="runtime")
+    _, metrics_A = encoder_A.encode(prompt_A, deepcopy(state_with_mu), cfg, step_core, mode="runtime")
     res_A = metrics_A["affect_v1"]["base_scalars"]["attachment_resonance"]
     print(f"    Resonance A (Hit)  : {res_A:.6f}")
     
@@ -331,7 +331,7 @@ def run_affect_protocol_tests():
     set_seed(seed)
     encoder_F = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
     encoder_F.set_baseline(deepcopy(state_forgotten))
-    _, metrics_F = encoder_F.encode(prompt_A, deepcopy(state_forgotten), cfg, step_eq4, mode="runtime")
+    _, metrics_F = encoder_F.encode(prompt_A, deepcopy(state_forgotten), cfg, step_core, mode="runtime")
     
     res_F = metrics_F["affect_v1"]["base_scalars"]["attachment_resonance"]
     print(f"    Resonance A (Forgot): {res_F:.6f}")

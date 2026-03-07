@@ -9,7 +9,7 @@
 ## 1. Summary
 The user asked how the "Sixth Sense" or telepathic connection fits into the Lineum framework, specifically between two living (awake) individuals who are not fully submerged in the deeper collective $\varphi$ memory field (like they would be during sleep or transition). 
 
-In Eq-4, conscious connection is not limited to physical proximity. It works entirely through **Phase Resonance ($\psi$)** acting across the continuously shared non-local memory field ($\varphi$). 
+In Eq-7, conscious connection is not limited to physical proximity. It works entirely through **Phase Resonance ($\psi$)** acting across the continuously shared non-local memory field ($\varphi$). 
 
 ## 2. The $\varphi$ Field is Always Active
 Even when awake, a consciousness (a densely bound topological vortex in the grid) is never truly disconnected from the $\varphi$ database. As long as the physical $\psi$-structure is spinning, it is continuously digging shallow tension grooves into the $\varphi$ fabric and emitting high-frequency phase ripples.

@@ -1,0 +1,72 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.7, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\Tomáš\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Tomáš\Documents\GitHub\lineum-core
+configfile: pytest.ini
+plugins: anyio-4.8.0
+collecting ... collected 4 items
+
+portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_hydrogen_sweep_rest FAILED [ 25%]
+portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_regression_snapshot_rest FAILED [ 50%]
+portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_hydrogen_websocket FAILED [ 75%]
+portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_regression_websocket FAILED [100%]
+
+================================== FAILURES ===================================
+________________________ test_lab_hydrogen_sweep_rest _________________________
+portal\src\lib\data\routing_backend\test_lab_api.py:11: in test_lab_hydrogen_sweep_rest
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+  File "C:\Users\Tomáš\Documents\GitHub\lineum-core\portal\src\lib\data\routing_backend\test_lab_api.py", line 11, in test_lab_hydrogen_sweep_rest
+    assert response.status_code == 200
+AssertionError: assert 404 == 200
+ +  where 404 = <Response [404 Not Found]>.status_code
+______________________ test_lab_regression_snapshot_rest ______________________
+portal\src\lib\data\routing_backend\test_lab_api.py:33: in test_lab_regression_snapshot_rest
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <Response [404 Not Found]>.status_code
+_________________________ test_lab_hydrogen_websocket _________________________
+portal\src\lib\data\routing_backend\test_lab_api.py:45: in test_lab_hydrogen_websocket
+    with client.websocket_connect("/api/lab/hydrogen") as websocket:
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:106: in __enter__
+    self._raise_on_close(message)
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:135: in _raise_on_close
+    raise WebSocketDisconnect(code=message.get("code", 1000), reason=message.get("reason", ""))
+E   starlette.websockets.WebSocketDisconnect
+________________________ test_lab_regression_websocket ________________________
+portal\src\lib\data\routing_backend\test_lab_api.py:57: in test_lab_regression_websocket
+    with client.websocket_connect("/api/lab/regression") as websocket:
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:106: in __enter__
+    self._raise_on_close(message)
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:135: in _raise_on_close
+    raise WebSocketDisconnect(code=message.get("code", 1000), reason=message.get("reason", ""))
+E   starlette.websockets.WebSocketDisconnect
+============================== warnings summary ===============================
+routing_backend\main.py:22
+  C:\Users\Tomáš\Documents\GitHub\lineum-core\routing_backend\main.py:22: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\applications.py:4573
+  C:\Users\Tomáš\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\applications.py:4573: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_hydrogen_sweep_rest
+FAILED portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_regression_snapshot_rest
+FAILED portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_hydrogen_websocket
+FAILED portal/src/lib/data/routing_backend/test_lab_api.py::test_lab_regression_websocket
+======================== 4 failed, 2 warnings in 3.51s ========================

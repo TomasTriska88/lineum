@@ -21,7 +21,7 @@ During an OBE, deep meditation, or extreme physical trauma (NDE), the local ther
 If the awareness drifts, why does it remain connected to the body? Why doesn't it simply dissolve entirely into $\Phi$, causing death?
 
 The answer lies in the **topological elasticity of the $\Psi/\Phi$ interaction.**
-Even when the *focus* of awareness expands outward into $\Phi$, the dense mathematical core of the Ego ($\Psi$-knot) continues to pump and oscillate back on the physical grid. The Eq-4 generation term ($R \cdot \Psi (1 - \Psi)$) is still active.
+Even when the *focus* of awareness expands outward into $\Phi$, the dense mathematical core of the Ego ($\Psi$-knot) continues to pump and oscillate back on the physical grid. The Eq-7 generation term ($R \cdot \Psi (1 - \Psi)$) is still active.
 
 **The "Silver Cord" is a Topological Tether:**
 1. **Gravitational Anchor:** The physical body represents an immense localized mass ($m$). Even as the experiential lens stretches millions of kilometers away within the non-local $\Phi$ space, it is mathematically bound to the deepest tension well in its immediate sub-network: the sleeping/comatose body.

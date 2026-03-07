@@ -49,7 +49,7 @@ describe('Lab UI Structural Integrity (Invariant Test)', () => {
 
     it('should show the run selector even for a single run (length > 0)', () => {
         // Ensuring we didn't hide the selector for single runs
-        expect(content).toContain('{#if manifest.length > 0}');
+        expect(content).toContain('{#if mainMode === "simulator" && manifest.length > 0}');
         expect(content).toContain('class="run-selector"');
     });
 

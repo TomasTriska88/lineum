@@ -150,6 +150,7 @@ def test_audit_path_enforcement():
             f"Suite path must be under runs/_whitepaper_contract/, got: {normalized}"
         assert normalized.endswith("output_wp/runs/_whitepaper_contract/whitepaper_contract_suite.json"), \
             f"Suite path must end with canonical suffix, got: {normalized}"
+<<<<<<< HEAD
 
 def test_health_active_profile():
     """
@@ -167,3 +168,5 @@ def test_health_active_profile():
         assert data["active_profile"] is not None, "active_profile must not be null when audit exists"
         assert data["active_profile"] in ("baseline", "canonical", "wave_core"), \
             f"Unexpected profile: {data['active_profile']}"
+=======
+>>>>>>> feature/wave-core-golden-validation

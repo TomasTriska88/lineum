@@ -18,7 +18,7 @@
 
 ## 3. Core Mechanics / Theory
 *The detailed explanation of the proposed dynamics.*
-* Ensure you reference `lineum-core.md` (Eq-4) if extending base mechanics.
+* Ensure you reference `lineum-core.md` (Eq-7) if extending base mechanics.
 * Use standard Markdown equations for mathematical consistency:
   $$ \nabla^2 \varphi = \dots $$
 

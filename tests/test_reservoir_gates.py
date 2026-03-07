@@ -4,11 +4,11 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import step_eq4, Eq4Config
+from lineum_core.math import step_core, CoreConfig
 
-PSI_AMP_CAP = Eq4Config().psi_amp_cap
-PHI_CAP = Eq4Config().phi_cap
-GRAD_CAP = Eq4Config().grad_cap
+PSI_AMP_CAP = CoreConfig().psi_amp_cap
+PHI_CAP = CoreConfig().phi_cap
+GRAD_CAP = CoreConfig().grad_cap
 
 # ---------------------------------------------------------------------------
 # TEST: LINEUM RESERVOIR COMPUTING (UNIVERSAL LOGIC GATES)
@@ -80,7 +80,7 @@ def test_universal_gates_reservoir():
         if inputs[step, 1] > 0:
             psi[IN2] = 1.0 + 0j
             
-        _state = step_eq4({"psi": psi, "delta": delta, "phi": phi, "kappa": kappa}, Eq4Config())
+        _state = step_core({"psi": psi, "delta": delta, "phi": phi, "kappa": kappa}, CoreConfig())
         psi, phi = _state["psi"], _state["phi"]
         
         out_and.append(abs(psi[OUT_AND]))

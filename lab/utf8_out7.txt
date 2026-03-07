@@ -1,0 +1,492 @@
+﻿
+Running 8 tests using 1 worker
+├Ś├ŚT├Ś├ŚF┬Ě├Ś├ŚF├Ś├ŚT├Ś├ŚF┬Ě├Ś├ŚF
+
+  1) [chromium] ÔÇ║ tests\presets.spec.js:38:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ O-like preset triggers Chaotic warning and Auto-Fix works 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-chromium\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-chromium-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-chromium-retry2\error-context.md
+
+  2) [chromium] ÔÇ║ tests\presets.spec.js:63:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Charts can be maximized using the MAX button 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-chromium\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-chromium-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-chromium-retry2\error-context.md
+
+  3) [chromium] ÔÇ║ tests\presets.spec.js:130:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Clear DB button prompts and wipes run history 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-chromium\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-chromium-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-chromium-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-chromium-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-chromium-retry2\error-context.md
+
+  4) [Mobile Chrome] ÔÇ║ tests\presets.spec.js:38:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ O-like preset triggers Chaotic warning and Auto-Fix works 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-Mobile-Chrome\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-Mobile-Chrome-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-Mobile-Chrome-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-Mobile-Chrome-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'O-like' })[22m
+
+
+      42 |
+      43 |         // Select O-like
+    > 44 |         await page.getByRole('button', { name: 'O-like' }).click();
+         |                                                            ^
+      45 |
+      46 |         // Run Scenario
+      47 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:44:60
+
+    Error Context: test-results\presets-Particle-Presets-S-172e1--warning-and-Auto-Fix-works-Mobile-Chrome-retry2\error-context.md
+
+  5) [Mobile Chrome] ÔÇ║ tests\presets.spec.js:63:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Charts can be maximized using the MAX button 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-Mobile-Chrome\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-Mobile-Chrome-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-Mobile-Chrome-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-Mobile-Chrome-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=Ôťů STABLE CLOUD')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=Ôťů STABLE CLOUD')[22m
+
+
+      72 |         await page.getByRole('button', { name: 'RUN SCENARIO' }).click();
+      73 |
+    > 74 |         await expect(page.locator('text=Ôťů STABLE CLOUD')).toBeVisible();
+         |                                                           ^
+      75 |
+      76 |         // Click show details
+      77 |         await page.getByRole('button', { name: 'Show Scientific Details' }).click();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:74:59
+
+    Error Context: test-results\presets-Particle-Presets-S-55067-imized-using-the-MAX-button-Mobile-Chrome-retry2\error-context.md
+
+  6) [Mobile Chrome] ÔÇ║ tests\presets.spec.js:130:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Clear DB button prompts and wipes run history 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-Mobile-Chrome\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-Mobile-Chrome-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-Mobile-Chrome-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-Mobile-Chrome-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  locator('.hist-card')
+    Expected: [32m2[39m
+    Received: [31m0[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for locator('.hist-card')[22m
+    [2m    9 ├Ś locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+
+
+      150 |
+      151 |         // Ensure history cards are visible
+    > 152 |         await expect(page.locator('.hist-card')).toHaveCount(2);
+          |                                                  ^
+      153 |
+      154 |         // Prep dialog handler to accept the confirm()
+      155 |         page.on('dialog', dialog => dialog.accept());
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\presets.spec.js:152:50
+
+    Error Context: test-results\presets-Particle-Presets-S-90309-ompts-and-wipes-run-history-Mobile-Chrome-retry2\error-context.md
+
+  6 failed
+    [chromium] ÔÇ║ tests\presets.spec.js:38:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ O-like preset triggers Chaotic warning and Auto-Fix works 
+    [chromium] ÔÇ║ tests\presets.spec.js:63:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Charts can be maximized using the MAX button 
+    [chromium] ÔÇ║ tests\presets.spec.js:130:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Clear DB button prompts and wipes run history 
+    [Mobile Chrome] ÔÇ║ tests\presets.spec.js:38:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ O-like preset triggers Chaotic warning and Auto-Fix works 
+    [Mobile Chrome] ÔÇ║ tests\presets.spec.js:63:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Charts can be maximized using the MAX button 
+    [Mobile Chrome] ÔÇ║ tests\presets.spec.js:130:5 ÔÇ║ Particle Presets Sandbox Guards ÔÇ║ Clear DB button prompts and wipes run history 
+  2 passed (5.4m)

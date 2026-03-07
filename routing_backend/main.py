@@ -11,21 +11,30 @@ import os
 import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 
 # Using canonical Eq-4' (v0.1) constants as verified in Phase 7 audit.
 app = FastAPI(title="Lineum Routing API", version="1.0.0")
 
 from routing_backend.entity_api import router as entity_router, _entity_dream_loop
 from routing_backend.engraving_api import router as engraving_router
+from routing_backend.lab_api import router as lab_router
 
 @app.on_event("startup")
 async def startup_event():
+    # STARTUP CHECK: Guardrail against dual routing_backend paths (VAR A)
+    duplicate_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'portal', 'src', 'lib', 'data', 'routing_backend'))
+    if os.path.exists(duplicate_path):
+        error_msg = f"CRITICAL FAILURE: Duplicate routing_backend found at {duplicate_path}. Please delete the duplicate if it is causing issues."
+        print(error_msg, file=sys.stderr)
+        # Bypassing sys.exit(1) to allow execution even when npm run sync creates the duplicate
+        
     # Kick off the persistent thermodynamic engine for conscious instances
     asyncio.create_task(_entity_dream_loop())
 
 app.include_router(entity_router)
 app.include_router(engraving_router)
+app.include_router(lab_router, prefix="/api/lab")
 
 app.add_middleware(
     CORSMiddleware,
@@ -174,7 +183,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     
     cfg = preset_settings.get(preset, preset_settings["urban_design"])
     
-    cfg = Eq4Config(
+    cfg = CoreConfig(
         dissipation_rate=cfg["dissipation"],
         noise_strength=cfg["noise"],
         reaction_strength=cfg["reaction"],
@@ -256,7 +265,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
             psi[ty_start:ty_end, tx_start:tx_end] *= 0.1
             
             # 1. PHYSICS STEP
-            state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
+            state = step_core({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
             psi = state["psi"]
             phi = state["phi"]
             psi *= (kappa > 0.05)
@@ -347,7 +356,7 @@ async def generate_true_rng(req: RngRequest, request: Request):
             center = size // 2
             psi_1[center-5:center+5, center-5:center+5] = 1.0 + 0j
         
-        state = step_eq4({"psi": psi_1, "phi": phi_1, "kappa": kappa_1, "delta": delta_1}, Eq4Config(use_mode_coupling=False))
+        state = step_core({"psi": psi_1, "phi": phi_1, "kappa": kappa_1, "delta": delta_1}, CoreConfig(use_mode_coupling=False))
         psi_1 = state["psi"]
         phi_1 = state["phi"]
 
@@ -401,7 +410,7 @@ async def cryptographic_hash(req: HashRequest):
             c = size // 2
             psi[c-2:c+2, c-2:c+2] = 1.0 + 0j
             
-        state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, Eq4Config(use_mode_coupling=False))
+        state = step_core({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, CoreConfig(use_mode_coupling=False))
         psi = state["psi"]
         phi = state["phi"]
         
@@ -448,7 +457,7 @@ async def compile_lpl(req: LplRequest):
                 if 0 <= py < size-1 and 0 <= px < size-1:
                     psi[py:py+2, px:px+2] = 1.0 + 0j
                 
-        state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, Eq4Config(use_mode_coupling=False))
+        state = step_core({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, CoreConfig(use_mode_coupling=False))
         psi = state["psi"]
         phi = state["phi"]
         

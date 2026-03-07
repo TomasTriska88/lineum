@@ -67,12 +67,16 @@
 
     .btn-primary,
     .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         padding: 0.75rem 1.5rem;
         border-radius: 6px;
         text-decoration: none;
         font-weight: 500;
         transition: all 0.2s;
         font-size: 0.9rem;
+        min-height: 44px;
     }
 
     .btn-primary {

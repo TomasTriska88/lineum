@@ -1,20 +1,20 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-03-06T20:17:35.657442+00:00",
+    "timestamp": "2026-03-06T19:36:16.212924+00:00",
     "contract_id": "lineum-core-1.0.18-core",
     "contract_version": "1.1.5",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "release:v1.1.3",
-    "git_commit": "3232bcd572897649db29173655440d1697414ed7",
+    "git_commit": "95097144a4a708a4f9c06b4ac70e44b3edb25359",
     "git_branch": "feature/wave-core-golden-validation",
     "release_tag": "v1.1.3",
     "equation_fingerprint": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5"
   },
   "fingerprints": {
     "whitepaper_sha256": null,
-    "contract_sha256": "6d4574bbd2d8123a2e335400da01f95d5527fde790a0526af918dacaa00ce146",
-    "codebase_sha256": "626a814d95c1e70b64cb7963a33765c0858a54323ed75193602e8abd7eb40b1f"
+    "contract_sha256": "81dcfdf46ef5f5be41987c58947b0d52ab932987a390845a654debb593a7b2fb",
+    "codebase_sha256": "4a733775e83a858d298428f998e9f1163ab040bf290363fc53b3bf1277038882"
   },
   "metric_spec": {
     "f0_mean_hz": {
@@ -953,11 +953,62 @@
       "run_id": "spec6_false_s41_20260222_152015",
       "profiles": [
         "baseline",
-        "canonical",
-        "wave_core"
+        "canonical"
       ],
-      "matched_profile": "canonical",
       "checks": [
+        {
+          "id": "baseline.audit_scope.hash_gate",
+          "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "status": "PASS",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.audit_scope.actual_hash"
+          }
+        },
+        {
+          "id": "baseline.invariants.dim",
+          "expected": "2D",
+          "actual": "2D",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.dim",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.dim"
+          }
+        },
+        {
+          "id": "baseline.invariants.bcs",
+          "expected": "periodic",
+          "actual": "periodic",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.bcs",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.bcs"
+          }
+        },
+        {
+          "id": "baseline.invariants.precision",
+          "expected": "float64",
+          "actual": "float64",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.precision",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260222_152015.manifest.invariants.precision"
+          }
+        },
+        {
+          "id": "baseline.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "baseline.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
         {
           "id": "canonical.audit_scope.hash_gate",
           "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
@@ -1295,10 +1346,8 @@
       "run_id": "spec6_false_s41_20260227_200927",
       "profiles": [
         "baseline",
-        "canonical",
-        "wave_core"
+        "canonical"
       ],
-      "matched_profile": "baseline",
       "checks": [
         {
           "id": "baseline.audit_scope.hash_gate",
@@ -1352,21 +1401,349 @@
           "expected": "exists",
           "actual": "found",
           "status": "PASS"
+        },
+        {
+          "id": "canonical.audit_scope.hash_gate",
+          "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "status": "PASS",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.audit_scope.actual_hash"
+          }
+        },
+        {
+          "id": "canonical.identity.seed",
+          "expected": 41,
+          "actual": 41,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.seed",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.run.seed"
+          }
+        },
+        {
+          "id": "canonical.identity.steps",
+          "expected": 2000,
+          "actual": 2000,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.run.steps"
+          }
+        },
+        {
+          "id": "canonical.identity.grid_size",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.grid_size",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.run.grid_size"
+          }
+        },
+        {
+          "id": "canonical.identity.time_step_s",
+          "expected": 1e-21,
+          "actual": 1e-21,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.time_step_s",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.run.time_step_s"
+          }
+        },
+        {
+          "id": "canonical.identity.kappa_mode",
+          "expected": "constant",
+          "actual": "constant",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.kappa_mode",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.run.kappa_mode"
+          }
+        },
+        {
+          "id": "canonical.analysis.spectrum_definition",
+          "expected": "power |FFT(x)|^2",
+          "actual": "power |FFT(x)|^2",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.spectrum_definition",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.spectrum_definition"
+          }
+        },
+        {
+          "id": "canonical.analysis.window_length",
+          "expected": 256,
+          "actual": 256,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.window_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.window_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.hop_length",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.hop_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.hop_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.guard_bins",
+          "expected": 2,
+          "actual": 2,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.guard_bins",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.guard_bins"
+          }
+        },
+        {
+          "id": "canonical.analysis.estimator",
+          "expected": "centroid",
+          "actual": "centroid",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.estimator",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.estimator"
+          }
+        },
+        {
+          "id": "canonical.analysis.bootstrap_ci_level",
+          "expected": 0.95,
+          "actual": 0.95,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.bootstrap_ci_level",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.analysis_config.bootstrap_ci_level"
+          }
+        },
+        {
+          "id": "canonical.anchor.f0_mean_hz",
+          "expected": {
+            "min": 3.5e+19,
+            "max": 3.9e+19,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 4.482094950950652e+19,
+          "status": "FAIL",
+          "message": "4.482094950950652e+19 > max 3.9e+19",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.f0_mean_hz"
+          }
+        },
+        {
+          "id": "canonical.anchor.topology_neutrality_n1",
+          "expected": {
+            "min": 70.0,
+            "max": 85.0,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 80.25,
+          "status": "PASS",
+          "message": "Value 80.25 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.topology_neutrality_n1",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.topology_neutrality_n1"
+          }
+        },
+        {
+          "id": "canonical.anchor.strict_neutrality",
+          "expected": {
+            "min": 0.0,
+            "max": 100.0,
+            "severity": "info",
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 32.7,
+          "status": "PASS",
+          "message": "Value 32.7 OK",
+          "severity": "info",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.strict_neutrality",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.strict_neutrality"
+          }
+        },
+        {
+          "id": "canonical.anchor.mean_vortices",
+          "expected": {
+            "min": 150.0,
+            "max": 200.0,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 182.1135,
+          "status": "PASS",
+          "message": "Value 182.1135 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.mean_vortices"
+          }
+        },
+        {
+          "id": "canonical.anchor.low_mass_qp_count",
+          "expected": {
+            "target": 49,
+            "abs_tol": 0,
+            "paper_ref": "\u00a74.7"
+          },
+          "actual": 49,
+          "status": "PASS",
+          "message": "Value 49.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.low_mass_qp_count",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.low_mass_qp_count"
+          }
+        },
+        {
+          "id": "canonical.anchor.max_lifespan_steps",
+          "expected": {
+            "min": 20,
+            "paper_ref": "\u00a74.5"
+          },
+          "actual": 54,
+          "status": "PASS",
+          "message": "Value 54.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.max_lifespan_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.max_lifespan_steps"
+          }
+        },
+        {
+          "id": "canonical.anchor.phi_half_life_steps",
+          "expected": {
+            "min": 1500,
+            "max": 1800,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 1690,
+          "status": "PASS",
+          "message": "Value 1690.0 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.phi_half_life_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.phi_half_life_steps"
+          }
+        },
+        {
+          "id": "canonical.anchor.sbr_mean",
+          "expected": {
+            "min": 1.5,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": 11264.488368014121,
+          "status": "PASS",
+          "message": "Value 11264.488368014121 OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.sbr_mean",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260227_200927.manifest.metrics.sbr_mean"
+          }
+        },
+        {
+          "id": "canonical.derived.df_hz",
+          "expected": 3.90625e+18,
+          "actual": 3.9062500000000005e+18,
+          "status": "PASS",
+          "message": "Value 3.9062500000000005e+18 OK (3.9063e+18)",
+          "actual_source": {
+            "primary": "calculated: 1 / (256 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
+          }
+        },
+        {
+          "id": "canonical.derived.nyquist_hz",
+          "expected": 5e+20,
+          "actual": 5.0000000000000007e+20,
+          "status": "PASS",
+          "message": "Value 5.0000000000000007e+20 OK (5.0000e+20)",
+          "actual_source": {
+            "primary": "calculated: 1 / (2 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
+          }
+        },
+        {
+          "id": "canonical.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*multi_spectrum_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*trajectories.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*topo_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*amplitude_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*phi_center_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*lineum_report.html",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*figure0_canonical.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*kappa_map.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
         }
       ],
-      "status": "PASS"
+      "status": "FAIL"
     },
     {
       "run_id": "spec6_false_s41_20260306_201952",
       "profiles": [
         "baseline",
-        "canonical",
-        "wave_core"
+        "canonical"
       ],
-      "matched_profile": "wave_core",
       "checks": [
         {
-          "id": "wave_core.audit_scope.hash_gate",
+          "id": "baseline.audit_scope.hash_gate",
           "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
           "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
           "status": "PASS",
@@ -1377,7 +1754,7 @@
           }
         },
         {
-          "id": "wave_core.invariants.dim",
+          "id": "baseline.invariants.dim",
           "expected": "2D",
           "actual": "2D",
           "status": "PASS",
@@ -1387,7 +1764,7 @@
           }
         },
         {
-          "id": "wave_core.invariants.bcs",
+          "id": "baseline.invariants.bcs",
           "expected": "periodic",
           "actual": "periodic",
           "status": "PASS",
@@ -1397,7 +1774,7 @@
           }
         },
         {
-          "id": "wave_core.invariants.precision",
+          "id": "baseline.invariants.precision",
           "expected": "float64",
           "actual": "float64",
           "status": "PASS",
@@ -1407,28 +1784,208 @@
           }
         },
         {
-          "id": "wave_core.anchor.M2_total",
-          "expected": {
-            "target": 63300000000.0,
-            "rel_tol": 0.15,
-            "severity": "fatal",
-            "paper_ref": "wave-core \u00a7energy"
-          },
-          "actual": 63314216245.82842,
+          "id": "baseline.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "baseline.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.audit_scope.hash_gate",
+          "expected": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+          "actual": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
           "status": "PASS",
-          "message": "Value 63314216245.82842 OK",
           "severity": "fatal",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run_summary.csv:M2_total",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.M2_total"
+            "primary": "spec6_false_s41_manifest.json:audit_scope.actual_hash",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.audit_scope.actual_hash"
           }
         },
         {
-          "id": "wave_core.anchor.low_mass_qp_count",
+          "id": "canonical.identity.seed",
+          "expected": 41,
+          "actual": 41,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.seed",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.run.seed"
+          }
+        },
+        {
+          "id": "canonical.identity.steps",
+          "expected": 2000,
+          "actual": 2000,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.run.steps"
+          }
+        },
+        {
+          "id": "canonical.identity.grid_size",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.grid_size",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.run.grid_size"
+          }
+        },
+        {
+          "id": "canonical.identity.time_step_s",
+          "expected": 1e-21,
+          "actual": 1e-21,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.time_step_s",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.run.time_step_s"
+          }
+        },
+        {
+          "id": "canonical.identity.kappa_mode",
+          "expected": "constant",
+          "actual": "constant",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:run.kappa_mode",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.run.kappa_mode"
+          }
+        },
+        {
+          "id": "canonical.analysis.spectrum_definition",
+          "expected": "power |FFT(x)|^2",
+          "actual": "power |FFT(x)|^2",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.spectrum_definition",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.spectrum_definition"
+          }
+        },
+        {
+          "id": "canonical.analysis.window_length",
+          "expected": 256,
+          "actual": 256,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.window_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.window_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.hop_length",
+          "expected": 128,
+          "actual": 128,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.hop_length",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.hop_length"
+          }
+        },
+        {
+          "id": "canonical.analysis.guard_bins",
+          "expected": 2,
+          "actual": 2,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.guard_bins",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.guard_bins"
+          }
+        },
+        {
+          "id": "canonical.analysis.estimator",
+          "expected": "centroid",
+          "actual": "centroid",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.estimator",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.estimator"
+          }
+        },
+        {
+          "id": "canonical.analysis.bootstrap_ci_level",
+          "expected": 0.95,
+          "actual": 0.95,
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:analysis_config.bootstrap_ci_level",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.analysis_config.bootstrap_ci_level"
+          }
+        },
+        {
+          "id": "canonical.anchor.f0_mean_hz",
+          "expected": {
+            "min": 3.5e+19,
+            "max": 3.9e+19,
+            "paper_ref": "\u00a74.6"
+          },
+          "actual": "NaN",
+          "status": "PASS",
+          "message": "Value nan OK",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.f0_mean_hz",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.f0_mean_hz"
+          }
+        },
+        {
+          "id": "canonical.anchor.topology_neutrality_n1",
+          "expected": {
+            "min": 70.0,
+            "max": 85.0,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 0.0,
+          "status": "FAIL",
+          "message": "0.0 < min 70.0",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.topology_neutrality_n1",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.topology_neutrality_n1"
+          }
+        },
+        {
+          "id": "canonical.anchor.strict_neutrality",
+          "expected": {
+            "min": 0.0,
+            "max": 100.0,
+            "severity": "info",
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": 0.0,
+          "status": "PASS",
+          "message": "Value 0.0 OK",
+          "severity": "info",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.strict_neutrality",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.strict_neutrality"
+          }
+        },
+        {
+          "id": "canonical.anchor.mean_vortices",
+          "expected": {
+            "min": 150.0,
+            "max": 200.0,
+            "paper_ref": "\u00a74.4"
+          },
+          "actual": null,
+          "status": "FAIL",
+          "message": "mean_vortices: Value missing",
+          "severity": "fatal",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:metrics.mean_vortices",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.mean_vortices"
+          }
+        },
+        {
+          "id": "canonical.anchor.low_mass_qp_count",
           "expected": {
             "target": 49,
-            "abs_tol": 2,
-            "severity": "fatal",
+            "abs_tol": 0,
             "paper_ref": "\u00a74.7"
           },
           "actual": 49,
@@ -1441,105 +1998,140 @@
           }
         },
         {
-          "id": "wave_core.anchor.net_charge",
+          "id": "canonical.anchor.max_lifespan_steps",
           "expected": {
-            "target": 0,
-            "abs_tol": 0,
-            "severity": "fatal",
-            "paper_ref": "wave-core \u00a7topology"
+            "min": 20,
+            "paper_ref": "\u00a74.5"
           },
           "actual": 0,
-          "status": "PASS",
-          "message": "Value 0.0 OK",
+          "status": "FAIL",
+          "message": "0.0 < min 20",
           "severity": "fatal",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:rolling_metrics.json:data.latest.net_charge",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.net_charge"
+            "primary": "spec6_false_s41_manifest.json:metrics.max_lifespan_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.max_lifespan_steps"
           }
         },
         {
-          "id": "wave_core.anchor.peak_phi",
+          "id": "canonical.anchor.phi_half_life_steps",
           "expected": {
-            "max": 1000000.0,
-            "severity": "fatal",
-            "paper_ref": "wave-core \u00a7cap"
+            "min": 1500,
+            "max": 1800,
+            "paper_ref": "\u00a74.6"
           },
-          "actual": 1000000.0,
-          "status": "PASS",
-          "message": "Value 1000000.0 OK",
+          "actual": null,
+          "status": "FAIL",
+          "message": "phi_half_life_steps: Value missing",
           "severity": "fatal",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run_summary.csv:peak_phi",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.peak_phi"
+            "primary": "spec6_false_s41_manifest.json:metrics.phi_half_life_steps",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.phi_half_life_steps"
           }
         },
         {
-          "id": "wave_core.anchor.center_amp",
+          "id": "canonical.anchor.sbr_mean",
           "expected": {
-            "min": 500,
-            "severity": "support",
-            "paper_ref": "wave-core \u00a7amplitude"
+            "min": 1.5,
+            "paper_ref": "\u00a74.6"
           },
-          "actual": 2154.915876705109,
-          "status": "PASS",
-          "message": "Value 2154.915876705109 OK",
-          "severity": "support",
+          "actual": null,
+          "status": "FAIL",
+          "message": "sbr_mean: Value missing",
+          "severity": "fatal",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:rolling_metrics.json:data.latest.center_amp",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.center_amp"
+            "primary": "spec6_false_s41_manifest.json:metrics.sbr_mean",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.sbr_mean"
           }
         },
         {
-          "id": "wave_core.anchor.vortices_total",
-          "expected": {
-            "min": 10,
-            "severity": "support",
-            "paper_ref": "wave-core \u00a7structure"
-          },
-          "actual": 60,
+          "id": "canonical.derived.df_hz",
+          "expected": 3.90625e+18,
+          "actual": 3.9062500000000005e+18,
           "status": "PASS",
-          "message": "Value 60.0 OK",
-          "severity": "support",
+          "message": "Value 3.9062500000000005e+18 OK (3.9063e+18)",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:rolling_metrics.json:data.latest.vortices_total",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.vortices_total"
+            "primary": "calculated: 1 / (256 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
           }
         },
         {
-          "id": "wave_core.anchor.final_particle_count",
-          "expected": {
-            "min": 0,
-            "severity": "info",
-            "paper_ref": "wave-core \u00a7tracking"
-          },
-          "actual": 0.0,
+          "id": "canonical.derived.nyquist_hz",
+          "expected": 5e+20,
+          "actual": 5.0000000000000007e+20,
           "status": "PASS",
-          "message": "Value 0.0 OK",
-          "severity": "info",
+          "message": "Value 5.0000000000000007e+20 OK (5.0000e+20)",
           "actual_source": {
-            "primary": "spec6_false_s41_manifest.json:run_summary.csv:final_particle_count",
-            "embedded": "embedded_context.runs.spec6_false_s41_20260306_201952.manifest.metrics.final_particle_count"
+            "primary": "calculated: 1 / (2 * 1.0e-21)",
+            "embedded": "calculated from embedded manifest/constants"
           }
         },
         {
-          "id": "wave_core.artifact.*manifest.json",
+          "id": "canonical.artifact.*manifest.json",
           "expected": "exists",
           "actual": "found",
           "status": "PASS"
         },
         {
-          "id": "wave_core.artifact.*metrics_summary.csv",
+          "id": "canonical.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*multi_spectrum_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*trajectories.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*topo_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*amplitude_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*phi_center_log.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*lineum_report.html",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*figure0_canonical.png",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "canonical.artifact.*kappa_map.png",
           "expected": "exists",
           "actual": "found",
           "status": "PASS"
         }
       ],
-      "status": "PASS"
+      "status": "FAIL"
     }
   ],
   "summary": {
-    "pass": 3,
-    "fail": 0,
+    "pass": 1,
+    "fail": 2,
     "skip": 0,
     "matched_canonical": 3
   }

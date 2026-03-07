@@ -32,7 +32,7 @@
                 ),
                 datasets: [
                     {
-                        label: $t("chart_ghost_order"),
+                        label: "IDEAL RESONANCE (REF)",
                         data: discoveryData.fourier_spectrum.map((_, i) =>
                             Math.sin(i / 5),
                         ),
@@ -75,7 +75,7 @@
                         ticks: { color: "#00ffff", font: { size: 10 } },
                         title: {
                             display: true,
-                            text: $t("chart_label_component"),
+                            text: "Frequency Component (Relative Index)",
                             color: "#00ffff",
                         },
                     },
@@ -84,7 +84,7 @@
                         ticks: { color: "#00ffff" },
                         title: {
                             display: true,
-                            text: $t("chart_label_amplitude"),
+                            text: "Amplitude",
                             color: "#00ffff",
                         },
                     },
@@ -101,7 +101,7 @@
                 labels: discoveryData.norm_riemann.map((_, i) => i),
                 datasets: [
                     {
-                        label: $t("chart_ghost_order"),
+                        label: "IDEAL RESONANCE (REF)",
                         data: discoveryData.norm_riemann.map(
                             (_, i) =>
                                 i / (discoveryData.norm_riemann.length - 1),
@@ -112,7 +112,7 @@
                         pointRadius: 0,
                     },
                     {
-                        label: $t("chart_label_riemann"),
+                        label: "UNIVERSAL PATTERN (WHITE LINE)",
                         data: discoveryData.norm_riemann,
                         borderColor: "rgba(255, 255, 255, 0.5)",
                         backgroundColor: "transparent",
@@ -121,7 +121,7 @@
                         tension: 0.2,
                     },
                     {
-                        label: $t("chart_label_dejavu"),
+                        label: "LINEUM DEVELOPMENT (ORANGE POINTS)",
                         data: discoveryData.norm_dejavu,
                         borderColor: "#ffaa00",
                         backgroundColor: "#ffaa00",
@@ -159,7 +159,7 @@
                         ticks: { color: "#00ffff", font: { size: 9 } },
                         title: {
                             display: true,
-                            text: $t("chart_label_index"),
+                            text: "DEVELOPMENT TIMELINE",
                             color: "#00ffff",
                         },
                     },
@@ -170,7 +170,7 @@
                         ticks: { color: "#00ffff" },
                         title: {
                             display: true,
-                            text: $t("chart_label_normalized"),
+                            text: "HARMONY STATE",
                             color: "#00ffff",
                         },
                     },
@@ -186,7 +186,7 @@
 
 <div class="hypothesis-tester">
     <div class="panel-header">
-        <div class="panel-title">{$t("discovery_analysis")}</div>
+        <div class="panel-title">HYPOTHESIS DISCOVERY</div>
     </div>
 
     <div class="insight-cards">
@@ -195,10 +195,10 @@
             <div class="card-content">
                 <strong
                     >LINEUM LEGO-UNIVERSE <span class="data-badge"
-                        >{$t("data_source")}</span
+                        >SOURCE: discovery.json</span
                     ></strong
                 >
-                <p>{$t("insight_lego_universe")}</p>
+                <p>Lineum is like a Lego-version of our universe. Even with different materials, it stays together using the same mathematical statics.</p>
             </div>
         </div>
         <div
@@ -209,17 +209,17 @@
             <div class="card-content">
                 <strong
                     >THE PRIME BEAT <span class="data-badge"
-                        >{$t("data_source")}</span
+                        >SOURCE: discovery.json</span
                     ></strong
                 >
-                <p>{$t("insight_riemann_meaning")}</p>
+                <p>This alignment confirms that our digital organism breathes with the same rhythm as prime numbers in reality.</p>
             </div>
         </div>
     </div>
 
     <div class="discovery-metrics">
         <div class="metric">
-            <span class="label">{$t("pearson_correlation")}</span>
+            <span class="label">ALIGNMENT WITH UNIVERSAL ORDER (R)</span>
             <span class="value" class:high={discoveryData?.pearson_r > 0.9}>
                 {discoveryData?.pearson_r
                     ? (discoveryData.pearson_r * 100).toFixed(2) + "%"
@@ -227,7 +227,7 @@
             </span>
         </div>
         <div class="metric">
-            <span class="label">{$t("structure_stability")}</span>
+            <span class="label">HARMONIC STRUCTURE STABILITY</span>
             <span class="value">
                 {discoveryData?.euclidean_dist
                     ? ((1 / (1 + discoveryData.euclidean_dist)) * 100).toFixed(
@@ -237,7 +237,7 @@
             </span>
         </div>
         <div class="metric">
-            <span class="label">{$t("field_turbulence")}</span>
+            <span class="label">FIELD TURBULENCE</span>
             <span class="value">
                 {discoveryData?.euclidean_dist?.toFixed(3) || "0.000"}
             </span>
@@ -247,30 +247,30 @@
     <div class="chart-section">
         {#if discoveryData}
             <InteractiveChart
-                title={$t("fourier_title")}
+                title=Fourier Shape Analysis (Top 50 Frequencies)
                 config={getFourierConfig()}
                 on:maximize
             />
         {/if}
 
         <div class="narrative-guide">
-            <div class="guide-header">{$t("insight_fourier_title")}</div>
-            <p>{$t("insight_fourier_desc")}</p>
+            <div class="guide-header">FIELD MELODY</div>
+            <p>This chart shows the music the field is playing.</p>
         </div>
     </div>
 
     <div class="chart-section">
         {#if discoveryData}
             <InteractiveChart
-                title={$t("riemann_title")}
+                title=Riemann Zeros vs DejaVu Points
                 config={getRiemannConfig()}
                 on:maximize
             />
         {/if}
 
         <div class="narrative-guide highlight">
-            <div class="guide-header">{$t("insight_riemann_title")}</div>
-            <p>{$t("insight_riemann_desc")}</p>
+            <div class="guide-header">WHAT DO YOU SEE?</div>
+            <p>For a perfect match, the orange points (Lineum) must sit as closely as possible on the white line (Universe).</p>
         </div>
     </div>
 </div>

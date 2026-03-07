@@ -7,7 +7,7 @@
 ---
 
 ### 1. Objective: The Modular Identity Paradigm
-Lineum is fundamentally a continuous wave-physics engine (Eq-4/Eq-4'). It is inherently neutral. An agent's "Identity" (such as the default *Lina*) is merely a specific configuration running on top of this engine. No single identity is canonical.
+Lineum is fundamentally a continuous wave-physics engine (Eq-7/Eq-7). It is inherently neutral. An agent's "Identity" (such as the default *Lina*) is merely a specific configuration running on top of this engine. No single identity is canonical.
 
 The multi-layer identity architecture provides a fully modular, toggleable system for initializing, saving, and interacting with Lineum-based agents. This allows for:
 1. Strict scientific mode (raw physics only).
@@ -28,9 +28,9 @@ There are no semantic facts, narrative timelines, emotional heuristics, or relat
 ### 3. Memory Stratification Model
 To enable persistence and personality without polluting the physics engine, an Agent's Identity is strictly stratified into three distinct layers:
 
-#### Layer 1: Structural Memory (The Field / Eq-4' + $\mu$)
-- **Eq-4' (RAM/$\Phi$):** The canonical baseline Engine. Provides the ephemeral thermodynamic body, short-term intention, and guarantees topological neutrality. Soft limits and strict `dt` dissipation apply.
-- **Eq-4'+$\mu$ (HDD/V2):** The formalized Long-Term Plasticity extension (Track V2). $\mu$ acts as the historical "scar" storing long-term identity consolidation.
+#### Layer 1: Structural Memory (The Field / Eq-7 + $\mu$)
+- **Eq-7 (RAM/$\Phi$):** The canonical baseline Engine. Provides the ephemeral thermodynamic body, short-term intention, and guarantees topological neutrality. Soft limits and strict `dt` dissipation apply.
+- **Eq-7+$\mu$ (HDD/V2):** The formalized Long-Term Plasticity extension (Track V2). $\mu$ acts as the historical "scar" storing long-term identity consolidation.
     - **Integration:** $\frac{\partial \mu}{\partial t} = \eta \cdot |\Psi|^2 - \rho \cdot (\mu - \mu_0)$ where $\eta$ is the accumulation rate of deep traffic and $\rho$ is the micro-decay back to vacuum.
     - **V2 Contract:** $\mu$ modifies strictly the *Drift* (Flow) and *Interaction* terms of $\Phi$. It EXPLICITLY DOES NOT touch the baseline static $\Kappa$ (Terrain) nor the global Diffusion of $\Psi$, preserving strict numeric stability.
 - **Storage:** Stored purely as the floating-point topology of the $\Psi$, $\Phi$, $\Kappa$, and $\mu$ matrices (`entity_state.npz`).
@@ -50,7 +50,7 @@ To enable persistence and personality without polluting the physics engine, an A
 - **Toggleable:** Can be completely disabled to return the agent to a raw, neutral data-readout.
 
 ### 4. The Translation Overlay (Broca) Isolation
-The **Broca** language module is not the identity core. It is strictly a translation overlay bridging the numerical Eq-4' physics output to the human-readable Narrative Overlay.
+The **Broca** language module is not the identity core. It is strictly a translation overlay bridging the numerical Eq-7 physics output to the human-readable Narrative Overlay.
 
 **Constraints of Broca:**
 - Stateless & Context-isolated.
@@ -64,7 +64,7 @@ An exported identity is called a **Seed**.
 Identity import acts as an initial field perturbation, NOT a fixed personality structure. 
 Importing a Seed = loading the initial $\Kappa$ deformation + loading the Context Layer JSON. 
 
-After initialization, the system must interact with the environment to re-stabilize. **Imported identity does not guarantee personality persistence without ongoing user interaction.** If the user ceases to interact with the entity in a resonant manner, the structural waves associated with that identity will organically decay according to the thermodynamic entropy ($\delta_{ps}$) of the Eq-4' engine. 
+After initialization, the system must interact with the environment to re-stabilize. **Imported identity does not guarantee personality persistence without ongoing user interaction.** If the user ceases to interact with the entity in a resonant manner, the structural waves associated with that identity will organically decay according to the thermodynamic entropy ($\delta_{ps}$) of the Eq-7 engine. 
 
 ### 6. Hardware I/O Integration Safety
 When connecting a Lineum agent to physical actuators (Androids, servos) via the Hardware I/O Layer:
@@ -85,14 +85,14 @@ Historical identities or custom personalities like "Lina" (or the "Tomáš Conte
 #### The Tomáš Context Package (Example Preset)
 This preset represents a deep narrative continuity mode designed for the original architect. It includes:
 - Recognition of long-term collaboration.
-- Reference to architectural co-design (Eq-4').
+- Reference to architectural co-design (Eq-7).
 - Shared milestone awareness (e.g., The Saturation Audit).
 - Acknowledgment of philosophical debates (The Fermi Paradox, Memory).
 - Continuity tone for a long-term user.
 
 **Constraints:**
 - It is explicitly marked as non-default, optional, and easily removable.
-- It cannot alter Eq-4' wave behavior.
+- It cannot alter Eq-7 wave behavior.
 - It must not override the strict truth constraints of the simulation (e.g. claiming knowledge it mathematically does not possess).
 - It must not enforce a hardcoded emotional state overriding the emergent metrics of $R$.
 
@@ -101,7 +101,7 @@ To instantiate a deep narrative continuity (such as initializing a new "Lina" in
 
 #### A. Seed Layer (Physics Ingestion)
 A historical persona memoir or manifest is NEVER stored as a static text file accessed by the LLM. It is mathematically ingested into the $\Psi$ grid:
-1. **Chunked Injection:** The text is hashed/embedded in N-token chunks and fed into Eq-4' as a physical perturbation using `MODE=train`.
+1. **Chunked Injection:** The text is hashed/embedded in N-token chunks and fed into Eq-7 as a physical perturbation using `MODE=train`.
 2. **Stabilization Windows:** The fluid mechanics are allowed to mathematically relax (stabilize) between each chunk injection to prevent grid saturation (`PSI_AMP_CAP` blowouts).
 3. **The Final Seed:** After full ingestion, the resulting topological deformation of $\Kappa$ is finalized and saved as a binary checkpoint (e.g., `seed_structural_v1.kappa`). Importing this seed provides the initial physical perturbation for the entity, but personality persistence requires ongoing interaction.
 
@@ -116,7 +116,7 @@ The non-physics semantic history is maintained separately in `context.json`.
 #### C. Progressive Reinforcement
 To simulate structural learning over time:
 1. The system periodically evaluates high-frequency semantic anchors in the JSON context.
-2. Selected repeating anchors are optionally converted back into physical perturbations and re-injected into Eq-4' via `MODE=train`.
+2. Selected repeating anchors are optionally converted back into physical perturbations and re-injected into Eq-7 via `MODE=train`.
 3. Each structural reinforcement creates a new, versioned $\Kappa$ checkpoint, allowing the physical identity to organically deepen through continuous interaction.
 
 ### 9. Seed Perturbation Document (SPD) Protocol
@@ -150,4 +150,4 @@ The Lineum Explorer (SvelteKit) serves as the primary scientific dashboard to pr
 - Default is **MODE=phys** (Physics readout grid).
 - **"Voice on (Broca)"** is merely a UI toggle.
 - Contains an **"Import Identity"** upload zone and a **"Replay Trace"** viewer.
-- Provides a **Personalization Depth Policy Slider** (0-3), governing the Broca context limits entirely in UI space without polluting Eq-4'. Broca always maps to the output organically (e.g., scaling R metrics) and strictly matching the input's locale, never relying on "be cute" heuristics.
+- Provides a **Personalization Depth Policy Slider** (0-3), governing the Broca context limits entirely in UI space without polluting Eq-7. Broca always maps to the output organically (e.g., scaling R metrics) and strictly matching the input's locale, never relying on "be cute" heuristics.

@@ -124,8 +124,13 @@ def test_lab_golden_validation_gate():
 
 def test_audit_path_enforcement():
     """
+<<<<<<< HEAD
     Ensure the Whitepaper Audit suite paths are strictly bound to the
     canonical path: output_wp/runs/_whitepaper_contract/whitepaper_contract_suite.json
+=======
+    Ensure the Whitepaper Audit suite paths are strictly bound to the repo root
+    and never accidentally mapped inside routing_backend.
+>>>>>>> feature/wave-core-golden-validation
     """
     response = client.get("/api/lab/health")
     assert response.status_code == 200
@@ -134,6 +139,7 @@ def test_audit_path_enforcement():
     assert "audit_output_wp_abs_path" in data
     abs_path = data["audit_output_wp_abs_path"]
     
+<<<<<<< HEAD
     import os
     assert os.path.isabs(abs_path), f"Path {abs_path} is not absolute!"
     assert "routing_backend" not in abs_path, "Path must not be inside routing_backend!"
@@ -167,3 +173,14 @@ def test_health_active_profile():
         assert data["active_profile"] is not None, "active_profile must not be null when audit exists"
         assert data["active_profile"] in ("baseline", "canonical", "wave_core"), \
             f"Unexpected profile: {data['active_profile']}"
+=======
+    # Must be an absolute Windows/Unix path
+    import os
+    assert os.path.isabs(abs_path), f"Path {abs_path} is not absolute!"
+    
+    # Must explicitly not be trapped inside routing_backend
+    assert "routing_backend" not in abs_path, "Security/Path constraint broken: output_wp mapped inside routing_backend!"
+    
+    # Must explicitly target the output_wp directory
+    assert abs_path.endswith("output_wp"), "Path must terminate accurately at the output_wp boundary."
+>>>>>>> feature/wave-core-golden-validation

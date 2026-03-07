@@ -13,7 +13,7 @@ import shutil
 
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 from routing_backend.text_to_wave_encoder import TextToWaveEncoder
 
 router = APIRouter()
@@ -151,7 +151,7 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         context_chunks = []
         classification_report = []
         
-        cfg = Eq4Config(
+        cfg = CoreConfig(
             use_mode_coupling=True, 
             use_mu=True,
             stencil_type=req.config.stencil_type
@@ -199,7 +199,7 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
                     text=block["text"],
                     state=state,
                     cfg=cfg,
-                    step_fn=step_eq4,
+                    step_fn=step_core,
                     mode="identity_burn",
                     personalization_depth=req.config.personalization_depth
                 )
@@ -223,7 +223,7 @@ async def offline_run_job(job_id: str, req: RunProcessRequest):
         active_jobs[job_id]["logs"].append("Cooling Phase (200 ticks)...")
         state["delta"] = np.zeros((GRID_SIZE, GRID_SIZE), dtype=np.float64)
         for _ in range(200):
-            state = step_eq4(state, cfg)
+            state = step_core(state, cfg)
             
         active_jobs[job_id]["progress"] = 95
         

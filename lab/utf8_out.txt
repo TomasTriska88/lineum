@@ -1,0 +1,171 @@
+﻿
+Running 2 tests using 1 worker
+├Ś├ŚF├Ś├ŚF
+
+  1) [chromium] ÔÇ║ tests\responsive.spec.js:5:5 ÔÇ║ Responsive Lab Navigation & Layout ÔÇ║ Desktop layout displays all panels 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-chromium\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error: apiRequestContext._wrapApiCall: ENOENT: no such file or directory, open 'C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\test-results\.playwright-artifacts-1\traces\68833bfb7a01a66a4f98-0f307e757c220901a942-retry1.trace'
+
+    Error: ENOENT: no such file or directory, open 'C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\test-results\.playwright-artifacts-1\545bf51359aa42da9c50e76ba5a3334a.zip'
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-chromium-retry1\error-context.md
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-chromium-retry2\error-context.md
+
+  2) [Mobile Chrome] ÔÇ║ tests\responsive.spec.js:5:5 ÔÇ║ Responsive Lab Navigation & Layout ÔÇ║ Desktop layout displays all panels 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-Mobile-Chrome\error-context.md
+
+    Retry #1 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-Mobile-Chrome-retry1\error-context.md
+
+    attachment #2: trace (application/zip) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-Mobile-Chrome-retry1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-Mobile-Chrome-retry1\trace.zip
+
+    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Retry #2 ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.sidebar-right')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.sidebar-right')[22m
+
+
+      22 |         // Right panel should be visible on desktop
+      23 |         const rightPanel = page.locator('.sidebar-right');
+    > 24 |         await expect(rightPanel).toBeVisible();
+         |                                  ^
+      25 |     });
+      26 |
+      27 |     test('Mobile layout collapses right panel and stacks navigation', async ({ page }) => {
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\responsive.spec.js:24:34
+
+    Error Context: test-results\responsive-Responsive-Lab--8db2e--layout-displays-all-panels-Mobile-Chrome-retry2\error-context.md
+
+  2 failed
+    [chromium] ÔÇ║ tests\responsive.spec.js:5:5 ÔÇ║ Responsive Lab Navigation & Layout ÔÇ║ Desktop layout displays all panels 
+    [Mobile Chrome] ÔÇ║ tests\responsive.spec.js:5:5 ÔÇ║ Responsive Lab Navigation & Layout ÔÇ║ Desktop layout displays all panels 

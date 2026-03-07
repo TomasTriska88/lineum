@@ -11,6 +11,7 @@ export class TopographyEngine {
         this.playbackSpeed = 1.0;
         this.frameTimeCounter = 0;
         this.lastTime = performance.now();
+        this._isPaused = false;
 
         this.showSpiral = false; // 🌀 Toggle for Golden Spiral overlay
         this.harmonicData = null;
@@ -33,7 +34,24 @@ export class TopographyEngine {
 
         this.updateTopography(); // 🖼️ Initial render for frame 0
 
-        window.addEventListener('resize', this.onResize.bind(this));
+        this.onResizeBound = this.onResize.bind(this);
+        window.addEventListener('resize', this.onResizeBound);
+    }
+
+    get isPaused() {
+        return this._isPaused;
+    }
+
+    set isPaused(value) {
+        if (this._isPaused !== value) {
+            this._isPaused = value;
+            if (!value) {
+                this.lastTime = performance.now(); // Reset time to prevent huge delta jumps
+                this.animate();
+            } else {
+                cancelAnimationFrame(this.requestID);
+            }
+        }
     }
 
     initLights() {
@@ -237,6 +255,8 @@ export class TopographyEngine {
     }
 
     animate() {
+        if (this._isPaused) return;
+
         this.requestID = requestAnimationFrame(this.animate.bind(this));
 
         const currentTime = performance.now();
@@ -281,9 +301,33 @@ export class TopographyEngine {
 
     dispose() {
         cancelAnimationFrame(this.requestID);
-        window.removeEventListener('resize', this.onResize);
-        this.renderer.dispose();
-        this.geometry.dispose();
-        this.material.dispose();
+        window.removeEventListener('resize', this.onResizeBound);
+
+        // Dispose of main grid
+        if (this.geometry) this.geometry.dispose();
+        if (this.material) this.material.dispose();
+        if (this.solidPlane && this.solidPlane.material) this.solidPlane.material.dispose();
+
+        // Dispose of linony fibers and cores
+        if (this.linony) {
+            this.linony.forEach(c => {
+                if (c.line.geometry) c.line.geometry.dispose();
+                if (c.line.material) c.line.material.dispose();
+                if (c.core.geometry) c.core.geometry.dispose();
+                if (c.core.material) c.core.material.dispose();
+            });
+        }
+
+        // Dispose of harmonics
+        if (this.goldenSpiral) {
+            if (this.goldenSpiral.geometry) this.goldenSpiral.geometry.dispose();
+            if (this.goldenSpiral.material) this.goldenSpiral.material.dispose();
+        }
+
+        // Dispose renderer context
+        if (this.renderer) {
+            this.renderer.dispose();
+            this.renderer.forceContextLoss();
+        }
     }
 }

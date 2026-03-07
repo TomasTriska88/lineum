@@ -17,7 +17,7 @@ In practical applications of Lineum (e.g. B2B routing, flow optimization), we fa
 
 To explain this to engineers pedagogically (this is a communication metaphor, not a scientific physical claim):
 - **$\kappa$ (ROM):** The absolute, static terrain map.
-- **$\phi$ (RAM):** The short-term active tension field (Eq-4). It forms rapid flows but vanishes over its natural half-life.
+- **$\phi$ (RAM):** The short-term active tension field (Eq-7). It forms rapid flows but vanishes over its natural half-life.
 - **$\mu$ (HDD):** Long-term, slowly shifting structural memory ("mobility" or "scars").
 - **$\psi$ (Signal):** The blind radar stream traversing the structure.
 

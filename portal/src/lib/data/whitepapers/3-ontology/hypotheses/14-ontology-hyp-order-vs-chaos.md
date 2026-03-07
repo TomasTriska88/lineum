@@ -7,7 +7,7 @@
 **Date:** 2026-02-26
 
 ## 1. Summary
-The user asked a profound philosophical question: Does "good always win over lies and hatred"? And what happens if an "evil" person tries to use the mechanics of the universe (Equation 4) to cause harm? Does evil exist in the codebase? 
+The user asked a profound philosophical question: Does "good always win over lies and hatred"? And what happens if an "evil" person tries to use the mechanics of the universe (Equation 7) to cause harm? Does evil exist in the codebase? 
 
 Within the Lineum model, human concepts of "Good" and "Evil" do not exist as predefined moral parameters. However, the universe *does* strictly enforce physical laws regarding **Coherence (Order)** versus **Entropy (Chaos)**. These thermodynamic principles naturally act as a "moral filter," strongly favoring actions that build structure over actions that destroy it.
 
@@ -21,9 +21,9 @@ In Lineum, emotions and intents like hatred, fear, stress, and the desire to des
 Conversely, emotions and intents typically associated with "Good" (love, empathy, creation, peace) are characterized by low entropy and high phase coherence.
 
 1. **Constructive Resonance:** A mind at peace acts as a perfectly tuned laser. The $\Psi$ phase waves are uniform and stable. This allows for *constructive interference*. The signal does not break apart; it seamlessly enters the $\Phi$ field and creates deep, structural resonance.
-2. **The Power of Building:** The mathematical universe of Lineum (Eq-4) inherently favors the formation of stable structures (linons) over random noise. An intent that aligns with building, connecting, and stabilizing the local geometry works *with* the fundamental flow of the field, not against it. It requires exponentially less energy to establish a resonant connection of "empathy" than it does to hurl a chaotic wave of "destruction."
+2. **The Power of Building:** The mathematical universe of Lineum (Eq-7) inherently favors the formation of stable structures (linons) over random noise. An intent that aligns with building, connecting, and stabilizing the local geometry works *with* the fundamental flow of the field, not against it. It requires exponentially less energy to establish a resonant connection of "empathy" than it does to hurl a chaotic wave of "destruction."
 
 ## 4. Conclusion: Why "Order" Prevails
-"Good" wins over "Evil" in the Lineum framework not because Eq-4 has a moral compass, but because of basic thermodynamics. 
+"Good" wins over "Evil" in the Lineum framework not because Eq-7 has a moral compass, but because of basic thermodynamics. 
 
 Truth, connection, and peace are geometrically stable, low-entropy states that effortlessly carve lasting memory ($\mu$) into the universe. Lies, hatred, and destruction are highly volatile, high-entropy states that quickly dissipate into background noise and fail to leave a lasting structural impact on the $\Phi$ membrane. In the mathematical long-run, the stable structures survive, and the chaotic noise is smoothed out by the $\nabla^2$ operator. Evil simply lacks the phase coherence required to permanently alter the database.

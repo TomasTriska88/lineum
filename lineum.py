@@ -18,11 +18,11 @@ import glob
 import hashlib
 import subprocess
 
-from lineum_core.math import step_eq4, Eq4Config
+from lineum_core.math import step_core, CoreConfig
 
-PSI_AMP_CAP = Eq4Config().psi_amp_cap
-PHI_CAP = Eq4Config().phi_cap
-GRAD_CAP = Eq4Config().grad_cap
+PSI_AMP_CAP = CoreConfig().psi_amp_cap
+PHI_CAP = CoreConfig().phi_cap
+GRAD_CAP = CoreConfig().grad_cap
 
 # --- Fingerprinting ---
 def _compute_code_fingerprint(files, normalized_newlines=True):
@@ -1951,7 +1951,7 @@ if __name__ == "__main__":
             # Track kappa spatial mean for temporal metrics
             kappa_spatial_means.append(float(np.mean(kappa)))
 
-            cfg = Eq4Config(
+            cfg = CoreConfig(
                 noise_strength=NOISE_STRENGTH,
                 drift_strength=float(DRIFT_STRENGTH),
                 dissipation_rate=float(DISSIPATION_RATE),
@@ -1961,7 +1961,7 @@ if __name__ == "__main__":
                 use_mode_coupling=TEST_EXHALE_MODE
             )
 
-            state = step_eq4({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
+            state = step_core({"psi": psi, "phi": phi, "kappa": kappa, "delta": delta}, cfg)
             psi = state["psi"]
             phi = state["phi"]
             

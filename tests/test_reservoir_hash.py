@@ -5,11 +5,11 @@ import os
 import hashlib
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lineum_core.math import step_eq4, Eq4Config
+from lineum_core.math import step_core, CoreConfig
 
-PSI_AMP_CAP = Eq4Config().psi_amp_cap
-PHI_CAP = Eq4Config().phi_cap
-GRAD_CAP = Eq4Config().grad_cap
+PSI_AMP_CAP = CoreConfig().psi_amp_cap
+PHI_CAP = CoreConfig().phi_cap
+GRAD_CAP = CoreConfig().grad_cap
 
 # ---------------------------------------------------------------------------
 # TEST: LINEUM CRYPTOGRAPHIC HASH (AVALANCHE EFFECT)
@@ -69,9 +69,9 @@ def test_hashing_avalanche_effect():
             psi_1[30:34, 30:34] = 1.0 + 0j
             psi_2[30:34, 30:34] = 1.0 + 0j
             
-        _state = step_eq4({"psi": psi_1, "delta": delta_1, "phi": phi_1, "kappa": kappa_1}, Eq4Config())
+        _state = step_core({"psi": psi_1, "delta": delta_1, "phi": phi_1, "kappa": kappa_1}, CoreConfig())
         psi_1, phi_1 = _state["psi"], _state["phi"]
-        _state = step_eq4({"psi": psi_2, "delta": delta_2, "phi": phi_2, "kappa": kappa_2}, Eq4Config())
+        _state = step_core({"psi": psi_2, "delta": delta_2, "phi": phi_2, "kappa": kappa_2}, CoreConfig())
         psi_2, phi_2 = _state["psi"], _state["phi"]
         
     diff = np.mean(np.abs(psi_1 - psi_2))

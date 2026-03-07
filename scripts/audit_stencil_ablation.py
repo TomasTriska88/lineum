@@ -7,7 +7,7 @@ import sys
 # Add core to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import lineum_core.math as lmath
-from lineum_core.math import Eq4Config, step_eq4
+from lineum_core.math import CoreConfig, step_core
 
 # Fix seed and config
 np.random.seed(42)
@@ -39,7 +39,7 @@ def generate_sentence_delta(seed_val):
 def run_ablation(stencil_name):
     print(f"\\n--- Running Ablation for {stencil_name} ---")
     state = initialize_fields()
-    cfg = Eq4Config(
+    cfg = CoreConfig(
         dt=1.0,
         use_mode_coupling=True,
         mode_coupling_strength=0.001,
@@ -62,7 +62,7 @@ def run_ablation(stencil_name):
         else:
             state["delta"] = np.zeros_like(state["phi"])
             
-        state = step_eq4(state, cfg)
+        state = step_core(state, cfg)
         
         # Metrics
         p_amp = np.abs(state["psi"])

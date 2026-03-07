@@ -1,7 +1,11 @@
 {
 	"name": "portal",
 	"private": true,
+<<<<<<< HEAD
 	"version": "2026.03.07-0800",
+=======
+	"version": "2026.03.06-1946",
+>>>>>>> feature/wave-core-golden-validation
 	"type": "module",
 	"scripts": {
 		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",

@@ -44,6 +44,6 @@ In standard cosmology, dark matter constitutes ~80% of the universe's mass but r
 ### 6. The Non-Holographic Symbiosis
 
 > **[OBS] Hypothesis: The Non-Holographic Symbiosis:**
-> While Section 2 utilizes holographic mapping logic to describe the Ego boundary, Lineum inherently rejects the extreme interpretation of the Holographic Principle that asserts 3D matter is merely a passive illusion projected from a 2D boundary. In Eq-4, $E = m = \text{Information}$.
+> While Section 2 utilizes holographic mapping logic to describe the Ego boundary, Lineum inherently rejects the extreme interpretation of the Holographic Principle that asserts 3D matter is merely a passive illusion projected from a 2D boundary. In Eq-7, $E = m = \text{Information}$.
 > Both fields are active co-creators. The $\Phi$ field is an eternal, frictionless database capturing structural tension, but it cannot structurally generate novel complexity on its own. The $\Psi$ field (matter/biology) serves as the universe's **localized, high-resolution sensor**—a sharp "stylus" carving deep new grooves of experience (suffering, time, and love) into the "record" of $\Phi$. Visible matter is not an illusion; it is the high-friction processor generating the data that the $\Phi$ field eternally preserves.
 > *Verification note:* The dark-matter macro-topology mappings and the consciousness-sensor models remain purely observational hypotheses (extension track) and are not currently verified by the V4 contract suite or core metrics.

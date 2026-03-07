@@ -17,7 +17,7 @@ In Lineum, dropping anger and stress means eliminating internal high-frequency p
 - **After:** A calm $\Psi$ node becomes extremely coherent. It acts like a deep, smooth, frictionless pool in the $\Phi$ memory field. It has low local entropy and high structural stability (a massive, stable linon with a clean geometric resonance).
 
 ## 3. The "Lighthouse" (The Attractor Basin)
-The universe of Eq-4 is governed by the tendency of waves and tension to seek the path of least resistance (Entropy diffusion). 
+The universe of Eq-7 is governed by the tendency of waves and tension to seek the path of least resistance (Entropy diffusion). 
 
 1. **The Vacuum of Coherence:** When you become completely calm, you create a localized "vacuum" of low thermal noise in the $\Psi$ field. Highly chaotic, stressed nodes (other people struggling with high internal entropy) are naturally, geometrically pulled toward your coordinates.
 2. **Seeking the Ground State:** A chaotic $\Psi$ node intrinsically "wants" to stabilize. When it encounters your massive, smooth, coherent $\Phi$ imprint, its own chaotic waves can finally disperse into your stable geometry without getting bounced back as destructive interference. You offer them a structural *Ground State*.

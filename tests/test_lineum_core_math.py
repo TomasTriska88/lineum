@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from lineum_core.math import step_eq4, Eq4Config, _diffuse_complex_numpy, _cap_complex_magnitude_numpy
+from lineum_core.math import step_core, CoreConfig, _diffuse_complex_numpy, _cap_complex_magnitude_numpy
 
 def test_diffuse_complex_numpy():
     field = np.zeros((5, 5), dtype=np.complex128)
@@ -18,9 +18,9 @@ def test_cap_complex_magnitude_numpy():
     capped = _cap_complex_magnitude_numpy(z, cap=5.0)
     assert np.allclose(capped, [1.0, 5.0, 5.0])
 
-def test_step_eq4_basic_shapes_and_finiteness():
+def test_step_core_basic_shapes_and_finiteness():
     """
-    Test that the step_eq4 function returns arrays of the correct shape and type
+    Test that the step_core function returns arrays of the correct shape and type
     without any NaN or Inf values, even starting from aggressive conditions.
     """
     size = 16
@@ -32,8 +32,8 @@ def test_step_eq4_basic_shapes_and_finiteness():
     # Set a random seed to make the linon fluctuation deterministic
     np.random.seed(42)
     
-    cfg = Eq4Config()
-    state = step_eq4({"psi": psi, "delta": delta, "phi": phi, "kappa": kappa}, cfg)
+    cfg = CoreConfig()
+    state = step_core({"psi": psi, "delta": delta, "phi": phi, "kappa": kappa}, cfg)
     new_psi, new_phi = state["psi"], state["phi"]
 
     assert new_psi.shape == (size, size)
@@ -45,7 +45,7 @@ def test_step_eq4_basic_shapes_and_finiteness():
     
     # Run multiple steps to ensure stability
     for _ in range(5):
-        state = step_eq4({"psi": new_psi, "delta": delta, "phi": new_phi, "kappa": kappa}, cfg)
+        state = step_core({"psi": new_psi, "delta": delta, "phi": new_phi, "kappa": kappa}, cfg)
         new_psi, new_phi = state["psi"], state["phi"]
 
     assert np.all(np.isfinite(new_psi))
