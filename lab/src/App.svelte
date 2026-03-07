@@ -64,6 +64,86 @@
             error = e.message;
             loading = false;
         }
+
+        // ─── Global Tooltip System (viewport-aware, no native title) ───
+        let tooltipEl = null;
+        const TOOLTIP_OFFSET = 8;
+
+        function showTooltip(e) {
+            const target = e.currentTarget;
+            const text = target.getAttribute("title");
+            if (!text) return;
+
+            // Suppress native tooltip, preserve accessibility
+            target.setAttribute("data-tooltip", text);
+            target.setAttribute("aria-label", text);
+            target.removeAttribute("title");
+
+            // Create tooltip div
+            const tooltipId = "lab-tt-" + Date.now();
+            tooltipEl = document.createElement("div");
+            tooltipEl.className = "lab-tooltip";
+            tooltipEl.setAttribute("role", "tooltip");
+            tooltipEl.id = tooltipId;
+            tooltipEl.textContent = text;
+            target.setAttribute("aria-describedby", tooltipId);
+            document.body.appendChild(tooltipEl);
+
+            // Position calculation
+            const rect = target.getBoundingClientRect();
+            const ttRect = tooltipEl.getBoundingClientRect();
+            let top, left;
+
+            // Default: above element
+            top = rect.top - ttRect.height - TOOLTIP_OFFSET;
+            left = rect.left + rect.width / 2 - ttRect.width / 2;
+
+            // If clipping top, show below
+            if (top < 4) {
+                top = rect.bottom + TOOLTIP_OFFSET;
+                tooltipEl.classList.add("below");
+            }
+            // If clipping left
+            if (left < 4) left = 4;
+            // If clipping right
+            if (left + ttRect.width > window.innerWidth - 4) {
+                left = window.innerWidth - ttRect.width - 4;
+            }
+
+            tooltipEl.style.top = top + "px";
+            tooltipEl.style.left = left + "px";
+            tooltipEl.classList.add("visible");
+        }
+
+        function hideTooltip(e) {
+            const target = e.currentTarget;
+            const text = target.getAttribute("data-tooltip");
+            if (text) {
+                target.setAttribute("title", text);
+                target.removeAttribute("data-tooltip");
+                target.removeAttribute("aria-label");
+                target.removeAttribute("aria-describedby");
+            }
+            if (tooltipEl) {
+                tooltipEl.remove();
+                tooltipEl = null;
+            }
+        }
+
+        // Delegate via event listeners on document
+        function handleMouseOver(e) {
+            const target = e.target.closest("[title]");
+            if (!target) return;
+            target._tooltipBound = true;
+            target.addEventListener("mouseleave", hideTooltip, { once: true });
+            showTooltip({ currentTarget: target });
+        }
+        document.addEventListener("mouseover", handleMouseOver);
+
+        return () => {
+            document.removeEventListener("mouseover", handleMouseOver);
+            if (tooltipEl) tooltipEl.remove();
+        };
     });
 
     async function loadRun(runId) {
@@ -134,6 +214,7 @@
         class:dimmed={activeTab === "lpl"}
         bind:this={container}
     ></div>
+<<<<<<< Updated upstream
     <div class="overlay" class:lpl-mode={activeTab === "lpl"}>
         <div class="header-section">
             <div class="header-top">
@@ -151,6 +232,242 @@
                                 </option>
                             {/each}
                         </select>
+=======
+
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>SIMULACRUM</h1>
+            <span class="subtitle">Lineum Lab | Hypothesis Sandbox</span>
+        </div>
+
+        <div class="nav-modes">
+            <button
+                class:active={mainMode === "simulator"}
+                on:click={() => (mainMode = "simulator")}
+            >
+                3D Simulator
+            </button>
+            <button
+                class:active={mainMode === "validation"}
+                on:click={() => (mainMode = "validation")}
+            >
+                Validation Core
+            </button>
+            <button
+                class:active={mainMode === "whitepaper"}
+                on:click={() => (mainMode = "whitepaper")}
+            >
+                Claims
+            </button>
+            <button
+                class:active={mainMode === "lpl"}
+                on:click={() => (mainMode = "lpl")}
+            >
+                LPL Compiler
+            </button>
+            <div class="divider"></div>
+            <button
+                class="btn-generate-audit {isGeneratingAudit ? 'pulse' : ''}"
+                on:click={generateAuditContract}
+                disabled={isGeneratingAudit}
+                title="Generates a local canonical contract in output_wp/"
+            >
+                {#if isGeneratingAudit}
+                    <span class="icon">⏳</span> GENERATING...
+                {:else}
+                    🛡️ GENERATE AUDIT CONTRACT
+                {/if}
+            </button>
+        </div>
+
+        <div class="header-controls">
+            {#if mainMode === "simulator" && manifest.length > 0}
+                <select
+                    class="run-selector"
+                    bind:value={selectedRunId}
+                    on:change={(e) => loadRun(e.target.value)}
+                >
+                    {#each manifest as run}
+                        <option value={run.run_id}>
+                            {run.run_tag} ({run.timestamp})
+                        </option>
+                    {/each}
+                </select>
+            {/if}
+        </div>
+    </nav>
+
+    {#if mainMode === "validation"}
+        <div class="fullscreen-mode">
+            <ValidationDashboard />
+        </div>
+    {:else if mainMode === "whitepaper"}
+        <div class="fullscreen-mode">
+            <WhitepaperClaims />
+        </div>
+    {:else if mainMode === "lpl"}
+        <div class="fullscreen-mode">
+            <LplCompiler />
+        </div>
+    {:else if mainMode === "simulator"}
+        <div class="overlay">
+            <div class="header-section">
+                <div
+                    class="discovery-headline"
+                    class:prime={metadata?.pearson_r > 0.9}
+                    class:tuning={metadata?.pearson_r > 0.5 &&
+                        metadata?.pearson_r <= 0.9}
+                >
+                    <span class="status-icon"></span>
+                    <span class="status-msg">
+                        SYSTEM STATUS: BREAKTHROUGH DETECTED:
+                        {metadata?.pearson_r > 0.9
+                            ? "PRIME RESONANCE (1:1 ALIGNMENT)"
+                            : metadata?.pearson_r > 0.5
+                              ? "GEOMETRY TUNING"
+                              : "STOCHASTIC NOISE (CHAOS)"}
+                    </span>
+                </div>
+            </div>
+
+            {#if frame >= 391}
+                <div class="central-alert-system">
+                    <div class="event-marker">
+                        SYSTEM ALERT: LINON DETECTION [birth]
+                    </div>
+                </div>
+            {/if}
+
+            <div class="side-panel side-panel-left">
+                <div class="panel-tabs">
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "stats"}
+                        on:click={() => (activeTab = "stats")}
+                    >
+                        STATISTICS
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "scanner"}
+                        on:click={() => (activeTab = "scanner")}
+                    >
+                        SCANNER
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "tidal"}
+                        on:click={() => (activeTab = "tidal")}
+                    >
+                        Tidal
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "hypothesis"}
+                        on:click={() => (activeTab = "hypothesis")}
+                    >
+                        HYPOTHESIS DISCOVERY
+                    </button>
+                    <button
+                        class="tab-btn"
+                        class:active={activeTab === "spikes"}
+                        on:click={() => (activeTab = "spikes")}
+                    >
+                        Phenomena
+                    </button>
+                </div>
+
+                <div class="tab-content">
+                    {#if activeTab === "stats"}
+                        <div class="stats-panel">
+                            <div class="stat">
+                                <span class="label">MODE:</span>
+                                <span class="value"
+                                    >FIELD Φ TOPOGRAPHY (3D)</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">METRIC:</span>
+                                <span class="value"
+                                    >z = field Φ height [AUDIT]</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">FRAME:</span>
+                                <span class="value"
+                                    >{frame} / {totalFrames}</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">SOURCE:</span>
+                                <span class="value"
+                                    >{metadata?.run_tag || "Audit"}</span
+                                >
+                            </div>
+                            <div class="stat">
+                                <span class="label">STATUS:</span>
+                                <span class="value"
+                                    >{frame >= (metadata?.birth_frame || 391)
+                                        ? "LINON DETECTION"
+                                        : "FIELD Φ INITIALIZATION"}</span
+                                >
+                                {#if metadata && frame < metadata.birth_frame}
+                                    <button
+                                        class="jump-btn"
+                                        on:click={() =>
+                                            engine.jumpToFrame(
+                                                metadata.birth_frame,
+                                            )}
+                                    >
+                                        JUMP TO BIRTH [{metadata.birth_frame}]
+                                    </button>
+                                {/if}
+                            </div>
+                            <div class="stat speed-control">
+                                <span class="label">SPEED:</span>
+                                <span class="value"
+                                    >{playbackSpeed.toFixed(1)}x</span
+                                >
+                                <input
+                                    type="range"
+                                    min="0.1"
+                                    max="5.0"
+                                    step="0.1"
+                                    bind:value={playbackSpeed}
+                                />
+                            </div>
+
+                            <div class="stat toggle-control">
+                                <span class="label">GOLDEN RATIO:</span>
+                                <button
+                                    class="toggle-btn {showSpiral
+                                        ? 'active'
+                                        : ''}"
+                                    on:click={() => (showSpiral = !showSpiral)}
+                                >
+                                    {showSpiral ? "ON" : "OFF"}
+                                </button>
+                            </div>
+                        </div>
+                    {:else if activeTab === "scanner"}
+                        <ZetaScanner
+                            {frame}
+                            data={resonanceData}
+                            harmonics={harmonicData}
+                        />
+                    {:else if activeTab === "tidal"}
+                        <TidalAnalyzer
+                            {dataRoot}
+                            on:maximize={(e) => (maximizedChart = e.detail)}
+                        />
+                    {:else if activeTab === "hypothesis"}
+                        <HypothesisTester
+                            {dataRoot}
+                            on:maximize={(e) => (maximizedChart = e.detail)}
+                        />
+                    {:else if activeTab === "spikes"}
+                        <ExtremeSpikes {engine} {frame} />
+>>>>>>> Stashed changes
                     {/if}
                     <button class="lang-btn" on:click={toggleLanguage}>
                         {$locale === "cs" ? "EN" : "CZ"}
@@ -962,5 +1279,29 @@
 
     .global-modal-overlay .close-btn:hover {
         color: #fff;
+    }
+
+    /* ─── Global Dark Tooltip (JS-positioned div) ─── */
+    :global(.lab-tooltip) {
+        position: fixed;
+        padding: 6px 10px;
+        background: #1c2128;
+        color: #c9d1d9;
+        font-size: 12px;
+        font-weight: 400;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif;
+        line-height: 1.4;
+        white-space: nowrap;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        z-index: 10000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+    }
+    :global(.lab-tooltip.visible) {
+        opacity: 1;
     }
 </style>

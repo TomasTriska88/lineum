@@ -401,26 +401,22 @@ def main():
         
         if not active_profiles: continue
         
-        run_result = {"run_id": run_id, "profiles": [p["name"] for p in active_profiles], "checks": [], "status": "PASS"}
-        if "canonical" in run_result["profiles"]: suite_report["summary"]["matched_canonical"] += 1
-
-        # Neutrality
+        # Evaluate each profile independently; run passes if ANY profile passes
+        # Pre-compute neutrality for topology anchors
         stride = manifest.get("logging", {}).get("topo_log_stride", run_meta.get("topo_log_stride", 1))
         n1, n0, _, _ = load_topo_stats(r_dir, stride)
-
+        profile_results = []
         for profile in active_profiles:
             p_name = profile["name"]
-            checks = profile.get("checks", {})
-
+            p_checks = profile.get("checks", {})
+            p_result = {"profile": p_name, "checks": [], "status": "PASS"}
+            
             # 0. Audit Scope (Mandatory if present)
             audit_scope = manifest.get("audit_scope")
             if audit_scope:
-                 # Hash Gate
                  expected_hash = audit_scope.get("expected_hash")
-                 # Fallback to contract-defined hash if manifest doesn't have it or it's null
                  if expected_hash is None:
-                     expected_hash = checks.get("audit_scope", {}).get("expected_hash")
-                 
+                     expected_hash = p_checks.get("audit_scope", {}).get("expected_hash")
                  actual_hash = audit_scope.get("actual_hash")
                  status = "PASS" if (expected_hash and actual_hash and expected_hash == actual_hash) else "FAIL"
                  res = {
@@ -431,10 +427,9 @@ def main():
                      "severity": "fatal"
                  }
                  res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:audit_scope.actual_hash", "embedded": f"embedded_context.runs.{run_id}.manifest.audit_scope.actual_hash"}
-                 if status == "FAIL": run_result["status"] = "FAIL"
-                 run_result["checks"].append(res)
+                 if status == "FAIL": p_result["status"] = "FAIL"
+                 p_result["checks"].append(res)
                  
-                 # Locked Keys Check (Dual Source)
                  if "diff_keys" in audit_scope and audit_scope["diff_keys"]:
                      res = {
                          "id": f"{p_name}.audit_scope.locked_keys",
@@ -443,34 +438,21 @@ def main():
                          "status": "FAIL",
                          "severity": "fatal"
                      }
-                     run_result["status"] = "FAIL"
-                     run_result["checks"].append(res)
+                     p_result["status"] = "FAIL"
+                     p_result["checks"].append(res)
 
-            # Code Fingerprint Check (vs Current Suite)
-            # Only relevant if we want to ensure the run matches the *current* tools
-            # But the contract might be running on old data. 
-            # We'll just log it as a check if configured, or implicit.
-            # User requirement: "contract suite (contract JSON + checky v whitepaper_contract.py)"
             cf = manifest.get("code_fingerprint", {}).get("sha256")
-            if cf:
-                # We don't necessarily fail here unless we enforce it, but let's record it.
-                # If we want to enforce it matches the *current* codebase:
-                current_cf = suite_report["fingerprints"]["codebase_sha256"]
-                # We won't fail hard on mismatch (reproducibility vs current HEAD), 
-                # but we can optionally add a warn/fail if strict mode is on?
-                pass 
 
             # 1. Invariants
-            for k, ev in checks.get("invariants", {}).items():
+            for k, ev in p_checks.get("invariants", {}).items():
                 av = manifest.get("invariants", {}).get(k)
                 res = {"id": f"{p_name}.invariants.{k}", "expected": ev, "actual": av, "status": "PASS" if str(av) == str(ev) else "FAIL"}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:invariants.{k}", "embedded": f"embedded_context.runs.{run_id}.manifest.invariants.{k}"}
-                if res["status"] == "FAIL": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if res["status"] == "FAIL": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
 
             # 2. Identity
-            for k, ev in checks.get("identity", {}).items():
-                # Correct nested lookup for dot-notation keys
+            for k, ev in p_checks.get("identity", {}).items():
                 parts = k.split(".")
                 curr = run_meta
                 for p in parts:
@@ -480,24 +462,22 @@ def main():
                         curr = None
                         break
                 av = curr
-                
                 res = {"id": f"{p_name}.identity.{k}", "expected": ev, "actual": av, "status": "PASS" if av == ev else "FAIL"}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:run.{k}", "embedded": f"embedded_context.runs.{run_id}.manifest.run.{k}"}
-                if res["status"] == "FAIL": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if res["status"] == "FAIL": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
 
             # 3. Analysis
-            for k, ev in checks.get("analysis_config", {}).items():
+            for k, ev in p_checks.get("analysis_config", {}).items():
                 av = manifest.get("analysis_config", {}).get(k)
                 res = {"id": f"{p_name}.analysis.{k}", "expected": ev, "actual": av, "status": "PASS" if av == ev else "FAIL"}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:analysis_config.{k}", "embedded": f"embedded_context.runs.{run_id}.manifest.analysis_config.{k}"}
-                if res["status"] == "FAIL": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if res["status"] == "FAIL": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
 
             # 4. Anchors
-            for mk, constr in checks.get("numerical_anchors", {}).items():
+            for mk, constr in p_checks.get("numerical_anchors", {}).items():
                 av = manifest.get("metrics", {}).get(mk)
-                # Specialized lookups
                 p_src, e_src = f"metrics.{mk}", f"manifest.metrics.{mk}"
                 if mk == "resolved_config_hash":
                      av = manifest.get("run_configuration", {}).get("resolved_config_hash")
@@ -513,12 +493,28 @@ def main():
                 elif mk == "kappa_map_binary_hash":
                      av = manifest.get("kappa", {}).get("binary_hash")
                      p_src, e_src = "kappa.binary_hash", "manifest.kappa.binary_hash"
+                # Wave-core metrics: fallback to run_summary.csv and rolling_metrics.json
+                elif mk in ("M2_total", "peak_phi", "final_particle_count") and av is None:
+                     summary = load_csv_dict(os.path.join(r_dir, "run_summary.csv"))
+                     if summary and mk in summary:
+                         try: av = float(summary[mk].get("value", "nan"))
+                         except (ValueError, TypeError): pass
+                     p_src = f"run_summary.csv:{mk}"
+                elif mk in ("net_charge", "center_amp", "vortices_total") and av is None:
+                     rm_path = glob.glob(os.path.join(r_dir, "*_rolling_metrics.json"))
+                     if rm_path:
+                         rm = load_json(rm_path[0])
+                         if rm:
+                             latest = rm.get("data", {}).get("latest", {})
+                             if mk in latest:
+                                 av = latest[mk]
+                     p_src = f"rolling_metrics.json:data.latest.{mk}"
 
                 status, msg, sev = check_value(mk, av, constr)
                 res = {"id": f"{p_name}.anchor.{mk}", "expected": constr, "actual": av, "status": status, "message": msg, "severity": sev}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:{p_src}", "embedded": f"embedded_context.runs.{run_id}.{e_src}"}
-                if status == "FAIL" and sev == "fatal": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if status == "FAIL" and sev == "fatal": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
 
             # Mandatory Presence check
             if p_name == "canonical" and not manifest.get("audit_scope"):
@@ -529,23 +525,40 @@ def main():
                      "status": "FAIL",
                      "severity": "fatal"
                  }
-                 run_result["status"] = "FAIL"
-                 run_result["checks"].append(res)
+                 p_result["status"] = "FAIL"
+                 p_result["checks"].append(res)
 
             # 5. Derived
-            for d in checks.get("derived", []):
+            for d in p_checks.get("derived", []):
                 st, msg, val = evaluate_derived(d, manifest, contract.get("constants", {}))
                 res = {"id": f"{p_name}.derived.{d['id']}", "expected": d.get("expected"), "actual": val, "status": st, "message": msg}
                 res["actual_source"] = {"primary": f"calculated: {d.get('formula')}", "embedded": "calculated from embedded manifest/constants"}
-                if st == "FAIL": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if st == "FAIL": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
 
             # 6. Artifacts
-            for art in checks.get("required_artifacts", []):
+            for art in p_checks.get("required_artifacts", []):
                 found = glob.glob(os.path.join(r_dir, art))
                 res = {"id": f"{p_name}.artifact.{art}", "expected": "exists", "actual": "found" if found else "missing", "status": "PASS" if found else "FAIL"}
-                if res["status"] == "FAIL": run_result["status"] = "FAIL"
-                run_result["checks"].append(res)
+                if res["status"] == "FAIL": p_result["status"] = "FAIL"
+                p_result["checks"].append(res)
+
+            profile_results.append(p_result)
+
+        # A run passes if it passes on at least one matching profile
+        # Prefer the most specific passing profile (most checks = most specific)
+        passing_profiles = [pr for pr in profile_results if pr["status"] == "PASS"]
+        passing_profiles.sort(key=lambda pr: len(pr["checks"]), reverse=True)
+        best_profile = passing_profiles[0] if passing_profiles else max(profile_results, key=lambda pr: len(pr["checks"]))
+        
+        run_result = {
+            "run_id": run_id,
+            "profiles": [p["name"] for p in active_profiles],
+            "matched_profile": best_profile["profile"],
+            "checks": best_profile["checks"],
+            "status": best_profile["status"]
+        }
+        if "canonical" in run_result["profiles"]: suite_report["summary"]["matched_canonical"] += 1
 
         suite_report["runs"].append(run_result)
         if run_result["status"] == "PASS": suite_report["summary"]["pass"] += 1

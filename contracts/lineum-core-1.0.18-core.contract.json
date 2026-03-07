@@ -123,6 +123,63 @@
                     "*kappa_map.png"
                 ]
             }
+        },
+        {
+            "name": "wave_core",
+            "selectors": {
+                "run_tag": "spec6_false_s41"
+            },
+            "checks": {
+                "invariants": {
+                    "dim": "2D",
+                    "bcs": "periodic",
+                    "precision": "float64"
+                },
+                "numerical_anchors": {
+                    "M2_total": {
+                        "target": 6.33e10,
+                        "rel_tol": 0.15,
+                        "severity": "fatal",
+                        "paper_ref": "wave-core §energy"
+                    },
+                    "low_mass_qp_count": {
+                        "target": 49,
+                        "abs_tol": 2,
+                        "severity": "fatal",
+                        "paper_ref": "§4.7"
+                    },
+                    "net_charge": {
+                        "target": 0,
+                        "abs_tol": 0,
+                        "severity": "fatal",
+                        "paper_ref": "wave-core §topology"
+                    },
+                    "peak_phi": {
+                        "max": 1e6,
+                        "severity": "fatal",
+                        "paper_ref": "wave-core §cap"
+                    },
+                    "center_amp": {
+                        "min": 500,
+                        "severity": "support",
+                        "paper_ref": "wave-core §amplitude"
+                    },
+                    "vortices_total": {
+                        "min": 10,
+                        "severity": "support",
+                        "paper_ref": "wave-core §structure"
+                    },
+                    "final_particle_count": {
+                        "min": 0,
+                        "severity": "info",
+                        "paper_ref": "wave-core §tracking"
+                    }
+                },
+                "required_artifacts": [
+                    "*manifest.json",
+                    "*metrics_summary.csv"
+                ]
+            }
         }
     ]
 }
