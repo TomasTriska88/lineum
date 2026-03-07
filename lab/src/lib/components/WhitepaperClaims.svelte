@@ -563,7 +563,7 @@
                 <div class="source-link">
                     <strong>Source:</strong>
                     <a
-                        href="vscode://file/C:/Users/Tomáš/Documents/GitHub/lineum-core/whitepapers/1-core/extensions/{selectedClaim.source_file}"
+                        href="vscode://file/C:/lineum-core/whitepapers/1-core/extensions/{selectedClaim.source_file}"
                         target="_blank"
                     >
                         {selectedClaim.source_file}

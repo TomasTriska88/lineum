@@ -9,7 +9,7 @@
     import LplCompiler from "./lib/components/LplCompiler.svelte";
     import ValidationDashboard from "./lib/components/ValidationDashboard.svelte";
     import WhitepaperClaims from "./lib/components/WhitepaperClaims.svelte";
-    import { t, locale } from "./lib/i18n";
+    import { t } from "./lib/i18n";
 
     let container;
     let engine;
@@ -47,10 +47,6 @@
         engine.showSpiral = showSpiral;
         if (engine.goldenSpiral) engine.goldenSpiral.visible = showSpiral;
     }
-
-    const toggleLanguage = () => {
-        locale.set($locale === "cs" ? "en" : "cs");
-    };
 
     onMount(async () => {
         try {
@@ -489,9 +485,6 @@
                     {:else if activeTab === "spikes"}
                         <ExtremeSpikes {engine} {frame} />
                     {/if}
-                    <button class="lang-btn" on:click={toggleLanguage}>
-                        {$locale === "cs" ? "EN" : "CZ"}
-                    </button>
                 </div>
             </div>
             {#if activeTab !== "lpl" && activeTab !== "rng"}
@@ -613,20 +606,6 @@
         transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .overlay.lpl-mode {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "header"
-            "alert"
-            "left"
-            "footer";
-        background: rgba(0, 5, 15, 0.4);
-        backdrop-filter: blur(5px);
-        border: 1px solid rgba(0, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 8px;
-    }
-
     .fullscreen-mode {
         position: absolute;
         top: 60px; /* height of top-nav */
@@ -645,13 +624,6 @@
         flex-direction: column;
         gap: 10px;
         pointer-events: all;
-    }
-
-    .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
     }
 
     .header-controls {
@@ -673,22 +645,6 @@
     .run-selector option {
         background: #050505;
         color: #fff;
-    }
-
-    .lang-btn {
-        background: rgba(0, 255, 255, 0.1);
-        border: 1px solid rgba(0, 255, 255, 0.4);
-        color: #00ffff;
-        padding: 4px 10px;
-        cursor: pointer;
-        font-size: 0.7rem;
-        font-weight: bold;
-        transition: all 0.2s;
-    }
-
-    .lang-btn:hover {
-        background: rgba(0, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .central-alert-system {

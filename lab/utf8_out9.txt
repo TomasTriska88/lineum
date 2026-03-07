@@ -1,4 +1,0 @@
-﻿
-Running 2 tests using 1 worker
-┬Ě┬Ě
-  2 passed (14.7s)

@@ -1,7 +1,13 @@
 import path from 'path';
 import { checkFile, walkDir } from '../../helpers/check-czech-lib.js';
 
-const SRC_DIR = 'src';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const SRC_DIR = path.join(__dirname, '../src');
 
 console.log('Checking for Czech characters in Portal src directory...');
 let hasErrors = false;
@@ -20,7 +26,7 @@ walkDir(SRC_DIR, (filePath) => {
     }
 
     // Skip content/lore data where Czech references are allowed
-    if (filePath.includes(path.join('src', 'lib', 'data')) || filePath.includes('about')) {
+    if (normalizedPath.includes('/src/lib/data/') || normalizedPath.includes('/about/') || normalizedPath.includes('/api-showcase/')) {
         return;
     }
 

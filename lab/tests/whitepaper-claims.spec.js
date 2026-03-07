@@ -175,7 +175,7 @@ test.describe('Whitepaper Claims MVP', () => {
         });
 
         await page.goto('/');
-        await page.click('text=Whitepapers');
+        await page.click('text=Claims');
 
         // Mock the verification API so Playwright doesn't wait for Vite proxy timeout
         await page.route('**/run_preset*', async route => {
@@ -216,7 +216,7 @@ test.describe('Whitepaper Claims MVP', () => {
 
         // Remount to trigger onMount health fetch
         await page.reload();
-        await page.click('text=Whitepapers');
+        await page.click('text=Claims');
         // Check claim detail status directly (it relies on audit status)
         await page.locator(`.claim-item:has(span.claim-id:text-is("${testableClaim.id}"))`).click();
 
@@ -270,7 +270,7 @@ test.describe('Whitepaper Claims MVP', () => {
         });
 
         await page.goto('/');
-        await page.click('text=Whitepapers');
+        await page.click('text=Claims');
 
         // Check if Applied filter exists
         await expect(page.locator('select.tag-select').nth(1)).toBeVisible();

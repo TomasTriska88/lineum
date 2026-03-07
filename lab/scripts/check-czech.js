@@ -1,16 +1,19 @@
 import path from 'path';
 import { checkFile, walkDir } from '../../helpers/check-czech-lib.js';
 
-const SRC_DIR = 'src';
-const DOC_FILE = '../portal/LAB_UX_CANON.md';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const SRC_DIR = path.join(__dirname, '../src');
+const DOC_FILE = path.join(__dirname, '../../portal/LAB_UX_CANON.md');
 
 console.log('Checking for Czech characters in Lab src and documentation...');
 let hasErrors = false;
 
 walkDir(SRC_DIR, (filePath) => {
-    // Ignore translation dictionary files which naturally contain Czech
-    if (filePath.includes('i18n.js') || filePath.includes('i18n.test.js') || filePath.includes('translations')) return;
-
     if (path.extname(filePath).match(/\.(svelte|ts|js|css|html)$/)) {
         if (checkFile(filePath)) {
             hasErrors = true;
