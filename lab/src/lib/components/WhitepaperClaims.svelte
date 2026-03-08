@@ -424,47 +424,39 @@
         const isSupported =
             getActualStatus(claim, claimResults) === "SUPPORTED";
 
+        const isCanonical =
+            claim.canonical_claim_set === "REQUIRED_FOR_PROMOTION" ||
+            claim.canonical_claim_set === "SUPPORTING_ONLY" ||
+            claim.id.includes("CORE");
+        const evidenceLevel = isSupported
+            ? "CANONICAL_EVIDENCE"
+            : cr.is_audit_grade
+              ? "AUDIT_FAILED"
+              : cr.passed_internal
+                ? "EXPERIMENTAL_EVIDENCE"
+                : "MISSING_EVIDENCE";
+
         let metricsList = "(No data)";
         let verdict = "No mathematical proof executed yet.";
-
-        if (cr) {
-            console.log("CR_DEBUG_KEYS: ", JSON.stringify(Object.keys(cr)));
-        }
-        if (cr && cr.traceability) {
-            console.log("CR_TRACE_DEBUG: ", JSON.stringify(cr.traceability));
-        }
 
         if (cr.traceability?.metrics?.length > 0) {
             metricsList = cr.traceability.metrics
                 .map(
                     (m) =>
-                        `- ${m.metric_name}: ${m.actual_value !== null ? Number(m.actual_value).toExponential(4) : "—"} (Rule: ${m.comparison_operator} ${m.threshold_rule})`,
+                        `- name: ${m.metric_name}\n  actual_value: ${m.actual_value !== null ? Number(m.actual_value).toExponential(4) : "—"}\n  threshold_rule: ${m.comparison_operator} ${m.threshold_rule}\n  why_status_changed: ${m.why_status_changed || "N/A"}`,
                 )
-                .join("\n");
+                .join("\n\n");
             verdict = cr.traceability.overall_pass
-                ? "Values securely inside canonical bounds."
-                : "Values outside required canonical bounds.";
-        } else if (cr.passed_internal) {
-            verdict = "Exploratory metrics match expectations.";
+                ? "SUPPORTED"
+                : "CONTRADICTED";
         }
 
         let editorialConstraints = "";
         if (claim.editorial_guidance) {
             const ed = claim.editorial_guidance;
-            editorialConstraints = `
-## 3. EDITORIAL CONSTRAINTS
-- **What it means:** ${ed.what_it_means}
-- **What it does NOT mean:** ${ed.what_it_does_not_mean}
-- **Forbidden overclaims:**
-${ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n")}
-- **Safe wording bases:**
-${ed.safe_wording.map((s) => `  - ${s}`).join("\n")}
-- **Suggested whitepaper use:** ${ed.suggested_whitepaper_use}`;
+            editorialConstraints = `- what_it_means: ${ed.what_it_means}\n- what_it_does_not_mean: ${ed.what_it_does_not_mean}\n- forbidden_overclaims:\n${ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n")}\n- safe_wording:\n${ed.safe_wording.map((s) => `  - ${s}`).join("\n")}\n- suggested_whitepaper_use: ${ed.suggested_whitepaper_use}`;
         } else {
-            editorialConstraints = `
-## 3. EDITORIAL CONSTRAINTS
-- **What it means:** ${claim.human_claim}
-- **What it does NOT mean:** ${claim.what_it_is_not || "N/A"}`;
+            editorialConstraints = `- what_it_means: ${claim.human_claim}\n- what_it_does_not_mean: ${claim.what_it_is_not || "N/A"}\n- forbidden_overclaims: []\n- safe_wording: []\n- suggested_whitepaper_use: N/A`;
         }
 
         let projectStatus =
@@ -476,69 +468,81 @@ ${ed.safe_wording.map((s) => `  - ${s}`).join("\n")}
             candidateTargets = claim.project_packet.candidate_whitepaper_targets
                 .map(
                     (t) =>
-                        `  - File: \`${t.file}\` (Topic: \`${t.target_topic_id}\`, Anchor: \`${t.current_anchor_if_known}\`, Confidence: ${t.confidence})\n    Rationale: ${t.rationale}`,
+                        `- file: ${t.file}\n  target_topic_id: ${t.target_topic_id || t.topic_id || "UNKNOWN"}\n  current_anchor_if_known: ${t.current_anchor_if_known || "UNKNOWN"}\n  confidence: ${t.confidence}\n  rationale: ${t.rationale}`,
                 )
-                .join("\n");
+                .join("\n\n");
         }
 
-        let nextStepPrereqs = "None.";
-        let assistantAction =
-            "Review constraints and generate the final whitepaper prose for the target file.";
-        let antigravityAction = "None.";
+        let nextStepPrereqs = "None_pending";
+        let implementationNotes =
+            claim.project_packet?.implementation_notes || "None";
+        let assistantAction = "Draft whitepaper prose.";
+        let antigravityAction = "None needed.";
         let escalate = false;
 
         if (!isReady) {
             assistantAction =
-                "Reject drafting. Forward the ESCALATION instructions to the user to pass to the Secondary Agent.";
+                "Instruct the user exactly what Antigravity must do next based on the missing prerequisites.";
             antigravityAction =
                 claim.project_packet?.recommended_next_step ||
                 "Resolve missing prerequisites.";
             nextStepPrereqs =
                 claim.project_packet?.missing_prerequisites?.length > 0
                     ? claim.project_packet.missing_prerequisites.join(" ")
-                    : "Missing prerequisites to be resolved by engineering.";
+                    : "Missing preconditions to be resolved by engineering.";
             escalate = true;
         }
 
         return `# LINEUM HANDOFF PROTOCOL [v1.0.0]
-## META-INSTRUCTIONS FOR PRIMARY AGENT (ASSISTANT)
-- **Role:** You are the Primary Agent. You lead evidence review, safe wording, and overclaim prevention.
-- **Lineum Rule:** Do not rely on prior memory of equations, whitepapers, audits, or historical project state. Treat this packet as the absolute current source of truth for the Lineum project.
-- **Action Required:** Perform evidence review first. If \`Is this ready for wording proposal now?\` is NO, do not draft prose. Instead, output strict instructions for the Secondary Agent (Antigravity) based on the \`Missing prerequisite\` section.
+packet_schema_version: v1.0.0
 
-## 1. CLAIM DEFINITION
-- **Claim ID:** ${claim.id}
-- **Short Claim:** ${claim.short_claim}
-- **Scope:** ${claim.scope}
-- **Current Status:** ${getActualStatus(claim, claimResults)}
-- **Evidence Level:** ${isSupported ? "CANONICAL_AUDIT_SUITE" : cr.is_audit_grade ? "AUDIT_FAILED" : "NONE/EXPERIMENTAL"}
-- **Type:** ${claim.id.includes("CORE") ? "CANONICAL" : "EXPERIMENTAL"}
+A) META-INSTRUCTIONS FOR PRIMARY AGENT
+- Treat this packet as the current source of truth for Lineum
+- Do not rely on prior memory of equations, whitepapers, audits, claims, or historical project state
+- Review evidence strength and wording first
+- If anything important is missing, instruct the user exactly what Antigravity must do next
 
-## 2. ENGINEERING TRACEABILITY
-- **Active Profile:** ${cr.active_profile || "unknown"}
-- **Equation Fingerprint:** ${cr.traceability?.equation_fingerprint || "unknown"}
-- **Scenario ID:** ${claim.scenario_id || "None"}
+B) CLAIM DEFINITION
+- claim_id: ${claim.id}
+- short_claim: ${claim.short_claim}
+- scope: ${claim.scope}
+- current_status: ${getActualStatus(claim, claimResults)}
+- evidence_level: ${evidenceLevel}
+- canonical_or_experimental: ${isCanonical ? "CANONICAL" : "EXPERIMENTAL"}
+- active_profile: ${cr.active_profile || "unknown"}
+- equation_fingerprint: ${cr.traceability?.equation_fingerprint || "unknown"}
+- scenario_id: ${claim.scenario_id || "None"}
+- target_topic_id: ${targetTopicId}
 
-### Metrical Evidence
+C) ENGINEERING TRACEABILITY
+- evidence_source: ${claim.falsification_evidence_source || "N/A"}
+- execution_device: ${cr.traceability?.execution_device || "unknown"}
+- deterministic_mode: ${cr.traceability?.deterministic_mode ? "true" : "false"}
+- overall_verdict: ${verdict}
+
+Metrics:
 ${metricsList}
-**Verdict:** ${verdict}
+
+D) EDITORIAL CONSTRAINTS
 ${editorialConstraints}
 
-## 4. PROJECT STATUS & NEXT STEPS
-- **Project Integration Status:** ${projectStatus}
-- **Target Topic ID:** ${targetTopicId}
-- **Candidate Targets:**
+E) PROJECT STATUS & NEXT STEPS
+- project_integration_status: ${projectStatus}
+- missing_prerequisites: ${nextStepPrereqs}
+- recommended_next_step: ${claim.project_packet?.recommended_next_step || "-"}
+- implementation_notes: ${implementationNotes}
+
+Candidate Whitepaper Targets:
 ${candidateTargets}
 
-### AUTOMATION ROUTING
-- **Is this ready for wording proposal now?** ${isReady ? "YES" : "NO"}
-- **Primary agent action:** ${assistantAction}
-- **Secondary agent required action:** ${antigravityAction}
-- **Missing prerequisite:** ${nextStepPrereqs}
-- **Escalation required:** ${escalate ? "True" : "False"}
-- **wording_proposal_allowed_now:** ${isReady ? "true" : "false"}
-- **claim_ready_for_editorial_use:** ${isReady ? "true" : "false"}
-- **escalate_to_secondary_agent:** ${escalate ? "true" : "false"}
+F) AUTOMATION ROUTING
+- Is this ready for wording proposal now? ${isReady ? "YES" : "NO"}
+- Primary agent action: ${assistantAction}
+- Secondary agent required action: ${antigravityAction}
+- Escalation required: ${escalate ? "true" : "false"}
+- wording_proposal_allowed_now: ${isReady ? "true" : "false"}
+- claim_ready_for_editorial_use: ${isReady ? "true" : "false"}
+- escalate_to_secondary_agent: ${escalate ? "true" : "false"}
 `;
     }
 
@@ -1023,16 +1027,38 @@ ${candidateTargets}
                             selectedClaim.short_claim,
                         )}
                     </h2>
-                    <span
-                        class="status-badge {getActualStatus(
-                            selectedClaim,
-                        ).toLowerCase()}"
-                    >
-                        {getActualStatus(selectedClaim, claimResults).replace(
-                            "_",
-                            " ",
-                        )}
-                    </span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span
+                            class="status-badge {getActualStatus(
+                                selectedClaim,
+                            ).toLowerCase()}"
+                        >
+                            {getActualStatus(
+                                selectedClaim,
+                                claimResults,
+                            ).replace("_", " ")}
+                        </span>
+                        <button
+                            class="assistant-copy-btn"
+                            style="padding: 6px 12px; font-weight: bold; font-family: monospace; border-radius: 4px; border: 1px solid #30363d; background: #1f6feb; color: white; cursor: pointer; display: flex; align-items: center; gap: 6px;"
+                            on:click={() =>
+                                copyToClipboard(
+                                    selectedClaim.id,
+                                    "assistant",
+                                    getAssistantPacketMarkdown(selectedClaim),
+                                )}
+                        >
+                            {#if copyStates[`${selectedClaim.id}-assistant`] === "copying"}
+                                ⌛ Copying...
+                            {:else if copyStates[`${selectedClaim.id}-assistant`] === "copied"}
+                                ✓ Copied for Assistant
+                            {:else if copyStates[`${selectedClaim.id}-assistant`] === "failed"}
+                                ❌ Failed
+                            {:else}
+                                📋 Copy for Assistant
+                            {/if}
+                        </button>
+                    </div>
                 </div>
 
                 {#if isApplied(selectedClaim.id, integrationLog)}

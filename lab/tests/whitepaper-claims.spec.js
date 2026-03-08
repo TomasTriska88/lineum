@@ -506,8 +506,8 @@ test.describe('Whitepaper Claims MVP', () => {
         await expect(listItems).toHaveCount(expectedFalsCount);
     });
 
-    test('Agent Automation: Handoff Packet text generation', async ({ page, context }) => {
-        // Grant clipboard permissions for writeText to work natively, or we can mock it
+    test('Agent Automation: Assistant Handoff Packet generation', async ({ page, context }) => {
+        // Grant clipboard permissions for writeText
         await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
         // Mock health and claim results so we establish a specific state for CL-CORE-001
@@ -534,8 +534,10 @@ test.describe('Whitepaper Claims MVP', () => {
                             is_stale: false,
                             traceability: {
                                 overall_pass: true,
+                                deterministic_mode: true,
+                                execution_device: "CUDA",
                                 metrics: [
-                                    { metric_name: "f0_mean_hz", actual_value: 432.1, comparison_operator: "min:", threshold_rule: 430 }
+                                    { metric_name: "f0_mean_hz", actual_value: 432.1, comparison_operator: "min:", threshold_rule: 430, why_status_changed: "Met" }
                                 ]
                             }
                         }
@@ -557,8 +559,11 @@ test.describe('Whitepaper Claims MVP', () => {
 
         // Wait for the canonical evidence box and Assistant button to appear
         await expect(page.locator('.evidence-box.canonical')).toBeVisible({ timeout: 10000 });
-        const assistantBtn = page.locator('button.agent-handoff');
+        const assistantBtn = page.locator('button.assistant-copy-btn');
         await expect(assistantBtn).toBeVisible();
+
+        // Check idle state text
+        await expect(assistantBtn).toContainText('📋 Copy for Assistant');
 
         // Intercept clipboard write
         await page.evaluate(() => {
@@ -572,27 +577,50 @@ test.describe('Whitepaper Claims MVP', () => {
         // Click the handoff button
         await assistantBtn.click();
 
+        // Verify copying/copied state visually if possible (it's fast, but we can check the result)
+        await expect(assistantBtn).toContainText('✓ Copied for Assistant');
+
         // Retrieve recorded text
         const packetText = await page.evaluate(() => window._clipboardText);
 
         // Assert schema stability features
-        expect(packetText).toContain('LINEUM HANDOFF PROTOCOL [v1.0.0]');
-        expect(packetText).toContain('META-INSTRUCTIONS FOR PRIMARY AGENT (ASSISTANT)');
-        expect(packetText).toContain('Treat this packet as the absolute current source of truth for the Lineum project.');
+        expect(packetText).toContain('# LINEUM HANDOFF PROTOCOL [v1.0.0]');
+        expect(packetText).toContain('packet_schema_version: v1.0.0');
+
+        // Assert primary rules
+        expect(packetText).toContain('A) META-INSTRUCTIONS FOR PRIMARY AGENT');
+        expect(packetText).toContain('- Treat this packet as the current source of truth for Lineum');
+        expect(packetText).toContain('- Do not rely on prior memory of equations, whitepapers');
+        expect(packetText).toContain('- Review evidence strength and wording first');
 
         // Assert claim identity fields
-        expect(packetText).toContain('- **Claim ID:** CL-CORE-001');
-        expect(packetText).toContain('- **Current Status:** SUPPORTED');
-        expect(packetText).toContain('- **Evidence Level:** CANONICAL_AUDIT_SUITE');
+        expect(packetText).toContain('B) CLAIM DEFINITION');
+        expect(packetText).toContain('- claim_id: CL-CORE-001');
+        expect(packetText).toContain('- current_status: SUPPORTED');
+        expect(packetText).toContain('- canonical_or_experimental: CANONICAL');
+        expect(packetText).toContain('- evidence_level: CANONICAL_EVIDENCE');
 
         // Assert traceability
-        expect(packetText).toContain('f0_mean_hz: 4.3210e+2');
+        expect(packetText).toContain('C) ENGINEERING TRACEABILITY');
+        expect(packetText).toContain('actual_value: 4.3210e+2');
+        expect(packetText).toContain('deterministic_mode: true');
+
+        // Assert constraints & targets
+        expect(packetText).toContain('D) EDITORIAL CONSTRAINTS');
+
+        expect(packetText).toContain('E) PROJECT STATUS & NEXT STEPS');
+        expect(packetText).toContain('Candidate Whitepaper Targets:');
+        expect(packetText).toContain('current_anchor_if_known:');
+        expect(packetText).toContain('confidence:');
+        expect(packetText).toContain('rationale:');
 
         // Assert automation routing fields based on our mocked state (READY_FOR_EDITORIAL_REVIEW)
-        expect(packetText).toContain('Is this ready for wording proposal now?** YES');
-        expect(packetText).toContain('Primary agent action:** Review constraints and generate the final whitepaper prose');
-        expect(packetText).toContain('wording_proposal_allowed_now:** true');
-        expect(packetText).toContain('escalate_to_secondary_agent:** false');
+        expect(packetText).toContain('F) AUTOMATION ROUTING');
+        expect(packetText).toContain('- Is this ready for wording proposal now? YES');
+        expect(packetText).toContain('- Primary agent action: Draft whitepaper prose.');
+        expect(packetText).toContain('- Secondary agent required action: None needed.');
+        expect(packetText).toContain('- wording_proposal_allowed_now: true');
+        expect(packetText).toContain('- escalate_to_secondary_agent: false');
 
         // Assert no external files attached, fully plain text
         expect(typeof packetText).toBe('string');
