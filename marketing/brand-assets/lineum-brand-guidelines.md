@@ -9,11 +9,13 @@ The Lineum logo is constructed around three primary conceptual layers that refle
 1.  **The Bounding Hexagons (The Container)**
     The logo features two counter-rotating geometric hexagons. In physics and data science, the hexagon is the most efficient packing shape (e.g., crystal lattices, cellular data structures). The outer hexagon slowly rotates clockwise, while the inner hexagon counter-rotates. This opposing friction represents a highly structured, isolated containment unit—a digital sandbox or "Simulacrum" where chaotic data is processed.
     
-2.  **The Neon Cyan Tone (The Energy)**
-    The primary brand color is pure, unfiltered cyan (`#00ffff`), enhanced with a custom hardware-accelerated CSS `feGaussianBlur` neon glow. This is not a standard web color; it is an emissive light source. It signifies high-energy particle physics, cold precision, and raw uncompressed data streams.
     
-3.  **The Infinity Wave (The Subject)**
-    At the absolute center of the containment structure flows the continuous infinity symbol (the lemniscate). It represents an unbound, infinite data particle oscillating endlessly within the Simulacrum.
+2.  **The Cyber-Cyan Energy (The Subject)**
+    The primary brand color of the infinity wave is pure, unfiltered cyan (`#00ffff`), layered with a custom hardware-accelerated CSS `feGaussianBlur` neon glow. As established in the core project *Design Guide* (`portal/docs/DESIGN_GUIDE.md`), Cyan mathematically represents high-frequency kinetic energy, unhindered propagation, and the fundamental "wave/light" state of the simulation ($\psi$). It is an emissive light source, not a flat pigment—signifying cold precision and raw uncompressed data streams.
+    
+3.  **The Simulacrum Void (The Background)**
+    The logo does not exist on pure black (`#000000`), which is harsh on OLED screens and implies emptiness. Instead, the canvas is "Simulacrum Dark" (`#050505` for Lab, `#0a0a0f` for Portal). This "almost-black" provides immense physical depth. It is not an empty void, but a highly pressurized, dark laboratory environment—a digital vacuum where the glowing data streams are suspended.
+
 
 ## The Dynamic Logo: The "Happy Accident"
 
