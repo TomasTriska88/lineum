@@ -418,11 +418,12 @@
 
     function getAssistantPacketMarkdown(claim) {
         const cr = claimResults[claim.id] || {};
+        const actualStatus = getActualStatus(claim, claimResults);
         const isReady =
             claim.project_packet?.project_integration_status ===
-            "READY_FOR_EDITORIAL_REVIEW";
-        const isSupported =
-            getActualStatus(claim, claimResults) === "SUPPORTED";
+                "READY_FOR_EDITORIAL_REVIEW" &&
+            (actualStatus === "SUPPORTED" || actualStatus === "CONTRADICTED");
+        const isSupported = actualStatus === "SUPPORTED";
 
         const isCanonical =
             claim.canonical_claim_set === "REQUIRED_FOR_PROMOTION" ||
@@ -1027,38 +1028,16 @@ F) AUTOMATION ROUTING
                             selectedClaim.short_claim,
                         )}
                     </h2>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <span
-                            class="status-badge {getActualStatus(
-                                selectedClaim,
-                            ).toLowerCase()}"
-                        >
-                            {getActualStatus(
-                                selectedClaim,
-                                claimResults,
-                            ).replace("_", " ")}
-                        </span>
-                        <button
-                            class="assistant-copy-btn"
-                            style="padding: 6px 12px; font-weight: bold; font-family: monospace; border-radius: 4px; border: 1px solid #30363d; background: #1f6feb; color: white; cursor: pointer; display: flex; align-items: center; gap: 6px;"
-                            on:click={() =>
-                                copyToClipboard(
-                                    selectedClaim.id,
-                                    "assistant",
-                                    getAssistantPacketMarkdown(selectedClaim),
-                                )}
-                        >
-                            {#if copyStates[`${selectedClaim.id}-assistant`] === "copying"}
-                                ⌛ Copying...
-                            {:else if copyStates[`${selectedClaim.id}-assistant`] === "copied"}
-                                ✓ Copied for Assistant
-                            {:else if copyStates[`${selectedClaim.id}-assistant`] === "failed"}
-                                ❌ Failed
-                            {:else}
-                                📋 Copy for Assistant
-                            {/if}
-                        </button>
-                    </div>
+                    <span
+                        class="status-badge {getActualStatus(
+                            selectedClaim,
+                        ).toLowerCase()}"
+                    >
+                        {getActualStatus(selectedClaim, claimResults).replace(
+                            "_",
+                            " ",
+                        )}
+                    </span>
                 </div>
 
                 {#if isApplied(selectedClaim.id, integrationLog)}
@@ -1589,103 +1568,99 @@ F) AUTOMATION ROUTING
                                 </p>
                             {/if}
                         </div>
-                        {#if getActualStatus(selectedClaim, claimResults)?.includes("SUPPORTED") || getActualStatus(selectedClaim, claimResults)?.includes("CONTRADICTED")}
-                            <div
-                                class="evidence-generator"
-                                style="margin-top: 20px; border-top: 1px solid #30363d; padding-top: 15px;"
+
+                        <div
+                            class="evidence-generator"
+                            style="margin-top: 20px; border-top: 1px solid #30363d; padding-top: 15px;"
+                        >
+                            <h4>Handoff & Data Export</h4>
+                            <textarea
+                                readonly
+                                class="evidence-textarea assistant-textarea"
+                                rows="12"
+                                style="width: 100%; background: #010409; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0;"
+                                >{getAssistantPacketMarkdown(
+                                    selectedClaim,
+                                )}</textarea
                             >
-                                <h4>Evidence Block Action</h4>
-                                <textarea
-                                    readonly
-                                    class="evidence-textarea"
-                                    rows="12"
-                                    style="width: 100%; background: #010409; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0;"
-                                    >{getAssistantPacketMarkdown(
-                                        selectedClaim,
-                                    )}</textarea
-                                >
-                                <div
-                                    class="evidence-actions"
-                                    style="display: flex; gap: 10px;"
-                                >
-                                    <button
-                                        class="run-btn copy agent-handoff"
-                                        style="background: #1f6feb; border-color: #388bfd; margin-right: auto;"
-                                        on:click={() =>
-                                            copyToClipboard(
-                                                selectedClaim.id,
-                                                "assistant",
-                                                getAssistantPacketMarkdown(
-                                                    selectedClaim,
-                                                ),
-                                            )}
-                                    >
-                                        {copyStates[
-                                            `${selectedClaim.id}-assistant`
-                                        ] === "copying"
-                                            ? "⏳ Copying..."
-                                            : copyStates[
-                                                    `${selectedClaim.id}-assistant`
-                                                ] === "copied"
-                                              ? "✓ Copied"
-                                              : copyStates[
-                                                      `${selectedClaim.id}-assistant`
-                                                  ] === "failed"
-                                                ? "❌ Failed"
-                                                : "📋 Copy for Assistant"}
-                                    </button>
-                                    <button
-                                        class="run-btn copy"
-                                        on:click={() =>
-                                            copyToClipboard(
-                                                selectedClaim.id,
-                                                "block",
-                                                getEvidenceMarkdown(
-                                                    selectedClaim,
-                                                ),
-                                            )}
-                                    >
-                                        {copyStates[
-                                            `${selectedClaim.id}-block`
-                                        ] === "copying"
-                                            ? "⏳"
-                                            : copyStates[
-                                                    `${selectedClaim.id}-block`
-                                                ] === "copied"
-                                              ? "✓ Copied"
-                                              : copyStates[
-                                                      `${selectedClaim.id}-block`
-                                                  ] === "failed"
-                                                ? "❌ Failed"
-                                                : "Copy Block to Clipboard"}
-                                    </button>
-                                    <button
-                                        class="run-btn mark-applied"
-                                        style="background: {isApplied(
+                            <div
+                                class="evidence-actions"
+                                style="display: flex; gap: 10px;"
+                            >
+                                <button
+                                    class="assistant-copy-btn"
+                                    style="padding: 8px 16px; font-weight: bold; font-family: monospace; border-radius: 4px; border: 1px solid #30363d; background: #1f6feb; color: white; cursor: pointer; display: flex; align-items: center; gap: 6px; flex-grow: 1; justify-content: center;"
+                                    on:click={() =>
+                                        copyToClipboard(
                                             selectedClaim.id,
-                                            integrationLog,
-                                        )
-                                            ? '#2e6b38'
-                                            : '#238636'};"
-                                        disabled={savingApplied ||
-                                            selectedClaim.editorial_guidance
-                                                ?.suggested_whitepaper_use ===
-                                                "DO_NOT_USE_IN_WHITEPAPER_YET"}
-                                        on:click={() =>
-                                            markAsApplied(selectedClaim)}
-                                    >
-                                        {savingApplied
-                                            ? "Saving Log..."
-                                            : isApplied(
-                                                    selectedClaim.id,
-                                                    integrationLog,
-                                                )
-                                              ? "Unmark Applied"
-                                              : "Mark as Applied in Log"}
-                                    </button>
-                                </div>
+                                            "assistant",
+                                            getAssistantPacketMarkdown(
+                                                selectedClaim,
+                                            ),
+                                        )}
+                                >
+                                    {copyStates[
+                                        `${selectedClaim.id}-assistant`
+                                    ] === "copying"
+                                        ? "⏳ Copying..."
+                                        : copyStates[
+                                                `${selectedClaim.id}-assistant`
+                                            ] === "copied"
+                                          ? "✓ Copied for Assistant"
+                                          : copyStates[
+                                                  `${selectedClaim.id}-assistant`
+                                              ] === "failed"
+                                            ? "❌ Failed"
+                                            : "📋 Copy for Assistant"}
+                                </button>
+                                <button
+                                    class="run-btn copy"
+                                    on:click={() =>
+                                        copyToClipboard(
+                                            selectedClaim.id,
+                                            "block",
+                                            getEvidenceMarkdown(selectedClaim),
+                                        )}
+                                >
+                                    {copyStates[`${selectedClaim.id}-block`] ===
+                                    "copying"
+                                        ? "⏳"
+                                        : copyStates[
+                                                `${selectedClaim.id}-block`
+                                            ] === "copied"
+                                          ? "✓ Copied"
+                                          : copyStates[
+                                                  `${selectedClaim.id}-block`
+                                              ] === "failed"
+                                            ? "❌ Failed"
+                                            : "Copy Raw Evidence Block"}
+                                </button>
+                                <button
+                                    class="run-btn mark-applied"
+                                    style="background: {isApplied(
+                                        selectedClaim.id,
+                                        integrationLog,
+                                    )
+                                        ? '#2e6b38'
+                                        : '#238636'};"
+                                    disabled={savingApplied ||
+                                        selectedClaim.editorial_guidance
+                                            ?.suggested_whitepaper_use ===
+                                            "DO_NOT_USE_IN_WHITEPAPER_YET"}
+                                    on:click={() =>
+                                        markAsApplied(selectedClaim)}
+                                >
+                                    {savingApplied
+                                        ? "Saving Log..."
+                                        : isApplied(
+                                                selectedClaim.id,
+                                                integrationLog,
+                                            )
+                                          ? "Unmark Applied"
+                                          : "Mark as Applied in Log"}
+                                </button>
                             </div>
-                        {/if}
+                        </div>
                     </div>
                 </div>
             </div>

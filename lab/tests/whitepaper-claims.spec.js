@@ -557,9 +557,15 @@ test.describe('Whitepaper Claims MVP', () => {
         await expect(claimLocator).toBeVisible({ timeout: 10000 });
         await claimLocator.click();
 
-        // Wait for the canonical evidence box and Assistant button to appear
-        await expect(page.locator('.evidence-box.canonical')).toBeVisible({ timeout: 10000 });
-        const assistantBtn = page.locator('button.assistant-copy-btn');
+        // Wait for the bottom action area
+        const evidenceGenerator = page.locator('.evidence-generator');
+        await expect(evidenceGenerator).toBeVisible({ timeout: 10000 });
+
+        // Assert only ONE primary copy button exists
+        const assistantBtns = page.locator('button.assistant-copy-btn');
+        await expect(assistantBtns).toHaveCount(1);
+
+        const assistantBtn = assistantBtns.first();
         await expect(assistantBtn).toBeVisible();
 
         // Check idle state text
@@ -625,5 +631,53 @@ test.describe('Whitepaper Claims MVP', () => {
         // Assert no external files attached, fully plain text
         expect(typeof packetText).toBe('string');
         expect(packetText.length).toBeGreaterThan(500);
+    });
+
+    test('Agent Automation: UNTESTED claim produces NOT READY Assistant Packet', async ({ page, context }) => {
+        await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+
+        await page.goto('/');
+        await page.click('text=Claims');
+
+        // Ensure loader is gone
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        // Filter for UNTESTED claims
+        const statusSelect = page.locator('select.tag-select').nth(1); // statusFilter
+        await statusSelect.selectOption('untested');
+
+        // Click the first UNTESTED claim
+        const untestedItems = page.locator('.claim-item.status-untested');
+        await expect(untestedItems.first()).toBeVisible({ timeout: 10000 });
+        await untestedItems.first().click();
+
+        // Verify the bottom action area appears (it must not be hidden for UNTESTED)
+        const evidenceGenerator = page.locator('.evidence-generator');
+        await expect(evidenceGenerator).toBeVisible({ timeout: 10000 });
+
+        // Verify only ONE button exists
+        const assistantBtns = page.locator('button.assistant-copy-btn');
+        await expect(assistantBtns).toHaveCount(1);
+        const assistantBtn = assistantBtns.first();
+
+        // Intercept clipboard write
+        await page.evaluate(() => {
+            window._clipboardText = "";
+            navigator.clipboard.writeText = async (text) => {
+                window._clipboardText = text;
+                return Promise.resolve();
+            };
+        });
+
+        // Click the handoff button
+        await assistantBtn.click();
+        await expect(assistantBtn).toContainText('✓ Copied for Assistant');
+
+        // Check the exported packet
+        const packetText = await page.evaluate(() => window._clipboardText);
+        expect(packetText).toContain('- Is this ready for wording proposal now? NO');
+        expect(packetText).toContain('- evidence_level: MISSING_EVIDENCE');
+        expect(packetText).toContain('- overall_verdict: No mathematical proof executed yet.');
+        expect(packetText).toContain('- Primary agent action: Instruct the user exactly what Antigravity must do next');
     });
 });
