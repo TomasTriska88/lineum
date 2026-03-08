@@ -81,6 +81,16 @@
         engine.isPaused = mainMode !== "simulator";
     }
 
+    let engineInitialized = false;
+    $: if (
+        mainMode === "simulator" &&
+        !engineInitialized &&
+        manifest.length > 0
+    ) {
+        engineInitialized = true;
+        loadRun(manifest[0].run_id);
+    }
+
     onMount(async () => {
         window.addEventListener("hashchange", () => {
             let hash = window.location.hash.replace("#", "");
@@ -98,8 +108,9 @@
             const res = await fetch("/data/manifest.json");
             if (!res.ok) throw new Error("Manifest not found");
             manifest = await res.json();
-            if (manifest.length > 0) {
-                // Default to the first (latest) run in manifest
+            if (manifest.length > 0 && mainMode === "simulator") {
+                // Load run immediately only if we spawned directly into the simulator
+                engineInitialized = true;
                 await loadRun(manifest[0].run_id);
             } else {
                 loading = false;
