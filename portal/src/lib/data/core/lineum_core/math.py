@@ -9,6 +9,69 @@ try:
 except ImportError:
     USE_PYTORCH = False
 
+class ExecutionPolicy:
+    """
+    Centralized policy for device selection, seeds, and determinism.
+    All execution paths (CLI, API, Exploratory) must consult this layer.
+    """
+    _device = None
+    _deterministic_mode = False
+    _is_canonical_run = False
+    
+    @classmethod
+    def init_core_determinism(cls, enforce_canonical=True, seed=42):
+        cls._is_canonical_run = enforce_canonical
+        cls._deterministic_mode = True
+        
+        # Lock seeds
+        if USE_PYTORCH:
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
+            torch.use_deterministic_algorithms(True, warn_only=True)
+            
+            # OS/environment level determinism
+            os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+            
+        np.random.seed(seed)
+        np.random.RandomState(seed) # Explicit initialization fallback
+        
+        if enforce_canonical or not (USE_PYTORCH and torch.cuda.is_available()):
+            cls._device = torch.device('cpu') if USE_PYTORCH else None
+        else:
+            cls._device = torch.device('cuda')
+            
+    @classmethod
+    def get_device(cls):
+        if cls._device is None:
+            # Fallback for uninitialized (exploratory)
+            if USE_PYTORCH:
+                cls._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+        return cls._device
+
+    @classmethod
+    def get_metadata(cls):
+        d = cls.get_device()
+        device_name = "CPU"
+        if d is not None and d.type == 'cuda':
+            device_name = torch.cuda.get_device_name(d)
+            
+        cuda_avail = USE_PYTORCH and torch.cuda.is_available()
+        
+        reason = None
+        if cls._is_canonical_run and cuda_avail and d.type == 'cpu':
+            reason = "Canonical audit strictly requires CPU pipeline for bitwise cross-hardware determinism. CUDA is disabled."
+            
+        return {
+            "execution_device": d.type if d else "numpy",
+            "deterministic_mode": cls._deterministic_mode,
+            "canonical_audit_allowed_on_cuda": False,
+            "cuda_available": cuda_avail,
+            "device_name": device_name,
+            "enforced_canonical": cls._is_canonical_run,
+            "reason": reason
+        }
+
 @dataclass(frozen=True)
 class CoreConfig:
     # --- Physic Constants ---
@@ -250,7 +313,7 @@ def _get_fft_symbol(size: int, stencil_type: str, device, dtype):
 
 def _step_pytorch(state: Dict[str, Any], cfg: CoreConfig) -> Dict[str, Any]:
     import torch
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = ExecutionPolicy.get_device()
     
     psi = torch.tensor(state.get("psi"), dtype=torch.complex128, device=device)
     phi = torch.tensor(state.get("phi"), dtype=torch.float64, device=device)

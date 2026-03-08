@@ -369,15 +369,10 @@ _RUN_TAG_DERIVED = f"spec{RUN_ID}_{RUN_MODE}_s{SEED}{('_' + PARAM_TAG) if PARAM_
 # If provided, it MUST win for all filenames, manifests, HTML links, etc.
 RUN_TAG = _os.environ.get("LINEUM_RUN_TAG", "").strip() or _RUN_TAG_DERIVED
 
-np.random.seed(SEED)
+from lineum_core.math import ExecutionPolicy
+import random
 random.seed(SEED)
-try:
-    import torch
-    torch.manual_seed(SEED)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(SEED)
-except ImportError:
-    pass
+ExecutionPolicy.init_core_determinism(enforce_canonical=(str(RUN_MODE).lower() == "false"), seed=SEED)
 
 # 🔧 Configuration mapping
 CONFIGS = {

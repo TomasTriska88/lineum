@@ -8,6 +8,7 @@
         PUBLIC_SIMULACRUM_URL,
         PUBLIC_ENABLE_API_SOLUTIONS,
     } from "$env/static/public";
+    import Logo from "$lib/components/Logo.svelte";
 
     let menuOpen = false;
     let docsOpen = false;
@@ -65,7 +66,15 @@
 
 <nav>
     <div class="container nav-content">
-        <a href="/" class="nav-logo">Lineum&trade;</a>
+        <a href="/" class="nav-logo">
+            <Logo
+                width={28}
+                height={28}
+                color="#00ffff"
+                variant="infinity_draw"
+            />
+            Lineum&trade;
+        </a>
 
         <button
             class="mobile-toggle"
@@ -166,10 +175,14 @@
     }
 
     .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         font-weight: 700;
         font-size: 1.2rem;
         letter-spacing: -0.05em;
         color: white;
+        text-decoration: none;
     }
 
     .nav-links {

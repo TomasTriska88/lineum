@@ -9,6 +9,8 @@
     import LplCompiler from "./lib/components/LplCompiler.svelte";
     import ValidationDashboard from "./lib/components/ValidationDashboard.svelte";
     import WhitepaperClaims from "./lib/components/WhitepaperClaims.svelte";
+    import ContactFooter from "./lib/components/ContactFooter.svelte";
+    import Logo from "./lib/components/Logo.svelte";
     import { t } from "./lib/i18n";
 
     let container;
@@ -368,7 +370,15 @@
 
     <nav class="top-nav">
         <div class="nav-brand">
-            <h1>SIMULACRUM</h1>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <Logo
+                    width={20}
+                    height={20}
+                    color="#00ffff"
+                    variant="infinity_draw"
+                />
+                <h1>SIMULACRUM</h1>
+            </div>
             <span class="subtitle">Lineum Lab | Hypothesis Sandbox</span>
         </div>
 
@@ -756,6 +766,8 @@
             </div>
         </div>
     {/if}
+
+    <ContactFooter />
 </main>
 
 <svelte:window
@@ -1353,6 +1365,7 @@
         padding: 0 32px;
         z-index: 200;
         pointer-events: auto;
+        box-sizing: border-box;
     }
 
     .nav-brand {

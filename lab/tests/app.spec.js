@@ -35,6 +35,12 @@ test.describe('App Initialization Smoke Test', () => {
 
         const brandEl = page.locator('.nav-brand h1');
         await expect(brandEl).toHaveText(/SIMULACRUM/i);
+
+        // Verify the contact footer renders and has expected content
+        const contactFooter = page.locator('.contact-footer');
+        await expect(contactFooter).toBeVisible();
+        await expect(contactFooter).toContainText('+420 771 543 804');
+        await expect(contactFooter).toContainText('Lineum Dynamics');
     });
 
     test('Navigation menu layout avoids vertical regression (Flex layout check)', async ({ page }) => {
@@ -121,4 +127,3 @@ test.describe('App Initialization Smoke Test', () => {
         expect(fullBox.y).toBeGreaterThanOrEqual(navBox.y + navBox.height);
     });
 });
-

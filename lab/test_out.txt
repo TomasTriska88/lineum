@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [Mobile Chrome] › tests\app.spec.js:106:5 › App Initialization Smoke Test › Fullscreen mode containers do not overlap with the top navigation bar (4.9s)
+
+  1 passed (6.5s)

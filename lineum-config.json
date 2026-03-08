@@ -1,16 +1,16 @@
 {
     "brand": {
-        "name": "Lineum",
-        "legalName": "Tomáš Tříska",
+        "name": "Lineum Dynamics s.r.o.",
+        "legalName": "Lineum Dynamics s.r.o.",
         "ic": "87577101",
-        "address": "Mírová 40, 356 04 Habartov, Czech Republic",
-        "phone": "+420 721 026 189",
+        "address": "Mírová 40, 357 09 Habartov, Czech Republic",
+        "phone": "+420 771 543 804",
         "trademark": "Lineum™",
         "domain": "lineum.io",
         "url": "https://lineum.io"
     },
     "contact": {
-        "primary": "tomas.triska.iver@gmail.com",
+        "primary": "tomat.triska.iver@gmail.com",
         "noreply": "noreply@lineum.io"
     },
     "academic": {

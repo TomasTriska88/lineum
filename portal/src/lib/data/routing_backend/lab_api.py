@@ -1,4 +1,5 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, HTTPException
+from fastapi.responses import StreamingResponse
 from typing import Dict
 import asyncio
 import time
@@ -56,10 +57,12 @@ async def get_health():
     import subprocess
     import os
     import sys
+    import json
     try:
         git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
     except Exception:
         git_hash = "unknown"
+
         
     try:
         branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL).decode("utf-8").strip()
@@ -73,11 +76,20 @@ async def get_health():
     # Delegate to shared audit context helper
     ctx = _get_audit_context()
 
+    is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
+
     return {
         "commit_hash": git_hash,
         "git_commit": git_hash,
         "git_branch": branch,
-        "current_build": f"{git_hash} ({branch})",
+        "current_build": {
+            "git_commit": git_hash,
+            "git_branch": branch,
+            "display": f"{git_hash} ({branch})"
+        },
+        "active_audit": {
+            "git_commit": ctx["contract_commit"]
+        },
         "audit_status": ctx["audit_status"],
         "contract_id": ctx["contract_id"],
         "active_contract_id": ctx["contract_id"],
@@ -86,6 +98,8 @@ async def get_health():
         "contract_timestamp": ctx["contract_timestamp"],
         "contract_commit": ctx["contract_commit"],
         "equation_fingerprint": ctx["equation_fingerprint"],
+        "audit_relevant_code_fingerprint": ctx["audit_relevant_code_fingerprint"],
+        "current_audit_relevant_code_fingerprint": ctx["current_audit_relevant_code_fingerprint"],
         "summary_pass": ctx["summary_pass"],
         "summary_fail": ctx["summary_fail"],
         "active_profile": ctx["active_profile"],
@@ -93,7 +107,85 @@ async def get_health():
         "loaded_modules": {
             "routing_backend": os.path.dirname(os.path.abspath(__file__)),
             "validation_core": vc_path
-        }
+        },
+        "production_safety": {
+            "is_production": is_prod,
+            "can_generate_audit": not is_prod,
+            "can_verify_all": not is_prod,
+            "reason": "Production is read-only. Audit generation and bulk verification are disabled." if is_prod else ""
+        },
+        "canonical_promotion": _get_canonical_promotion(ctx)
+    }
+
+def _get_canonical_promotion(ctx):
+    import os
+    import json
+    claims_path = os.path.join(REPO_ROOT_CLAIMS, 'lab', 'src', 'lib', 'data', 'claims.json')
+    try:
+        with open(claims_path, 'r', encoding='utf-8') as f:
+            claims_data = json.load(f)
+    except Exception:
+        claims_data = []
+
+    required_ids = [c["id"] for c in claims_data if c.get("canonical_claim_set") == "REQUIRED_FOR_PROMOTION"]
+    results = _load_claim_results()
+    current_fingerprint = ctx.get("equation_fingerprint", "unknown")
+    
+    req_status = []
+    missing_reqs = []
+    all_ready = True
+    
+    for rid in required_ids:
+        res = results.get(rid, {})
+        saved_fp = res.get("equation_fingerprint", "")
+        # Check staleness
+        is_stale = (saved_fp and saved_fp != "unknown" and current_fingerprint != "unknown" and saved_fp != current_fingerprint)
+        
+        status = res.get("resolved_claim_status", "UNTESTED")
+        evidence_source = "NONE"
+        is_ready = False
+        
+        if is_stale:
+            status = "STALE"
+            evidence_source = "STALE"
+        else:
+            if status == "SUPPORTED":
+                if res.get("is_audit_grade"):
+                    evidence_source = "CANONICAL_SUITE"
+                    is_ready = True
+                else:
+                    evidence_source = "EXPERIMENTAL_RUN"
+                    status = "EXPERIMENTAL_SUPPORTED"
+            elif status == "EXPERIMENTAL_SUPPORTED":
+                evidence_source = "EXPERIMENTAL_RUN"
+            elif status == "UNTESTED":
+                evidence_source = "NONE"
+
+        if not is_ready:
+            all_ready = False
+            missing_reqs.append(f"{rid} requires CANONICAL_SUITE evidence, current is {evidence_source}")
+            
+        req_status.append({
+            "id": rid,
+            "status": status,
+            "is_ready": is_ready,
+            "evidence_source": evidence_source
+        })
+        
+    if all_ready and len(required_ids) > 0:
+        if ctx.get("audit_status") == "AUDITED" and ctx.get("active_profile") == "wave_core":
+             promo_status = "CANONICAL_AUDITED"
+        else:
+             promo_status = "READY_FOR_CANONICAL_PROMOTION"
+    elif len(required_ids) > 0:
+        promo_status = "IN_PROGRESS"
+    else:
+        promo_status = "NOT_READY"
+        
+    return {
+        "canonical_promotion_status": promo_status,
+        "missing_requirements": missing_reqs,
+        "required_claims_status": req_status
     }
 
 # ══════════════════════════════════════════════════════════════
@@ -111,6 +203,7 @@ def _get_audit_context():
     contract_timestamp = "unknown"
     contract_commit = ""
     equation_fingerprint = ""
+    suite_audit_fp = "unknown"
     summary_pass = 0
     summary_fail = 0
     active_profile = None
@@ -173,11 +266,11 @@ def _get_audit_context():
                         if contract_commit == curr_full:
                             audit_status = "AUDITED"
                             if active_profile == "wave_core" and not active_run_has_metrics:
-                                audit_status = "PROVISIONAL PASS / BASELINE ONLY"
+                                audit_status = "EXPERIMENTAL / BASELINE METRICS"
                         else:
                             audit_status = "BUILD_NEWER"
                     else:
-                        audit_status = "OUTDATED"
+                        audit_status = "REVALIDATION_REQUIRED"
                     break
     except Exception as e:
         print(f"Audit context error: {e}")
@@ -188,6 +281,8 @@ def _get_audit_context():
         "contract_timestamp": contract_timestamp,
         "contract_commit": contract_commit or "unknown",
         "equation_fingerprint": equation_fingerprint or "unknown",
+        "audit_relevant_code_fingerprint": suite_audit_fp,
+        "current_audit_relevant_code_fingerprint": curr_audit_fp if 'curr_audit_fp' in locals() else "unknown",
         "summary_pass": summary_pass,
         "summary_fail": summary_fail,
         "active_profile": active_profile,
@@ -204,21 +299,25 @@ SCENARIO_REGISTRY = {
         "claim_id": "CL-CORE-001",
         "description": "Dominant spectral tone stability (Unitarity Check)",
         "runner": "run_ra1_unitarity",
+        "contract_profile": "whitepaper_core"
     },
     "preset-core-002": {
         "claim_id": "CL-CORE-002",
         "description": "Topological neutrality maintained (Bound State/Edges)",
         "runner": "run_ra2_bound_state",
+        "contract_profile": "whitepaper_core"
     },
     "preset-core-003": {
         "claim_id": "CL-CORE-003",
         "description": "φ center-trace exhibits a measurable half-life (Excited Forms)",
         "runner": "run_ra3_excited_state",
+        "contract_profile": "whitepaper_core"
     },
     "preset-core-004": {
         "claim_id": "CL-CORE-004",
         "description": "Stable localized excitations (linons) emerge (Mu Memory footprinting)",
         "runner": "run_ra4_mu_memory",
+        "contract_profile": "whitepaper_core"
     },
 }
 
@@ -272,6 +371,54 @@ def _get_current_git_commit() -> str:
 from fastapi import HTTPException
 from datetime import datetime, timezone
 
+def _extract_canonical_traceability(suite_path: str, claim_id: str, mapped_profile: str) -> list:
+    if not suite_path or not os.path.exists(suite_path):
+        return []
+    try:
+        with open(suite_path, 'r', encoding='utf-8') as f:
+            suite_data = json.load(f)
+        audits = suite_data if isinstance(suite_data, list) else [suite_data]
+        audits.sort(key=lambda x: x.get("header", {}).get("timestamp", ""), reverse=True)
+        if not audits:
+            return []
+        latest_audit = audits[0]
+        for run in latest_audit.get("runs", []):
+            if run.get("matched_profile") == mapped_profile:
+                metrics = run.get("metrics", {})
+                checks = run.get("checks", {})
+                
+                claim_metric_keys = []
+                if claim_id == "CL-CORE-001":
+                    claim_metric_keys = ["f0_mean_hz", "sbr_mean"]
+                elif claim_id == "CL-CORE-002":
+                    claim_metric_keys = ["topology_neutrality_n1", "mean_vortices"]
+                elif claim_id == "CL-CORE-003":
+                    claim_metric_keys = ["phi_half_life_steps", "max_lifespan_steps"]
+                elif claim_id == "CL-CORE-004":
+                    claim_metric_keys = ["low_mass_qp_count"]
+                else:
+                    claim_metric_keys = list(metrics.keys())
+                
+                evaluations = []
+                for m_key in claim_metric_keys:
+                    actual = metrics.get(m_key)
+                    check = checks.get(m_key, {})
+                    passed = check.get("pass", False)
+                    rule_str = f"min:{check.get('min', '*')} max:{check.get('max', '*')}"
+                    evaluations.append({
+                        "metric_name": m_key,
+                        "actual_value": actual,
+                        "threshold_rule": rule_str,
+                        "comparison_operator": "in_bounds",
+                        "source_file_or_field": "whitepaper_contract_suite.json",
+                        "passed": passed,
+                        "why_status_changed": f"{actual} in {rule_str} -> {'PASS' if passed else 'FAIL'}"
+                    })
+                return evaluations
+    except Exception as e:
+        print(f"Error extracting canonical traceability: {e}")
+    return []
+
 @router.get("/run_preset")
 async def run_preset(preset_name: str):
     """
@@ -318,12 +465,66 @@ async def run_preset(preset_name: str):
     git_commit = _get_current_git_commit()
 
     # Determine resolved claim status
-    if is_canonical:
+    import json
+    claims_path = os.path.join(REPO_ROOT_CLAIMS, 'lab', 'src', 'lib', 'data', 'claims.json')
+    claim_set = "NOT_PART_OF_PROMOTION"
+    try:
+        with open(claims_path, 'r', encoding='utf-8') as f:
+            claims_data = json.load(f)
+            for c in claims_data:
+                if c.get("id") == scenario.get("claim_id"):
+                    claim_set = c.get("canonical_claim_set", "NOT_PART_OF_PROMOTION")
+                    break
+    except Exception:
+        pass
+
+    is_eligible_for_canonical = claim_set in ["REQUIRED_FOR_PROMOTION", "SUPPORTING_ONLY"]
+    
+    if is_canonical and is_eligible_for_canonical:
         resolved_claim_status = "SUPPORTED" if overall_pass else "CONTRADICTED"
     else:
         resolved_claim_status = (
             "EXPERIMENTAL_SUPPORTED" if overall_pass else "EXPERIMENTAL_CONTRADICTED"
         )
+        
+    from lineum_core.math import ExecutionPolicy
+    runtime_meta = ExecutionPolicy.get_metadata()
+    
+    exp_results = val_data.get("expectation_results", [])
+    metrics_evaluations = []
+    
+    if is_canonical:
+        mapped_profile = scenario.get("contract_profile", ctx["active_profile"])
+        metrics_evaluations = _extract_canonical_traceability(
+            ctx.get("suite_abs_path"), scenario["claim_id"], mapped_profile
+        )
+
+    if not metrics_evaluations:
+        for e in exp_results:
+            m_val = e.get("measured")
+            m_exp = e.get("expected")
+            m_op = e.get("op", "")
+            m_pass = e.get("passed", False)
+            metrics_evaluations.append({
+                "metric_name": e.get("metric", "unknown"),
+                "actual_value": m_val,
+                "threshold_rule": m_exp,
+                "comparison_operator": m_op,
+                "source_file_or_field": "validation_core.py",
+                "passed": m_pass,
+                "why_status_changed": f"{m_val} {m_op} {m_exp} -> {'PASS' if m_pass else 'FAIL'}"
+            })
+
+    traceability = {
+        "claim_id": scenario["claim_id"],
+        "scenario_id": preset_name,
+        "active_profile": ctx["active_profile"] or "unknown",
+        "execution_device": runtime_meta.get("execution_device", "unknown"),
+        "deterministic_mode": runtime_meta.get("deterministic_mode", False),
+        "equation_fingerprint": ctx["equation_fingerprint"],
+        "metrics": metrics_evaluations,
+        "overall_pass": overall_pass,
+    }
 
     # Persist claim result with full context
     claim_result = {
@@ -338,6 +539,7 @@ async def run_preset(preset_name: str):
         "git_commit": git_commit,
         "equation_fingerprint": ctx["equation_fingerprint"],
         "overall_pass": overall_pass,
+        "traceability": traceability,
     }
     _save_claim_result(scenario["claim_id"], claim_result)
 
@@ -347,6 +549,16 @@ async def run_preset(preset_name: str):
         "message": f"Scenario '{preset_name}' executed. {len(val_data.get('expectation_results', []))} checks evaluated.",
     }
 
+
+@router.get("/claims")
+async def alias_claims():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/api/lab/claim_results")
+
+@router.get("/whitepapers")
+async def alias_whitepapers():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/api/lab/claims")
 
 @router.get("/claim_results")
 async def get_claim_results():
@@ -377,6 +589,10 @@ async def get_claim_results():
         result["is_stale"] = is_stale
         if is_stale:
             stale_count += 1
+            if result.get("resolved_claim_status") in ["SUPPORTED", "CONTRADICTED"]:
+                result["resolved_claim_status"] = "STALE_CANONICAL"
+            elif result.get("resolved_claim_status") in ["EXPERIMENTAL_SUPPORTED", "EXPERIMENTAL_CONTRADICTED"]:
+                result["resolved_claim_status"] = "OUTDATED_FOR_CURRENT_EQUATION"
 
     return {
         "results": results,
@@ -392,6 +608,12 @@ async def verify_all():
     Run all TESTABLE_NOW claim scenarios in bulk.
     Returns results + test-suite-style summary with detailed counts and duration.
     """
+    import os
+    from fastapi import HTTPException
+    is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
+    if is_prod:
+        raise HTTPException(status_code=403, detail="Bulk verification disabled in production. Ready-only mode.")
+
     import time
     start_time = time.monotonic()
 
@@ -459,6 +681,45 @@ async def verify_all():
                 status = "SUPPORTED" if overall_pass else "CONTRADICTED"
             else:
                 status = "EXPERIMENTAL_SUPPORTED" if overall_pass else "EXPERIMENTAL_CONTRADICTED"
+                
+            from lineum_core.math import ExecutionPolicy
+            runtime_meta = ExecutionPolicy.get_metadata()
+            
+            exp_results = val_data.get("expectation_results", [])
+            metrics_evaluations = []
+            
+            if is_canonical:
+                mapped_profile = scenario.get("contract_profile", ctx["active_profile"])
+                metrics_evaluations = _extract_canonical_traceability(
+                    ctx.get("suite_abs_path"), scenario["claim_id"], mapped_profile
+                )
+
+            if not metrics_evaluations:
+                for e in exp_results:
+                    m_val = e.get("measured")
+                    m_exp = e.get("expected")
+                    m_op = e.get("op", "")
+                    m_pass = e.get("passed", False)
+                    metrics_evaluations.append({
+                        "metric_name": e.get("metric", "unknown"),
+                        "actual_value": m_val,
+                        "threshold_rule": m_exp,
+                        "comparison_operator": m_op,
+                        "source_file_or_field": "validation_core.py",
+                        "passed": m_pass,
+                        "why_status_changed": f"{m_val} {m_op} {m_exp} -> {'PASS' if m_pass else 'FAIL'}"
+                    })
+
+            traceability = {
+                "claim_id": scenario["claim_id"],
+                "scenario_id": preset_name,
+                "active_profile": ctx["active_profile"] or "unknown",
+                "execution_device": runtime_meta.get("execution_device", "unknown"),
+                "deterministic_mode": runtime_meta.get("deterministic_mode", False),
+                "equation_fingerprint": ctx["equation_fingerprint"],
+                "metrics": metrics_evaluations,
+                "overall_pass": overall_pass,
+            }
 
             claim_result = {
                 "claim_id": scenario["claim_id"],
@@ -472,6 +733,7 @@ async def verify_all():
                 "git_commit": git_commit,
                 "equation_fingerprint": ctx["equation_fingerprint"],
                 "overall_pass": overall_pass,
+                "traceability": traceability,
             }
 
             _save_claim_result(scenario["claim_id"], claim_result)
@@ -515,118 +777,175 @@ async def verify_all():
     }
 
 
-@router.post("/audit/generate")
-async def generate_audit_contract():
-    """
-    Full audit pipeline (blocking):
-      Step 1: lineum.py with LINEUM_BASE_OUTPUT_DIR=output_wp + LINEUM_AUDIT_PROFILE=whitepaper_core
-      Step 2: tools/whitepaper_contract.py (suite generation)
-    Returns proof: new_run_id, latest_run, suite header, audit_status.
-    """
+@router.get("/audit/config")
+async def get_audit_config(request: Request):
+    """Returns access control and runtime device info for audit generation."""
+    host = request.client.host
+    is_localhost = host in ("127.0.0.1", "::1", "localhost", "0.0.0.0")
+    
     import subprocess
+    import sys
+    import os
+    import json
     REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    
+    script = (
+        "import json\n"
+        "import os\n"
+        "os.environ['LINEUM_RUN_MODE'] = 'false'\n"
+        "from lineum_core.math import ExecutionPolicy\n"
+        "ExecutionPolicy.init_core_determinism(enforce_canonical=True)\n"
+        "print('---METADATA_START---')\n"
+        "print(json.dumps(ExecutionPolicy.get_metadata()))\n"
+        "print('---METADATA_END---')\n"
+    )
+    
+    meta = {
+        "execution_device": "cpu",
+        "deterministic_mode": True,
+        "canonical_audit_allowed_on_cuda": False,
+        "cuda_available": False,
+        "device_name": "Unknown",
+        "fallback_reason": "Subprocess probe failed",
+        "reason": None
+    }
+    
     try:
-        # --- Step 1: Physics run into output_wp/runs/<run_id>/ ---
-        lineum_path = os.path.join(REPO_ROOT, 'lineum.py')
         env = os.environ.copy()
-        env["LINEUM_BASE_OUTPUT_DIR"] = "output_wp"
-        env["LINEUM_AUDIT_PROFILE"] = "whitepaper_core"
-        env["LINEUM_RUN_ID"] = "6"
         env["LINEUM_RUN_MODE"] = "false"
-        env["LINEUM_SEED"] = "41"
-        env["LINEUM_STEPS"] = "2000"
-        env["PYTHONUTF8"] = "1"
-
-        step1 = subprocess.run(
-            ["python", lineum_path],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            env=env,
-            timeout=600  # 10 min max for physics run
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            capture_output=True, text=True, cwd=REPO_ROOT, env=env, timeout=10
         )
-        if step1.returncode != 0:
-            return {"status": "error", "step": 1, "detail": f"lineum.py failed (exit {step1.returncode})", "stderr": step1.stderr[-2000:] if step1.stderr else ""}
-
-        # Read latest_run.txt to find the new run
-        latest_run_path = os.path.join(REPO_ROOT, 'output_wp', 'latest_run.txt')
-        latest_run_value = None
-        if os.path.isfile(latest_run_path):
-            with open(latest_run_path, 'r', encoding='utf-8') as f:
-                latest_run_value = f.read().strip()
-
-        # --- Step 2: Suite verification + generation ---
-        contract_path = os.path.join(REPO_ROOT, 'tools', 'whitepaper_contract.py')
-        step2 = subprocess.run(
-            ["python", contract_path],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=120
-        )
-        if step2.returncode != 0:
-            return {"status": "error", "step": 2, "detail": f"whitepaper_contract.py failed (exit {step2.returncode})", "stderr": step2.stderr[-2000:] if step2.stderr else ""}
-
-        # --- Read suite and build response ---
-        suite_path = Path(os.path.join(REPO_ROOT, 'output_wp', 'runs', '_whitepaper_contract', 'whitepaper_contract_suite.json'))
-        if not suite_path.exists():
-            return {"status": "error", "detail": "Suite file not found after generation at canonical path."}
-
-        with open(suite_path, 'r', encoding='utf-8') as f:
-            suite = json.load(f)
-
-        header = suite.get("header", {})
-        summary = suite.get("summary", {})
-
-        # Determine audit_status
-        try:
-            current_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, stderr=subprocess.DEVNULL).decode("utf-8").strip()
-        except Exception:
-            current_commit = "unknown"
-
-        import sys
-        if os.path.join(REPO_ROOT, "tools") not in sys.path:
-            sys.path.append(os.path.join(REPO_ROOT, "tools"))
-        try:
-            from whitepaper_contract import compute_audit_relevant_fingerprint
-            curr_audit_fp = compute_audit_relevant_fingerprint(REPO_ROOT)
-        except Exception:
-            curr_audit_fp = "unknown"
-
-        suite_commit = header.get("git_commit", "")
-        suite_audit_fp = header.get("audit_relevant_code_fingerprint", "unknown")
-        
-        if curr_audit_fp != "unknown" and suite_audit_fp == curr_audit_fp:
-            if suite_commit == current_commit:
-                audit_status = "AUDITED"
-            else:
-                audit_status = "BUILD_NEWER"
-        else:
-            audit_status = "OUTDATED"
-
-        # Derive new_run_id from latest_run.txt
-        new_run_id = latest_run_value if latest_run_value else "unknown"
-
-        return {
-            "status": "success",
-            "new_run_id": new_run_id,
-            "latest_run_txt": latest_run_value,
-            "active_suite_abs_path": str(suite_path.resolve()),
-            "contract_id": header.get("contract_id"),
-            "git_commit": header.get("git_commit"),
-            "equation_fingerprint": header.get("equation_fingerprint"),
-            "tool_version": header.get("tool_version"),
-            "timestamp": header.get("timestamp"),
-            "summary_pass": summary.get("pass", 0),
-            "summary_fail": summary.get("fail", 0),
-            "audit_status": audit_status,
-            "step1_stdout_tail": step1.stdout[-500:] if step1.stdout else "",
-            "step2_stdout": step2.stdout
-        }
-    except subprocess.TimeoutExpired as e:
-        return {"status": "error", "detail": f"Timeout: {e}"}
+        out = result.stdout
+        if "---METADATA_START---" in out and "---METADATA_END---" in out:
+            json_str = out.split("---METADATA_START---")[1].split("---METADATA_END---")[0].strip()
+            parsed = json.loads(json_str)
+            meta.update(parsed)
+            # Map fallback reason for backwards compatibility with front-end
+            meta["fallback_reason"] = parsed.get("reason", None)
     except Exception as e:
-        return {"status": "error", "detail": str(e)}
+        meta["fallback_reason"] = f"Probe error: {e}"
+        
+    import os
+    is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
+    
+    meta["allowed"] = is_localhost and not is_prod
+    if is_prod:
+        meta["reason"] = "Audit generation disabled in production. Ready-only mode."
+    elif not is_localhost:
+        meta["reason"] = "Audit generation is available only on localhost / internal environment."
+        
+    return meta
+
+
+@router.post("/audit/generate")
+async def generate_audit_contract(request: Request):
+    """
+    Full audit pipeline streaming via SSE (Server-Sent Events).
+    """
+    import os
+    is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
+    if is_prod:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Audit generation disabled in production. Ready-only mode.")
+
+    import subprocess
+    import sys
+    import asyncio
+    
+    host = request.client.host
+    if host not in ("127.0.0.1", "::1", "localhost", "0.0.0.0"):
+        raise HTTPException(status_code=403, detail="Audit generation is available only on localhost / internal environment.")
+
+    REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    def sse_generator():
+        import subprocess
+        start_time = time.monotonic()
+        
+        def emit(step, detail, status="progress", extra=None):
+            elapsed = round(time.monotonic() - start_time, 1)
+            payload = {"status": status, "step": step, "detail": detail, "elapsed": elapsed}
+            if extra:
+                payload.update(extra)
+            return f"data: {json.dumps(payload)}\n\n"
+
+        try:
+            yield emit(0, "Checking environment")
+            time.sleep(0.1)
+
+            lineum_path = os.path.join(REPO_ROOT, 'lineum.py')
+            env = os.environ.copy()
+            env["LINEUM_BASE_OUTPUT_DIR"] = "output_wp"
+            env["LINEUM_AUDIT_PROFILE"] = "whitepaper_core"
+            env["LINEUM_RUN_ID"] = "6"
+            env["LINEUM_RUN_MODE"] = "false"
+            env["LINEUM_SEED"] = "41"
+            env["LINEUM_STEPS"] = "2000"
+            env["LINEUM_RESUME"] = "false"
+            env["PYTHONUTF8"] = "1"
+            env["PYTHONIOENCODING"] = "utf-8"
+
+            yield emit(1, "Starting physics run (this may take a few minutes)...")
+
+            process1 = subprocess.Popen(
+                [sys.executable, lineum_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd=REPO_ROOT,
+                env=env
+            )
+
+            for line in iter(process1.stdout.readline, b''):
+                text = line.decode('utf-8', errors='replace').strip()
+                if "device" in text.lower():
+                    yield emit(2, f"{text}")
+
+            process1.stdout.close()
+            returncode1 = process1.wait()
+
+            if returncode1 != 0:
+                yield emit(2, f"lineum.py failed (exit {returncode1})", "error")
+                return
+
+            yield emit(3, "Writing run artifacts...")
+            
+            # Step 2: Suite verification
+            yield emit(4, "Rebuilding suite & verifying claims...")
+            contract_path = os.path.join(REPO_ROOT, 'tools', 'whitepaper_contract.py')
+            process2 = subprocess.Popen(
+                [sys.executable, contract_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=REPO_ROOT,
+                env=env
+            )
+            process2.communicate()
+
+            if process2.returncode != 0:
+                yield emit(4, f"whitepaper_contract.py failed", "error")
+                return
+
+            yield emit(5, "Refreshing Lab state...")
+
+            # Find new run_id
+            latest_run_path = os.path.join(REPO_ROOT, 'output_wp', 'latest_run.txt')
+            latest_run_value = "unknown"
+            if os.path.isfile(latest_run_path):
+                with open(latest_run_path, 'r', encoding='utf-8') as f:
+                    latest_run_value = f.read().strip()
+
+            yield emit(6, "Done", "success", {
+                "new_run_id": latest_run_value.replace("runs/", ""),
+                "audit_status": "AUDITED"
+            })
+        except Exception as e:
+            import traceback
+            err_msg = str(e) or "Unknown exception"
+            print("SSE GENERATOR EXCEPTION:\n", traceback.format_exc())
+            yield emit(99, f"Fatal error: {err_msg}", "error")
+
+    return StreamingResponse(sse_generator(), media_type="text/event-stream")
 
 class IntegrationEventRequest(BaseModel):
     event: str

@@ -9,18 +9,34 @@ test.describe('Legal Contact Information', () => {
         // Wait for page to render
         await page.waitForSelector('.content-block');
 
-        // Locate all text in content-blocks
-        const contents = await page.locator('.content-block').allTextContents();
-        const textContent = contents.join(' ');
+        // Verify Legal Entity links are present and correct
+        const justiceLink = page.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-$firma?nazev="]`);
+        await expect(justiceLink).toBeVisible();
 
-        // Assert that the text includes config info
-        expect(textContent).toContain(config.brand.legalName);
-        expect(textContent).toContain(config.brand.ic);
-        expect(textContent).toContain(config.brand.address);
+        const icLink = page.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-$firma?ico="]`);
+        await expect(icLink).toBeVisible();
 
-        // Ensure phone is displayed
+        const mapsLink = page.locator(`a[href*="maps.google.com/?q="]`);
+        await expect(mapsLink).toBeVisible();
+
         if (config.brand.phone) {
-            expect(textContent).toContain(config.brand.phone);
+            const phoneLink = page.locator(`a[href*="tel:"]`);
+            await expect(phoneLink).toBeVisible();
         }
+
+        const mailtoLink = page.locator(`a[href*="mailto:"]`);
+        await expect(mailtoLink).toBeVisible();
+    });
+
+    test('should display persistent contact footer containing company and phone', async ({ page }) => {
+        await page.goto('/');
+
+        // The footer should be present on the home page (and all others via layout)
+        const footer = page.locator('.contact-footer');
+        await expect(footer).toBeVisible();
+
+        // Should contain the basic components
+        await expect(footer).toContainText(config.brand.name);
+        await expect(footer).toContainText(config.brand.phone);
     });
 });

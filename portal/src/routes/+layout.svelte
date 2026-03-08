@@ -7,6 +7,7 @@
     import ResonanceDeck from "$lib/components/ResonanceDeck.svelte";
     import CookieBanner from "$lib/components/CookieBanner.svelte";
     import Navigation from "$lib/components/Navigation.svelte";
+    import ContactFooter from "$lib/components/ContactFooter.svelte";
     import { hudActive } from "$lib/stores/hudStore";
     import * as m from "$lib/paraglide/messages.js";
     import { page } from "$app/stores";
@@ -49,6 +50,7 @@
 
     <ResonanceDeck active={$hudActive} />
     <CookieBanner />
+    <ContactFooter />
     <div class="version-hud">v{pkg.version}</div>
 </ParaglideJS>
 
