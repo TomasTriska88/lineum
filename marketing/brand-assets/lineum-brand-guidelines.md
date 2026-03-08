@@ -17,14 +17,15 @@ The Lineum logo is constructed around three primary conceptual layers that refle
     The logo does not exist on pure black (`#000000`), which is harsh on OLED screens and implies emptiness. Instead, the canvas is "Simulacrum Dark" (`#050505` for Lab, `#0a0a0f` for Portal). This "almost-black" provides immense physical depth. It is not an empty void, but a highly pressurized, dark laboratory environment—a digital vacuum where the glowing data streams are suspended.
 
 
-## The Dynamic Logo: The "Happy Accident"
-
-While the static `lineum-logo-static.svg` represents the theoretical, mathematically perfect frozen state of the Lineum core, the animated `lineum-logo-animated.svg` (and its native Svelte component representation) contains a deliberate, highly specific animation artifact.
+## The Incomplete Loop: The "Happy Accident"
 
 During the development of the SVG's dynamic stroke-drawing CSS animation (`stroke-dasharray`), an intentional geometric misalignment was preserved: **The mathematical length of the bezier curves is approximately 213.6 pixels, but the stroke-dash animation loop is hardcoded to a strict 250-pixel offset.**
 
 **The resulting visual phenomenon:**
-Because the animation cycle is longer than the physical line, the infinity wave *never truly completes its circuit*. It leaves a microscopic, glowing gap just before closing the loop. Furthermore, as the animation loop resets (`stroke-dashoffset` wraps around the remaining distance), the energy overflows the starting coordinate, creating a brief, trailing point or "dash" before the next cycle begins.
+Because the animation cycle is longer than the physical line, the infinity wave *never truly completes its circuit*. It leaves a microscopic, glowing gap just before closing the loop.
+
+**The Static Representation:**
+This phenomenon is so fundamental to the brand that the static `lineum-logo-static.svg` does not portray a "perfectly closed" loop either. Instead, the static logo is permanently frozen at the exact moment of maximum tension—just milliseconds before the mathematical loop would close, forever preserving a 4% geometrical gap (`stroke-dashoffset="4"`). Furthermore, in the animated versions, as the loop resets (`stroke-dashoffset` wraps around the remaining distance), the energy overflows the starting coordinate, creating a brief, trailing point or "dash" before the next cycle begins.
 
 **The Semantic Meaning:**
 Far from being an error, this "draw gap" and "dash reset" are now foundational to the Lineum visual identity. They perfectly illustrate the core scientific reality of the project:
