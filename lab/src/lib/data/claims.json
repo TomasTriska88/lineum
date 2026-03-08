@@ -1237,5 +1237,36 @@
         "falsification_mode": "MANUAL_PLAN_ONLY",
         "falsification_status": "NOT_IMPLEMENTED",
         "last_falsification_run_id": "none"
+    },
+    {
+        "id": "CL-CORE-008",
+        "short_claim": "Large-scale phase alignment",
+        "human_claim": "Under certain stabilized conditions, the simulation exhibits episodes of large-scale phase alignment.",
+        "scientific_claim": "The field shows transient or sustained large-scale phase coherence under constrained boundary and stability conditions.",
+        "what_it_is_not": "This is NOT claiming a violation of the second law of thermodynamics, but rather a topological sorting behavior under bounded phase-locking.",
+        "source_file": "01-core-lineum.md",
+        "source_section": "N/A",
+        "source_anchor": "N/A",
+        "source_quote": "N/A",
+        "tags": [
+            "phase-alignment",
+            "coherence"
+        ],
+        "scope": "MODEL_INTERNAL",
+        "status": "UNTESTED",
+        "testability": "NEEDS_NEW_SCENARIO",
+        "test_reason": "Need an explicitly bounded tuning test scenario to prove coherence.",
+        "verification_plan": null,
+        "expected_measures": null,
+        "scenario_id": null,
+        "disclaimers": null,
+        "falsification_needed": true,
+        "falsification_plan": null,
+        "missing_falsification_reason": "Not yet prepared.",
+        "verification_spec_status": "NOT_PREPARED",
+        "canonical_claim_set": "SUPPORTING_ONLY",
+        "falsification_mode": "MANUAL_PLAN_ONLY",
+        "falsification_status": "NOT_IMPLEMENTED",
+        "last_falsification_run_id": "none"
     }
 ]
