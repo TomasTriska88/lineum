@@ -133,9 +133,9 @@
 
     {#if auditStatus !== "AUDITED" && auditStatus !== "BUILD_NEWER"}
         <div class="warning-box">
-            <strong>⚠ Warning:</strong> The current build's equation does not have
-            an active Audit-Grade contract. Whitepaper claims cannot be verified
-            canonically (EXPERIMENTAL mode only) until a new Audit Contract is generated.
+            <strong>⚠ Warning:</strong> A provisional baseline pass exists for this
+            build, but a canonical metric-backed audit is not complete yet. Claims
+            remain in an experimental state.
         </div>
     {/if}
 

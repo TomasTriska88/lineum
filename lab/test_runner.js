@@ -1,0 +1,1 @@
+const cp = require('child_process'); try { const out = cp.execSync('npx playwright test whitepaper-claims.spec.js -g "Agent Automation"', { encoding: 'utf8', stdio: 'pipe' }); require('fs').writeFileSync('../.scratch/playwright_dump.txt', out); } catch (e) { require('fs').writeFileSync('../.scratch/playwright_dump.txt', e.stdout + '\n' + e.stderr); }

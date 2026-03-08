@@ -9,12 +9,30 @@
         "euclidean_dist": 0.5136243556801225
     },
     {
-        "run_id": "spec6_false_s41_20260306_201952",
+        "run_id": "spec6_false_s41_20260227_200927",
         "run_tag": "spec6_false_s41",
-        "timestamp": "20260306_201952",
+        "timestamp": "20260227_200927",
+        "birth_frame": 389,
+        "frame_count": 400,
+        "pearson_r": 0.9961299168203144,
+        "euclidean_dist": 0.5136243556801225
+    },
+    {
+        "run_id": "spec6_false_s41_20260307_212138",
+        "run_tag": "spec6_false_s41",
+        "timestamp": "20260307_212138",
         "birth_frame": 237,
         "frame_count": 400,
         "pearson_r": 0.5299235917777152,
         "euclidean_dist": 3.661555581108056
+    },
+    {
+        "run_id": "spec6_false_s41_20260307_225444",
+        "run_tag": "spec6_false_s41",
+        "timestamp": "20260307_225444",
+        "birth_frame": 228,
+        "frame_count": 400,
+        "pearson_r": 0.43213990301103844,
+        "euclidean_dist": 3.959383708173091
     }
 ]

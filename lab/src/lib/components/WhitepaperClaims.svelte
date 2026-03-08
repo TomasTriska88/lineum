@@ -1,5 +1,6 @@
 <script>
     import { whitepaperClaims } from "../data/claims.js";
+    import whitepaperMap from "../data/whitepaper_map.json";
     import { marked } from "marked";
     import katex from "katex";
     import "katex/dist/katex.min.css";
@@ -21,14 +22,29 @@
         });
     }
 
-    export let manifestHistory = []; // Array of { id, preset, passed, mode }
+    export const manifestHistory = []; // Array of { id, preset, passed, mode }
 
-    let searchQuery = "";
+    let searchQuery =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_search") || ""
+            : "";
     let selectedTag = "all";
-    let statusFilter = "all";
-    let testabilityFilter = "all";
-    let scopeFilter = "all";
-    let falsificationFilter = "all";
+    let statusFilter =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_status") || "all"
+            : "all";
+    let testabilityFilter =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_testability") || "all"
+            : "all";
+    let scopeFilter =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_scope") || "all"
+            : "all";
+    let falsificationFilter =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_falsification") || "all"
+            : "all";
 
     function clearFilters() {
         searchQuery = "";
@@ -41,6 +57,7 @@
 
     let integrationLog = [];
     let savingApplied = false;
+    let isPromotionBlockExpanded = false;
 
     // Derived tags list
     $: allTags = [
@@ -124,14 +141,22 @@
             }
         }
 
-        // Rule 4: Enforce strict OUTDATED barrier
-        // If the system claims it's outdated or the contract metadata differs, it cannot be canonical SUPPORTED
+        // Rule 4: Use specialized stale states if present
+        if (
+            cr.status === "STALE_CANONICAL" ||
+            cr.status === "OUTDATED_FOR_CURRENT_EQUATION"
+        ) {
+            return cr.status;
+        }
+
+        // Rule 5: Fallback downgrades if contract breaks globally but claim wasn't explicitly marked stale
         if (
             cr.is_stale ||
             cr.status === "OUTDATED" ||
             auditStatus === "OUTDATED" ||
+            auditStatus === "REVALIDATION_REQUIRED" ||
             auditStatus === "BUILD_NEWER" ||
-            auditStatus === "PROVISIONAL PASS / BASELINE ONLY"
+            auditStatus === "EXPERIMENTAL / BASELINE METRICS"
         ) {
             if (cr.passed_internal) {
                 if (
@@ -155,7 +180,7 @@
             return "OUTDATED";
         }
 
-        // Rule 5: Otherwise, return the strict backend resolved status
+        // Rule 6: Otherwise, return the strict backend resolved status
         return cr.status || "UNTESTED";
     }
 
@@ -175,7 +200,23 @@
             .find((e) => e.claim_id === claimId && e.event === "APPLIED");
     }
 
-    let selectedClaimId = null;
+    let selectedClaimId =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_selected_claim") || null
+            : null;
+
+    $: if (typeof window !== "undefined") {
+        localStorage.setItem("wc_search", searchQuery);
+        localStorage.setItem("wc_status", statusFilter);
+        localStorage.setItem("wc_testability", testabilityFilter);
+        localStorage.setItem("wc_scope", scopeFilter);
+        localStorage.setItem("wc_falsification", falsificationFilter);
+        if (selectedClaimId) {
+            localStorage.setItem("wc_selected_claim", selectedClaimId);
+        } else {
+            localStorage.removeItem("wc_selected_claim");
+        }
+    }
     $: selectedClaim =
         whitepaperClaims.find((c) => c.id === selectedClaimId) || null;
 
@@ -187,7 +228,6 @@
     let activeContract = null;
     let currentBuild = "unknown";
 
-    // Comprehensive audit state
     let auditStatus = "NONE";
     let contractId = null;
     let contractTimestamp = "unknown";
@@ -196,7 +236,19 @@
     let summaryPass = 0;
     let summaryFail = 0;
 
-    onMount(async () => {
+    let productionSafety = {
+        is_production: false,
+        can_generate_audit: true,
+        can_verify_all: true,
+        reason: "",
+    };
+    let canonicalPromotion = {
+        canonical_promotion_status: "NOT_READY",
+        missing_requirements: [],
+        required_claims_status: [],
+    };
+
+    async function fetchHealth() {
         try {
             const res = await fetch("http://127.0.0.1:8000/api/lab/health");
             if (res.ok) {
@@ -213,10 +265,18 @@
                 equationFingerprint = data.equation_fingerprint || "unknown";
                 summaryPass = data.summary_pass || 0;
                 summaryFail = data.summary_fail || 0;
+                if (data.production_safety)
+                    productionSafety = data.production_safety;
+                if (data.canonical_promotion)
+                    canonicalPromotion = data.canonical_promotion;
             }
         } catch (e) {
             console.error("Health check failed:", e);
         }
+    }
+
+    onMount(async () => {
+        await fetchHealth();
 
         // Load last known claim results (persisted)
         await refreshStatuses();
@@ -230,6 +290,9 @@
         } catch (e) {
             console.error("Integration log fetch failed:", e);
         }
+
+        window.addEventListener("audit-completed", fetchHealth);
+        return () => window.removeEventListener("audit-completed", fetchHealth);
     });
 
     async function refreshStatuses() {
@@ -254,9 +317,14 @@
                         active_profile: result.active_profile,
                         checked_at: result.checked_at,
                         is_stale: result.is_stale || false,
+                        traceability: result.traceability,
                     };
                 }
                 claimResults = { ...claimResults };
+                console.log(
+                    "DEBUG SVELTE: refreshStatuses claimResults =",
+                    claimResults,
+                );
             }
         } catch (e) {
             console.error("Failed to load claim results:", e);
@@ -291,6 +359,7 @@
                         active_profile: result.active_profile,
                         checked_at: result.checked_at,
                         is_stale: false,
+                        traceability: result.traceability,
                     };
                 }
                 claimResults = { ...claimResults };
@@ -314,7 +383,7 @@
             bAuditStatus = auditStatus === "NONE" ? "NONE" : "OUTDATED";
         }
         if (
-            auditStatus === "PROVISIONAL PASS / BASELINE ONLY" ||
+            auditStatus === "EXPERIMENTAL / BASELINE METRICS" ||
             auditStatus === "BUILD_NEWER"
         ) {
             bAuditStatus = "OUTDATED";
@@ -347,11 +416,164 @@
         return `> [!NOTE] \n> **EVIDENCE:**\n> - **claim_id:** ${claim.id}\n> - **contract_id:** ${cid}\n> - **manifest_id:** ${cr.manifest_id || "none"}\n> - **claim_status:** ${cStatus}\n> - **audit_status:** ${bAuditStatus}\n> - **equation_fingerprint:** ${finger}\n> - **git_commit:** ${com}\n> - **timestamp_utc:** ${new Date().toISOString()}\n> - **lab_section:** Claims\n> - **whitepaper_target:** ${target}`;
     }
 
+    function getAssistantPacketMarkdown(claim) {
+        const cr = claimResults[claim.id] || {};
+        const isReady =
+            claim.project_packet?.project_integration_status ===
+            "READY_FOR_EDITORIAL_REVIEW";
+        const isSupported =
+            getActualStatus(claim, claimResults) === "SUPPORTED";
+
+        let metricsList = "(No data)";
+        let verdict = "No mathematical proof executed yet.";
+
+        if (cr) {
+            console.log("CR_DEBUG_KEYS: ", JSON.stringify(Object.keys(cr)));
+        }
+        if (cr && cr.traceability) {
+            console.log("CR_TRACE_DEBUG: ", JSON.stringify(cr.traceability));
+        }
+
+        if (cr.traceability?.metrics?.length > 0) {
+            metricsList = cr.traceability.metrics
+                .map(
+                    (m) =>
+                        `- ${m.metric_name}: ${m.actual_value !== null ? Number(m.actual_value).toExponential(4) : "—"} (Rule: ${m.comparison_operator} ${m.threshold_rule})`,
+                )
+                .join("\n");
+            verdict = cr.traceability.overall_pass
+                ? "Values securely inside canonical bounds."
+                : "Values outside required canonical bounds.";
+        } else if (cr.passed_internal) {
+            verdict = "Exploratory metrics match expectations.";
+        }
+
+        let editorialConstraints = "";
+        if (claim.editorial_guidance) {
+            const ed = claim.editorial_guidance;
+            editorialConstraints = `
+## 3. EDITORIAL CONSTRAINTS
+- **What it means:** ${ed.what_it_means}
+- **What it does NOT mean:** ${ed.what_it_does_not_mean}
+- **Forbidden overclaims:**
+${ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n")}
+- **Safe wording bases:**
+${ed.safe_wording.map((s) => `  - ${s}`).join("\n")}
+- **Suggested whitepaper use:** ${ed.suggested_whitepaper_use}`;
+        } else {
+            editorialConstraints = `
+## 3. EDITORIAL CONSTRAINTS
+- **What it means:** ${claim.human_claim}
+- **What it does NOT mean:** ${claim.what_it_is_not || "N/A"}`;
+        }
+
+        let projectStatus =
+            claim.project_packet?.project_integration_status || "UNKNOWN";
+        let targetTopicId = claim.target_topic_id || "UNKNOWN";
+
+        let candidateTargets = "None specified";
+        if (claim.project_packet?.candidate_whitepaper_targets?.length > 0) {
+            candidateTargets = claim.project_packet.candidate_whitepaper_targets
+                .map(
+                    (t) =>
+                        `  - File: \`${t.file}\` (Topic: \`${t.target_topic_id}\`, Anchor: \`${t.current_anchor_if_known}\`, Confidence: ${t.confidence})\n    Rationale: ${t.rationale}`,
+                )
+                .join("\n");
+        }
+
+        let nextStepPrereqs = "None.";
+        let assistantAction =
+            "Review constraints and generate the final whitepaper prose for the target file.";
+        let antigravityAction = "None.";
+        let escalate = false;
+
+        if (!isReady) {
+            assistantAction =
+                "Reject drafting. Forward the ESCALATION instructions to the user to pass to the Secondary Agent.";
+            antigravityAction =
+                claim.project_packet?.recommended_next_step ||
+                "Resolve missing prerequisites.";
+            nextStepPrereqs =
+                claim.project_packet?.missing_prerequisites?.length > 0
+                    ? claim.project_packet.missing_prerequisites.join(" ")
+                    : "Missing prerequisites to be resolved by engineering.";
+            escalate = true;
+        }
+
+        return `# LINEUM HANDOFF PROTOCOL [v1.0.0]
+## META-INSTRUCTIONS FOR PRIMARY AGENT (ASSISTANT)
+- **Role:** You are the Primary Agent. You lead evidence review, safe wording, and overclaim prevention.
+- **Lineum Rule:** Do not rely on prior memory of equations, whitepapers, audits, or historical project state. Treat this packet as the absolute current source of truth for the Lineum project.
+- **Action Required:** Perform evidence review first. If \`Is this ready for wording proposal now?\` is NO, do not draft prose. Instead, output strict instructions for the Secondary Agent (Antigravity) based on the \`Missing prerequisite\` section.
+
+## 1. CLAIM DEFINITION
+- **Claim ID:** ${claim.id}
+- **Short Claim:** ${claim.short_claim}
+- **Scope:** ${claim.scope}
+- **Current Status:** ${getActualStatus(claim, claimResults)}
+- **Evidence Level:** ${isSupported ? "CANONICAL_AUDIT_SUITE" : cr.is_audit_grade ? "AUDIT_FAILED" : "NONE/EXPERIMENTAL"}
+- **Type:** ${claim.id.includes("CORE") ? "CANONICAL" : "EXPERIMENTAL"}
+
+## 2. ENGINEERING TRACEABILITY
+- **Active Profile:** ${cr.active_profile || "unknown"}
+- **Equation Fingerprint:** ${cr.traceability?.equation_fingerprint || "unknown"}
+- **Scenario ID:** ${claim.scenario_id || "None"}
+
+### Metrical Evidence
+${metricsList}
+**Verdict:** ${verdict}
+${editorialConstraints}
+
+## 4. PROJECT STATUS & NEXT STEPS
+- **Project Integration Status:** ${projectStatus}
+- **Target Topic ID:** ${targetTopicId}
+- **Candidate Targets:**
+${candidateTargets}
+
+### AUTOMATION ROUTING
+- **Is this ready for wording proposal now?** ${isReady ? "YES" : "NO"}
+- **Primary agent action:** ${assistantAction}
+- **Secondary agent required action:** ${antigravityAction}
+- **Missing prerequisite:** ${nextStepPrereqs}
+- **Escalation required:** ${escalate ? "True" : "False"}
+- **wording_proposal_allowed_now:** ${isReady ? "true" : "false"}
+- **claim_ready_for_editorial_use:** ${isReady ? "true" : "false"}
+- **escalate_to_secondary_agent:** ${escalate ? "true" : "false"}
+`;
+    }
+
+    let copyStates = {};
+    function copyToClipboard(claimId, type, text) {
+        const key = `${claimId}-${type}`;
+        copyStates[key] = "copying";
+        copyStates = { ...copyStates };
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {
+                copyStates[key] = "copied";
+                copyStates = { ...copyStates };
+                setTimeout(() => {
+                    copyStates[key] = "idle";
+                    copyStates = { ...copyStates };
+                }, 2000);
+            })
+            .catch((err) => {
+                console.error("Copy failed", err);
+                copyStates[key] = "failed";
+                copyStates = { ...copyStates };
+                setTimeout(() => {
+                    copyStates[key] = "idle";
+                    copyStates = { ...copyStates };
+                }, 2000);
+            });
+    }
+
     async function markAsApplied(claim) {
         savingApplied = true;
         const cr = claimResults[claim.id];
+        const isApp = isApplied(claim.id, integrationLog);
         const payload = {
-            event: "APPLIED",
+            event: isApp ? "REVERTED" : "APPLIED",
             claim_id: claim.id,
             applied_commit: currentBuild.split(" ")[0] || "unknown",
             contract_id: cr?.contract_id || contractId || "unknown",
@@ -410,6 +632,7 @@
                 details: data.message || "Executed.",
                 scenario_id: data.scenario_id,
                 active_profile: data.active_profile,
+                traceability: data.traceability,
             };
             claimResults = { ...claimResults };
         } catch (e) {
@@ -467,6 +690,131 @@
 
 <div class="claims-container">
     <div class="claims-sidebar">
+        {#if canonicalPromotion.canonical_promotion_status !== "NOT_READY"}
+            <div
+                class="promotion-block"
+                style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 20px;"
+            >
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;"
+                    on:click={() =>
+                        (isPromotionBlockExpanded = !isPromotionBlockExpanded)}
+                    on:keydown={(e) =>
+                        e.key === "Enter" &&
+                        (isPromotionBlockExpanded = !isPromotionBlockExpanded)}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div style="flex: 1;">
+                        <h4
+                            style="margin: 0 0 5px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;"
+                        >
+                            <span
+                                style="font-size: 10px; color: #8b949e; display: inline-block; width: 12px; text-align: center;"
+                                >{isPromotionBlockExpanded ? "▼" : "▶"}</span
+                            >
+                            Wave Core Promotion
+                        </h4>
+                        <div
+                            style="font-size: 12px; color: #8b949e; padding-left: 20px;"
+                        >
+                            {canonicalPromotion.required_claims_status.filter(
+                                (r) => r.is_ready,
+                            ).length} / {canonicalPromotion
+                                .required_claims_status.length} required claims
+                        </div>
+                    </div>
+                    <span
+                        style="font-size: 11px; padding: 2px 6px; border-radius: 12px; font-weight: bold; white-space: nowrap; {canonicalPromotion.canonical_promotion_status ===
+                        'CANONICAL_AUDITED'
+                            ? 'background: #238636; color: white;'
+                            : canonicalPromotion.canonical_promotion_status ===
+                                'READY_FOR_CANONICAL_PROMOTION'
+                              ? 'background: #9e6a03; color: white;'
+                              : 'background: #1f6feb; color: white;'}"
+                    >
+                        {canonicalPromotion.canonical_promotion_status.replace(
+                            /_/g,
+                            " ",
+                        )}
+                    </span>
+                </div>
+
+                {#if isPromotionBlockExpanded}
+                    <div
+                        style="margin-top: 15px; border-top: 1px solid #30363d; padding-top: 15px;"
+                    >
+                        <div
+                            style="font-size: 13px; color: #8b949e; margin-bottom: 15px;"
+                        >
+                            Goal: Elevating <span
+                                style="font-family: monospace;">wave_core</span
+                            > from provisional to canonical.
+                        </div>
+
+                        <div style="font-size: 13px;">
+                            <strong style="display: block; margin-bottom: 8px;"
+                                >Required Claims Status:</strong
+                            >
+                            <ul
+                                style="list-style: none; padding: 0; margin: 0 0 15px 0; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; max-height: 200px; overflow-y: auto;"
+                            >
+                                {#each canonicalPromotion.required_claims_status as req}
+                                    <li
+                                        style="padding: 8px 10px; border-bottom: 1px solid #30363d; background: {req.is_ready
+                                            ? '#051d14'
+                                            : '#161b22'}; display: flex; justify-content: space-between; align-items: center;"
+                                    >
+                                        <span
+                                            title={req.id}
+                                            style="font-family: monospace; font-size: 12px; color: {req.is_ready
+                                                ? '#3fb950'
+                                                : '#c9d1d9'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;"
+                                        >
+                                            {req.is_ready ? "✓" : "○"}
+                                            {req.id}
+                                        </span>
+                                        <span
+                                            style="font-size: 10px; color: #8b949e; text-align: right; line-height: 1;"
+                                            >{req.evidence_source.replace(
+                                                /_/g,
+                                                " ",
+                                            )}</span
+                                        >
+                                    </li>
+                                {/each}
+                            </ul>
+                        </div>
+
+                        {#if canonicalPromotion.missing_requirements.length > 0}
+                            <div style="font-size: 13px; color: #ff7b72;">
+                                <strong
+                                    style="display: block; margin-bottom: 4px;"
+                                    >Blockers:</strong
+                                >
+                                <ul style="padding-left: 20px; margin: 0;">
+                                    {#each canonicalPromotion.missing_requirements as blocker}
+                                        <li>{blocker}</li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        {/if}
+
+                        {#if canonicalPromotion.canonical_promotion_status === "READY_FOR_CANONICAL_PROMOTION"}
+                            <div
+                                style="font-size: 13px; color: #3fb950; margin-top: 15px; padding-top: 15px; border-top: 1px solid #30363d;"
+                            >
+                                <strong>Ready!</strong> Please run
+                                <span style="font-family: monospace;"
+                                    >Generate Audit Contract</span
+                                > to finalize promotion.
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
+            </div>
+        {/if}
+
         <div class="filter-section">
             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                 <input
@@ -553,7 +901,11 @@
                 <button
                     class="bulk-btn verify-all-btn"
                     on:click={verifyAllClaims}
-                    disabled={isVerifyingAll}
+                    disabled={isVerifyingAll ||
+                        !productionSafety.can_verify_all}
+                    title={!productionSafety.can_verify_all
+                        ? productionSafety.reason
+                        : "Verify all claims"}
                 >
                     {isVerifyingAll
                         ? "Verifying..."
@@ -627,7 +979,11 @@
                         claim,
                         claimResults,
                     ).toLowerCase()}"
+                    role="button"
+                    tabindex="0"
                     on:click={() => selectClaim(claim.id)}
+                    on:keydown={(e) =>
+                        e.key === "Enter" && selectClaim(claim.id)}
                 >
                     <div class="claim-header">
                         <span class="claim-id">{claim.id}</span>
@@ -716,7 +1072,10 @@
                 <div class="source-link">
                     <strong>Source:</strong>
                     <a
-                        href="vscode://file/C:/lineum-core/whitepapers/1-core/extensions/{selectedClaim.source_file}"
+                        href="/wiki/{selectedClaim.source_file.replace(
+                            /\.md$/,
+                            '',
+                        )}"
                         target="_blank"
                     >
                         {selectedClaim.source_file}
@@ -780,9 +1139,75 @@
                 {/if}
 
                 <!-- Falsification -->
-                {#if selectedClaim.falsification_needed !== undefined}
+                {#if selectedClaim.falsification_mode || selectedClaim.falsification_needed !== undefined}
                     <div class="falsification-section">
-                        <h3>Falsification</h3>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: baseline;"
+                        >
+                            <h3>Falsification State</h3>
+                            {#if selectedClaim.falsification_mode}
+                                <span
+                                    style="font-size: 11px; padding: 2px 6px; background: rgba(31, 111, 235, 0.15); color: #58a6ff; border: 1px solid rgba(31, 111, 235, 0.3); border-radius: 12px; font-family: monospace;"
+                                >
+                                    {selectedClaim.falsification_mode}
+                                </span>
+                            {/if}
+                        </div>
+
+                        {#if selectedClaim.falsification_mode}
+                            <div
+                                class="fals-meta-grid"
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; font-size: 13px; background: #0d1117; padding: 12px; border-radius: 6px; border: 1px solid #30363d;"
+                            >
+                                <div>
+                                    <strong
+                                        style="color: #8b949e; display: block; font-size: 11px; text-transform: uppercase;"
+                                        >Status</strong
+                                    >
+                                    <span
+                                        class="mono"
+                                        style="font-weight: bold; color: {selectedClaim.falsification_status ===
+                                        'FAILED'
+                                            ? '#f85149'
+                                            : selectedClaim.falsification_status ===
+                                                'PASSED'
+                                              ? '#3fb950'
+                                              : '#d29922'};"
+                                    >
+                                        {selectedClaim.falsification_status ||
+                                            "NOT_RUN"}
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong
+                                        style="color: #8b949e; display: block; font-size: 11px; text-transform: uppercase;"
+                                        >Evidence Source</strong
+                                    >
+                                    <span class="mono"
+                                        >{selectedClaim.falsification_evidence_source?.replace(
+                                            /_/g,
+                                            " ",
+                                        ) || "NONE"}</span
+                                    >
+                                </div>
+                                {#if selectedClaim.last_falsification_run_id}
+                                    <div
+                                        style="grid-column: 1 / -1; margin-top: 4px; padding-top: 8px; border-top: 1px solid #21262d;"
+                                    >
+                                        <strong
+                                            style="color: #8b949e; display: inline-block; width: 60px; font-size: 11px;"
+                                            >Run ID:</strong
+                                        >
+                                        <span
+                                            class="mono"
+                                            style="color: #c9d1d9; font-size: 11px;"
+                                            >{selectedClaim.last_falsification_run_id}</span
+                                        >
+                                    </div>
+                                {/if}
+                            </div>
+                        {/if}
+
                         <div class="fals-status">
                             <strong>Falsification needed:</strong>
                             <span
@@ -855,7 +1280,7 @@
                         </p>
                     </div>
 
-                    {#if selectedClaim.testability === "TESTABLE_NOW" && (getActualStatus(selectedClaim, claimResults) === "UNTESTED" || getActualStatus(selectedClaim, claimResults) === "OUTDATED")}
+                    {#if selectedClaim.testability === "TESTABLE_NOW"}
                         <div class="action-box">
                             <button
                                 class="run-btn"
@@ -918,6 +1343,103 @@
                                     </div>
                                 {/if}
                             </div>
+                        </div>
+                    {/if}
+
+                    {#if claimResults[selectedClaim.id] && claimResults[selectedClaim.id].traceability}
+                        <div class="traceability-box">
+                            <h4>Computation Traceability</h4>
+
+                            <div class="trace-grid">
+                                <strong>Execution Device:</strong>
+                                <span
+                                    >{claimResults[selectedClaim.id]
+                                        .traceability.execution_device}</span
+                                >
+
+                                <strong>Deterministic Mode:</strong>
+                                <span
+                                    >{claimResults[selectedClaim.id]
+                                        .traceability.deterministic_mode
+                                        ? "Yes (Enforced)"
+                                        : "No"}</span
+                                >
+
+                                <strong>Equation Fingerprint:</strong>
+                                <span class="mono small breakable"
+                                    >{claimResults[selectedClaim.id]
+                                        .traceability
+                                        .equation_fingerprint}</span
+                                >
+
+                                <strong>Overall Result:</strong>
+                                <span
+                                    class="verdict {claimResults[
+                                        selectedClaim.id
+                                    ].traceability.overall_pass
+                                        ? 'pass'
+                                        : 'fail'}"
+                                >
+                                    {claimResults[selectedClaim.id].traceability
+                                        .overall_pass
+                                        ? "SUPPORTED"
+                                        : "CONTRADICTED"}
+                                </span>
+                            </div>
+
+                            {#if claimResults[selectedClaim.id].traceability.metrics && claimResults[selectedClaim.id].traceability.metrics.length > 0}
+                                <h5>Evaluated Rules & Metrics</h5>
+                                <div class="trace-table-container">
+                                    <table class="trace-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Actual Value</th>
+                                                <th>Rule</th>
+                                                <th>Verdict</th>
+                                                <th>Source</th>
+                                                <th>Reason</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {#each claimResults[selectedClaim.id].traceability.metrics as metricObj}
+                                                <tr>
+                                                    <td class="mono"
+                                                        >{metricObj.metric_name}</td
+                                                    >
+                                                    <td class="mono">
+                                                        {metricObj.actual_value !==
+                                                        null
+                                                            ? Number(
+                                                                  metricObj.actual_value,
+                                                              ).toExponential(4)
+                                                            : "—"}
+                                                    </td>
+                                                    <td class="mono"
+                                                        >{metricObj.comparison_operator}
+                                                        {metricObj.threshold_rule}</td
+                                                    >
+                                                    <td
+                                                        class="verdict-col {metricObj.passed
+                                                            ? 'pass'
+                                                            : 'fail'}"
+                                                    >
+                                                        {metricObj.passed
+                                                            ? "PASS"
+                                                            : "FAIL"}
+                                                    </td>
+                                                    <td class="mono small"
+                                                        >{metricObj.source_file_or_field}</td
+                                                    >
+                                                    <td class="reason-cell"
+                                                        >{metricObj.why_status_changed}</td
+                                                    >
+                                                </tr>
+                                            {/each}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {/if}
                         </div>
                     {/if}
 
@@ -1052,7 +1574,7 @@
                                     class="evidence-textarea"
                                     rows="12"
                                     style="width: 100%; background: #010409; color: #c9d1d9; border: 1px solid #30363d; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 13px; margin: 10px 0;"
-                                    >{getEvidenceMarkdown(
+                                    >{getAssistantPacketMarkdown(
                                         selectedClaim,
                                     )}</textarea
                                 >
@@ -1061,15 +1583,56 @@
                                     style="display: flex; gap: 10px;"
                                 >
                                     <button
+                                        class="run-btn copy agent-handoff"
+                                        style="background: #1f6feb; border-color: #388bfd; margin-right: auto;"
+                                        on:click={() =>
+                                            copyToClipboard(
+                                                selectedClaim.id,
+                                                "assistant",
+                                                getAssistantPacketMarkdown(
+                                                    selectedClaim,
+                                                ),
+                                            )}
+                                    >
+                                        {copyStates[
+                                            `${selectedClaim.id}-assistant`
+                                        ] === "copying"
+                                            ? "⏳ Copying..."
+                                            : copyStates[
+                                                    `${selectedClaim.id}-assistant`
+                                                ] === "copied"
+                                              ? "✓ Copied"
+                                              : copyStates[
+                                                      `${selectedClaim.id}-assistant`
+                                                  ] === "failed"
+                                                ? "❌ Failed"
+                                                : "📋 Copy for Assistant"}
+                                    </button>
+                                    <button
                                         class="run-btn copy"
-                                        on:click={() => {
-                                            navigator.clipboard.writeText(
+                                        on:click={() =>
+                                            copyToClipboard(
+                                                selectedClaim.id,
+                                                "block",
                                                 getEvidenceMarkdown(
                                                     selectedClaim,
                                                 ),
-                                            );
-                                        }}>Copy Block to Clipboard</button
+                                            )}
                                     >
+                                        {copyStates[
+                                            `${selectedClaim.id}-block`
+                                        ] === "copying"
+                                            ? "⏳"
+                                            : copyStates[
+                                                    `${selectedClaim.id}-block`
+                                                ] === "copied"
+                                              ? "✓ Copied"
+                                              : copyStates[
+                                                      `${selectedClaim.id}-block`
+                                                  ] === "failed"
+                                                ? "❌ Failed"
+                                                : "Copy Block to Clipboard"}
+                                    </button>
                                     <button
                                         class="run-btn mark-applied"
                                         style="background: {isApplied(
@@ -1078,10 +1641,10 @@
                                         )
                                             ? '#2e6b38'
                                             : '#238636'};"
-                                        disabled={isApplied(
-                                            selectedClaim.id,
-                                            integrationLog,
-                                        ) || savingApplied}
+                                        disabled={savingApplied ||
+                                            selectedClaim.editorial_guidance
+                                                ?.suggested_whitepaper_use ===
+                                                "DO_NOT_USE_IN_WHITEPAPER_YET"}
                                         on:click={() =>
                                             markAsApplied(selectedClaim)}
                                     >
@@ -1091,7 +1654,7 @@
                                                     selectedClaim.id,
                                                     integrationLog,
                                                 )
-                                              ? "✓ Logged as Applied"
+                                              ? "Unmark Applied"
                                               : "Mark as Applied in Log"}
                                     </button>
                                 </div>
@@ -1121,6 +1684,14 @@
             Arial, sans-serif;
     }
 
+    @media (max-width: 768px) {
+        .claims-container {
+            flex-direction: column;
+            height: auto;
+            min-height: calc(100vh - 80px);
+        }
+    }
+
     .claims-sidebar {
         width: 350px;
         border-right: 1px solid #30363d;
@@ -1128,6 +1699,15 @@
         flex-direction: column;
         background: #010409;
         position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .claims-sidebar {
+            width: 100%;
+            height: 400px;
+            border-right: none;
+            border-bottom: 1px solid #30363d;
+        }
     }
 
     .global-audit-indicator {
@@ -1179,24 +1759,7 @@
     .global-audit-indicator:hover .audit-hover-panel {
         display: block;
     }
-    .audit-hover-panel h4 {
-        margin: 0 0 12px 0;
-        color: #c9d1d9;
-        font-size: 13px;
-        border-bottom: 1px solid #30363d;
-        padding-bottom: 8px;
-    }
-    .audit-hover-panel .h-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 6px;
-        font-size: 12px;
-        color: #8b949e;
-    }
-    .audit-hover-panel .mono {
-        font-family: monospace;
-        color: #c9d1d9;
-    }
+
     .summary-counts .s-pass {
         color: #3fb950;
         font-weight: bold;
@@ -1416,9 +1979,90 @@
         color: #58a6ff;
     }
     .evidence-meta {
-        font-size: 12px;
-        line-height: 1.8;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: #a0aec0;
+    }
+
+    .traceability-box {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid #1f1f35;
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 12px;
+    }
+    .traceability-box h4 {
+        margin: 0 0 10px 0;
         color: #8b949e;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .traceability-box h5 {
+        margin: 12px 0 6px 0;
+        color: #c9d1d9;
+        font-size: 0.8rem;
+    }
+    .trace-grid {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 4px 12px;
+        font-size: 0.8rem;
+        color: #c9d1d9;
+    }
+    .trace-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        margin-top: 6px;
+    }
+    .trace-table th {
+        text-align: left;
+        color: #8b949e;
+        padding: 4px 8px;
+        border-bottom: 1px solid #1f1f35;
+        font-weight: 500;
+    }
+    .trace-table td {
+        padding: 4px 8px;
+        border-bottom: 1px solid #1f1f35;
+        color: #c9d1d9;
+    }
+
+    .verdict {
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 1px 6px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    .verdict.pass {
+        background: rgba(46, 160, 67, 0.15);
+        color: #3fb950;
+        border: 1px solid rgba(63, 185, 80, 0.4);
+    }
+    .verdict.fail {
+        background: rgba(248, 81, 73, 0.15);
+        color: #f85149;
+        border: 1px solid rgba(248, 81, 73, 0.4);
+    }
+
+    .verdict-col {
+        font-weight: 700;
+    }
+    .verdict-col.pass {
+        color: #3fb950;
+    }
+    .verdict-col.fail {
+        color: #f85149;
+    }
+
+    .reason-cell {
+        font-size: 0.75rem;
+        color: #8b949e;
+        max-width: 250px;
+        white-space: normal;
+        line-height: 1.3;
     }
     .evidence-meta code {
         background: #0d1117;
@@ -1730,12 +2374,6 @@
 
     .scientific-render :global(.katex) {
         font-size: 1.05em; /* Make math slightly bigger to match system font */
-    }
-    .ep-col ul {
-        margin: 0;
-        padding-left: 20px;
-        font-size: 14px;
-        color: #8b949e;
     }
 
     .testing-section {

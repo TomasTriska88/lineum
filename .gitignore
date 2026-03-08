@@ -56,8 +56,88 @@ docs/reports/2026-02-17-audit/audit_report.md
 # Generated Ingestion Artifacts
 artifacts/
 routing_backend/artifacts/
+__pycache__/
+/.vscode
+
+# Temporary helper scripts (Antigravity scratch convention)
+**/.scratch/
+!**/.scratch/README.md
+
+# Simulation output (generated, not versioned)
+# Simulation output (generated, not versioned)
+output*/
+!output_wp/
+output/repro/packs/
+verify_output/
+test_out/
+output_verification*/
+verify_audit*/
+audit_verification*/
+
+# Temp files
+*.tmp
+*.log
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs
+dist/
+.svelte-kit/
+build/
+vite.config.js.timestamp-*
+*.mjs.map
+
+# Lab data (generated, matched by extract_audit_data.py)
+# lab/public/data/runs/*
+# lab/public/data/*.json
+!lab/public/data/manifest.json
+
+# Local debug/proof artifacts (Antigravity)
+repro_*.py
+repro_*.txt
+console_*.txt
+final_*.txt
+alias_*.txt
+test_output*.txt
+contract_*.txt
+
+# Portal build-time synced data (unignored for Railway standalone deployment)
+portal/src/lib/data/ai_index.json
+# portal/src/lib/data/
+repro_audit.ps1
+docs/reports/2026-02-17-audit/audit_report.md
+
+# Generated Ingestion Artifacts
+artifacts/
+routing_backend/artifacts/
 logs/
 
 # Playwright Test Artifacts
 lab/playwright-report/
 lab/test-results/
+
+# -------------------------------------------------------------
+# LIGHTWEIGHT AUDIT ARTIFACT POLICY
+# -------------------------------------------------------------
+# Ignore everything inside historical run directories by default
+output_wp/runs/*/*
+
+# MUST unignore the whitepaper contract suite directory & contents
+!output_wp/runs/_whitepaper_contract/
+!output_wp/runs/_whitepaper_contract/*
+
+# WHITELIST: Lightweight metadata and summaries per run
+!output_wp/runs/*/*_manifest.json
+!output_wp/runs/*/_LOCK.json
+!output_wp/runs/*/run_summary.csv
+!output_wp/runs/*/*_rolling_metrics.json
+!output_wp/runs/*/*_metrics_summary.csv
+!output_wp/runs/*/*_multi_spectrum_summary.csv
+!output_wp/runs/*/portal_params.json
+
+# Explicitly exclude the quarantine archive entirely
+output_wp/archive/

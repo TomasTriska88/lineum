@@ -12,6 +12,9 @@ export default defineConfig({
         },
         port: 5174,
         strictPort: true,
+        watch: {
+            ignored: ['**/output_wp/**', '**/.scratch/**']
+        }
     },
     test: {
         environment: 'jsdom',

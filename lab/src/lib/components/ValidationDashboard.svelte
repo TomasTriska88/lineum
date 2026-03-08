@@ -372,6 +372,8 @@
     onMount(async () => {
         await fetchHistory();
         await fetchHealth();
+        window.addEventListener("audit-completed", fetchHealth);
+        return () => window.removeEventListener("audit-completed", fetchHealth);
     });
 
     async function fetchHealth() {

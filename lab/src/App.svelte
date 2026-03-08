@@ -29,11 +29,39 @@
     let maximizedChart = null; // { title, config }
     let error = null;
 
+    let auditConfig = null;
+    let showCudaWarning = false;
+    let auditProgressText = "GENERATING...";
+    let auditProgressStep = 0;
+
     // Persist active tab across reloads
     const savedTab = localStorage.getItem("lab_active_tab");
     let activeTab = savedTab || "stats";
 
-    let mainMode = "simulator";
+    // Persist main section via URL Hash + localStorage fallback
+    const getInitialMode = () => {
+        if (typeof window !== "undefined") {
+            const hash = window.location.hash.replace("#", "");
+            if (hash === "whitepapers" || hash === "whitepaper") {
+                window.location.hash = "claims";
+                return "claims";
+            }
+            const validModes = ["simulator", "validation", "claims", "lpl"];
+            if (validModes.includes(hash)) return hash;
+            const savedMode = localStorage.getItem("lab_main_mode");
+            if (validModes.includes(savedMode)) return savedMode;
+        }
+        return "simulator";
+    };
+
+    let mainMode = getInitialMode();
+
+    $: if (mainMode && typeof window !== "undefined") {
+        localStorage.setItem("lab_main_mode", mainMode);
+        if (window.location.hash !== "#" + mainMode) {
+            window.location.hash = mainMode;
+        }
+    }
 
     $: if (activeTab) {
         localStorage.setItem("lab_active_tab", activeTab);
@@ -54,6 +82,18 @@
     }
 
     onMount(async () => {
+        window.addEventListener("hashchange", () => {
+            let hash = window.location.hash.replace("#", "");
+            if (hash === "whitepapers" || hash === "whitepaper") {
+                window.location.hash = "claims";
+                hash = "claims";
+            }
+            const validModes = ["simulator", "validation", "claims", "lpl"];
+            if (validModes.includes(hash) && mainMode !== hash) {
+                mainMode = hash;
+            }
+        });
+
         try {
             const res = await fetch("/data/manifest.json");
             if (!res.ok) throw new Error("Manifest not found");
@@ -63,6 +103,15 @@
                 await loadRun(manifest[0].run_id);
             } else {
                 loading = false;
+            }
+
+            try {
+                const cfgRes = await fetch(
+                    "http://localhost:8000/api/lab/audit/config",
+                );
+                if (cfgRes.ok) auditConfig = await cfgRes.json();
+            } catch (e) {
+                console.warn("Could not fetch audit config", e);
             }
         } catch (e) {
             console.error("Initialization failed:", e);
@@ -153,34 +202,83 @@
 
     let isGeneratingAudit = false;
 
+    function initiateAuditGeneration() {
+        if (!auditConfig?.allowed) return;
+        if (auditConfig.execution_device === "cpu") {
+            showCudaWarning = true;
+        } else {
+            generateAuditContract();
+        }
+    }
+
     async function generateAuditContract() {
         if (isGeneratingAudit) return;
         isGeneratingAudit = true;
+        showCudaWarning = false;
+        auditProgressText = "Starting up...";
+
         try {
-            const res = await fetch(
+            const response = await fetch(
                 "http://localhost:8000/api/lab/audit/generate",
                 {
                     method: "POST",
                 },
             );
-            if (!res.ok) throw new Error("Audit generation failed");
-            const data = await res.json();
-            alert(
-                "Audit Contract Generated!\nStatus: " +
-                    data.audit_status +
-                    "\nRun ID: " +
-                    data.new_run_id,
-            );
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
 
-            // Reload manifest to show new run
-            try {
-                const mRes = await fetch("/data/manifest.json");
-                if (mRes.ok) manifest = await mRes.json();
-            } catch (e) {}
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const lines = decoder
+                    .decode(value, { stream: true })
+                    .split("\n");
+                for (const line of lines) {
+                    if (line.startsWith("data: ")) {
+                        try {
+                            const data = JSON.parse(line.substring(6));
+                            auditProgressText = data.detail || "GENERATING...";
+                            auditProgressStep = data.step || 0;
+
+                            if (data.status === "success") {
+                                alert(
+                                    "Audit Contract Generated!\nStatus: " +
+                                        data.audit_status +
+                                        "\nRun ID: " +
+                                        data.new_run_id +
+                                        "\nElapsed: " +
+                                        data.elapsed +
+                                        "s",
+                                );
+                                window.dispatchEvent(
+                                    new CustomEvent("audit-completed"),
+                                );
+                                try {
+                                    const mRes = await fetch(
+                                        "/data/manifest.json",
+                                    );
+                                    if (mRes.ok) manifest = await mRes.json();
+                                } catch (e) {}
+                                isGeneratingAudit = false;
+                                return;
+                            } else if (data.status === "error") {
+                                throw new Error(data.detail);
+                            }
+                        } catch (e) {
+                            if (
+                                e.message &&
+                                e.message !== "Unexpected end of JSON input"
+                            ) {
+                                throw e;
+                            }
+                        }
+                    }
+                }
+            }
         } catch (err) {
             console.error(err);
             alert("Failed to generate audit contract: " + err.message);
-        } finally {
             isGeneratingAudit = false;
         }
     }
@@ -277,8 +375,8 @@
                 Validation Core
             </button>
             <button
-                class:active={mainMode === "whitepaper"}
-                on:click={() => (mainMode = "whitepaper")}
+                class:active={mainMode === "claims"}
+                on:click={() => (mainMode = "claims")}
             >
                 Claims
             </button>
@@ -290,13 +388,19 @@
             </button>
             <div class="divider"></div>
             <button
-                class="btn-generate-audit {isGeneratingAudit ? 'pulse' : ''}"
-                on:click={generateAuditContract}
-                disabled={isGeneratingAudit}
-                title="Generates a local canonical contract in output_wp/"
+                class="btn-generate-audit"
+                class:pulse={isGeneratingAudit}
+                class:disabled-audit={auditConfig && !auditConfig.allowed}
+                on:click={initiateAuditGeneration}
+                disabled={(auditConfig && !auditConfig.allowed) ||
+                    isGeneratingAudit}
+                title={auditConfig?.reason ||
+                    "Generates a local canonical contract in output_wp/"}
             >
                 {#if isGeneratingAudit}
-                    <span class="icon">⏳</span> GENERATING...
+                    <span class="icon">⏳</span> {auditProgressText}
+                {:else if auditConfig && !auditConfig.allowed}
+                    <span class="icon">🔒</span> LOCAL ONLY
                 {:else}
                     🛡️ GENERATE AUDIT CONTRACT
                 {/if}
@@ -324,7 +428,7 @@
         <div class="fullscreen-mode">
             <ValidationDashboard />
         </div>
-    {:else if mainMode === "whitepaper"}
+    {:else if mainMode === "claims"}
         <div class="fullscreen-mode">
             <WhitepaperClaims />
         </div>
@@ -554,6 +658,89 @@
                             showMax={false}
                         />
                     {/key}
+                </div>
+            </div>
+        </div>
+    {/if}
+
+    {#if showCudaWarning}
+        <div class="global-modal-overlay">
+            <div class="modal-content warning-modal" style="max-width: 500px">
+                <div class="modal-header">
+                    <h3>⚠️ Performance Warning</h3>
+                    <button
+                        class="close-btn"
+                        on:click={() => (showCudaWarning = false)}
+                        >&times;</button
+                    >
+                </div>
+                <div class="modal-body">
+                    <p
+                        style="margin-bottom: 12px; font-size: 1.1rem; color: #ffeb3b;"
+                    >
+                        <strong>Canonical runs enforced on CPU</strong>
+                    </p>
+                    <div
+                        style="background: rgba(0,0,0,0.3); border: 1px solid #1f1f35; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-family: monospace; font-size: 0.85rem; color: #a0aec0;"
+                    >
+                        <div>
+                            <strong style="color: #cbd5e1;"
+                                >Execution Device:</strong
+                            >
+                            {auditConfig?.execution_device || "CPU"}
+                        </div>
+                        <div>
+                            <strong style="color: #cbd5e1;"
+                                >Deterministic Mode:</strong
+                            >
+                            {auditConfig?.deterministic_mode
+                                ? "Enabled"
+                                : "Disabled"}
+                        </div>
+                        <div>
+                            <strong style="color: #cbd5e1;"
+                                >CUDA Available:</strong
+                            >
+                            {auditConfig?.cuda_available ? "Yes" : "No"}
+                        </div>
+                        <div>
+                            <strong style="color: #cbd5e1;"
+                                >Canonical on CUDA Allowed:</strong
+                            >
+                            {auditConfig?.canonical_audit_allowed_on_cuda
+                                ? "Yes"
+                                : "No"}
+                        </div>
+                        {#if auditConfig?.reason}
+                            <div style="margin-top: 8px; color: #f87171;">
+                                <strong style="color: #cbd5e1;">Reason:</strong>
+                                {auditConfig.reason}
+                            </div>
+                        {/if}
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.5;">
+                        This canonical audit requires solving the Lineum Eq-7
+                        wavefield over 2,000 steps. It will run on <strong
+                            >{auditConfig?.device_name || "CPU"}</strong
+                        > and may be much slower (approx 2-5 minutes). Do you want
+                        to continue?
+                    </p>
+                    <div
+                        style="display: flex; gap: 16px; margin-top: 24px; justify-content: flex-end;"
+                    >
+                        <button
+                            class="btn-cancel"
+                            on:click={() => (showCudaWarning = false)}
+                            style="background: transparent; border: 1px solid #4a4a5a; padding: 8px 16px; border-radius: 6px; cursor: pointer; color: #fff;"
+                            >Cancel</button
+                        >
+                        <button
+                            class="btn-proceed"
+                            on:click={generateAuditContract}
+                            style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; padding: 8px 16px; border-radius: 6px; cursor: pointer; color: #fef08a; font-weight: bold;"
+                            >Continue on CPU</button
+                        >
+                    </div>
                 </div>
             </div>
         </div>

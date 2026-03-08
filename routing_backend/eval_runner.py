@@ -20,14 +20,10 @@ def init_state(grid_size=64):
     }
 
 def set_seed(seed):
-    np.random.seed(seed)
-    try:
-        import torch
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-    except ImportError:
-        pass
+    # Resolve determinism using centralized policy
+    from lineum_core.math import ExecutionPolicy
+    is_audit = (str(os.environ.get("LINEUM_RUN_MODE", "true")).lower() == "false")
+    ExecutionPolicy.init_core_determinism(enforce_canonical=is_audit, seed=seed)
 
 def run_iteration(mode, grid, dt, seed, cfg):
     encoder = TextToWaveEncoder(grid_size=grid, plasticity_tau=200)
