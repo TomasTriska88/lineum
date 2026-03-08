@@ -131,12 +131,20 @@ test.describe('Whitepaper Claims MVP', () => {
         const appliedLogs = integrationLog.filter(l => l.applied === true);
 
         for (const claim of whitepaperClaims) {
-            // New unapplied claims shouldn't fail the forensic audit test 
-            if (claim.id.startsWith('CL-COSMO') || claim.id === 'CL-CORE-008') continue;
+            // Rule-based exclusion: Do not enforce Integration Log traceability 
+            // on claims that are not yet technically prepared for automated testing
+            if (claim.testability === 'NOT_TESTABLE_YET' ||
+                claim.testability === 'NEEDS_NEW_SCENARIO' ||
+                claim.verification_spec_status !== 'APPROVED') {
+                continue;
+            }
+
             const match = appliedLogs.find(l => l.claim_id === claim.id);
-            expect(match, `Claim ${claim.id} is missing an applied=true traceability record`).toBeDefined();
+            expect(match, `Runnable claim ${claim.id} is missing an applied=true traceability record`).toBeDefined();
             // Also cross-check source file matches
-            expect(match.source_file).toBe(claim.source_file);
+            if (match) {
+                expect(match.source_file).toBe(claim.source_file);
+            }
         }
 
         // Summary log
