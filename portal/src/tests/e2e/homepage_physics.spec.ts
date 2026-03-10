@@ -13,8 +13,8 @@ test.describe('Lineum Homepage UI Updates', () => {
             await mobileToggle.click();
         }
 
-        // 1. Check if the Lab link is visible directly via href (i18n safe)
-        const labLink = page.locator('a[href="/#lab"]');
+        // 1. Check if the Lab link is visible (i18n safe)
+        const labLink = page.locator('.nav-links a[target="simulacrum"]');
         await expect(labLink).toBeVisible();
 
         // 1.5 & 2 Check if API Solutions and Engraving are visible (only if enabled via env)

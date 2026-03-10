@@ -254,43 +254,17 @@
     </div>
 </section>
 
-<footer class="container">
-    <div class="footer-content">
-        <div class="footer-info">
-            <p>{m.footer_copy()}</p>
-            <!-- <div class="operator-info">
-                Operator info removed temporarily until dynamic translations for config are ready
-            </div> -->
-        </div>
-        <div class="footer-links">
-            <a href="/support">{m.footer_support()}</a>
-            <a href="/privacy">{m.footer_privacy()}</a>
-            <a
-                href="https://github.com/TomasTriska88/lineum-core/tree/{commitHash}"
-                target="_blank"
-                style="color: var(--accent-cyan);"
-                >Source (AGPLv3) - Commit: {commitHash}</a
-            >
-            <a
-                href="https://github.com/TomasTriska88/lineum-private"
-                target="_blank">{m.footer_github()}</a
-            >
-        </div>
-    </div>
-</footer>
-
 <style>
-    :global(:root) {
-        --nav-height: 0px;
-    }
     .hero {
         height: 100vh;
         display: flex;
         align-items: center;
         position: relative;
         overflow: visible;
-        margin-top: -64px;
-        padding-top: 64px;
+        margin-top: calc(
+            -1 * var(--nav-height, 120px)
+        ); /* Pull hero up under nav */
+        padding-top: var(--nav-height, 120px); /* Push content back down */
     }
 
     .shader-overlay {
@@ -491,25 +465,6 @@
         }
     }
 
-    footer {
-        padding: 4rem 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 4rem;
-    }
-
-    .footer-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #555;
-        font-size: 0.9rem;
-    }
-
-    .footer-links {
-        display: flex;
-        gap: 2rem;
-    }
-
     @media (max-width: 768px) {
         .hero {
             flex-direction: column;
@@ -556,17 +511,6 @@
 
         .scientific-grid {
             grid-template-columns: 1fr;
-        }
-
-        .footer-content {
-            flex-direction: column;
-            gap: 2rem;
-            text-align: center;
-        }
-
-        .footer-links {
-            flex-direction: column;
-            gap: 1rem;
         }
     }
 </style>

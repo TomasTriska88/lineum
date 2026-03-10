@@ -79,7 +79,7 @@ a:hover {
 .animate-breathe {
     animation: breathe 4s ease-in-out infinite;
     transform-origin: bottom center;
-    display: inline-block;
+    display: flex;
     vertical-align: bottom;
     will-change: transform, filter;
 }

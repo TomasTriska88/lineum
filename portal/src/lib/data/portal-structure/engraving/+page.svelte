@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Logo from "$lib/components/Logo.svelte";
 
     // State Types
     type Block = {
@@ -245,8 +246,19 @@
                     class="primary-btn pulse-hover"
                     on:click={uploadFiles}
                     disabled={isUploading || !files}
+                    style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
                 >
-                    {isUploading ? "Staging..." : "Upload & Preview"}
+                    {#if isUploading}
+                        <Logo
+                            width={20}
+                            height={20}
+                            color="#fff"
+                            variant="infinity_draw"
+                        />
+                        Staging...
+                    {:else}
+                        Upload & Preview
+                    {/if}
                 </button>
             </div>
             {#if errorMsg}

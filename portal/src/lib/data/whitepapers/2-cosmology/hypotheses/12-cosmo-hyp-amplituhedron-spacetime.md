@@ -1,5 +1,5 @@
 **Title:** Cosmology Hypothesis: The Amplituhedron and Emergent Spacetime
-**Document ID: 12-cosmo-hyp-amplituhedron-spacetime
+**Document ID:** 12-cosmo-hyp-amplituhedron-spacetime
 **Document Type:** Hypothesis
 **Version:** 1.0.0
 **Status:** Draft

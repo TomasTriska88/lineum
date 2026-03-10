@@ -1,5 +1,5 @@
 **Title:** Tříska’s Spectral Mirror Hypothesis
-**Document ID:** 06-hyp-spectral-mirror
+**Document ID:** 08-cosmo-hyp-spectral-mirror
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

@@ -1,5 +1,5 @@
 **Title:** Tříska’s Conceptual Notes on Transverson Resonance (Hypothesis)
-**Document ID:** 07-hyp-transverson-resonance
+**Document ID:** 09-cosmo-hyp-transverson-resonance
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

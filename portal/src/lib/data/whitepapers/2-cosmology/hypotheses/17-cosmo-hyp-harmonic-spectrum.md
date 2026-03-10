@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Harmonic Structure of the Lineum Spectrum (Tříska’s Harmonic Spectrum Hypothesis)
-**Document ID: 17-cosmo-hyp-harmonic-spectrum
+**Document ID:** 17-cosmo-hyp-harmonic-spectrum
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

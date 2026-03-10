@@ -1,5 +1,5 @@
 **Title:** Tříska’s Autodestructive Spectrum Hypothesis
-**Document ID: 13-cosmo-hyp-autodestructive-spectrum
+**Document ID:** 13-cosmo-hyp-autodestructive-spectrum
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Spectral Depth of the Lineum Field (Tříska’s Harmonic Depth Hypothesis)
-**Document ID: 16-cosmo-hyp-harmonic-depth
+**Document ID:** 16-cosmo-hyp-harmonic-depth
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

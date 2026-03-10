@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Homogeneous Quasiparticle Emergence (Homogeneous Quasiparticle Emergence)
-**Document ID: 18-cosmo-hyp-particle-emergence
+**Document ID:** 18-cosmo-hyp-particle-emergence
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

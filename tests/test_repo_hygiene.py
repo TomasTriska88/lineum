@@ -34,3 +34,30 @@ def test_critical_files_exist():
     for relative_path in critical_files:
         file_path = root / relative_path
         assert file_path.exists(), f"CRITICAL FILE MISSING: {relative_path}. This file must never be deleted!"
+
+def test_no_duplicate_whitepaper_numbers():
+    """Ensures that no two whitepapers in the same category directory share the same numerical prefix."""
+    root = Path(__file__).resolve().parent.parent
+    wp_dir = root / "whitepapers"
+    
+    if not wp_dir.exists():
+        return
+        
+    for category_dir in wp_dir.iterdir():
+        if not category_dir.is_dir():
+            continue
+            
+        hypotheses_dir = category_dir / "hypotheses"
+        if not hypotheses_dir.exists():
+            continue
+            
+        seen_numbers = {}
+        for md_file in hypotheses_dir.glob("*.md"):
+            name = md_file.name
+            # Extract the leading number, e.g. "35" from "35-cosmo-hyp-neural-resonance.md"
+            parts = name.split('-')
+            if parts and parts[0].isdigit():
+                num = int(parts[0])
+                if num in seen_numbers:
+                    assert False, f"DUPLICATE WHITEPAPER NUMBER DETECTED in {category_dir.name}: #{num}\nFiles: {seen_numbers[num]} AND {name}"
+                seen_numbers[num] = name

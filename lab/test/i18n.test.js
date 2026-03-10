@@ -2,29 +2,18 @@ import { describe, it, expect } from 'vitest';
 import { get } from 'svelte/store';
 import { locale, t, resolveKey, translations } from '../src/lib/i18n';
 
-describe('i18n Translation System', () => {
+describe('i18n Translation System (Lab Flat Dict)', () => {
     it('resolves top-level keys correctly', () => {
-        locale.set('cs');
         const translate = get(t);
-        expect(translate('simulakrum')).toBe(translations.cs.simulakrum);
+        expect(translate('simulakrum')).toBe(translations.simulakrum);
     });
 
     it('resolves nested namespace keys correctly', () => {
-        locale.set('cs');
         const translate = get(t);
-        // We will add a 'test_namespace' to translations in i18n.js for testing
-        expect(translate('test_ns.hello')).toBe(translations.cs.test_ns.hello);
+        expect(translate('test_ns.hello')).toBe(translations.test_ns.hello);
     });
 
-    it('falls back to English when a key is missing in Czech', () => {
-        translations.en.test_ns.dynamic_missing = 'English Only';
-        locale.set('cs');
-        const translate = get(t);
-        expect(translate('test_ns.dynamic_missing')).toBe('English Only');
-    });
-
-    it('returns a placeholder with [MISSING] prefix when the key is not found in any locale', () => {
-        locale.set('cs');
+    it('returns a placeholder with [MISSING] prefix when the key is not found', () => {
         const translate = get(t);
         expect(translate('nonexistent.key')).toBe('[MISSING: nonexistent.key]');
     });

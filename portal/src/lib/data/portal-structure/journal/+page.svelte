@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Logo from "$lib/components/Logo.svelte";
 
     let imprints: any[] = [];
     let loading = true;
@@ -69,7 +70,18 @@
     </div>
 
     {#if loading}
-        <div class="sys-msg">Loading geometric memory topology...</div>
+        <div
+            class="sys-msg"
+            style="display: flex; flex-direction: column; align-items: center; gap: 1rem;"
+        >
+            <Logo
+                width={48}
+                height={48}
+                color="#00ffff"
+                variant="infinity_draw"
+            />
+            <div>Loading geometric memory topology...</div>
+        </div>
     {:else if errorMsg}
         <div class="sys-msg error">{errorMsg}</div>
     {:else if imprints.length === 0}

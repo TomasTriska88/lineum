@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Silent Collapse of a Quasiparticle (Tříska’s Silent Collapse Hypothesis)
-**Document ID: 21-cosmo-hyp-silent-collapse
+**Document ID:** 21-cosmo-hyp-silent-collapse
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

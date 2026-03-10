@@ -14,7 +14,7 @@ console.log('Checking for Czech characters in Lab src and documentation...');
 let hasErrors = false;
 
 walkDir(SRC_DIR, (filePath) => {
-    if (path.extname(filePath).match(/\.(svelte|ts|js|css|html)$/)) {
+    if (path.extname(filePath).match(/\.(svelte|ts|js|css|html|json)$/)) {
         if (checkFile(filePath)) {
             hasErrors = true;
         }

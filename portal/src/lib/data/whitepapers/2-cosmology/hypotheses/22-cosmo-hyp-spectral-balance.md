@@ -1,5 +1,5 @@
 **Title:** Tříska’s Spectral Balance Hypothesis
-**Document ID: 22-cosmo-hyp-spectral-balance
+**Document ID:** 22-cosmo-hyp-spectral-balance
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

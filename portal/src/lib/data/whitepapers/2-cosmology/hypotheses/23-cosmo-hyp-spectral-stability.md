@@ -1,6 +1,6 @@
 ```markdown
 **Title:** Hypothesis: Spectral Stability of Lineum
-**Document ID: 23-cosmo-hyp-spectral-stability
+**Document ID:** 23-cosmo-hyp-spectral-stability
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

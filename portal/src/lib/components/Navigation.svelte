@@ -39,10 +39,10 @@
 
     // Language handling
     const langs = [
-        { code: "en", label: "English" },
-        { code: "cs", label: "Čeština" },
-        { code: "de", label: "Deutsch" },
-        { code: "ja", label: "日本語" },
+        { code: "en", label: "English", abbr: "EN" },
+        { code: "cs", label: "Čeština", abbr: "CZ" },
+        { code: "de", label: "Deutsch", abbr: "DE" },
+        { code: "ja", label: "日本語", abbr: "JA" },
     ];
 
     function getResolvedCanonicalPath(currentPath: string) {
@@ -93,63 +93,83 @@
                 <a
                     href="/api-solutions"
                     style="color: #38bdf8; font-weight: bold;"
-                    >{m.nav_api()}
+                >
+                    {m.nav_api()}
                     <span
                         style="font-size: 0.6rem; vertical-align: super; opacity: 0.8;"
                         >{m.badge_early_access()}</span
-                    ></a
-                >
-                <a href="/engraving" style="color: #ffaa00; font-weight: bold;"
-                    >{m.nav_engraving()}
-                    <span style="font-size: 0.6rem; vertical-align: super;"
-                        >{m.badge_beta()}</span
-                    ></a
-                >
+                    >
+                </a>
             {/if}
+
             <a href={PUBLIC_SIMULACRUM_URL} target="simulacrum">{m.nav_lab()}</a
             >
             <a href="/#scientist">{m.sections_scientist_label()}</a>
 
             <div class="dropdown" role="menu" tabindex="0">
                 <button class="dropdown-toggle" on:click={toggleDocs}>
-                    {m.nav_docs()} <span class="caret">▼</span>
+                    Ecosystem <span class="caret">▼</span>
                 </button>
-                <div class="dropdown-menu" class:mobile-open={docsOpen}>
-                    <a href="/about">{m.nav_about()}</a>
-                    <a href="/codex">{m.nav_codex()}</a>
-                    <a href="/wiki#faq">{m.nav_faq()}</a>
+                <div
+                    class="dropdown-menu mega-menu"
+                    class:mobile-open={docsOpen}
+                >
+                    <div class="menu-section">
+                        <span class="menu-label">The Project</span>
+                        <a href="/about">{m.nav_about()}</a>
+                        <a href="/brand">{m.nav_brand()}</a>
+                        <a href="/codex">{m.nav_codex()}</a>
+                        <a href="/wiki#faq">{m.nav_faq()}</a>
+                    </div>
+                    <div class="menu-section">
+                        <span class="menu-label">Developers</span>
+                        {#if PUBLIC_ENABLE_API_SOLUTIONS === "true"}
+                            <a href="/engraving" style="color: #ffaa00;"
+                                >{m.nav_engraving()}
+                                <span
+                                    style="font-size: 0.6rem; vertical-align: super;"
+                                    >{m.badge_beta()}</span
+                                ></a
+                            >
+                        {/if}
+                        <a href="/explorer">Explorer</a>
+                        <a href="/journal">Memory Journal</a>
+                        <a href="http://127.0.0.1:8000/redoc" target="_blank"
+                            >API Redoc</a
+                        >
+                    </div>
                 </div>
             </div>
 
-            <div class="dropdown" role="menu" tabindex="0">
-                <button class="dropdown-toggle" on:click={toggleDevTools}>
-                    Dev Tools <span class="caret">▼</span>
-                </button>
-                <div class="dropdown-menu" class:mobile-open={devToolsOpen}>
-                    <a href="/explorer">Explorer</a>
-                    <a href="/journal">Memory Journal</a>
-                    <a href="http://127.0.0.1:8000/redoc" target="_blank"
-                        >API Redoc</a
-                    >
-                </div>
-            </div>
+            <div class="spacer" style="margin-left: auto;"></div>
 
             <a href="/support" class="nav-cta">{m.nav_support()}</a>
 
-            <div class="lang-switcher" translate="no">
-                {#each langs as lang}
-                    <a
-                        href={getResolvedCanonicalPath($page.url.pathname)}
-                        hreflang={lang.code}
-                        data-sveltekit-reload
-                        class="lang-btn"
-                        class:active={currentLang === lang.code}
-                        data-tooltip={lang.label}
-                        data-tooltip-pos="bottom"
-                    >
-                        {lang.code.toUpperCase()}
-                    </a>
-                {/each}
+            <div class="dropdown lang-dropdown" role="menu" tabindex="0">
+                <button
+                    class="dropdown-toggle lang-toggle"
+                    on:click={toggleDevTools}
+                >
+                    {langs.find((l) => l.code === currentLang)?.abbr ||
+                        currentLang.toUpperCase()} <span class="caret">▼</span>
+                </button>
+                <div
+                    class="dropdown-menu"
+                    class:mobile-open={devToolsOpen}
+                    style="min-width: max-content;"
+                >
+                    {#each langs as lang}
+                        <a
+                            href={getResolvedCanonicalPath($page.url.pathname)}
+                            hreflang={lang.code}
+                            data-sveltekit-reload
+                            class="lang-btn"
+                            class:active={currentLang === lang.code}
+                        >
+                            {lang.label} ({lang.abbr})
+                        </a>
+                    {/each}
+                </div>
             </div>
         </div>
     </div>
@@ -225,7 +245,7 @@
         transform: rotate(180deg);
     }
     :global(.dropdown-menu) {
-        display: none; /* Hidden by default, driven by JS on mobile or hover on desktop */
+        display: none;
         position: absolute;
         top: 100%;
         left: 0;
@@ -237,20 +257,64 @@
         flex-direction: column;
         backdrop-filter: blur(10px);
         z-index: 1000;
+        box-shadow:
+            0 10px 40px rgba(0, 0, 0, 0.5),
+            0 1px 3px rgba(255, 255, 255, 0.05) inset;
+        transition:
+            opacity 0.2s ease,
+            transform 0.2s ease;
+        opacity: 0;
+        transform: translateY(5px);
+        pointer-events: none;
+    }
+    :global(.mega-menu) {
+        min-width: 480px;
+        flex-direction: row;
+        gap: 2rem;
+        padding: 1.25rem;
+    }
+    :global(.menu-section) {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 0.15rem;
+    }
+    :global(.menu-label) {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #777;
+        padding: 0 0.6rem 0.4rem 0.6rem;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 0.4rem;
     }
     :global(.dropdown:hover .dropdown-menu) {
         display: flex;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
     }
     :global(.dropdown-menu.mobile-open) {
         display: flex;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
     }
     :global(.dropdown-menu a) {
-        padding: 0.75rem 1rem;
+        padding: 0.4rem 0.6rem;
         width: 100%;
         box-sizing: border-box;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #bbb;
+        transition: all 0.2s ease;
     }
     :global(.dropdown-menu a:hover) {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        transform: translateX(2px);
     }
 
     .nav-cta {
@@ -258,40 +322,29 @@
         color: white !important;
         padding: 0.5rem 1rem;
         border-radius: 4px;
+        font-weight: 600;
     }
 
-    .lang-switcher {
-        display: flex;
-        gap: 0.2rem;
-        background: rgba(255, 255, 255, 0.03);
-        padding: 0.3rem 0.4rem;
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        align-items: center;
-    }
-
-    .lang-btn {
-        background: transparent;
-        border: none;
-        color: #666;
-        font-size: 0.75rem;
+    /* Language specific overrides */
+    :global(.lang-dropdown .dropdown-toggle) {
+        font-size: 0.8rem;
         font-weight: 700;
-        cursor: pointer;
-        padding: 0.3rem 0.5rem;
-        border-radius: 4px;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
-
-    .lang-btn:hover {
-        color: white;
+        padding: 0.3rem 0.6rem;
         background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    .lang-btn.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    :global(.lang-dropdown .dropdown-menu) {
+        left: auto;
+        right: 0;
+    }
+    :global(.lang-dropdown a) {
+        white-space: nowrap;
+        padding-right: 1.5rem;
+    }
+    :global(.lang-dropdown a.active) {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--accent-cyan);
     }
 
     .mobile-toggle {
@@ -356,6 +409,23 @@
             box-shadow: none;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+        }
+
+        :global(.mega-menu) {
+            min-width: 100%;
+            flex-direction: column;
+            gap: 0;
+            padding: 0;
+        }
+
+        :global(.menu-section) {
+            margin-bottom: 1rem;
+        }
+
+        :global(.menu-label) {
+            padding-left: 0;
+            background: transparent;
         }
 
         .mobile-toggle {

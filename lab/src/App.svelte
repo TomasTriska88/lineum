@@ -642,13 +642,6 @@
                 </div>
             {/if}
 
-            <div class="sandbox-disclaimer">
-                <div class="disclaimer-header">
-                    <span class="warning-icon">!</span>
-                    <strong>{$t("sandbox_title")}</strong>
-                </div>
-                <p>{$t("sandbox_warning")}</p>
-            </div>
         </div>
     {/if}
 
@@ -1008,40 +1001,6 @@
         box-shadow: inset 0 -2px 0 #00ffff;
     }
 
-    /* Sandbox Disclaimer Styling */
-    .sandbox-disclaimer {
-        grid-area: footer;
-        background: rgba(255, 170, 0, 0.08);
-        border: 1px solid rgba(255, 170, 0, 0.4);
-        padding: 15px;
-        margin-top: auto;
-        backdrop-filter: blur(10px);
-        border-radius: 4px;
-        pointer-events: all;
-    }
-
-    .disclaimer-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-        color: #ffaa00;
-    }
-
-    .disclaimer-header strong {
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    .sandbox-disclaimer p {
-        margin: 0;
-        font-size: 0.65rem;
-        line-height: 1.5;
-        color: #eee;
-        opacity: 0.8;
-        font-style: italic;
-    }
 
     .tab-content {
         flex: 1;

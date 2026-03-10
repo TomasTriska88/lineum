@@ -1,6 +1,6 @@
 ```markdown
 **Title:** Hypothesis: Jet Emission from a Saturated φ-Trap
-**Document ID:** 04-hyp-jet
+**Document ID:** 04-cosmo-hyp-jet
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

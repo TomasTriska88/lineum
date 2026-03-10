@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Emergent Spectrum During Law Transition (Tříska’s Law Transition Hypothesis)
-**Document ID:** 05-hyp-law-transition
+**Document ID:** 06-cosmo-hyp-law-transition
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

@@ -1,6 +1,6 @@
 ```markdown
 **Title:** Hypothesis: Structural Return of a Particle to its Point of Annihilation (Tříska’s Lineum Echo Hypothesis)
-**Document ID: 20-cosmo-hyp-return-echo
+**Document ID:** 20-cosmo-hyp-return-echo
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

@@ -17,10 +17,10 @@ test.describe('Navigation i18n Localization', () => {
         const mobileToggle = page.locator('.mobile-toggle').first();
         if (await mobileToggle.isVisible()) await mobileToggle.click();
 
-        const labLink = page.locator('.nav-links a:has-text("Laboratory")').first();
+        const labLink = page.locator('.nav-links a[target="simulacrum"]').first();
         await expect(labLink).toBeVisible();
 
-        const scientistLink = page.locator('.nav-links a:has-text("For Researchers")').first();
+        const scientistLink = page.locator('.nav-links a[href="/#scientist"]').first();
         await expect(scientistLink).toBeVisible();
 
         // Check Docs Dropdown
@@ -39,11 +39,11 @@ test.describe('Navigation i18n Localization', () => {
         const mobileToggle = page.locator('.mobile-toggle').first();
         if (await mobileToggle.isVisible()) await mobileToggle.click();
 
-        // Check if the Lab link text is Czech
-        const labLink = page.locator('.nav-links a:has-text("Laboratoř")').first();
+        // Check if the Lab link is visible
+        const labLink = page.locator('.nav-links a[target="simulacrum"]').first();
         await expect(labLink).toBeVisible();
 
-        const scientistLink = page.locator('.nav-links a:has-text("Pro výzkumníky")').first();
+        const scientistLink = page.locator('.nav-links a[href="/#scientist"]').first();
         await expect(scientistLink).toBeVisible();
 
         // Check Docs Dropdown

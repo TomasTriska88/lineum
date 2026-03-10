@@ -74,7 +74,7 @@ result = solver.route(
         <!-- VERCEL-STYLE HERO SECTION (Centered, Clean, Massive) -->
         <div
             class="w-full flex flex-col items-center justify-center text-center px-4 pt-16 pb-16 max-w-5xl mx-auto"
-            style="margin-top: 180px;"
+            style="margin-top: calc(180px - var(--nav-height, 120px));"
         >
             <div class="flex items-center gap-3 mb-8">
                 <span
@@ -828,9 +828,6 @@ result = solver.route(
 </div>
 
 <style>
-    :global(:root) {
-        --nav-height: 0px;
-    }
     :global(body) {
         /* Ensure normal scroll behavior and background for the new B2B layout */
         background-color: #020617; /* tailwind text-slate-950 */

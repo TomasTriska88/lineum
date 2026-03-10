@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Spatial Transparency through the Tuning Field κ (Tříska’s Dimensional Transparency Hypothesis)
-**Document ID: 15-cosmo-hyp-dimensional-transparency
+**Document ID:** 15-cosmo-hyp-dimensional-transparency
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

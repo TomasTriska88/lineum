@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Structural Closure of a Quasiparticle (Tříska's Structural Closure Hypothesis)
-**Document ID: 14-cosmo-hyp-closure
+**Document ID:** 14-cosmo-hyp-closure
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

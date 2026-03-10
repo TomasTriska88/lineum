@@ -1,5 +1,5 @@
 **Title:** Hypothesis: Resonant Seed of the Universe (Tříska’s Resonant Seed Hypothesis)
-**Document ID: 19-cosmo-hyp-resonant-seed
+**Document ID:** 19-cosmo-hyp-resonant-seed
 **Document Type:** Hypothesis
 **Version:** 0.1.0
 **Status:** Draft

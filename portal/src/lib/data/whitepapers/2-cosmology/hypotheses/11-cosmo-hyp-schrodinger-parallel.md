@@ -1,5 +1,5 @@
 **Title:** Cosmology Hypothesis: The Schrödinger Parallel without Imaginary Numbers
-**Document ID: 11-cosmo-hyp-schrodinger-parallel
+**Document ID:** 11-cosmo-hyp-schrodinger-parallel
 **Document Type:** Hypothesis
 **Version:** 1.0.0
 **Status:** Draft

@@ -51,25 +51,14 @@
     <ResonanceDeck active={$hudActive} />
     <CookieBanner />
     <ContactFooter />
-    <div class="version-hud">v{pkg.version}</div>
 </ParaglideJS>
 
 <style>
-    .version-hud {
-        position: fixed;
-        bottom: 8px;
-        right: 12px;
-        font-family: monospace;
-        font-size: 0.65rem;
-        color: rgba(255, 255, 255, 0.25);
-        z-index: 1000;
-        pointer-events: none;
-    }
-
     main {
         position: relative;
         z-index: 1;
-        padding-top: var(--nav-height, 100px);
+        padding-top: var(--nav-height, 120px);
+        padding-bottom: 90px; /* Leave breathing room for the fixed Contact Footer */
         transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
@@ -81,7 +70,7 @@
         main {
             padding-top: var(
                 --nav-height,
-                100px
+                120px
             ); /* Standard padding is enough now */
         }
     }
