@@ -6,9 +6,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const portalSrcDir = path.resolve(__dirname, '../src');
+const portalRootDir = path.resolve(__dirname, '../');
 const labSrcDir = path.resolve(__dirname, '../../lab/src');
+const labRootDir = path.resolve(__dirname, '../../lab');
 
 const dirsToScan = [portalSrcDir, labSrcDir];
+const filesToScanRoot = [portalRootDir, labRootDir];
 function scanDirectory(directory) {
     // Ignore static data structure archiver dumps
     if (directory.includes(path.join('src', 'lib', 'data')) || directory.includes(path.join('src', 'tests', 'data'))) {
@@ -24,7 +27,7 @@ function scanDirectory(directory) {
 
         if (stat.isDirectory()) {
             hasError = scanDirectory(fullPath) || hasError;
-        } else if (file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.svelte')) {
+        } else if (file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.svelte') || file.startsWith('.env')) {
             const content = fs.readFileSync(fullPath, 'utf-8');
             // We ignore base.ts because it configures playwright itself, allowing localhost for data URIs
             if (file !== 'base.ts' && content.toLowerCase().includes('localhost')) {
@@ -44,6 +47,28 @@ for (const d of dirsToScan) {
     if (fs.existsSync(d)) {
         failed = scanDirectory(d) || failed;
     }
+}
+
+// Manually check .env files in root dirs
+function scanRootFiles(directory) {
+    let hasError = false;
+    if (!fs.existsSync(directory)) return false;
+    const files = fs.readdirSync(directory);
+    for (const file of files) {
+        if (file.startsWith('.env')) {
+            const fullPath = path.join(directory, file);
+            const content = fs.readFileSync(fullPath, 'utf-8');
+            if (content.toLowerCase().includes('localhost')) {
+                console.error(`\x1b[31m[ERROR] Found 'localhost' in ${fullPath}\x1b[0m`);
+                hasError = true;
+            }
+        }
+    }
+    return hasError;
+}
+
+for (const d of filesToScanRoot) {
+    failed = scanRootFiles(d) || failed;
 }
 
 if (failed) {

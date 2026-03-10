@@ -69,16 +69,24 @@ async function main() {
     // SECURITY BYPASS: Allow safe-merge to update Lina if needed without manual commit msg override
     process.env.LINA_UPDATE_ALLOW = 'true';
 
-    // Clean .test-output
-    const testOutputDir = path.join(__dirname, '../.test-output');
-    if (fs.existsSync(testOutputDir)) {
-        log("Cleaning .test-output...", colors.cyan);
-        try {
-            fs.rmSync(testOutputDir, { recursive: true, force: true });
-        } catch (e) {
-            log("Warning: Failed to clean .test-output (might be open). Continuing.", colors.yellow);
+    // Clean test outputs and scratch directories to structurally prevent clutter
+    const dirsToClean = [
+        path.join(__dirname, '../.test-output'),
+        path.join(__dirname, '../.scratch'),
+        path.join(__dirname, '../../lab/.scratch'),
+        path.join(__dirname, '../../.scratch')
+    ];
+
+    log("Cleaning temporary testing & scratch directories...", colors.cyan);
+    dirsToClean.forEach(dir => {
+        if (fs.existsSync(dir)) {
+            try {
+                fs.rmSync(dir, { recursive: true, force: true });
+            } catch (e) {
+                log(`Warning: Failed to clean ${dir} (might be open). Continuing.`, colors.yellow);
+            }
         }
-    }
+    });
 
     // 1. Check for clean working directory
     checkClean();

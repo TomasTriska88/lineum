@@ -28,3 +28,19 @@ usage_db.json
 .test-output/
 test_debug*.txt
 test_output*.txt
+test_out*.txt
+out_*.json
+*.log
+
+# AI & Debug Artifacts strictly blocked
+*.jpg
+*.png
+*.jpeg
+/*.js
+/*.cjs
+/*.mjs
+!svelte.config.js
+!vite.config.ts
+!tailwind.config.ts
+!postcss.config.cjs
+!playwright.config.ts

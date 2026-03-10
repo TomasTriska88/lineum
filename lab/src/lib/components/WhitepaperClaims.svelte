@@ -68,10 +68,10 @@
     // Filter claims
     $: filteredClaims = whitepaperClaims.filter((claim) => {
         const matchesSearch =
-            claim.short_claim
+            (claim.short_claim || "")
                 .toLowerCase()
-                .includes(searchQuery.toLowerCase()) ||
-            claim.human_claim.toLowerCase().includes(searchQuery.toLowerCase());
+                .includes((searchQuery || "").toLowerCase()) ||
+            (claim.human_claim || "").toLowerCase().includes((searchQuery || "").toLowerCase());
         const matchesTag =
             selectedTag === "all" || claim.tags.includes(selectedTag);
 

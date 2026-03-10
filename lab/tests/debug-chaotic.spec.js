@@ -36,7 +36,7 @@ test('Standalone Chaotic test (no beforeEach)', async ({ page }) => {
         if (msg.type() === 'log' || msg.type() === 'error') console.log('BROWSER:', msg.text());
     });
 
-    await page.goto('http://127.0.0.1:5174/');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Validation Core' }).click();
 
     // Go to Explore Mode

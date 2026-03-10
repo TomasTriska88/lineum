@@ -10,7 +10,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         });
 
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
 
         // Wait for main UI to assemble
         const nav = page.locator('.top-nav');
@@ -36,7 +36,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
 
         // iPhone 12 Pro dimensions approx
         await page.setViewportSize({ width: 390, height: 844 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
 
         const nav = page.locator('.top-nav');
         await expect(nav).toBeVisible();
@@ -65,7 +65,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         });
 
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
 
         // Switch to VALIDATE mode
         await page.getByRole('button', { name: 'Validation Core' }).click();
@@ -93,7 +93,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
 
         // Test especially on mobile where the footer is tallest and screen shortest
         await page.setViewportSize({ width: 390, height: 844 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
 
         // Switch to VALIDATE mode
         await page.getByRole('button', { name: 'Validation Core' }).click();
@@ -141,7 +141,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
     test('RUN SCENARIO button is visible immediately without scrolling', async ({ page }) => {
         await page.route('*/api/lab/history', async route => await route.fulfill({ json: [] }));
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
 
         // Wait for UI to load
         await page.getByRole('button', { name: 'Validation Core' }).click();
@@ -161,7 +161,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
                 await route.fulfill({ json: [{ run_id: "test1", timestamp: "2026-03-05T12:00:00Z", scenario: "t0", manifest: {} }] });
             }
         });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // Click Clear All History
@@ -184,7 +184,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.route('/data/manifest.json', async route => await route.fulfill({ json: [] }));
 
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // The disclaimer should be visible
@@ -201,7 +201,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.route('/data/manifest.json', async route => await route.fulfill({ json: [] }));
 
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // Navigate to Explore mode so presets + RUN SCENARIO button are visible

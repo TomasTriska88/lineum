@@ -379,9 +379,24 @@
     async function fetchHealth() {
         try {
             const res = await fetch("/api/lab/health");
-            if (res.ok) systemHealth = await res.json();
+            if (res.ok) {
+                systemHealth = await res.json();
+            } else {
+                systemHealth = { 
+                    commit_hash: "API ERROR", 
+                    audit_status: "API UNAVAILABLE", 
+                    active_contract_id: "NONE", 
+                    current_build: "Backend Offline" 
+                };
+            }
         } catch (e) {
             console.error("Health fetch failed:", e);
+            systemHealth = { 
+                commit_hash: "API OFFLINE", 
+                audit_status: "API UNAVAILABLE", 
+                active_contract_id: "NONE", 
+                current_build: "Check terminal 'npm run dev'" 
+            };
         }
     }
 

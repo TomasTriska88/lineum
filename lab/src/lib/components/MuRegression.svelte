@@ -23,8 +23,8 @@
     let artifactsData = null;
     let artifactsError = null;
 
-    export let wsUrl = "ws://localhost:8000/api/lab/regression";
-    const restUrl = "http://localhost:8000/api/lab/regression/snapshot";
+    export let wsUrl = "ws://127.0.0.1:8000/api/lab/regression";
+    const restUrl = "http://127.0.0.1:8000/api/lab/regression/snapshot";
 
     async function loadArtifacts() {
         showArtifacts = !showArtifacts;

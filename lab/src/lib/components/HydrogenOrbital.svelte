@@ -17,8 +17,8 @@
     let artifactsData = null;
     let artifactsError = null;
 
-    export let wsUrl = "ws://localhost:8000/api/lab/hydrogen";
-    const restUrl = "http://localhost:8000/api/lab/hydrogen/sweep";
+    export let wsUrl = "ws://127.0.0.1:8000/api/lab/hydrogen";
+    const restUrl = "http://127.0.0.1:8000/api/lab/hydrogen/sweep";
 
     function connect() {
         if (ws) ws.close();

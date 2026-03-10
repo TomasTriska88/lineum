@@ -72,7 +72,7 @@ test.describe('Particle Presets Sandbox Guards', () => {
         });
 
         await page.setViewportSize({ width: 1280, height: 800 });
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         // Navigate to the Validation Dashboard
         await page.getByRole('button', { name: 'Validation Core' }).click();
     });
@@ -246,7 +246,7 @@ test.describe('Particle Presets Sandbox Guards', () => {
         });
 
         // Reload so the GET hits the mocked route and populates the sidebar
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // Ensure history cards are visible

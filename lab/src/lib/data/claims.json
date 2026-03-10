@@ -1335,20 +1335,22 @@
     },
     {
         "id": "CL-COSMO-012",
-        "description": "Sustained consciousness correlates strictly with regions demonstrating extreme Phi-field topographic depth and localized harmonic resonance.",
+        "short_claim": "Sustained consciousness correlates strictly with regions demonstrating extreme Phi-field topographic depth.",
+        "human_claim": "Sustained consciousness correlates strictly with regions demonstrating extreme Phi-field topographic depth and localized harmonic resonance.",
         "status": "UNTESTED",
         "confidence": 0,
         "type": "EMPIRICAL",
         "subsystem": "Cosmology",
-        "source": "35-cosmo-hyp-neural-resonance.md"
+        "source_file": "35-cosmo-hyp-neural-resonance.md"
     },
     {
         "id": "CL-COSMO-013",
-        "description": "Biological neural hubs acting as consciousness interfaces will exhibit a Pearson Correlation (R) > 0.90 against Universal Riemann patterns during prime cognitive states.",
+        "short_claim": "Biological neural hubs acting as consciousness interfaces exhibit Pearson Correlation (R) > 0.90.",
+        "human_claim": "Biological neural hubs acting as consciousness interfaces will exhibit a Pearson Correlation (R) > 0.90 against Universal Riemann patterns during prime cognitive states.",
         "status": "UNTESTED",
         "confidence": 0,
         "type": "MATHEMATICAL",
         "subsystem": "Cosmology",
-        "source": "35-cosmo-hyp-neural-resonance.md"
+        "source_file": "35-cosmo-hyp-neural-resonance.md"
     }
 ]

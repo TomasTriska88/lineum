@@ -120,7 +120,7 @@
 
             try {
                 const cfgRes = await fetch(
-                    "http://localhost:8000/api/lab/audit/config",
+                    "http://127.0.0.1:8000/api/lab/audit/config",
                 );
                 if (cfgRes.ok) auditConfig = await cfgRes.json();
             } catch (e) {
@@ -232,7 +232,7 @@
 
         try {
             const response = await fetch(
-                "http://localhost:8000/api/lab/audit/generate",
+                "http://127.0.0.1:8000/api/lab/audit/generate",
                 {
                     method: "POST",
                 },

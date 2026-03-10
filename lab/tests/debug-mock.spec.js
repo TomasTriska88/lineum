@@ -16,7 +16,7 @@ test('Debug: verify mock intercepts cross-origin fetch to port 8000', async ({ p
     await page.route('**/data/manifest.json', async route => await route.fulfill({ json: [] }));
 
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('http://127.0.0.1:5174/');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Validation Core' }).click();
 
     // Navigate to playground
