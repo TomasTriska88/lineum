@@ -647,7 +647,6 @@ test.describe('Whitepaper Claims MVP', () => {
         expect(packetText).toContain('F) AUTOMATION ROUTING');
         expect(packetText).toContain('- Is this ready for wording proposal now? YES');
         expect(packetText).toContain('- Primary agent action: Propose safe wording now.');
-        expect(packetText).toContain('- Secondary agent required action: None needed.');
         expect(packetText).toContain('- wording_proposal_allowed_now: true');
         expect(packetText).toContain('- escalate_to_secondary_agent: false');
 
@@ -703,6 +702,8 @@ test.describe('Whitepaper Claims MVP', () => {
         expect(packetText).toContain('- overall_verdict: No mathematical proof executed yet.');
         expect(packetText).toContain('If evidence is missing, do not accept scratch-only proof as sufficient.');
         expect(packetText).toContain('Missing project work must be requested from Antigravity and completed in the repository/runtime, not only in scratch scripts or side artifacts.');
+        expect(packetText).toContain('The Assistant must output these Secondary Agent instructions as a clearly copyable block');
+        expect(packetText).toContain('The instruction must be clearly formatted as a copyable block so the user can pass it directly to Antigravity without rewriting it.');
     });
 
     test('Agent Automation: Experimental claim produces consistent non-canonical data', async ({ page, context }) => {

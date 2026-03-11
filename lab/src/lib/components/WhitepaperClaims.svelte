@@ -275,21 +275,21 @@
         }
     }
 
-    onMount(async () => {
-        await fetchHealth();
-
-        // Load last known claim results (persisted)
-        await refreshStatuses();
-
-        try {
-            const logRes = await fetch("/integration_log");
-            if (logRes.ok) {
-                const logData = await logRes.json();
-                integrationLog = logData.events || [];
+    onMount(() => {
+        const init = async () => {
+            await fetchHealth();
+            await refreshStatuses();
+            try {
+                const logRes = await fetch("/integration_log");
+                if (logRes.ok) {
+                    const logData = await logRes.json();
+                    integrationLog = logData.events || [];
+                }
+            } catch (e) {
+                console.error("Integration log fetch failed:", e);
             }
-        } catch (e) {
-            console.error("Integration log fetch failed:", e);
-        }
+        };
+        init();
 
         window.addEventListener("audit-completed", fetchHealth);
         return () => window.removeEventListener("audit-completed", fetchHealth);
@@ -543,7 +543,8 @@ A) META-INSTRUCTIONS FOR PRIMARY AGENT
 - You are the Primary Agent. Your job is to review evidence strength, propose safe wording when allowed, and prevent overclaims.
 - If anything important is missing, do not fill gaps from memory.
 - If evidence is missing, do not accept scratch-only proof as sufficient.
-- Require Antigravity, as the Secondary / Project Agent, to integrate the claim into the real project pipeline (scenario, metrics, traceability, tests, and suite path if needed).
+- The Assistant must review first. If the claim is NOT READY, the Assistant must formulate concrete project-side instructions for Antigravity (the Secondary / Project Agent) based on the structured fields in Section E.
+- The Assistant must output these Secondary Agent instructions as a clearly copyable block so the user can pass it on without rewriting it.
 
 B) CLAIM DEFINITION
 - claim_id: ${claim.id}
@@ -570,7 +571,7 @@ D) EDITORIAL CONSTRAINTS
 ${editorialConstraints}
 
 E) PROJECT STATUS & NEXT STEPS
-- This section tells the Primary Agent whether project-side integration is still missing.
+- This section provides the structured information the Primary Agent needs to generate the right secondary-agent handoff.
 - If prerequisites are missing, the claim is not ready for final wording.
 - Missing project work must be requested from Antigravity and completed in the repository/runtime, not only in scratch scripts or side artifacts.
 ${projectNextStepsBlock}
@@ -580,9 +581,7 @@ ${candidateTargets}
 
 F) AUTOMATION ROUTING
 - Is this ready for wording proposal now? ${isReady ? "YES" : "NO"}
-- Primary agent action: ${isReady ? "Propose safe wording now." : "Instruct the user exactly what Antigravity must do next."}
-- Secondary agent required action: ${isReady ? "None needed." : "Complete the missing project-side integration in the real Lineum pipeline."}
-- Escalation required: ${escalate ? "true" : "false"}
+- Primary agent action: ${isReady ? "Propose safe wording now." : "Review the missing prerequisites and instruct the user exactly what concrete project-side tasks Antigravity must do next. The instruction must be clearly formatted as a copyable block so the user can pass it directly to Antigravity without rewriting it."}
 - wording_proposal_allowed_now: ${isReady ? "true" : "false"}
 - claim_ready_for_editorial_use: ${isReady ? "true" : "false"}
 - escalate_to_secondary_agent: ${escalate ? "true" : "false"}
