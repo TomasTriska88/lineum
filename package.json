@@ -6,7 +6,8 @@
         "portal:sync": "cd portal && npm run sync",
         "build": "npm run portal:sync && cd portal && npm install && npm run build",
         "start": "cd portal && node build",
-        "test": "cd portal && npm test && cd ../lab && npm test"
+        "test": "cd portal && npm test && cd ../lab && npm test",
+        "clean:scratch": "npx -y rimraf .scratch portal/.scratch lab/.scratch routing_backend/.scratch"
     },
     "engines": {
         "node": ">=20.0.0"

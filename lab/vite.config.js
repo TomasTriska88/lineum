@@ -17,6 +17,7 @@ export default defineConfig({
             },
         },
         port: 5174,
+        host: '127.0.0.1',
         strictPort: true,
         watch: {
             ignored: ['**/output_wp/**', '**/.scratch/**']

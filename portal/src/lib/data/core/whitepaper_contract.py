@@ -511,7 +511,11 @@ def main():
         for profile in active_profiles:
             p_name = profile["name"]
             p_checks = profile.get("checks", {})
-            p_result = {"profile": p_name, "checks": [], "status": "PASS"}
+            p_result = {"profile": p_name, "checks": [], "status": "PASS", "metrics": {}}
+            
+            # Start by adding all basic metrics from manifest
+            if "metrics" in manifest:
+                p_result["metrics"].update(manifest["metrics"])
             
             # 0. Audit Scope (Mandatory if present)
             audit_scope = manifest.get("audit_scope")
@@ -613,6 +617,11 @@ def main():
                      p_src = f"rolling_metrics.json:data.latest.{mk}"
 
                 status, msg, sev = check_value(mk, av, constr)
+                
+                # Make sure the resolved anchor value goes into the output metrics
+                if av is not None:
+                    p_result["metrics"][mk] = av
+                    
                 res = {"id": f"{p_name}.anchor.{mk}", "expected": constr, "actual": av, "status": status, "message": msg, "severity": sev}
                 res["actual_source"] = {"primary": f"{os.path.basename(m_path)}:{p_src}", "embedded": f"embedded_context.runs.{run_id}.{e_src}"}
                 if status == "FAIL" and sev == "fatal": p_result["status"] = "FAIL"
@@ -633,6 +642,11 @@ def main():
             # 5. Derived
             for d in p_checks.get("derived", []):
                 st, msg, val = evaluate_derived(d, manifest, contract.get("constants", {}))
+                
+                # Make sure the derived value goes into the output metrics
+                if val is not None:
+                    p_result["metrics"][d["id"]] = val
+                    
                 res = {"id": f"{p_name}.derived.{d['id']}", "expected": d.get("expected"), "actual": val, "status": st, "message": msg}
                 res["actual_source"] = {"primary": f"calculated: {d.get('formula')}", "embedded": "calculated from embedded manifest/constants"}
                 if st == "FAIL": p_result["status"] = "FAIL"
@@ -658,6 +672,7 @@ def main():
             "profiles": [p["name"] for p in active_profiles],
             "matched_profile": best_profile["profile"],
             "checks": best_profile["checks"],
+            "metrics": best_profile["metrics"],
             "status": best_profile["status"]
         }
         if "canonical" in run_result["profiles"]: suite_report["summary"]["matched_canonical"] += 1

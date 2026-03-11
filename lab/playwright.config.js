@@ -8,7 +8,7 @@ export default defineConfig({
     reporter: [['html', { outputFolder: '.scratch/playwright-report', open: 'never' }]],
     outputDir: '.scratch/test-results',
     use: {
-        baseURL: 'http://localhost:5174',
+        baseURL: 'http://127.0.0.1:5174',
         trace: 'on-first-retry',
     },
 

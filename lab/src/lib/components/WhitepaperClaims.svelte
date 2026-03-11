@@ -250,7 +250,7 @@
 
     async function fetchHealth() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/api/lab/health");
+            const res = await fetch("/api/lab/health");
             if (res.ok) {
                 const data = await res.json();
                 activeContract = data.contract_id || null;
@@ -282,7 +282,7 @@
         await refreshStatuses();
 
         try {
-            const logRes = await fetch("http://127.0.0.1:8000/integration_log");
+            const logRes = await fetch("/integration_log");
             if (logRes.ok) {
                 const logData = await logRes.json();
                 integrationLog = logData.events || [];
@@ -298,7 +298,7 @@
     async function refreshStatuses() {
         try {
             const res = await fetch(
-                "http://127.0.0.1:8000/api/lab/claim_results",
+                "/api/lab/claim_results",
             );
             if (res.ok) {
                 const data = await res.json();
@@ -336,7 +336,7 @@
         verifyAllSummary = null;
         try {
             const res = await fetch(
-                "http://127.0.0.1:8000/api/lab/verify_all",
+                "/api/lab/verify_all",
                 {
                     method: "POST",
                 },
@@ -437,6 +437,14 @@
                 ? "EXPERIMENTAL_EVIDENCE"
                 : "MISSING_EVIDENCE";
 
+        let isCanonicalDisplay = isCanonical ? "CANONICAL" : "EXPERIMENTAL";
+        let evidenceSourceDisplay = claim.falsification_evidence_source || "N/A";
+
+        if (evidenceLevel === "MISSING_EVIDENCE") {
+            isCanonicalDisplay = isCanonical ? "UNKNOWN" : "EXPERIMENTAL";
+            evidenceSourceDisplay = "NONE / MISSING_EVIDENCE";
+        }
+
         let metricsList = "(No data)";
         let verdict = "No mathematical proof executed yet.";
 
@@ -455,14 +463,14 @@
         let editorialConstraints = "";
         if (claim.editorial_guidance) {
             const ed = claim.editorial_guidance;
-            editorialConstraints = `- what_it_means: ${ed.what_it_means}\n- what_it_does_not_mean: ${ed.what_it_does_not_mean}\n- forbidden_overclaims:\n${ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n")}\n- safe_wording:\n${ed.safe_wording.map((s) => `  - ${s}`).join("\n")}\n- suggested_whitepaper_use: ${ed.suggested_whitepaper_use}`;
+            editorialConstraints = `- what_it_means: ${ed.what_it_means || "MISSING"}\n- what_it_does_not_mean: ${ed.what_it_does_not_mean || "MISSING"}\n- forbidden_overclaims:\n${(ed.forbidden_overclaims || []).length > 0 ? ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n") : "  - (None defined)"}\n- safe_wording:\n${(ed.safe_wording || []).length > 0 ? ed.safe_wording.map((s) => `  - ${s}`).join("\n") : "  - (None defined)"}\n- suggested_whitepaper_use: ${ed.suggested_whitepaper_use || "MISSING"}`;
         } else {
-            editorialConstraints = `- what_it_means: ${claim.human_claim}\n- what_it_does_not_mean: ${claim.what_it_is_not || "N/A"}\n- forbidden_overclaims: []\n- safe_wording: []\n- suggested_whitepaper_use: N/A`;
+            editorialConstraints = `- what_it_means: MISSING_EDITORIAL_GUIDANCE\n- what_it_does_not_mean: MISSING_EDITORIAL_GUIDANCE\n- forbidden_overclaims:\n  - MISSING_EDITORIAL_GUIDANCE\n- safe_wording:\n  - MISSING_EDITORIAL_GUIDANCE\n- suggested_whitepaper_use: MISSING_EDITORIAL_GUIDANCE`;
         }
 
         let projectStatus =
-            claim.project_packet?.project_integration_status || "UNKNOWN";
-        let targetTopicId = claim.target_topic_id || "UNKNOWN";
+            claim.project_packet?.project_integration_status || "MISSING_PROJECT_INTEGRATION_STATUS";
+        let targetTopicId = claim.target_topic_id || "MISSING_TOPIC_ID";
 
         let candidateTargets = "None specified";
         if (claim.project_packet?.candidate_whitepaper_targets?.length > 0) {
@@ -474,23 +482,46 @@
                 .join("\n\n");
         }
 
-        let nextStepPrereqs = "None_pending";
         let implementationNotes =
             claim.project_packet?.implementation_notes || "None";
         let assistantAction = "Draft whitepaper prose.";
         let antigravityAction = "None needed.";
         let escalate = false;
 
+        let metaInstructionsAddendum = "";
+        let projectNextStepsBlock = `- project_integration_status: ${projectStatus}\n- missing_prerequisites: None_pending\n- recommended_next_step: ${claim.project_packet?.recommended_next_step || "-"}\n- implementation_notes: ${implementationNotes}`;
+
         if (!isReady) {
             assistantAction =
                 "Instruct the user exactly what Antigravity must do next based on the missing prerequisites.";
-            antigravityAction =
-                claim.project_packet?.recommended_next_step ||
-                "Resolve missing prerequisites.";
-            nextStepPrereqs =
-                claim.project_packet?.missing_prerequisites?.length > 0
-                    ? claim.project_packet.missing_prerequisites.join(" ")
-                    : "Missing preconditions to be resolved by engineering.";
+            
+            antigravityAction = claim.project_packet?.recommended_next_step;
+            if (!antigravityAction || antigravityAction === "Resolve missing prerequisites." || antigravityAction === "-") {
+                antigravityAction = "integrate scenario into validation/runtime path, persist metrics, add traceability, add tests";
+            }
+
+            let missingArr = claim.project_packet?.missing_prerequisites?.length > 0 
+                ? claim.project_packet.missing_prerequisites 
+                : ["Missing preconditions to be resolved by engineering."];
+            
+            let missingStr = "\n" + missingArr.map(x => `  - ${x}`).join("\n");
+
+            let recArr = claim.project_packet?.recommended_next_step && !["Resolve missing prerequisites.", "-"].includes(claim.project_packet.recommended_next_step)
+                ? [claim.project_packet.recommended_next_step]
+                : [
+                    "Create a real scenario_id in the project",
+                    "Implement metrics in the project codepath",
+                    "Propagate traceability into claim_results and UI",
+                    "Add tests",
+                    "If intended for canonical use later, define suite-contract integration",
+                    "Scratch script alone is not sufficient"
+                  ];
+            
+            let recStr = "\n" + recArr.map(x => `  - ${x}`).join("\n");
+
+            projectNextStepsBlock = `- project_integration_status: ${projectStatus}\n- missing_prerequisites:${missingStr}\n- recommended_next_step:${recStr}\n- implementation_notes: ${implementationNotes}`;
+            
+            metaInstructionsAddendum = `\n- If evidence is missing, do not accept scratch-only proof as sufficient.\n- Require Antigravity to integrate the claim into the actual project pipeline (scenario, metrics, traceability, tests, and suite path if needed).`;
             escalate = true;
         }
 
@@ -501,7 +532,7 @@ A) META-INSTRUCTIONS FOR PRIMARY AGENT
 - Treat this packet as the current source of truth for Lineum
 - Do not rely on prior memory of equations, whitepapers, audits, claims, or historical project state
 - Review evidence strength and wording first
-- If anything important is missing, instruct the user exactly what Antigravity must do next
+- If anything important is missing, instruct the user exactly what Antigravity must do next${metaInstructionsAddendum}
 
 B) CLAIM DEFINITION
 - claim_id: ${claim.id}
@@ -509,14 +540,14 @@ B) CLAIM DEFINITION
 - scope: ${claim.scope}
 - current_status: ${getActualStatus(claim, claimResults)}
 - evidence_level: ${evidenceLevel}
-- canonical_or_experimental: ${isCanonical ? "CANONICAL" : "EXPERIMENTAL"}
+- canonical_or_experimental: ${isCanonicalDisplay}
 - active_profile: ${cr.active_profile || "unknown"}
 - equation_fingerprint: ${cr.traceability?.equation_fingerprint || "unknown"}
 - scenario_id: ${claim.scenario_id || "None"}
 - target_topic_id: ${targetTopicId}
 
 C) ENGINEERING TRACEABILITY
-- evidence_source: ${claim.falsification_evidence_source || "N/A"}
+- evidence_source: ${evidenceSourceDisplay}
 - execution_device: ${cr.traceability?.execution_device || "unknown"}
 - deterministic_mode: ${cr.traceability?.deterministic_mode ? "true" : "false"}
 - overall_verdict: ${verdict}
@@ -528,10 +559,7 @@ D) EDITORIAL CONSTRAINTS
 ${editorialConstraints}
 
 E) PROJECT STATUS & NEXT STEPS
-- project_integration_status: ${projectStatus}
-- missing_prerequisites: ${nextStepPrereqs}
-- recommended_next_step: ${claim.project_packet?.recommended_next_step || "-"}
-- implementation_notes: ${implementationNotes}
+${projectNextStepsBlock}
 
 Candidate Whitepaper Targets:
 ${candidateTargets}
@@ -589,14 +617,14 @@ F) AUTOMATION ROUTING
             timestamp_utc: new Date().toISOString(),
         };
         try {
-            const res = await fetch("http://127.0.0.1:8000/integration_log", {
+            const res = await fetch("/integration_log", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
             if (res.ok) {
                 const newLogRes = await fetch(
-                    "http://127.0.0.1:8000/integration_log",
+                    "/integration_log",
                 );
                 const newLog = await newLogRes.json();
                 integrationLog = newLog.events;
@@ -618,7 +646,7 @@ F) AUTOMATION ROUTING
         try {
             // Backend is authoritative: resolves scenario, runs physics, determines status
             const res = await fetch(
-                `http://127.0.0.1:8000/api/lab/run_preset?preset_name=${claim.scenario_id}`,
+                `/api/lab/run_preset?preset_name=${claim.scenario_id}`,
             );
             if (!res.ok) {
                 const err = await res.text();

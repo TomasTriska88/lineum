@@ -45,11 +45,11 @@
         if (typeof window !== "undefined") {
             const hash = window.location.hash.replace("#", "");
             if (hash === "whitepapers" || hash === "whitepaper") {
-                window.location.hash = "claims";
                 return "claims";
             }
             const validModes = ["simulator", "validation", "claims", "lpl"];
             if (validModes.includes(hash)) return hash;
+            
             const savedMode = localStorage.getItem("lab_main_mode");
             if (validModes.includes(savedMode)) return savedMode;
         }
@@ -57,11 +57,16 @@
     };
 
     let mainMode = getInitialMode();
+    let isHydrated = false;
 
-    $: if (mainMode && typeof window !== "undefined") {
+    $: if (mainMode && typeof window !== "undefined" && isHydrated) {
         localStorage.setItem("lab_main_mode", mainMode);
+        // Only push to hash if it differs, normalizing legacy hashes if needed
         if (window.location.hash !== "#" + mainMode) {
-            window.location.hash = mainMode;
+            // Do not immediately overwrite whitepaper legacy hash on load, let the hashchange listener or user navigation handle it
+            if (window.location.hash !== "#whitepaper" && window.location.hash !== "#whitepapers") {
+                 window.location.hash = mainMode;
+            }
         }
     }
 
@@ -94,6 +99,19 @@
     }
 
     onMount(async () => {
+        // Hydrate the actual mainMode from the client context (since SSR evaluates this as 'simulator' initially)
+        const initMode = getInitialMode();
+        if (initMode !== mainMode) {
+            mainMode = initMode;
+        }
+        
+        isHydrated = true;
+
+        // Guarantee initial hash matches the derived mainMode state on load
+        if (window.location.hash !== "#" + mainMode) {
+            window.location.hash = mainMode;
+        }
+
         window.addEventListener("hashchange", () => {
             let hash = window.location.hash.replace("#", "");
             if (hash === "whitepapers" || hash === "whitepaper") {
@@ -120,7 +138,7 @@
 
             try {
                 const cfgRes = await fetch(
-                    "http://127.0.0.1:8000/api/lab/audit/config",
+                    "/api/lab/audit/config",
                 );
                 if (cfgRes.ok) auditConfig = await cfgRes.json();
             } catch (e) {
@@ -134,6 +152,9 @@
 
         // ─── Global Tooltip System (viewport-aware, no native title) ───
         let tooltipEl = null;
+        if (typeof window !== "undefined" && window.location.href.includes("5174")) {
+            setInterval(() => console.log('SVELTE STATE:', { mainMode, activeTab, loading, error, hash: window.location.hash }), 1000);
+        }
         const TOOLTIP_OFFSET = 8;
 
         function showTooltip(e) {
@@ -232,7 +253,7 @@
 
         try {
             const response = await fetch(
-                "http://127.0.0.1:8000/api/lab/audit/generate",
+                "/api/lab/audit/generate",
                 {
                     method: "POST",
                 },

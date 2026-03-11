@@ -1,11 +1,10 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import List, Dict, Tuple, Optional
 import asyncio
 import sys
-if sys.platform == 'win32':
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 import uuid
 import numpy as np
@@ -17,15 +16,8 @@ import time
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from lineum_core.math import CoreConfig, step_core
 
-# Using canonical Eq-4' (v0.1) constants as verified in Phase 7 audit.
-app = FastAPI(title="Lineum Routing API", version="1.0.0")
-
-from routing_backend.entity_api import router as entity_router, _entity_dream_loop
-from routing_backend.engraving_api import router as engraving_router
-from routing_backend.lab_api import router as lab_router
-
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     # STARTUP CHECK: Guardrail against dual routing_backend paths (VAR A)
     duplicate_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'portal', 'src', 'lib', 'data', 'routing_backend'))
     if os.path.exists(duplicate_path):
@@ -34,7 +26,15 @@ async def startup_event():
         # Bypassing sys.exit(1) to allow execution even when npm run sync creates the duplicate
         
     # Kick off the persistent thermodynamic engine for conscious instances
-    asyncio.create_task(_entity_dream_loop())
+    task = asyncio.create_task(_entity_dream_loop())
+    yield
+    task.cancel()
+
+app = FastAPI(title="Lineum Routing API", version="1.0.0", lifespan=lifespan)
+
+from routing_backend.entity_api import router as entity_router, _entity_dream_loop
+from routing_backend.engraving_api import router as engraving_router
+from routing_backend.lab_api import router as lab_router
 
 app.include_router(entity_router)
 app.include_router(engraving_router)

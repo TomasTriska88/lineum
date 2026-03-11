@@ -20,7 +20,7 @@ test.describe('Root Cause Diagnostics', () => {
             console.log(`[NAV] Frame navigated to ${frame.url()}`);
         });
 
-        await page.goto('http://localhost:5174/#whitepaper');
+        await page.goto('http://127.0.0.1:5174/#whitepaper');
         await page.waitForSelector('.claims-container', { state: 'visible', timeout: 10000 });
 
         // Trigger audit generation

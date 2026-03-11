@@ -191,6 +191,37 @@
         "falsification_plan": "If mean alignment ≤ 0 across multiple seeds, the directional drift claim is falsified.",
         "missing_falsification_reason": null,
         "verification_spec_status": "NOT_PREPARED",
+        "target_topic_id": "guided-motion",
+        "editorial_guidance": {
+            "what_it_means": "Linons move up the potential gradient",
+            "what_it_does_not_mean": "This implies no new fundamental force, just environmental geometry",
+            "forbidden_overclaims": [
+                "Do not claim this proves gravity is solved",
+                "Do not claim this replaces General Relativity"
+            ],
+            "safe_wording": [
+                "Linons exhibit a statistical tendency to drift towards regions of high structural pressure."
+            ],
+            "suggested_whitepaper_use": "DO_NOT_USE_IN_WHITEPAPER_YET"
+        },
+        "project_packet": {
+            "project_integration_status": "MISSING_SCENARIO",
+            "candidate_whitepaper_targets": [
+                {
+                    "file": "01-core-lineum.md",
+                    "target_topic_id": "guided-motion",
+                    "current_anchor_if_known": "#guided-motion",
+                    "confidence": "HIGH",
+                    "rationale": "Main section defining directional drift of linons."
+                }
+            ],
+            "missing_prerequisites": [
+                "Requires trajectory analysis scenario with drift statistics",
+                "Metrics not defined in contract suite"
+            ],
+            "recommended_next_step": "Create a real scenario_id in the project, implement metrics in the project codepath, propagate traceability into claim_results and UI, add tests",
+            "implementation_notes": "None"
+        },
         "canonical_claim_set": "SUPPORTING_ONLY",
         "falsification_mode": "MANUAL_PLAN_ONLY",
         "falsification_status": "NOT_IMPLEMENTED",

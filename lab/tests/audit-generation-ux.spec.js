@@ -4,12 +4,12 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test.beforeEach(async ({ page }) => {
         // Go to the lab page
-        await page.goto('http://localhost:5174');
+        await page.goto('http://127.0.0.1:5174');
     });
 
     test('Production Policy - Button Disabled and Localhost Warning', async ({ page }) => {
         // Intercept config to simulate production
-        await page.route('http://localhost:8000/api/lab/audit/config', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
             const json = {
                 allowed: false,
                 cuda_available: true,
@@ -22,7 +22,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         });
 
         // Intercept verify_all to not crash
-        await page.route('http://localhost:8000/api/lab/health', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/health', async route => {
             await route.fulfill({ json: { current_build: {}, active_audit: {} } });
         });
 
@@ -37,7 +37,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test('CPU Fallback Warning - Cancel', async ({ page }) => {
         // Intercept config to simulate CPU only
-        await page.route('http://localhost:8000/api/lab/audit/config', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: false,
@@ -77,7 +77,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test('CPU Fallback Warning - Continue (Mock SSE)', async ({ page }) => {
         // Intercept config to simulate CPU only
-        await page.route('http://localhost:8000/api/lab/audit/config', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: false,
@@ -90,7 +90,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         });
 
         // Intercept generate to stream mock SSE
-        await page.route('http://localhost:8000/api/lab/audit/generate', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/audit/generate', async route => {
             const stream = "data: {\"status\":\"progress\",\"step\":0,\"detail\":\"Checking environment\",\"elapsed\":0.1}\n\n" +
                 "data: {\"status\":\"success\",\"step\":5,\"detail\":\"Done\",\"new_run_id\":\"mock_run_123\",\"elapsed\":1.5}\n\n";
             await route.fulfill({
@@ -124,7 +124,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test('CUDA Localhost - Direct Generation (Mock SSE)', async ({ page }) => {
         // Intercept config to simulate proper CUDA
-        await page.route('http://localhost:8000/api/lab/audit/config', async route => {
+        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: true,
