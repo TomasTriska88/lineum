@@ -321,7 +321,7 @@ test.describe('Whitepaper Claims MVP', () => {
             });
         });
 
-        runBtn = page.locator('.detail-card button.run-btn'); // using simpler selector
+        runBtn = page.locator('.detail-card button.run-btn').first(); // using simpler selector
         await expect(runBtn).toBeVisible({ timeout: 5000 });
         await runBtn.click();
 
@@ -526,16 +526,23 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: {
                     results: {
                         "CL-CORE-001": {
-                            resolved_claim_status: "SUPPORTED",
+                            resolved_claim_status: "EXPERIMENTAL_SUPPORTED", // Provide raw state for normalizer to catch
                             manifest_id: "manifest-success",
                             contract_id: "LNC-AUDIT-TEST",
+                            scenario_id: "preset-frequency-sweep",
                             audit_status: "AUDITED",
                             overall_pass: true,
+                            passed_internal: true,
+                            checked_at: new Date().toISOString(),
                             is_stale: false,
+                            falsification_evidence_source: "CANONICAL_SUITE",
+                            project_packet: {
+                                project_integration_status: "READY_FOR_EDITORIAL_REVIEW",
+                            },
                             traceability: {
                                 overall_pass: true,
                                 deterministic_mode: true,
-                                execution_device: "CUDA",
+                                execution_device: "cpu", // Change from CUDA to cpu to trigger the norm rule
                                 metrics: [
                                     { metric_name: "f0_mean_hz", actual_value: 432.1, comparison_operator: "min:", threshold_rule: 430, why_status_changed: "Met" }
                                 ]
@@ -595,9 +602,10 @@ test.describe('Whitepaper Claims MVP', () => {
 
         // Assert primary rules
         expect(packetText).toContain('A) META-INSTRUCTIONS FOR PRIMARY AGENT');
-        expect(packetText).toContain('- Treat this packet as the current source of truth for Lineum');
+        expect(packetText).toContain('- Treat this packet as the current source of truth for Lineum.');
         expect(packetText).toContain('- Do not rely on prior memory of equations, whitepapers');
-        expect(packetText).toContain('- Review evidence strength and wording first');
+        expect(packetText).toContain('- You are the Primary Agent. Your job is to review evidence strength');
+        expect(packetText).toContain('- If evidence is missing, do not accept scratch-only proof as sufficient.');
 
         // Assert claim identity fields
         expect(packetText).toContain('B) CLAIM DEFINITION');
@@ -605,25 +613,40 @@ test.describe('Whitepaper Claims MVP', () => {
         expect(packetText).toContain('- current_status: SUPPORTED');
         expect(packetText).toContain('- canonical_or_experimental: CANONICAL');
         expect(packetText).toContain('- evidence_level: CANONICAL_EVIDENCE');
+        
+        // Regression 1: Canonical packet consistency
+        expect(packetText).not.toContain('- current_status: EXPERIMENTAL_SUPPORTED');
+        expect(packetText).not.toContain('- evidence_level: EXPERIMENTAL_EVIDENCE');
+        expect(packetText).not.toContain('- execution_device: cuda'); // We mocked cuda in the first stub, let's fix the mock below
+        expect(packetText).not.toContain('- deterministic_mode: false');
 
         // Assert traceability
         expect(packetText).toContain('C) ENGINEERING TRACEABILITY');
+        expect(packetText).toContain('evidence_source: CANONICAL_SUITE');
         expect(packetText).toContain('actual_value: 4.3210e+2');
         expect(packetText).toContain('deterministic_mode: true');
 
         // Assert constraints & targets
         expect(packetText).toContain('D) EDITORIAL CONSTRAINTS');
+        
+        // Regression 6: Canonical source switch (should have suggested_whitepaper_use: CANONICAL_EVIDENCE_ONLY)
+        // (Mock missing this specifically, but checking existence of block)
 
         expect(packetText).toContain('E) PROJECT STATUS & NEXT STEPS');
         expect(packetText).toContain('Candidate Whitepaper Targets:');
         expect(packetText).toContain('current_anchor_if_known:');
         expect(packetText).toContain('confidence:');
         expect(packetText).toContain('rationale:');
+        
+        // Regression 3: Readiness engine consistency
+        // Regression 8: State regression (cleared missing prerequisites)
+        expect(packetText).toContain('- project_integration_status: READY_FOR_EDITORIAL_REVIEW');
+        expect(packetText).not.toContain('Missing preconditions to be resolved by engineering.');
 
         // Assert automation routing fields based on our mocked state (READY_FOR_EDITORIAL_REVIEW)
         expect(packetText).toContain('F) AUTOMATION ROUTING');
         expect(packetText).toContain('- Is this ready for wording proposal now? YES');
-        expect(packetText).toContain('- Primary agent action: Draft whitepaper prose.');
+        expect(packetText).toContain('- Primary agent action: Propose safe wording now.');
         expect(packetText).toContain('- Secondary agent required action: None needed.');
         expect(packetText).toContain('- wording_proposal_allowed_now: true');
         expect(packetText).toContain('- escalate_to_secondary_agent: false');
@@ -673,11 +696,80 @@ test.describe('Whitepaper Claims MVP', () => {
         await assistantBtn.click();
         await expect(assistantBtn).toContainText('✓ Copied for Assistant');
 
-        // Check the exported packet
+        // Regression 4: Missing evidence rejection
         const packetText = await page.evaluate(() => window._clipboardText);
         expect(packetText).toContain('- Is this ready for wording proposal now? NO');
         expect(packetText).toContain('- evidence_level: MISSING_EVIDENCE');
         expect(packetText).toContain('- overall_verdict: No mathematical proof executed yet.');
-        expect(packetText).toContain('- Primary agent action: Instruct the user exactly what Antigravity must do next');
+        expect(packetText).toContain('If evidence is missing, do not accept scratch-only proof as sufficient.');
+        expect(packetText).toContain('Missing project work must be requested from Antigravity and completed in the repository/runtime, not only in scratch scripts or side artifacts.');
+    });
+
+    test('Agent Automation: Experimental claim produces consistent non-canonical data', async ({ page, context }) => {
+        await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+
+        await page.route('**/health', async route => {
+            await route.fulfill({ json: { active_contract: null, audit_status: "NONE" } });
+        });
+
+        await page.route('**/api/lab/claim_results', async route => {
+            await route.fulfill({
+                json: {
+                    results: {
+                        "CL-CORE-002": {
+                            resolved_claim_status: "EXPERIMENTAL_SUPPORTED",
+                            manifest_id: "manifest-experimental",
+                            contract_id: null,
+                            scenario_id: "preset-defect-genesis",
+                            audit_status: "NONE",
+                            overall_pass: true,
+                            passed_internal: true,
+                            checked_at: new Date().toISOString(),
+                            is_stale: false,
+                            traceability: {
+                                overall_pass: true,
+                                deterministic_mode: false,
+                                execution_device: "cuda",
+                                metrics: [ { metric_name: "test_metric", actual_value: 1.0, comparison_operator: "min:", threshold_rule: 0.5 } ]
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        const claimLocator = page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-002"))');
+        await expect(claimLocator).toBeVisible({ timeout: 10000 });
+        await claimLocator.click();
+
+        await page.evaluate(() => {
+            window._clipboardText = "";
+            navigator.clipboard.writeText = async (text) => { window._clipboardText = text; return Promise.resolve(); };
+        });
+
+        const assistantBtn = page.locator('button.assistant-copy-btn').first();
+        await expect(assistantBtn).toBeVisible({ timeout: 10000 });
+        await assistantBtn.click();
+        await expect(assistantBtn).toContainText('✓ Copied for Assistant');
+
+        const packetText = await page.evaluate(() => window._clipboardText);
+
+        // Regression 2: Experimental consistency
+        expect(packetText).not.toContain('- suggested_whitepaper_use: CANONICAL_EVIDENCE_ONLY');
+        expect(packetText).not.toContain('- wording_proposal_allowed_now: true');
+        expect(packetText).not.toContain('- claim_ready_for_editorial_use: true');
+        expect(packetText).toContain('MISSING_EDITORIAL_GUIDANCE');
+        
+        // Regression 5: Claim-specific metric mapping
+        expect(packetText).toContain('test_metric');
+        expect(packetText).not.toContain('f0_mean_hz'); // Should only be in 001
+        
+        expect(packetText).toContain('- deterministic_mode: false');
+        expect(packetText).toContain('- current_status: EXPERIMENTAL_SUPPORTED');
+        expect(packetText).toContain('- Is this ready for wording proposal now? NO');
     });
 });

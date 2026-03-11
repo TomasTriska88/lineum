@@ -418,24 +418,41 @@
 
     function getAssistantPacketMarkdown(claim) {
         const cr = claimResults[claim.id] || {};
-        const actualStatus = getActualStatus(claim, claimResults);
+        let actualStatus = getActualStatus(claim, claimResults);
+
+        // Normalization rule: If it's a canonically tested claim that is editorially ready on cpu deterministically, treat it as fully SUPPORTED/CONTRADICTED in the packet
+        if (
+            claim.project_packet?.project_integration_status === "READY_FOR_EDITORIAL_REVIEW" &&
+            claim.falsification_evidence_source === "CANONICAL_SUITE" &&
+            cr.traceability?.deterministic_mode === true &&
+            cr.traceability?.execution_device === "cpu"
+        ) {
+            if (actualStatus === "EXPERIMENTAL_SUPPORTED") actualStatus = "SUPPORTED";
+            if (actualStatus === "EXPERIMENTAL_CONTRADICTED") actualStatus = "CONTRADICTED";
+        }
+
+        // Single coherent readiness rule: Must be explicitly READY_FOR_EDITORIAL_REVIEW *AND* actual status must be supportive/contradictive (including experimental)
         const isReady =
             claim.project_packet?.project_integration_status ===
                 "READY_FOR_EDITORIAL_REVIEW" &&
-            (actualStatus === "SUPPORTED" || actualStatus === "CONTRADICTED");
-        const isSupported = actualStatus === "SUPPORTED";
+            (actualStatus === "SUPPORTED" || actualStatus === "CONTRADICTED" || actualStatus === "EXPERIMENTAL_SUPPORTED" || actualStatus === "EXPERIMENTAL_CONTRADICTED");
+            
+        const isSupported = actualStatus === "SUPPORTED" || actualStatus === "EXPERIMENTAL_SUPPORTED";
 
         const isCanonical =
             claim.canonical_claim_set === "REQUIRED_FOR_PROMOTION" ||
             claim.canonical_claim_set === "SUPPORTING_ONLY" ||
             claim.id.includes("CORE");
-        const evidenceLevel = isSupported
-            ? "CANONICAL_EVIDENCE"
-            : cr.is_audit_grade
-              ? "AUDIT_FAILED"
-              : cr.passed_internal
-                ? "EXPERIMENTAL_EVIDENCE"
-                : "MISSING_EVIDENCE";
+            
+        // Fix evidence_level logic to align strictly with test provenance
+        let evidenceLevel = "MISSING_EVIDENCE";
+        if (actualStatus === "SUPPORTED" || actualStatus === "CONTRADICTED") {
+            evidenceLevel = "CANONICAL_EVIDENCE";
+        } else if (actualStatus === "EXPERIMENTAL_SUPPORTED" || actualStatus === "EXPERIMENTAL_CONTRADICTED") {
+            evidenceLevel = "EXPERIMENTAL_EVIDENCE";
+        } else if (cr.is_audit_grade === false && cr.checked_at) {
+             evidenceLevel = "AUDIT_FAILED";
+        }
 
         let isCanonicalDisplay = isCanonical ? "CANONICAL" : "EXPERIMENTAL";
         let evidenceSourceDisplay = claim.falsification_evidence_source || "N/A";
@@ -463,7 +480,11 @@
         let editorialConstraints = "";
         if (claim.editorial_guidance) {
             const ed = claim.editorial_guidance;
-            editorialConstraints = `- what_it_means: ${ed.what_it_means || "MISSING"}\n- what_it_does_not_mean: ${ed.what_it_does_not_mean || "MISSING"}\n- forbidden_overclaims:\n${(ed.forbidden_overclaims || []).length > 0 ? ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n") : "  - (None defined)"}\n- safe_wording:\n${(ed.safe_wording || []).length > 0 ? ed.safe_wording.map((s) => `  - ${s}`).join("\n") : "  - (None defined)"}\n- suggested_whitepaper_use: ${ed.suggested_whitepaper_use || "MISSING"}`;
+            let suggestedUse = ed.suggested_whitepaper_use || "MISSING";
+            if (evidenceLevel !== "CANONICAL_EVIDENCE" && suggestedUse === "CANONICAL_EVIDENCE_ONLY") {
+                suggestedUse = "EXPERIMENTAL_USE_ONLY";
+            }
+            editorialConstraints = `- what_it_means: ${ed.what_it_means || "MISSING"}\n- what_it_does_not_mean: ${ed.what_it_does_not_mean || "MISSING"}\n- forbidden_overclaims:\n${(ed.forbidden_overclaims || []).length > 0 ? ed.forbidden_overclaims.map((o) => `  - ${o}`).join("\n") : "  - (None defined)"}\n- safe_wording:\n${(ed.safe_wording || []).length > 0 ? ed.safe_wording.map((s) => `  - ${s}`).join("\n") : "  - (None defined)"}\n- suggested_whitepaper_use: ${suggestedUse}`;
         } else {
             editorialConstraints = `- what_it_means: MISSING_EDITORIAL_GUIDANCE\n- what_it_does_not_mean: MISSING_EDITORIAL_GUIDANCE\n- forbidden_overclaims:\n  - MISSING_EDITORIAL_GUIDANCE\n- safe_wording:\n  - MISSING_EDITORIAL_GUIDANCE\n- suggested_whitepaper_use: MISSING_EDITORIAL_GUIDANCE`;
         }
@@ -484,22 +505,11 @@
 
         let implementationNotes =
             claim.project_packet?.implementation_notes || "None";
-        let assistantAction = "Draft whitepaper prose.";
-        let antigravityAction = "None needed.";
         let escalate = false;
 
-        let metaInstructionsAddendum = "";
         let projectNextStepsBlock = `- project_integration_status: ${projectStatus}\n- missing_prerequisites: None_pending\n- recommended_next_step: ${claim.project_packet?.recommended_next_step || "-"}\n- implementation_notes: ${implementationNotes}`;
 
         if (!isReady) {
-            assistantAction =
-                "Instruct the user exactly what Antigravity must do next based on the missing prerequisites.";
-            
-            antigravityAction = claim.project_packet?.recommended_next_step;
-            if (!antigravityAction || antigravityAction === "Resolve missing prerequisites." || antigravityAction === "-") {
-                antigravityAction = "integrate scenario into validation/runtime path, persist metrics, add traceability, add tests";
-            }
-
             let missingArr = claim.project_packet?.missing_prerequisites?.length > 0 
                 ? claim.project_packet.missing_prerequisites 
                 : ["Missing preconditions to be resolved by engineering."];
@@ -521,7 +531,6 @@
 
             projectNextStepsBlock = `- project_integration_status: ${projectStatus}\n- missing_prerequisites:${missingStr}\n- recommended_next_step:${recStr}\n- implementation_notes: ${implementationNotes}`;
             
-            metaInstructionsAddendum = `\n- If evidence is missing, do not accept scratch-only proof as sufficient.\n- Require Antigravity to integrate the claim into the actual project pipeline (scenario, metrics, traceability, tests, and suite path if needed).`;
             escalate = true;
         }
 
@@ -529,16 +538,18 @@
 packet_schema_version: v1.0.0
 
 A) META-INSTRUCTIONS FOR PRIMARY AGENT
-- Treat this packet as the current source of truth for Lineum
-- Do not rely on prior memory of equations, whitepapers, audits, claims, or historical project state
-- Review evidence strength and wording first
-- If anything important is missing, instruct the user exactly what Antigravity must do next${metaInstructionsAddendum}
+- Treat this packet as the current source of truth for Lineum.
+- Do not rely on prior memory of equations, whitepapers, audits, claims, or historical project state.
+- You are the Primary Agent. Your job is to review evidence strength, propose safe wording when allowed, and prevent overclaims.
+- If anything important is missing, do not fill gaps from memory.
+- If evidence is missing, do not accept scratch-only proof as sufficient.
+- Require Antigravity, as the Secondary / Project Agent, to integrate the claim into the real project pipeline (scenario, metrics, traceability, tests, and suite path if needed).
 
 B) CLAIM DEFINITION
 - claim_id: ${claim.id}
 - short_claim: ${claim.short_claim}
 - scope: ${claim.scope}
-- current_status: ${getActualStatus(claim, claimResults)}
+- current_status: ${actualStatus}
 - evidence_level: ${evidenceLevel}
 - canonical_or_experimental: ${isCanonicalDisplay}
 - active_profile: ${cr.active_profile || "unknown"}
@@ -549,7 +560,7 @@ B) CLAIM DEFINITION
 C) ENGINEERING TRACEABILITY
 - evidence_source: ${evidenceSourceDisplay}
 - execution_device: ${cr.traceability?.execution_device || "unknown"}
-- deterministic_mode: ${cr.traceability?.deterministic_mode ? "true" : "false"}
+- deterministic_mode: ${cr.traceability?.deterministic_mode !== undefined ? (cr.traceability.deterministic_mode ? "true" : "false") : "unknown"}
 - overall_verdict: ${verdict}
 
 Metrics:
@@ -559,6 +570,9 @@ D) EDITORIAL CONSTRAINTS
 ${editorialConstraints}
 
 E) PROJECT STATUS & NEXT STEPS
+- This section tells the Primary Agent whether project-side integration is still missing.
+- If prerequisites are missing, the claim is not ready for final wording.
+- Missing project work must be requested from Antigravity and completed in the repository/runtime, not only in scratch scripts or side artifacts.
 ${projectNextStepsBlock}
 
 Candidate Whitepaper Targets:
@@ -566,8 +580,8 @@ ${candidateTargets}
 
 F) AUTOMATION ROUTING
 - Is this ready for wording proposal now? ${isReady ? "YES" : "NO"}
-- Primary agent action: ${assistantAction}
-- Secondary agent required action: ${antigravityAction}
+- Primary agent action: ${isReady ? "Propose safe wording now." : "Instruct the user exactly what Antigravity must do next."}
+- Secondary agent required action: ${isReady ? "None needed." : "Complete the missing project-side integration in the real Lineum pipeline."}
 - Escalation required: ${escalate ? "true" : "false"}
 - wording_proposal_allowed_now: ${isReady ? "true" : "false"}
 - claim_ready_for_editorial_use: ${isReady ? "true" : "false"}
