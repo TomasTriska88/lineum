@@ -1,12 +1,15 @@
 {
-  "timestamp": "2026-03-07T19:43:38.293974+00:00",
+  "timestamp": "2026-03-11T18:17:09.467711+00:00",
   "reason": "Locked audit runs failing SHA256 integrity verification.",
   "quarantined_directories": [
+    "output_wp\\archive\\quarantine\\spec6_false_s41_20260306_201952",
     "output_wp/runs\\spec6_false_s41_20260306_201952",
-    "output_wp\\archive\\quarantine\\spec6_false_s41_20260306_201952"
+    "output_wp\\archive\\quarantine\\spec6_false_s41_20260310_130840"
   ],
   "valid_candidates": [
-    "output_wp/runs\\spec6_false_s41_20260307_162450",
+    "output_wp/runs\\spec6_false_s41_20260311_191354",
+    "output_wp/runs\\spec6_false_s41_20260311_190429",
+    "output_wp/runs\\spec6_false_s41_20260311_183614",
     "output_wp/runs\\spec6_false_s41_20260227_200927",
     "output_wp/runs\\spec6_false_s41_20260222_152015"
   ]
