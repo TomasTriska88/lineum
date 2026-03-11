@@ -24,3 +24,25 @@ describe('i18n Translation System (Lab Flat Dict)', () => {
         expect(resolveKey(obj, 'level1.missing')).toBe(undefined);
     });
 });
+
+import fs from 'fs';
+import path from 'path';
+
+describe('i18n Hardcoded Text Enforcement', () => {
+    it('enforces no hardcoded English navigation labels in App.svelte', () => {
+        const appSveltePath = path.resolve(__dirname, '../src/App.svelte');
+        const code = fs.readFileSync(appSveltePath, 'utf-8');
+        
+        // Assert that the i18n translations are being used
+        expect(code).toContain('$t("nav_simulator")');
+        expect(code).toContain('$t("nav_claims")');
+        expect(code).toContain('$t("nav_validation")');
+        expect(code).toContain('$t("nav_lpl")');
+        
+        // Assert that the old hardcoded strings are removed
+        expect(code).not.toContain('label: "3D Simulator"');
+        expect(code).not.toContain('label: "Validation Core"');
+        expect(code).not.toContain('label: "Claims"');
+        expect(code).not.toContain('label: "LPL Compiler"');
+    });
+});

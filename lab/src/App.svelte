@@ -11,6 +11,7 @@
     import WhitepaperClaims from "./lib/components/WhitepaperClaims.svelte";
     import ContactFooter from "./lib/components/ContactFooter.svelte";
     import Logo from "./lib/components/Logo.svelte";
+    import NavButton from "./lib/components/NavButton.svelte";
     import { t } from "./lib/i18n";
 
     let container;
@@ -404,30 +405,19 @@
         </div>
 
         <div class="nav-modes">
-            <button
-                class:active={mainMode === "simulator"}
-                on:click={() => (mainMode = "simulator")}
-            >
-                3D Simulator
-            </button>
-            <button
-                class:active={mainMode === "validation"}
-                on:click={() => (mainMode = "validation")}
-            >
-                Validation Core
-            </button>
-            <button
-                class:active={mainMode === "claims"}
-                on:click={() => (mainMode = "claims")}
-            >
-                Claims
-            </button>
-            <button
-                class:active={mainMode === "lpl"}
-                on:click={() => (mainMode = "lpl")}
-            >
-                LPL Compiler
-            </button>
+            {#each [
+                { id: "simulator", label: $t("nav_simulator") },
+                { id: "claims", label: $t("nav_claims") },
+                { id: "validation", label: $t("nav_validation") },
+                { id: "lpl", label: $t("nav_lpl") }
+            ] as mode}
+                <NavButton
+                    buttonMode={mode.id}
+                    currentMode={mainMode}
+                    text={mode.label}
+                    on:select={(e) => mainMode = e.detail}
+                />
+            {/each}
             <div class="divider"></div>
             <button
                 class="btn-generate-audit"
@@ -1376,31 +1366,6 @@
         display: flex;
         align-items: center;
         gap: 15px;
-    }
-
-    .nav-modes button {
-        background: transparent;
-        border: 1px solid transparent;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        padding: 6px 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border-radius: 4px;
-    }
-
-    .nav-modes button:hover {
-        color: #00ffff;
-        background: rgba(0, 255, 255, 0.05);
-    }
-
-    .nav-modes button.active {
-        color: #00ffff;
-        background: rgba(0, 255, 255, 0.1);
-        border: 1px solid rgba(0, 255, 255, 0.3);
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
     }
 
     .nav-modes .divider {

@@ -3,21 +3,31 @@ import { readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
 describe('Repository Hygiene Enforcement', () => {
+    it('ensures critical AI agent files like usage_db.json exist in portal root', () => {
+        const portalRoot = process.cwd();
+        const usageDbPath = join(portalRoot, 'usage_db.json');
+        
+        const exists = statSync(usageDbPath, { throwIfNoEntry: false })?.isFile();
+        expect(exists, 'CRITICAL FILE MISSING: usage_db.json must exist in the portal root for the AI Agent tracking system.').toBe(true);
+    });
+
     it('ensures no temporary scrape/log files are left in the root or portal directories', () => {
         // Paths to check
         const projectRoot = join(process.cwd(), '../');
         const portalRoot = process.cwd();
+        const labRoot = join(process.cwd(), '../lab');
 
         const dirsToCheck = [
             { name: 'Project Root', path: projectRoot },
-            { name: 'Portal Root', path: portalRoot }
+            { name: 'Portal Root', path: portalRoot },
+            { name: 'Lab Root', path: labRoot }
         ];
 
         // Forbidden exact extensions (nobody should have a raw .log or .tmp checked into root)
         const forbiddenExts = ['.log', '.tmp', '.zip'];
 
         // Allowed generic JSON files in roots
-        const allowedJsons = ['package.json', 'package-lock.json', 'tsconfig.json', 'svelte.config.js', 'lineum-config.json', 'audit_info_thermodynamics.json', 'audit_stencil_ablation.json', 'lang_test_results.json', 'rigor_mode_coupling.json', 'output_audit_saturation.json', 'railway.json', '.zenodo.json'];
+        const allowedJsons = ['package.json', 'package-lock.json', 'tsconfig.json', 'svelte.config.js', 'lineum-config.json', 'audit_info_thermodynamics.json', 'audit_stencil_ablation.json', 'lang_test_results.json', 'rigor_mode_coupling.json', 'output_audit_saturation.json', 'railway.json', '.zenodo.json', 'usage_db.json'];
 
         // Allowed TXT files in roots 
         const allowedTxt = ['requirements.txt', 'requirements-dev.txt', 'audit_log.txt', 'broca_results.txt', 'clean_audit.txt', 'github_rules.txt', 'icon-interpretation.txt', 'pr_rules.txt', 'public_rules.txt', 'smetak_oea_rules.txt', 'timing_audit.txt', 'robots.txt'];

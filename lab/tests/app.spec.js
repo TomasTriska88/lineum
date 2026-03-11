@@ -36,11 +36,11 @@ test.describe('App Initialization Smoke Test', () => {
         const brandEl = page.locator('.nav-brand h1');
         await expect(brandEl).toHaveText(/SIMULACRUM/i);
 
-        // Verify the contact footer renders and has expected content
-        const contactFooter = page.locator('.contact-footer');
-        await expect(contactFooter).toBeVisible();
-        await expect(contactFooter).toContainText('+420 771 543 804');
-        await expect(contactFooter).toContainText('Lineum Dynamics');
+        // Verify the status bar footer renders and has expected content
+        const statusBar = page.locator('.status-bar');
+        await expect(statusBar).toBeVisible();
+        await expect(statusBar).toContainText('LINEUM LAB');
+        await expect(statusBar).toContainText('AGPLv3');
     });
 
     test('Navigation menu layout avoids vertical regression (Flex layout check)', async ({ page }) => {

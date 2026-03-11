@@ -3,13 +3,17 @@ import { test, expect } from '@playwright/test';
 test.describe('Audit Generation UX and Truthfulness', () => {
 
     test.beforeEach(async ({ page }) => {
+        // Global mocks for all backend endpoints used on mount to prevent App.svelte error state
+        await page.route('**/data/manifest.json', async route => {
+            await route.fulfill({ json: [] });
+        });
         // Go to the lab page
         await page.goto('http://127.0.0.1:5174');
     });
 
     test('Production Policy - Button Disabled and Localhost Warning', async ({ page }) => {
         // Intercept config to simulate production
-        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
+        await page.route('**/api/lab/audit/config', async route => {
             const json = {
                 allowed: false,
                 cuda_available: true,
@@ -22,7 +26,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         });
 
         // Intercept verify_all to not crash
-        await page.route('http://127.0.0.1:8000/api/lab/health', async route => {
+        await page.route('**/api/lab/health', async route => {
             await route.fulfill({ json: { current_build: {}, active_audit: {} } });
         });
 
@@ -37,7 +41,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test('CPU Fallback Warning - Cancel', async ({ page }) => {
         // Intercept config to simulate CPU only
-        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
+        await page.route('**/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: false,
@@ -62,8 +66,8 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         // Warning modal should appear
         const modal = page.locator('.warning-modal');
         await expect(modal).toBeVisible();
-        await expect(modal).toContainText('CUDA unavailable');
-        await expect(modal).toContainText('Mock CPU only');
+        await expect(modal).toContainText('Performance Warning');
+        await expect(modal).toContainText('Standard CPU');
 
         // Click cancel
         await page.locator('.warning-modal .btn-cancel').click();
@@ -77,7 +81,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
 
     test('CPU Fallback Warning - Continue (Mock SSE)', async ({ page }) => {
         // Intercept config to simulate CPU only
-        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
+        await page.route('**/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: false,
@@ -90,7 +94,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         });
 
         // Intercept generate to stream mock SSE
-        await page.route('http://127.0.0.1:8000/api/lab/audit/generate', async route => {
+        await page.route('**/api/lab/audit/generate', async route => {
             const stream = "data: {\"status\":\"progress\",\"step\":0,\"detail\":\"Checking environment\",\"elapsed\":0.1}\n\n" +
                 "data: {\"status\":\"success\",\"step\":5,\"detail\":\"Done\",\"new_run_id\":\"mock_run_123\",\"elapsed\":1.5}\n\n";
             await route.fulfill({
@@ -118,13 +122,13 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         // Click continue
         await page.locator('.warning-modal .btn-proceed').click();
 
-        // Button should show generation
-        await expect(page.locator('button.btn-generate-audit')).toContainText('Done');
+        // Button should reset to initial state after success
+        await expect(page.locator('button.btn-generate-audit')).toContainText('GENERATE AUDIT CONTRACT');
     });
 
     test('CUDA Localhost - Direct Generation (Mock SSE)', async ({ page }) => {
         // Intercept config to simulate proper CUDA
-        await page.route('http://127.0.0.1:8000/api/lab/audit/config', async route => {
+        await page.route('**/api/lab/audit/config', async route => {
             const json = {
                 allowed: true,
                 cuda_available: true,
@@ -137,7 +141,7 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         });
 
         // Intercept generate to stream mock SSE
-        await page.route('http://localhost:8000/api/lab/audit/generate', async route => {
+        await page.route('**/api/lab/audit/generate', async route => {
             const stream = "data: {\"status\":\"progress\",\"step\":0,\"detail\":\"Checking environment\",\"elapsed\":0.1}\n\n" +
                 "data: {\"status\":\"progress\",\"step\":1,\"detail\":\"Starting mock GPU run\",\"elapsed\":0.5}\n\n" +
                 "data: {\"status\":\"success\",\"step\":5,\"detail\":\"Done\",\"new_run_id\":\"mock_run_gpu\",\"elapsed\":1.2}\n\n";
@@ -165,6 +169,6 @@ test.describe('Audit Generation UX and Truthfulness', () => {
         await expect(page.locator('.warning-modal')).toBeHidden();
 
         // Wait for final state
-        await expect(genBtn).toContainText('Done');
+        await expect(genBtn).toContainText('GENERATE AUDIT CONTRACT');
     });
 });

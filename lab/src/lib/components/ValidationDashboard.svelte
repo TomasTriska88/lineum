@@ -847,7 +847,7 @@
             <button
                 class="mega-run"
                 disabled={running}
-                on:click={executeScenario}
+                on:click={() => executeScenario()}
             >
                 {running ? "EXECUTING MATH CORE..." : "RUN SCENARIO"}
             </button>

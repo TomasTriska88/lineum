@@ -267,7 +267,7 @@ test.describe('Whitepaper Claims MVP', () => {
         await expect(claimLocator).toBeVisible();
         await claimLocator.click();
 
-        let runBtn = page.locator('button:has-text("Run Verification Scenario")');
+        let runBtn = page.locator('.detail-card button:has-text("Run Verification Scenario")');
         await expect(runBtn).toBeVisible();
         await runBtn.click();
 
@@ -321,7 +321,7 @@ test.describe('Whitepaper Claims MVP', () => {
             });
         });
 
-        runBtn = page.locator('button.run-btn'); // using simpler selector
+        runBtn = page.locator('.detail-card button.run-btn'); // using simpler selector
         await expect(runBtn).toBeVisible({ timeout: 5000 });
         await runBtn.click();
 

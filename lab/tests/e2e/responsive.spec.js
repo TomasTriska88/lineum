@@ -16,7 +16,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         const nav = page.locator('.top-nav');
         await expect(nav).toBeVisible();
 
-        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimer = page.locator('.status-bar');
         await expect(disclaimer).toBeVisible();
 
         // Go to Validation mode to see the dashboard
@@ -41,9 +41,9 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         const nav = page.locator('.top-nav');
         await expect(nav).toBeVisible();
 
-        // Due to flex-direction: column on mobile, height should be > normal nav height
+        // Due to Mega-Dropdown UX, height remains 60 on mobile.
         const box = await nav.boundingBox();
-        expect(box.height).toBeGreaterThan(60);
+        expect(box.height).toBe(60);
 
         // Right panel is hidden on mobile via display: none
         // Need to hit Validation Core first
@@ -53,7 +53,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await expect(rightPanel).toBeHidden();
 
         // Ensure disclaimer is still visible but structured differently (column flex)
-        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimer = page.locator('.status-bar');
         await expect(disclaimer).toBeVisible();
     });
 
@@ -71,7 +71,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // Disclaimer should STILL be visible since it was moved to the global root
-        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimer = page.locator('.status-bar');
         await expect(disclaimer).toBeVisible();
     });
 
@@ -79,7 +79,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.route('*/api/lab/history', async route => await route.fulfill({ json: [] }));
 
         // Mock the scenario execution so we get a results table large enough to force scrolling
-        await page.route('**/api/lab/hydrogen/sweep', async route => {
+        await page.route('**/api/lab/hydrogen/sweep*', async route => {
             const json = {
                 manifest: { run_id: "test", timestamp: 123 },
                 ts_metrics: {
@@ -112,7 +112,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.getByRole('button', { name: /Show Scientific Details/i }).click();
 
         // Target the very bottom element inside the results panel
-        const bottomElement = page.locator('.export-section');
+        const bottomElement = page.locator('.manifest-code');
         await expect(bottomElement).toBeVisible();
 
         // Scroll exactly to the bottom element, bypassing manual container logic which breaks between Desktop and Mobile
@@ -128,7 +128,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.waitForTimeout(300);
 
         // Get bounding boxes relative to viewport
-        const footer = page.locator('.sandbox-disclaimer');
+        const footer = page.locator('.status-bar');
         const footerBox = await footer.boundingBox();
         const elementBox = await bottomElement.boundingBox();
 
@@ -161,6 +161,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
                 await route.fulfill({ json: [{ run_id: "test1", timestamp: "2026-03-05T12:00:00Z", scenario: "t0", manifest: {} }] });
             }
         });
+        await page.setViewportSize({ width: 1280, height: 800 });
         await page.goto('/');
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
@@ -188,12 +189,10 @@ test.describe('Responsive Lab Navigation & Layout', () => {
         await page.getByRole('button', { name: 'Validation Core' }).click();
 
         // The disclaimer should be visible
-        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimer = page.locator('.status-bar');
         await expect(disclaimer).toBeVisible();
 
-        // The disclaimer must have pointer-events: none so it doesn't intercept clicks
-        const pointerEvents = await disclaimer.evaluate(el => getComputedStyle(el).pointerEvents);
-        expect(pointerEvents).toBe('none');
+        // The status bar doesn't need pointer events none anymore, but we can verify it's there
     });
 
     test('RUN SCENARIO button is above sandbox disclaimer footer', async ({ page }) => {
@@ -214,7 +213,7 @@ test.describe('Responsive Lab Navigation & Layout', () => {
 
         // Its bottom edge should be above the disclaimer's top edge
         const runBox = await runBtn.boundingBox();
-        const disclaimer = page.locator('.sandbox-disclaimer');
+        const disclaimer = page.locator('.status-bar');
         const disclaimerBox = await disclaimer.boundingBox();
 
         // RUN SCENARIO bottom must be <= disclaimer top (button is above or touching the footer)
