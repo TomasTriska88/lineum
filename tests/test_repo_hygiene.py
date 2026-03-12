@@ -11,6 +11,40 @@ def test_no_untracked_files_in_root():
     
     assert len(untracked_files) == 0, f"Found untracked files in root: {untracked_files}. Please move them to .scratch/ or add to .gitignore."
 
+def test_no_forbidden_tracked_files():
+    """
+    Ensures that temporary scripts, scratch files, and debug outputs
+    are not accidentally tracked in the git repository.
+    """
+    root = Path(__file__).resolve().parent.parent
+    result = subprocess.run(["git", "ls-files"], cwd=root, capture_output=True, text=True)
+    
+    assert result.returncode == 0, f"Git command failed: {result.stderr}"
+    
+    tracked_files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
+    
+    forbidden_patterns = [
+        "debug_out.txt",
+        "debug_valid.txt",
+        "pytest_output.txt",
+        "validation_errors.txt",
+        "test_output.json",
+        "test_output2.json",
+        "fix_czech_claim.js",
+        "clean_whitepaper_map.js",
+        "add_claim_036.js"
+    ]
+
+    violations = []
+    for file in tracked_files:
+        for pattern in forbidden_patterns:
+            if pattern in file.lower():
+                violations.append(file)
+                break
+
+    if violations:
+        assert False, f"Repository hygiene test failed. 🚨 Forbidden artifacts are tracked in git:\n" + "\n".join(violations) + "\nRemove them using `git rm --cached <file>` and add them to .gitignore or .scratch/."
+
 def test_critical_files_exist():
     """Ensures that the project's key configuration files have not been accidentally deleted."""
     root = Path(__file__).resolve().parent.parent

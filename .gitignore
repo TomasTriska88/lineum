@@ -103,7 +103,11 @@ console_*.txt
 final_*.txt
 alias_*.txt
 test_output*.txt
+test_output*.json
 contract_*.txt
+debug_*.txt
+pytest_output.txt
+validation_errors.txt
 
 # Portal build-time synced data (unignored for Railway standalone deployment)
 portal/src/lib/data/ai_index.json
