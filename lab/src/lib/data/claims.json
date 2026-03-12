@@ -1107,5 +1107,39 @@
         "falsification_mode": "MANUAL_PLAN_ONLY",
         "falsification_status": "NOT_IMPLEMENTED",
         "last_falsification_run_id": null
+    },
+    {
+        "id": "CL-011",
+        "short_claim": "Spacetime is granular, composed of Planck-scale quantum pixels.",
+        "human_claim": "The universe is not smooth or continuous; it is a quantum mosaic made of minuscule 'pixels' that dictate the fundamental rules of reality, forming the fabric of the cosmos.",
+        "scientific_claim": "The Lineum fundamental grid represents discrete spacetime units at the Planck scale. At this granular level, continuous symmetries are replaced by exact local update rules on the grid topology, averting singularities.",
+        "what_it_is_not": "This is NOT claiming a physical measurement of the Planck length has been made; it is an foundational hypothesis framing the discrete architecture of the model.",
+        "source_file": "01-core-lineum.md",
+        "source_section": "§2.0 The Quantum Mosaic",
+        "source_anchor": "#the-quantum-mosaic",
+        "source_quote": "The universe might not be smooth and continuous, but rather a \"quantum mosaic\" composed of minuscule, discrete units... Planck-scale quantum pixels.",
+        "tags": [
+            "core",
+            "planck-scale",
+            "pixel",
+            "quantum-mosaic",
+            "discrete-spacetime"
+        ],
+        "scope": "ANALOGICAL",
+        "status": "UNTESTED",
+        "testability": "NOT_TESTABLE_YET",
+        "test_reason": "It is an architectural axiom of the model, not an emergent measurable statistic.",
+        "verification_plan": "1. Review theoretical foundation logic. 2. Verify all operations are strictly bound to discrete cell boundaries.",
+        "expected_measures": "Grid operations resolve without continuous floating point approximations of space.",
+        "scenario_id": "conceptual",
+        "disclaimers": "Planck-scale terminology is analogical for the lowest-level grid structure in Lineum.",
+        "falsification_needed": false,
+        "falsification_plan": null,
+        "missing_falsification_reason": "Architectural axiom (analogical representation of the grid).",
+        "verification_spec_status": "NOT_PREPARED",
+        "canonical_claim_set": "NOT_PART_OF_PROMOTION",
+        "falsification_mode": "MANUAL_PLAN_ONLY",
+        "falsification_status": "NOT_IMPLEMENTED",
+        "last_falsification_run_id": null
     }
 ]

@@ -145,6 +145,25 @@
             } catch (e) {
                 console.warn("Could not fetch audit config", e);
             }
+
+            // --- Audit Reconnect & Initial Poll ---
+            try {
+                const statusRes = await fetch("/api/lab/audit/status");
+                if (statusRes.ok) {
+                    const statusData = await statusRes.json();
+                    if (["RUNNING", "QUIET", "CANCELLING"].includes(statusData.state)) {
+                        isGeneratingAudit = true;
+                        auditProgressText = statusData.detail || statusData.phase;
+                        startAuditPolling();
+                    } else if (["FAILED", "STALE"].includes(statusData.state) && statusData.started_at > 0) {
+                        // Notify user if they refreshed and missed a crash
+                        console.warn("Found stale/failed audit run terminal state:", statusData);
+                        auditProgressText = "Generation aborted.";
+                    }
+                }
+            } catch(e) {
+                console.warn("Could not probe audit status.", e);
+            }
         } catch (e) {
             console.error("Initialization failed:", e);
             error = e.message;
@@ -236,6 +255,7 @@
     });
 
     let isGeneratingAudit = false;
+    let auditPollInterval = null;
 
     function initiateAuditGeneration() {
         if (!auditConfig?.allowed) return;
@@ -246,77 +266,100 @@
         }
     }
 
+    async function cancelAuditContract() {
+        if (!isGeneratingAudit) return;
+        try {
+            auditProgressText = "Sending cancellation...";
+            const response = await fetch("/api/lab/audit/cancel", { method: "POST" });
+            const data = await response.json();
+            if (data.status === "cancelling") {
+                 auditProgressText = "Shutting down... Please wait.";
+            }
+        } catch (err) {
+            console.error("Failed to cancel audit:", err);
+            alert("Failed to cancel audit: " + err.message);
+        }
+    }
+
+    function startAuditPolling() {
+        if (auditPollInterval) clearInterval(auditPollInterval);
+        
+        auditPollInterval = setInterval(async () => {
+            try {
+                const res = await fetch("/api/lab/audit/status");
+                if (!res.ok) throw new Error("Status endpoint failed");
+                const data = await res.json();
+
+                if (["RUNNING", "QUIET", "CANCELLING"].includes(data.state)) {
+                    isGeneratingAudit = true;
+                    // Provide robust detail even when detail matches phase
+                    auditProgressText = data.detail && data.detail !== data.phase 
+                        ? `${data.phase} (${data.detail})` 
+                        : data.phase;
+                        
+                    if(data.state === "CANCELLING") {
+                        auditProgressText = "Cancelling: " + auditProgressText;
+                    } else if (data.state === "QUIET") {
+                        auditProgressText = "No heartbeat (timeout approaching)...";
+                    }
+                } else if (data.state === "COMPLETED") {
+                    clearInterval(auditPollInterval);
+                    auditPollInterval = null;
+                    isGeneratingAudit = false;
+                    
+                    alert(`Audit Contract Generated!\nStatus: Canonical Updated\nElapsed: ${data.elapsed}s`);
+                    
+                    window.dispatchEvent(new CustomEvent("audit-completed"));
+                    try {
+                        const mRes = await fetch("/data/manifest.json");
+                        if (mRes.ok) manifest = await mRes.json();
+                    } catch (e) {}
+                    
+                } else if (["FAILED", "CANCELLED", "STALE"].includes(data.state)) {
+                     clearInterval(auditPollInterval);
+                     auditPollInterval = null;
+                     isGeneratingAudit = false;
+                     let errorMsg = `Audit generation aborted. State: ${data.state}\nReason: ${data.phase}`;
+                     if (data.detail) errorMsg += `\nDetail: ${data.detail}`;
+                     alert(errorMsg);
+                }
+            } catch (err) {
+                console.warn("Poll heartbeat missed:", err);
+            }
+        }, 500);
+    }
+
     async function generateAuditContract() {
         if (isGeneratingAudit) return;
         isGeneratingAudit = true;
         showCudaWarning = false;
-        auditProgressText = "Starting up...";
+        auditProgressText = "Starting background job...";
 
         try {
-            const response = await fetch(
-                "/api/lab/audit/generate",
-                {
-                    method: "POST",
-                },
-            );
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
-
-                const lines = decoder
-                    .decode(value, { stream: true })
-                    .split("\n");
-                for (const line of lines) {
-                    if (line.startsWith("data: ")) {
-                        try {
-                            const data = JSON.parse(line.substring(6));
-                            auditProgressText = data.detail || "GENERATING...";
-                            auditProgressStep = data.step || 0;
-
-                            if (data.status === "success") {
-                                alert(
-                                    "Audit Contract Generated!\nStatus: " +
-                                        data.audit_status +
-                                        "\nRun ID: " +
-                                        data.new_run_id +
-                                        "\nElapsed: " +
-                                        data.elapsed +
-                                        "s",
-                                );
-                                window.dispatchEvent(
-                                    new CustomEvent("audit-completed"),
-                                );
-                                try {
-                                    const mRes = await fetch(
-                                        "/data/manifest.json",
-                                    );
-                                    if (mRes.ok) manifest = await mRes.json();
-                                } catch (e) {}
-                                isGeneratingAudit = false;
-                                return;
-                            } else if (data.status === "error") {
-                                throw new Error(data.detail);
-                            }
-                        } catch (e) {
-                            if (
-                                e.message &&
-                                e.message !== "Unexpected end of JSON input"
-                            ) {
-                                throw e;
-                            }
-                        }
-                    }
-                }
+            const response = await fetch("/api/lab/audit/generate", { method: "POST" });
+            
+            if (response.status === 409) {
+                 // Fast sync if another tab already started it
+                 startAuditPolling();
+                 return;
             }
+            
+            if (!response.ok) {
+                 const errText = await response.text();
+                 throw new Error(`Server returned ${response.status}: ${errText}`);
+            }
+
+            // Immediately start polling since HTTP POST returns status quickly now
+            startAuditPolling();
+            
         } catch (err) {
             console.error(err);
-            alert("Failed to generate audit contract: " + err.message);
+            alert("Failed to initiate audit: " + err.message);
             isGeneratingAudit = false;
+            if (auditPollInterval) clearInterval(auditPollInterval);
         }
     }
+
 
     async function loadRun(runId) {
         loading = true;
@@ -419,6 +462,15 @@
                 />
             {/each}
             <div class="divider"></div>
+            {#if isGeneratingAudit}
+                <button
+                    class="btn-generate-audit cancel"
+                    on:click={cancelAuditContract}
+                    title="Stop physics simulation and quarantine artifacts."
+                >
+                    🚫 CANCEL AUDIT
+                </button>
+            {/if}
             <button
                 class="btn-generate-audit"
                 class:pulse={isGeneratingAudit}
@@ -430,7 +482,7 @@
                     "Generates a local canonical contract in output_wp/"}
             >
                 {#if isGeneratingAudit}
-                    <span class="icon">⏳</span> {auditProgressText}
+                    <span class="icon">⏳</span> AUDIT RUNNING
                 {:else if auditConfig && !auditConfig.allowed}
                     <span class="icon">🔒</span> LOCAL ONLY
                 {:else}
@@ -456,13 +508,20 @@
         </div>
     </nav>
 
+    {#if isGeneratingAudit}
+        <div class="audit-progress-panel" data-testid="audit-progress-panel">
+            <div class="panel-header">LIVE AUDIT PROGRESS</div>
+            <div class="panel-body">{auditProgressText}</div>
+        </div>
+    {/if}
+
     {#if mainMode === "validation"}
         <div class="fullscreen-mode">
             <ValidationDashboard />
         </div>
     {:else if mainMode === "claims"}
         <div class="fullscreen-mode">
-            <WhitepaperClaims />
+            <WhitepaperClaims {isGeneratingAudit} />
         </div>
     {:else if mainMode === "lpl"}
         <div class="fullscreen-mode">
@@ -1392,5 +1451,43 @@
     .btn-generate-audit:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    .audit-progress-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 450px;
+        background: rgba(0, 15, 5, 0.95);
+        border: 1px solid #00ff00;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        z-index: 300;
+        pointer-events: all;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .audit-progress-panel .panel-header {
+        background: rgba(0, 255, 0, 0.15);
+        color: #00ff00;
+        font-size: 0.7rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        padding: 6px 12px;
+        border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    }
+
+    .audit-progress-panel .panel-body {
+        padding: 12px;
+        color: #00ff00;
+        font-family: monospace;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        word-break: break-all;
+        white-space: pre-wrap;
+        max-height: 150px;
+        overflow-y: auto;
     }
 </style>

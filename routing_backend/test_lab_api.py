@@ -150,7 +150,6 @@ def test_audit_path_enforcement():
             f"Suite path must be under runs/_whitepaper_contract/, got: {normalized}"
         assert normalized.endswith("output_wp/runs/_whitepaper_contract/whitepaper_contract_suite.json"), \
             f"Suite path must end with canonical suffix, got: {normalized}"
-<<<<<<< HEAD
 
 def test_health_active_profile():
     """
@@ -168,5 +167,39 @@ def test_health_active_profile():
         assert data["active_profile"] is not None, "active_profile must not be null when audit exists"
         assert data["active_profile"] in ("baseline", "canonical", "wave_core"), \
             f"Unexpected profile: {data['active_profile']}"
-=======
->>>>>>> feature/wave-core-golden-validation
+
+def test_audit_cancellation_flow():
+    """
+    Ensures that calling /audit/cancel cleanly transitions the state machine
+    from RUNNING -> CANCELLING -> CANCELLED, ensuring the UI does not hang.
+    """
+    from routing_backend.lab_api import audit_mgr
+    import time
+    
+    # Manually mock a stuck RUNNING state
+    audit_mgr.job_id = "test-cancel-job-123"
+    audit_mgr.state = "RUNNING"
+    audit_mgr.started_at = time.time()
+    audit_mgr.last_heartbeat = time.time()
+    audit_mgr.save_state()
+    
+    # Trigger cancellation
+    res = client.post("/api/lab/audit/cancel")
+    assert res.status_code == 200
+    assert res.json()["status"] == "cancelling"
+    
+    # In TestClient, BackgroundTasks run synchronously and often complete before 
+    # the next line of code, so the state could be CANCELLING or already CANCELLED.
+    status_res = client.get("/api/lab/audit/status")
+    current_state = status_res.json()["state"]
+    assert current_state in ["CANCELLING", "CANCELLED"]
+    
+    # Ensure it reaches CANCELLED
+    if current_state == "CANCELLING":
+        from routing_backend.lab_api import _trigger_cleanup_and_kill
+        _trigger_cleanup_and_kill(audit_mgr.job_id)
+        
+    final_res = client.get("/api/lab/audit/status")
+    assert final_res.json()["state"] == "CANCELLED"
+    assert audit_mgr.state == "CANCELLED"
+

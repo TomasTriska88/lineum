@@ -254,6 +254,11 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: { manifest_id: "mock-123", overall_pass: true, message: "Mocked fetch", resolved_claim_status: "EXPERIMENTAL_SUPPORTED", audit_status: "NONE", scenario_id: "mock-scenario" }
             });
         });
+        
+        // Mock audit status for baseline
+        await page.route('**/api/lab/audit/status', async route => {
+            await route.fulfill({ json: { state: "COMPLETED", phase: "Done", detail: "Done", elapsed: 0 } });
+        });
 
         // Check global navigation header to ensure audit generation button is present
         await expect(page.locator('.btn-generate-audit')).toBeVisible();
@@ -772,5 +777,116 @@ test.describe('Whitepaper Claims MVP', () => {
         expect(packetText).toContain('- deterministic_mode: false');
         expect(packetText).toContain('- current_status: EXPERIMENTAL_SUPPORTED');
         expect(packetText).toContain('- Is this ready for wording proposal now? NO');
+    });
+});
+
+test.describe('Audit Job Manager Integration UI', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route('**/api/lab/claim_results', async route => {
+            await route.fulfill({ json: { results: {} } });
+        });
+        await page.route('**/health', async route => {
+            await route.fulfill({ json: { active_contract: null, audit_status: "NONE" } });
+        });
+        await page.route('**/data/manifest.json', async route => {
+            await route.fulfill({ json: [] });
+        });
+        await page.route('**/api/lab/audit/config', async route => {
+            await route.fulfill({ json: { allowed: true, execution_device: "mock-cpu" } });
+        });
+    });
+
+    test('UI Reconnects to Running Audit Job on Mount', async ({ page }) => {
+        // Mock active running site
+        await page.route('**/api/lab/audit/status', async route => {
+            await route.fulfill({ json: { state: "RUNNING", phase: "Physics simulation running...", detail: "step 500/2000", elapsed: 12.5 } });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+
+        // Check global navigation header to ensure audit generation button is in pulse mode
+        const btn = page.locator('.btn-generate-audit:not(.cancel)');
+        await expect(btn).toBeVisible();
+        await expect(btn).toHaveClass(/pulse/);
+        await expect(btn).toContainText('⏳ AUDIT RUNNING');
+        
+        const progressPanel = page.locator('.audit-progress-panel .panel-body');
+        await expect(progressPanel).toContainText('Physics simulation running...');
+        await expect(progressPanel).toContainText('step 500/2000');
+        
+        // Cancel button should appear
+        const cancelBtn = page.locator('.btn-generate-audit.cancel');
+        await expect(cancelBtn).toBeVisible();
+        await expect(cancelBtn).toContainText('CANCEL AUDIT');
+    });
+
+    test('UI Cancellation Flow triggers CANCELLING state', async ({ page }) => {
+        let cancelHit = false;
+        await page.route('**/api/lab/audit/status', async route => {
+            await route.fulfill({ json: { state: cancelHit ? "CANCELLING" : "RUNNING", phase: cancelHit ? "Shutting down" : "Running", detail: "", elapsed: 12.5 } });
+        });
+        
+        await page.route('**/api/lab/audit/cancel', async route => {
+            cancelHit = true;
+            await route.fulfill({ json: { status: "cancelling" } });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        
+        // Handle window.confirm for cancel
+        page.once('dialog', dialog => dialog.accept());
+
+        // Wait for connection to establish so we don't click prematurely
+        const btn = page.locator('.btn-generate-audit:not(.cancel)');
+        await expect(btn).toContainText('⏳ AUDIT RUNNING');
+
+        const cancelBtn = page.locator('.btn-generate-audit.cancel');
+        await expect(cancelBtn).toBeVisible();
+        await cancelBtn.click();
+        
+        const progressPanel = page.locator('.audit-progress-panel .panel-body');
+        await expect(progressPanel).toContainText(/Shutting down/i);
+    });
+    
+    test('Canonical Paradox: newer artifacts keep canonical support', async ({ page }) => {
+        // Here we test Rule 5 from WhitepaperClaims where CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER does NOT downgrade to EXPERIMENTAL
+        await page.route('**/health', async route => {
+            await route.fulfill({ json: { 
+                active_contract: "valid", 
+                audit_status: "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER" 
+            } });
+        });
+
+        await page.route('**/api/lab/claim_results', async route => {
+            await route.fulfill({
+                json: {
+                    results: {
+                        "CL-CORE-001": {
+                            resolved_claim_status: "SUPPORTED", // True grade
+                            manifest_id: "manifest-success",
+                            scenario_id: "preset-frequency-sweep",
+                            audit_status: "AUDITED",
+                            overall_pass: true,
+                            passed_internal: true
+                        }
+                    }
+                }
+            });
+        });
+        
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+        
+        const claimLocator = page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))');
+        await expect(claimLocator).toBeVisible({ timeout: 10000 });
+        await claimLocator.click();
+        
+        // Wait for canonical evidence box - this implies it did NOT downgrade to EXPERIMENTAL (which uses .exploratory class)
+        let canonicalBox = page.locator('.evidence-box.canonical');
+        await expect(canonicalBox).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('.detail-card strong:has-text("SUPPORTED")')).toBeVisible();
     });
 });

@@ -1,8 +1,9 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, HTTPException
-from fastapi.responses import StreamingResponse
-from typing import Dict
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, HTTPException, BackgroundTasks
+from fastapi.responses import StreamingResponse, JSONResponse
+from typing import Dict, Optional
 import asyncio
 import time
+import shutil
 import numpy as np
 import io
 import base64
@@ -27,6 +28,10 @@ from scripts.validation_core import (
 
 HISTORY_DIR = Path(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'output', 'lab_history'))
 HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+REPO_ROOT_CLAIMS = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+OUTPUT_WP_DIR = Path(os.path.join(REPO_ROOT_CLAIMS, 'output_wp'))
+AUDIT_STATE_FILE = OUTPUT_WP_DIR / ".audit_job_state.json"
+STAGING_AUDIT_DIR = OUTPUT_WP_DIR / "runs" / "_staging_audit"
 
 def save_run(data: dict):
     if "manifest" in data and "run_id" in data["manifest"]:
@@ -40,6 +45,85 @@ def save_run(data: dict):
             
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(save_data, f, indent=2)
+
+class AuditJobManager:
+    def __init__(self):
+        self._load_state()
+
+    def _load_state(self):
+        self.job_id = None
+        self.state = "COMPLETED"
+        self.started_at = 0.0
+        self.last_heartbeat = 0.0
+        self.phase = "Done"
+        self.detail = ""
+        self.run_id_if_known = None
+        self.pid = None
+        self.task = None
+
+        if AUDIT_STATE_FILE.exists():
+            try:
+                with open(AUDIT_STATE_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                self.job_id = data.get("job_id")
+                
+                # Check stale conditions on load (if server crashed while running)
+                loaded_state = data.get("state", "COMPLETED")
+                if loaded_state in ["RUNNING", "QUIET", "CANCELLING"]:
+                    self.state = "FAILED"
+                    self.phase = "Server restarted unexpectedly"
+                else:
+                    self.state = loaded_state
+                    
+                self.started_at = data.get("started_at", 0.0)
+                self.last_heartbeat = data.get("last_heartbeat", 0.0)
+                self.phase = data.get("phase", "Done")
+                self.run_id_if_known = data.get("run_id_if_known")
+                self.pid = data.get("pid")
+            except Exception as e:
+                print(f"Failed to load audit state: {e}")
+
+    def save_state(self):
+        data = {
+            "job_id": self.job_id,
+            "state": self.state,
+            "started_at": self.started_at,
+            "last_heartbeat": self.last_heartbeat,
+            "phase": self.phase,
+            "detail": self.detail,
+            "run_id_if_known": self.run_id_if_known,
+            "pid": self.pid
+        }
+        try:
+            with open(AUDIT_STATE_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            print(f"Failed to save audit state: {e}")
+
+    def update(self, phase: str, detail: str = "", state: Optional[str] = None):
+        self.phase = phase
+        self.detail = detail
+        if state:
+            self.state = state
+        self.last_heartbeat = time.time()
+        self.save_state()
+
+    def quarantine_cleanup(self):
+        """Moves staging dict to quarantine and releases lock."""
+        # Process kill logic is handled in the worker
+        print(f"AuditManager: Cleaning up staging into quarantine.")
+        if STAGING_AUDIT_DIR.exists():
+            timestamp = int(time.time())
+            quarantine_target = OUTPUT_WP_DIR / "archive" / "quarantine" / f"stale_audit_{timestamp}"
+            quarantine_target.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                shutil.move(str(STAGING_AUDIT_DIR), str(quarantine_target))
+            except Exception as e:
+                print(f"Failed to quarantine staging: {e}")
+        self.run_id_if_known = None
+        self.save_state()
+
+audit_mgr = AuditJobManager()
 
 router = APIRouter()
 
@@ -262,15 +346,20 @@ def _get_audit_context():
                                     active_run_has_metrics = True
                                 break
 
-                    if curr_audit_fp != "unknown" and suite_audit_fp == curr_audit_fp:
+                    # Resolve Audit Context status rules (Fix Canonical Paradox)
+                    if audit_mgr.state in ["RUNNING", "QUIET", "CANCELLING"]:
+                        audit_status = "AUDIT_RUNNING"
+                    elif curr_audit_fp != "unknown" and suite_audit_fp == curr_audit_fp:
                         if contract_commit == curr_full:
-                            audit_status = "AUDITED"
-                            if active_profile == "wave_core" and not active_run_has_metrics:
-                                audit_status = "EXPERIMENTAL / BASELINE METRICS"
+                            audit_status = "CANONICAL_AUDITED"
                         else:
-                            audit_status = "BUILD_NEWER"
+                            audit_status = "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER"
                     else:
                         audit_status = "REVALIDATION_REQUIRED"
+                        
+                    if audit_status in ["CANONICAL_AUDITED", "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER"]:
+                        if active_profile == "wave_core" and not active_run_has_metrics:
+                            audit_status = "EXPERIMENTAL / BASELINE METRICS"
                     break
     except Exception as e:
         print(f"Audit context error: {e}")
@@ -853,9 +942,9 @@ async def get_audit_config(request: Request):
 
 
 @router.post("/audit/generate")
-async def generate_audit_contract(request: Request):
+async def generate_audit_contract(request: Request, background_tasks: BackgroundTasks):
     """
-    Full audit pipeline streaming via SSE (Server-Sent Events).
+    Spawns background task for full audit generation and protects against duplicates.
     """
     import os
     is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
@@ -863,102 +952,254 @@ async def generate_audit_contract(request: Request):
         from fastapi import HTTPException
         raise HTTPException(status_code=403, detail="Audit generation disabled in production. Ready-only mode.")
 
-    import subprocess
-    import sys
-    import asyncio
-    
+    import uuid
     host = request.client.host
     if host not in ("127.0.0.1", "::1", "localhost", "0.0.0.0"):
         raise HTTPException(status_code=403, detail="Audit generation is available only on localhost / internal environment.")
 
+    # Duplicate run check
+    if audit_mgr.state in ["RUNNING", "QUIET", "CANCELLING"]:
+        raise HTTPException(status_code=409, detail="Audit generation already in progress.")
+
+    audit_mgr.job_id = str(uuid.uuid4())
+    audit_mgr.state = "RUNNING"
+    audit_mgr.started_at = time.time()
+    audit_mgr.last_heartbeat = time.time()
+    audit_mgr.phase = "Initializing background worker..."
+    audit_mgr.detail = ""
+    audit_mgr.run_id_if_known = None
+    audit_mgr.pid = None
+    audit_mgr.save_state()
+
+    background_tasks.add_task(_audit_worker, audit_mgr.job_id)
+    
+    return JSONResponse({
+        "status": "started",
+        "job_id": audit_mgr.job_id,
+        "message": "Audit generation scheduled."
+    })
+
+def _trigger_cleanup_and_kill(job_id: str):
+    """Helper for _audit_worker to kill process and quarantine"""
+    if audit_mgr.job_id != job_id: return
+    try:
+        import os, signal
+        if audit_mgr.pid:
+            os.kill(audit_mgr.pid, signal.SIGTERM)
+            time.sleep(0.5)
+            # Send SIGKILL if still hanging
+            try:
+                os.kill(audit_mgr.pid, signal.SIGKILL)
+            except OSError:
+                pass
+            print(f"Audit worker process {audit_mgr.pid} terminated.")
+    except Exception as e:
+        print(f"Failed to kill audit worker: {e}")
+    finally:
+        audit_mgr.quarantine_cleanup()
+        audit_mgr.update("Cancelled cleanly", state="CANCELLED")
+
+async def _audit_worker(job_id: str):
+    import subprocess
+    import sys
+    import os
+    
+    if audit_mgr.job_id != job_id:
+        return
+
     REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    def sse_generator():
-        import subprocess
-        start_time = time.monotonic()
+    audit_mgr.update("Checking environment")
+    await asyncio.sleep(0.1)
+
+    try:
+        lineum_path = os.path.join(REPO_ROOT, 'lineum.py')
         
-        def emit(step, detail, status="progress", extra=None):
-            elapsed = round(time.monotonic() - start_time, 1)
-            payload = {"status": status, "step": step, "detail": detail, "elapsed": elapsed}
-            if extra:
-                payload.update(extra)
-            return f"data: {json.dumps(payload)}\n\n"
+        # Prepare Staging Directory Configuration
+        env = os.environ.copy()
+        
+        # Crucial: Override target run directory to Staging structure
+        env["LINEUM_BASE_OUTPUT_DIR"] = "output_wp"
+        env["LINEUM_AUDIT_PROFILE"] = "whitepaper_core"
+        env["LINEUM_RUN_ID"] = "6"
+        env["LINEUM_RUN_MODE"] = "false"
+        env["LINEUM_SEED"] = "41"
+        env["LINEUM_STEPS"] = "2000"
+        env["LINEUM_RESUME"] = "false"
+        env["PYTHONUTF8"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
+        env["LINEUM_ORCHESTRATION_TOKEN"] = audit_mgr.job_id
+        
+        # Safe Staging Override logic - append `_staging_audit` safely into physics engine path logic
+        # For simplicity, we wrap with LINEUM_OVERRIDE_RUN_DIR which requires lineum.py support or we move output
+        # Let's use the simplest approach: let it dump to full path and copy. But lineum actually supports output dir:
+        env["LINEUM_OUT_OVERRIDE"] = str(STAGING_AUDIT_DIR)
 
-        try:
-            yield emit(0, "Checking environment")
-            time.sleep(0.1)
+        if STAGING_AUDIT_DIR.exists():
+            shutil.rmtree(STAGING_AUDIT_DIR, ignore_errors=True)
+        STAGING_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
 
-            lineum_path = os.path.join(REPO_ROOT, 'lineum.py')
-            env = os.environ.copy()
-            env["LINEUM_BASE_OUTPUT_DIR"] = "output_wp"
-            env["LINEUM_AUDIT_PROFILE"] = "whitepaper_core"
-            env["LINEUM_RUN_ID"] = "6"
-            env["LINEUM_RUN_MODE"] = "false"
-            env["LINEUM_SEED"] = "41"
-            env["LINEUM_STEPS"] = "2000"
-            env["LINEUM_RESUME"] = "false"
-            env["PYTHONUTF8"] = "1"
-            env["PYTHONIOENCODING"] = "utf-8"
+        audit_mgr.update("Starting physics run (this may take a few minutes)...")
 
-            yield emit(1, "Starting physics run (this may take a few minutes)...")
+        process1 = await asyncio.create_subprocess_exec(
+            sys.executable, lineum_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+            cwd=REPO_ROOT,
+            env=env
+        )
+        audit_mgr.pid = process1.pid
+        audit_mgr.save_state()
 
-            process1 = subprocess.Popen(
-                [sys.executable, lineum_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                cwd=REPO_ROOT,
-                env=env
-            )
-
-            for line in iter(process1.stdout.readline, b''):
+        async def read_stdout(stream):
+            while True:
+                line = await stream.readline()
+                if not line:
+                    break
                 text = line.decode('utf-8', errors='replace').strip()
-                if "device" in text.lower():
-                    yield emit(2, f"{text}")
+                if "device" in text.lower() or "step" in text.lower():
+                    audit_mgr.update("Physics simulation running...", detail=text)
 
-            process1.stdout.close()
-            returncode1 = process1.wait()
+        read_task = asyncio.create_task(read_stdout(process1.stdout))
 
-            if returncode1 != 0:
-                yield emit(2, f"lineum.py failed (exit {returncode1})", "error")
+        while True:
+            # Check cancelling state requested by UI
+            if audit_mgr.state == "CANCELLING":
+                _trigger_cleanup_and_kill(job_id)
+                audit_mgr.update("Cancelled cleanly", state="CANCELLED")
                 return
 
-            yield emit(3, "Writing run artifacts...")
+            if process1.returncode is not None:
+                # Finished
+                if process1.returncode != 0:
+                    _trigger_cleanup_and_kill(job_id)
+                    audit_mgr.update("Physics Failed", detail=f"lineum.py failed (exit {process1.returncode})", state="FAILED")
+                    return
+                break
             
-            # Step 2: Suite verification
-            yield emit(4, "Rebuilding suite & verifying claims...")
-            contract_path = os.path.join(REPO_ROOT, 'tools', 'whitepaper_contract.py')
-            process2 = subprocess.Popen(
-                [sys.executable, contract_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                cwd=REPO_ROOT,
-                env=env
-            )
-            process2.communicate()
+            # Use asyncio wait with timeout for non-blocking poll
+            try:
+                await asyncio.wait_for(process1.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                # Artificial heartbeat pacing 
+                audit_mgr.update(audit_mgr.phase, detail=audit_mgr.detail) 
 
-            if process2.returncode != 0:
-                yield emit(4, f"whitepaper_contract.py failed", "error")
+
+        # Process 1 Succeeded
+        audit_mgr.update("Writing run artifacts...")
+        await asyncio.sleep(0.5)
+
+        # Promote Canonical Run from Staging
+        import glob
+        staging_payload = glob.glob(str(STAGING_AUDIT_DIR / "whitepaper_core*"))
+        if not staging_payload:
+             # Try simpler prefix if run ID logic generated it slightly differently
+             staging_payload = glob.glob(str(STAGING_AUDIT_DIR / "*"))
+             
+        if staging_payload and "whitepaper" in staging_payload[0] or "core" in staging_payload[0]:
+            target_path = OUTPUT_WP_DIR / "runs" / os.path.basename(staging_payload[0])
+            shutil.move(staging_payload[0], str(target_path))
+            # Write latest run txt hook
+            with open(OUTPUT_WP_DIR / "latest_run.txt", "w") as f:
+                f.write(f"runs/{os.path.basename(staging_payload[0])}")
+        
+        audit_mgr.update("Rebuilding suite & verifying claims...")
+        contract_path = os.path.join(REPO_ROOT, 'tools', 'whitepaper_contract.py')
+        process2 = await asyncio.create_subprocess_exec(
+            sys.executable, contract_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=REPO_ROOT,
+            env=env
+        )
+        audit_mgr.pid = process2.pid
+        audit_mgr.save_state()
+        
+        while True:
+            if audit_mgr.state == "CANCELLING":
+                _trigger_cleanup_and_kill(job_id)
+                audit_mgr.update("Cancelled cleanly", state="CANCELLED")
                 return
+            
+            if process2.returncode is not None:
+                if process2.returncode != 0:
+                    _trigger_cleanup_and_kill(job_id)
+                    audit_mgr.update("Suite Rebuild Failed", detail=f"contract failed", state="FAILED")
+                    return
+                break
+            
+            try:
+                await asyncio.wait_for(process2.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                audit_mgr.update(audit_mgr.phase)
 
-            yield emit(5, "Refreshing Lab state...")
+        audit_mgr.update("Refreshing Lab state...")
 
-            # Find new run_id
-            latest_run_path = os.path.join(REPO_ROOT, 'output_wp', 'latest_run.txt')
-            latest_run_value = "unknown"
-            if os.path.isfile(latest_run_path):
-                with open(latest_run_path, 'r', encoding='utf-8') as f:
-                    latest_run_value = f.read().strip()
+        latest_run_path = OUTPUT_WP_DIR / "latest_run.txt"
+        latest_run_value = "unknown"
+        if latest_run_path.exists():
+            with open(latest_run_path, 'r', encoding='utf-8') as f:
+                latest_run_value = f.read().strip()
+                
+        audit_mgr.run_id_if_known = latest_run_value.replace("runs/", "")
+        
+        # COMPLETE
+        audit_mgr.update("Done", detail="Audit successfully verified.", state="COMPLETED")
 
-            yield emit(6, "Done", "success", {
-                "new_run_id": latest_run_value.replace("runs/", ""),
-                "audit_status": "AUDITED"
-            })
-        except Exception as e:
-            import traceback
-            err_msg = str(e) or "Unknown exception"
-            print("SSE GENERATOR EXCEPTION:\n", traceback.format_exc())
-            yield emit(99, f"Fatal error: {err_msg}", "error")
+    except Exception as e:
+        import traceback
+        err_msg = str(e) or "Unknown exception"
+        print("AUDIT WORKER EXCEPTION:\n", traceback.format_exc())
+        _trigger_cleanup_and_kill(job_id)
+        audit_mgr.update("Fatal Process Error", detail=err_msg, state="FAILED")
 
-    return StreamingResponse(sse_generator(), media_type="text/event-stream")
+@router.get("/audit/status")
+async def get_audit_status():
+    """Poll endpoint for tracking Audit Generation."""
+    # Stale Evaluation Check
+    if audit_mgr.state in ["RUNNING", "QUIET"]:
+        time_elapsed_since_hb = time.time() - audit_mgr.last_heartbeat
+        
+        if time_elapsed_since_hb > 180.0:
+            print(f"AuditManager: STALE TIMEOUT REACHED for {audit_mgr.job_id}")
+            audit_mgr.state = "STALE"
+            audit_mgr.phase = "Timeout (No Heartbeat for > 180s)"
+            audit_mgr.detail = "Process likely froze. Moved outputs to quarantine."
+            audit_mgr.quarantine_cleanup()
+        elif time_elapsed_since_hb > 60.0:
+            audit_mgr.state = "QUIET"
+            
+    return JSONResponse({
+        "job_id": audit_mgr.job_id,
+        "state": audit_mgr.state,
+        "phase": audit_mgr.phase,
+        "detail": audit_mgr.detail,
+        "run_id_if_known": audit_mgr.run_id_if_known,
+        "elapsed": round(time.time() - audit_mgr.started_at, 1) if audit_mgr.started_at else 0
+    })
+
+@router.post("/audit/cancel")
+async def cancel_audit_contract(background_tasks: BackgroundTasks):
+    """Triggers cancellation of an existing active job."""
+    if audit_mgr.state not in ["RUNNING", "QUIET", "CANCELLING"]:
+        return JSONResponse({"status": "ignored", "message": f"No active job running. Current state: {audit_mgr.state}"})
+    
+    # Immediately tell UI we are cancelling, but also trigger the deep cleanup eagerly 
+    # just in case the async worker loop has completely died (e.g. from a Windows pipe stall)
+    old_state = audit_mgr.state
+    audit_mgr.update("Cancellation Triggered", detail="Shutting down processes...", state="CANCELLING")
+    
+    # If it was actually RUNNING, the loop should catch it. But to be 100% safe,
+    # we offload aggressive kill to a background task so it doesn't block the HTTP response,
+    # guaranteeing a CANCELLED final state.
+    def force_kill_job(j_id):
+        import time
+        time.sleep(1.0) # give loop a chance to exit gracefully
+        if audit_mgr.state == "CANCELLING" and audit_mgr.job_id == j_id:
+             _trigger_cleanup_and_kill(j_id)
+             
+    background_tasks.add_task(force_kill_job, audit_mgr.job_id)
+    
+    return JSONResponse({"status": "cancelling", "job_id": audit_mgr.job_id})
 
 class IntegrationEventRequest(BaseModel):
     event: str

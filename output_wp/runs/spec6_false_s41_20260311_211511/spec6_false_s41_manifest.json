@@ -1,0 +1,205 @@
+{
+  "run": {
+    "run_id": 6,
+    "run_tag": "spec6_false_s41",
+    "seed": 41,
+    "run_mode": "false",
+    "param_tag": "",
+    "kappa_mode": "constant",
+    "low_noise_mode": false,
+    "test_exhale_mode": true,
+    "grid_size": 128,
+    "steps": 2000,
+    "pixel_size_m": 1e-12,
+    "time_step_s": 1e-21,
+    "window_W": 256,
+    "window_hop": 128,
+    "phi_interaction_cap": 10.0,
+    "phi_cap": 1000000.0,
+    "psi_amp_cap": 1000000.0,
+    "grad_cap": 1000000.0
+  },
+  "spectral_pipeline": {
+    "dt": 1e-21,
+    "sampling_rate_hz": 1.0000000000000001e+21,
+    "df_hz": 3.9062500000000005e+18,
+    "nyquist_hz": 5.0000000000000007e+20,
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "window_function": "Hann",
+    "dc_remove": true,
+    "fft_type": "RFFT",
+    "estimator": "parabolic_3_bin",
+    "estimator_threshold": 1e-12
+  },
+  "analysis_config": {
+    "spectrum_definition": "power |FFT(x)|^2",
+    "window_type": "Hann",
+    "window_length": 256,
+    "hop_length": 128,
+    "guard_bins": 2,
+    "estimator": "centroid",
+    "bootstrap_iterations": 1000,
+    "bootstrap_ci_level": 0.95,
+    "sbr_guard_bins": 2
+  },
+  "kappa": {
+    "mode": "constant",
+    "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+    "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+    "hash_basis": "map_at_init",
+    "is_dynamic": false,
+    "stats": {
+      "spatial_final_mean": 0.5,
+      "spatial_final_std": 0.0,
+      "temporal_mean_of_spatial_means": null,
+      "temporal_std_of_spatial_means": null
+    }
+  },
+  "metrics": {
+    "dominant_freq_Hz": 3.152667838565667e+18,
+    "f0_mean_hz": 3.152667838565667e+18,
+    "sbr": 37158.5484229656,
+    "sbr_mean": 37158.5484229656,
+    "f0_ci": [
+      2.259701885469705e+18,
+      3.976139748239799e+18
+    ],
+    "sbr_ci": [
+      11116.434289116734,
+      69587.93159918195
+    ],
+    "phi_half_life_steps": 986,
+    "phi_half_life_status": "OK",
+    "phi_steady_state": 1000000.0,
+    "pct_neutral": 69.05,
+    "topology_neutrality_n1": 69.05,
+    "mean_total_vortices": 201.123,
+    "mean_vortices": 201.123,
+    "max_lifespan_steps": 862,
+    "median_lifespan_steps": 4,
+    "phi_mean_near": 940849.0,
+    "phi_mean_field": 929051.0825777727,
+    "phi_std_near": 127236.5078125,
+    "phi_std_field": 150367.71134039192,
+    "low_mass_quasiparticle_count": 49,
+    "low_mass_qp_count": 49
+  },
+  "data_files": {
+    "html_report": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_report.html",
+    "amplitude_log_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_amplitude_log.csv",
+    "phi_center_log_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_phi_center_log.csv",
+    "topo_log_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_topo_log.csv",
+    "trajectories_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_trajectories.csv",
+    "multi_spectrum_summary_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_multi_spectrum_summary.csv",
+    "metrics_summary_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_metrics_summary.csv",
+    "phi_grid_summary_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_phi_grid_summary.csv",
+    "phi_grid_dejavu_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_phi_grid_dejavu.csv",
+    "phi_curl_low_mass_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_phi_curl_low_mass.csv",
+    "spin_aura_profile_csv": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_spin_aura_profile.csv",
+    "spectrum_plot_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_spectrum_plot.png",
+    "phi_center_plot_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_phi_center_plot.png",
+    "topo_charge_plot_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_topo_charge_plot.png",
+    "vortex_count_plot_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_vortex_count_plot.png",
+    "kappa_map_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_kappa_map.png",
+    "figure0_canonical_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_figure0_canonical.png",
+    "spin_aura_avg_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_spin_aura_avg.png",
+    "spin_aura_map_png": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_spin_aura_map.png",
+    "gif_amplitude": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_amplitude.gif",
+    "gif_spin": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_spin.gif",
+    "gif_vortices": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_vortices.gif",
+    "gif_particles": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_particles.gif",
+    "gif_flow": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_flow.gif",
+    "gif_full_overlay": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_lineum_full_overlay.gif",
+    "frames_vortices_npy": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_frames_vortices.npy",
+    "frames_curl_npy": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_frames_curl.npy",
+    "frames_amp_npy": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_frames_amp.npy",
+    "frames_phi_npy": "output_wp\\runs/spec6_false_s41_20260311_211511\\spec6_false_s41_frames_phi.npy"
+  },
+  "topology": {
+    "computed_over": "logged_frames_only",
+    "includes_step_0": true,
+    "raw_winding_used": true
+  },
+  "invariants": {
+    "dim": "2D",
+    "bcs": "periodic",
+    "precision": "float64",
+    "stencil": "classic_laplace",
+    "grid_size": 128,
+    "dt": 0.01
+  },
+  "run_configuration": {
+    "resolved_config": {
+      "run_id": 6,
+      "run_mode": "false",
+      "seed": 41,
+      "param_tag": "",
+      "low_noise_mode": false,
+      "test_exhale_mode": true,
+      "kappa_mode": "constant",
+      "window_w": 256,
+      "window_hop": 128,
+      "phi_interaction_cap": 0,
+      "steps": 2000,
+      "store_every": 5,
+      "disable_tracking": false
+    },
+    "resolved_config_hash": "799b4f3067aa50ddb324f590ef06706408c4cd8a13b832385882513e61d8231d"
+  },
+  "provenance": {
+    "rng_backend": "MT19937",
+    "seed": 41,
+    "rng_state_hash": "04622966fb7606bce8950a5cc26a421058f6e70fe0effb0497d79727b7cb8c51"
+  },
+  "logging": {
+    "topo_log_stride": 1
+  },
+  "audit_scope": {
+    "profile": "whitepaper_core",
+    "expected": {
+      "test_exhale_mode": true,
+      "low_noise_mode": false,
+      "steps": 2000,
+      "seed": 41,
+      "run_id": 6,
+      "run_mode": false,
+      "resume": false,
+      "base_output_dir": "output_wp",
+      "kappa_mode": "constant",
+      "kappa_hash_basis": "N/A",
+      "kappa_schedule_id": "N/A",
+      "kappa_stride": "N/A"
+    },
+    "actual": {
+      "test_exhale_mode": true,
+      "low_noise_mode": false,
+      "steps": 2000,
+      "seed": 41,
+      "run_id": 6,
+      "run_mode": false,
+      "resume": false,
+      "base_output_dir": "output_wp",
+      "kappa_mode": "constant",
+      "kappa_hash_basis": "N/A",
+      "kappa_schedule_id": "N/A",
+      "kappa_stride": "N/A"
+    },
+    "expected_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+    "actual_hash": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
+    "diff_keys": []
+  },
+  "code_fingerprint": {
+    "sha256": "13e7ef57c15ac16df5c72e7ee8ac939e0de20ae2bf4630200c933285f691b6fa",
+    "files": [
+      "lineum.py",
+      "tools/whitepaper_contract.py"
+    ],
+    "file_hashes": {
+      "lineum.py": "7687b7192c8791fe0067112cccd0d6aeb303dfb559a21c1fc91d184818ad9a21",
+      "tools/whitepaper_contract.py": "cd4f7ea24645e42655fe7054c77f69ce7037fe8f08825d202564f488e70df41f"
+    },
+    "normalized_newlines": true
+  }
+}
