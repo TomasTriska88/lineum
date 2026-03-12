@@ -1141,5 +1141,38 @@
         "falsification_mode": "MANUAL_PLAN_ONLY",
         "falsification_status": "NOT_IMPLEMENTED",
         "last_falsification_run_id": null
+    },
+    {
+        "id": "CL-COSMO-037",
+        "short_claim": "The Quantum Corral is a macro-analogy for Lineum's discrete field interactions.",
+        "human_claim": "Just as scientists arranged 48 atoms to trap electron waves into standing shapes, Lineum's spatial map (\u03ba) traps waves (\u03c8) to form stable matter (linons) vibrating against the memory substrate (\u03c6).",
+        "scientific_claim": "The macroscopic manipulation of standing electron waves via atom placement directly maps to Lineum's Eq-7 where \u03ba boundaries constrain the complex scalar field \u03c8, producing stable topological excitations over the memory field \u03c6.",
+        "what_it_is_not": "This is NOT a claim that Lineum models copper atoms; it is an analogy demonstrating discrete geometric boundaries inducing stable wave phenomena.",
+        "source_file": "37-cosmo-hyp-quantum-corral.md",
+        "source_section": "§2 Experimental Mapping to Eq-7 Fields",
+        "source_anchor": "#experimental-mapping-to-eq-7-fields",
+        "source_quote": "The Quantum Corral experiment provides a tangible 1:1 conceptual mapping of Lineum's triad of fields.",
+        "tags": [
+            "cosmology",
+            "analogy",
+            "quantum-corral",
+            "wave-mechanics"
+        ],
+        "scope": "ANALOGICAL",
+        "status": "UNTESTED",
+        "testability": "NOT_TESTABLE_YET",
+        "test_reason": "It is an analogical mapping to a real-world experiment, rather than an internal testable property.",
+        "verification_plan": "1. Review theoretical mapping mapping \u03ba to the boundary atoms, \u03c8 to the electron wave, and \u03c6 to the substrate. 2. Verify logical consistency.",
+        "expected_measures": "Qualitative verification of structural mapping between Eq-7 and Quantum Corral geometry.",
+        "scenario_id": "conceptual",
+        "disclaimers": "This represents macro-analogical mapping, not a literal representation of the STM experiment.",
+        "falsification_needed": false,
+        "falsification_plan": null,
+        "missing_falsification_reason": "Analogical mapping representing structural mechanics.",
+        "verification_spec_status": "NOT_PREPARED",
+        "canonical_claim_set": "NOT_PART_OF_PROMOTION",
+        "falsification_mode": "MANUAL_PLAN_ONLY",
+        "falsification_status": "NOT_IMPLEMENTED",
+        "last_falsification_run_id": null
     }
 ]
