@@ -23,6 +23,7 @@
     }
 
     export const manifestHistory = []; // Array of { id, preset, passed, mode }
+    export let isGeneratingAudit = false;
 
     let searchQuery =
         typeof window !== "undefined"
@@ -68,9 +69,8 @@
     // Filter claims
     $: filteredClaims = whitepaperClaims.filter((claim) => {
         const matchesSearch =
-            (claim.short_claim || "")
-                .toLowerCase()
-                .includes((searchQuery || "").toLowerCase()) ||
+            (claim.id || "").toLowerCase().includes((searchQuery || "").toLowerCase()) ||
+            (claim.short_claim || "").toLowerCase().includes((searchQuery || "").toLowerCase()) ||
             (claim.human_claim || "").toLowerCase().includes((searchQuery || "").toLowerCase());
         const matchesTag =
             selectedTag === "all" || claim.tags.includes(selectedTag);
@@ -113,7 +113,7 @@
     });
 
     // SINGLE SOURCE OF TRUTH for Claim Render Status
-    function getActualStatus(claim, results) {
+    function getActualStatus(claim, results, isActive) {
         // Rule 1: Not Testable = Never runs
         if (
             claim.testability === "NOT_TESTABLE_YET" ||
@@ -141,7 +141,12 @@
             }
         }
 
-        // Rule 4: Use specialized stale states if present
+        // Rule 4: If an audit is literally running right now, bypass stale fallback to show progress explicitly
+        if (isActive) {
+            return "AUDIT_RUNNING";
+        }
+
+        // Rule 5: Use specialized stale states if present
         if (
             cr.status === "STALE_CANONICAL" ||
             cr.status === "OUTDATED_FOR_CURRENT_EQUATION"
@@ -158,6 +163,12 @@
             auditStatus === "BUILD_NEWER" ||
             auditStatus === "EXPERIMENTAL / BASELINE METRICS"
         ) {
+            // Fix Canonical Paradox: If we are just missing the original contract commit but have newer artifacts, it does NOT downgrade
+            if (auditStatus === "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER") {
+                // Keep the exact CR status (e.g., SUPPORTED)
+                return cr.status || "UNTESTED";
+            }
+            
             if (cr.passed_internal) {
                 if (
                     !cr.manifest_id ||
@@ -379,12 +390,13 @@
 
         // Match audit_status logic to the single source of truth downgrade
         let bAuditStatus = auditStatus;
-        if (auditStatus !== "AUDITED") {
+        if (auditStatus !== "AUDITED" && auditStatus !== "CANONICAL_AUDITED" && auditStatus !== "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER" && auditStatus !== "AUDIT_RUNNING") {
             bAuditStatus = auditStatus === "NONE" ? "NONE" : "OUTDATED";
         }
         if (
             auditStatus === "EXPERIMENTAL / BASELINE METRICS" ||
-            auditStatus === "BUILD_NEWER"
+            auditStatus === "BUILD_NEWER" ||
+            auditStatus === "REVALIDATION_REQUIRED"
         ) {
             bAuditStatus = "OUTDATED";
         }
@@ -410,7 +422,8 @@
 
         let target = "none (core registry only)";
         if (claim.source_file && !claim.source_file?.includes("claims.js")) {
-            target = `${claim.source_file}${anchor}`;
+            const mappedPath = whitepaperMap[claim.source_file] || `whitepapers/missing/${claim.source_file}`;
+            target = `${mappedPath}${anchor}`;
         }
 
         return `> [!NOTE] \n> **EVIDENCE:**\n> - **claim_id:** ${claim.id}\n> - **contract_id:** ${cid}\n> - **manifest_id:** ${cr.manifest_id || "none"}\n> - **claim_status:** ${cStatus}\n> - **audit_status:** ${bAuditStatus}\n> - **equation_fingerprint:** ${finger}\n> - **git_commit:** ${com}\n> - **timestamp_utc:** ${new Date().toISOString()}\n> - **lab_section:** Claims\n> - **whitepaper_target:** ${target}`;
@@ -497,8 +510,10 @@
         if (claim.project_packet?.candidate_whitepaper_targets?.length > 0) {
             candidateTargets = claim.project_packet.candidate_whitepaper_targets
                 .map(
-                    (t) =>
-                        `- file: ${t.file}\n  target_topic_id: ${t.target_topic_id || t.topic_id || "UNKNOWN"}\n  current_anchor_if_known: ${t.current_anchor_if_known || "UNKNOWN"}\n  confidence: ${t.confidence}\n  rationale: ${t.rationale}`,
+                    (t) => {
+                        const relativePath = whitepaperMap[t.file] || `whitepapers/missing/${t.file}`;
+                        return `- file: ${relativePath}\n  target_topic_id: ${t.target_topic_id || t.topic_id || "UNKNOWN"}\n  current_anchor_if_known: ${t.current_anchor_if_known || "UNKNOWN"}\n  confidence: ${t.confidence}\n  rationale: ${t.rationale}`;
+                    }
                 )
                 .join("\n\n");
         }
@@ -1045,7 +1060,7 @@ F) AUTOMATION ROUTING
                                     claim,
                                     claimResults,
                                 ).toLowerCase()}"
-                                >{getActualStatus(claim, claimResults)}</span
+                                >{getActualStatus(claim, claimResults, isGeneratingAudit)}</span
                             >
                         </div>
                     </div>
@@ -1074,7 +1089,7 @@ F) AUTOMATION ROUTING
                             selectedClaim,
                         ).toLowerCase()}"
                     >
-                        {getActualStatus(selectedClaim, claimResults).replace(
+                        {getActualStatus(selectedClaim, claimResults, isGeneratingAudit).replace(
                             "_",
                             " ",
                         )}
@@ -1489,7 +1504,7 @@ F) AUTOMATION ROUTING
                         </div>
                     {/if}
 
-                    {#if getActualStatus(selectedClaim, claimResults).startsWith("EXPERIMENTAL_")}
+                    {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit).startsWith("EXPERIMENTAL_")}
                         <div class="evidence-box exploratory">
                             <h4>Exploratory Evidence Captured</h4>
                             <p>
@@ -1519,7 +1534,7 @@ F) AUTOMATION ROUTING
                         </div>
                     {/if}
 
-                    {#if getActualStatus(selectedClaim, claimResults) === "SUPPORTED" || getActualStatus(selectedClaim, claimResults) === "CONTRADICTED"}
+                    {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "CONTRADICTED"}
                         <div class="evidence-box canonical">
                             <h4>
                                 Canonical Evidence
@@ -1559,25 +1574,25 @@ F) AUTOMATION ROUTING
                     <div class="proposal-preview">
                         <h4>Preview: Proposed Whitepaper Edit</h4>
                         <div class="preview-box">
-                            {#if getActualStatus(selectedClaim, claimResults) === "UNTESTED"}
+                            {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "UNTESTED"}
                                 <p class="preview-placeholder">
                                     Run an Audit-Grade verification to generate
                                     proposed edit text.
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults).startsWith("EXPERIMENTAL_")}
+                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit).startsWith("EXPERIMENTAL_")}
                                 <p class="preview-placeholder">
                                     Laboratory simulation completed, but an
                                     official Audit-Grade run is required to
                                     propose canonical text edits.
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults) === "OUTDATED"}
+                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "OUTDATED"}
                                 <p class="preview-placeholder">
                                     The previous laboratory simulation is
                                     outdated. Run a new Audit-Grade verification
                                     on the current equation to generate proposed
                                     edit text.
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults) === "SUPPORTED"}
+                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED"}
                                 <p class="mono-edit add">
                                     + <span class="badge supported"
                                         >Validated by Lab</span
@@ -1591,7 +1606,7 @@ F) AUTOMATION ROUTING
                                         ].manifest_id})</span
                                     >
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults) === "CONTRADICTED"}
+                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "CONTRADICTED"}
                                 <p class="mono-edit replace">
                                     - {selectedClaim.short_claim}
                                     <br />+
@@ -1875,6 +1890,16 @@ F) AUTOMATION ROUTING
     .claim-status.untested {
         background: #30363d;
         color: #8b949e;
+    }
+    .claim-status.audit_running {
+        background: rgba(47, 129, 247, 0.2);
+        color: #58a6ff;
+        border: 1px solid rgba(88, 166, 255, 0.4);
+        animation: pulse-audit 2s infinite;
+    }
+    @keyframes pulse-audit {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
     }
     .claim-status.experimental_supported {
         background: rgba(210, 153, 34, 0.2);

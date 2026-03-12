@@ -8,11 +8,13 @@
         "dev": "concurrently -k -n \"SVELTE,PYTHON\" -c \"cyan,magenta\" \"vite\" \"cd .. && python -m uvicorn routing_backend.main:app --host 127.0.0.1 --port 8000\"",
         "build": "vite build",
         "preview": "vite preview",
+        "pretest": "node ../scripts/generate_whitepaper_map.js",
         "test": "node ../portal/scripts/check-localhost-e2e.js && node scripts/validate_claims.js && vitest run"
     },
     "devDependencies": {
         "@playwright/test": "^1.58.2",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
+        "@testing-library/svelte": "^5.3.1",
         "concurrently": "^8.2.2",
         "jsdom": "^28.1.0",
         "svelte": "^4.2.7",
@@ -26,7 +28,6 @@
         "chartjs-plugin-zoom": "^2.2.0",
         "katex": "^0.16.37",
         "marked": "^17.0.4",
-        "playwright": "^1.58.2",
         "three": "^0.160.0"
     }
 }
