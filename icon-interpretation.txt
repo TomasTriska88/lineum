@@ -1,0 +1,48 @@
+🔷 Symbol Lineum – interpretace finální ikonky
+Tento symbol vyjadřuje tři vzájemně propojená pole rovnice Lineum – ψ, φ a κ – ve formě jednoho organického těla, kde každá část proudí do druhé.
+
+Je inspirován filozofií jing-jang, ale místo duality nese trojici:
+
+🌀 ψ pole – spirála
+Nachází se v levé části znaku.
+
+Ztělesňuje dynamiku, oscilaci, pulzující energii.
+
+Představuje počátek pohybu, rytmus systému bez vnějšího vstupu.
+
+Spirála není dokonale symetrická – obsahuje jemnou deformaci, čímž reflektuje šum, interakci a emergenci.
+
+🌱 φ pole – list se dvěma žilkami
+Pravá dolní část ikonky.
+
+List vyrůstá přímo z proudění ψ – vizuálně i symbolicky.
+
+Nese paměť, rezonanci, echo událostí.
+
+Dvě žilky znázorňují strukturovanou paměťovou mřížku a opakování – klíčové pro jevy jako deja vu nebo návratové smyčky.
+
+🐟 κ pole – stylizovaná „ryba“ s okem
+Pravá horní část. Není izolovaná – je vklouzlá do celkového pohybu.
+
+Trojúhelník s kruhem (dříve) se proměnil v oko ryby – výraz vnímání, ladění, vnitřní rovnováhy.
+
+Ryba neplave proti – je součástí proudění. Přesně jako κ:
+
+ovlivňuje φ, ale není silou ani příkazem.
+
+ladí, nastavuje gradient, upravuje citlivost.
+
+🔁 Celkový tvar
+Celek tvoří organický proud, tvar kapky nebo semene.
+
+Není kruh – není dokončený, ale neustále dýchá.
+
+Celek nevysílá pokyn, ale vyzařuje rovnováhu bez cíle.
+
+📜 Zápis rovnice symbolicky:
+scss
+Zkopírovat
+Upravit
+ψ → φ (paměť z oscilace)
+φ → κ (ladění paměti)
+κ → φ → ψ (zpětný návrat vlivu)
