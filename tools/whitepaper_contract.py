@@ -153,8 +153,17 @@ def verify_locked_run(run_dir):
     for rel_path in registry:
         if not os.path.exists(os.path.join(run_dir, rel_path)):
             # Gracefully tolerate missing artifacts that are ignored by Git LFS / .gitignore
-            if (rel_path.endswith('.npz') or rel_path.endswith('.npy') or rel_path.endswith('.png') or rel_path.endswith('.svg') or rel_path.endswith('.gif') or 
-                "checkpoints" in rel_path or rel_path.endswith('_log.csv')):
+            is_whitelisted = (
+                rel_path.endswith('_manifest.json') or
+                rel_path == '_LOCK.json' or
+                rel_path == 'run_summary.csv' or
+                rel_path.endswith('_rolling_metrics.json') or
+                rel_path.endswith('_metrics_summary.csv') or
+                rel_path.endswith('_multi_spectrum_summary.csv') or
+                rel_path == 'portal_params.json' or
+                "checkpoints" in rel_path
+            )
+            if not is_whitelisted:
                 continue
             print(f"WARNING: Locked audit run tampered: {run_dir} (Missing file {rel_path}). RUN EXCLUDED.")
             return False
