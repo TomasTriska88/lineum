@@ -23,35 +23,37 @@ def test_audit_context_status_resolutions():
     }
     suite_json = json.dumps(suite_data)
         
-    # 1. SCENARIO: Perfect Match (AUDITED)
-    with patch('subprocess.check_output', return_value=b"aaaa1111"):
-        with patch('routing_backend.lab_api.Path.exists', return_value=True):
-            with patch('routing_backend.lab_api.Path.read_text', return_value="AUDITED"):
-                with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
-                    mock_fp = MagicMock(return_value="hash-code-fingerprint")
-                    with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}):
-                        ctx = _get_audit_context()
-                    assert ctx["audit_status"] == "AUDITED"
-                    assert ctx["audit_relevant_code_fingerprint"] == "hash-code-fingerprint"
-                    assert ctx["active_profile"] == "wave_core"
+    def fake_exists(self):
+        return "whitepaper_contract_suite.json" in str(self)
 
-    # 2. SCENARIO: Equation matches, Git differs (BUILD_NEWER)
+    import pathlib
+
+    # 1. SCENARIO: Perfect Match (CANONICAL_AUDITED)
+    with patch('subprocess.check_output', return_value=b"aaaa1111"):
+        with patch.object(pathlib.Path, 'exists', autospec=True, side_effect=fake_exists):
+            with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
+                mock_fp = MagicMock(return_value="hash-code-fingerprint")
+                with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}):
+                    ctx = _get_audit_context()
+                assert ctx["audit_status"] == "CANONICAL_AUDITED"
+                assert ctx["audit_relevant_code_fingerprint"] == "hash-code-fingerprint"
+                assert ctx["active_profile"] == "wave_core"
+
+    # 2. SCENARIO: Equation matches, Git differs (CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER)
     with patch('subprocess.check_output', return_value=b"bbbb2222"): # New commit!
-        with patch('routing_backend.lab_api.Path.exists', return_value=True):
-            with patch('routing_backend.lab_api.Path.read_text', return_value="AUDITED"):
-                with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
-                    mock_fp = MagicMock(return_value="hash-code-fingerprint")
-                    with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}): # Eq still same!
-                        ctx = _get_audit_context()
-                    assert ctx["audit_status"] == "BUILD_NEWER"
-                    assert ctx["current_audit_relevant_code_fingerprint"] == "hash-code-fingerprint"
+        with patch.object(pathlib.Path, 'exists', autospec=True, side_effect=fake_exists):
+            with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
+                mock_fp = MagicMock(return_value="hash-code-fingerprint")
+                with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}): # Eq still same!
+                    ctx = _get_audit_context()
+                assert ctx["audit_status"] == "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER"
+                assert ctx["current_audit_relevant_code_fingerprint"] == "hash-code-fingerprint"
 
     # 3. SCENARIO: Equation Differs (REVALIDATION_REQUIRED)
     with patch('subprocess.check_output', return_value=b"bbbb2222"):
-        with patch('routing_backend.lab_api.Path.exists', return_value=True):
-            with patch('routing_backend.lab_api.Path.read_text', return_value="AUDITED"):
-                with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
-                    mock_fp = MagicMock(return_value="hash-code-CHANGED")
-                    with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}): # MATH CHANGED!
-                        ctx = _get_audit_context()
-                    assert ctx["audit_status"] == "REVALIDATION_REQUIRED"
+        with patch.object(pathlib.Path, 'exists', autospec=True, side_effect=fake_exists):
+            with patch('routing_backend.lab_api.open', mock_open(read_data=suite_json)):
+                mock_fp = MagicMock(return_value="hash-code-CHANGED")
+                with patch.dict('sys.modules', {'whitepaper_contract': MagicMock(compute_audit_relevant_fingerprint=mock_fp)}): # MATH CHANGED!
+                    ctx = _get_audit_context()
+                assert ctx["audit_status"] == "REVALIDATION_REQUIRED"

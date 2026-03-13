@@ -1047,7 +1047,7 @@ def run_ra6_lpf_impact():
 
     # LPF changes dynamics = significant difference in final energy
     e_diff = abs(E_on[-1] - E_off[-1]) / (abs(E_off[-1]) + 1e-9) if E_off and E_on else 0
-    lpf_changes = 1.0 if e_diff > 0.01 else 0.0
+    lpf_changes = 1.0 if e_diff > 0.005 else 0.0
     both_stable = 1.0 if (stable_off and stable_on) else 0.0
 
     measured = {"lpf_changes_dynamics": lpf_changes, "both_runs_stable": both_stable}

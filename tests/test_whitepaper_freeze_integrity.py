@@ -35,7 +35,7 @@ def test_whitepaper_freeze_integrity(tmp_path, capsys):
     assert "Frozen" in snapshot.read_text(encoding="utf-8")
     
     # Check that lock file exists
-    lock_file = releases_dir / "lineum-mock-1.0.18-FROZEN.md._LOCK.json"
+    lock_file = releases_dir / "lineum-mock-1.0.18-core-FROZEN.md._LOCK.json"
     assert lock_file.exists()
     
     # Verify lock passes

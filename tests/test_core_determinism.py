@@ -53,7 +53,8 @@ def run_scenario(device_str, is_canonical):
         val_data = run_ra1_unitarity()
         
     finally:
-        torch.cuda.is_available = orig_is_available
+        if torch:
+            torch.cuda.is_available = orig_is_available
         
     return val_data
 
@@ -85,8 +86,13 @@ def test_determinism_matrix():
     print(f"CPU max raw drift: {cpu_comp['max_psi_diff']}")
     assert cpu_comp['bitwise'], "CPU Canonical must be exactly bitwise deterministic."
     
-    import torch
-    if torch.cuda.is_available():
+    try:
+        import torch
+        has_cuda = torch.cuda.is_available()
+    except ImportError:
+        has_cuda = False
+
+    if has_cuda:
         print("\n--- Exploratory (CUDA) ---")
         cuda_run1 = run_scenario('cuda', is_canonical=False)
         cuda_run2 = run_scenario('cuda', is_canonical=False)

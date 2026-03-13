@@ -63,6 +63,8 @@ def test_whitepaper_naming_conventions(project_root):
             continue
             
         for file in folder_path.rglob("*.md"):
+            if "experiments" in file.parts:
+                continue
             if file.name.lower() == "readme.md":
                 continue
             

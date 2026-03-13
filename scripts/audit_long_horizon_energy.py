@@ -101,7 +101,7 @@ def main():
     plt.grid(True)
     
     plt.tight_layout()
-    plt.savefig("C:/Users/Tomáš/.gemini/antigravity/brain/2e522412-c953-4007-805d-7366f70a6d14/audit_long_horizon_energy.png")
+    plt.savefig("audit_long_horizon_energy.png")
     print("Saved plot to artifact directory: audit_long_horizon_energy.png")
 
 if __name__ == "__main__":
