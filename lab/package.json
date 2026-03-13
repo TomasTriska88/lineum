@@ -9,7 +9,8 @@
         "build": "vite build",
         "preview": "vite preview",
         "pretest": "node ../scripts/generate_whitepaper_map.js",
-        "test": "node ../portal/scripts/check-localhost-e2e.js && node scripts/validate_claims.js && vitest run"
+        "test": "node ../portal/scripts/check-localhost-e2e.js && node scripts/validate_claims.js && vitest run",
+        "test:e2e": "playwright test"
     },
     "devDependencies": {
         "@playwright/test": "^1.58.2",

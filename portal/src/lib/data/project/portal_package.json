@@ -1,7 +1,7 @@
 {
 	"name": "portal",
 	"private": true,
-	"version": "2026.03.13-1058",
+	"version": "2026.03.13-1339",
 	"type": "module",
 	"scripts": {
 		"predev": "npx -y kill-port 5173 5174 8000 || exit 0",
@@ -17,7 +17,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"check:i18n": "node scripts/check-czech.js",
 		"check:licenses": "node scripts/check-licenses.js",
-		"test": "npm run sync && npx svelte-kit sync && node scripts/check-localhost-e2e.js && vitest run",
+		"test": "npm run sync && npx paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && npx svelte-kit sync && node scripts/check-localhost-e2e.js && vitest run",
 		"test:e2e": "playwright test",
 		"sync": "node scripts/sync-data.js",
 		"stage": "node scripts/stage-railway.js",
