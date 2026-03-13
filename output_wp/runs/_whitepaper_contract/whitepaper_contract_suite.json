@@ -1,21 +1,21 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-03-13T08:03:58.248788+00:00",
+    "timestamp": "2026-03-13T10:00:13.623462+00:00",
     "contract_id": "lineum-core-1.0.18-core",
     "contract_version": "1.1.5",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "release:v1.1.5",
-    "git_commit": "d3fda7718b7857e160bdee27e953f5cc28b4970e",
+    "git_commit": "d73e585e078aa23d9e74349f141fc489c2bbede2",
     "git_branch": "dev",
     "release_tag": "v1.1.5",
     "equation_fingerprint": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
-    "audit_relevant_code_fingerprint": "50a0c1d64eaac1097735ba2d21a16815d3eceb07f2753a876064161f1c60ba6d"
+    "audit_relevant_code_fingerprint": "edcab88faadf177275c5fe67c572c861e8567b1ea3073716a8504e4ba7ff38e7"
   },
   "fingerprints": {
     "whitepaper_sha256": null,
     "contract_sha256": "6d4574bbd2d8123a2e335400da01f95d5527fde790a0526af918dacaa00ce146",
-    "audit_relevant_sha256": "50a0c1d64eaac1097735ba2d21a16815d3eceb07f2753a876064161f1c60ba6d"
+    "audit_relevant_sha256": "edcab88faadf177275c5fe67c572c861e8567b1ea3073716a8504e4ba7ff38e7"
   },
   "metric_spec": {
     "f0_mean_hz": {
@@ -67,10 +67,265 @@
       "short_definition": "Nyquist frequency built from timestep",
       "computed_in": "tools/whitepaper_contract.py:evaluate_derived",
       "units": "Hz"
+    },
+    "M2_total": {
+      "short_definition": "M2 mass/energy invariant tracking",
+      "computed_in": "scripts/validation_core.py:compute_metrics",
+      "units": "cumulative"
+    },
+    "net_charge": {
+      "short_definition": "Net particle charge invariant tracking",
+      "computed_in": "scripts/validation_core.py:analyze_particles",
+      "units": "charge"
+    },
+    "peak_phi": {
+      "short_definition": "Maximum amplitude of the phi field",
+      "computed_in": "scripts/validation_core.py:compute_metrics",
+      "units": "magnitude"
+    },
+    "center_amp": {
+      "short_definition": "Amplitude of the scalar field at the geometric origin",
+      "computed_in": "scripts/validation_core.py:compute_metrics",
+      "units": "magnitude"
+    },
+    "vortices_total": {
+      "short_definition": "Total count of captured topological vortices",
+      "computed_in": "scripts/validation_core.py:compute_metrics",
+      "units": "count"
+    },
+    "final_particle_count": {
+      "short_definition": "Final discrete quasi-particle count",
+      "computed_in": "scripts/validation_core.py:analyze_particles",
+      "units": "count"
     }
   },
   "embedded_context": {
     "runs": {
+      "spec6_false_s41_20260313_105118": {
+        "manifest": {
+          "run": {
+            "run_id": 6,
+            "run_tag": "spec6_false_s41",
+            "seed": 41,
+            "run_mode": "false",
+            "param_tag": "",
+            "kappa_mode": "constant",
+            "low_noise_mode": false,
+            "test_exhale_mode": true,
+            "grid_size": 128,
+            "steps": 1,
+            "pixel_size_m": 1e-12,
+            "time_step_s": 1e-21,
+            "window_W": 256,
+            "window_hop": 128,
+            "phi_interaction_cap": 10.0,
+            "phi_cap": 1000000.0,
+            "psi_amp_cap": 1000000.0,
+            "grad_cap": 1000000.0
+          },
+          "spectral_pipeline": {
+            "dt": 1e-21,
+            "sampling_rate_hz": 1.0000000000000001e+21,
+            "df_hz": 3.9062500000000005e+18,
+            "nyquist_hz": 5.0000000000000007e+20,
+            "window_length": 256,
+            "hop_length": 128,
+            "guard_bins": 2,
+            "window_function": "Hann",
+            "dc_remove": true,
+            "fft_type": "RFFT",
+            "estimator": "parabolic_3_bin",
+            "estimator_threshold": 1e-12
+          },
+          "analysis_config": {
+            "spectrum_definition": "power |FFT(x)|^2",
+            "window_type": "Hann",
+            "window_length": 256,
+            "hop_length": 128,
+            "guard_bins": 2,
+            "estimator": "centroid",
+            "bootstrap_iterations": 1000,
+            "bootstrap_ci_level": 0.95,
+            "sbr_guard_bins": 2
+          },
+          "kappa": {
+            "mode": "constant",
+            "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+            "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+            "hash_basis": "map_at_init",
+            "is_dynamic": false,
+            "stats": {
+              "spatial_final_mean": 0.5,
+              "spatial_final_std": 0.0,
+              "temporal_mean_of_spatial_means": null,
+              "temporal_std_of_spatial_means": null
+            }
+          },
+          "metrics": {
+            "dominant_freq_Hz": "NaN",
+            "f0_mean_hz": "NaN",
+            "sbr": null,
+            "sbr_mean": null,
+            "f0_ci": [
+              "NaN",
+              "NaN"
+            ],
+            "sbr_ci": [
+              "NaN",
+              "NaN"
+            ],
+            "phi_half_life_steps": null,
+            "phi_half_life_status": "N/A_LOW_STEADY_STATE",
+            "phi_steady_state": 0.0006837670823868257,
+            "pct_neutral": null,
+            "topology_neutrality_n1": null,
+            "mean_total_vortices": null,
+            "mean_vortices": null,
+            "max_lifespan_steps": 0,
+            "median_lifespan_steps": 0,
+            "phi_mean_near": 0.0,
+            "phi_mean_field": 0.0,
+            "phi_std_near": 0.0,
+            "phi_std_field": 0.0,
+            "low_mass_quasiparticle_count": 49,
+            "low_mass_qp_count": 49
+          },
+          "data_files": {
+            "html_report": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_report.html",
+            "amplitude_log_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_amplitude_log.csv",
+            "phi_center_log_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_phi_center_log.csv",
+            "topo_log_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_topo_log.csv",
+            "trajectories_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_trajectories.csv",
+            "multi_spectrum_summary_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_multi_spectrum_summary.csv",
+            "metrics_summary_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_metrics_summary.csv",
+            "phi_grid_summary_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_phi_grid_summary.csv",
+            "phi_grid_dejavu_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_phi_grid_dejavu.csv",
+            "phi_curl_low_mass_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_phi_curl_low_mass.csv",
+            "spin_aura_profile_csv": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_spin_aura_profile.csv",
+            "spectrum_plot_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_spectrum_plot.png",
+            "phi_center_plot_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_phi_center_plot.png",
+            "topo_charge_plot_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_topo_charge_plot.png",
+            "vortex_count_plot_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_vortex_count_plot.png",
+            "kappa_map_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_kappa_map.png",
+            "figure0_canonical_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_figure0_canonical.png",
+            "spin_aura_avg_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_spin_aura_avg.png",
+            "spin_aura_map_png": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_spin_aura_map.png",
+            "gif_amplitude": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_amplitude.gif",
+            "gif_spin": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_spin.gif",
+            "gif_vortices": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_vortices.gif",
+            "gif_particles": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_particles.gif",
+            "gif_flow": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_flow.gif",
+            "gif_full_overlay": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_lineum_full_overlay.gif",
+            "frames_vortices_npy": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_frames_vortices.npy",
+            "frames_curl_npy": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_frames_curl.npy",
+            "frames_amp_npy": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_frames_amp.npy",
+            "frames_phi_npy": "output_wp\\runs/spec6_false_s41_20260313_105118\\spec6_false_s41_frames_phi.npy"
+          },
+          "topology": {
+            "computed_over": "logged_frames_only",
+            "includes_step_0": true,
+            "raw_winding_used": true
+          },
+          "invariants": {
+            "dim": "2D",
+            "bcs": "periodic",
+            "precision": "float64",
+            "stencil": "classic_laplace",
+            "grid_size": 128,
+            "dt": 0.01
+          },
+          "run_configuration": {
+            "resolved_config": {
+              "run_id": 6,
+              "run_mode": "false",
+              "seed": 41,
+              "param_tag": "",
+              "low_noise_mode": false,
+              "test_exhale_mode": true,
+              "kappa_mode": "constant",
+              "window_w": 256,
+              "window_hop": 128,
+              "phi_interaction_cap": 0,
+              "steps": 1,
+              "store_every": 1,
+              "disable_tracking": true
+            },
+            "resolved_config_hash": "8211e03e60b3a8b0cc9aa90bf14c03566bd8ba87a8e6e628bfc945134e10f3d6"
+          },
+          "provenance": {
+            "rng_backend": "MT19937",
+            "seed": 41,
+            "rng_state_hash": "32d8b164bf72c83e8b6b35ad19845451610ec33fbd1ebd1b1c0a3fa5e5e99b7f"
+          },
+          "logging": {
+            "topo_log_stride": 1
+          },
+          "code_fingerprint": {
+            "sha256": "5fe856d9dac7dad081fe66d15d264ab610b367de6c0b0958906b0c1ab638a1b5",
+            "files": [
+              "lineum.py",
+              "tools/whitepaper_contract.py"
+            ],
+            "file_hashes": {
+              "lineum.py": "7687b7192c8791fe0067112cccd0d6aeb303dfb559a21c1fc91d184818ad9a21",
+              "tools/whitepaper_contract.py": "53a5a832bc20106eca0a319aeb1e5074aabbd1b010c2b04948b7575c96e1d903"
+            },
+            "normalized_newlines": true
+          }
+        },
+        "manifest_sha256": "8322b6729337a9d700b2b6f773ba1949e6c5c1019c00fa2efd63c36ee394106a",
+        "spectral_pipeline": {
+          "dt": 1e-21,
+          "sampling_rate_hz": 1.0000000000000001e+21,
+          "df_hz": 3.9062500000000005e+18,
+          "nyquist_hz": 5.0000000000000007e+20,
+          "window_length": 256,
+          "hop_length": 128,
+          "guard_bins": 2,
+          "window_function": "Hann",
+          "dc_remove": true,
+          "fft_type": "RFFT",
+          "estimator": "parabolic_3_bin",
+          "estimator_threshold": 1e-12
+        },
+        "run_configuration": {
+          "resolved_config": {
+            "run_id": 6,
+            "run_mode": "false",
+            "seed": 41,
+            "param_tag": "",
+            "low_noise_mode": false,
+            "test_exhale_mode": true,
+            "kappa_mode": "constant",
+            "window_w": 256,
+            "window_hop": 128,
+            "phi_interaction_cap": 0,
+            "steps": 1,
+            "store_every": 1,
+            "disable_tracking": true
+          },
+          "resolved_config_hash": "8211e03e60b3a8b0cc9aa90bf14c03566bd8ba87a8e6e628bfc945134e10f3d6"
+        },
+        "provenance": {
+          "rng_backend": "MT19937",
+          "seed": 41,
+          "rng_state_hash": "32d8b164bf72c83e8b6b35ad19845451610ec33fbd1ebd1b1c0a3fa5e5e99b7f"
+        },
+        "audit_scope": {},
+        "kappa": {
+          "mode": "constant",
+          "hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+          "binary_hash": "31f1d2b2391050bc1f6975db4e8ae4dac6ddab211f45fc7f5333c18a3981aa3a",
+          "hash_basis": "map_at_init",
+          "is_dynamic": false,
+          "stats": {
+            "spatial_final_mean": 0.5,
+            "spatial_final_std": 0.0,
+            "temporal_mean_of_spatial_means": null,
+            "temporal_std_of_spatial_means": null
+          }
+        }
+      },
       "spec6_false_s41_20260313_085505": {
         "manifest": {
           "run": {
@@ -1693,6 +1948,89 @@
   },
   "runs": [
     {
+      "run_id": "spec6_false_s41_20260313_105118",
+      "profiles": [
+        "baseline",
+        "canonical",
+        "wave_core"
+      ],
+      "matched_profile": "baseline",
+      "checks": [
+        {
+          "id": "baseline.invariants.dim",
+          "expected": "2D",
+          "actual": "2D",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.dim",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260313_105118.manifest.invariants.dim"
+          }
+        },
+        {
+          "id": "baseline.invariants.bcs",
+          "expected": "periodic",
+          "actual": "periodic",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.bcs",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260313_105118.manifest.invariants.bcs"
+          }
+        },
+        {
+          "id": "baseline.invariants.precision",
+          "expected": "float64",
+          "actual": "float64",
+          "status": "PASS",
+          "actual_source": {
+            "primary": "spec6_false_s41_manifest.json:invariants.precision",
+            "embedded": "embedded_context.runs.spec6_false_s41_20260313_105118.manifest.invariants.precision"
+          }
+        },
+        {
+          "id": "baseline.artifact.*manifest.json",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        },
+        {
+          "id": "baseline.artifact.*metrics_summary.csv",
+          "expected": "exists",
+          "actual": "found",
+          "status": "PASS"
+        }
+      ],
+      "metrics": {
+        "dominant_freq_Hz": "NaN",
+        "f0_mean_hz": "NaN",
+        "sbr": null,
+        "sbr_mean": null,
+        "f0_ci": [
+          "NaN",
+          "NaN"
+        ],
+        "sbr_ci": [
+          "NaN",
+          "NaN"
+        ],
+        "phi_half_life_steps": null,
+        "phi_half_life_status": "N/A_LOW_STEADY_STATE",
+        "phi_steady_state": 0.0006837670823868257,
+        "pct_neutral": null,
+        "topology_neutrality_n1": null,
+        "mean_total_vortices": null,
+        "mean_vortices": null,
+        "max_lifespan_steps": 0,
+        "median_lifespan_steps": 0,
+        "phi_mean_near": 0.0,
+        "phi_mean_field": 0.0,
+        "phi_std_near": 0.0,
+        "phi_std_field": 0.0,
+        "low_mass_quasiparticle_count": 49,
+        "low_mass_qp_count": 49
+      },
+      "status": "PASS"
+    },
+    {
       "run_id": "spec6_false_s41_20260313_085505",
       "profiles": [
         "baseline",
@@ -2478,9 +2816,9 @@
     }
   ],
   "summary": {
-    "pass": 6,
+    "pass": 7,
     "fail": 0,
     "skip": 0,
-    "matched_canonical": 6
+    "matched_canonical": 7
   }
 }

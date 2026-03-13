@@ -193,6 +193,10 @@ class TestRA5Driving:
         assert len(data["N_undriven"]) == 50
 
 
+import pytest
+from lineum_core.math import USE_PYTORCH
+
+@pytest.mark.skipif(not USE_PYTORCH, reason="RA-6 LPF requires PyTorch wave core")
 class TestRA6LPFImpact:
     """RA-6: LPF ON vs OFF Impact (Lineum-only)."""
 

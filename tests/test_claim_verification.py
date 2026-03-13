@@ -188,6 +188,9 @@ def test_run_preset_persists_context_fields():
 
 def test_health_returns_all_required_fields():
     """/health must return git_commit, audit_status, active_profile, active_contract_id."""
+    from routing_backend.lab_api import audit_mgr
+    audit_mgr.state = "COMPLETED"
+    
     res = client.get("/api/lab/health")
     assert res.status_code == 200
     data = res.json()

@@ -79,6 +79,10 @@ def test_api_aliases():
     assert "/api/lab/claim_results" in resp2.headers["location"]
 
 
+import importlib.util
+has_torch = importlib.util.find_spec('torch') is not None
+
+@pytest.mark.skipif(not has_torch, reason="Requires PyTorch")
 def test_execution_policy_canonical_path():
     """Verify device rules for canonical vs exploratory paths"""
     original_device = ExecutionPolicy._device
