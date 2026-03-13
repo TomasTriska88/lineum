@@ -1,0 +1,11 @@
+=== TranslatorSpec v0.2 Calibration Report ===
+
+=== AUDIT 1: Delta Mask Distribution ===
+[a...] Delta Mask -> Min: 0.0000, Max: 0.1101, Mean: 0.0184
+[jablko...] Delta Mask -> Min: 0.0000, Max: 0.4469, Mean: 0.0593
+[Tato delší věta...] Delta Mask -> Min: 0.0000, Max: 1.0000, Mean: 0.3763
+
+=== AUDIT 2: R Vector Readout Distribution (Pre-Norm vs Norm) ===
+[a...] R Vector: Min: 0.4645, Max: 0.8333, Mean: 0.6687 -> SUM: 133.75/200.00
+[jablko...] R Vector: Min: 0.4563, Max: 0.8333, Mean: 0.6681 -> SUM: 133.62/200.00
+[Tato delší věta...] R Vector: Min: 0.4466, Max: 0.8333, Mean: 0.6677 -> SUM: 133.54/200.00
