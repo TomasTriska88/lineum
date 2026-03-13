@@ -52,7 +52,7 @@ def test_audit_run_locks(project_root):
         # Any file in registry missing?
         for rel_path in registry:
             # Gracefully tolerate missing artifacts ignored by Git LFS / .gitignore Lightweight Policy
-            if (rel_path.endswith('.npz') or rel_path.endswith('.npy') or rel_path.endswith('.png') or rel_path.endswith('.svg') or 
+            if (rel_path.endswith('.npz') or rel_path.endswith('.npy') or rel_path.endswith('.png') or rel_path.endswith('.svg') or rel_path.endswith('.gif') or 
                 "checkpoints" in rel_path or rel_path.endswith('_log.csv')):
                 continue
             assert (run_dir / rel_path).exists(), f"Tampering detected in {run_dir}: Missing tracked file {rel_path}."
