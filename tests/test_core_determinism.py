@@ -22,14 +22,32 @@ def run_scenario(device_str, is_canonical):
     
     # We temporarily patch torch.cuda.is_available ONLY for the exploratory path testing
     # to force execution if we specifically want to test the CUDA path variance.
-    import torch
-    orig_is_available = torch.cuda.is_available
     try:
-        if device_str == 'cpu':
-            torch.cuda.is_available = lambda: False
-        elif device_str == 'cuda' and not torch.cuda.is_available():
-            print("Skipping CUDA since it's truly not available system-wide.")
-            return None
+        import torch
+    except ImportError:
+        if device_str == 'cuda':
+            pytest.skip("PyTorch not installed; skipping CUDA path test.")
+        # If device_str is 'cpu', we can proceed without torch for now,
+        # assuming run_ra1_unitarity handles it or it's not needed for CPU path.
+        # However, the original code imports torch unconditionally, so this
+        # skip guard is specifically for the CUDA path.
+        # If torch is truly needed for CPU path, this would need adjustment.
+        # For now, assuming the intent is to skip CUDA if torch is missing.
+        torch = None # Set to None to avoid NameError later if not skipped
+
+    orig_is_available = None
+    if torch: # Only proceed with torch-related patching if torch was imported
+        orig_is_available = torch.cuda.is_available
+    
+    try:
+        if torch: # Only apply torch-specific logic if torch was imported
+            if device_str == 'cpu':
+                torch.cuda.is_available = lambda: False
+            elif device_str == 'cuda' and not torch.cuda.is_available():
+                print("Skipping CUDA since it's truly not available system-wide.")
+                return None
+        elif device_str == 'cuda': # If torch not imported and device_str is cuda, we should have skipped already
+            pytest.skip("PyTorch not installed; skipping CUDA path test.")
         
         # This is the actual execution function called by lab_api.py -> SCENARIO_REGISTRY
         val_data = run_ra1_unitarity()

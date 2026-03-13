@@ -515,10 +515,14 @@ def _extract_canonical_traceability(suite_path: str, claim_id: str, mapped_profi
                 evaluations = []
                 for m_key in claim_metric_keys:
                     actual = metrics.get(m_key)
-                    check_obj = next((c for c in checks if m_key in c.get("id", "")), None)
-                    if check_obj:
+                    if isinstance(checks, list):
+                        check_obj = next((c for c in checks if isinstance(c, dict) and m_key in c.get("id", "")), None)
+                    else:
+                        check_obj = checks.get(m_key)
+                        
+                    if check_obj and isinstance(check_obj, dict):
                         expected_rule = check_obj.get("expected", {})
-                        passed = check_obj.get("status") == "PASS"
+                        passed = check_obj.get("status") == "PASS" or check_obj.get("pass") is True
                         if isinstance(expected_rule, dict):
                             rule_str = f"min:{expected_rule.get('min', '*')} max:{expected_rule.get('max', '*')}"
                             if "target" in expected_rule:

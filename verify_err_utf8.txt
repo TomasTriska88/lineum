@@ -1,0 +1,48 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.7, pytest-8.4.1, pluggy-1.6.0 -- C:\Users\TomßÜ\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\TomßÜ\Documents\GitHub\lineum-core
+configfile: pytest.ini
+plugins: anyio-4.8.0
+collecting ... collected 14 items
+
+tests/test_claim_verification.py::test_unknown_preset_returns_404 PASSED [  7%]
+tests/test_claim_verification.py::test_missing_preset_name_returns_422 PASSED [ 14%]
+tests/test_claim_verification.py::test_preset_frequency_sweep_returns_required_fields PASSED [ 21%]
+tests/test_claim_verification.py::test_resolved_claim_status_is_valid PASSED [ 28%]
+tests/test_claim_verification.py::test_canonical_status_requires_audited FAILED [ 35%]
+tests/test_claim_verification.py::test_preset_defect_genesis_maps_to_cl002 PASSED [ 42%]
+tests/test_claim_verification.py::test_preset_absolute_zero_maps_to_cl010 PASSED [ 50%]
+tests/test_claim_verification.py::test_verify_all_returns_all_testable PASSED [ 57%]
+tests/test_claim_verification.py::test_verify_all_summary_fields PASSED  [ 64%]
+tests/test_claim_verification.py::test_claim_results_returns_saved_data PASSED [ 71%]
+tests/test_claim_verification.py::test_claim_results_has_stale_count PASSED [ 78%]
+tests/test_claim_verification.py::test_run_preset_persists_context_fields PASSED [ 85%]
+tests/test_claim_verification.py::test_health_returns_all_required_fields FAILED [ 92%]
+tests/test_claim_verification.py::test_health_no_build_unknown PASSED    [100%]
+
+================================== FAILURES ===================================
+___________________ test_canonical_status_requires_audited ____________________
+tests\test_claim_verification.py:83: in test_canonical_status_requires_audited
+    assert data["resolved_claim_status"].startswith("EXPERIMENTAL_"), \
+E   AssertionError: Non-AUDITED build must return EXPERIMENTAL status, got: SUPPORTED
+E   assert False
+E    +  where False = <built-in method startswith of str object at 0x00000179551CD530>('EXPERIMENTAL_')
+E    +    where <built-in method startswith of str object at 0x00000179551CD530> = 'SUPPORTED'.startswith
+___________________ test_health_returns_all_required_fields ___________________
+tests\test_claim_verification.py:203: in test_health_returns_all_required_fields
+    assert data["audit_status"] in ("AUDITED", "OUTDATED", "NONE", "REVALIDATION_REQUIRED", "BUILD_NEWER"), \
+E   AssertionError: Invalid audit_status: CANONICAL_AUDITED
+E   assert 'CANONICAL_AUDITED' in ('AUDITED', 'OUTDATED', 'NONE', 'REVALIDATION_REQUIRED', 'BUILD_NEWER')
+============================== warnings summary ===============================
+tests/test_claim_verification.py::test_preset_absolute_zero_maps_to_cl010
+tests/test_claim_verification.py::test_verify_all_returns_all_testable
+tests/test_claim_verification.py::test_verify_all_summary_fields
+  C:\Users\TomßÜ\Documents\GitHub\lineum-core\scripts\validation_core.py:806: ComplexWarning: Casting complex values to real discards the imaginary part
+    ortho_dot = abs(float(np.sum(np.conj(ground_psi) * excited_psi) * dV))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_claim_verification.py::test_canonical_status_requires_audited
+FAILED tests/test_claim_verification.py::test_health_returns_all_required_fields
+================== 2 failed, 12 passed, 3 warnings in 32.91s ==================

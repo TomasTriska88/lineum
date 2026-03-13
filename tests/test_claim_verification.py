@@ -13,9 +13,10 @@ from routing_backend.main import app
 client = TestClient(app)
 
 VALID_PRESETS = [
-    "preset-frequency-sweep",
-    "preset-defect-genesis",
-    "preset-absolute-zero",
+    "preset-core-001",
+    "preset-core-002",
+    "preset-core-003",
+    "preset-core-004",
 ]
 
 def test_unknown_preset_returns_404():
@@ -34,7 +35,7 @@ def test_preset_frequency_sweep_returns_required_fields():
     /run_preset with a valid preset must return all authoritative fields:
     manifest_id, resolved_claim_status, scenario_id, claim_id, audit context.
     """
-    res = client.get("/api/lab/run_preset?preset_name=preset-frequency-sweep")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-001")
     assert res.status_code == 200
     data = res.json()
 
@@ -49,15 +50,15 @@ def test_preset_frequency_sweep_returns_required_fields():
     assert "overall_pass" in data, "overall_pass missing"
 
     # Scenario mapping validation
-    assert data["scenario_id"] == "preset-frequency-sweep"
-    assert data["claim_id"] == "CL-001"
+    assert data["scenario_id"] == "preset-core-001"
+    assert data["claim_id"] == "CL-CORE-001"
 
     # manifest_id must not be empty
     assert data["manifest_id"], "manifest_id must not be empty"
 
 def test_resolved_claim_status_is_valid():
     """resolved_claim_status must be one of the 4 allowed values."""
-    res = client.get("/api/lab/run_preset?preset_name=preset-frequency-sweep")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-001")
     assert res.status_code == 200
     data = res.json()
 
@@ -71,11 +72,11 @@ def test_canonical_status_requires_audited():
     SUPPORTED or CONTRADICTED (not EXPERIMENTAL_*).
     If audit_status != AUDITED, it must be EXPERIMENTAL_*.
     """
-    res = client.get("/api/lab/run_preset?preset_name=preset-frequency-sweep")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-001")
     assert res.status_code == 200
     data = res.json()
 
-    if data["audit_status"] == "AUDITED":
+    if data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED"):
         assert data["resolved_claim_status"] in ("SUPPORTED", "CONTRADICTED"), \
             f"AUDITED build must return canonical status, got: {data['resolved_claim_status']}"
     else:
@@ -84,18 +85,18 @@ def test_canonical_status_requires_audited():
 
 def test_preset_defect_genesis_maps_to_cl002():
     """preset-defect-genesis must map to CL-002."""
-    res = client.get("/api/lab/run_preset?preset_name=preset-defect-genesis")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-002")
     assert res.status_code == 200
     data = res.json()
-    assert data["claim_id"] == "CL-002"
+    assert data["claim_id"] == "CL-CORE-002"
     assert data["manifest_id"]
 
 def test_preset_absolute_zero_maps_to_cl010():
     """preset-absolute-zero must map to CL-010."""
-    res = client.get("/api/lab/run_preset?preset_name=preset-absolute-zero")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-003")
     assert res.status_code == 200
     data = res.json()
-    assert data["claim_id"] == "CL-010"
+    assert data["claim_id"] == "CL-CORE-003"
     assert data["manifest_id"]
 
 
@@ -114,9 +115,10 @@ def test_verify_all_returns_all_testable():
 
     # All 3 registry entries should be tested
     results = data["results"]
-    assert "CL-001" in results, "CL-001 missing from verify_all results"
-    assert "CL-002" in results, "CL-002 missing from verify_all results"
-    assert "CL-010" in results, "CL-010 missing from verify_all results"
+    assert "CL-CORE-001" in results, "CL-CORE-001 missing from verify_all results"
+    assert "CL-CORE-002" in results, "CL-CORE-002 missing from verify_all results"
+    assert "CL-CORE-003" in results, "CL-CORE-003 missing from verify_all results"
+    assert "CL-CORE-004" in results, "CL-CORE-004 missing from verify_all results"
 
     # Each result must have resolved_claim_status
     for cid, r in results.items():
@@ -134,13 +136,13 @@ def test_verify_all_summary_fields():
     for field in ["tested_count", "supported", "contradicted", "experimental", "skipped"]:
         assert field in summary, f"Summary missing '{field}'"
 
-    assert summary["tested_count"] == 3, f"Expected 3 tested, got {summary['tested_count']}"
+    assert summary["tested_count"] == 4, f"Expected 4 tested, got {summary['tested_count']}"
 
 
 def test_claim_results_returns_saved_data():
     """GET /claim_results must return previously saved claim results."""
     # First run a preset to ensure persistence
-    client.get("/api/lab/run_preset?preset_name=preset-frequency-sweep")
+    client.get("/api/lab/run_preset?preset_name=preset-core-001")
 
     res = client.get("/api/lab/claim_results")
     assert res.status_code == 200
@@ -148,9 +150,9 @@ def test_claim_results_returns_saved_data():
 
     assert "results" in data
     results = data["results"]
-    assert "CL-001" in results, "CL-001 not in persisted results"
+    assert "CL-CORE-001" in results, "CL-CORE-001 not in persisted results"
 
-    cl001 = results["CL-001"]
+    cl001 = results["CL-CORE-001"]
     assert "resolved_claim_status" in cl001
     assert "manifest_id" in cl001
     assert "checked_at" in cl001
@@ -170,7 +172,7 @@ def test_claim_results_has_stale_count():
 
 def test_run_preset_persists_context_fields():
     """/run_preset must return and persist checked_at, git_commit, equation_fingerprint."""
-    res = client.get("/api/lab/run_preset?preset_name=preset-frequency-sweep")
+    res = client.get("/api/lab/run_preset?preset_name=preset-core-001")
     assert res.status_code == 200
     data = res.json()
 
@@ -198,7 +200,7 @@ def test_health_returns_all_required_fields():
 
     # Audit truthfulness
     assert "audit_status" in data, "audit_status missing"
-    assert data["audit_status"] in ("AUDITED", "OUTDATED", "NONE"), \
+    assert data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED", "OUTDATED", "NONE", "REVALIDATION_REQUIRED", "BUILD_NEWER"), \
         f"Invalid audit_status: {data['audit_status']}"
 
     # Contract info

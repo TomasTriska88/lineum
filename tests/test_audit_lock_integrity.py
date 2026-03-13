@@ -72,7 +72,7 @@ def test_audit_run_locks_mutability_check(tmp_path, capsys):
     assert verify_locked_run(str(run_dir)) is True
     
     # 5. Delete a file
-    file2 = run_dir / "kappa_map.png"
+    file2 = run_dir / "run_summary.csv"
     file2.unlink()
     assert verify_locked_run(str(run_dir)) is False
     captured = capsys.readouterr()
