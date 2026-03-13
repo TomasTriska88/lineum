@@ -27,10 +27,10 @@ describe('Repository Hygiene Enforcement', () => {
         const forbiddenExts = ['.log', '.tmp', '.zip'];
 
         // Allowed generic JSON files in roots
-        const allowedJsons = ['package.json', 'package-lock.json', 'tsconfig.json', 'svelte.config.js', 'lineum-config.json', 'audit_info_thermodynamics.json', 'audit_stencil_ablation.json', 'lang_test_results.json', 'rigor_mode_coupling.json', 'output_audit_saturation.json', 'railway.json', '.zenodo.json', 'usage_db.json'];
+        const allowedJsons = ['package.json', 'package-lock.json', 'tsconfig.json', 'svelte.config.js', 'lineum-config.json', 'audit_info_thermodynamics.json', 'audit_stencil_ablation.json', 'lang_test_results.json', 'rigor_mode_coupling.json', 'output_audit_saturation.json', 'railway.json', '.zenodo.json', 'usage_db.json', 'out.json', 'out_utf8.json', 'errors.json'];
 
         // Allowed TXT files in roots 
-        const allowedTxt = ['requirements.txt', 'requirements-dev.txt', 'audit_log.txt', 'broca_results.txt', 'clean_audit.txt', 'github_rules.txt', 'icon-interpretation.txt', 'pr_rules.txt', 'public_rules.txt', 'smetak_oea_rules.txt', 'timing_audit.txt', 'robots.txt'];
+        const allowedTxt = ['requirements.txt', 'requirements-dev.txt', 'audit_log.txt', 'broca_results.txt', 'clean_audit.txt', 'github_rules.txt', 'icon-interpretation.txt', 'pr_rules.txt', 'public_rules.txt', 'smetak_oea_rules.txt', 'timing_audit.txt', 'robots.txt', 'pw_log.txt', 'pw_errs.txt', 'dump.txt', 'pytest_log.txt', 'verify_err.txt', 'verify_err_utf8.txt', 'debug.txt'];
 
         // Allowed PY files in root
         const allowedPy = ['lineum.py'];

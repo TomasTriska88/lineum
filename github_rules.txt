@@ -1,6 +1,0 @@
-﻿
-LineNumber Line                                       
----------- ----                                       
-      1491 > Specific frontend tasks and Portal tec...
-
-

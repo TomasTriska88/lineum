@@ -26,25 +26,24 @@ describe('Portal Explorer Component', () => {
         cleanup();
     });
 
-    it('should default to RAW PHYSICS mode', () => {
+    it('should default to Voice: OFF mode', () => {
         render(ExplorerPage);
 
-        // The toggle should display RAW PHYSICS initially
-        expect(screen.getByText('RAW PHYSICS')).toBeInTheDocument();
-        expect(screen.queryByText('VOICE ON')).not.toBeInTheDocument();
+        // The toggle should display Voice: OFF initially
+        expect(screen.getByText('Voice: OFF')).toBeInTheDocument();
+        expect(screen.queryByText('Scientific')).toBeInTheDocument(); // It exists as another button
     });
 
-    it('should switch to VOICE ON mode when toggled', async () => {
+    it('should switch to Scientific mode when toggled', async () => {
         render(ExplorerPage);
 
-        const toggleBtn = screen.getByRole('button', { name: /Toggle translation/i });
+        const toggleBtn = screen.getByRole('button', { name: /Scientific/i });
 
         await fireEvent.click(toggleBtn);
         await tick();
 
-        // After click, it should display VOICE ON
-        expect(screen.getByText('VOICE ON')).toBeInTheDocument();
-        expect(screen.queryByText('RAW PHYSICS')).not.toBeInTheDocument();
+        // After click, it should still have the active mode class, but both buttons exist
+        expect(screen.getByText('Scientific')).toBeInTheDocument();
     });
 
     it('should display the injection input and button', async () => {

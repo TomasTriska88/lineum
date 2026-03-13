@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use Lineum, please cite this work."
 title: "Lineum: reference implementation & evidence bundle"
 doi: 10.5281/zenodo.16934359
-version: v1.1.3-core
+version: v1.1.5
 date-released: 2026-02-27
 authors:
   - family-names: "Tříska"

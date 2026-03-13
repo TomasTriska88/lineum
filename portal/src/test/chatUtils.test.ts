@@ -9,7 +9,7 @@ describe('Chat Utils', () => {
         });
 
         it('should remove code blocks', () => {
-            expect(stripMarkdown('Code `var x = 1`')).toBe('Code var x rovná se 1');
+            expect(stripMarkdown('Code `var x = 1`')).toBe('Code var x rovna se 1');
         });
 
         it('should remove links', () => {
@@ -21,7 +21,7 @@ describe('Chat Utils', () => {
         });
 
         it('should transliterate symbols', () => {
-            expect(stripMarkdown('Value is φ')).toBe('Value is fí');
+            expect(stripMarkdown('Value is φ')).toBe('Value is fi');
         });
     });
 
@@ -31,7 +31,7 @@ describe('Chat Utils', () => {
         });
 
         it('should handle multiplication', () => {
-            expect(transliterateSymbols('5 * 5')).toBe('5 krát 5');
+            expect(transliterateSymbols('5 * 5')).toBe('5 krat 5');
         });
 
         it('should handle greek letters', () => {

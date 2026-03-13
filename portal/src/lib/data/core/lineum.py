@@ -564,13 +564,65 @@ _env_present = {k: _os.environ.get(
 if _env_present:
     print("ENV OVERRIDES PRESENT:", _env_present)
 
-# --- Output Directory Logic ---
+# --- Base output directory logic & CANONICAL INTENT LOCK ---
 
-# Base output directory (kořen)
-# [IMPORTANT] "output_wp" is reserved STRICTLY for audit/whitepaper runs. 
-# Do NOT use it for diagnostic tests or temporary diagnostic scripts.
+# Base output directory
 BASE_OUTPUT_DIR = _env_str("LINEUM_BASE_OUTPUT_DIR", "output")
 _os.makedirs(BASE_OUTPUT_DIR, exist_ok=True)
+
+from pathlib import Path
+
+# Resolve absolute paths to prevent relative trickery (e.g. BASE_OUTPUT_DIR="output/../output_wp")
+_resolved_base = Path(BASE_OUTPUT_DIR).resolve()
+_repo_root = Path(__file__).parent.resolve()
+_canonical_wp_dir = (_repo_root / "output_wp").resolve()
+
+# === [POLICY] Orchestration Token Lock (Fail-Before-Touch) ===
+# If the target is strictly inside the canonical output_wp folder, we MUST have a valid token
+try:
+    _is_canonical_intent = _resolved_base.is_relative_to(_canonical_wp_dir)
+except AttributeError:
+    # Python < 3.9 fallback
+    _is_canonical_intent = str(_canonical_wp_dir) in str(_resolved_base)
+
+if _is_canonical_intent:
+    print("\n[POLICY] Canonical output intent detected. Validating Lab Orchestration Token...")
+    
+    token = _os.environ.get("LINEUM_ORCHESTRATION_TOKEN", "")
+    if not token:
+        print("[FATAL] ERROR: Canonical audit must be launched via Lab Orchestration layer. (Missing token)")
+        print("   Direct manual runs targeting `output_wp` are forbidden.")
+        sys.exit(1)
+        
+    state_file = _canonical_wp_dir / ".audit_job_state.json"
+    if not state_file.exists():
+        print("[FATAL] ERROR: Canonical audit must be launched via Lab Orchestration layer. (Missing job state)")
+        sys.exit(1)
+        
+    try:
+        with open(state_file, "r", encoding="utf-8") as f:
+            job_state = json.load(f)
+            
+        if job_state.get("job_id") != token:
+            print(f"[FATAL] ERROR: Invalid orchestration token. Provided '{token}' does not match active job '{job_state.get('job_id')}'.")
+            sys.exit(1)
+            
+        if job_state.get("state") not in ("RUNNING", "QUIET", "CANCELLING"):
+            print(f"[FATAL] ERROR: Cannot launch. Orchestrator state is '{job_state.get('state')}'.")
+            sys.exit(1)
+            
+        import time
+        last_hb = job_state.get("last_heartbeat", 0)
+        age = time.time() - last_hb
+        if age > 180:
+            print(f"[FATAL] ERROR: Orchestration token is stale (heartbeat age: {age:.1f}s). Replay attack / ghost job prevented.")
+            sys.exit(1)
+            
+    except Exception as e:
+        print(f"[FATAL] ERROR: Failed to validate orchestration token: {e}")
+        sys.exit(1)
+        
+    print(f"[POLICY] Token validated. Job ID: {token}")
 
 # Global placeholders (populated by setup_output_globals)
 output_dir = None
@@ -579,6 +631,21 @@ RUN_DIR_NAME = None
 
 # Update latest_run.txt (Atomic)
 def _update_latest_run_pointer(base_dir: str, run_rel_path: str):
+    # Safety Check: If someone somehow tricks the base_dir to be output_wp during execution without a token,
+    # block the write directly at the destination point.
+    try:
+        abs_base = Path(base_dir).resolve()
+        try:
+            is_wp = abs_base.is_relative_to(_canonical_wp_dir)
+        except AttributeError:
+            is_wp = str(_canonical_wp_dir) in str(abs_base)
+            
+        if is_wp and not _os.environ.get("LINEUM_ORCHESTRATION_TOKEN"):
+             print("\n[FATAL] ERROR: Unauthorized attempt to overwrite canonical latest_run.txt. Aborting.")
+             sys.exit(1)
+    except Exception:
+        pass
+
     try:
         ptr_path = _os.path.join(base_dir, "latest_run.txt")
         _atomic_write_bytes(ptr_path, run_rel_path.encode('utf-8'))
@@ -614,7 +681,7 @@ def setup_output_globals(resume_checkpoint: Optional[str] = None):
                     _ckpt_dir = ckpt_parent
                     RUN_DIR_NAME = _os.path.relpath(output_dir, BASE_OUTPUT_DIR)
                     reused = True
-                    print(f"[*] ♻️ RESUME-IN-PLACE: Reusing output directory: {output_dir}")
+                    print(f"[*] RESUME-IN-PLACE: Reusing output directory: {output_dir}")
                 else:
                     print(f"DEBUG: setup_output_globals: cand_run_dir DOES NOT EXIST")
             else:
@@ -630,7 +697,7 @@ def setup_output_globals(resume_checkpoint: Optional[str] = None):
         _os.makedirs(output_dir, exist_ok=True)
         _ckpt_dir = _os.path.join(output_dir, "checkpoints")
         _os.makedirs(_ckpt_dir, exist_ok=True)
-        print(f"📂 Output directory: {output_dir}")
+        print(f"[*] Output directory: {output_dir}")
 
     # 3. Always update pointer to where we are writing
     _update_latest_run_pointer(BASE_OUTPUT_DIR, RUN_DIR_NAME)
@@ -1491,7 +1558,7 @@ def export_portal_params():
     """
     path = os.path.join(output_dir, "portal_params.json")
     params = {
-        "version": "vv1.1.4-core",
+        "version": "v1.0.18-core",
         "updated_utc": datetime.datetime.utcnow().isoformat() + "Z",
         "dissipation_rate": float(DISSIPATION_RATE),
         "reaction_strength": float(REACTION_STRENGTH),
