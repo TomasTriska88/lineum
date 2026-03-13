@@ -48,3 +48,23 @@ jobs:
     - name: Run Whitepaper & Contract Audit Validation
       run: |
         make check
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Frontend Dependencies
+      run: |
+        cd portal && npm install
+        cd ../lab && npm install
+
+    - name: Install Playwright Browsers
+      run: |
+        cd portal && npx playwright install --with-deps chromium
+        cd ../lab && npx playwright install --with-deps chromium
+
+    - name: Execute UI Suite Gates (Vitest + Playwright)
+      run: |
+        cd portal && npm run test && npm run test:e2e
+        cd ../lab && npm run test && npm run test:e2e

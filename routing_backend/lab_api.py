@@ -701,22 +701,47 @@ async def get_claim_results():
     """
     results = _load_claim_results()
     if not results:
-        return {"results": {}, "stale_count": 0}
+        results = {}
 
     ctx = _get_audit_context()
     current_commit = _get_current_git_commit()
     current_fingerprint = ctx.get("equation_fingerprint", "unknown")
+
+    # Merge static canonical status from claims.json if missing from dynamic results
+    try:
+        claims_path = os.path.join(REPO_ROOT_CLAIMS, 'lab', 'src', 'lib', 'data', 'claims.json')
+        if os.path.exists(claims_path):
+            with open(claims_path, 'r', encoding='utf-8') as f:
+                claims_data = json.load(f)
+                for c in claims_data:
+                    c_id = c["id"]
+                    if c_id not in results:
+                        status = c.get("status", "UNTESTED")
+                        if status in ["SUPPORTED", "CONTRADICTED", "EXPERIMENTAL_RUN"]:
+                            results[c_id] = {
+                                "resolved_claim_status": status,
+                                "git_commit": "unknown",
+                                "equation_fingerprint": c.get("equation_fingerprint", "unknown"),
+                                "scenario_id": c.get("scenario_id", "static-scenario"),
+                                "manifest_id": "static-canonical",
+                                "overall_pass": True if status == "SUPPORTED" else False
+                            }
+    except Exception as e:
+        print(f"Failed merging static claims: {e}")
 
     stale_count = 0
     for claim_id, result in results.items():
         saved_commit = result.get("git_commit", "")
         saved_fingerprint = result.get("equation_fingerprint", "")
 
+        is_synthetic = (saved_commit == "unknown")
+        
         is_stale = (
-            (saved_commit and saved_commit != current_commit) or
+            (saved_commit and not is_synthetic and saved_commit != current_commit) or
             (saved_fingerprint and saved_fingerprint != "unknown" and
              current_fingerprint != "unknown" and
-             saved_fingerprint != current_fingerprint)
+             saved_fingerprint != current_fingerprint) or
+            (is_synthetic and not is_current_build_audited(ctx.get("audit_status", "")))
         )
         result["is_stale"] = is_stale
         
@@ -733,7 +758,10 @@ async def get_claim_results():
         result["verdict"] = verdict
 
         # 2. Evidence Provenance
-        if is_stale:
+        if base_status == "EXPERIMENTAL_RUN":
+            # Experimental statuses don't degrade into canonical stale warnings
+            result["evidence_provenance"] = "EXPERIMENTAL_RUN"
+        elif is_stale:
             stale_count += 1
             result["evidence_provenance"] = "STALE_EVIDENCE"
         else:

@@ -492,18 +492,25 @@ test.describe('Whitepaper Claims MVP', () => {
         await expect(page.locator('.status-badge.experimental')).not.toBeVisible();
     });
 
-    test('ui_renders_stale_canonical_mixed_state', async ({ page }) => {
-        // Explicit regression test for the mixed state the user encountered
+    test('Regression: historical_canonical_evidence_survives_stale_dynamic_claim_payload', async ({ page }) => {
+        // Master test guarding cross-view consistency across 5 components for the stale mapping paradox.
         await page.route('**/health', async route => {
             await route.fulfill({
                 json: {
-                    audit_status: "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER",
-                    is_canonical_audit_status: true,
+                    audit_status: "REVALIDATION_REQUIRED",
+                    is_canonical_audit_status: false,
                     is_current_build_audited: false,
                     is_audit_in_progress: false,
                     audit_banner_kind: "stale_for_current_build",
                     current_build: "dirty-hash (main)",
-                    canonicalPromotion: { canonical_promotion_status: 'IN_PROGRESS', required_claims_status: [], missing_requirements: [] },
+                    summary_pass: 1, // 4. Drives Claims Verification summary to show passing
+                    canonical_promotion: { 
+                        canonical_promotion_status: 'IN_PROGRESS', 
+                        required_claims_status: [
+                            {id: "CL-CORE-001", is_ready: true, evidence_source: "CANONICAL_SUITE"}
+                        ], 
+                        missing_requirements: [] 
+                    },
                     productionSafety: { can_verify_all: true, can_generate_audit: true }
                 }
             });
@@ -514,11 +521,11 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: {
                     results: {
                         "CL-CORE-001": {
-                            resolved_claim_status: "STALE_CANONICAL",
+                            resolved_claim_status: "SUPPORTED",
                             verdict: "SUPPORTED",
                             evidence_provenance: "STALE_EVIDENCE",
-                            manifest_id: "manifest-stale",
-                            scenario_id: "preset-frequency-sweep",
+                            scenario_id: "preset-core-001",
+                            manifest_id: "static-canonical",
                             is_stale: true
                         }
                     },
@@ -531,16 +538,63 @@ test.describe('Whitepaper Claims MVP', () => {
         await page.click('text=Claims');
         await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
 
-        await page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))').click();
+        // 1. Promotion Panel consistency
+        const promotionBlock = page.locator('.promotion-block');
+        await expect(promotionBlock).toBeVisible();
+        await promotionBlock.locator('[role="button"]').click();
+        await expect(promotionBlock.locator('li:has-text("CL-CORE-001")')).toContainText('CANONICAL SUITE');
+        
+        // Close Promotion block so it doesn't overlap on Mobile
+        await promotionBlock.locator('[role="button"]').click();
+        
+        // 2. Claim List Row consistency
+        const claimListItem = page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))');
+        await expect(claimListItem.locator('.claim-status.untested')).toHaveCount(0); // Proof of negative regression collapse immunity
+        await expect(claimListItem.locator('.claim-status.supported')).toContainText('SUPPORTED');
+        await expect(claimListItem.locator('.claim-status.outdated')).toContainText('(STALE EVIDENCE)');
+        
+        // 4. Claims Verification Summary consistency
+        const supportedBadges = page.locator('.claim-item .claim-status.supported');
+        await expect(supportedBadges).toHaveCount(1); // Ensures sum_pass = 1 translates to actually rendering a badge
 
-        // 1. Freshness: STALE banner MUST be visible
+        // Traverse to Detail view
+        await claimListItem.click();
+
+        // 5. Validation Core Freshness consistency
         await expect(page.locator('.audit-warning-banner:has-text("Audit is stale for current build")')).toBeVisible();
 
-        // 2. Verdict: SUPPORTED badge exists (pure mathematics)
+        // 3. Claim Detail Badge consistency
         await expect(page.locator('.detail-card .status-badge.supported')).toContainText('SUPPORTED');
-
-        // 3. Provenance: secondary STALE EVIDENCE chip explicitly rendered
         await expect(page.locator('.detail-card .status-badge.outdated')).toHaveText('(STALE EVIDENCE)');
+    });
+
+    test('Regression: Negative regression test (true UNTESTED)', async ({ page }) => {
+        // When a claim truly has no evidence, it should be plain UNTESTED
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    audit_status: "NONE",
+                    is_canonical_audit_status: false,
+                    is_current_build_audited: false,
+                    is_audit_in_progress: false,
+                    audit_banner_kind: "not_audited"
+                }
+            });
+        });
+
+        await page.route('**/claim_results', async route => {
+            // Missing entirely from results
+            await route.fulfill({ json: { results: {}, stale_count: 0 } });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        // We know CL-CORE-003 exists in claims.js but we mocked results as {}
+        const claimListItem = page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-003"))');
+        await expect(claimListItem.locator('.claim-status.untested')).toHaveCount(1);
+        await expect(claimListItem.locator('.claim-status.outdated')).toHaveCount(0);
     });
 
     test('Integration Log Traceability Test', async ({ page }) => {
