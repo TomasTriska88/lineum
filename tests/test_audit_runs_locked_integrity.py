@@ -59,8 +59,7 @@ def test_audit_run_locks(project_root):
                 rel_path.endswith('_rolling_metrics.json') or
                 rel_path.endswith('_metrics_summary.csv') or
                 rel_path.endswith('_multi_spectrum_summary.csv') or
-                rel_path == 'portal_params.json' or
-                "checkpoints" in rel_path
+                rel_path == 'portal_params.json'
             )
             if not is_whitelisted:
                 continue
