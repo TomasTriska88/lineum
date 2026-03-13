@@ -1,7 +1,8 @@
 import os
 import sys
 import json
-import torch
+import pytest
+torch = pytest.importorskip("torch")
 import numpy as np
 
 # Add repo root to path
