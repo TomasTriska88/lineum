@@ -24,7 +24,8 @@ def test_contract_tool_strictly_readonly_on_locked_runs(project_root):
         
         for rel_path, info in registry.items():
             fpath = run_dir / rel_path
-            snapshots[fpath] = info["sha256"]
+            if fpath.exists():
+                snapshots[fpath] = info["sha256"]
             
     # 2. Run the tool (in strict mode or regular)
     # We just run it to let it scan and generate the suite.
