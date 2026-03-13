@@ -1,0 +1,355 @@
+﻿
+Running 2 tests using 2 workers
+
+[1A[2K[1/2] [Mobile Chrome] ÔÇ║ tests\whitepaper-claims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Regression: historical_canonical_evidence_survives_stale_dynamic_claim_payload
+[1A[2K[2/2] [chromium] ÔÇ║ tests\whitepaper-claims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Regression: historical_canonical_evidence_survives_stale_dynamic_claim_payload
+node.exe : [1A[2K[chromium] ÔÇ║ tests\whitepa
+per-claims.spec.js:495:5 ÔÇ║ Whitepaper Claims 
+MVP ÔÇ║ Regression: historical_canonical_eviden
+ce_survives_stale_dynamic_claim_payload
+At C:\Users\Tomáš\AppData\Roaming\npm\npx.ps1:2
+4 char:5
++     & "node$exe"  "$basedir/node_modules/npm/
+bin/npx-cli.js" $args
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   [1A[2K[chromi...c_claim_payload:String) [  
+  ], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErr 
+   or
+ 
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] ÔÇ║ tests\whitepaper-cl
+aims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ
+║ Regression: historical_canonical_evidence_sur
+vives_stale_dynamic_claim_payload
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+
+[1A[2K[chromium] ÔÇ║ tests\whitepaper-claims.
+spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Reg
+ression: historical_canonical_evidence_survives
+_stale_dynamic_claim_payload
+
+[CONSOLE DEBUG]: [vite] connected.
+
+[1A[2K[Mobile Chrome] ÔÇ║ tests\whitepaper-cl
+aims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ
+║ Regression: historical_canonical_evidence_sur
+vives_stale_dynamic_claim_payload
+
+
+[CONSOLE DEBUG]: [vite] connected.
+
+[1A[2K[chromium] ÔÇ║ tests\whitepaper-claims.
+spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Reg
+ression: historical_canonical_evidence_survives
+_stale_dynamic_claim_payload
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulat
+or, activeTab: stats, loading: false, error: nu
+ll, hash: #simulator}
+
+
+[1A[2K[Mobile Chrome] ÔÇ║ tests\whitepaper-cl
+aims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ
+║ Regression: historical_canonical_evidence_sur
+vives_stale_dynamic_claim_payload
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulat
+or, activeTab: stats, loading: false, error: nu
+ll, hash: #simulator}
+
+
+[1A[2K
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses cl
+aimResults = {CL-CORE-001: Object}
+
+
+
+[1A[2K[chromium] ÔÇ║ tests\whitepaper-claims.
+spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Reg
+ression: historical_canonical_evidence_survives
+_stale_dynamic_claim_payload
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses cl
+aimResults = {CL-CORE-001: Object}
+
+[1A[2K[Mobile Chrome] ÔÇ║ tests\whitepaper-cl
+aims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ
+║ Regression: historical_canonical_evidence_sur
+vives_stale_dynamic_claim_payload
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+[1A[2K
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims,
+ activeTab: stats, loading: false, error: null,
+ hash: #claims}
+
+[1A[2K  1) [Mobile Chrome] ÔÇ║ tests\whitepaper-claims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Regression: historical_canonical_evidence_survives_stale_dynamic_claim_payload 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))')[22m
+    [2m    - locator resolved to <div tabindex="0" role="button" class="claim-item  status-supported s-CqZStMKFsdFO">ÔÇŽ</div>[22m
+    [2m  - attempting click action[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <div class="bulk-actions s-CqZStMKFsdFO">ÔÇŽ</div> from <div class="filter-section s-CqZStMKFsdFO">ÔÇŽ</div> subtree intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 ├Ś waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    12 ├Ś waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="bulk-actions s-CqZStMKFsdFO">ÔÇŽ</div> from <div class="filter-section s-CqZStMKFsdFO">ÔÇŽ</div> subtree intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m       - waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <div class="bulk-actions s-CqZStMKFsdFO">ÔÇŽ</div> from <div class="filter-section s-CqZStMKFsdFO">ÔÇŽ</div> subtree intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+    [2m    - waiting for element to be visible, enabled and stable[22m
+    [2m    - element is visible, enabled and stable[22m
+    [2m    - scrolling into view if needed[22m
+    [2m    - done scrolling[22m
+    [2m    - <div class="claim-detail s-CqZStMKFsdFO">ÔÇŽ</div> intercepts pointer events[22m
+    [2m  - retrying click action[22m
+    [2m    - waiting 500ms[22m
+
+
+      556 |
+      557 |         // Traverse to Detail view
+    > 558 |         await claimListItem.click();
+          |                             ^
+      559 |
+      560 |         // 5. Validation Core Freshness consistency
+      561 |         await expect(page.locator('.audit-warning-banner:has-text("Audit is stale for current build")')).toBeVisible();
+        at C:\Users\Tom├í┼í\Documents\GitHub\lineum-core\lab\tests\whitepaper-claims.spec.js:558:29
+
+    Error Context: .scratch\test-results\whitepaper-claims-Whitepap-c26b3-stale-dynamic-claim-payload-Mobile-Chrome\error-context.md
+
+
+[1A[2K  1 failed
+    [Mobile Chrome] ÔÇ║ tests\whitepaper-claims.spec.js:495:5 ÔÇ║ Whitepaper Claims MVP ÔÇ║ Regression: historical_canonical_evidence_survives_stale_dynamic_claim_payload 
+  1 passed (33.6s)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report .scratch\playwright-report[39m
+[36m[39m

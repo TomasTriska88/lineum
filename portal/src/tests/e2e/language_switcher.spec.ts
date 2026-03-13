@@ -17,8 +17,11 @@ test.describe('Language Switcher', () => {
         // Find the Japanese switcher element
         const jaButton = page.locator('.lang-dropdown a[hreflang="ja"]').first();
 
-        // Click to switch language (forcing in case hidden behind hamburger)
-        await jaButton.click({ force: true });
+        // Click to switch language (Must expand the dropdown first)
+        const dropdownToggle = page.locator('.lang-dropdown .dropdown-toggle');
+        await dropdownToggle.click();
+        await page.waitForTimeout(300); // Wait for CSS opacity transition
+        await jaButton.click();
 
         // The URL should now include the /ja/ prefix
         await expect(page).toHaveURL(/\/ja/);
@@ -28,7 +31,9 @@ test.describe('Language Switcher', () => {
 
         // Switch back to English
         const enButton = page.locator('.lang-dropdown a[hreflang="en"]').first();
-        await enButton.click({ force: true });
+        await dropdownToggle.click();
+        await page.waitForTimeout(300);
+        await enButton.click();
 
         // English is the default language, so the URL should not have /ja
         await expect(page).toHaveURL(/^(?!.*\/ja).*$/);
@@ -38,14 +43,18 @@ test.describe('Language Switcher', () => {
         // Test "every other right/left" skip bug
         // Switch to Czech
         const csButton = page.locator('.lang-dropdown a[hreflang="cs"]').first();
-        await csButton.click({ force: true });
+        await dropdownToggle.click();
+        await page.waitForTimeout(300);
+        await csButton.click();
         await expect(page).toHaveURL(/\/cs/);
         await expect(page.locator('html')).toHaveAttribute('lang', 'cs');
         await expect(page.locator('.lang-dropdown a[hreflang="cs"]').first()).toHaveClass(/active/);
 
         // Switch to Deutsch immediately after Czech
         const deButton = page.locator('.lang-dropdown a[hreflang="de"]').first();
-        await deButton.click({ force: true });
+        await dropdownToggle.click();
+        await page.waitForTimeout(300);
+        await deButton.click();
         await expect(page).toHaveURL(/\/de/);
         await expect(page.locator('html')).toHaveAttribute('lang', 'de');
         await expect(page.locator('.lang-dropdown a[hreflang="de"]').first()).toHaveClass(/active/);

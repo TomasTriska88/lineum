@@ -27,7 +27,7 @@ test.describe('Explorer UI Audit', () => {
         const toggleBtn = page.getByRole('button', { name: /Scientific/i });
         await toggleBtn.click();
 
-        await expect(page.locator('text=Scientific')).toBeVisible({ timeout: 10000 });
+        await expect(toggleBtn).toHaveClass(/bg-indigo-600/);
         await expect(page.getByRole('button', { name: 'Voice: OFF', exact: true })).toBeVisible(); // Still visible as an inactive button
     });
 

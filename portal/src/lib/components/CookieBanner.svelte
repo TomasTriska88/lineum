@@ -98,8 +98,8 @@
         }
 
         .content p {
-            font-size: 0.75rem;
-            line-height: 1.2;
+            font-size: 0.875rem;
+            line-height: 1.3;
             text-align: left;
         }
 
@@ -109,7 +109,7 @@
 
         button {
             padding: 0.4rem 1rem;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
     }
 </style>

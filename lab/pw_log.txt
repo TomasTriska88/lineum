@@ -1,0 +1,625 @@
+
+Running 28 tests using 8 workers
+
+[1A[2K[1/28] [chromium] › tests\whitepaper-claims.spec.js:34:5 › Whitepaper Claims MVP › Schema Test: Every claim has required fields and valid enums
+[1A[2K[2/28] [chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+[1A[2K[3/28] [chromium] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+[1A[2K[4/28] [chromium] › tests\whitepaper-claims.spec.js:99:5 › Whitepaper Claims MVP › Traceability MVP: Integration Log forensically links claims to whitepapers
+[1A[2K[5/28] [chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+[1A[2K[6/28] [chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+[1A[2K[7/28] [chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+[1A[2K[8/28] [chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:99:5 › Whitepaper Claims MVP › Traceability MVP: Integration Log forensically links claims to whitepapers
+
+--- TRACEABILITY COVERAGE ---
+
+[1A[2KTotal Curated Claims in DB: 34
+
+[1A[2KIntegration Log Entries: 35
+
+[1A[2KApplied YES: 33
+
+[1A[2KApplied NO (Skipped): 2
+
+[1A[2KCoverage %: 97.1%
+
+[1A[2KMissing Traceability Records: 0
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[9/28] [chromium] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[10/28] [chromium] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K
+[CONSOLE ERROR]: Integration log fetch failed: TypeError: Failed to fetch
+    at init (http://127.0.0.1:5174/src/lib/components/WhitepaperClaims.svelte?t=1773313485124:5392:26)
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[11/28] [chromium] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[12/28] [chromium] › tests\whitepaper-claims.spec.js:885:5 › Audit Job Manager Integration UI › UI Reconnects to Running Audit Job on Mount
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {CL-CORE-001: Object}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {CL-CORE-002: Object}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[13/28] [chromium] › tests\whitepaper-claims.spec.js:910:5 › Audit Job Manager Integration UI › UI Cancellation Flow triggers CANCELLING state
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[14/28] [chromium] › tests\whitepaper-claims.spec.js:939:5 › Audit Job Manager Integration UI › Canonical Paradox: newer artifacts keep canonical support
+[1A[2K[chromium] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K  1) [chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.audit-warning-banner:has-text("Audit is stale for current build")')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.audit-warning-banner:has-text("Audit is stale for current build")')[22m
+
+
+      372 |         // Expect the orange stale banner to be visible somewhere
+      373 |         const staleBanner = page.locator('.audit-warning-banner:has-text("Audit is stale for current build")');
+    > 374 |         await expect(staleBanner).toBeVisible();
+          |                                   ^
+      375 |         await expect(staleBanner).toContainText('newer-commit-hash (main)');
+      376 |
+      377 |         // 2. RUNNING 
+        at C:\Users\Tomáš\Documents\GitHub\lineum-core\lab\tests\whitepaper-claims.spec.js:374:35
+
+    Error Context: .scratch\test-results\whitepaper-claims-Whitepap-7f99e-tic-Audit-Banner-Variations-chromium\error-context.md
+
+
+[1A[2K[15/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:34:5 › Whitepaper Claims MVP › Schema Test: Every claim has required fields and valid enums
+[1A[2K[16/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+[1A[2K[17/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:99:5 › Whitepaper Claims MVP › Traceability MVP: Integration Log forensically links claims to whitepapers
+[1A[2K[18/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+[1A[2K[19/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+[1A[2K[20/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+[1A[2K[21/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+[1A[2K[22/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:160:5 › Whitepaper Claims MVP › UI Test: Lists renders claims and details view shows source links
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[23/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+[1A[2K
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:99:5 › Whitepaper Claims MVP › Traceability MVP: Integration Log forensically links claims to whitepapers
+
+--- TRACEABILITY COVERAGE ---
+
+[1A[2KTotal Curated Claims in DB: 34
+
+[1A[2KIntegration Log Entries: 35
+
+[1A[2KApplied YES: 33
+
+[1A[2KApplied NO (Skipped): 2
+
+[1A[2KCoverage %: 97.1%
+
+[1A[2KMissing Traceability Records: 0
+
+[1A[2K[24/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[25/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:593:5 › Whitepaper Claims MVP › Agent Automation: Assistant Handoff Packet generation
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {CL-CORE-001: Object}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K
+[CONSOLE ERROR]: Integration log fetch failed: TypeError: Failed to fetch
+    at init (http://127.0.0.1:5174/src/lib/components/WhitepaperClaims.svelte?t=1773313485124:5392:26)
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:747:5 › Whitepaper Claims MVP › Agent Automation: UNTESTED claim produces NOT READY Assistant Packet
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:798:5 › Whitepaper Claims MVP › Agent Automation: Experimental claim produces consistent non-canonical data
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {CL-CORE-002: Object}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE DEBUG]: [vite] connecting...
+
+
+[1A[2K
+[CONSOLE DEBUG]: [vite] connected.
+
+
+[1A[2K[26/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:885:5 › Audit Job Manager Integration UI › UI Reconnects to Running Audit Job on Mount
+[1A[2K[27/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:910:5 › Audit Job Manager Integration UI › UI Cancellation Flow triggers CANCELLING state
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[28/28] [Mobile Chrome] › tests\whitepaper-claims.spec.js:939:5 › Audit Job Manager Integration UI › Canonical Paradox: newer artifacts keep canonical support
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:229:5 › Whitepaper Claims MVP › Mapping Test: Strict Gating and Audit Badge UI
+
+[CONSOLE LOG]: DEBUG SVELTE: refreshStatuses claimResults = {}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:508:5 › Whitepaper Claims MVP › Tooltip System: styled tooltip appears on hover with accessibility
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: simulator, activeTab: stats, loading: false, error: null, hash: #simulator}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:420:5 › Whitepaper Claims MVP › Integration Log Traceability Test
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:547:5 › Whitepaper Claims MVP › UI Test: Claims Filtering Logic and Combinations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K[Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations
+
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K
+[CONSOLE LOG]: SVELTE STATE: {mainMode: claims, activeTab: stats, loading: false, error: null, hash: #claims}
+
+
+[1A[2K  2) [Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.audit-warning-banner:has-text("Audit is stale for current build")')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.audit-warning-banner:has-text("Audit is stale for current build")')[22m
+
+
+      372 |         // Expect the orange stale banner to be visible somewhere
+      373 |         const staleBanner = page.locator('.audit-warning-banner:has-text("Audit is stale for current build")');
+    > 374 |         await expect(staleBanner).toBeVisible();
+          |                                   ^
+      375 |         await expect(staleBanner).toContainText('newer-commit-hash (main)');
+      376 |
+      377 |         // 2. RUNNING 
+        at C:\Users\Tomáš\Documents\GitHub\lineum-core\lab\tests\whitepaper-claims.spec.js:374:35
+
+    Error Context: .scratch\test-results\whitepaper-claims-Whitepap-7f99e-tic-Audit-Banner-Variations-Mobile-Chrome\error-context.md
+
+
+[1A[2K  2 failed
+    [chromium] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations 
+    [Mobile Chrome] › tests\whitepaper-claims.spec.js:350:5 › Whitepaper Claims MVP › UI Test: Semantic Audit Banner Variations 
+  26 passed (25.7s)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report .scratch\playwright-report[39m
+[36m[39m

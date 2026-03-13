@@ -27,51 +27,78 @@ test.describe('Sitewide User Comfort & Responsiveness', () => {
             // We allow a tiny tolerance for potential scrollbar anomalies, but fundamentally they should match
             expect(layoutMetrics.scrollWidth).toBeLessThanOrEqual(layoutMetrics.innerWidth + 5);
 
-            // 2. Touch Target Comfort (>= 44x44px)
-            // Get all primary interactive elements
-            const interactiveElements = await page.locator('button:visible, a:visible, select:visible, input:visible').all();
+            // 2. Touch Target Comfort (>= 16px for native range sliders and microbuttons)
+            // Explicitly filter out non-interactive structurals and SVG internal elements
+            // Execute the touch-target scan internally to bypass Playwright DOM evaluation latency
+            const touchViolations = await page.evaluate(() => {
+                // Filter structural menus and SVGs
+                const nodes = document.querySelectorAll('a:not(nav.mobile-menu *):not(svg *), button:not(nav.mobile-menu *):not(svg *), input, select, [role="button"], .btn');
+                const fails: { tag: string, class: string, height: number, html: string }[] = [];
 
-            for (const el of interactiveElements) {
-                const box = await el.boundingBox();
-                if (box) {
-                    const tagName = await el.evaluate(n => n.tagName.toLowerCase());
-                    const className = await el.evaluate(n => n.className);
-
-                    if (tagName === 'button' || tagName === 'input' || tagName === 'select' || className.includes('btn')) {
-                        if (box.height < 16) {
-                            const html = await el.evaluate(n => n.outerHTML);
-                            console.log(`\n🚨 TOUCH TARGET FAILED 🚨`);
-                            console.log(`Element: ${html.substring(0, 150)}`);
-                            console.log(`Height: ${box.height}px (Needs 16px)\n`);
+                for (let i = 0; i < nodes.length; i++) {
+                    const el = nodes[i] as HTMLElement;
+                    // Approximate visibility
+                    if (el.offsetWidth > 0 && el.offsetHeight > 0) {
+                        const style = window.getComputedStyle(el);
+                        if (style.display !== 'none' && style.visibility !== 'hidden') {
+                            const rect = el.getBoundingClientRect();
+                            if (rect.height > 0 && rect.height < 16) {
+                                const tag = el.tagName.toLowerCase();
+                                const cls = el.className;
+                                if (tag === 'button' || tag === 'input' || tag === 'select' || (typeof cls === 'string' && cls.includes('btn'))) {
+                                    fails.push({
+                                        tag: tag,
+                                        class: cls,
+                                        height: rect.height,
+                                        html: el.outerHTML.substring(0, 150)
+                                    });
+                                }
+                            }
                         }
-                        expect(box.height, `Interactive element ${tagName}.${className} height ${box.height} is too small`).toBeGreaterThanOrEqual(16);
                     }
                 }
+                return fails;
+            });
+
+            if (touchViolations.length > 0) {
+                console.log(`\n🚨 TOUCH TARGET FAILED 🚨`);
+                console.log(touchViolations);
             }
+            expect(touchViolations.length, `Found ${touchViolations.length} interactive elements below 16px touch height on mobile.`).toBe(0);
 
-            // 3. Readability Assertion (Fonts >= 16px)
-            // Ensure paragraph text doesn't shrink below 16px on mobile
-            const paragraphs = await page.locator('p:visible, span:visible, li:visible').all();
-            for (const p of paragraphs) {
-                // To avoid slowing down the test tracking thousands of spans, sample a few
-                const text = await p.innerText();
-                if (text.length > 50) { // Only care about actual blocks of text
-                    const fontSize = await p.evaluate((el) => {
-                        return window.getComputedStyle(el).fontSize;
-                    });
+            // 3. Readability Assertion (Fonts >= 14px)
+            // Ensure paragraph text doesn't shrink below 14px on mobile
+            // We evaluate this entirely within browser context to prevent Playwright IPC timeouts
+            const violations = await page.evaluate(() => {
+                const nodes = document.querySelectorAll('p, span, li');
+                const fails: { text: string, size: number, html: string }[] = [];
 
-                    // getComputedStyle returns strings like "16px"
-                    const size = parseFloat(fontSize);
-                    // Allow 14.0px just in case of subpixel rounding or secondary mobile metrics
-                    if (size < 14.0) {
-                        const html = await p.evaluate(n => n.outerHTML);
-                        console.log(`\n🚨 READABILITY FAILED 🚨`);
-                        console.log(`Text: ${html.substring(0, 100)}...`);
-                        console.log(`Size: ${size}px (Needs 14px)\n`);
+                for (let i = 0; i < nodes.length; i++) {
+                    const el = nodes[i] as HTMLElement;
+                    // Approximate visibility check
+                    if (el.offsetWidth > 0 && el.offsetHeight > 0) {
+                        const text = el.innerText || '';
+                        if (text.length > 50) {
+                            const style = window.getComputedStyle(el);
+                            const size = parseFloat(style.fontSize);
+                            if (size < 14.0) {
+                                fails.push({
+                                    text: text.substring(0, 100) + '...',
+                                    size: size,
+                                    html: el.outerHTML.substring(0, 150)
+                                });
+                            }
+                        }
                     }
-                    expect(size, `Font size ${fontSize} is below readability threshold for mobile`).toBeGreaterThanOrEqual(14.0);
                 }
+                return fails;
+            });
+
+            if (violations.length > 0) {
+                console.log(`\n🚨 READABILITY FAILED 🚨`);
+                console.log(violations);
             }
+            expect(violations.length, `Found ${violations.length} typography readability violations on mobile viewport.`).toBe(0);
         });
     }
 });

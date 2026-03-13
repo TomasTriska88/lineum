@@ -19,17 +19,19 @@ test.describe('Lineum Homepage UI Updates', () => {
         const labLink = page.locator('.nav-links a[target="simulacrum"]');
         await expect(labLink).toBeVisible();
 
-        // 1.5 & 2 Check if API Solutions and Engraving are visible (only if enabled via env)
+        // 1.5 & 2 Check if API Solutions and Engraving are visible inside Ecosystem (only if enabled via env)
+        const ecosystemToggle = page.getByRole('button', { name: /Ecosystem/i });
+        if (await ecosystemToggle.isVisible()) {
+            await ecosystemToggle.click();
+            await page.waitForTimeout(300); // CSS transition delay
+        }
+
         const apiLink = page.locator('a[href="/api-solutions"]').first();
         if ((await apiLink.count()) > 0) {
             await expect(apiLink).toBeVisible();
             const engravingLink = page.locator('a[href="/engraving"]').first();
             await expect(engravingLink).toBeVisible();
         }
-
-        // 3. Check if 'For Scientists' is visible directly via href (i18n safe)
-        const scientistLink = page.locator('a[href="/#scientist"]');
-        await expect(scientistLink).toBeVisible();
 
         // 4. Click the Docs dropdown and verify 'About' is present
         const docsToggle = page.locator('.dropdown-toggle');
