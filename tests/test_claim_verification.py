@@ -76,7 +76,7 @@ def test_canonical_status_requires_audited():
     assert res.status_code == 200
     data = res.json()
 
-    if data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED"):
+    if data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED", "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER"):
         assert data["resolved_claim_status"] in ("SUPPORTED", "CONTRADICTED"), \
             f"AUDITED build must return canonical status, got: {data['resolved_claim_status']}"
     else:
@@ -203,7 +203,7 @@ def test_health_returns_all_required_fields():
 
     # Audit truthfulness
     assert "audit_status" in data, "audit_status missing"
-    assert data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED", "OUTDATED", "NONE", "REVALIDATION_REQUIRED", "BUILD_NEWER"), \
+    assert data["audit_status"] in ("AUDITED", "CANONICAL_AUDITED", "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER", "OUTDATED", "NONE", "REVALIDATION_REQUIRED", "BUILD_NEWER"), \
         f"Invalid audit_status: {data['audit_status']}"
 
     # Contract info
