@@ -2,6 +2,23 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Audit Progress Panel UI Constraints', () => {
     test.beforeEach(async ({ page }) => {
+        // Intercept foundational API routes to prevent ECONNREFUSED when FastAPI is offline
+        await page.route('/api/lab/health', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ status: "online", version: "mocked" })
+            });
+        });
+
+        await page.route('/api/lab/statistics', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ total_claims: 0, verified_claims: 0 })
+            });
+        });
+
         // Intercept audit routes to simulate a running state with extremely long log texts
         await page.route('/api/lab/audit/config', async route => {
             await route.fulfill({

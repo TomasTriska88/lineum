@@ -1,6 +1,23 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Responsive Lab Navigation & Layout', () => {
+    test.beforeEach(async ({ page }) => {
+        // Intercept foundational API routes to prevent ECONNREFUSED when FastAPI is offline
+        await page.route('/api/lab/health', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ status: "online", version: "mocked" })
+            });
+        });
+        await page.route('/api/lab/statistics', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ total_claims: 0, verified_claims: 0 })
+            });
+        });
+    });
 
     test('Desktop layout displays all panels', async ({ page }) => {
         await page.route('*/api/lab/history', async route => await route.fulfill({ json: [] }));
