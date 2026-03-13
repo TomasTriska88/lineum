@@ -224,8 +224,6 @@ def main():
                         print(f"[WARN] {filename} PHI hash mismatch (Fuzzy mode - ignoring).")
                     else:
                         print(f"[FAIL] {filename} PHI hash mismatch!")
-                        print(f"       Expected: {info['phi_hash']}")
-                        print(f"       Got:      {phi_h}")
                         hashes_ok = False
                 
                 if psi_h == info["psi_hash"] and phi_h == info["phi_hash"]:

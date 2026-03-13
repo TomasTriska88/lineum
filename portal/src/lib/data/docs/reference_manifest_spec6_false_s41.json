@@ -14,8 +14,8 @@
     "snapshots": {
         "step_200": {
             "step": 200,
-            "psi_hash": "db6da3eb8195a2efc0838e33b645419368833e5c8152130cf92fc4a44e00920c",
-            "phi_hash": "ebaf7de44d9a2644ba52545bc0b22da465d1d73a8826921b8c11d04fc016603d",
+            "psi_hash": "4b7cd78b533037729085c97cb8954e8900ad1edad9bb698b86ad11ed67b5081d",
+            "phi_hash": "065a7ac0b6649d54f8fe4ab709fd1974c82c6f3be4eed2f48a2b78a0a50dfea9",
             "psi_shape": [
                 128,
                 128
@@ -29,8 +29,8 @@
         },
         "step_1000": {
             "step": 1000,
-            "psi_hash": "c2dc022248b5ef684620b32b752946dca676c775cbfa5fe2c7c34ddfd25476de",
-            "phi_hash": "38e2ccf2d50467fdb3d5a8c2b4ff1d1a5416bdb80e564eb7e624e2abb5f2ec69",
+            "psi_hash": "15871d3ddc29c3af8074ccbbd2f60b5566581c07a129dc420b1cb27747046491",
+            "phi_hash": "5d31588690cda14e273fb8cebd39bd53b27ca5f26661dcfc56b996e1bb4a97f3",
             "psi_shape": [
                 128,
                 128
@@ -44,8 +44,8 @@
         },
         "final": {
             "step": 2000,
-            "psi_hash": "3c49d6b0f1e35b0262e059daa7ec583b7bcdb5aaa27335bce907f1028fa00b9e",
-            "phi_hash": "9c8722061834580cda0e3a66602051dbfcdf7bf8f19246ce7c5df7118de36b34",
+            "psi_hash": "294c36fa1e86fa7f1317b890689fc12d5d13b4c17a1b303457f41804e22e5f3f",
+            "phi_hash": "f1b99eac9ece7779f8af0c3de5f7a774da8797816fa3013dc8a4ba94dd8f355d",
             "psi_shape": [
                 128,
                 128
