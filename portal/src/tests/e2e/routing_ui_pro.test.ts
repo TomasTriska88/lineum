@@ -56,10 +56,10 @@ test.describe('Routing Pulse Lab - Advanced Holo UI & WebGL Lifecycle', () => {
 
         await startBtn.click();
 
-        // Wait for simulating state (e.g. Stop Verification button)
-        const stopBtn = page.getByRole('button', { name: /Calculating Tensor.../i });
-        await expect(stopBtn).toBeVisible({ timeout: 5000 });
-        await page.waitForTimeout(500); // let it render
+        // Wait for simulating state to finish
+        const doneBtn = page.getByRole('button', { name: /New Iteration/i });
+        await expect(doneBtn).toBeVisible({ timeout: 10000 });
+        await page.waitForTimeout(500); // let the WebGL routing output render
 
         // Step 3: Lifecycle navigation to verify onDestroy WebGL memory leak cleanup
         // We go back to the Homepage, and then back to Routing.

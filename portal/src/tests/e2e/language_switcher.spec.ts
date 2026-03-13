@@ -15,10 +15,10 @@ test.describe('Language Switcher', () => {
         await expect(page.locator('h1').first()).toBeVisible();
 
         // Ensure the language switcher block protects against browser auto-translators
-        await expect(page.locator('.lang-switcher')).toHaveAttribute('translate', 'no');
+        await expect(page.locator('.lang-dropdown').first()).toHaveAttribute('translate', 'no');
 
         // Find the Japanese switcher element
-        const jaButton = page.locator('.lang-btn', { hasText: 'JA' }).first();
+        const jaButton = page.locator('.lang-dropdown a[hreflang="ja"]').first();
 
         // Click to switch language (forcing in case hidden behind hamburger)
         await jaButton.click({ force: true });
@@ -30,28 +30,28 @@ test.describe('Language Switcher', () => {
         await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
 
         // Switch back to English
-        const enButton = page.locator('.lang-btn', { hasText: 'EN' }).first();
+        const enButton = page.locator('.lang-dropdown a[hreflang="en"]').first();
         await enButton.click({ force: true });
 
         // English is the default language, so the URL should not have /ja
         await expect(page).toHaveURL(/^(?!.*\/ja).*$/);
         await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-        await expect(page.locator('.lang-btn', { hasText: 'EN' }).first()).toHaveClass(/active/);
+        await expect(page.locator('.lang-dropdown a[hreflang="en"]').first()).toHaveClass(/active/);
 
         // Test "every other right/left" skip bug
         // Switch to Czech
-        const csButton = page.locator('.lang-btn', { hasText: 'CS' }).first();
+        const csButton = page.locator('.lang-dropdown a[hreflang="cs"]').first();
         await csButton.click({ force: true });
         await expect(page).toHaveURL(/\/cs/);
         await expect(page.locator('html')).toHaveAttribute('lang', 'cs');
-        await expect(page.locator('.lang-btn', { hasText: 'CS' }).first()).toHaveClass(/active/);
+        await expect(page.locator('.lang-dropdown a[hreflang="cs"]').first()).toHaveClass(/active/);
 
         // Switch to Deutsch immediately after Czech
-        const deButton = page.locator('.lang-btn', { hasText: 'DE' }).first();
+        const deButton = page.locator('.lang-dropdown a[hreflang="de"]').first();
         await deButton.click({ force: true });
         await expect(page).toHaveURL(/\/de/);
         await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-        await expect(page.locator('.lang-btn', { hasText: 'DE' }).first()).toHaveClass(/active/);
+        await expect(page.locator('.lang-dropdown a[hreflang="de"]').first()).toHaveClass(/active/);
     });
 
 });

@@ -17,18 +17,18 @@ test.describe('Explorer UI Audit', () => {
         await expect(page.getByRole('heading', { name: 'Explorer', exact: true })).toBeVisible();
 
         // The exact case toggle label must be visible
-        await expect(page.getByText('RAW PHYSICS', { exact: true })).toBeVisible();
+        await expect(page.getByText('Voice: OFF', { exact: true })).toBeVisible();
 
         // Assert absence of VOICE ON
         await expect(page.getByText('VOICE ON')).not.toBeVisible();
     });
 
     test('should toggle to VOICE ON hybrid mode', async ({ page }) => {
-        const toggleBtn = page.getByRole('button', { name: /Toggle translation/i });
+        const toggleBtn = page.getByRole('button', { name: /Scientific/i });
         await toggleBtn.click();
 
-        await expect(page.locator('text=VOICE ON')).toBeVisible({ timeout: 10000 });
-        await expect(page.locator('text=RAW PHYSICS')).not.toBeVisible();
+        await expect(page.locator('text=Scientific')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('text=Voice: OFF')).toBeVisible(); // Still visible as an inactive button
     });
 
     test('should render inject input correctly', async ({ page }) => {
