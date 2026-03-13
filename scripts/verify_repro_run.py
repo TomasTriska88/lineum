@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import argparse
 import pathlib
@@ -116,7 +116,7 @@ def main():
     
     script_dir = pathlib.Path(__file__).parent.resolve()
     root_dir = script_dir.parent
-    manifest_path = root_dir / "docs" / "reference_manifest_spec6_false_s41.json"
+    manifest_path = root_dir / "portal" / "src" / "lib" / "data" / "docs" / "reference_manifest_spec6_false_s41.json"
     
     if not manifest_path.exists():
         print(f"[FAIL] Canonical manifest not found. {manifest_path}")
