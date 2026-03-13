@@ -19,6 +19,35 @@ test.describe('Audit Progress Panel UI Constraints', () => {
             });
         });
 
+        await page.route('/api/lab/claim_results', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    "sim-001": { 
+                        "status": "verifying",
+                        "metrics": { "fidelity": 0.999 } 
+                    }
+                })
+            });
+        });
+
+        await page.route('/api/lab/history', async route => {
+            await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+        });
+
+        await page.route('/data/manifest.json', async route => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify([{
+                    "id": "claim_ui_constraint_test",
+                    "status": "pending",
+                    "description": "Dummy claim to force UI rendering"
+                }])
+            });
+        });
+
         // Intercept audit routes to simulate a running state with extremely long log texts
         await page.route('/api/lab/audit/config', async route => {
             await route.fulfill({
