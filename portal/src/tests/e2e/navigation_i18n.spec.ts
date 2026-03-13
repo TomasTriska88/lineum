@@ -20,7 +20,7 @@ test.describe('Navigation i18n Localization', () => {
         const labLink = page.locator('.nav-links a[target="simulacrum"]').first();
         await expect(labLink).toBeVisible();
 
-        const scientistLink = page.locator('.nav-links a[href="/#scientist"]').first();
+        const scientistLink = page.locator('.nav-links a[href$="#scientist"]').first();
         await expect(scientistLink).toBeVisible();
 
         // Check Docs Dropdown
@@ -43,7 +43,7 @@ test.describe('Navigation i18n Localization', () => {
         const labLink = page.locator('.nav-links a[target="simulacrum"]').first();
         await expect(labLink).toBeVisible();
 
-        const scientistLink = page.locator('.nav-links a[href="/#scientist"]').first();
+        const scientistLink = page.locator('.nav-links a[href$="#scientist"]').first();
         await expect(scientistLink).toBeVisible();
 
         // Check Docs Dropdown
@@ -67,29 +67,39 @@ test.describe('Navigation i18n Localization', () => {
             await mobileToggle.click();
         }
 
-        // Check language tooltip labels are native
-        const csButton = page.locator('a[hreflang="cs"]').first();
-        await expect(csButton).toHaveAttribute('data-tooltip', 'Čeština');
+        // Check language labels are native. Since they are inside a dropdown, we open it first.
+        await page.locator('.lang-toggle').click();
 
-        const deButton = page.locator('a[hreflang="de"]').first();
-        await expect(deButton).toHaveAttribute('data-tooltip', 'Deutsch');
+        const csButton = page.locator('.lang-dropdown a[hreflang="cs"]').first();
+        await expect(csButton).toContainText('Čeština');
 
-        const jaButton = page.locator('a[hreflang="ja"]').first();
-        await expect(jaButton).toHaveAttribute('data-tooltip', '日本語');
+        const deButton = page.locator('.lang-dropdown a[hreflang="de"]').first();
+        await expect(deButton).toContainText('Deutsch');
 
-        const enButton = page.locator('a[hreflang="en"]').first();
-        await expect(enButton).toHaveAttribute('data-tooltip', 'English');
+        const jaButton = page.locator('.lang-dropdown a[hreflang="ja"]').first();
+        await expect(jaButton).toContainText('日本語');
+
+        const enButton = page.locator('.lang-dropdown a[hreflang="en"]').first();
+        await expect(enButton).toContainText('English');
 
         // Switch to German and ensure the Czech button STILL says "Čeština"
-        await deButton.click({ force: true });
+        await deButton.click();
         await page.waitForTimeout(500);
 
         // Wait again for header to re-appear
         await expect(page.locator('.nav-logo').first()).toBeVisible();
 
+        // 0. Handle mobile viewport if necessary (ensures lang-switcher is visible)
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click();
+        }
+
+        // Open dropdown again
+        await page.locator('.lang-toggle').click();
+
         // Re-query locator after page reload
-        const csButtonAfter = page.locator('a[hreflang="cs"]').first();
-        await expect(csButtonAfter).toHaveAttribute('data-tooltip', 'Čeština');
+        const csButtonAfter = page.locator('.lang-dropdown a[hreflang="cs"]').first();
+        await expect(csButtonAfter).toContainText('Čeština');
     });
 
 });

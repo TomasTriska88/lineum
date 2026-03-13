@@ -18,10 +18,10 @@ test.describe('Lineum Homepage UI Updates', () => {
         await expect(labLink).toBeVisible();
 
         // 1.5 & 2 Check if API Solutions and Engraving are visible (only if enabled via env)
-        const apiLink = page.locator('a[href="/api-solutions"]');
+        const apiLink = page.locator('a[href="/api-solutions"]').first();
         if ((await apiLink.count()) > 0) {
             await expect(apiLink).toBeVisible();
-            const engravingLink = page.locator('a[href="/engraving"]');
+            const engravingLink = page.locator('a[href="/engraving"]').first();
             await expect(engravingLink).toBeVisible();
         }
 

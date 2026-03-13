@@ -36,11 +36,11 @@ test.describe('Wiki Table of Contents (TOC)', () => {
         expect(count).toBeGreaterThan(0);
 
         // Explicitly check for an H1 header ("1. Abstract")
-        const h1Link = tocLinks.filter({ hasText: '1. Abstract' });
+        const h1Link = tocLinks.filter({ hasText: '1. Abstract' }).first();
         await expect(h1Link).toBeVisible();
 
         // Explicitly check for an H2 header ("2. Motivation")
-        const h2Link = tocLinks.filter({ hasText: '2. Motivation' });
+        const h2Link = tocLinks.filter({ hasText: '2. Motivation' }).first();
         await expect(h2Link).toBeVisible();
 
         // Explicitly check for an H4 header ("4.3.1 Cross-Implementation Replication (advisory)")

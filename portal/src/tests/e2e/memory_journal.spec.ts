@@ -75,19 +75,19 @@ test.describe('Memory Imprint Journal UI verification', () => {
         await expect(page.locator('h1')).toContainText('Memory Imprint Journal');
 
         // Verify Imprint card renders
-        await expect(page.locator('.imprint-card')).toBeVisible();
-        await expect(page.locator('.imprint-card h3')).toContainText('test-hash-12345');
+        await expect(page.locator('.imprint-card').first()).toBeVisible();
+        await expect(page.locator('.imprint-card h3').first()).toContainText('test-hash-12345');
 
         // Verify Physics config details
-        await expect(page.locator('.metric-box.config')).toContainText('Grid: 64');
+        await expect(page.locator('.metric-box.config').first()).toContainText('Grid: 64');
 
         // Ensure Affect metrics exist
-        await expect(page.locator('.metric-box.affect')).toContainText('Arousal: 1.00e+3');
+        await expect(page.locator('.metric-box.affect').first()).toContainText('Arousal: 1.00e+3');
 
         // Click Forget
         page.on('dialog', dialog => dialog.accept()); // Automatically accept the deterministic revert confirm box
 
-        await page.locator('.forget-btn').click();
+        await page.locator('.forget-btn').first().click();
 
         // Verify that the route interceptor successfully captured the DELETE call for this ID
         // To be sure that delete happened, we wait for the interceptor logic

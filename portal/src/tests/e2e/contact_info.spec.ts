@@ -9,10 +9,10 @@ test.describe('Legal Contact Information', () => {
         // Verify Legal Entity links are present and correct within the main content block
         const aboutContainer = page.locator('.about-page').first();
 
-        const justiceLink = aboutContainer.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-$firma?nazev="]`);
+        const justiceLink = aboutContainer.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-%24firma?nazev="]`);
         await expect(justiceLink).toBeVisible();
 
-        const icLink = aboutContainer.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-$firma?ico="]`);
+        const icLink = aboutContainer.locator(`a[href*="or.justice.cz/ias/ui/rejstrik-%24firma?ico="]`);
         await expect(icLink).toBeVisible();
 
         const mapsLink = aboutContainer.locator(`a[href*="maps.google.com/?q="]`);

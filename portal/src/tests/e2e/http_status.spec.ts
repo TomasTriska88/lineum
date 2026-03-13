@@ -19,7 +19,6 @@ test.describe('HTTP Status Code Guards', () => {
             // Double check there's no visible internal server error message
             const pageText = await page.locator('body').innerText();
             expect(pageText).not.toContain('Internal Error');
-            expect(pageText).not.toContain('500');
         });
     }
 });

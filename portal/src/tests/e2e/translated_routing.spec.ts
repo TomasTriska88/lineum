@@ -19,7 +19,8 @@ test.describe('Translated Routing (SEO URLs)', () => {
         await expect(page).toHaveURL(/.*\/api-solutions/);
 
         // Switch to Czech, click CS button in switcher
-        const csButton = page.locator('.lang-switcher .lang-btn', { hasText: 'CS' }).first();
+        await page.locator('.lang-toggle').click();
+        const csButton = page.getByRole('link', { name: 'Čeština (CZ)' });
         await csButton.click();
 
         // Verify URL transformed into translated sub-directory routing (! not canonical route /cs/api-solutions !)
@@ -27,7 +28,8 @@ test.describe('Translated Routing (SEO URLs)', () => {
         await expect(page.locator('html')).toHaveAttribute('lang', 'cs');
 
         // Switch to German from Czech (cross-navigate on a translated route)
-        const deButton = page.locator('.lang-switcher .lang-btn', { hasText: 'DE' }).first();
+        await page.locator('.lang-toggle').click();
+        const deButton = page.getByRole('link', { name: 'Deutsch (DE)' });
         await deButton.click();
 
         // Validate German translated route (api-loesungen)
@@ -35,7 +37,8 @@ test.describe('Translated Routing (SEO URLs)', () => {
         await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 
         // Back to Japanese (which has no explicit translation mapping, retains /api-solutions)
-        const jaButton = page.locator('.lang-switcher .lang-btn', { hasText: 'JA' }).first();
+        await page.locator('.lang-toggle').click();
+        const jaButton = page.getByRole('link', { name: '日本語 (JA)' });
         await jaButton.click();
 
         // Validate Japanese URL (but prefix must appear)
