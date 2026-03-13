@@ -1,7 +1,7 @@
 # 🧪 Lineum – Task List for Further Verification
 > **[POLICY] ENGLSIH ONLY:** This file is the central repository backlog. All new entries, notes, and tasks must be written strictly in **English**. Do not use Czech or any other language in this document.
 
-This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.1.4** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
+This file contains an overview of research points that require further testing, visualization, or quantitative verification. Each point should be either (re)verified by simulation or explicitly formulated as a hypothesis. The state of this TODO is aligned with the core paper **lineum-core v1.1.5** (Eq-4, static κ, 2D, periodic BCs, RUN_TAG `spec6_false_s41`).
 This is not the source of truth for the model state - binding definitions and claims are always in the current version of the whitepaper / core paper.
 The sections below are divided to first address **basic principles and critical points** and only then mapping to "real physics".
 
@@ -29,7 +29,7 @@ The sections below are divided to first address **basic principles and critical 
 - Terms like "spin aura", "neutral topology", etc. are **internal names for specifically defined numerical objects in the model** within this repository (fields, integrals, indices...).
 - Every such term must have its **operational definition** stated in the core paper and code; the name itself **is not a claim about a new physical quantity** outside the model nor about the properties of Standard Model particles.
 - This TODO file **does not introduce new physical terms**; it only reminds where terminology and definitions need to be cleaned up or revised in the whitepaper / code.
-- **Terminology closure – zeta-points (#naming, #renaming, #not-for-whitepaper).** The canonical name for the phenomenon is **"zeta-points"** (explainable as **"points of closure"**). The original designation **"DejaVu points"** is maintained from the version aligned with _lineum-core v1.1.4_  **exclusively as a historical / legacy alias** and may only appear in texts in sentences like _"historically referred to as..."_. In all new definitions, claims, tables, and graphs – **including the whitepaper and core paper** – only the name **zeta-points** (with "points of closure" occasionally in parentheses) is used to prevent the old name from being adopted into the whitepaper as ostensibly equivalent.
+- **Terminology closure – zeta-points (#naming, #renaming, #not-for-whitepaper).** The canonical name for the phenomenon is **"zeta-points"** (explainable as **"points of closure"**). The original designation **"DejaVu points"** is maintained from the version aligned with _lineum-core v1.1.5_  **exclusively as a historical / legacy alias** and may only appear in texts in sentences like _"historically referred to as..."_. In all new definitions, claims, tables, and graphs – **including the whitepaper and core paper** – only the name **zeta-points** (with "points of closure" occasionally in parentheses) is used to prevent the old name from being adopted into the whitepaper as ostensibly equivalent.
   This point is a **purely naming/renaming TODO**: when generating / rewriting the whitepaper, it is **not literalized as a scientific claim**, but serves only as an internal rule for naming and checking that the old name never appears as an active concept anywhere in the text.
 
 ---
@@ -58,7 +58,7 @@ The highest "cross-cutting" priority across all sections is to show that observe
 
 ---
 
-## 🔍 Phenomena from core paper to revalidate (core v1.1.4)
+## 🔍 Phenomena from core paper to revalidate (core v1.1.5)
 
 > **Audit 2026: Protocol & Reproduction (Feb 17, 2026):**
 > *   **Goal:** Rigorous verification of determinism and energy sources (H0 vs H1).
@@ -383,7 +383,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       layer that only sees aggregated properties of the one beneath (e.g. through averaged φ / linon statistics),
        – decide whether multi-layer scenarios will be kept strictly as an **interpretational overlay** onto a single Eq-4
       (effective "floors of reality" in post-processing), or as an isolated **extension branch** with an explicit
-      index `n` in the equations; in documentation, explicitly separate this from core v1.1.4.
+      index `n` in the equations; in documentation, explicitly separate this from core v1.1.5.
 - [ ] (Tomas's [HYPOTHESIS]) **3D Ghosting / Tentacle Model:** Linon (a 2D point) interpreted as the cross-section of a 3D fiber (tentacle) intersecting the 2D Lineum slice.
   - [ ] **Deja Vu / Mandela Effect:** If the 3D fiber changes shape in depth (above layers), its cross-sections (linons) in all layers shift synchronously. This explains the global "history rewrite" (Mandela Effect) as a consequence of a non-trivial 3D rotation of the structure.
 
@@ -477,8 +477,8 @@ Verify whether this density predicts changes in a(t) or local φ tension.
       - Sets canonical references: `RUN_ID=6`, `RUN_MODE=false`, `SEED=41`, `PARAM_TAG=dt05_w256_steps2500`
       - Minimizes output payload to prevent OOM/disk-thrashing: `STORE_EVERY=50`, disables all `.gif`, `.png`, and `frames` exports.
       - Ensure this script is documented as the recommended starting point for deep, multi-thousand step analyses without crashing generic hardware.
-- [ ] **Technical Debt (v1.1.4):** Refactor the core simulation loop in `lineum.py` to natively ensure the final state of the simulation is *always* saved as a checkpoint upon completion or exit, regardless of the `i % CHECKPOINT_EVERY == 0` modulo logic. This will allow audit pipeline scripts (like `repro_spec6_false_s41.py`) to use the exact specified number of `--steps 2000` instead of relying on the `+1` (2001) step workaround to capture the final boundary state.
-- [ ] **Repository Governance & CI/CD Hardening (Post v1.1.4):**
+- [ ] **Technical Debt (v1.1.5):** Refactor the core simulation loop in `lineum.py` to natively ensure the final state of the simulation is *always* saved as a checkpoint upon completion or exit, regardless of the `i % CHECKPOINT_EVERY == 0` modulo logic. This will allow audit pipeline scripts (like `repro_spec6_false_s41.py`) to use the exact specified number of `--steps 2000` instead of relying on the `+1` (2001) step workaround to capture the final boundary state.
+- [ ] **Repository Governance & CI/CD Hardening (Post v1.1.5):**
       - Enable branch protection / required status checks for `main` and `dev` if applicable.
       - Consider tag/ruleset protection for `v*` tags to prevent unauthorized or malformed tag creation.
       - Update documentation to explicitly distinguish between "hard release-asset gate" (what currently blocks release compilation) and "advisory CI without repo-level protection" (the current state of PRs/tags without branch rules).
@@ -486,11 +486,11 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 ### 🔲 G. Implementation details and stability against "engineering" choices #impl
 
 - [ ] **[TECHNICAL DEBT] Migrate to NumPy 2.0+ and establish a new Canonical Baseline.**
-       - **Context:** `lineum-core v1.1.4` strictly pins `numpy<2.0.0` (specifically relying on 1.25.x math) to preserve the exact floating-point rounding math used to generate the initial `reference_manifest_spec6_false_s41.json`. Upgrading to NumPy 2.x introduces microscopic LSB deviations in float64 arrays (due to new C-level AVX512/SIMD optimizations) that accumulate over thousands of PDE steps, inevitably changing the final SHA-256 hash of the simulation state.
+       - **Context:** `lineum-core v1.1.5` strictly pins `numpy<2.0.0` (specifically relying on 1.25.x math) to preserve the exact floating-point rounding math used to generate the initial `reference_manifest_spec6_false_s41.json`. Upgrading to NumPy 2.x introduces microscopic LSB deviations in float64 arrays (due to new C-level AVX512/SIMD optimizations) that accumulate over thousands of PDE steps, inevitably changing the final SHA-256 hash of the simulation state.
        - **Strategy (Whitepaper Lock):** The Core Whitepaper and its exact numerical claims (e.g. radius $\approx 49$, 832 linons, specific hashes) are formally locked to the **v1.1.x** codebase running on the older NumPy 1.25.x stack. This ensures absolute historical reproducibility of the paper's original claims.
-       - **Action 1 (The Upgrade - Target v1.1.4):** Once the Core Paper is finalized/published, unpin NumPy in `requirements.txt` and allow the ecosystem to upgrade to NumPy 2.x and SciPy 1.14+.
+       - **Action 1 (The Upgrade - Target v1.1.5):** Once the Core Paper is finalized/published, unpin NumPy in `requirements.txt` and allow the ecosystem to upgrade to NumPy 2.x and SciPy 1.14+.
        - **Action 2 (The New Canon):** Delete the old `reference_manifest_*.json`. Run a clean, canonical reproduction script (`repro_spec6_false_s41.py`) locally on the new NumPy 2.x stack to generate a completely new set of reference snapshots (`step_200.npz`, `final.npz`).
-       - **Action 3 (Documentation):** Generate the new JSON manifest, commit it, and explicitly state in the release notes / whitepaper that `v1.1.4` represents a "Canon Break" and that all future reproducibility tests must be run against NumPy 2.x.
+       - **Action 3 (Documentation):** Generate the new JSON manifest, commit it, and explicitly state in the release notes / whitepaper that `v1.1.5` represents a "Canon Break" and that all future reproducibility tests must be run against NumPy 2.x.
 
 - [ ] Test the impact of **floating-point precision**: compare runs in float32 vs. float64 (or float80/long double, if available) on key metrics (f₀, linon shape, φ half-life, spin aura).
 - [ ] Document the utilized **RNG and seeding** (library, algorithm, seeding method) and verify that with the same seed, the evolution is deterministic across OS / hardware within expected tolerances.
@@ -820,7 +820,7 @@ Verify whether this density predicts changes in a(t) or local φ tension.
 
 - [ ] (Tomas's [HYPOTHESIS]) **Hormonal spectral regulation:** Test a frequency band (e.g. in the sonified region of 1.85e+20 Hz) as a global regulatory switch. Injecting energy into specific harmonics could force a transition from a `false` (chaos) state to `true` (order).
 - [ ] Prepare a separate **layman / storytelling section "What do these mathematical objects mean in Lineum"** (golden ratio, Fibonacci, ζ(s) zero points, primes, π, e, γ) for README / FAQ / accompanying materials; frame it as an **interpretational layer** tied to this block (metaphor of an orchestra: basic tones, quiet spots, tuning), with a clear disclaimer that it is a [HYPOTHESIS] / storytelling dependent on the results of statistical tests, not part of the core proofs.
-- Formally define what **zeta-points** are in the model (explainable as **"points of closure"**) and **explicitly record the terminological transition**: the original designation _"DejaVu points"_ was used as a working term in earlier versions, but starting from the branch aligned to _lineum-core v1.1.4_ it is treated merely as a **historical alias**, which must not be used as the primary name in new definitions and claims.
+- Formally define what **zeta-points** are in the model (explainable as **"points of closure"**) and **explicitly record the terminological transition**: the original designation _"DejaVu points"_ was used as a working term in earlier versions, but starting from the branch aligned to _lineum-core v1.1.5_ it is treated merely as a **historical alias**, which must not be used as the primary name in new definitions and claims.
   – Then precisely define Zeta-points / points of closure e.g. as repeatedly visited trajectory spots, stable φ-remnants, local minima / "black holes"
   – **Zeta-Deep Calibration (1024x1024 Physics Scale)**: 
       - Adjusting parameters for the 1024x1024 grid is not "p-hacking" the Zeta zeros into existence. Eq-4 models topological pressure. When the spatial resolution increases 64-fold, the "hydrodynamic" volume of the discrete cells changes drastically. If original core coefficients are kept, the field saturates into a static block due to massive local capacity clamping. 
@@ -945,7 +945,7 @@ This section contains hypotheses extracted from the analysis of Vlasta's "Open-E
 
 - [ ] Clearly define the **scope relative to Lineum**:
        – The Tentacle model is a **metaphysical / phenomenological hypothesis about consciousness**, not a claim derived from Eq-4;
-       – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.1.4.
+       – state that any potential mapping onto Lineum (ψ, φ, κ, linons, Structural Closure) is an **interpretation beyond the core model**, not part of lineum-core v1.1.5.
 
 - [ ] (Tomas's + Katina's [HYPOTHESIS]) Add a subsection on how the Tentacle model interprets phenomena like **deja vu** and the **Mandela effect**, clearly separating them from the numerical zeta-point phenomenon in Lineum:
        – Frame Deja vu as the subjective experience of "two branches of reality brushing against each other": the central consciousness has access to multiple timelines / tentacles, and the local instance occasionally catches a brief glimpse of another branch of the same story → a feeling of "I have experienced this before", without implying an actual change to the past;
@@ -1322,7 +1322,7 @@ This section gathers concrete commercial and tool uses where Lineum (even in its
 - **Hypothesis (Lineum):** The Pareto distribution is not just a statistical anomaly of human economics, but a fundamental geometric truth of energy dissipation in continuous fields. In Lineum, as the φ memory tension shapes the terrain, the system naturally prunes mathematically inferior paths. The field reaches an asymptotic equilibrium where ~80% of the movement/energy systematically traverses only ~20% of the most optimal channels (the "super-highways"), leaving the rest of the space as low-density tributaries.
 - **Preliminary Verification (Local Run 2026-02-22):**
     - **Setup:** A $128 \times 128$ grid, 40 randomized high-friction $\kappa$ obstacles, target $\delta$ tension of 50.0, and 100 simultaneous agents starting opposite the target. Ran for 300 steps.
-    - **Result:** The baseline Lineum engine (v1.1.4) currently distributes flow highly homogeneously. The top $20\%$ of active cells carry exactly $\sim20.01\%$ to $21.04\%$ of the total system volume. 
+    - **Result:** The baseline Lineum engine (v1.1.5) currently distributes flow highly homogeneously. The top $20\%$ of active cells carry exactly $\sim20.01\%$ to $21.04\%$ of the total system volume. 
     - **Conclusion & Next Steps:** The current Eq-4 physics engine spreads the probability wave extremely wide to guarantee structural closure, which prevents the immediate formation of a Pareto 80/20 "super-highway". To achieve a true 80/20 power law, the engine specifically needs a much stronger non-linear feedback loop in the $\phi$ (memory) tension, where highly trafficked cells disproportionately lower their own resistance (similar to ant pheromones or riverbed erosion). This confirms that Pareto is *not* a default property of random diffusion, but requires active structural reinforcement. 
     - **Erosion Experiment Results (2026-02-22, branch `lineum-exp-erosion`):**
         - Baseline (no erosion): `top20_share = 23.7%`, `top10 = 12.6%`, `top1% = 1.4%`, `Gini = 0.113`
@@ -1679,7 +1679,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
 - [ ] **3) (Naming) Unify public naming to "Lineum™"**
     - Use "Lineum Core" solely as an internal/technical designation for the package/engine, not as the main brand.
 - [ ] **4) (License) Future public release of Lineum (new version): migrate core to AGPL**
-    - *(Note: historical Zenodo v1.1.4 is MIT and will remain so as a proof of priority).*
+    - *(Note: historical Zenodo v1.1.5 is MIT and will remain so as a proof of priority).*
 - [ ] **5) (Codex) Add a new document (e.g., `docs/LINEUM_CODEX.md`)**
     - Containing the text "Lineum Codex — Ethical Stance (v1)" (text ready). (Do not create the file yet).
 - [ ] **6) (Portal Policy) Prepare Portal documents:**
@@ -1723,7 +1723,7 @@ The canonical text of the codex is stored in `docs/LINEUM_CODEX_v1.md`.
     - **QR Codes (Physical-Digital Bridge):** Incorporate small QR codes on the merch. When scanned, they open a hidden `/resonance` easter-egg portal page or an interactive Matrix message.
     - **Branded Unboxing:** Configure Spreadshop to include custom Lineum branding and a specific welcome message on the enclosed packing slips.
 - [ ] **M.4 Marketing (Drops & Gamification)**
-    - Present products as limited "Drops" (e.g., v1.1.4 Founder's edition) to foster exclusivity.
+    - Present products as limited "Drops" (e.g., v1.1.5 Founder's edition) to foster exclusivity.
     - **Contributor/Private Tiers:** Set up hidden merch tiers with direct URL links sent only to the Lineum team and active beta-testers as an exclusive reward.
     - **Gamification:** Offer hidden merch in the E-shop (e.g., a "Root Access" hoodie) that unlocks for purchase only when a user discovers a specific easter-egg in the portal's terminal/CLI interface.
 
