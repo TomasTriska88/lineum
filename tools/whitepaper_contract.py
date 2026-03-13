@@ -361,7 +361,12 @@ def main():
     parser.add_argument("--strict", action="store_true")
     parser.add_argument("--backfill-analysis-config", action="store_true")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--print-doc-block", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+
+    if args.print_doc_block:
+        print(DOC_BLOCK.strip())
+        sys.exit(0)
 
     # Determine contract
     c_path = args.contract

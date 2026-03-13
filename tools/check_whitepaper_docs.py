@@ -7,7 +7,7 @@ from pathlib import Path
 TOOLS_DIR = Path(__file__).parent
 RUNNER_SCRIPT = TOOLS_DIR / "whitepaper_contract.py"
 PROJECT_ROOT = TOOLS_DIR.parent
-DOCS_PATH = PROJECT_ROOT / "docs" / "whitepaper-contract.md"
+DOCS_PATH = PROJECT_ROOT / "portal" / "src" / "lib" / "data" / "docs" / "whitepaper-contract.md"
 
 MARKER_START = "<!-- CLI_DOC_START -->"
 MARKER_END = "<!-- CLI_DOC_END -->"

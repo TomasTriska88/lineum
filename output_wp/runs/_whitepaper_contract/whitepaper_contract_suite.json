@@ -1,21 +1,21 @@
 {
   "suite_schema_version": "1.0.0",
   "header": {
-    "timestamp": "2026-03-13T10:00:13.623462+00:00",
+    "timestamp": "2026-03-13T10:52:03.095539+00:00",
     "contract_id": "lineum-core-1.0.18-core",
     "contract_version": "1.1.5",
     "tool_id": "lineum_audit_suite_gen",
     "tool_version": "release:v1.1.5",
-    "git_commit": "d73e585e078aa23d9e74349f141fc489c2bbede2",
+    "git_commit": "549a9b49394015bf2833d1b364afb6517c0611c0",
     "git_branch": "dev",
     "release_tag": "v1.1.5",
     "equation_fingerprint": "7197faf5a92a141a4847314485bee819ae9fdecdf08eead313ffdd3d3a6fe9f5",
-    "audit_relevant_code_fingerprint": "edcab88faadf177275c5fe67c572c861e8567b1ea3073716a8504e4ba7ff38e7"
+    "audit_relevant_code_fingerprint": "aa10551a40dd773ab8e7c4a6f74bb22f6fede1c8da3f84e891580fec1d62aa73"
   },
   "fingerprints": {
     "whitepaper_sha256": null,
     "contract_sha256": "6d4574bbd2d8123a2e335400da01f95d5527fde790a0526af918dacaa00ce146",
-    "audit_relevant_sha256": "edcab88faadf177275c5fe67c572c861e8567b1ea3073716a8504e4ba7ff38e7"
+    "audit_relevant_sha256": "aa10551a40dd773ab8e7c4a6f74bb22f6fede1c8da3f84e891580fec1d62aa73"
   },
   "metric_spec": {
     "f0_mean_hz": {
