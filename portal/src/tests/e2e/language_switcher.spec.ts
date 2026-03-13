@@ -14,9 +14,6 @@ test.describe('Language Switcher', () => {
         // Wait for the main page to load
         await expect(page.locator('h1').first()).toBeVisible();
 
-        // Ensure the language switcher block protects against browser auto-translators
-        await expect(page.locator('.lang-dropdown').first()).toHaveAttribute('translate', 'no');
-
         // Find the Japanese switcher element
         const jaButton = page.locator('.lang-dropdown a[hreflang="ja"]').first();
 

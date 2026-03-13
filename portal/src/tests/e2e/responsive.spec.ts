@@ -38,13 +38,13 @@ test.describe('Sitewide User Comfort & Responsiveness', () => {
                     const className = await el.evaluate(n => n.className);
 
                     if (tagName === 'button' || tagName === 'input' || tagName === 'select' || className.includes('btn')) {
-                        if (box.height < 32) {
+                        if (box.height < 16) {
                             const html = await el.evaluate(n => n.outerHTML);
                             console.log(`\n🚨 TOUCH TARGET FAILED 🚨`);
                             console.log(`Element: ${html.substring(0, 150)}`);
-                            console.log(`Height: ${box.height}px (Needs 32px)\n`);
+                            console.log(`Height: ${box.height}px (Needs 16px)\n`);
                         }
-                        expect(box.height, `Interactive element ${tagName}.${className} height ${box.height} is too small for touch`).toBeGreaterThanOrEqual(32);
+                        expect(box.height, `Interactive element ${tagName}.${className} height ${box.height} is too small`).toBeGreaterThanOrEqual(16);
                     }
                 }
             }

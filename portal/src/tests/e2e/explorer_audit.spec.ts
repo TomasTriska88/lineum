@@ -28,7 +28,7 @@ test.describe('Explorer UI Audit', () => {
         await toggleBtn.click();
 
         await expect(page.locator('text=Scientific')).toBeVisible({ timeout: 10000 });
-        await expect(page.locator('text=Voice: OFF')).toBeVisible(); // Still visible as an inactive button
+        await expect(page.getByRole('button', { name: 'Voice: OFF', exact: true })).toBeVisible(); // Still visible as an inactive button
     });
 
     test('should render inject input correctly', async ({ page }) => {
