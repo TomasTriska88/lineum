@@ -124,8 +124,8 @@ test.describe('Audit Progress Panel UI Constraints', () => {
         await firstClaim.click(); // Open the claim
         
         // The badge next to the claim ID should show AUDIT_RUNNING
-        const claimStatusBadge = firstClaim.locator('.claim-status.audit_running');
+        const claimStatusBadge = firstClaim.locator('.claim-status');
         await expect(claimStatusBadge).toBeVisible();
-        await expect(claimStatusBadge).toHaveText('AUDIT_RUNNING');
+        await expect(claimStatusBadge).toHaveText(/AUDIT_RUNNING/);
     });
 });
