@@ -1491,7 +1491,7 @@ def export_portal_params():
     """
     path = os.path.join(output_dir, "portal_params.json")
     params = {
-        "version": "v1.0.18-core",
+        "version": "vv1.1.4-core",
         "updated_utc": datetime.datetime.utcnow().isoformat() + "Z",
         "dissipation_rate": float(DISSIPATION_RATE),
         "reaction_strength": float(REACTION_STRENGTH),

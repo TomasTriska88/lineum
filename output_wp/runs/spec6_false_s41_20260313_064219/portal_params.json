@@ -1,0 +1,13 @@
+{
+  "version": "v1.0.18-core",
+  "updated_utc": "2026-03-13T05:42:21.813109Z",
+  "dissipation_rate": 0.00462,
+  "reaction_strength": 0.0007,
+  "psi_phi_coupling": 0.004,
+  "phi_interaction_strength": 0.04,
+  "phi_diffusion": 0.3,
+  "psi_diffusion": 0.05,
+  "noise_strength": 0.005,
+  "phi_cap": 1000000.0,
+  "psi_amp_cap": 1000000.0
+}

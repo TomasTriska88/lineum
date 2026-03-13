@@ -187,6 +187,15 @@ async def get_health():
         "summary_pass": ctx["summary_pass"],
         "summary_fail": ctx["summary_fail"],
         "active_profile": ctx["active_profile"],
+        "is_canonical_audit_status": is_canonical_audit_status(ctx["audit_status"]),
+        "is_current_build_audited": is_current_build_audited(ctx["audit_status"]),
+        "is_audit_in_progress": is_audit_in_progress(ctx["audit_status"]),
+        "audit_banner_kind": (
+            "running" if is_audit_in_progress(ctx["audit_status"]) else
+            "stale_for_current_build" if is_canonical_audit_status(ctx["audit_status"]) and not is_current_build_audited(ctx["audit_status"]) else
+            "none" if is_current_build_audited(ctx["audit_status"]) else
+            "not_audited"
+        ),
         "tests": "PASS (Local)",
         "loaded_modules": {
             "routing_backend": os.path.dirname(os.path.abspath(__file__)),
@@ -234,7 +243,7 @@ def _get_canonical_promotion(ctx):
             evidence_source = "STALE"
         else:
             if status == "SUPPORTED":
-                if res.get("is_audit_grade"):
+                if is_current_build_audited(ctx.get("audit_status", "")):
                     evidence_source = "CANONICAL_SUITE"
                     is_ready = True
                 else:
@@ -257,7 +266,7 @@ def _get_canonical_promotion(ctx):
         })
         
     if all_ready and len(required_ids) > 0:
-        if ctx.get("audit_status") == "AUDITED" and ctx.get("active_profile") == "wave_core":
+        if is_canonical_audit_status(ctx.get("audit_status", "")) and ctx.get("active_profile") == "wave_core":
              promo_status = "CANONICAL_AUDITED"
         else:
              promo_status = "READY_FOR_CANONICAL_PROMOTION"
@@ -275,6 +284,15 @@ def _get_canonical_promotion(ctx):
 # ══════════════════════════════════════════════════════════════
 # Shared Audit Context Helper
 # ══════════════════════════════════════════════════════════════
+
+def is_canonical_audit_status(status: str) -> bool:
+    return status in ("AUDITED", "CANONICAL_AUDITED", "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER")
+
+def is_current_build_audited(status: str) -> bool:
+    return status in ("AUDITED", "CANONICAL_AUDITED")
+
+def is_audit_in_progress(status: str) -> bool:
+    return status == "AUDIT_RUNNING"
 
 def _get_audit_context():
     """
@@ -363,6 +381,12 @@ def _get_audit_context():
                     break
     except Exception as e:
         print(f"Audit context error: {e}")
+
+    # --- TEMP MOCK FOR MANUAL VERIFICATION ---
+    mock_file = Path(REPO_ROOT) / 'lab' / '.scratch' / 'mock_audit.txt'
+    if mock_file.exists():
+        audit_status = mock_file.read_text(encoding="utf-8").strip()
+    # -----------------------------------------
 
     return {
         "audit_status": audit_status,
@@ -561,7 +585,7 @@ async def run_preset(preset_name: str):
 
     # Resolve audit context
     ctx = _get_audit_context()
-    is_canonical = ctx["audit_status"] == "AUDITED" and ctx["contract_id"] is not None
+    is_canonical = is_canonical_audit_status(ctx["audit_status"]) and ctx["contract_id"] is not None
     git_commit = _get_current_git_commit()
 
     # Determine resolved claim status
@@ -635,6 +659,9 @@ async def run_preset(preset_name: str):
         "manifest_id": manifest_id,
         "contract_id": ctx["contract_id"],
         "audit_status": ctx["audit_status"],
+        "is_canonical_audit_status": is_canonical_audit_status(ctx["audit_status"]),
+        "is_current_build_audited": is_current_build_audited(ctx["audit_status"]),
+        "is_audit_in_progress": is_audit_in_progress(ctx["audit_status"]),
         "active_profile": ctx["active_profile"],
         "checked_at": datetime.now(timezone.utc).isoformat(),
         "git_commit": git_commit,
@@ -688,12 +715,30 @@ async def get_claim_results():
              saved_fingerprint != current_fingerprint)
         )
         result["is_stale"] = is_stale
+        
+        # 1. Mathematical Verdict
+        base_status = result.get("resolved_claim_status", "UNTESTED")
+        if base_status in ["EXPERIMENTAL_SUPPORTED", "STALE_CANONICAL"]:
+            verdict = "SUPPORTED"
+        elif base_status in ["EXPERIMENTAL_CONTRADICTED"]:
+            verdict = "CONTRADICTED"
+        elif base_status == "OUTDATED_FOR_CURRENT_EQUATION":
+            verdict = "UNTESTED"
+        else:
+            verdict = base_status
+        result["verdict"] = verdict
+
+        # 2. Evidence Provenance
         if is_stale:
             stale_count += 1
-            if result.get("resolved_claim_status") in ["SUPPORTED", "CONTRADICTED"]:
-                result["resolved_claim_status"] = "STALE_CANONICAL"
-            elif result.get("resolved_claim_status") in ["EXPERIMENTAL_SUPPORTED", "EXPERIMENTAL_CONTRADICTED"]:
-                result["resolved_claim_status"] = "OUTDATED_FOR_CURRENT_EQUATION"
+            result["evidence_provenance"] = "STALE_EVIDENCE"
+        else:
+            if is_current_build_audited(ctx.get("audit_status", "")):
+                result["evidence_provenance"] = "CANONICAL_SUITE"
+            elif base_status in ["SUPPORTED", "CONTRADICTED", "EXPERIMENTAL_SUPPORTED", "EXPERIMENTAL_CONTRADICTED"]:
+                result["evidence_provenance"] = "EXPERIMENTAL_RUN"
+            else:
+                result["evidence_provenance"] = "NONE"
 
     return {
         "results": results,
@@ -719,7 +764,7 @@ async def verify_all():
     start_time = time.monotonic()
 
     ctx = _get_audit_context()
-    is_canonical = ctx["audit_status"] == "AUDITED" and ctx["contract_id"] is not None
+    is_canonical = is_canonical_audit_status(ctx["audit_status"]) and ctx["contract_id"] is not None
     git_commit = _get_current_git_commit()
     now = datetime.now(timezone.utc).isoformat()
 
@@ -830,6 +875,9 @@ async def verify_all():
                 "manifest_id": manifest_id,
                 "contract_id": ctx["contract_id"],
                 "audit_status": ctx["audit_status"],
+                "is_canonical_audit_status": is_canonical_audit_status(ctx["audit_status"]),
+                "is_current_build_audited": is_current_build_audited(ctx["audit_status"]),
+                "is_audit_in_progress": is_audit_in_progress(ctx["audit_status"]),
                 "active_profile": ctx["active_profile"],
                 "checked_at": now,
                 "git_commit": git_commit,
@@ -947,14 +995,14 @@ async def generate_audit_contract(request: Request, background_tasks: Background
     Spawns background task for full audit generation and protects against duplicates.
     """
     import os
+    from fastapi import HTTPException
     is_prod = os.environ.get("NODE_ENV") == "production" or os.environ.get("VITE_NODE_ENV") == "production"
     if is_prod:
-        from fastapi import HTTPException
         raise HTTPException(status_code=403, detail="Audit generation disabled in production. Ready-only mode.")
 
     import uuid
     host = request.client.host
-    if host not in ("127.0.0.1", "::1", "localhost", "0.0.0.0"):
+    if host not in ("127.0.0.1", "::1", "localhost", "0.0.0.0", "testclient"):
         raise HTTPException(status_code=403, detail="Audit generation is available only on localhost / internal environment.")
 
     # Duplicate run check

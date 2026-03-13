@@ -53,8 +53,7 @@ def test_audit_run_locks_mutability_check(tmp_path, capsys):
     orig_content = file1.read_text(encoding="utf-8")
     
     file1.write_text("id,val\n1,999", encoding="utf-8")
-    with pytest.raises(SystemExit):
-        verify_locked_run(str(run_dir))
+    assert verify_locked_run(str(run_dir)) is False
     captured = capsys.readouterr()
     assert "SHA256 mismatch" in captured.out or "Size mismatch" in captured.out
     
@@ -64,8 +63,7 @@ def test_audit_run_locks_mutability_check(tmp_path, capsys):
     
     # 4. Add a file
     (run_dir / "sneaky_file.txt").write_text("sneaky", encoding="utf-8")
-    with pytest.raises(SystemExit):
-        verify_locked_run(str(run_dir))
+    assert verify_locked_run(str(run_dir)) is False
     captured = capsys.readouterr()
     assert "File count mismatch" in captured.out or "Extra file" in captured.out
     
@@ -76,7 +74,6 @@ def test_audit_run_locks_mutability_check(tmp_path, capsys):
     # 5. Delete a file
     file2 = run_dir / "kappa_map.png"
     file2.unlink()
-    with pytest.raises(SystemExit):
-        verify_locked_run(str(run_dir))
+    assert verify_locked_run(str(run_dir)) is False
     captured = capsys.readouterr()
     assert "File count mismatch" in captured.out or "Missing file" in captured.out

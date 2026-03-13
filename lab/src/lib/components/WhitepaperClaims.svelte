@@ -112,87 +112,54 @@
         );
     });
 
-    // SINGLE SOURCE OF TRUTH for Claim Render Status
+    // SINGLE SOURCE OF TRUTH for Claim Verdict (Pure pass/fail constraint, no provenance)
     function getActualStatus(claim, results, isActive) {
-        // Rule 1: Not Testable = Never runs
         if (
             claim.testability === "NOT_TESTABLE_YET" ||
             claim.testability === "NEEDS_NEW_SCENARIO"
         ) {
             return "UNTESTED";
         }
-
-        // Rule 2: If we don't have results, it hasn't run
-        const cr = (results || {})[claim.id] || {};
-        if (!cr.status) return "UNTESTED";
-
-        // Rule 3: Enforce real provenance for experimental claims
-        // If it claims to be experimental supported but has no real manifest_id (or has fallback), downgrade it
-        if (
-            cr.status === "EXPERIMENTAL_SUPPORTED" ||
-            cr.status === "EXPERIMENTAL_CONTRADICTED"
-        ) {
-            if (
-                !cr.manifest_id ||
-                cr.manifest_id === "error-fallback" ||
-                !cr.scenario_id
-            ) {
-                return "UNTESTED";
-            }
-        }
-
-        // Rule 4: If an audit is literally running right now, bypass stale fallback to show progress explicitly
         if (isActive) {
             return "AUDIT_RUNNING";
         }
 
-        // Rule 5: Use specialized stale states if present
-        if (
-            cr.status === "STALE_CANONICAL" ||
-            cr.status === "OUTDATED_FOR_CURRENT_EQUATION"
-        ) {
-            return cr.status;
-        }
+        const cr = (results || {})[claim.id] || {};
+        
+        // Return raw verdict from API (SUPPORTED, CONTRADICTED, UNTESTED)
+        let verdict = cr.verdict;
+        if (!verdict) return "UNTESTED";
 
-        // Rule 5: Fallback downgrades if contract breaks globally but claim wasn't explicitly marked stale
-        if (
-            cr.is_stale ||
-            cr.status === "OUTDATED" ||
-            auditStatus === "OUTDATED" ||
-            auditStatus === "REVALIDATION_REQUIRED" ||
-            auditStatus === "BUILD_NEWER" ||
-            auditStatus === "EXPERIMENTAL / BASELINE METRICS"
-        ) {
-            // Fix Canonical Paradox: If we are just missing the original contract commit but have newer artifacts, it does NOT downgrade
-            if (auditStatus === "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER") {
-                // Keep the exact CR status (e.g., SUPPORTED)
-                return cr.status || "UNTESTED";
+        // Enforce provenance requirement for positive experimental results natively here if API failed to drop it
+        if (verdict === "SUPPORTED" || verdict === "CONTRADICTED") {
+            if (cr.evidence_provenance === "EXPERIMENTAL_RUN" || cr.evidence_provenance === "NONE" || cr.evidence_provenance === "STALE_EVIDENCE") {
+                 if (!cr.manifest_id || cr.manifest_id === "error-fallback" || !cr.scenario_id) {
+                     return "UNTESTED";
+                 }
             }
-            
-            if (cr.passed_internal) {
-                if (
-                    !cr.manifest_id ||
-                    cr.manifest_id === "error-fallback" ||
-                    !cr.scenario_id
-                ) {
-                    return "UNTESTED";
-                }
-                return "EXPERIMENTAL_SUPPORTED";
-            } else if (cr.passed_internal === false) {
-                if (
-                    !cr.manifest_id ||
-                    cr.manifest_id === "error-fallback" ||
-                    !cr.scenario_id
-                ) {
-                    return "UNTESTED";
-                }
-                return "EXPERIMENTAL_CONTRADICTED";
-            }
-            return "OUTDATED";
         }
+        return verdict;
+    }
 
-        // Rule 6: Otherwise, return the strict backend resolved status
-        return cr.status || "UNTESTED";
+    // SINGLE SOURCE OF TRUTH for Claim Provenance Tier
+    function getProvenanceStatus(claim, results, isActive) {
+        if (isActive) return "";
+        if (
+            claim.testability === "NOT_TESTABLE_YET" ||
+            claim.testability === "NEEDS_NEW_SCENARIO"
+        ) {
+            return "";
+        }
+        const cr = (results || {})[claim.id] || {};
+        return cr.evidence_provenance || "NONE";
+    }
+
+    function formatProvenance(provString) {
+        if (!provString || provString === "NONE") return "";
+        if (provString === "STALE_EVIDENCE") return "(STALE EVIDENCE)";
+        if (provString === "EXPERIMENTAL_RUN") return "(EXPERIMENTAL DRAFT)";
+        if (provString === "CANONICAL_SUITE") return ""; // Canonical is implicit if there's no warning
+        return `(${provString.replace("_", " ")})`;
     }
 
     // Reactivity fix: pass integrationLog explicitly from template to trigger Svelte re-renders
@@ -240,6 +207,7 @@
     let currentBuild = "unknown";
 
     let auditStatus = "NONE";
+    let auditBannerKind = "not_audited";
     let contractId = null;
     let contractTimestamp = "unknown";
     let contractCommit = "unknown";
@@ -269,6 +237,7 @@
                     data.commit_hash || data.current_build || "unknown";
 
                 auditStatus = data.audit_status || "NONE";
+                auditBannerKind = data.audit_banner_kind || "not_audited";
                 contractId = data.contract_id || null;
                 contractTimestamp = data.contract_timestamp || "unknown";
                 contractCommit =
@@ -319,9 +288,11 @@
                         status: result.is_stale
                             ? "OUTDATED"
                             : result.resolved_claim_status,
+                        verdict: result.verdict,
+                        evidence_provenance: result.evidence_provenance,
                         manifest_id: result.manifest_id,
                         contract_id: result.contract_id,
-                        is_audit_grade: result.audit_status === "AUDITED",
+                        is_audit_grade: result.is_current_build_audited ?? (result.audit_status === "AUDITED" || result.audit_status === "CANONICAL_AUDITED"),
                         passed_internal: result.overall_pass,
                         details: `Last checked: ${result.checked_at || "unknown"}`,
                         scenario_id: result.scenario_id,
@@ -363,7 +334,7 @@
                         status: result.resolved_claim_status,
                         manifest_id: result.manifest_id,
                         contract_id: result.contract_id,
-                        is_audit_grade: result.audit_status === "AUDITED",
+                        is_audit_grade: result.is_current_build_audited ?? (result.audit_status === "AUDITED" || result.audit_status === "CANONICAL_AUDITED"),
                         passed_internal: result.overall_pass,
                         details: `Bulk verified: ${result.checked_at || "now"}`,
                         scenario_id: result.scenario_id,
@@ -390,15 +361,8 @@
 
         // Match audit_status logic to the single source of truth downgrade
         let bAuditStatus = auditStatus;
-        if (auditStatus !== "AUDITED" && auditStatus !== "CANONICAL_AUDITED" && auditStatus !== "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER" && auditStatus !== "AUDIT_RUNNING") {
+        if (auditBannerKind === "not_audited" || auditBannerKind === "stale_for_current_build") {
             bAuditStatus = auditStatus === "NONE" ? "NONE" : "OUTDATED";
-        }
-        if (
-            auditStatus === "EXPERIMENTAL / BASELINE METRICS" ||
-            auditStatus === "BUILD_NEWER" ||
-            auditStatus === "REVALIDATION_REQUIRED"
-        ) {
-            bAuditStatus = "OUTDATED";
         }
 
         let cid = cr.contract_id || contractId;
@@ -460,9 +424,13 @@
         // Fix evidence_level logic to align strictly with test provenance
         let evidenceLevel = "MISSING_EVIDENCE";
         if (actualStatus === "SUPPORTED" || actualStatus === "CONTRADICTED") {
-            evidenceLevel = "CANONICAL_EVIDENCE";
-        } else if (actualStatus === "EXPERIMENTAL_SUPPORTED" || actualStatus === "EXPERIMENTAL_CONTRADICTED") {
-            evidenceLevel = "EXPERIMENTAL_EVIDENCE";
+            if (cr.evidence_provenance === "CANONICAL_SUITE") {
+                evidenceLevel = "CANONICAL_EVIDENCE";
+            } else if (cr.evidence_provenance === "EXPERIMENTAL_RUN" || cr.evidence_provenance === "STALE_EVIDENCE") {
+                evidenceLevel = "EXPERIMENTAL_EVIDENCE";
+            } else {
+                evidenceLevel = "CANONICAL_EVIDENCE";
+            }
         } else if (cr.is_audit_grade === false && cr.checked_at) {
              evidenceLevel = "AUDIT_FAILED";
         }
@@ -686,9 +654,11 @@ F) AUTOMATION ROUTING
             // Backend returns resolved_claim_status — frontend just renders it
             claimResults[claim.id] = {
                 status: data.resolved_claim_status,
+                verdict: data.verdict,
+                evidence_provenance: data.evidence_provenance,
                 manifest_id: data.manifest_id,
                 contract_id: data.contract_id,
-                is_audit_grade: data.audit_status === "AUDITED",
+                is_audit_grade: data.is_current_build_audited ?? (data.audit_status === "AUDITED" || data.audit_status === "CANONICAL_AUDITED"),
                 passed_internal: data.overall_pass,
                 details: data.message || "Executed.",
                 scenario_id: data.scenario_id,
@@ -1060,8 +1030,16 @@ F) AUTOMATION ROUTING
                                     claim,
                                     claimResults,
                                 ).toLowerCase()}"
-                                >{getActualStatus(claim, claimResults, isGeneratingAudit)}</span
-                            >
+                                >{getActualStatus(claim, claimResults, isGeneratingAudit)}</span>
+                            {#if getProvenanceStatus(claim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE"}
+                                <span class="claim-status outdated" style="font-size: 0.75em; padding: 2px 6px; background: rgba(227,100,20,0.15); color: #e36414; border: 1px solid rgba(227,100,20,0.3);">
+                                    {formatProvenance(getProvenanceStatus(claim, claimResults, isGeneratingAudit))}
+                                </span>
+                            {:else if getProvenanceStatus(claim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN"}
+                                <span class="claim-status experimental" style="font-size: 0.75em; padding: 2px 6px; opacity: 0.8;">
+                                    {formatProvenance(getProvenanceStatus(claim, claimResults, isGeneratingAudit))}
+                                </span>
+                            {/if}
                         </div>
                     </div>
                     <div class="claim-short">
@@ -1084,16 +1062,26 @@ F) AUTOMATION ROUTING
                             selectedClaim.short_claim,
                         )}
                     </h2>
-                    <span
-                        class="status-badge {getActualStatus(
-                            selectedClaim,
-                        ).toLowerCase()}"
-                    >
-                        {getActualStatus(selectedClaim, claimResults, isGeneratingAudit).replace(
-                            "_",
-                            " ",
-                        )}
-                    </span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span
+                            class="status-badge {getActualStatus(
+                                selectedClaim,
+                                claimResults,
+                                isGeneratingAudit
+                            ).toLowerCase()}"
+                        >
+                            {getActualStatus(selectedClaim, claimResults, isGeneratingAudit).replace("_", " ")}
+                        </span>
+                        {#if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE"}
+                            <span class="status-badge outdated" style="font-size: 0.8em; padding: 2px 8px; background: rgba(227,100,20,0.15); color: #e36414; border: 1px solid rgba(227,100,20,0.3);">
+                                {formatProvenance(getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit))}
+                            </span>
+                        {:else if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN"}
+                            <span class="status-badge experimental" style="font-size: 0.8em; padding: 2px 8px; opacity: 0.8;">
+                                {formatProvenance(getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit))}
+                            </span>
+                        {/if}
+                    </div>
                 </div>
 
                 {#if isApplied(selectedClaim.id, integrationLog)}
@@ -1118,7 +1106,7 @@ F) AUTOMATION ROUTING
                     </div>
                 {/if}
 
-                {#if auditStatus !== "AUDITED"}
+                {#if auditBannerKind === "not_audited"}
                     <div class="audit-warning-banner">
                         <span class="warn-icon">⚠️</span>
                         <div>
@@ -1126,6 +1114,22 @@ F) AUTOMATION ROUTING
                             Build: <code>{currentBuild}</code>. Runs will be
                             marked as EXPLORATORY until an official suite is
                             generated.
+                        </div>
+                    </div>
+                {:else if auditBannerKind === "stale_for_current_build"}
+                    <div class="audit-warning-banner" style="background-color: var(--lineum-amber-dark, #bd561d); color: white;">
+                        <span class="warn-icon">⏳</span>
+                        <div>
+                            <strong>Audit is stale for current build</strong><br />
+                            Build <code>{currentBuild}</code> has un-audited changes ahead of canonical lineage. Runs will be marked EXPLORATORY.
+                        </div>
+                    </div>
+                {:else if auditBannerKind === "running"}
+                    <div class="audit-warning-banner" style="background-color: var(--lineum-wave, #1dbdbd); border-color: var(--lineum-wave); color: #0a0a0a;">
+                        <span class="warn-icon">⏳</span>
+                        <div>
+                            <strong>Audit running</strong><br />
+                            A formal audit is currently in progress.
                         </div>
                     </div>
                 {/if}
@@ -1504,7 +1508,7 @@ F) AUTOMATION ROUTING
                         </div>
                     {/if}
 
-                    {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit).startsWith("EXPERIMENTAL_")}
+                    {#if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN" || getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE"}
                         <div class="evidence-box exploratory">
                             <h4>Exploratory Evidence Captured</h4>
                             <p>
@@ -1534,7 +1538,7 @@ F) AUTOMATION ROUTING
                         </div>
                     {/if}
 
-                    {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "CONTRADICTED"}
+                    {#if (getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "CONTRADICTED") && getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "CANONICAL_SUITE"}
                         <div class="evidence-box canonical">
                             <h4>
                                 Canonical Evidence
@@ -1579,13 +1583,13 @@ F) AUTOMATION ROUTING
                                     Run an Audit-Grade verification to generate
                                     proposed edit text.
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit).startsWith("EXPERIMENTAL_")}
+                            {:else if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN"}
                                 <p class="preview-placeholder">
                                     Laboratory simulation completed, but an
                                     official Audit-Grade run is required to
                                     propose canonical text edits.
                                 </p>
-                            {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "OUTDATED"}
+                            {:else if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "OUTDATED"}
                                 <p class="preview-placeholder">
                                     The previous laboratory simulation is
                                     outdated. Run a new Audit-Grade verification

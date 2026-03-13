@@ -7,19 +7,19 @@ from pathlib import Path
 # Files to update and their regex patterns
 FILES_TO_UPDATE = {
     "CITATION.cff": [
-        (r'version:\s+v\d+\.\d+\.\d+(-core)?', lambda m: f"version: {m.group(0).split(' ')[1].split('-')[0].replace('v', 'v') if not '-core' in m.group(0) else 'v' + '__CANONICAL_VERSION__-core'}"), # Will be replaced dynamically
+        (r'version:\s+v\d+\.\d+\.\d+(-core)?', lambda m: f"version: {m.group(0).split(' ')[1].split('-')[0].replace('v', 'v') if not '-core' in m.group(0) else 'v' + '__CANONICAL_VERSION__'}"), # Will be replaced dynamically
     ],
     "README.md": [
-        (r'v\d+\.\d+\.\d+', '__CANONICAL_VERSION__'),
+        (r'v\d+\.\d+\.\d+(-core)?', '__CANONICAL_VERSION__'),
     ],
     "todo.md": [
        (r'v\d+\.\d+\.\d+(-core)?', '__CANONICAL_VERSION__')
     ],
     "portal/static/portal_params.json": [
-       (r'"version":\s*"v1\.\d+\.\d+-core"', '"version": "v__CANONICAL_VERSION__-core"')
+       (r'"version":\s*"v\d+\.\d+\.\d+(-core)?"', '"version": "v__CANONICAL_VERSION__"')
     ],
     "portal/src/lib/data/core/lineum.py": [
-       (r'"version":\s*"v1\.\d+\.\d+-core"', '"version": "v__CANONICAL_VERSION__-core"')
+       (r'"version":\s*"v\d+\.\d+\.\d+(-core)?"', '"version": "v__CANONICAL_VERSION__"')
     ]
 }
 
@@ -72,9 +72,9 @@ def main():
     if not canonical_version.startswith("v"):
         canonical_version = f"v{canonical_version}"
         
-    core_version = f"{canonical_version}-core"
+    core_version = canonical_version
     
-    print(f"Syncing version to: {canonical_version} (Core: {core_version})")
+    print(f"Syncing version to: {canonical_version}")
     
     changes_made = False
     for filename, patterns in FILES_TO_UPDATE.items():

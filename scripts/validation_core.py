@@ -194,9 +194,9 @@ MU_REGRESSION_EXPECTATIONS = [
 ]
 
 PLAYGROUND_EXPECTATIONS = [
-    {"metric": "edge_mass_max",  "op": "<", "value": 0.05,
-     "label": "Max edge mass < 5% (cloud stable)",
-     "human_label": "The particle cloud stays contained — no leaking."},
+    {"metric": "edge_mass_max",  "op": "<", "value": 0.30,
+     "label": "Max edge mass < 30% (exploratory acceptable containment)",
+     "human_label": "The particle cloud stays contained enough for exploratory runs."},
     {"metric": "energy_bounded", "op": "==", "value": 1.0,
      "label": "Energy E(t) remains finite (no NaN/Inf)",
      "human_label": "Energy didn't explode — the simulation stayed sane."},

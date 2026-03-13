@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release-pack:
     runs-on: ubuntu-latest
@@ -20,10 +23,39 @@ jobs:
         with:
           python-version: '3.11.7'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+
+      - name: Execute Golden PyTest Gate (Core & Scripts)
+        run: |
+          pytest -v
+
+      - name: Execute Whitepaper & Contract Audit Gate
+        run: |
+          make check
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd portal && npm install
+          cd ../lab && npm install
+
+      - name: Install Playwright Browsers
+        run: |
+          cd portal && npx playwright install --with-deps chromium
+          cd ../lab && npx playwright install --with-deps chromium
+
+      - name: Execute UI Suite Gates (Vitest + Playwright)
+        run: |
+          cd portal && npm run test && npm run test:e2e
+          cd ../lab && npm run test && npm run test:e2e
 
       - name: Run audit pipeline (Generate canonical run)
         run: |

@@ -40,6 +40,10 @@ jobs:
         pip install -r requirements.txt
         pip install pytest pytest-asyncio
 
-    - name: Run PyTest Suite
+    - name: Run PyTest Suite (Includes Core & Scripts)
       run: |
-        pytest tests/ -v
+        pytest -v
+
+    - name: Run Whitepaper & Contract Audit Validation
+      run: |
+        make check

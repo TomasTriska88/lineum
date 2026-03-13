@@ -648,9 +648,9 @@
     <span class="status-pass" style="display: flex; flex-direction: column;">
         <span
             >Audit Status: <strong
-                class={systemHealth.audit_status === "AUDITED"
+                class={systemHealth.is_current_build_audited && systemHealth.is_canonical_audit_status
                     ? "audited"
-                    : "none"}>{systemHealth.audit_status}</strong
+                    : (systemHealth.is_canonical_audit_status ? "outdated" : "none")}>{systemHealth.audit_status}</strong
             ></span
         >
         <span style="font-size: 11px; color: #8b949e;"
@@ -862,6 +862,9 @@
         {#if !currentResult && !running}
             <Scorecard
                 auditStatus={systemHealth.audit_status}
+                auditBannerKind={systemHealth.audit_banner_kind}
+                isCanonicalAudit={systemHealth.is_canonical_audit_status}
+                isCurrentBuildAudited={systemHealth.is_current_build_audited}
                 contractId={systemHealth.contract_id}
                 contractTimestamp={systemHealth.contract_timestamp}
                 contractCommit={systemHealth.active_audit?.git_commit ||

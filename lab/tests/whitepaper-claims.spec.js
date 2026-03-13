@@ -238,6 +238,9 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: {
                     active_contract: null,
                     audit_status: "NONE",
+                    audit_banner_kind: "not_audited",
+                    is_current_build_audited: false,
+                    is_canonical_audit_status: false,
                     current_build: "mock-hash (main)",
                     canonicalPromotion: { canonical_promotion_status: 'NOT_READY', required_claims_status: [], missing_requirements: [] },
                     productionSafety: { can_verify_all: true, can_generate_audit: true }
@@ -248,10 +251,9 @@ test.describe('Whitepaper Claims MVP', () => {
         await page.goto('/');
         await page.click('text=Claims');
 
-        // Mock the verification API so Playwright doesn't wait for Vite proxy timeout
         await page.route('**/run_preset*', async route => {
             await route.fulfill({
-                json: { manifest_id: "mock-123", overall_pass: true, message: "Mocked fetch", resolved_claim_status: "EXPERIMENTAL_SUPPORTED", audit_status: "NONE", scenario_id: "mock-scenario" }
+                json: { manifest_id: "mock-123", overall_pass: true, message: "Mocked fetch", resolved_claim_status: "EXPERIMENTAL_SUPPORTED", verdict: "SUPPORTED", evidence_provenance: "EXPERIMENTAL_RUN", audit_status: "NONE", is_current_build_audited: false, is_canonical_audit_status: false, scenario_id: "mock-scenario" }
             });
         });
         
@@ -287,6 +289,9 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: {
                     contract_id: "LNC-AUDIT-MOCK123",
                     audit_status: "AUDITED",
+                    audit_banner_kind: "none",
+                    is_current_build_audited: true,
+                    is_canonical_audit_status: true,
                     contract_commit: "mock123",
                     current_build: "mock123 (main)",
                     summary_pass: 10,
@@ -322,7 +327,7 @@ test.describe('Whitepaper Claims MVP', () => {
         // Remock verification API to return AUDIT grade results
         await page.route('**/run_preset*', async route => {
             await route.fulfill({
-                json: { manifest_id: "mock-123-audited", overall_pass: true, message: "Mocked fetch", resolved_claim_status: "SUPPORTED", audit_status: "AUDITED", scenario_id: "mock-scenario", contract_id: "LNC-AUDIT-MOCK123" }
+                json: { manifest_id: "mock-123-audited", overall_pass: true, message: "Mocked fetch", resolved_claim_status: "SUPPORTED", verdict: "SUPPORTED", evidence_provenance: "CANONICAL_SUITE", audit_status: "AUDITED", is_current_build_audited: true, is_canonical_audit_status: true, scenario_id: "mock-scenario", contract_id: "LNC-AUDIT-MOCK123" }
             });
         });
 
@@ -335,10 +340,207 @@ test.describe('Whitepaper Claims MVP', () => {
         await expect(canonicalBox).toBeVisible({ timeout: 15000 });
 
         // Assert status transition to pure SUPPORTED or CONTRADICTED
-        await expect(page.locator('.detail-card strong:has-text("SUPPORTED"), .detail-card strong:has-text("CONTRADICTED")')).toBeVisible();
+        await expect(page.locator('.detail-card .status-badge.supported, .detail-card .status-badge.contradicted')).toBeVisible();
 
         // Assert canonical evidence box contains the contract ID
         await expect(page.locator('.evidence-box.canonical .contract-id')).toContainText(/LNC-AUDIT-MOCK123/);
+    });
+
+    test('UI Test: Semantic Audit Banner Variations', async ({ page }) => {
+        // 1. STALE FOR CURRENT BUILD
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    active_contract: "LNC-AUDIT-STALE",
+                    audit_status: "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER",
+                    audit_banner_kind: "stale_for_current_build",
+                    current_build: "newer-commit-hash (main)",
+                    canonicalPromotion: { canonical_promotion_status: 'CANONICAL_AUDITED', required_claims_status: [], missing_requirements: [] },
+                    productionSafety: { can_verify_all: true, can_generate_audit: true }
+                }
+            });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+        
+        // Select any claim to open the detail card
+        await page.locator('.claim-item').first().click();
+
+        // Expect the orange stale banner to be visible somewhere
+        const staleBanner = page.locator('.audit-warning-banner:has-text("Audit is stale for current build")');
+        await expect(staleBanner).toBeVisible();
+        await expect(staleBanner).toContainText('newer-commit-hash (main)');
+
+        // 2. RUNNING 
+        await page.unroute('**/health');
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    active_contract: null,
+                    audit_status: "AUDIT_RUNNING",
+                    audit_banner_kind: "running",
+                    current_build: "in-flight-hash (main)",
+                }
+            });
+        });
+
+        // Trigger Svelte's fetchHealth() natively
+        await page.evaluate(() => window.dispatchEvent(new Event('audit-completed')));
+        await page.waitForTimeout(500);
+
+        const runningBanner = page.locator('.audit-warning-banner:has-text("Audit running")');
+        await expect(runningBanner).toBeVisible();
+
+        // 3. CLEAN CANONICAL
+        await page.unroute('**/health');
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    active_contract: "LNC-AUDIT-CLEAN",
+                    audit_status: "CANONICAL_AUDITED",
+                    audit_banner_kind: "none",
+                    current_build: "clean-hash (main)",
+                }
+            });
+        });
+
+        // Trigger Svelte's fetchHealth() natively
+        await page.evaluate(() => window.dispatchEvent(new Event('audit-completed')));
+        await page.waitForTimeout(500);
+
+        await expect(page.locator('.audit-warning-banner')).toHaveCount(0);
+    });
+
+    test('ui_does_not_render_stale_banner_when_backend_marks_current_build_audited', async ({ page }) => {
+        // Explicit regression test requested by user to prevent stale/payload contradiction
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    audit_status: "CANONICAL_AUDITED",
+                    is_canonical_audit_status: true,
+                    is_current_build_audited: true,
+                    is_audit_in_progress: false,
+                    audit_banner_kind: "none",
+                    current_build: "regression-hash (main)",
+                    canonicalPromotion: { canonical_promotion_status: 'CANONICAL_AUDITED', required_claims_status: [], missing_requirements: [] },
+                    productionSafety: { can_verify_all: true, can_generate_audit: true }
+                }
+            });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        // Select any claim
+        await page.locator('.claim-item').first().click();
+
+        // Banner should NOT be visible since audit_banner_kind is "none"
+        await expect(page.locator('.audit-warning-banner')).not.toBeVisible();
+        await expect(page.locator('.audit-warning-banner:has-text("Audit is stale for current build")')).not.toBeVisible();
+    });
+
+    test('ui_renders_clean_canonical_state', async ({ page }) => {
+        // Explicit regression test for Clean Canonical Scenario
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    audit_status: "CANONICAL_AUDITED",
+                    is_canonical_audit_status: true,
+                    is_current_build_audited: true,
+                    is_audit_in_progress: false,
+                    audit_banner_kind: "none",
+                    current_build: "clean-hash (main)",
+                    canonicalPromotion: { canonical_promotion_status: 'CANONICAL_AUDITED', required_claims_status: [], missing_requirements: [] },
+                    productionSafety: { can_verify_all: true, can_generate_audit: true }
+                }
+            });
+        });
+
+        await page.route('**/claim_results', async route => {
+            await route.fulfill({
+                json: {
+                    results: {
+                        "CL-CORE-001": {
+                            resolved_claim_status: "SUPPORTED",
+                            verdict: "SUPPORTED",
+                            evidence_provenance: "CANONICAL_SUITE",
+                            is_stale: false
+                        }
+                    },
+                    stale_count: 0
+                }
+            });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        await page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))').click();
+
+        // 1. Freshness: No stale banner
+        await expect(page.locator('.audit-warning-banner')).not.toBeVisible();
+        
+        // 2. Verdict: SUPPORTED badge exists
+        await expect(page.locator('.status-badge.supported')).toContainText('SUPPORTED');
+
+        // 3. Provenance: NO standalone provenance chip for clean canonical
+        await expect(page.locator('.status-badge.outdated')).not.toBeVisible();
+        await expect(page.locator('.status-badge.experimental')).not.toBeVisible();
+    });
+
+    test('ui_renders_stale_canonical_mixed_state', async ({ page }) => {
+        // Explicit regression test for the mixed state the user encountered
+        await page.route('**/health', async route => {
+            await route.fulfill({
+                json: {
+                    audit_status: "CANONICAL_AUDITED_ARTIFACT_COMMIT_NEWER",
+                    is_canonical_audit_status: true,
+                    is_current_build_audited: false,
+                    is_audit_in_progress: false,
+                    audit_banner_kind: "stale_for_current_build",
+                    current_build: "dirty-hash (main)",
+                    canonicalPromotion: { canonical_promotion_status: 'IN_PROGRESS', required_claims_status: [], missing_requirements: [] },
+                    productionSafety: { can_verify_all: true, can_generate_audit: true }
+                }
+            });
+        });
+
+        await page.route('**/claim_results', async route => {
+            await route.fulfill({
+                json: {
+                    results: {
+                        "CL-CORE-001": {
+                            resolved_claim_status: "STALE_CANONICAL",
+                            verdict: "SUPPORTED",
+                            evidence_provenance: "STALE_EVIDENCE",
+                            manifest_id: "manifest-stale",
+                            scenario_id: "preset-frequency-sweep",
+                            is_stale: true
+                        }
+                    },
+                    stale_count: 1
+                }
+            });
+        });
+
+        await page.goto('/');
+        await page.click('text=Claims');
+        await expect(page.locator('.loader')).toHaveCount(0, { timeout: 15000 });
+
+        await page.locator('.claim-item:has(span.claim-id:text-is("CL-CORE-001"))').click();
+
+        // 1. Freshness: STALE banner MUST be visible
+        await expect(page.locator('.audit-warning-banner:has-text("Audit is stale for current build")')).toBeVisible();
+
+        // 2. Verdict: SUPPORTED badge exists (pure mathematics)
+        await expect(page.locator('.detail-card .status-badge.supported')).toContainText('SUPPORTED');
+
+        // 3. Provenance: secondary STALE EVIDENCE chip explicitly rendered
+        await expect(page.locator('.detail-card .status-badge.outdated')).toHaveText('(STALE EVIDENCE)');
     });
 
     test('Integration Log Traceability Test', async ({ page }) => {
@@ -349,6 +551,9 @@ test.describe('Whitepaper Claims MVP', () => {
                     active_contract: "LNC-AUDIT-456",
                     contract_id: "LNC-AUDIT-456",
                     audit_status: "AUDITED",
+                    audit_banner_kind: "none",
+                    is_current_build_audited: true,
+                    is_canonical_audit_status: true,
                     contract_commit: "commit456",
                     current_build: "commit456 (main)",
                 }
@@ -364,9 +569,8 @@ test.describe('Whitepaper Claims MVP', () => {
             }
         });
 
-        // Mock preset run
         await page.route('**/run_preset*', async route => {
-            await route.fulfill({ json: { manifest_id: "manifest-789", overall_pass: true, resolved_claim_status: "SUPPORTED", audit_status: "AUDITED", contract_id: "LNC-AUDIT-456" } });
+            await route.fulfill({ json: { manifest_id: "manifest-789", overall_pass: true, resolved_claim_status: "SUPPORTED", verdict: "SUPPORTED", evidence_provenance: "CANONICAL_SUITE", audit_status: "AUDITED", is_current_build_audited: true, is_canonical_audit_status: true, contract_id: "LNC-AUDIT-456" } });
         });
 
         await page.goto('/');
@@ -521,7 +725,10 @@ test.describe('Whitepaper Claims MVP', () => {
                 json: {
                     active_contract: "LNC-AUDIT-TEST",
                     contract_id: "LNC-AUDIT-TEST",
-                    audit_status: "AUDITED"
+                    audit_status: "AUDITED",
+                    audit_banner_kind: "none",
+                    is_current_build_audited: true,
+                    is_canonical_audit_status: true
                 }
             });
         });
@@ -532,10 +739,14 @@ test.describe('Whitepaper Claims MVP', () => {
                     results: {
                         "CL-CORE-001": {
                             resolved_claim_status: "EXPERIMENTAL_SUPPORTED", // Provide raw state for normalizer to catch
+                            verdict: "SUPPORTED",
+                            evidence_provenance: "CANONICAL_SUITE",
                             manifest_id: "manifest-success",
                             contract_id: "LNC-AUDIT-TEST",
                             scenario_id: "preset-frequency-sweep",
                             audit_status: "AUDITED",
+                            is_current_build_audited: true,
+                            is_canonical_audit_status: true,
                             overall_pass: true,
                             passed_internal: true,
                             checked_at: new Date().toISOString(),
@@ -715,7 +926,7 @@ test.describe('Whitepaper Claims MVP', () => {
         await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
         await page.route('**/health', async route => {
-            await route.fulfill({ json: { active_contract: null, audit_status: "NONE" } });
+            await route.fulfill({ json: { active_contract: null, audit_status: "NONE", audit_banner_kind: "not_audited", is_current_build_audited: false, is_canonical_audit_status: false } });
         });
 
         await page.route('**/api/lab/claim_results', async route => {
@@ -724,10 +935,14 @@ test.describe('Whitepaper Claims MVP', () => {
                     results: {
                         "CL-CORE-002": {
                             resolved_claim_status: "EXPERIMENTAL_SUPPORTED",
+                            verdict: "SUPPORTED",
+                            evidence_provenance: "EXPERIMENTAL_RUN",
                             manifest_id: "manifest-experimental",
                             contract_id: null,
                             scenario_id: "preset-defect-genesis",
                             audit_status: "NONE",
+                            is_current_build_audited: false,
+                            is_canonical_audit_status: false,
                             overall_pass: true,
                             passed_internal: true,
                             checked_at: new Date().toISOString(),
@@ -775,7 +990,8 @@ test.describe('Whitepaper Claims MVP', () => {
         expect(packetText).not.toContain('f0_mean_hz'); // Should only be in 001
         
         expect(packetText).toContain('- deterministic_mode: false');
-        expect(packetText).toContain('- current_status: EXPERIMENTAL_SUPPORTED');
+        expect(packetText).toContain('- current_status: SUPPORTED');
+        expect(packetText).toContain('- evidence_level: EXPERIMENTAL_EVIDENCE');
         expect(packetText).toContain('- Is this ready for wording proposal now? NO');
     });
 });
@@ -865,6 +1081,8 @@ test.describe('Audit Job Manager Integration UI', () => {
                     results: {
                         "CL-CORE-001": {
                             resolved_claim_status: "SUPPORTED", // True grade
+                            verdict: "SUPPORTED",
+                            evidence_provenance: "CANONICAL_SUITE",
                             manifest_id: "manifest-success",
                             scenario_id: "preset-frequency-sweep",
                             audit_status: "AUDITED",
@@ -887,6 +1105,6 @@ test.describe('Audit Job Manager Integration UI', () => {
         // Wait for canonical evidence box - this implies it did NOT downgrade to EXPERIMENTAL (which uses .exploratory class)
         let canonicalBox = page.locator('.evidence-box.canonical');
         await expect(canonicalBox).toBeVisible({ timeout: 15000 });
-        await expect(page.locator('.detail-card strong:has-text("SUPPORTED")')).toBeVisible();
+        await expect(page.locator('.detail-card .status-badge.supported')).toBeVisible();
     });
 });

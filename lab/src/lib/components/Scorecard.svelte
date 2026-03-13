@@ -2,6 +2,9 @@
     import { onMount } from "svelte";
 
     export let auditStatus = "NONE";
+    export let auditBannerKind = "not_audited";
+    export let isCanonicalAudit = false;
+    export let isCurrentBuildAudited = false;
     export let contractId = null;
     export let contractTimestamp = null;
     export let contractCommit = null;
@@ -18,27 +21,27 @@
     export let errorMsg = null;
 
     // Status visual mapping
-    const getBadgeColor = (status) => {
-        if (status === "AUDITED")
+    const getBadgeColor = (isCanonical, isCurrentBlock) => {
+        if (isCanonical && isCurrentBlock)
             return {
                 bg: "rgba(34,197,94,0.12)",
                 border: "rgba(34,197,94,0.4)",
                 text: "#4ade80",
                 glow: "0 0 20px rgba(34,197,94,0.15)",
             };
-        if (status === "BUILD_NEWER")
-            return {
-                bg: "rgba(59,130,246,0.12)",
-                border: "rgba(59,130,246,0.4)",
-                text: "#60a5fa",
-                glow: "0 0 20px rgba(59,130,246,0.15)",
-            };
-        if (status === "OUTDATED")
+        if (isCanonical && !isCurrentBlock)
             return {
                 bg: "rgba(234,179,8,0.12)",
                 border: "rgba(234,179,8,0.4)",
                 text: "#facc15",
                 glow: "0 0 20px rgba(234,179,8,0.15)",
+            };
+        if (auditStatus === "BUILD_NEWER") // Legacy fallback if needed
+            return {
+                bg: "rgba(59,130,246,0.12)",
+                border: "rgba(59,130,246,0.4)",
+                text: "#60a5fa",
+                glow: "0 0 20px rgba(59,130,246,0.15)",
             };
         return {
             bg: "rgba(239,68,68,0.12)",
@@ -48,14 +51,14 @@
         };
     };
 
-    const getBadgeIcon = (status) => {
-        if (status === "AUDITED") return "✅";
-        if (status === "BUILD_NEWER") return "ℹ️";
-        if (status === "OUTDATED") return "⚠️";
+    const getBadgeIcon = (isCanonical, isCurrentBlock) => {
+        if (isCanonical && isCurrentBlock) return "✅";
+        if (isCanonical && !isCurrentBlock) return "⚠️";
+        if (auditStatus === "BUILD_NEWER") return "ℹ️";
         return "❌";
     };
 
-    $: colors = getBadgeColor(auditStatus);
+    $: colors = getBadgeColor(isCanonicalAudit, isCurrentBuildAudited);
     $: hasContract = contractId && contractId !== "N/A";
 </script>
 
@@ -65,7 +68,7 @@
         class="badge-row"
         style="background:{colors.bg}; border-color:{colors.border}; box-shadow:{colors.glow}"
     >
-        <span class="badge-icon">{getBadgeIcon(auditStatus)}</span>
+        <span class="badge-icon">{getBadgeIcon(isCanonicalAudit, isCurrentBuildAudited)}</span>
         <div class="badge-text">
             <span class="badge-label" style="color:{colors.text}"
                 >AUDIT CONTRACT</span
@@ -109,7 +112,7 @@
             <span class="label">Timestamp</span>
             <span class="value small truncate" title={contractTimestamp}
                 >{contractTimestamp
-                    ? contractTimestamp.substring(0, 19)
+                    ? String(contractTimestamp).substring(0, 19)
                     : "N/A"}</span
             >
 
@@ -131,11 +134,13 @@
         </div>
     </div>
 
-    {#if auditStatus !== "AUDITED" && auditStatus !== "BUILD_NEWER"}
+    {#if auditBannerKind === "stale_for_current_build"}
         <div class="warning-box">
-            <strong>⚠ Warning:</strong> A provisional baseline pass exists for this
-            build, but a canonical metric-backed audit is not complete yet. Claims
-            remain in an experimental state.
+            <strong>⚠ Warning:</strong> A canonical baseline pass exists for an older build, but this current build has un-audited changes.
+        </div>
+    {:else if !isCanonicalAudit && auditStatus !== "BUILD_NEWER"}
+        <div class="warning-box red-warning">
+            <strong>⚠ Warning:</strong> A canonical metric-backed audit is not complete. Claims remain in an experimental state.
         </div>
     {/if}
 
@@ -307,6 +312,11 @@
         color: rgba(250, 204, 21, 0.85);
         font-size: 0.8rem;
         line-height: 1.5;
+    }
+    .red-warning {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.35);
+        color: #fca5a5;
     }
 
     .actions-section {
