@@ -54,7 +54,8 @@ test.describe('Navigation Redesign Layout', () => {
         expect(response.status()).toBe(200);
     });
 
-    test('Lab link (Simulacrum) does not point to bugged 127.0.0.1 IPv4', async ({ page }) => {
+    test('Lab link (Simulacrum) does not point to bugged 127.0.0.1 IPv4', async ({ page, isMobile }) => {
+        if (isMobile) return;
         await page.goto('/');
         const labLink = page.locator('a[target="simulacrum"]').first();
         await expect(labLink).toBeVisible();

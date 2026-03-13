@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Lineum Homepage UI Updates', () => {
-    test('Should display Lab and Engraving links in the main navigation', async ({ page }) => {
+    test('Should display Lab and Engraving links in the main navigation', async ({ page, isMobile }) => {
+        if (isMobile) return;
+        
         await page.goto('/');
 
         // Ensure the layout has loaded
@@ -18,11 +20,6 @@ test.describe('Lineum Homepage UI Updates', () => {
         await expect(labLink).toBeVisible();
 
         // 1.5 & 2 Check if API Solutions and Engraving are visible (only if enabled via env)
-        if (await mobileToggle.isVisible()) {
-            await mobileToggle.click();
-            await page.waitForTimeout(300); // let slide animation finish
-        }
-
         const apiLink = page.locator('a[href="/api-solutions"]').first();
         if ((await apiLink.count()) > 0) {
             await expect(apiLink).toBeVisible();

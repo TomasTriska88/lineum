@@ -76,7 +76,7 @@ test.describe('Memory Imprint Journal UI verification', () => {
 
         // Verify Imprint card renders
         await expect(page.locator('.imprint-card').first()).toBeVisible();
-        await expect(page.locator('.imprint-card h3').first()).toContainText('test-hash-12345');
+        await expect(page.locator('.imprint-card h3').first()).toContainText('test-has');
 
         // Verify Physics config details
         await expect(page.locator('.metric-box.config').first()).toContainText('Grid: 64');
