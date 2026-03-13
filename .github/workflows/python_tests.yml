@@ -1,8 +1,9 @@
 name: Python Backend Tests
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "debug-v1.1.6-ci" ]
     paths:
       - 'lineum.py'
       - 'lineum_core/**'
