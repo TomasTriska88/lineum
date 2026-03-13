@@ -13,7 +13,7 @@ test.describe('Validation Dashboard Fallback', () => {
         });
 
         // Navigate to the Lab portal
-        await page.goto('http://127.0.0.1:5174/');
+        await page.goto('/');
         await page.waitForTimeout(1000); // 1 second buffer just in case
         
         // Validation Dashboard lives under the Validation Core tab

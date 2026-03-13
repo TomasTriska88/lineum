@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Lineum Homepage UI Updates', () => {
     test('Should display Lab and Engraving links in the main navigation', async ({ page }) => {
-        await page.goto('http://127.0.0.1:5173/');
+        await page.goto('/');
 
         // Ensure the layout has loaded
         await expect(page.locator('.nav-logo').first()).toBeVisible();
@@ -39,7 +39,7 @@ test.describe('Lineum Homepage UI Updates', () => {
     });
 
     test('Should display the new Physics Equation with the Mu term', async ({ page }) => {
-        await page.goto('http://127.0.0.1:5173/');
+        await page.goto('/');
 
         // The equation inline should show up on the hero section
         // We look for the literal text `μ` in the span

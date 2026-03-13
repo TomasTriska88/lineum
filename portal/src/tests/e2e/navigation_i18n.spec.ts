@@ -11,7 +11,7 @@ test.describe('Navigation i18n Localization', () => {
 
     test('Should display English navigation on the root path', async ({ page }) => {
         // According to our i18n file, English is the default language tag mapped to '/'
-        await page.goto('http://127.0.0.1:5173/');
+        await page.goto('/');
         await expect(page.locator('.nav-logo').first()).toBeVisible();
 
         const mobileToggle = page.locator('.mobile-toggle').first();
@@ -33,7 +33,7 @@ test.describe('Navigation i18n Localization', () => {
 
     test('Should display Czech navigation on the /cs/ path', async ({ page }) => {
         // According to our i18n file, Czech localized paths are prefixed normally with /cs
-        await page.goto('http://127.0.0.1:5173/cs/');
+        await page.goto('/cs/');
         await expect(page.locator('.nav-logo').first()).toBeVisible();
 
         const mobileToggle = page.locator('.mobile-toggle').first();
@@ -56,7 +56,7 @@ test.describe('Navigation i18n Localization', () => {
 
     test('Should display language names in their native localized form (Čeština, Deutsch, etc) regardless of current UI language', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
-        await page.goto('http://127.0.0.1:5173/');
+        await page.goto('/');
 
         // Wait for hydration
         await expect(page.locator('.nav-logo').first()).toBeVisible();

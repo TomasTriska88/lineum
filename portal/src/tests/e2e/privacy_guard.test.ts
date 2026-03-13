@@ -7,11 +7,13 @@ import path from 'path';
 // Format: "filename": ["allowed_key_1", "allowed_key_2"]
 const STORAGE_WHITELIST: Record<string, string[]> = {
     'CookieBanner.svelte': ['cookie_consent'],
-    'ResonanceDeck.svelte': ['resonance_history', 'cookie_consent'], // cookie_consent is read here too
+    'ResonanceDeck.svelte': ['resonance_history', 'cookie_consent', 'lina_session_id'], // cookie_consent is read here too
     'AiResearch.svelte': ['lineum_research_history'],
     'privacy.test.ts': ['cookie_consent'],
     'chat_flow.test.ts': ['resonance_history'], // Simulates chat history
-    'wiki_warning.spec.ts': ['lineum_whitepaper_warning_acknowledged'],
+    'wiki_warning.spec.ts': ['lineum_whitepaper_warning_acknowledged', 'wiki_warning_ack'],
+    'api_solutions_interactions.spec.ts': ['cookie_consent'],
+    'WikiWarning.svelte': ['wiki_warning_ack'],
     'setup.ts': [],
     '+page.svelte': ['lineum_whitepaper_warning_acknowledged'],
     'privacy_guard.test.ts': ['cookie_consent', 'resonance_history', 'lineum_research_history', 'key'], // The guard itself reads these for regex matching context or verification
