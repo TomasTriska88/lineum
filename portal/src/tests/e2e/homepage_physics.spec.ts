@@ -19,27 +19,23 @@ test.describe('Lineum Homepage UI Updates', () => {
         const labLink = page.locator('.nav-links a[target="simulacrum"]');
         await expect(labLink).toBeVisible();
 
-        // 1.5 & 2 Check if API Solutions and Engraving are visible inside Ecosystem (only if enabled via env)
-        const ecosystemToggle = page.getByRole('button', { name: /Ecosystem/i });
-        if (await ecosystemToggle.isVisible()) {
-            await ecosystemToggle.click();
-            await page.waitForTimeout(300); // CSS transition delay
-        }
+        // 2. Click the Ecosystem dropdown to verify About, API Solutions, and Engraving
+        const ecosystemToggle = page.locator('.dropdown-toggle').filter({ hasText: /Ecosystem/i });
+        await expect(ecosystemToggle).toBeVisible();
+        await ecosystemToggle.click();
+        await page.waitForTimeout(300); // Wait for mega-menu transition
 
-        const apiLink = page.locator('a[href="/api-solutions"]').first();
+        // 3. Verify 'About' is present in the The Project section
+        const aboutLink = page.locator('.mega-menu a[href="/about"]');
+        await expect(aboutLink).toBeVisible();
+
+        // 4. Verify Engraving and API (API is actually root level, Engraving is inside developers)
+        const apiLink = page.locator('.nav-links > a[href="/api-solutions"]').first();
         if ((await apiLink.count()) > 0) {
             await expect(apiLink).toBeVisible();
-            const engravingLink = page.locator('a[href="/engraving"]').first();
+            const engravingLink = page.locator('.mega-menu a[href="/engraving"]');
             await expect(engravingLink).toBeVisible();
         }
-
-        // 4. Click the Docs dropdown and verify 'About' is present
-        const docsToggle = page.locator('.dropdown-toggle');
-        await expect(docsToggle).toBeVisible();
-        await docsToggle.click();
-
-        const aboutLink = page.locator('a[href="/about"]');
-        await expect(aboutLink).toBeVisible();
     });
 
     test('Should display the new Physics Equation with the Mu term', async ({ page }) => {
