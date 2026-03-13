@@ -65,6 +65,9 @@ jobs:
         cd ../lab && npx playwright install --with-deps chromium
 
     - name: Execute UI Suite Gates (Vitest + Playwright)
+      env:
+        PUBLIC_SIMULACRUM_URL: 'http://127.0.0.1:5174'
+        PUBLIC_ENABLE_API_SOLUTIONS: 'true'
       run: |
         cd portal && npm run test && npm run test:e2e
         cd ../lab && npm run test && npm run test:e2e
