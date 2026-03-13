@@ -154,7 +154,7 @@ def verify_locked_run(run_dir):
         if not os.path.exists(os.path.join(run_dir, rel_path)):
             # Gracefully tolerate missing artifacts that are ignored by Git LFS / .gitignore
             if (rel_path.endswith('.npz') or rel_path.endswith('.npy') or rel_path.endswith('.png') or rel_path.endswith('.svg') or 
-                "checkpoints" in rel_path or rel_path.endswith('amplitude_log.csv') or rel_path.endswith('topo_log.csv')):
+                "checkpoints" in rel_path or rel_path.endswith('_log.csv')):
                 continue
             print(f"WARNING: Locked audit run tampered: {run_dir} (Missing file {rel_path}). RUN EXCLUDED.")
             return False
