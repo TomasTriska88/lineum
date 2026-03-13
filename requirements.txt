@@ -10,3 +10,4 @@ uvicorn[standard]>=0.20
 websockets>=11.0
 httpx>=0.24.0
 requests>=2.30.0
+python-multipart>=0.0.9
