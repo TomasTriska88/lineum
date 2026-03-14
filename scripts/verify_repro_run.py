@@ -7,6 +7,29 @@ import glob
 import json
 import hashlib
 import numpy as np
+import platform
+
+def get_execution_profile():
+    return f"{sys.platform}_{platform.machine()}_numpy{np.__version__}"
+
+def evaluate_hash(metric, computed, info_dict, profile):
+    legacy_key = f"{metric}_hash"
+    profile_key = f"{metric}_hashes"
+    
+    if profile_key in info_dict:
+        approved_hashes = info_dict[profile_key]
+        if profile in approved_hashes:
+            expected = approved_hashes[profile]
+            match = (computed == expected)
+            return match, expected, f"Profile ({profile})"
+        else:
+            return False, "N/A", f"Unknown Profile (Known: {list(approved_hashes.keys())})"
+    elif legacy_key in info_dict:
+        expected = info_dict[legacy_key]
+        match = (computed == expected)
+        return match, expected, "Legacy Single-Hash"
+    else:
+        return False, "N/A", f"Missing Schema Keys"
 
 def main():
     parser = argparse.ArgumentParser(description="Verification of Canonical Lineum run (spec6_false_s41).")
@@ -149,6 +172,11 @@ def main():
         print("[FAIL] Manifest contains no snapshots.")
         sys.exit(1)
 
+    profile = get_execution_profile()
+    print("-" * 40)
+    print(f"[INFO] Resolved Execution Profile: {profile}")
+    print("-" * 40)
+
     snapshots_ok = True
     hashes_ok = True
     
@@ -210,24 +238,23 @@ def main():
                 psi_h = compute_strict_hash_verify(psi)
                 phi_h = compute_strict_hash_verify(phi)
                 
-                if psi_h != info["psi_hash"]:
+                psi_ok, psi_exp, psi_src = evaluate_hash("psi", psi_h, info, profile)
+                phi_ok, phi_exp, phi_src = evaluate_hash("phi", phi_h, info, profile)
+                
+                print(f"[V] {filename} PSI | Src: {psi_src} | Exp: {psi_exp} | Got: {psi_h} | {'PASS' if psi_ok else 'FAIL'}")
+                print(f"[V] {filename} PHI | Src: {phi_src} | Exp: {phi_exp} | Got: {phi_h} | {'PASS' if phi_ok else 'FAIL'}")
+
+                if not psi_ok:
                     if args.fuzzy_match:
                         print(f"[WARN] {filename} PSI hash mismatch (Fuzzy mode - ignoring).")
                     else:
-                        print(f"[FAIL] {filename} PSI hash mismatch!")
-                        print(f"       Expected: {info['psi_hash']}")
-                        print(f"       Got:      {psi_h}")
                         hashes_ok = False
                 
-                if phi_h != info["phi_hash"]:
+                if not phi_ok:
                     if args.fuzzy_match:
                         print(f"[WARN] {filename} PHI hash mismatch (Fuzzy mode - ignoring).")
                     else:
-                        print(f"[FAIL] {filename} PHI hash mismatch!")
                         hashes_ok = False
-                
-                if psi_h == info["psi_hash"] and phi_h == info["phi_hash"]:
-                    print(f"[OK] {filename} verified (Strict Hash Match).")
                     
         except Exception as e:
             print(f"[FAIL] Error verifying {filename}: {e}")
