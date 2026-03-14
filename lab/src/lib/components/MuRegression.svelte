@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from "svelte";
+    import { t } from "../i18n";
 
     let canvasDiff;
     let canvasWave;
@@ -146,18 +147,18 @@
 
 <div class="lab-container">
     <div class="lab-header">
-        <h2>Mu Memory Substrate Regression Test</h2>
+        <h2>{$t('mu_title')}</h2>
         <div class="status-indicator">
             <div class="dot" class:connected={isConnected}></div>
-            {phaseText} | Step: {currentStep} / {maxSteps}
+            {phaseText} | {$t('hydro_step')}: {currentStep} / {maxSteps}
         </div>
-        <button on:click={connect}>Restart Test</button>
+        <button on:click={connect}>{$t('mu_restart')}</button>
     </div>
 
     <div class="lab-content">
         <div class="split-view">
             <div class="view-panel">
-                <h3>Diffusion Kanon (Thermodynamic)</h3>
+                <h3>{$t('mu_diff_kanon')}</h3>
                 <div class="render-box">
                     <canvas bind:this={canvasDiff} class="pixel-canvas"
                     ></canvas>
@@ -165,13 +166,13 @@
                 <div class="stats-mini">
                     <div>N(t): {diffN.toExponential(2)}</div>
                     <div class:warning={diffMaxMu >= 9.9}>
-                        Max Mu: {diffMaxMu.toFixed(2)}
+                        {$t('mu_max_mu')} {diffMaxMu.toFixed(2)}
                     </div>
                 </div>
             </div>
 
             <div class="view-panel">
-                <h3>Wave Projected Soft (Quantum Acoustic)</h3>
+                <h3>{$t('mu_wave_proj')}</h3>
                 <div class="render-box">
                     <canvas bind:this={canvasWave} class="pixel-canvas"
                     ></canvas>
@@ -179,25 +180,22 @@
                 <div class="stats-mini">
                     <div>N(t): {waveN.toExponential(2)}</div>
                     <div class:warning={waveMaxMu >= 9.9}>
-                        Max Mu: {waveMaxMu.toFixed(2)}
+                        {$t('mu_max_mu')} {waveMaxMu.toFixed(2)}
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="info-footer">
-            <strong>Regression Goal:</strong> Verify that the new Wave physics engine
-            carves persistent identity ($\mu$) into the topography without causing
-            mathematical saturation blowouts (NaN) compared to the stable canonical
-            diffusion matrix. Bright yellow indicates fully saturated `mu_cap` (10.0).
+            <strong>{$t('mu_goal_hdr')}</strong> {$t('mu_goal_desc')}
         </div>
     </div>
 
     <div class="artifacts-toggle">
         <button on:click={loadArtifacts}>
             {showArtifacts
-                ? "Hide Raw Data & Scripts"
-                : "Generate Dynamic Validation Artifacts"}
+                ? $t('hydro_btn_hide')
+                : $t('hydro_btn_gen')}
         </button>
     </div>
 
@@ -205,19 +203,17 @@
         <div class="artifacts-panel">
             {#if artifactsLoading}
                 <div class="loader-txt">
-                    Spinning up Eq-7 Cores to generate real-time metrics...
+                    {$t('mu_spin_up')}
                 </div>
             {:else if artifactsError}
                 <div class="error-txt">
-                    Error computing dynamic snapshot: {artifactsError}
+                    {$t('mu_error_snap')} {artifactsError}
                 </div>
             {:else if artifactsData}
                 <div class="artifact-section">
-                    <h3>1. Real-Time Render Output (Matplotlib)</h3>
+                    <h3>{$t('mu_rt_render')}</h3>
                     <p>
-                        Side-by-side comparison of Diffusion (Kanon) vs Wave
-                        Projected Soft generated perfectly on-demand from live
-                        Engine.
+                        {$t('mu_rt_desc')}
                     </p>
                     <img
                         src={`data:image/png;base64,${artifactsData.image_b64}`}
@@ -227,7 +223,7 @@
                 </div>
 
                 <div class="artifact-section">
-                    <h3>2. Core Executable Script (`run_mu_regression.py`)</h3>
+                    <h3>{$t('mu_core_script')}</h3>
                     <pre><code
                             >{`# 1:1 Validated Logic
 from lineum_core.math import CoreConfig, step_core

@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { t } from "../i18n";
 
     export let auditStatus = "NONE";
     export let auditBannerKind = "not_audited";
@@ -71,7 +72,7 @@
         <span class="badge-icon">{getBadgeIcon(isCanonicalAudit, isCurrentBuildAudited)}</span>
         <div class="badge-text">
             <span class="badge-label" style="color:{colors.text}"
-                >AUDIT CONTRACT</span
+                >{$t('score_audit_contract')}</span
             >
             <span class="badge-status" style="color:{colors.text}"
                 >{auditStatus}</span
@@ -84,49 +85,49 @@
 
     <!-- Audit Details Grid — always visible -->
     <div class="details-card">
-        <h3 class="details-title">Audit Details</h3>
+        <h3 class="details-title">{$t('score_audit_details')}</h3>
         <div class="details-grid">
-            <span class="label">Contract ID</span>
+            <span class="label">{$t('score_contract_id')}</span>
             <span class="value mono">{contractId || "N/A"}</span>
 
-            <span class="label">Build Commit</span>
+            <span class="label">{$t('score_build_commit')}</span>
             <span class="value mono small breakable"
                 >{currentBuildCommit || "unknown"}</span
             >
 
-            <span class="label">Audit Commit</span>
+            <span class="label">{$t('score_audit_commit')}</span>
             <span class="value mono small breakable"
                 >{contractCommit || "unknown"}</span
             >
 
-            <span class="label">Eq Fingerprint</span>
+            <span class="label">{$t('score_eq_fingerprint')}</span>
             <span class="value mono small breakable">
                 {equationFingerprint || "unknown"}
             </span>
 
-            <span class="label">Code Fingerprint</span>
+            <span class="label">{$t('score_code_fingerprint')}</span>
             <span class="value mono small breakable">
                 {auditCodeFingerprint || "unknown"}
             </span>
 
-            <span class="label">Timestamp</span>
+            <span class="label">{$t('score_timestamp')}</span>
             <span class="value small truncate" title={contractTimestamp}
                 >{contractTimestamp
                     ? String(contractTimestamp).substring(0, 19)
                     : "N/A"}</span
             >
 
-            <span class="label">Summary</span>
+            <span class="label">{$t('score_summary')}</span>
             <span class="value">
-                <span class="pass-count">{summaryPass} PASS</span>
+                <span class="pass-count">{summaryPass} {$t('score_pass')}</span>
                 <span class="separator">/</span>
                 <span class={summaryFail > 0 ? "fail-count" : "zero-fail"}
-                    >{summaryFail} FAIL</span
+                    >{summaryFail} {$t('score_fail')}</span
                 >
             </span>
 
             {#if activeProfile}
-                <span class="label">Profile</span>
+                <span class="label">{$t('score_profile')}</span>
                 <span class="value">
                     <span class="profile-inline">{activeProfile}</span>
                 </span>
@@ -136,17 +137,17 @@
 
     {#if auditBannerKind === "stale_for_current_build"}
         <div class="warning-box">
-            <strong>⚠ Warning:</strong> A canonical baseline pass exists for an older build, but this current build has un-audited changes.
+            {$t('score_warn_stale')}
         </div>
     {:else if !isCanonicalAudit && auditStatus !== "BUILD_NEWER"}
         <div class="warning-box red-warning">
-            <strong>⚠ Warning:</strong> A canonical metric-backed audit is not complete. Claims remain in an experimental state.
+            {$t('score_warn_exp')}
         </div>
     {/if}
 
     <!-- Actions Section -->
     <div class="actions-section">
-        <h3 class="actions-title">Run Controls</h3>
+        <h3 class="actions-title">{$t('score_run_controls')}</h3>
         <div class="actions-row">
             <button
                 class="run-btn"
@@ -154,16 +155,16 @@
                 disabled={isRunning}
             >
                 {#if isRunning}
-                    <span class="pulse">Running Scenarios…</span>
+                    <span class="pulse">{$t('score_running_scenarios')}</span>
                 {:else}
-                    Run Golden Suite (Experimental)
+                    {$t('score_run_golden')}
                 {/if}
             </button>
         </div>
 
         {#if errorMsg}
             <div class="error-box">
-                Error: {errorMsg}
+                {$t('score_error')} {errorMsg}
             </div>
         {/if}
     </div>

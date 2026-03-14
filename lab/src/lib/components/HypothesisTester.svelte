@@ -186,7 +186,7 @@
 
 <div class="hypothesis-tester">
     <div class="panel-header">
-        <div class="panel-title">HYPOTHESIS DISCOVERY</div>
+        <div class="panel-title">{$t('hypo_title')}</div>
     </div>
 
     <div class="insight-cards">
@@ -194,11 +194,11 @@
             <div class="card-icon">🧩</div>
             <div class="card-content">
                 <strong
-                    >LINEUM LEGO-UNIVERSE <span class="data-badge"
-                        >SOURCE: discovery.json</span
+                    >{$t('hypo_lego')} <span class="data-badge"
+                        >{$t('hypo_source')}</span
                     ></strong
                 >
-                <p>Lineum is like a Lego-version of our universe. Even with different materials, it stays together using the same mathematical statics.</p>
+                <p>{$t('hypo_lego_desc')}</p>
             </div>
         </div>
         <div
@@ -208,18 +208,18 @@
             <div class="card-icon">⚡</div>
             <div class="card-content">
                 <strong
-                    >THE PRIME BEAT <span class="data-badge"
-                        >SOURCE: discovery.json</span
+                    >{$t('hypo_prime')} <span class="data-badge"
+                        >{$t('hypo_source')}</span
                     ></strong
                 >
-                <p>This alignment confirms that our digital organism breathes with the same rhythm as prime numbers in reality.</p>
+                <p>{$t('hypo_prime_desc')}</p>
             </div>
         </div>
     </div>
 
     <div class="discovery-metrics">
         <div class="metric">
-            <span class="label">ALIGNMENT WITH UNIVERSAL ORDER (R)</span>
+            <span class="label">{$t('hypo_align')}</span>
             <span class="value" class:high={discoveryData?.pearson_r > 0.9}>
                 {discoveryData?.pearson_r
                     ? (discoveryData.pearson_r * 100).toFixed(2) + "%"
@@ -227,7 +227,7 @@
             </span>
         </div>
         <div class="metric">
-            <span class="label">HARMONIC STRUCTURE STABILITY</span>
+            <span class="label">{$t('hypo_stability')}</span>
             <span class="value">
                 {discoveryData?.euclidean_dist
                     ? ((1 / (1 + discoveryData.euclidean_dist)) * 100).toFixed(
@@ -237,7 +237,7 @@
             </span>
         </div>
         <div class="metric">
-            <span class="label">FIELD TURBULENCE</span>
+            <span class="label">{$t('hypo_turbulence')}</span>
             <span class="value">
                 {discoveryData?.euclidean_dist?.toFixed(3) || "0.000"}
             </span>
@@ -254,8 +254,8 @@
         {/if}
 
         <div class="narrative-guide">
-            <div class="guide-header">FIELD MELODY</div>
-            <p>This chart shows the music the field is playing.</p>
+            <div class="guide-header">{$t('hypo_melody_hdr')}</div>
+            <p>{$t('hypo_melody_desc')}</p>
         </div>
     </div>
 
@@ -269,8 +269,8 @@
         {/if}
 
         <div class="narrative-guide highlight">
-            <div class="guide-header">WHAT DO YOU SEE?</div>
-            <p>For a perfect match, the orange points (Lineum) must sit as closely as possible on the white line (Universe).</p>
+            <div class="guide-header">{$t('hypo_see_hdr')}</div>
+            <p>{$t('hypo_see_desc')}</p>
         </div>
     </div>
 </div>

@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from "svelte";
+    import { t } from "../i18n";
 
     let canvas;
     let ctx;
@@ -122,12 +123,12 @@
 
 <div class="lab-container">
     <div class="lab-header">
-        <h2>Hydrogen 2D Ground State Validation (Eq-7 Wave Core)</h2>
+        <h2>{$t('hydro_title')}</h2>
         <div class="status-indicator">
             <div class="dot" class:connected={isConnected}></div>
             {currentPhase}
         </div>
-        <button on:click={connect}>Restart Simulation</button>
+        <button on:click={connect}>{$t('hydro_restart')}</button>
     </div>
 
     <div class="lab-content">
@@ -136,27 +137,25 @@
         </div>
 
         <div class="metrics-panel">
-            <h3>Telemetry</h3>
+            <h3>{$t('hydro_telemetry')}</h3>
             <div class="metric">
-                <span class="label">Step</span>
+                <span class="label">{$t('hydro_step')}</span>
                 <span class="value">{currentStep} / {maxSteps}</span>
             </div>
             <div class="metric">
-                <span class="label">Total Mass (N_t)</span>
+                <span class="label">{$t('hydro_mass_t')}</span>
                 <span class="value">{nt.toExponential(2)}</span>
             </div>
             {#if edgeMass > 0}
                 <div class="metric">
-                    <span class="label">Edge Mass</span>
+                    <span class="label">{$t('hydro_edge_mass')}</span>
                     <span class="value">{edgeMass.toExponential(4)}</span>
                 </div>
             {/if}
 
             <div class="disclaimer">
-                <strong>Logarithmic Density Rendering:</strong>
-                The brightness represents $\log(| \psi |^2)$. Pure black means true
-                vacuum. Watch how the wave remains completely isolated from the periodic
-                edges.
+                <strong>{$t('hydro_log_density')}</strong>
+                {$t('hydro_log_desc')}
             </div>
         </div>
     </div>
@@ -164,8 +163,8 @@
     <div class="artifacts-toggle">
         <button on:click={loadArtifacts}>
             {showArtifacts
-                ? "Hide Raw Data & Scripts"
-                : "Generate Dynamic Validation Artifacts"}
+                ? $t('hydro_btn_hide')
+                : $t('hydro_btn_gen')}
         </button>
     </div>
 
@@ -173,25 +172,24 @@
         <div class="artifacts-panel">
             {#if artifactsLoading}
                 <div class="loader-txt">
-                    Spinning up Eq-7 Cores to generate real-time metrics
-                    sweep...
+                    {$t('hydro_spin_up')}
                 </div>
             {:else if artifactsError}
                 <div class="error-txt">
-                    Error computing dynamic sweep: {artifactsError}
+                    {$t('hydro_error_sweep')} {artifactsError}
                 </div>
             {:else if artifactsData}
                 <div class="artifact-section">
-                    <h3>1. Ground State Sweep Results (Live Math Execution)</h3>
+                    <h3>{$t('hydro_sweep_res')}</h3>
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Grid</th><th>Z</th><th>$\epsilon$</th><th
-                                    >E (Start)</th
-                                ><th>E (End)</th><th>dE Drift</th><th
+                                <th>{$t('hydro_grid')}</th><th>Z</th><th>{$t('hydro_eps')}</th><th
+                                    >{$t('hydro_e_start')}</th
+                                ><th>{$t('hydro_e_end')}</th><th>{$t('hydro_de_drift')}</th><th
                                     >&lt;r&gt;</th
-                                ><th>&lt;r²&gt;</th><th>Edge Mass</th><th
-                                    >Max Edge</th
+                                ><th>&lt;r²&gt;</th><th>{$t('hydro_edge_mass')}</th><th
+                                    >{$t('hydro_max_edge')}</th
                                 >
                             </tr>
                         </thead>
@@ -218,11 +216,9 @@
                 </div>
 
                 <div class="artifact-section">
-                    <h3>2. Real-Time Render Output (Matplotlib Pipeline)</h3>
+                    <h3>{$t('hydro_rt_render')}</h3>
                     <p>
-                        Generated natively on-demand right now. Proving
-                        asymptotic limits at the grid edge against a `viridis`
-                        coulomb terrain.
+                        {$t('hydro_rt_desc')}
                     </p>
                     <img
                         src={`data:image/png;base64,${artifactsData.image_b64}`}
@@ -233,8 +229,7 @@
 
                 <div class="artifact-section">
                     <h3>
-                        3. Core Executable Script
-                        (`generate_hydrogen_wave_report.py`)
+                        {$t('hydro_core_script')}
                     </h3>
                     <pre><code
                             >{`# 1:1 Validated Logic

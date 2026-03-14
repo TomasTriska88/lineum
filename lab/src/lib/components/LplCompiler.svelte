@@ -255,41 +255,40 @@
 
 <div class="lpl-container">
     <div class="header">
-        <h2>LINEUM POLYGON LANGUAGE (LPL) COMPILER</h2>
+        <h2>{$t('lpl_title')}</h2>
         <p>
-            Design spatial topology and run Universal Logic Gates via continuous
-            fluid dynamics. Draw walls to guide the wave.
+            {$t('lpl_desc')}
         </p>
     </div>
 
     <div class="workspace">
         <!-- TOOLBAR -->
         <div class="toolbar">
-            <h3>TOOLS</h3>
+            <h3>{$t('lpl_tools')}</h3>
             <button
                 class:active={mode === "draw_wall"}
                 on:click={() => (mode = "draw_wall")}
             >
-                🟦 Draw Walls (Crystal)
+                {$t('lpl_tool_draw')}
             </button>
             <button
                 class:active={mode === "erase_wall"}
                 on:click={() => (mode = "erase_wall")}
             >
-                ⬛ Erase (Fluid)
+                {$t('lpl_tool_erase')}
             </button>
             <button
                 class:active={mode === "add_input"}
                 on:click={() => (mode = "add_input")}
             >
-                🟠 Place Input (Laser)
+                {$t('lpl_tool_input')}
             </button>
 
             <div class="divider"></div>
 
-            <h3>PRESETS</h3>
-            <button on:click={loadPresetAND}>Load AND Gate</button>
-            <button on:click={clearMask} class="danger">Clear Space</button>
+            <h3>{$t('lpl_presets')}</h3>
+            <button on:click={loadPresetAND}>{$t('lpl_preset_and')}</button>
+            <button on:click={clearMask} class="danger">{$t('lpl_preset_clear')}</button>
 
             <div class="divider"></div>
 
@@ -298,7 +297,7 @@
                 disabled={isCompiling}
                 on:click={compile}
             >
-                {isCompiling ? "COMPILING WAVES..." : "▶ RUN COMPILER (API)"}
+                {isCompiling ? $t('lpl_btn_compiling') : $t('lpl_btn_run')}
             </button>
 
             {#if error}
@@ -309,7 +308,7 @@
         <!-- CANVAS AREA -->
         <div class="canvas-wrapper">
             <div class="canvas-block">
-                <h4>PHYSICAL MASK (CAD)</h4>
+                <h4>{$t('lpl_mask_cad')}</h4>
                 <canvas
                     bind:this={canvas}
                     width="500"
@@ -319,17 +318,17 @@
                     on:pointerup={handlePointerUp}
                     on:pointerleave={handlePointerUp}
                 ></canvas>
-                <div class="legend">Click & drag to shape the geometry.</div>
+                <div class="legend">{$t('lpl_mask_hint')}</div>
             </div>
 
             <div class="arrow">➔</div>
 
             <div class="canvas-block">
-                <h4>WAVEFORM TELEMETRY (Φ)</h4>
+                <h4>{$t('lpl_telemetry')}</h4>
                 <canvas bind:this={resultCanvas} width="500" height="500"
                 ></canvas>
                 <div class="legend">
-                    Resulting Standing Waves after 500 iterations.
+                    {$t('lpl_telemetry_hint')}
                 </div>
             </div>
         </div>

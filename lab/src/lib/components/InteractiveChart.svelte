@@ -87,11 +87,11 @@
                     type="button"
                     class="icon-btn"
                     on:click={handleMaximize}
-                    aria-label="Maximize">MAX</button
+                    aria-label="Maximize">{$t('chart_max')}</button
                 >
             {/if}
             <button type="button" class="zoom-reset" on:click={resetZoom}
-                >RESET</button
+                >{$t('chart_reset')}</button
             >
         </div>
     </div>
@@ -105,7 +105,7 @@
         <canvas bind:this={canvas}></canvas>
     </div>
     <p class="zoom-help" class:highlighted={highlightZoomTips}>
-        <span class="ctrl-key">CTRL</span> + {"Scroll to ZOOM" ||
+        <span class="ctrl-key">{$t('chart_ctrl')}</span> + {"Scroll to ZOOM" ||
             "Scroll to Zoom"}
     </p>
 </div>

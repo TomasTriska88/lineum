@@ -1,10 +1,12 @@
 <script>
+    import { t } from "../i18n.js";
     import { whitepaperClaims } from "../data/claims.js";
     import whitepaperMap from "../data/whitepaper_map.json";
     import { marked } from "marked";
     import katex from "katex";
     import "katex/dist/katex.min.css";
     import { onMount } from "svelte";
+    import CollapsibleBox from "./CollapsibleBox.svelte";
 
     // Render inline LaTeX: replaces $...$ with KaTeX HTML
     function renderInlineLatex(text) {
@@ -47,6 +49,22 @@
             ? localStorage.getItem("wc_falsification") || "all"
             : "all";
 
+    let selectedWhitepaper =
+        typeof window !== "undefined"
+            ? localStorage.getItem("wc_whitepaper") || "all"
+            : "all";
+            
+    let isFiltersExpanded = false;
+
+    $: hasActiveFilters =
+        searchQuery !== "" ||
+        selectedTag !== "all" ||
+        statusFilter !== "all" ||
+        testabilityFilter !== "all" ||
+        scopeFilter !== "all" ||
+        falsificationFilter !== "all" ||
+        selectedWhitepaper !== "all";
+
     function clearFilters() {
         searchQuery = "";
         selectedTag = "all";
@@ -54,6 +72,7 @@
         testabilityFilter = "all";
         scopeFilter = "all";
         falsificationFilter = "all";
+        selectedWhitepaper = "all";
     }
 
     let integrationLog = [];
@@ -64,6 +83,12 @@
     $: allTags = [
         "all",
         ...new Set(whitepaperClaims.flatMap((c) => c.tags)),
+    ].sort();
+
+    // Derived whitepapers list
+    $: allWhitepapers = [
+        "all",
+        ...new Set(whitepaperClaims.map((c) => c.source_file).filter(Boolean)),
     ].sort();
 
     // Filter claims
@@ -101,6 +126,8 @@
             (falsificationFilter === "needed"
                 ? claim.falsification_needed === true
                 : true);
+        const matchesWhitepaper =
+            selectedWhitepaper === "all" || claim.source_file === selectedWhitepaper;
 
         return (
             matchesSearch &&
@@ -108,7 +135,8 @@
             matchesStatus &&
             matchesTestability &&
             matchesScope &&
-            matchesFalsification
+            matchesFalsification &&
+            matchesWhitepaper
         );
     });
 
@@ -189,6 +217,7 @@
         localStorage.setItem("wc_testability", testabilityFilter);
         localStorage.setItem("wc_scope", scopeFilter);
         localStorage.setItem("wc_falsification", falsificationFilter);
+        localStorage.setItem("wc_whitepaper", selectedWhitepaper);
         if (selectedClaimId) {
             localStorage.setItem("wc_selected_claim", selectedClaimId);
         } else {
@@ -699,70 +728,29 @@ F) AUTOMATION ROUTING
 <div class="claims-container">
     <div class="claims-sidebar">
         {#if canonicalPromotion.canonical_promotion_status !== "NOT_READY"}
-            <div
-                class="promotion-block"
-                style="background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 15px; margin-bottom: 20px;"
+            <CollapsibleBox
+                title={$t('claims.wave_core_promo')}
+                badgeText={canonicalPromotion.canonical_promotion_status.replace(/_/g, " ")}
+                badgeStyle={canonicalPromotion.canonical_promotion_status === 'CANONICAL_AUDITED' ? 'background: #238636; color: white;' : canonicalPromotion.canonical_promotion_status === 'READY_FOR_CANONICAL_PROMOTION' ? 'background: #9e6a03; color: white;' : 'background: #1f6feb; color: white;'}
+                bind:isExpanded={isPromotionBlockExpanded}
             >
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;"
-                    on:click={() =>
-                        (isPromotionBlockExpanded = !isPromotionBlockExpanded)}
-                    on:keydown={(e) =>
-                        e.key === "Enter" &&
-                        (isPromotionBlockExpanded = !isPromotionBlockExpanded)}
-                    role="button"
-                    tabindex="0"
-                >
-                    <div style="flex: 1;">
-                        <h4
-                            style="margin: 0 0 5px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;"
-                        >
-                            <span
-                                style="font-size: 10px; color: #8b949e; display: inline-block; width: 12px; text-align: center;"
-                                >{isPromotionBlockExpanded ? "▼" : "▶"}</span
-                            >
-                            Wave Core Promotion
-                        </h4>
-                        <div
-                            style="font-size: 12px; color: #8b949e; padding-left: 20px;"
-                        >
-                            {canonicalPromotion.required_claims_status.filter(
-                                (r) => r.is_ready,
-                            ).length} / {canonicalPromotion
-                                .required_claims_status.length} required claims
-                        </div>
-                    </div>
-                    <span
-                        style="font-size: 11px; padding: 2px 6px; border-radius: 12px; font-weight: bold; white-space: nowrap; {canonicalPromotion.canonical_promotion_status ===
-                        'CANONICAL_AUDITED'
-                            ? 'background: #238636; color: white;'
-                            : canonicalPromotion.canonical_promotion_status ===
-                                'READY_FOR_CANONICAL_PROMOTION'
-                              ? 'background: #9e6a03; color: white;'
-                              : 'background: #1f6feb; color: white;'}"
-                    >
-                        {canonicalPromotion.canonical_promotion_status.replace(
-                            /_/g,
-                            " ",
-                        )}
-                    </span>
+                <div slot="header-meta" style="font-size: 12px; color: #8b949e; padding-left: 20px;">
+                    {canonicalPromotion.required_claims_status.filter((r) => r.is_ready).length} / {canonicalPromotion.required_claims_status.length} {$t('claims.required_claims')}
                 </div>
-
-                {#if isPromotionBlockExpanded}
                     <div
                         style="margin-top: 15px; border-top: 1px solid #30363d; padding-top: 15px;"
                     >
                         <div
                             style="font-size: 13px; color: #8b949e; margin-bottom: 15px;"
                         >
-                            Goal: Elevating <span
-                                style="font-family: monospace;">wave_core</span
-                            > from provisional to canonical.
+                            {$t('claims.goal_elevating')} <span
+                                style="font-family: monospace;">{$t('wc_wave_core')}</span
+                            > {$t('claims.from_prov_to_canon')}
                         </div>
 
                         <div style="font-size: 13px;">
                             <strong style="display: block; margin-bottom: 8px;"
-                                >Required Claims Status:</strong
+                                >{$t('claims.req_status')}</strong
                             >
                             <ul
                                 style="list-style: none; padding: 0; margin: 0 0 15px 0; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; max-height: 200px; overflow-y: auto;"
@@ -798,7 +786,7 @@ F) AUTOMATION ROUTING
                             <div style="font-size: 13px; color: #ff7b72;">
                                 <strong
                                     style="display: block; margin-bottom: 4px;"
-                                    >Blockers:</strong
+                                    >{$t('claims.blockers')}</strong
                                 >
                                 <ul style="padding-left: 20px; margin: 0;">
                                     {#each canonicalPromotion.missing_requirements as blocker}
@@ -812,127 +800,171 @@ F) AUTOMATION ROUTING
                             <div
                                 style="font-size: 13px; color: #3fb950; margin-top: 15px; padding-top: 15px; border-top: 1px solid #30363d;"
                             >
-                                <strong>Ready!</strong> Please run
+                                <strong>{$t('claims.ready')}</strong> {$t('claims.please_run')}
                                 <span style="font-family: monospace;"
-                                    >Generate Audit Contract</span
-                                > to finalize promotion.
+                                    >{$t('claims.gen_audit_contract')}</span
+                                > {$t('claims.to_finalize')}
                             </div>
                         {/if}
-                    </div>
-                {/if}
-            </div>
+            </CollapsibleBox>
         {/if}
 
-        <div class="filter-section">
-            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                <input
-                    type="text"
-                    placeholder="Search claims..."
-                    bind:value={searchQuery}
-                    class="search-input"
-                    style="flex: 1; min-width: 150px;"
-                />
-                <select
-                    bind:value={selectedTag}
-                    class="tag-select"
-                    style="flex: 1;"
-                >
-                    {#each allTags as tag}
-                        <option value={tag}
-                            >{tag === "all" ? "All Tags" : tag}</option
-                        >
-                    {/each}
-                </select>
-                <select
-                    bind:value={statusFilter}
-                    class="tag-select"
-                    style="flex: 1;"
-                >
-                    <option value="all">All States</option>
-                    <option value="supported">✅ Supported</option>
-                    <option value="contradicted">❌ Contradicted</option>
-                    <option value="untested">⬜ Untested</option>
-                    <option value="experimental">🧪 Experimental</option>
-                    <option value="outdated">⚠️ Outdated</option>
-                    <option value="applied">✓ Applied Only</option>
-                    <option value="not_applied">Not Applied</option>
-                </select>
-            </div>
-
-            <div
-                style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;"
-            >
-                <select
-                    bind:value={testabilityFilter}
-                    class="tag-select"
-                    style="flex: 1;"
-                >
-                    <option value="all">All Testabilities</option>
-                    <option value="TESTABLE_NOW">Testable Now</option>
-                    <option value="NEEDS_NEW_SCENARIO"
-                        >Needs New Scenario</option
+        <!-- Vyjmutý CollapsibleBox volně v parent divu -->
+        <CollapsibleBox
+            title={$t('claims.filter_claims')}
+            badgeText={hasActiveFilters ? $t('claims.showing_x_claims').replace('{count}', filteredClaims.length.toString()) : ""}
+            testId="filters-toggle"
+            bind:isExpanded={isFiltersExpanded}
+        >
+            <div slot="header-actions">
+                {#if hasActiveFilters}
+                    <button
+                        class="clear-filters-btn"
+                        on:click|stopPropagation={clearFilters}
+                        style="background: transparent; color: #ff7b72; border: 1px solid rgba(255,123,114,0.3); border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.65rem; z-index: 10;"
+                        data-tooltip={$t('claims.clear_title')}
                     >
-                    <option value="NOT_TESTABLE_YET">Not Testable Yet</option>
-                </select>
-                <select
-                    bind:value={scopeFilter}
-                    class="tag-select"
-                    style="flex: 1;"
-                >
-                    <option value="all">All Scopes</option>
-                    <option value="MODEL_INTERNAL">Model Internal</option>
-                    <option value="ANALOGICAL">Analogical</option>
-                    <option value="REAL_WORLD_STRONG">Real-world Strong</option>
-                </select>
-                <select
-                    bind:value={falsificationFilter}
-                    class="tag-select"
-                    style="flex: 1;"
-                >
-                    <option value="all">All Falsifications</option>
-                    <option value="needed">Falsification Needed</option>
-                </select>
+                        {$t('claims.clear_filters')}
+                    </button>
+                {/if}
             </div>
-            <div
-                style="display: flex; justify-content: flex-end; margin-top: 5px;"
-            >
-                <button
-                    class="clear-filters-btn"
-                    on:click={clearFilters}
-                    style="background: transparent; color: #ff7b72; border: 1px solid rgba(255,123,114,0.3); border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.75rem;"
-                >
-                    ✕ Clear Filters
-                </button>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div style="flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-search" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.search_query')}</label>
+                    <input
+                        id="filter-search"
+                        type="text"
+                        placeholder="Search claims..."
+                        bind:value={searchQuery}
+                        class="search-input"
+                    />
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-tags" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.tags')}</label>
+                    <select
+                        id="filter-tags"
+                        bind:value={selectedTag}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        {#each allTags as tag}
+                            <option value={tag}
+                                >{tag === "all" ? $t('claims.all_tags') : tag}</option
+                            >
+                        {/each}
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-state" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.audit_state')}</label>
+                    <select
+                        id="filter-state"
+                        bind:value={statusFilter}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        <option value="all">{$t('claims.state_all')}</option>
+                        <option value="supported">{$t('claims.state_supported')}</option>
+                        <option value="contradicted">{$t('claims.state_contradicted')}</option>
+                        <option value="untested">{$t('claims.state_untested')}</option>
+                        <option value="experimental">{$t('claims.state_experimental')}</option>
+                        <option value="outdated">{$t('claims.state_outdated')}</option>
+                        <option value="applied">{$t('claims.state_applied')}</option>
+                        <option value="not_applied">{$t('claims.state_not_applied')}</option>
+                    </select>
+                </div>
             </div>
 
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 5px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-testability" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.testability')}</label>
+                    <select
+                        id="filter-testability"
+                        bind:value={testabilityFilter}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        <option value="all">{$t('claims.testability_all')}</option>
+                        <option value="TESTABLE_NOW">{$t('claims.test_now')}</option>
+                        <option value="NEEDS_NEW_SCENARIO"
+                            >{$t('claims.test_needs_scenario')}</option
+                        >
+                        <option value="NOT_TESTABLE_YET">{$t('claims.test_not_yet')}</option>
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-scope" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.model_scope')}</label>
+                    <select
+                        id="filter-scope"
+                        bind:value={scopeFilter}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        <option value="all">{$t('claims.scope_all')}</option>
+                        <option value="MODEL_INTERNAL">{$t('claims.scope_internal')}</option>
+                        <option value="ANALOGICAL">{$t('claims.scope_analogical')}</option>
+                        <option value="REAL_WORLD_STRONG">{$t('claims.scope_strong')}</option>
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-falsification" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.falsification')}</label>
+                    <select
+                        id="filter-falsification"
+                        bind:value={falsificationFilter}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        <option value="all">{$t('claims.false_all')}</option>
+                        <option value="needed">{$t('claims.false_needed')}</option>
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <label for="filter-whitepaper" style="font-size: 11px; color: #8b949e; text-transform: uppercase;">{$t('claims.doc_source')}</label>
+                    <select
+                        id="filter-whitepaper"
+                        bind:value={selectedWhitepaper}
+                        class="tag-select"
+                        style="width: 100%;"
+                    >
+                        <option value="all">{$t('claims.doc_all')}</option>
+                        {#each allWhitepapers as wp}
+                            {#if wp !== "all"}
+                                <option value={wp}>{wp}</option>
+                            {/if}
+                        {/each}
+                    </select>
+                </div>
+            </div>
+        </CollapsibleBox>
+
+        <div class="filter-section">
             <div class="bulk-actions">
                 <button
                     class="bulk-btn verify-all-btn"
                     on:click={verifyAllClaims}
                     disabled={isVerifyingAll ||
                         !productionSafety.can_verify_all}
-                    title={!productionSafety.can_verify_all
+                    data-tooltip={!productionSafety.can_verify_all
                         ? productionSafety.reason
-                        : "Verify all claims"}
+                        : $t('claims.verify_all_testable')}
                 >
                     {isVerifyingAll
-                        ? "Verifying..."
-                        : "⚡ Verify All Testable Claims"}
+                        ? $t('claims.verification_in_progress')
+                        : $t('claims.verify_all_testable')}
                 </button>
                 <button class="bulk-btn refresh-btn" on:click={refreshStatuses}>
-                    🔄 Refresh Statuses
+                    {$t('claims.refresh_statuses')}
                 </button>
             </div>
 
             {#if verifyAllSummary}
                 <div class="verify-summary-panel">
                     <div class="summary-header">
-                        <span class="summary-title">Claims Verification</span>
+                        <span class="summary-title">{$t('claims.claims_verification')}</span>
                         {#if verifyAllSummary.is_canonical}
-                            <span class="mode-badge canonical">CANONICAL</span>
+                            <span class="mode-badge canonical">{$t('wc_canonical')}</span>
                         {:else}
                             <span class="mode-badge experimental"
-                                >EXPERIMENTAL</span
+                                >{$t('wc_experimental')}</span
                             >
                         {/if}
                     </div>
@@ -970,7 +1002,7 @@ F) AUTOMATION ROUTING
                         >
                         ·
                         <span class="s-dim" title="Duration"
-                            >⏱️ {verifyAllSummary.duration_ms}ms</span
+                            >⏱️ {verifyAllSummary.duration_ms}{$t('wc_ms')}</span
                         >
                     </div>
                 </div>
@@ -1025,7 +1057,7 @@ F) AUTOMATION ROUTING
                 </div>
             {/each}
             {#if filteredClaims.length === 0}
-                <div class="no-results">No claims match your filters.</div>
+                <div class="no-results">{$t('claims.no_results')}</div>
             {/if}
         </div>
     </div>
@@ -1066,9 +1098,9 @@ F) AUTOMATION ROUTING
                         class="applied-banner is-applied"
                         style="margin: 10px 0; background: rgba(46,160,67,0.15); border-left: 3px solid #3fb950; padding: 10px; border-radius: 4px;"
                     >
-                        <strong>Whitepaper status:</strong>
-                        <span style="color: #4ade80;">✓ Applied</span>
-                        | Commit:
+                        <strong>{$t('claims.whitepaper_status')}</strong>
+                        <span style="color: #4ade80;">{$t('claims.applied')}</span>
+                        {$t('claims.commit_label')}
                         <code
                             >{getAppliedEvent(selectedClaim.id, integrationLog)
                                 ?.applied_commit || "unknown"}</code
@@ -1079,7 +1111,7 @@ F) AUTOMATION ROUTING
                         class="applied-banner"
                         style="margin: 10px 0; background: rgba(139,148,158,0.1); border-left: 3px solid #8b949e; padding: 10px; border-radius: 4px; color: #8b949e;"
                     >
-                        Whitepaper status: Not applied yet
+                        {$t('claims.whitepaper_status')} {$t('claims.not_applied_yet')}
                     </div>
                 {/if}
 
@@ -1087,32 +1119,30 @@ F) AUTOMATION ROUTING
                     <div class="audit-warning-banner">
                         <span class="warn-icon">⚠️</span>
                         <div>
-                            <strong>Not audited for current build</strong><br />
-                            Build: <code>{currentBuild}</code>. Runs will be
-                            marked as EXPLORATORY until an official suite is
-                            generated.
+                            <strong>{$t('claims.not_audited_build')}</strong><br />
+                            {$t('claims.build_label')} <code>{currentBuild}</code>. {$t('claims.runs_marked_exploratory')}
                         </div>
                     </div>
                 {:else if auditBannerKind === "stale_for_current_build"}
                     <div class="audit-warning-banner" style="background-color: var(--lineum-amber-dark, #bd561d); color: white;">
                         <span class="warn-icon">⏳</span>
                         <div>
-                            <strong>Audit is stale for current build</strong><br />
-                            Build <code>{currentBuild}</code> has un-audited changes ahead of canonical lineage. Runs will be marked EXPLORATORY.
+                            <strong>{$t('claims.audit_stale')}</strong><br />
+                            {$t('claims.build_label')} <code>{currentBuild}</code> {$t('claims.stale_desc')}
                         </div>
                     </div>
                 {:else if auditBannerKind === "running"}
                     <div class="audit-warning-banner" style="background-color: var(--lineum-wave, #1dbdbd); border-color: var(--lineum-wave); color: #0a0a0a;">
                         <span class="warn-icon">⏳</span>
                         <div>
-                            <strong>Audit running</strong><br />
-                            A formal audit is currently in progress.
+                            <strong>{$t('audit_running')}</strong><br />
+                            {$t('claims.audit_in_progress')}
                         </div>
                     </div>
                 {/if}
 
                 <div class="source-link">
-                    <strong>Source:</strong>
+                    <strong>{$t('claims.source')}</strong>
                     <a
                         href="/wiki/{selectedClaim.source_file.replace(
                             /\.md$/,
@@ -1122,16 +1152,16 @@ F) AUTOMATION ROUTING
                     >
                         {selectedClaim.source_file}
                     </a>
-                    (Section: {selectedClaim.source_anchor})
+                    ({$t('claims.section')} {selectedClaim.source_anchor})
                 </div>
 
                 <div class="explain-pack">
-                    <div class="ep-liner">Human Translation</div>
+                    <div class="ep-liner">{$t('claims.human_translation')}</div>
                     <p>{selectedClaim.human_claim}</p>
 
                     <div class="ep-columns">
                         <div class="ep-col">
-                            <h4>Scientific Claim</h4>
+                            <h4>{$t('claims.scientific_claim')}</h4>
                             <p class="scientific-render">
                                 {@html renderScientificClaim(
                                     selectedClaim.scientific_claim,
@@ -1139,7 +1169,7 @@ F) AUTOMATION ROUTING
                             </p>
                         </div>
                         <div class="ep-col ep-not">
-                            <h4>What this is NOT</h4>
+                            <h4>{$t('claims.what_this_is_not')}</h4>
                             <p>
                                 {@html renderInlineLatex(
                                     selectedClaim.what_it_is_not,
@@ -1152,7 +1182,7 @@ F) AUTOMATION ROUTING
                 <!-- Scope & Classification -->
                 {#if selectedClaim.scope}
                     <div class="scope-section">
-                        <strong>Scope:</strong>
+                        <strong>{$t('claims.scope_label')}</strong>
                         <span
                             class="scope-badge scope-{selectedClaim.scope
                                 .toLowerCase()
@@ -1171,7 +1201,7 @@ F) AUTOMATION ROUTING
                 <!-- Source Quote -->
                 {#if selectedClaim.source_quote}
                     <div class="source-quote-box">
-                        <div class="sq-label">Source Quote</div>
+                        <div class="sq-label">{$t('claims.source_quote')}</div>
                         <blockquote>
                             {@html renderInlineLatex(
                                 selectedClaim.source_quote,
@@ -1186,7 +1216,7 @@ F) AUTOMATION ROUTING
                         <div
                             style="display: flex; justify-content: space-between; align-items: baseline;"
                         >
-                            <h3>Falsification State</h3>
+                            <h3>{$t('claims.falsification_state')}</h3>
                             {#if selectedClaim.falsification_mode}
                                 <span
                                     style="font-size: 11px; padding: 2px 6px; background: rgba(31, 111, 235, 0.15); color: #58a6ff; border: 1px solid rgba(31, 111, 235, 0.3); border-radius: 12px; font-family: monospace;"
@@ -1204,7 +1234,7 @@ F) AUTOMATION ROUTING
                                 <div>
                                     <strong
                                         style="color: #8b949e; display: block; font-size: 11px; text-transform: uppercase;"
-                                        >Status</strong
+                                        >{$t('claims.status')}</strong
                                     >
                                     <span
                                         class="mono"
@@ -1217,19 +1247,19 @@ F) AUTOMATION ROUTING
                                               : '#d29922'};"
                                     >
                                         {selectedClaim.falsification_status ||
-                                            "NOT_RUN"}
+                                            $t('claims.not_run')}
                                     </span>
                                 </div>
                                 <div>
                                     <strong
                                         style="color: #8b949e; display: block; font-size: 11px; text-transform: uppercase;"
-                                        >Evidence Source</strong
+                                        >{$t('claims.evidence_source')}</strong
                                     >
                                     <span class="mono"
                                         >{selectedClaim.falsification_evidence_source?.replace(
                                             /_/g,
                                             " ",
-                                        ) || "NONE"}</span
+                                        ) || $t('claims.none')}</span
                                     >
                                 </div>
                                 {#if selectedClaim.last_falsification_run_id}
@@ -1238,7 +1268,7 @@ F) AUTOMATION ROUTING
                                     >
                                         <strong
                                             style="color: #8b949e; display: inline-block; width: 60px; font-size: 11px;"
-                                            >Run ID:</strong
+                                            >{$t('claims.run_id')}</strong
                                         >
                                         <span
                                             class="mono"
@@ -1251,7 +1281,7 @@ F) AUTOMATION ROUTING
                         {/if}
 
                         <div class="fals-status">
-                            <strong>Falsification needed:</strong>
+                            <strong>{$t('claims.falsification_needed')}</strong>
                             <span
                                 class="fals-badge {selectedClaim.falsification_needed
                                     ? 'yes'
@@ -1265,7 +1295,7 @@ F) AUTOMATION ROUTING
                         {#if selectedClaim.falsification_needed}
                             {#if selectedClaim.falsification_plan}
                                 <div class="fals-plan">
-                                    <strong>Falsification Plan:</strong>
+                                    <strong>{$t('claims.falsification_plan')}</strong>
                                     <p>
                                         {@html renderInlineLatex(
                                             selectedClaim.falsification_plan,
@@ -1274,7 +1304,7 @@ F) AUTOMATION ROUTING
                                 </div>
                             {:else if selectedClaim.missing_falsification_reason}
                                 <div class="fals-missing">
-                                    <strong>Missing Plan — Reason:</strong>
+                                    <strong>{$t('claims.missing_plan')}</strong>
                                     <p>
                                         {selectedClaim.missing_falsification_reason}
                                     </p>
@@ -1287,16 +1317,16 @@ F) AUTOMATION ROUTING
                 <!-- Disclaimers -->
                 {#if selectedClaim.disclaimers}
                     <div class="disclaimers-box">
-                        <div class="disc-label">⚠ Disclaimers</div>
+                        <div class="disc-label">{$t('claims.disclaimers_title')}</div>
                         <p>{selectedClaim.disclaimers}</p>
                     </div>
                 {/if}
 
                 <div class="testing-section">
-                    <h3>Lab Verification Workflow</h3>
+                    <h3>{$t('claims.lab_verify_workflow')}</h3>
 
                     <div class="testability">
-                        <strong>Testability Status:</strong>
+                        <strong>{$t('claims.testability_status')}</strong>
                         <span
                             class="t-badge {selectedClaim.testability.toLowerCase()}"
                         >
@@ -1308,13 +1338,13 @@ F) AUTOMATION ROUTING
                     </div>
 
                     <div class="verification-plan">
-                        <strong>Verification Plan:</strong>
+                        <strong>{$t('claims.verify_plan')}</strong>
                         <p>
                             {@html renderInlineLatex(
                                 selectedClaim.verification_plan,
                             )}
                         </p>
-                        <strong>Expected Lab Measures:</strong>
+                        <strong>{$t('claims.expected_measures')}</strong>
                         <p>
                             {@html renderInlineLatex(
                                 selectedClaim.expected_measures,
@@ -1330,11 +1360,11 @@ F) AUTOMATION ROUTING
                                 disabled={isVerifying}
                             >
                                 {isVerifying
-                                    ? "Running Simulation..."
-                                    : "Run Verification Scenario"}
+                                    ? $t('claims.run_sim_btn')
+                                    : $t('claims.run_verify_scenario')}
                             </button>
                             <p class="action-hint">
-                                Maps to internal preset: <code
+                                {$t('claims.maps_preset')} <code
                                     >{selectedClaim.scenario_id}</code
                                 >
                             </p>
@@ -1343,45 +1373,44 @@ F) AUTOMATION ROUTING
 
                     {#if claimResults[selectedClaim.id]}
                         <div class="last-evidence-box">
-                            <h4>Last Evidence</h4>
+                            <h4>{$t('claims.last_evidence')}</h4>
                             <div class="evidence-meta">
                                 <div>
-                                    <strong>Checked:</strong>
+                                    <strong>{$t('claims.checked_label')}</strong>
                                     {claimResults[selectedClaim.id]
-                                        .checked_at || "unknown"}
+                                        .checked_at || $t('claims.unknown')}
                                 </div>
                                 <div>
-                                    <strong>Manifest:</strong>
+                                    <strong>{$t('claims.manifest_label')}</strong>
                                     <code
                                         >{claimResults[selectedClaim.id]
                                             .manifest_id || "—"}</code
                                     >
                                 </div>
                                 <div>
-                                    <strong>Scenario:</strong>
+                                    <strong>{$t('claims.scenario_label')}</strong>
                                     <code
                                         >{claimResults[selectedClaim.id]
                                             .scenario_id || "—"}</code
                                     >
                                 </div>
                                 <div>
-                                    <strong>Audit:</strong>
+                                    <strong>{$t('claims.audit_label')}</strong>
                                     {claimResults[selectedClaim.id]
                                         .is_audit_grade
-                                        ? "✅ AUDIT GRADE"
+                                        ? $t('claims.audit_grade')
                                         : "🧪 Experimental"}
                                 </div>
                                 {#if claimResults[selectedClaim.id].active_profile}
                                     <div>
-                                        <strong>Profile:</strong>
+                                        <strong>{$t('claims.profile_label')}</strong>
                                         {claimResults[selectedClaim.id]
                                             .active_profile}
                                     </div>
                                 {/if}
                                 {#if claimResults[selectedClaim.id].is_stale}
                                     <div class="stale-warning">
-                                        ⚠️ This result is from a different
-                                        build/equation — re-run to update
+                                        {$t('claims.stale_warning')}
                                     </div>
                                 {/if}
                             </div>
@@ -1390,31 +1419,31 @@ F) AUTOMATION ROUTING
 
                     {#if claimResults[selectedClaim.id] && claimResults[selectedClaim.id].traceability}
                         <div class="traceability-box">
-                            <h4>Computation Traceability</h4>
+                            <h4>{$t('claims.comp_traceability')}</h4>
 
                             <div class="trace-grid">
-                                <strong>Execution Device:</strong>
+                                <strong>{$t('claims.exec_device_label')}</strong>
                                 <span
                                     >{claimResults[selectedClaim.id]
                                         .traceability.execution_device}</span
                                 >
 
-                                <strong>Deterministic Mode:</strong>
+                                <strong>{$t('claims.determ_mode_label')}</strong>
                                 <span
                                     >{claimResults[selectedClaim.id]
                                         .traceability.deterministic_mode
-                                        ? "Yes (Enforced)"
-                                        : "No"}</span
+                                        ? $t('claims.yes_enforced')
+                                        : $t('claims.no')}</span
                                 >
 
-                                <strong>Equation Fingerprint:</strong>
+                                <strong>{$t('claims.eq_fingerprint')}</strong>
                                 <span class="mono small breakable"
                                     >{claimResults[selectedClaim.id]
                                         .traceability
                                         .equation_fingerprint}</span
                                 >
 
-                                <strong>Overall Result:</strong>
+                                <strong>{$t('claims.overall_result')}</strong>
                                 <span
                                     class="verdict {claimResults[
                                         selectedClaim.id
@@ -1424,23 +1453,23 @@ F) AUTOMATION ROUTING
                                 >
                                     {claimResults[selectedClaim.id].traceability
                                         .overall_pass
-                                        ? "SUPPORTED"
-                                        : "CONTRADICTED"}
+                                        ? $t('claims.supported_upper')
+                                        : $t('claims.contradicted_upper')}
                                 </span>
                             </div>
 
                             {#if claimResults[selectedClaim.id].traceability.metrics && claimResults[selectedClaim.id].traceability.metrics.length > 0}
-                                <h5>Evaluated Rules & Metrics</h5>
+                                <h5>{$t('claims.eval_rules_metrics')}</h5>
                                 <div class="trace-table-container">
                                     <table class="trace-table">
                                         <thead>
                                             <tr>
-                                                <th>Metric</th>
-                                                <th>Actual Value</th>
-                                                <th>Rule</th>
-                                                <th>Verdict</th>
-                                                <th>Source</th>
-                                                <th>Reason</th>
+                                                <th>{$t('claims.col_metric')}</th>
+                                                <th>{$t('claims.col_actual')}</th>
+                                                <th>{$t('claims.col_rule')}</th>
+                                                <th>{$t('claims.col_verdict')}</th>
+                                                <th>{$t('claims.col_source')}</th>
+                                                <th>{$t('claims.col_reason')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1467,8 +1496,8 @@ F) AUTOMATION ROUTING
                                                             : 'fail'}"
                                                     >
                                                         {metricObj.passed
-                                                            ? "PASS"
-                                                            : "FAIL"}
+                                                            ? $t('claims.pass')
+                                                            : $t('claims.fail')}
                                                     </td>
                                                     <td class="mono small"
                                                         >{metricObj.source_file_or_field}</td
@@ -1487,9 +1516,9 @@ F) AUTOMATION ROUTING
 
                     {#if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN" || getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE"}
                         <div class="evidence-box exploratory">
-                            <h4>Exploratory Evidence Captured</h4>
+                            <h4>{$t('claims.exploratory_evidence')}</h4>
                             <p>
-                                Status set to <strong
+                                {$t('claims.status_set_to')} <strong
                                     >{getActualStatus(
                                         selectedClaim,
                                         claimResults,
@@ -1497,16 +1526,15 @@ F) AUTOMATION ROUTING
                                 >.
                                 <br /><span
                                     style="color: #ff7b72; font-size: 0.9em;"
-                                    >Audit grade: NOT AVAILABLE (until audit
-                                    suite exists)</span
+                                    >{$t('claims.audit_grade_na')}</span
                                 >
                             </p>
                             <p class="manifest-link">
-                                Extracted Data: {claimResults[selectedClaim.id]
+                                {$t('claims.extracted_data')} {claimResults[selectedClaim.id]
                                     .passed_internal
-                                    ? "Matches Expectations"
-                                    : "Fails Expectations"}
-                                <br />Manifest ID:
+                                    ? $t('claims.matches_exp')
+                                    : $t('claims.fails_exp')}
+                                <br />{$t('claims.manifest_label')}
                                 <span class="mono"
                                     >{claimResults[selectedClaim.id]
                                         ?.manifest_id}</span
@@ -1518,11 +1546,11 @@ F) AUTOMATION ROUTING
                     {#if (getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "CONTRADICTED") && getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "CANONICAL_SUITE"}
                         <div class="evidence-box canonical">
                             <h4>
-                                Canonical Evidence
-                                <span class="audit-badge">✓ Audit Grade</span>
+                                {$t('claims.canonical_evidence')}
+                                <span class="audit-badge">{$t('claims.audit_grade')}</span>
                             </h4>
                             <p>
-                                Status transitioned to <strong
+                                {$t('claims.status_transitioned')} <strong
                                     class={getActualStatus(
                                         selectedClaim,
                                     ).toLowerCase()}
@@ -1533,11 +1561,11 @@ F) AUTOMATION ROUTING
                                 >.
                             </p>
                             <p class="manifest-link">
-                                Audit Contract: <span class="mono contract-id"
+                                {$t('claims.audit_contract')} <span class="mono contract-id"
                                     >{claimResults[selectedClaim.id]
                                         ?.contract_id}</span
                                 ><br />
-                                Source Run Manifest ID:
+                                {$t('claims.source_run_manifest')}
                                 <span class="mono"
                                     >{claimResults[selectedClaim.id]
                                         ?.manifest_id}</span
@@ -1546,43 +1574,37 @@ F) AUTOMATION ROUTING
                                     href="http://127.0.0.1:8000/api/lab/claim_results"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="view-run">(View Run Export ↗)</a
+                                    class="view-run">{$t('claims.view_run_export')}</a
                                 >
                             </p>
                         </div>
                     {/if}
 
                     <div class="proposal-preview">
-                        <h4>Preview: Proposed Whitepaper Edit</h4>
+                        <h4>{$t('claims.preview_proposed')}</h4>
                         <div class="preview-box">
                             {#if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "UNTESTED"}
                                 <p class="preview-placeholder">
-                                    Run an Audit-Grade verification to generate
-                                    proposed edit text.
+                                    {$t('claims.run_audit_generate')}
                                 </p>
                             {:else if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "EXPERIMENTAL_RUN"}
                                 <p class="preview-placeholder">
-                                    Laboratory simulation completed, but an
-                                    official Audit-Grade run is required to
-                                    propose canonical text edits.
+                                    {$t('claims.lab_sim_completed_audit_req')}
                                 </p>
                             {:else if getProvenanceStatus(selectedClaim, claimResults, isGeneratingAudit) === "STALE_EVIDENCE" || getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "OUTDATED"}
                                 <p class="preview-placeholder">
-                                    The previous laboratory simulation is
-                                    outdated. Run a new Audit-Grade verification
-                                    on the current equation to generate proposed
-                                    edit text.
+                                    {$t('claims.prev_lab_sim_outdated')}
                                 </p>
                             {:else if getActualStatus(selectedClaim, claimResults, isGeneratingAudit) === "SUPPORTED"}
                                 <p class="mono-edit add">
                                     + <span class="badge supported"
-                                        >Validated by Lab</span
+                                        >{$t('claims.validated_by_lab')}</span
                                     >
                                     {selectedClaim.short_claim}
                                     <br /><span class="sub-edit">
-                                        (Audit Contract: {claimResults[
+                                        ({$t('claims.audit_contract')} {claimResults[
                                             selectedClaim.id
-                                        ].contract_id} | Manifest: {claimResults[
+                                        ].contract_id} | {$t('claims.manifest_label')} {claimResults[
                                             selectedClaim.id
                                         ].manifest_id})</span
                                     >
@@ -1592,15 +1614,15 @@ F) AUTOMATION ROUTING
                                     - {selectedClaim.short_claim}
                                     <br />+
                                     <span class="badge contradicted"
-                                        >Falsified Hypothesis</span
+                                        >{$t('claims.falsified_hypothesis')}</span
                                     >
                                     {selectedClaim.short_claim}
                                     <br /><span class="sub-edit">
-                                        (Audit Contract: {claimResults[
+                                        ({$t('claims.audit_contract')} {claimResults[
                                             selectedClaim.id
-                                        ].contract_id} | Manifest: {claimResults[
+                                        ].contract_id} | {$t('claims.manifest_label')} {claimResults[
                                             selectedClaim.id
-                                        ].manifest_id} - Keep as record)</span
+                                        ].manifest_id} {$t('claims.keep_as_record')})</span
                                     >
                                 </p>
                             {/if}
@@ -1610,7 +1632,7 @@ F) AUTOMATION ROUTING
                             class="evidence-generator"
                             style="margin-top: 20px; border-top: 1px solid #30363d; padding-top: 15px;"
                         >
-                            <h4>Handoff & Data Export</h4>
+                            <h4>{$t('claims.evidence_actions')}</h4>
                             <textarea
                                 readonly
                                 class="evidence-textarea assistant-textarea"
@@ -1639,16 +1661,16 @@ F) AUTOMATION ROUTING
                                     {copyStates[
                                         `${selectedClaim.id}-assistant`
                                     ] === "copying"
-                                        ? "⏳ Copying..."
+                                        ? $t('claims.copy_assistant_copying')
                                         : copyStates[
                                                 `${selectedClaim.id}-assistant`
                                             ] === "copied"
-                                          ? "✓ Copied for Assistant"
+                                          ? $t('claims.copy_assistant_copied')
                                           : copyStates[
                                                   `${selectedClaim.id}-assistant`
                                               ] === "failed"
-                                            ? "❌ Failed"
-                                            : "📋 Copy for Assistant"}
+                                            ? $t('claims.copy_assistant_failed')
+                                            : $t('claims.copy_assistant')}
                                 </button>
                                 <button
                                     class="run-btn copy"
@@ -1661,16 +1683,16 @@ F) AUTOMATION ROUTING
                                 >
                                     {copyStates[`${selectedClaim.id}-block`] ===
                                     "copying"
-                                        ? "⏳"
+                                        ? $t('claims.copy_evidence_copying')
                                         : copyStates[
                                                 `${selectedClaim.id}-block`
                                             ] === "copied"
-                                          ? "✓ Copied"
+                                          ? $t('claims.copy_evidence_copied')
                                           : copyStates[
                                                   `${selectedClaim.id}-block`
                                               ] === "failed"
-                                            ? "❌ Failed"
-                                            : "Copy Raw Evidence Block"}
+                                            ? $t('claims.copy_evidence_failed')
+                                            : $t('claims.copy_evidence')}
                                 </button>
                                 <button
                                     class="run-btn mark-applied"
@@ -1688,13 +1710,13 @@ F) AUTOMATION ROUTING
                                         markAsApplied(selectedClaim)}
                                 >
                                     {savingApplied
-                                        ? "Saving Log..."
+                                        ? $t('claims.saving_log')
                                         : isApplied(
                                                 selectedClaim.id,
                                                 integrationLog,
                                             )
-                                          ? "Unmark Applied"
-                                          : "Mark as Applied in Log"}
+                                          ? $t('claims.unmark_applied')
+                                          : $t('claims.mark_applied')}
                                 </button>
                             </div>
                         </div>
@@ -1703,8 +1725,7 @@ F) AUTOMATION ROUTING
             </div>
         {:else}
             <div class="empty-state">
-                Select a claim from the list to view its details and
-                verification plan.
+                {$t('claims.empty_state')}
             </div>
         {/if}
     </div>
@@ -1817,12 +1838,27 @@ F) AUTOMATION ROUTING
 
     .search-input,
     .tag-select {
-        background: #0d1117;
+        background: #0d1117 url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" width="16" height="16" stroke="gray" stroke-width="2" fill="none" class="feather feather-chevron-down" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right 10px center;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
         border: 1px solid #30363d;
         color: #c9d1d9;
-        padding: 8px 12px;
+        font-size: 13px;
         border-radius: 6px;
-        font-size: 14px;
+        padding: 8px 30px 8px 12px;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .tag-select:hover {
+        border-color: #8b949e;
+    }
+    .tag-select:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+    }
+    .search-input,
+    .tag-select {
         width: 100%;
         box-sizing: border-box;
     }

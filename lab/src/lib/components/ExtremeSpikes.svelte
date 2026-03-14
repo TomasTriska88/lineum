@@ -72,56 +72,54 @@
 
 <div class="spikes-panel">
     <div class="header">
-        <h3>EXTREME SPIKES (LIVE TELEMETRY)</h3>
-        <p class="subtitle">Real-time localized geometric anomalies.</p>
+        <h3>{$t('spikes_title')}</h3>
+        <p class="subtitle">{$t('spikes_subtitle')}</p>
     </div>
 
     <div class="split-pane">
         <div class="text-pane">
-            <h4>Live Phenomenon Analysis</h4>
+            <h4>{$t('spikes_live_analysis')}</h4>
             <div class="live-stats">
                 <div class="stat-box">
-                    <span class="label">Status</span>
+                    <span class="label">{$t('spikes_status')}</span>
                     <strong class={status === "STABLE" ? "safe" : "danger"}
                         >{status}</strong
                     >
                 </div>
                 <div class="stat-box">
-                    <span class="label">Max Φ Intensity</span>
+                    <span class="label">{$t('spikes_max_phi')}</span>
                     <strong>{maxPhi.toExponential(2)}</strong>
                 </div>
                 <div class="stat-box">
-                    <span class="label">Background Mean Φ</span>
+                    <span class="label">{$t('spikes_mean_phi')}</span>
                     <strong>{meanPhi.toExponential(2)}</strong>
                 </div>
                 <div class="stat-box">
-                    <span class="label">Anomaly Ratio</span>
+                    <span class="label">{$t('spikes_ratio')}</span>
                     <strong>{anomalyRatio.toFixed(1)}x</strong>
                 </div>
             </div>
 
             <p style="margin-top: 15px;">
-                Unlike background noise, these anomalies collapse massive
-                information into localized sub-grids. This reads directly from
-                the actively running 3D engine above.
+                {$t('spikes_desc')}
             </p>
 
             <div class="equation-box">
-                <span class="equation-label">The Information Equivalence</span>
-                <code>I = m / k_φ = E / (k_φ · c_eff²)</code>
+                <span class="equation-label">{$t('spikes_eq_label')}</span>
+                <code>{$t('ex_i_m_k_e_k_c_eff')}</code>
             </div>
         </div>
 
         <div class="visual-pane">
             <div class="visual-card">
-                <h5>2D Anomaly Heatmap (Frame {frame})</h5>
+                <h5>{$t('spikes_heatmap_title').replace('{0}', frame)}</h5>
                 <canvas
                     bind:this={canvasRef}
                     width="256"
                     height="256"
                     class="heatmap-canvas"
                 ></canvas>
-                <p class="caption">Only peaks > 2x Mean Φ are rendered.</p>
+                <p class="caption">{$t('spikes_heatmap_cap')}</p>
             </div>
         </div>
     </div>

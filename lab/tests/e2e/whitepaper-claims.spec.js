@@ -96,7 +96,7 @@ test.describe('Whitepaper Claims State & Provenance Regressions', () => {
         await expect(claimItem).toContainText('STALE EVIDENCE');
 
         // 2. Assert Promotion Panel has 1 / 3
-        const promotionPanel = page.locator('.promotion-block');
+        const promotionPanel = page.locator('.collapsible-box').filter({ hasText: 'Wave Core Promotion' });
         await expect(promotionPanel).toBeVisible();
         await expect(promotionPanel).toContainText('1 / 3 required claims');
 
@@ -115,5 +115,34 @@ test.describe('Whitepaper Claims State & Provenance Regressions', () => {
         // 5. Assert the Promotion Panel did NOT regress to 0 / 3
         await expect(promotionPanel).toContainText('1 / 3 required claims');
         await expect(promotionPanel).not.toContainText('0 / 3 required claims');
+    });
+
+    test('Filters toggling, filtering, and clear functionality', async ({ page }) => {
+        await page.goto('/#claims');
+
+        const claimItem = page.locator('.claim-item').first();
+        await expect(claimItem).toBeVisible();
+
+        // Ensure "Clear Filters" is initially hidden
+        const clearFiltersBtn = page.locator('.clear-filters-btn');
+        await expect(clearFiltersBtn).not.toBeVisible();
+
+        // Expand filters
+        const filtersToggle = page.locator('[data-testid="filters-toggle"]');
+        await expect(filtersToggle).toBeVisible();
+        await filtersToggle.click();
+
+        // Type in search to activate filters
+        const searchInput = page.locator('.search-input');
+        await expect(searchInput).toBeVisible();
+        await searchInput.fill('CL-CORE');
+
+        // Verify "Clear Filters" appears
+        await expect(clearFiltersBtn).toBeVisible();
+
+        // Clear filters
+        await clearFiltersBtn.click();
+        await expect(clearFiltersBtn).not.toBeVisible();
+        await expect(searchInput).toHaveValue('');
     });
 });

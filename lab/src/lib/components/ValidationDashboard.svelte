@@ -1,4 +1,5 @@
 <script>
+    import { t } from "../i18n";
     import { onMount, tick } from "svelte";
     import InteractiveChart from "./InteractiveChart.svelte";
     import ConfirmDialog from "./ConfirmDialog.svelte";
@@ -634,7 +635,7 @@
 >
     <span class="commit" style="display: flex; flex-direction: column;">
         <span
-            >🛡️ System Health &rsaquo; Build: <strong
+            >{$t('vd_sys_health_build')} <strong
                 style="font-family: monospace;"
                 >{systemHealth.commit_hash || "unknown"}</strong
             ></span
@@ -647,14 +648,14 @@
     </span>
     <span class="status-pass" style="display: flex; flex-direction: column;">
         <span
-            >Audit Status: <strong
+            >{$t('vd_audit_status')} <strong
                 class={systemHealth.is_current_build_audited && systemHealth.is_canonical_audit_status
                     ? "audited"
                     : (systemHealth.is_canonical_audit_status ? "outdated" : "none")}>{systemHealth.audit_status}</strong
             ></span
         >
         <span style="font-size: 11px; color: #8b949e;"
-            >Active Contract: {systemHealth.active_contract_id || "null"}</span
+            >{$t('vd_active_contract')} {systemHealth.active_contract_id || "null"}</span
         >
     </span>
     <span
@@ -663,7 +664,7 @@
     >
         <span
             style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-            >WP Path: <strong
+            >{$t('vd_wp_path')} <strong
                 style="font-family: monospace; font-size: 11px;"
                 title={systemHealth.audit_output_wp_abs_path}
                 >{systemHealth.audit_output_wp_abs_path || ""}</strong
@@ -672,12 +673,12 @@
         <span
             style="font-size: 11px; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
             title={systemHealth.active_suite_abs_path || "null"}
-            >Suite: {systemHealth.active_suite_abs_path || "null"}</span
+            >{$t('vd_suite')} {systemHealth.active_suite_abs_path || "null"}</span
         >
     </span>
     <button
         class="glossary-toggle"
-        on:click={() => (showGlossary = !showGlossary)}>❓ Glossary</button
+        on:click={() => (showGlossary = !showGlossary)}>{$t('vd_glossary')}</button
     >
 </div>
 
@@ -690,47 +691,47 @@
                     class="val-btn"
                     on:click={() => (mode = "validate")}
                 >
-                    🔒 VALIDATE<small>Safe Presets</small>
+                    {$t('vd_validate')}<small>{$t('vd_safe_presets')}</small>
                 </button>
                 <button
                     class:active={mode === "explore"}
                     class="exp-btn"
                     on:click={() => (mode = "explore")}
                 >
-                    ⚡ EXPLORE<small>Unlocked</small>
+                    {$t('vd_explore')}<small>{$t('vd_unlocked')}</small>
                 </button>
             </div>
 
             {#if mode === "explore"}
                 <div class="warning-banner border-explore">
-                    <span class="badge badge-explore">Exploratory</span>
-                    <p><strong>Sandbox — you might break stability.</strong></p>
+                    <span class="badge badge-explore">{$t('vd_exploratory')}</span>
+                    <p><strong>{$t('vd_sandbox_you_might_br')}</strong></p>
                     <p class="sci">
-                        Free params + warnings, not validation-grade.
+                        {$t('vd_free_params')}
                     </p>
                 </div>
             {:else}
                 <div class="warning-banner border-validate">
-                    <span class="badge">Validation-grade</span>
+                    <span class="badge">{$t('vd_validation_grade')}</span>
                     <p>
-                        <strong>Technical check — reproducible results.</strong>
+                        <strong>{$t('vd_technical_check_repr')}</strong>
                     </p>
                     <p class="sci">
-                        Locked presets + manifest + validation-grade.
+                        {$t('vd_locked_presets')}
                     </p>
                 </div>
             {/if}
 
             <div class="scenario-list">
                 <div class="scenario-header-row">
-                    <h3>Core Validation</h3>
+                    <h3>{$t('vd_core_validation')}</h3>
                     {#if mode === "validate"}
                         <button
                             class="golden-suite-btn"
                             on:click={runGoldenSuite}
                             disabled={running}
                         >
-                            🌟 RUN GOLDEN SUITE
+                            {$t('vd_run_golden')}
                         </button>
                     {/if}
                 </div>
@@ -746,13 +747,13 @@
                         <div class="dual-desc">
                             <p class="human">{sc.human}</p>
                             <p class="scientific">{sc.scientific}</p>
-                            <p class="when"><em>When:</em> {sc.when}</p>
-                            <p class="expect"><em>Expect:</em> {sc.expect}</p>
+                            <p class="when"><em>{$t('vd_when')}</em> {sc.when}</p>
+                            <p class="expect"><em>{$t('vd_expect')}</em> {sc.expect}</p>
                         </div>
                     </div>
                 {/each}
 
-                <h3 class="ra-header">Reality Alignment Checks</h3>
+                <h3 class="ra-header">{$t('vd_reality_alignment_ch')}</h3>
                 {#each scenarios.filter((s) => s.category === "reality_alignment") as sc}
                     <div
                         class="scenario-card ra-card"
@@ -764,14 +765,14 @@
                         <div class="scenario-title-row">
                             <strong>{sc.name}</strong>
                             {#if sc.lineum_only}
-                                <span class="lineum-badge">LINEUM-ONLY</span>
+                                <span class="lineum-badge">{$t('vd_lineum_only')}</span>
                             {/if}
                         </div>
                         <div class="dual-desc">
                             <p class="human">{sc.human}</p>
                             <p class="scientific">{sc.scientific}</p>
-                            <p class="when"><em>When:</em> {sc.when}</p>
-                            <p class="expect"><em>Expect:</em> {sc.expect}</p>
+                            <p class="when"><em>{$t('vd_when_1')}</em> {sc.when}</p>
+                            <p class="expect"><em>{$t('vd_expect_1')}</em> {sc.expect}</p>
                         </div>
                     </div>
                 {/each}
@@ -779,7 +780,7 @@
 
             {#if selectedScenario === "play"}
                 <div class="preset-panel">
-                    <h3>Particle Presets</h3>
+                    <h3>{$t('vd_particle_presets')}</h3>
                     <div class="preset-buttons">
                         {#each particlePresets as p}
                             <button
@@ -801,43 +802,43 @@
 
             {#if mode === "explore" && selectedScenario === "play"}
                 <div class="tuning-panel">
-                    <h3>Advanced V(r) Analog Tuning</h3>
+                    <h3>{$t('vd_advanced_v_r_analog_')}</h3>
                     <label
-                        >Z (Charge) <input
+                        >{$t('vd_z_charge')} <input
                             type="number"
                             step="0.5"
                             bind:value={exploreConfig.Z}
                         /></label
                     >
                     <label
-                        >ε (Epsilon) <input
+                        >{$t('vd_epsilon')} <input
                             type="number"
                             step="0.05"
                             bind:value={exploreConfig.eps}
                         /></label
                     >
                     <label
-                        >dt (Time Step) <input
+                        >{$t('vd_dt_time_step')} <input
                             type="number"
                             step="0.01"
                             bind:value={exploreConfig.dt}
                         /></label
                     >
                     <label
-                        >Potential V(r):
+                        >{$t('vd_potential_v_r')}
                         <select bind:value={exploreConfig.potential_type}>
-                            <option value="coulomb">Soft Coulomb</option>
-                            <option value="harmonic">Harmonic r^2</option>
-                            <option value="double_well">Double Well</option>
-                            <option value="ring">Ring Potential</option>
+                            <option value="coulomb">{$t('vd_soft_coulomb')}</option>
+                            <option value="harmonic">{$t('vd_harmonic_r_2')}</option>
+                            <option value="double_well">{$t('vd_double_well')}</option>
+                            <option value="ring">{$t('vd_ring_potential')}</option>
                         </select>
                     </label>
                     <label
-                        >Excitation
+                        >{$t('vd_excitation')}
                         <select bind:value={exploreConfig.excited_state}>
-                            <option value={0}>0 (Ground / S-like)</option>
-                            <option value={1}>1 (First Node / P-like)</option>
-                            <option value={2}>2 (Cross Node / D-like)</option>
+                            <option value={0}>{$t('vd_0_ground_s_like')}</option>
+                            <option value={1}>{$t('vd_1_first_node_p_like')}</option>
+                            <option value={2}>{$t('vd_2_cross_node_d_like')}</option>
                         </select>
                     </label>
                 </div>
@@ -885,7 +886,7 @@
         {#if currentResult}
             <div class="results-header" id="verdict-block">
                 <div class="header-main">
-                    <h2>Run Complete: {currentResult.manifest.run_id}</h2>
+                    <h2>{$t('vd_run_complete')} {currentResult.manifest.run_id}</h2>
                     <span class="git-badge">{currentResult.manifest.git}</span>
                 </div>
                 <div class="header-actions">
@@ -896,7 +897,7 @@
                                 .getElementById("visuals-section")
                                 ?.scrollIntoView({ behavior: "smooth" })}
                     >
-                        ⬇️ Jump to Results
+                        {$t('vd_jump_results')}
                     </button>
                     <button
                         class="toggle-details"
@@ -911,7 +912,7 @@
                         href={`/api/lab/runs/${currentResult.manifest.run_id}/export`}
                         download
                     >
-                        📥 Export Data Package (.zip)
+                        {$t('vd_export_data')}
                     </a>
                 </div>
             </div>
@@ -926,15 +927,15 @@
                         {#if currentResult.overall_pass === true}
                             <span class="verdict-icon">✅</span>
                             <span class="verdict-text"
-                                >PASS — All expectations met</span
+                                >{$t('vd_pass_all_expectation')}</span
                             >
                         {:else}
                             <span class="verdict-icon">❌</span>
                             <span class="verdict-text"
-                                >FAIL — Some expectations not met</span
+                                >{$t('vd_fail_some_expectatio')}</span
                             >
                             <button class="fix-btn" on:click={makeStable}
-                                >🔧 Make stable</button
+                                >{$t('vd_make_stable')}</button
                             >
                         {/if}
                         <span
@@ -942,8 +943,8 @@
                                 ? 'verdict-explore'
                                 : 'verdict-validate'}"
                             >{mode === "validate"
-                                ? "🔒 VALIDATE"
-                                : "⚡ EXPLORE"}</span
+                                ? $t('vd_validate')
+                                : $t('vd_explore')}</span
                         >
                     </div>
                     <div class="expectation-checklist">
@@ -995,19 +996,19 @@
                     class:fail={maxL >= 0.2}
                 >
                     <div class="status-icon">
-                        {#if maxL < 0.05}✅ Stable cloud
-                        {:else if maxL < 0.2}⚠️ Leaking edge
-                        {:else}❌ Chaotic (Unstable)
+                        {#if maxL < 0.05}{$t('vd_stable_cloud')}
+                        {:else if maxL < 0.2}{$t('vd_leaking_edge')}
+                        {:else}{$t('vd_chaotic_unstable')}
                         {/if}
                     </div>
                     <div class="status-text">
-                        Max Edge Mass (8 cells): {maxL.toFixed(3)} | Final: {lastL.toFixed(
+                        {$t('vd_max_edge_mass')} {maxL.toFixed(3)} {$t('vd_final')} {lastL.toFixed(
                             3,
                         )}
                     </div>
                     {#if maxL >= 0.05}
                         <button class="autofix-btn" on:click={makeStable}
-                            >🔧 Make stable</button
+                            >{$t('vd_make_stable_1')}</button
                         >
                     {/if}
                     {#if stabilizeMsg}
@@ -1023,7 +1024,7 @@
                     </div>
                     <div class="ep-columns">
                         <div class="ep-col">
-                            <h4>What you're seeing</h4>
+                            <h4>{$t('vd_what_you_re_seeing')}</h4>
                             <ul>
                                 {#each currentResult.explain_pack.what_you_see || [] as item}
                                     <li>{item}</li>
@@ -1031,7 +1032,7 @@
                             </ul>
                         </div>
                         <div class="ep-col ep-not">
-                            <h4>What this is NOT</h4>
+                            <h4>{$t('vd_what_this_is_not')}</h4>
                             <ul>
                                 {#each currentResult.explain_pack.what_it_is_not || [] as item}
                                     <li>{item}</li>
@@ -1042,7 +1043,7 @@
                     {#if currentResult.explain_pack.disclaimers?.length}
                         <details class="ep-disclaimers">
                             <summary
-                                >Disclaimers ({currentResult.explain_pack
+                                >{$t('vd_disclaimers')}{currentResult.explain_pack
                                     .disclaimers.length})</summary
                             >
                             <ul>
@@ -1061,7 +1062,7 @@
                 class:side-by-side={showDetails}
             >
                 <div class="run-col">
-                    <h3>Simulation Output</h3>
+                    <h3>{$t('vd_simulation_output')}</h3>
                     {#if currentResult.image_b64}
                         <img
                             src={`data:image/png;base64,${currentResult.image_b64}`}
@@ -1072,7 +1073,7 @@
                 {#if compareResult && showDetails}
                     <div class="run-col">
                         <h3>
-                            Comparison Base: {compareResult.manifest.run_id
+                            {$t('vd_comparison_base')} {compareResult.manifest.run_id
                                 .split("_")
                                 .slice(1, 3)
                                 .join("_")}
@@ -1120,7 +1121,7 @@
             {#if compareResult}
                 <div class="compare-panel">
                     <h3>
-                        📊 Compare: {currentResult.manifest.run_id} vs {compareResult
+                        {$t('vd_compare')} {currentResult.manifest.run_id} {$t('vd_vs')} {compareResult
                             .manifest?.run_id}
                     </h3>
 
@@ -1135,19 +1136,19 @@
                             ]}
                         {#if a && b}
                             <div class="delta-metrics">
-                                <h4>Δ Metrics</h4>
+                                <h4>{$t('vd_metrics')}</h4>
                                 <table class="delta-table">
                                     <thead
                                         ><tr
-                                            ><th>Metric</th><th>Current</th><th
-                                                >Compare</th
+                                            ><th>{$t('vd_metric')}</th><th>{$t('vd_current')}</th><th
+                                                >{$t('vd_compare_1')}</th
                                             ><th>Δ</th></tr
                                         ></thead
                                     >
                                     <tbody>
                                         {#if a.E !== undefined && b.E !== undefined}
                                             <tr>
-                                                <td>Energy E</td>
+                                                <td>{$t('vd_energy_e')}</td>
                                                 <td>{a.E?.toFixed(4)}</td>
                                                 <td>{b.E?.toFixed(4)}</td>
                                                 <td
@@ -1183,7 +1184,7 @@
                                         {/if}
                                         {#if a.edge_mass_cells !== undefined && b.edge_mass_cells !== undefined}
                                             <tr>
-                                                <td>Edge Mass</td>
+                                                <td>{$t('vd_edge_mass')}</td>
                                                 <td
                                                     >{a.edge_mass_cells?.toFixed(
                                                         6,
@@ -1214,7 +1215,7 @@
                                         {/if}
                                         {#if a.drift_dE !== undefined && b.drift_dE !== undefined}
                                             <tr>
-                                                <td>Drift ΔE/E</td>
+                                                <td>{$t('vd_drift_e_e')}</td>
                                                 <td>{a.drift_dE?.toFixed(4)}</td
                                                 >
                                                 <td>{b.drift_dE?.toFixed(4)}</td
@@ -1242,7 +1243,7 @@
                     {/if}
 
                     <div class="diff-manifest">
-                        <h4>Diff Manifest</h4>
+                        <h4>{$t('vd_diff_manifest')}</h4>
                         <div class="diff-grid">
                             {#if currentResult.manifest?.config && compareResult.manifest?.config}
                                 {@const mc = currentResult.manifest.config}
@@ -1276,7 +1277,7 @@
                     <button
                         class="close-compare"
                         on:click={() => (compareResult = null)}
-                        >✕ Close Compare</button
+                        >{$t('vd_close_compare')}</button
                     >
                 </div>
             {/if}
@@ -1285,11 +1286,11 @@
 
     <aside class="sidebar-right">
         <div class="hist-header">
-            <h3>Run History DB</h3>
+            <h3>{$t('vd_run_history_db')}</h3>
             <button
                 class="clear-db-btn"
                 on:click={promptClearHistory}
-                title="Clear All History">🗑️ Clear</button
+                title="Clear All History">{$t('vd_clear')}</button
             >
         </div>
         <div class="hist-list">
@@ -1313,16 +1314,16 @@
                         {#if run.manifest?.is_golden}<span
                                 class="golden-badge"
                                 title="Part of the Golden validation suite"
-                                >GOLDEN</span
+                                >{$t('vd_golden')}</span
                             >{/if}
                         {#if run.manifest?.mode === "explore"}<span
-                                class="b-exp">EXP</span
-                            >{:else}<span class="b-val">VAL</span>{/if}
+                                class="b-exp">{$t('vd_exp')}</span
+                            >{:else}<span class="b-val">{$t('vd_val')}</span>{/if}
                         {#if run.overall_pass === true}<span class="b-pass"
-                                >PASS</span
+                                >{$t('vd_pass')}</span
                             >
                         {:else if run.overall_pass === false}<span
-                                class="b-fail">FAIL</span
+                                class="b-fail">{$t('vd_fail')}</span
                             >
                         {/if}
                     </div>
@@ -1330,25 +1331,25 @@
                     <div class="hist-p">
                         {#if run.manifest?.config?.Z}Z={run.manifest.config
                                 .Z}{/if}
-                        {#if run.manifest?.config?.dt}dt={run.manifest.config
+                        {#if run.manifest?.config?.dt}{$t('vd_dt')}{run.manifest.config
                                 .dt}{/if}
                         {#if run.manifest?.config?.physics_mode_psi}| {run
                                 .manifest.config.physics_mode_psi}{/if}
                     </div>
                     <div class="hist-actions">
                         <button on:click={() => loadPastRun(run.run_id)}
-                            >Load</button
+                            >{$t('vd_load')}</button
                         >
                         <button
                             class="rerun-btn"
                             on:click={() => rerunFromManifest(run.run_id)}
-                            >Rerun</button
+                            >{$t('vd_rerun')}</button
                         >
                         {#if currentResult && currentResult.manifest.run_id !== run.run_id}
                             <button
                                 class="cmp-btn"
                                 on:click={() => loadCompareRun(run.run_id)}
-                                >Diff</button
+                                >{$t('vd_diff')}</button
                             >
                         {/if}
                     </div>
@@ -1409,7 +1410,7 @@
         >
             <div class="glossary-panel">
                 <div class="glossary-header">
-                    <h3>📖 Lab Glossary</h3>
+                    <h3>{$t('vd_lab_glossary')}</h3>
                     <button
                         class="glossary-close"
                         on:click={() => (showGlossary = false)}>✕</button

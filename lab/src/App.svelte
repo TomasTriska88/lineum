@@ -417,9 +417,9 @@
     {:else if error}
         <div class="loader">
             <div class="error-msg">
-                <h3>INITIALIZATION FAILURE</h3>
+                <h3>{$t('init_fail')}</h3>
                 <p>{error}</p>
-                <button on:click={() => window.location.reload()}>RETRY</button>
+                <button on:click={() => window.location.reload()}>{$t('retry')}</button>
             </div>
         </div>
     {/if}
@@ -442,9 +442,9 @@
                     color="#00ffff"
                     variant="infinity_draw"
                 />
-                <h1>SIMULACRUM</h1>
+                <h1>{$t('simulakrum')}</h1>
             </div>
-            <span class="subtitle">Lineum Lab | Hypothesis Sandbox</span>
+            <span class="subtitle">{$t('sub_title')}</span>
         </div>
 
         <div class="nav-modes">
@@ -466,9 +466,9 @@
                 <button
                     class="btn-generate-audit cancel"
                     on:click={cancelAuditContract}
-                    title="Stop physics simulation and quarantine artifacts."
+                    data-tooltip={$t('cancel_audit_title')}
                 >
-                    🚫 CANCEL AUDIT
+                    {$t('cancel_audit')}
                 </button>
             {/if}
             <button
@@ -478,15 +478,15 @@
                 on:click={initiateAuditGeneration}
                 disabled={(auditConfig && !auditConfig.allowed) ||
                     isGeneratingAudit}
-                title={auditConfig?.reason ||
-                    "Generates a local canonical contract in output_wp/"}
+                data-tooltip={auditConfig?.reason ||
+                    $t('gen_audit_title')}
             >
                 {#if isGeneratingAudit}
-                    <span class="icon">⏳</span> AUDIT RUNNING
+                    <span class="icon">⏳</span> {$t('audit_running')}
                 {:else if auditConfig && !auditConfig.allowed}
-                    <span class="icon">🔒</span> LOCAL ONLY
+                    <span class="icon">🔒</span> {$t('local_only')}
                 {:else}
-                    🛡️ GENERATE AUDIT CONTRACT
+                    {$t('gen_audit_contract')}
                 {/if}
             </button>
         </div>
@@ -510,7 +510,7 @@
 
     {#if isGeneratingAudit}
         <div class="audit-progress-panel" data-testid="audit-progress-panel">
-            <div class="panel-header">LIVE AUDIT PROGRESS</div>
+            <div class="panel-header">{$t('live_progress')}</div>
             <div class="panel-body">{auditProgressText}</div>
         </div>
     {/if}
@@ -538,12 +538,12 @@
                 >
                     <span class="status-icon"></span>
                     <span class="status-msg">
-                        SYSTEM STATUS: BREAKTHROUGH DETECTED:
+                        {$t('system_status_breakthrough')}
                         {metadata?.pearson_r > 0.9
-                            ? "PRIME RESONANCE (1:1 ALIGNMENT)"
+                            ? $t('status_prime_resonance')
                             : metadata?.pearson_r > 0.5
-                              ? "GEOMETRY TUNING"
-                              : "STOCHASTIC NOISE (CHAOS)"}
+                              ? $t('status_geometry_tuning')
+                              : $t('status_stochastic_noise')}
                     </span>
                 </div>
             </div>
@@ -551,7 +551,7 @@
             {#if frame >= 391}
                 <div class="central-alert-system">
                     <div class="event-marker">
-                        SYSTEM ALERT: LINON DETECTION [birth]
+                        {$t('alert_birth')}
                     </div>
                 </div>
             {/if}
@@ -563,35 +563,35 @@
                         class:active={activeTab === "stats"}
                         on:click={() => (activeTab = "stats")}
                     >
-                        STATISTICS
+                        {$t('tab_stats')}
                     </button>
                     <button
                         class="tab-btn"
                         class:active={activeTab === "scanner"}
                         on:click={() => (activeTab = "scanner")}
                     >
-                        SCANNER
+                        {$t('tab_scanner')}
                     </button>
                     <button
                         class="tab-btn"
                         class:active={activeTab === "tidal"}
                         on:click={() => (activeTab = "tidal")}
                     >
-                        Tidal
+                        {$t('tab_tidal')}
                     </button>
                     <button
                         class="tab-btn"
                         class:active={activeTab === "hypothesis"}
                         on:click={() => (activeTab = "hypothesis")}
                     >
-                        HYPOTHESIS DISCOVERY
+                        {$t('discovery_analysis')}
                     </button>
                     <button
                         class="tab-btn"
                         class:active={activeTab === "spikes"}
                         on:click={() => (activeTab = "spikes")}
                     >
-                        Phenomena
+                        {$t('tab_spikes')}
                     </button>
                 </div>
 
@@ -599,35 +599,35 @@
                     {#if activeTab === "stats"}
                         <div class="stats-panel">
                             <div class="stat">
-                                <span class="label">MODE:</span>
+                                <span class="label">{$t('label_mode')}</span>
                                 <span class="value"
-                                    >FIELD Φ TOPOGRAPHY (3D)</span
+                                    >{$t('val_mode')}</span
                                 >
                             </div>
                             <div class="stat">
-                                <span class="label">METRIC:</span>
+                                <span class="label">{$t('label_metric')}</span>
                                 <span class="value"
-                                    >z = field Φ height [AUDIT]</span
+                                    >{$t('val_metric')}</span
                                 >
                             </div>
                             <div class="stat">
-                                <span class="label">FRAME:</span>
+                                <span class="label">{$t('label_frame')}</span>
                                 <span class="value"
                                     >{frame} / {totalFrames}</span
                                 >
                             </div>
                             <div class="stat">
-                                <span class="label">SOURCE:</span>
+                                <span class="label">{$t('label_source')}</span>
                                 <span class="value"
                                     >{metadata?.run_tag || "Audit"}</span
                                 >
                             </div>
                             <div class="stat">
-                                <span class="label">STATUS:</span>
+                                <span class="label">{$t('label_status')}</span>
                                 <span class="value"
                                     >{frame >= (metadata?.birth_frame || 391)
-                                        ? "LINON DETECTION"
-                                        : "FIELD Φ INITIALIZATION"}</span
+                                        ? $t('status_born')
+                                        : $t('status_init')}</span
                                 >
                                 {#if metadata && frame < metadata.birth_frame}
                                     <button
@@ -637,12 +637,12 @@
                                                 metadata.birth_frame,
                                             )}
                                     >
-                                        JUMP TO BIRTH [{metadata.birth_frame}]
+                                        {$t('btn_jump')}{metadata.birth_frame}{$t('jump_end')}
                                     </button>
                                 {/if}
                             </div>
                             <div class="stat speed-control">
-                                <span class="label">SPEED:</span>
+                                <span class="label">{$t('label_speed')}</span>
                                 <span class="value"
                                     >{playbackSpeed.toFixed(1)}x</span
                                 >
@@ -656,7 +656,7 @@
                             </div>
 
                             <div class="stat toggle-control">
-                                <span class="label">GOLDEN RATIO:</span>
+                                <span class="label">{$t('label_phi')}</span>
                                 <button
                                     class="toggle-btn {showSpiral
                                         ? 'active'
@@ -751,7 +751,7 @@
         <div class="global-modal-overlay">
             <div class="modal-content warning-modal" style="max-width: 500px">
                 <div class="modal-header">
-                    <h3>⚠️ Performance Warning</h3>
+                    <h3>{$t('perf_warning_title')}</h3>
                     <button
                         class="close-btn"
                         on:click={() => (showCudaWarning = false)}
@@ -762,20 +762,20 @@
                     <p
                         style="margin-bottom: 12px; font-size: 1.1rem; color: #ffeb3b;"
                     >
-                        <strong>Canonical runs enforced on CPU</strong>
+                        <strong>{$t('perf_warning_desc')}</strong>
                     </p>
                     <div
                         style="background: rgba(0,0,0,0.3); border: 1px solid #1f1f35; padding: 12px; border-radius: 6px; margin-bottom: 12px; font-family: monospace; font-size: 0.85rem; color: #a0aec0;"
                     >
                         <div>
                             <strong style="color: #cbd5e1;"
-                                >Execution Device:</strong
+                                >{$t('exec_device')}</strong
                             >
                             {auditConfig?.execution_device || "CPU"}
                         </div>
                         <div>
                             <strong style="color: #cbd5e1;"
-                                >Deterministic Mode:</strong
+                                >{$t('determ_mode')}</strong
                             >
                             {auditConfig?.deterministic_mode
                                 ? "Enabled"
@@ -783,13 +783,13 @@
                         </div>
                         <div>
                             <strong style="color: #cbd5e1;"
-                                >CUDA Available:</strong
+                                >{$t('cuda_avail')}</strong
                             >
                             {auditConfig?.cuda_available ? "Yes" : "No"}
                         </div>
                         <div>
                             <strong style="color: #cbd5e1;"
-                                >Canonical on CUDA Allowed:</strong
+                                >{$t('canon_cuda')}</strong
                             >
                             {auditConfig?.canonical_audit_allowed_on_cuda
                                 ? "Yes"
@@ -797,17 +797,15 @@
                         </div>
                         {#if auditConfig?.reason}
                             <div style="margin-top: 8px; color: #f87171;">
-                                <strong style="color: #cbd5e1;">Reason:</strong>
+                                <strong style="color: #cbd5e1;">{$t('reason')}</strong>
                                 {auditConfig.reason}
                             </div>
                         {/if}
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.5;">
-                        This canonical audit requires solving the Lineum Eq-7
-                        wavefield over 2,000 steps. It will run on <strong
+                        {$t('canon_warn_msg1')} <strong
                             >{auditConfig?.device_name || "CPU"}</strong
-                        > and may be much slower (approx 2-5 minutes). Do you want
-                        to continue?
+                        > {$t('canon_warn_msg2')}
                     </p>
                     <div
                         style="display: flex; gap: 16px; margin-top: 24px; justify-content: flex-end;"
@@ -816,13 +814,13 @@
                             class="btn-cancel"
                             on:click={() => (showCudaWarning = false)}
                             style="background: transparent; border: 1px solid #4a4a5a; padding: 8px 16px; border-radius: 6px; cursor: pointer; color: #fff;"
-                            >Cancel</button
+                            >{$t('cancel')}</button
                         >
                         <button
                             class="btn-proceed"
                             on:click={generateAuditContract}
                             style="background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; padding: 8px 16px; border-radius: 6px; cursor: pointer; color: #fef08a; font-weight: bold;"
-                            >Continue on CPU</button
+                            >{$t('continue_cpu')}</button
                         >
                     </div>
                 </div>

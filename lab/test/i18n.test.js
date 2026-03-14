@@ -46,3 +46,41 @@ describe('i18n Hardcoded Text Enforcement', () => {
         expect(code).not.toContain('label: "LPL Compiler"');
     });
 });
+
+describe('i18n Key Existence Validation', () => {
+    it('ensures every $t("key") referenced in Svelte components actually exists in i18n.js', () => {
+        const srcDir = path.resolve(__dirname, '../src');
+        const svelteFiles = [];
+
+        function findSvelteFiles(dir) {
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                const fullPath = path.join(dir, file);
+                if (fs.statSync(fullPath).isDirectory()) {
+                    findSvelteFiles(fullPath);
+                } else if (fullPath.endsWith('.svelte')) {
+                    svelteFiles.push(fullPath);
+                }
+            }
+        }
+        findSvelteFiles(srcDir);
+
+        const missingKeys = [];
+        // Match $t('key') or $t("key")
+        const tRegex = /\$t\(['"]([^'"]+)['"]\)/g;
+
+        for (const file of svelteFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            let match;
+            while ((match = tRegex.exec(content)) !== null) {
+                const key = match[1];
+                const resolved = resolveKey(translations, key);
+                if (resolved === undefined) {
+                    missingKeys.push(`[${path.basename(file)}] Missing translation key: '${key}'`);
+                }
+            }
+        }
+
+        expect(missingKeys, "Found Svelte components referencing non-existent i18n keys!").toEqual([]);
+    });
+});

@@ -3,7 +3,7 @@
     export let height = 32;
     export let color = "currentColor";
     export let className = "";
-    export let variant: "infinity_draw" = "infinity_draw";
+    export let variant = "infinity_draw";
 </script>
 
 <svg
@@ -11,7 +11,7 @@
     {height}
     viewBox="0 0 100 100"
     xmlns="http://www.w3.org/2000/svg"
-    class={`lineum-logo ${variant} ${className}`}
+    class="lineum-logo {variant} {className}"
 >
     <!-- Background / Border Glow -->
     <defs>

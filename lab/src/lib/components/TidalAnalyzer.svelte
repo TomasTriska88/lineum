@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import InteractiveChart from "./InteractiveChart.svelte";
+    import { t } from "../i18n";
 
     export let dataRoot = "";
 
@@ -74,9 +75,9 @@
 
 <div class="tidal-analyzer">
     <div class="panel-header">
-        <h3>Tidal Stretching Analysis</h3>
+        <h3>{$t('tidal_title')}</h3>
         <p class="desc">
-            Observation of cluster dispersion near massive phi-traps.
+            {$t('tidal_desc')}
         </p>
     </div>
 
@@ -97,27 +98,26 @@
 
         <div class="metrics-grid">
             <div class="metric">
-                <span class="label">Min Variance</span>
+                <span class="label">{$t('tidal_min_variance')}</span>
                 <span class="value">{minVar.toFixed(2)}</span>
             </div>
             <div class="metric highlight">
-                <span class="label">Max Variance</span>
+                <span class="label">{$t('tidal_max_variance')}</span>
                 <span class="value">{maxVar.toFixed(2)}</span>
             </div>
         </div>
         <div class="interpretation">
-            <p><strong>Status:</strong> [HYPOTHESIS_CONFIRMED]</p>
+            <p><strong>{$t('tidal_status')}</strong> {$t('tidal_hypo_conf')}</p>
             <p>
-                The {ratio.toFixed(1)}x increase in variance confirms that front
-                linons accelerate faster than rear linons, causing
-                <strong>spaghettification</strong>.
+                {$t('tidal_spaghetti_a').replace('{0}', ratio.toFixed(1))}
+                <strong>{$t('tidal_spaghetti_b')}</strong>.
             </p>
             <p class="source">
-                Source: Automated Pipeline ({stretchingData.variances.length} samples)
+                {$t('tidal_source_pipeline').replace('{0}', stretchingData.variances.length)}
             </p>
         </div>
     {:else}
-        <p class="loading">Searching for tidal signatures...</p>
+        <p class="loading">{$t('tidal_searching_signatures')}</p>
     {/if}
 </div>
 

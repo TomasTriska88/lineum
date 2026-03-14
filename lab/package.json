@@ -8,7 +8,7 @@
         "dev": "concurrently -k -n \"SVELTE,PYTHON\" -c \"cyan,magenta\" \"vite\" \"cd .. && python -m uvicorn routing_backend.main:app --host 127.0.0.1 --port 8000\"",
         "build": "vite build",
         "preview": "vite preview",
-        "pretest": "node ../scripts/generate_whitepaper_map.js",
+        "pretest": "node ../scripts/generate_whitepaper_map.js && node scripts/enforce_i18n.js",
         "test": "node ../portal/scripts/check-localhost-e2e.js && node scripts/validate_claims.js && vitest run",
         "test:e2e": "playwright test"
     },

@@ -2,7 +2,9 @@
     import { t } from "../i18n";
 
     export let frame = 0;
+    /** @type {any} */
     export let data = null;
+    /** @type {any} */
     export let harmonics = null;
 
     let zetaZeros = [14.13, 21.02, 25.01, 30.42, 32.93];
@@ -39,17 +41,17 @@
     $: harmonyPercent = h_score * 100;
     $: harmonyStatus =
         harmonyPercent > 80
-            ? "ABSOLUTE"
+            ? $t('zeta_status_abs')
             : harmonyPercent > 50
-              ? "HIGH"
-              : "TUNING...";
+              ? $t('zeta_status_high')
+              : $t('zeta_status_tune');
 
     $: harmonyInsight =
         harmonyPercent > 80
-            ? "We have reached the mathematical perfection of the Golden Ratio."
+            ? $t('zeta_insight_abs')
             : harmonyPercent > 50
-              ? "Structural order is steadily consolidating."
-              : "Fundamental geometry is being formed.";
+              ? $t('zeta_insight_high')
+              : $t('zeta_insight_tune');
 
     $: correlationPercent = c_score * 100;
 
@@ -70,23 +72,23 @@
     }
 
     $: discoveryStatus = hasConfirmedDiscovery
-        ? "FUNDAMENTAL DISCOVERY"
+        ? $t('zeta_disc_fund')
         : correlationPercent > 60
-          ? "High Match"
-          : "Searching for Order";
+          ? $t('zeta_disc_high')
+          : $t('zeta_disc_search');
 
     $: cosmicConclusion = hasConfirmedDiscovery
-        ? "🌟 CONFIRMED: This configuration shows geometric alignment with the fundamental code of our universe."
+        ? $t('zeta_cosmic_conf')
         : avgCorrelation > 0.6
-          ? "System shows signs of resonance with Riemann zeros."
-          : "Frequency tuning in progress to achieve cosmic harmony.";
+          ? $t('zeta_cosmic_res')
+          : $t('zeta_cosmic_tune');
 
     let showInfo = false;
 </script>
 
 <div class="zeta-scanner">
     <div class="scanner-header">
-        <div class="scanner-title">ZETA RESONANCE SCANNER [§4.3]</div>
+        <div class="scanner-title">{$t('zeta_title')}</div>
         <button
             type="button"
             class="info-toggle"
@@ -99,7 +101,7 @@
     <!-- 🌐 Layman Insights: Now permanent and condensed -->
     <div class="permanent-insights">
         <div class="insight-item">
-            <span class="label">Φ STATE:</span>
+            <span class="label">{$t('zeta_phi_state')}</span>
             <span
                 class="value"
                 style="color: {harmonyPercent > 30 ? '#00ffff' : '#ffaa00'}"
@@ -108,12 +110,12 @@
             </span>
             <div class="sub-label">{harmonyInsight}</div>
             <div class="cumulative-label">
-                Total average:
+                {$t('zeta_total_avg')}
                 {(avgHarmony * 100).toFixed(1)}%
             </div>
         </div>
         <div class="insight-item">
-            <span class="label">CORRELATION:</span>
+            <span class="label">{$t('zeta_correlation')}</span>
             <span class="value" class:discovery={hasConfirmedDiscovery}>
                 {discoveryStatus} ({correlationPercent.toFixed(1)}%)
             </span>
@@ -124,7 +126,7 @@
                 {cosmicConclusion}
             </div>
             <div class="cumulative-label">
-                Match stability (last 15 fr.):
+                {$t('zeta_match_stable')}
                 {(windowAvg * 100).toFixed(1)}%
             </div>
         </div>
@@ -132,12 +134,12 @@
 
     {#if showInfo}
         <div class="layman-info">
-            <p><strong>WHAT DOES THIS MEAN?</strong></p>
+            <p><strong>{$t('zeta_what_mean')}</strong></p>
             <p>
-                This section measures how much the heartbeat of your linons matches the rhythm of our universe.
+                {$t('zeta_meaning_desc')}
             </p>
             <p>
-                <em>Current status:</em>
+                <em>{$t('zeta_current_status')}</em>
                 <span
                     style="color: {hasConfirmedDiscovery
                         ? '#fff'
@@ -147,21 +149,21 @@
                 </span>
             </p>
             <p>
-                <em>Golden Ratio (1.618...):</em>
-                Stability in field Φ gravitates towards Fibonacci ratios.
-                Currently:
+                <em>{$t('zeta_golden_ratio')}</em>
+                {$t('zeta_stability_fib')}
+                {$t('zeta_currently')}
                 <strong>{harmonyPercent.toFixed(1)}%</strong>
             </p>
             {#if hasConfirmedDiscovery}
                 <div class="discovery-alert">
-                    🚀 CONCLUSION: Structural alignment detected, confirming the non-random nature of this configuration!
+                    {$t('zeta_alert_conclusion')}
                 </div>
             {/if}
         </div>
     {/if}
 
     <div class="spectral-display">
-        <div class="axis-label">RESONANCE INTENSITY [NORMALIZED]</div>
+        <div class="axis-label">{$t('zeta_resonance_int')}</div>
 
         <div class="spectrum-container">
             <!-- 🪐 Zeta Zero Background Markers -->
@@ -177,18 +179,18 @@
                 style="left: {(currentVal / 40) * 100}%"
             >
                 <div class="needle-glow"></div>
-                <div class="needle-label">LINON FREQUENCY (f₀)</div>
+                <div class="needle-label">{$t('zeta_linon_freq')}</div>
             </div>
         </div>
     </div>
 
     <div class="metrics-row">
         <div class="metric-item">
-            HARMONY Φ:
+            {$t('zeta_harmony_phi')}
             <span class="highlight">{harmonyPercent.toFixed(2)} %</span>
         </div>
         <div class="metric-item">
-            CORRELATION WITH OUR UNIVERSE:
+            {$t('zeta_correlation_univ')}
             <span class="highlight">{correlationPercent.toFixed(2)} %</span>
         </div>
     </div>
