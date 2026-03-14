@@ -8,9 +8,33 @@ import json
 import hashlib
 import numpy as np
 import platform
+import io
+from contextlib import redirect_stdout
+
+def extract_blas_linkage():
+    f = io.StringIO()
+    with redirect_stdout(f):
+        np.show_config()
+    out = f.getvalue().lower()
+    
+    if "openblas" in out:
+        return "openblas"
+    elif "mkl" in out:
+        return "mkl"
+    elif "accelerate" in out:
+        return "accelerate"
+    elif "atlas" in out:
+        return "atlas"
+    return "generic_blas"
 
 def get_execution_profile():
-    return f"{sys.platform}_{platform.machine()}_numpy{np.__version__}"
+    os_name = sys.platform
+    arch = platform.machine()
+    py_ver = f"{sys.version_info.major}.{sys.version_info.minor}"
+    np_ver = np.__version__
+    blas = extract_blas_linkage()
+    
+    return f"{os_name}_{arch}_py{py_ver}_np{np_ver}_{blas}"
 
 def evaluate_hash(metric, computed, info_dict, profile):
     legacy_key = f"{metric}_hash"

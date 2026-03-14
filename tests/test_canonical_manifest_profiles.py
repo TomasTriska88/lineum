@@ -8,9 +8,9 @@ repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(repo_root, "scripts"))
 from verify_repro_run import evaluate_hash
 
-# Mock references based strictly on CI validation
-MOCK_WINDOWS_PROFILE = "win32_AMD64_numpy1.25.2"
-MOCK_UBUNTU_PROFILE = "linux_x86_64_numpy1.26.4"
+# Mock references based strictly on CI validation and BLAS linkages
+MOCK_WINDOWS_PROFILE = "win32_AMD64_py3.11_np1.25.2_openblas"
+MOCK_UBUNTU_PROFILE = "linux_x86_64_py3.11_np1.26.4_openblas"
 
 VALID_WINDOWS_HASH = "mock_windows_hash_123"
 VALID_UBUNTU_HASH = "mock_ubuntu_hash_456"
@@ -113,7 +113,7 @@ def test_strict_manifest_json_file_schema():
         assert "phi_hashes" in info, f"Snapshot {key} structurally missing 'phi_hashes' dict schema"
         
         # Verify both local and CI execution profiles are rigorously registered
-        assert "win32_AMD64_numpy1.25.2" in info["psi_hashes"], f"Windows Execution Profile missing from {key}"
-        assert "linux_x86_64_numpy1.26.4" in info["psi_hashes"], f"Ubuntu CI Execution Profile missing from {key}"
-        assert "win32_AMD64_numpy1.25.2" in info["phi_hashes"], f"Windows Execution Profile missing from {key}"
-        assert "linux_x86_64_numpy1.26.4" in info["phi_hashes"], f"Ubuntu CI Execution Profile missing from {key}"
+        assert "win32_AMD64_py3.11_np1.25.2_openblas" in info["psi_hashes"], f"Windows Execution Profile missing from {key}"
+        assert "linux_x86_64_py3.11_np1.26.4_openblas" in info["psi_hashes"], f"Ubuntu CI Execution Profile missing from {key}"
+        assert "win32_AMD64_py3.11_np1.25.2_openblas" in info["phi_hashes"], f"Windows Execution Profile missing from {key}"
+        assert "linux_x86_64_py3.11_np1.26.4_openblas" in info["phi_hashes"], f"Ubuntu CI Execution Profile missing from {key}"
