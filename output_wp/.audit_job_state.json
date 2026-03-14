@@ -1,1 +1,10 @@
-{"job_id": "83647baa-2575-4a27-ab26-e69972cc9d37", "state": "RUNNING", "last_heartbeat": 1773395465.1139057}
+{
+  "job_id": "5f149c20-0625-4595-868c-89ee4ed6fdc2",
+  "state": "FAILED",
+  "started_at": 1773467623.8773286,
+  "last_heartbeat": 1773468028.5371184,
+  "phase": "Fatal Process Error",
+  "detail": "list index out of range",
+  "run_id_if_known": null,
+  "pid": 38920
+}
