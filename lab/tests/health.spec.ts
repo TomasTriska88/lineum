@@ -12,6 +12,9 @@ test.describe('Validation Dashboard Fallback', () => {
             });
         });
 
+        await page.route('/api/lab/history', async route => { await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }); });
+        await page.route('/data/manifest.json', async route => { await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }); });
+
         // Navigate to the Lab portal
         await page.goto('/');
         await page.waitForTimeout(1000); // 1 second buffer just in case
