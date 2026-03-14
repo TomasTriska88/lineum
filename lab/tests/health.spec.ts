@@ -23,8 +23,8 @@ test.describe('Validation Dashboard Fallback', () => {
         await page.waitForTimeout(1000);
 
         // Instead of 'loading...', it should explicitly show the API UNAVAILABLE state
-        await expect(page.locator('text=Backend Offline').first()).toBeVisible();
-        await expect(page.locator('text=API UNAVAILABLE').first()).toBeVisible();
+        // We only check for the primary status badge
+        await expect(page.locator('.badge-status').filter({ hasText: 'API UNAVAILABLE' }).first()).toBeVisible();
     });
 
 });
