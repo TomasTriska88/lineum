@@ -326,25 +326,8 @@
             if (res.ok) {
                 const data = await res.json();
                 verifyAllSummary = data.summary;
-                // Update claimResults from bulk response
-                for (const [claimId, result] of Object.entries(
-                    data.results || {},
-                )) {
-                    claimResults[claimId] = {
-                        status: result.resolved_claim_status,
-                        manifest_id: result.manifest_id,
-                        contract_id: result.contract_id,
-                        is_audit_grade: result.is_current_build_audited ?? (result.audit_status === "AUDITED" || result.audit_status === "CANONICAL_AUDITED"),
-                        passed_internal: result.overall_pass,
-                        details: `Bulk verified: ${result.checked_at || "now"}`,
-                        scenario_id: result.scenario_id,
-                        active_profile: result.active_profile,
-                        checked_at: result.checked_at,
-                        is_stale: false,
-                        traceability: result.traceability,
-                    };
-                }
-                claimResults = { ...claimResults };
+                await fetchHealth();
+                await refreshStatuses();
             }
         } catch (e) {
             console.error("Verify all failed:", e);
@@ -651,21 +634,15 @@ F) AUTOMATION ROUTING
             }
             const data = await res.json();
 
-            // Backend returns resolved_claim_status — frontend just renders it
+            // Backend returns resolved_claim_status — immediately synchronize the single source of truth matrix
+            await fetchHealth();
+            await refreshStatuses();
+            
+            // Re-select actual resolved text for UX details overlay
             claimResults[claim.id] = {
-                status: data.resolved_claim_status,
-                verdict: data.verdict,
-                evidence_provenance: data.evidence_provenance,
-                manifest_id: data.manifest_id,
-                contract_id: data.contract_id,
-                is_audit_grade: data.is_current_build_audited ?? (data.audit_status === "AUDITED" || data.audit_status === "CANONICAL_AUDITED"),
-                passed_internal: data.overall_pass,
+                ...claimResults[claim.id],
                 details: data.message || "Executed.",
-                scenario_id: data.scenario_id,
-                active_profile: data.active_profile,
-                traceability: data.traceability,
             };
-            claimResults = { ...claimResults };
         } catch (e) {
             console.warn("Verification error:", e);
             claimResults[claim.id] = {

@@ -767,6 +767,10 @@ async def get_claim_results():
         else:
             if is_current_build_audited(ctx.get("audit_status", "")):
                 result["evidence_provenance"] = "CANONICAL_SUITE"
+            elif is_canonical_audit_status(ctx.get("audit_status", "")) and (result.get("is_audit_grade", False) or is_synthetic):
+                # If the overall system is STALE canonical, mapped canonical claims remain structurally "stale" until released.
+                stale_count += 1
+                result["evidence_provenance"] = "STALE_EVIDENCE"
             elif base_status in ["SUPPORTED", "CONTRADICTED", "EXPERIMENTAL_SUPPORTED", "EXPERIMENTAL_CONTRADICTED"]:
                 result["evidence_provenance"] = "EXPERIMENTAL_RUN"
             else:
